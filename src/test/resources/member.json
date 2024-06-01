@@ -1,0 +1,17 @@
+{
+  "fullName": "Director1",
+  "position": "Senior Software Engineer",
+  "images": [
+    {
+      "path": "image.png",
+      "alt": "director alt",
+      "type": "desktop"
+    }
+  ],
+  "network": [
+    {
+      "type": "Linkedin",
+      "link": "https://www.linkedin.com/director"
+    }
+  ]
+}

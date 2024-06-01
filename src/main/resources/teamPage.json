@@ -1,0 +1,315 @@
+{
+  "page": {
+    "title": "Team",
+    "subtitle": "Core Team",
+    "description": "The core team of our community is composed of visionary directors and dynamic leaders, who bring a wealth of experience and dedication to empowering women in technology. These esteemed professionals are committed to fostering an environment of growth, inclusivity and support, guiding our community toward achieving its mission and goals."
+  },
+  "contact": {
+    "title": "Contact us",
+    "links": [
+      {
+        "type": "email",
+        "link": "london@womencodingcommunity.com"
+      },
+      {
+        "type": "slack",
+        "link": "https://join.slack.com/t/womencodingcommunity/shared_invite/zt-2hpjwpx7l-rgceYBIWp6pCiwc0hVsX8A"
+      }
+    ]
+  },
+  "membersByType": {
+    "directors": [
+      {
+        "fullName": "Irina Kamalova",
+        "position": "Senior Software Engineer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/8.jpeg",
+            "alt": "Director profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/irina-kamalova/"
+          },
+          {
+            "type": "medium",
+            "link": "https://iren-kamalova.medium.com/"
+          }
+        ]
+      },
+      {
+        "fullName": "Adriana Zencke",
+        "position": "Senior Software Engineer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/4.jpeg",
+            "alt": "Director profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/dricazenck"
+          },
+          {
+            "type": "github",
+            "link": "https://github.com/dricazenck"
+          },
+          {
+            "type": "medium",
+            "link": "https://medium.com/@dricazenck"
+          }
+        ]
+      },
+      {
+        "fullName": "Rajani Rao",
+        "position": "CTO/Principal Technologist",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/9.jpeg",
+            "alt": "Director profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/rajaniraog"
+          }
+        ]
+      },
+      {
+        "fullName": "Julia Babahina",
+        "position": "Lead Risk Management Specialist",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/11.jpeg",
+            "alt": "Director profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/julia-babahina-cism-crisc-30285440"
+          }
+        ]
+      },
+      {
+        "fullName": "Ying LIU",
+        "position": "Head of AI",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/10.jpeg",
+            "alt": "Director profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/yingliu-data/"
+          }
+        ]
+      }
+    ],
+    "leads": [
+      {
+        "fullName": "Eleonora Belova",
+        "position": "Test Automation Engineer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/7.jpeg",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/eleonora-belova-7069baa5/"
+          },
+          {
+            "type": "github",
+            "link": "https://github.com/nora-weisser"
+          }
+        ]
+      },
+      {
+        "fullName": "Elena Fedorova",
+        "position": "Designer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/2.png",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/elena-fedorova-9ab270237/"
+          }
+        ]
+      },
+      {
+        "fullName": "Abhipsa Mishra",
+        "position": "Senior Software Engineer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/13.jpeg",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/abhipsa-mishra-684a4326"
+          }
+        ]
+      },
+      {
+        "fullName": "Silke Nodwell",
+        "position": "Data Scientist",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/12.jpeg",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/silke-nodwell-763681172"
+          }
+        ]
+      },
+      {
+        "fullName": "Ekaterine Oshkhereli",
+        "position": "Data Analyst",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/15.jpeg",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/ekaterine-oshkhereli-46266559/"
+          }
+        ]
+      },
+      {
+        "fullName": "Airat Yusuff",
+        "position": "Software Engineer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/6.jpeg",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/khairah-yusuff/"
+          },
+          {
+            "type": "github",
+            "link": "https://github.com/khairahscorner"
+          },
+          {
+            "type": "medium",
+            "link": "https://khairahscorner.hashnode.dev/"
+          }
+        ]
+      },
+      {
+        "fullName": "Madhura Chaganty",
+        "position": "Engineering Manager",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/3.jpeg",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/madhurachaganty"
+          }
+        ]
+      },
+      {
+        "fullName": "Sonali Goel",
+        "position": "Senior/Lead Engineer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/14.jpeg",
+            "alt": "Leader profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/sonali-goel-6b611522/"
+          }
+        ]
+      }
+    ],
+    "evangelists": [
+      {
+        "fullName": "Arzu Caner",
+        "position": "Front-end Developer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/1.jpeg",
+            "alt": "Evangelist profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/arzucaner/"
+          },
+          {
+            "type": "github",
+            "link": "https://github.com/arzucaner"
+          },
+          {
+            "type": "medium",
+            "link": "https://arzuguneycaner.medium.com/"
+          }
+        ]
+      },
+      {
+        "fullName": "Idayat Sanni",
+        "position": "Front-end Developer",
+        "images": [
+          {
+            "path": "https://womencodingcommunity.com/assets/images/team/5.jpeg",
+            "alt": "Evangelist profile image",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "linkedin",
+            "link": "https://www.linkedin.com/in/idayat-sanni-a46b16102/"
+          }
+        ]
+      }
+    ]
+  }
+}
