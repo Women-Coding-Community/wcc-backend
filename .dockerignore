@@ -1,0 +1,20 @@
+# flyctl launch added from .gitignore
+**/.gradle/*
+**/build/*
+**/.idea/*
+**/.ideaDataSources
+
+
+# IntelliJ customizations
+!**/.idea/checkstyle-idea.xml
+!**/.idea/saveactions_settings.xml
+!**/.idea/codeStyles/codeStyleConfig.xml
+!**/.idea/codeStyleSettings.xml
+!**/.idea/externalDependencies.xml
+!**/.idea/google-java-format.xml
+
+# flyctl launch added from .idea/.gitignore
+# Default ignored files
+.idea/shelf
+.idea/workspace.xml
+fly.toml
