@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.pages.TeamPage;
+import com.wcc.platform.domain.pages.CodeOfConductPage;
 import com.wcc.platform.service.CmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,5 +23,10 @@ public class CmsController {
     @GetMapping("/team")
     public TeamPage getTeamPage() {
         return cmsService.getTeam();
+    }
+
+    @GetMapping("/code_of_conduct")
+    public CodeOfConductPage getCodeOfConductPage() {
+        return cmsService.getCodeOfConduct();
     }
 }
