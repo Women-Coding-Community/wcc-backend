@@ -25,7 +25,7 @@ public class CmsController {
         return cmsService.getTeam();
     }
 
-    @GetMapping("/code_of_conduct")
+    @GetMapping("/code-of-conduct")
     public CodeOfConductPage getCodeOfConductPage() {
         return cmsService.getCodeOfConduct();
     }
