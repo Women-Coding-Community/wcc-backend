@@ -3,7 +3,7 @@ package com.wcc.platform.deserializers;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.wcc.platform.domain.SocialNetworkType;
+import com.wcc.platform.domain.platform.SocialNetworkType;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.pages;
+package com.wcc.platform.domain.cms.pages;
 
 public record PageMetadata(Pagination pagination) {
 }

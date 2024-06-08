@@ -1,20 +1,20 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.domain.LeadershipMember;
-import com.wcc.platform.domain.SocialNetwork;
-import com.wcc.platform.domain.pages.Page;
-import com.wcc.platform.domain.pages.TeamPage;
-import com.wcc.platform.domain.pages.attributes.Contact;
-import com.wcc.platform.domain.pages.attributes.Image;
-import com.wcc.platform.domain.pages.attributes.MemberByType;
+import com.wcc.platform.domain.platform.LeadershipMember;
+import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.attributes.Contact;
+import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.MemberByType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.wcc.platform.domain.SocialNetworkType.*;
-import static com.wcc.platform.domain.pages.attributes.ImageType.DESKTOP;
+import static com.wcc.platform.domain.platform.SocialNetworkType.*;
+import static com.wcc.platform.domain.cms.attributes.ImageType.DESKTOP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest

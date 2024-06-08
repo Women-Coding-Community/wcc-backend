@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.pages.attributes;
+package com.wcc.platform.domain.cms.attributes;
 
 public enum ImageType {
     MOBILE, DESKTOP, TABLET

@@ -2,7 +2,7 @@ package com.wcc.platform.deserializers;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.wcc.platform.domain.MemberType;
+import com.wcc.platform.domain.platform.MemberType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

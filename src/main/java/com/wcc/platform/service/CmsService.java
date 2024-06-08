@@ -1,12 +1,19 @@
 package com.wcc.platform.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.LeadershipMember;
-import com.wcc.platform.domain.pages.TeamPage;
-import com.wcc.platform.utils.FileUtil;
+import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+
+import static com.wcc.platform.domain.cms.ApiConfig.TEAM;
 
 @Service
 public class CmsService {
@@ -17,23 +24,24 @@ public class CmsService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * API to retrieve information about leadership team members.
+     *
+     * @return Leadership team page content.
+     */
     public TeamPage getTeam() {
-        String teamPage = FileUtil.readFileAsString("teamPage.json");
+        URL resourceUrl = CmsService.class.getClassLoader().getResource(TEAM.getFileName());
 
         try {
-            return objectMapper.readValue(teamPage, TeamPage.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            if (resourceUrl != null) {
+                File file = Path.of(resourceUrl.toURI()).toFile();
+                return objectMapper.readValue(file, TeamPage.class);
+            }
+        } catch (URISyntaxException | IOException e) {
+            throw new PlatformInternalException(e.getMessage(), e);
         }
+
+        throw new ContentNotFoundException("Team content not found.");
     }
 
-    public LeadershipMember getMember() {
-        String teamPage = FileUtil.readFileAsString("member.json");
-
-        try {
-            return objectMapper.readValue(teamPage, LeadershipMember.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

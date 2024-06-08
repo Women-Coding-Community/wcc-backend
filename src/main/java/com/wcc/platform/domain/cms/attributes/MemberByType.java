@@ -1,6 +1,6 @@
-package com.wcc.platform.domain.pages.attributes;
+package com.wcc.platform.domain.cms.attributes;
 
-import com.wcc.platform.domain.LeadershipMember;
+import com.wcc.platform.domain.platform.LeadershipMember;
 
 import java.util.List;
 

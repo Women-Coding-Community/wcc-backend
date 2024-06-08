@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wcc.platform.deserializers.ImageTypeDeserializer;
 import com.wcc.platform.deserializers.MemberTypeDeserializer;
 import com.wcc.platform.deserializers.SocialNetworkTypeDeserializer;
-import com.wcc.platform.domain.MemberType;
-import com.wcc.platform.domain.SocialNetworkType;
-import com.wcc.platform.domain.pages.attributes.ImageType;
+import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.SocialNetworkType;
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
