@@ -19,3 +19,5 @@
 ```shell
 ./gradlew bootRun
 ```
+
+* Access application on http://localhost:8080/api/cms/v1/team
