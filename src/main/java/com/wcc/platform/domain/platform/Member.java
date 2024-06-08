@@ -6,58 +6,60 @@ import java.util.List;
 
 
 public class Member {
+    String fullName;
+    String position;
+    MemberType memberType;
+    List<Image> images;
+    List<SocialNetwork> network;
 
-        String fullName;
-        String position;
-        MemberType memberType;
-        List<Image> images;
-        List<SocialNetwork> network;
+    public Member() {
+    }
 
-        public Member(String fullName, String position, MemberType memberType, List<Image> images, List<SocialNetwork> network) {
-                this.fullName = fullName;
-                this.position = position;
-                this.memberType = memberType;
-                this.images = images;
-                this.network = network;
-        }
+    public Member(String fullName, String position, MemberType memberType, List<Image> images, List<SocialNetwork> network) {
+        this.fullName = fullName;
+        this.position = position;
+        this.memberType = memberType;
+        this.images = images;
+        this.network = network;
+    }
 
-        public void setFullName(String fullName) {
-                this.fullName = fullName;
-        }
+    public String getFullName() {
+        return fullName;
+    }
 
-        public void setPosition(String position) {
-                this.position = position;
-        }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
-        public void setMemberType(MemberType memberType) {
-                this.memberType = memberType;
-        }
+    public String getPosition() {
+        return position;
+    }
 
-        public void setImages(List<Image> images) {
-                this.images = images;
-        }
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-        public void setNetwork(List<SocialNetwork> network) {
-                this.network = network;
-        }
+    public MemberType getMemberType() {
+        return memberType;
+    }
 
-        public String getFullName() {
-                return fullName;
-        }
+    public void setMemberType(MemberType memberType) {
+        this.memberType = memberType;
+    }
 
-        public String getPosition() {
-                return position;
-        }
+    public List<Image> getImages() {
+        return images;
+    }
 
-        public MemberType getMemberType() {
-                return memberType;
-        }
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 
-        public List<Image> getImages() {
-                return images;
-        }
+    public List<SocialNetwork> getNetwork() {
+        return network;
+    }
 
-        public List<SocialNetwork> getNetwork() {
-                return network;
-        }
+    public void setNetwork(List<SocialNetwork> network) {
+        this.network = network;
+    }
 }
