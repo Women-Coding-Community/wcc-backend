@@ -1,5 +1,6 @@
 package com.wcc.platform.factories;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
@@ -10,10 +11,11 @@ import com.wcc.platform.domain.platform.LeadershipMember;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
+import com.wcc.platform.utils.FileUtil;
 
 import java.util.List;
 
-public class TeamPageFactory {
+public class TestFactories {
 
     public static Contact createContactTest() {
         return new Contact("Contact Us", List.of(new SocialNetwork(SocialNetworkType.EMAIL, "test@test.com")));
@@ -21,6 +23,15 @@ public class TeamPageFactory {
 
     public static TeamPage createTeamPageTest() {
         return new TeamPage(createPageTest(), createContactTest(), createMemberByTypeTest());
+    }
+
+    public static TeamPage createTeamPageTest(String fileName) {
+        try {
+            String content = FileUtil.readFileAsString(fileName);
+            return ObjectMapperTestFactory.getInstance().readValue(content, TeamPage.class);
+        } catch (JsonProcessingException e) {
+            return createTeamPageTest();
+        }
     }
 
     public static MemberByType createMemberByTypeTest() {
@@ -31,7 +42,7 @@ public class TeamPageFactory {
     }
 
     public static Page createPageTest() {
-        return new Page("title", "subtitle", "description1");
+        return new Page("title", "subtitle", "description");
     }
 
     public static LeadershipMember createMemberTest(MemberType type) {
