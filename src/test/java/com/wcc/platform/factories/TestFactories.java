@@ -46,8 +46,15 @@ public class TestFactories {
     }
 
     public static LeadershipMember createMemberTest(MemberType type) {
-        return new LeadershipMember("fullName " + type.name(),
-                "position " + type.name(), type, List.of(createImageTest()), List.of(createSocialNetworkTest()));
+        var team = new LeadershipMember();
+
+        team.setFullName("fullName " + type.name());
+        team.setPosition("position " + type.name());
+        team.setMemberType(type);
+        team.setImages(List.of(createImageTest()));
+        team.setNetwork(List.of(createSocialNetworkTest()));
+
+        return team;
     }
 
     public static Image createImageTest(ImageType type) {
