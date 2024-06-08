@@ -1,0 +1,79 @@
+{
+  "page": {
+    "title": "title",
+    "subtitle": "subtitle",
+    "description": "description"
+  },
+  "contact": {
+    "title": "Contact us",
+    "links": [
+      {
+        "type": "email",
+        "link": "london@wcc.com"
+      },
+      {
+        "type": "slack",
+        "link": "http://shortlink_to_slack.com"
+      }
+    ]
+  },
+  "membersByType": {
+    "directors": [
+      {
+        "fullName": "Director1",
+        "position": "Senior Software Engineer",
+        "images": [
+          {
+            "path": "image.png",
+            "alt": "director alt",
+            "type": "desktop"
+          }
+        ],
+        "network": [
+          {
+            "type": "Linkedin",
+            "link": "https://www.linkedin.com/director"
+          }
+        ]
+      }
+    ],
+    "leads": [
+      {
+        "fullName": "Full name Leader",
+        "position": "Software Engineer",
+        "images": [
+          {
+            "path": "leader.png",
+            "alt": "leader alt",
+            "type": "mobile"
+          }
+        ],
+        "network": [
+          {
+            "type": "github",
+            "link": "https://github.com/leader"
+          }
+        ]
+      }
+    ],
+    "evangelists": [
+      {
+        "fullName": "Full name Evangelists",
+        "position": "Senior Software Engineer",
+        "images": [
+          {
+            "path": "evangelist.png",
+            "alt": "alt evangelist",
+            "type": "tablet"
+          }
+        ],
+        "network": [
+          {
+            "type": "Linkedin",
+            "link": "https://www.linkedin.com"
+          }
+        ]
+      }
+    ]
+  }
+}
