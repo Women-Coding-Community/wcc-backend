@@ -3,12 +3,12 @@ package com.wcc.platform.domain.cms;
 /**
  * Create custom api configurations.
  */
-public enum ApiConfig {
+public enum ApiResourcesFile {
     TEAM("TeamPage.json");
 
     private final String fileName;
 
-    ApiConfig(String fileName) {
+    ApiResourcesFile(String fileName) {
         this.fileName = fileName;
     }
 
