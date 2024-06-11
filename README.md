@@ -60,7 +60,7 @@ sdk use java 0.0.0-open
 
 * Or set the newly installed Java version as the default:
 ```shell
-sdk default java 0.0.0.-open
+sdk default java 0.0.0-open
 ```
 
 * To verify if the java version is correct use:
