@@ -51,14 +51,4 @@ public class CmsService {
             throw new PlatformInternalException(e.getMessage(), e);
         }
     }
-
-    // public CodeOfConductPage getCodeOfConduct() {
-    //     String codeOfConductPage = FileUtil.readFileAsString("codeOfConductPage.json");
-
-    //     try {
-    //         return objectMapper.readValue(codeOfConductPage, CodeOfConductPage.class);
-    //     } catch (JsonProcessingException e) {
-    //         throw new RuntimeException(e);
-    //     }
-    // }
 }
