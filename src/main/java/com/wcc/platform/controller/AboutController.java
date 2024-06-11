@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,5 +27,11 @@ public class AboutController {
     @ApiOperation(value = "API to retrieve information about leadership team members")
     public ResponseEntity<TeamPage> getTeamPage() {
         return ResponseEntity.ok(cmsService.getTeam());
+    }
+
+    @GetMapping("/code-of-conduct")
+    @ApiOperation(value = "API to retrieve Code of Ccnduct")
+    public ResponseEntity<CodeOfConductPage> getCodeOfConductPage() {
+        return ResponseEntity.ok(cmsService.getCodeOfConduct());
     }
 }

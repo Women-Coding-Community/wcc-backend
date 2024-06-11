@@ -4,7 +4,8 @@ package com.wcc.platform.domain.cms;
  * Create custom api configurations.
  */
 public enum ApiResourcesFile {
-    TEAM("TeamPage.json");
+    TEAM("TeamPage.json"),
+    CODE_OF_CONDUCT("CodeOfConductPage.json");
 
     private final String fileName;
 
