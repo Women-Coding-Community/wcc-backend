@@ -1,4 +1,4 @@
-package com.wcc.platform.domain;
+package com.wcc.platform.domain.platform;
 
 public enum MemberType {
     DIRECTOR,

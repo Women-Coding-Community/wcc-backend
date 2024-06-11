@@ -3,7 +3,7 @@ package com.wcc.platform.deserializers;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.wcc.platform.domain.SocialNetworkType;
+import com.wcc.platform.domain.platform.SocialNetworkType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
