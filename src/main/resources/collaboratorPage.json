@@ -1,0 +1,40 @@
+{
+  "page": {
+    "title": "Team",
+    "subtitle": "Core Team",
+    "description": "The core team of our community is composed of visionary directors and dynamic leaders, who bring a wealth of experience and dedication to empowering women in technology. These esteemed professionals are committed to fostering an environment of growth, inclusivity and support, guiding our community toward achieving its mission and goals."
+  },
+  "contact": {
+    "title": "Contact us",
+    "links": [
+      {
+        "type": "email",
+        "link": "london@wcc.com"
+      },
+      {
+        "type": "slack",
+        "link": "http://shortlink_to_slack.com"
+      }
+    ]
+  },
+  "collaborators": [
+    {
+      "fullName": "Full name",
+      "position": "Senior Software Engineer",
+      "images": [
+        {
+          "path": "https://cloudprovider.com/image.png",
+          "alt": "There are two women talking during a productive mentoring session",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "youtube",
+          "link": "https://www.linkedin.com"
+        }
+      ],
+      "memberType": "director"
+    }
+  ]
+}
