@@ -24,9 +24,10 @@
 
 ********************************************************************************************************************
 
-## JAVA 21.0.2
+## JAVA 21
 This project uses Java 21, you can run in 21.0.2 or 21.0.3. If you have installed a different version on your machine and don't want to remove it, you can use **SDKMAN** development tool.
-It will allow you to switch based on the Java version you want to use. Here is the [link] (https://sdkman.io). 
+It will allow you to switch based on the Java version you want to use. 
+Here is the [link] (https://sdkman.io). 
 
 * Install SDKMAN
 
