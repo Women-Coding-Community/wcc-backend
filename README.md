@@ -25,8 +25,8 @@
 ********************************************************************************************************************
 
 ## JAVA 21.0.2
-This product is built with Java 21.0.2. If you have installed a different version on your machine and don't want to remove it, you can use **SDKMAN** development tool.
-It will allow you to switch based on the Java version you want to use. Here is the link: https://sdkman.io/. 
+This project uses Java 21, you can run in 21.0.2 or 21.0.3. If you have installed a different version on your machine and don't want to remove it, you can use **SDKMAN** development tool.
+It will allow you to switch based on the Java version you want to use. Here is the [link] (https://sdkman.io). 
 
 * Install SDKMAN
 
@@ -43,27 +43,11 @@ sdk list java
 
 * Install the desired Java version
 ```shell
-sdk install java 0.0.0-open 
-```
-
-### Set the new Java version for your specific project
-
-* Navigate to your project directory 
-```shell
-cd /path/to/your/project
-```
-
-* Use SDKMAN to set the java version for this specific directory:
-```shell
-sdk use java 0.0.0-open
-```
-
-* Or set the newly installed Java version as the default:
-```shell
-sdk default java 0.0.0-open
+sdk install java 21.0.2-open 
 ```
 
 * To verify if the java version is correct use:
 ```shell
 java -version
 ```
+
