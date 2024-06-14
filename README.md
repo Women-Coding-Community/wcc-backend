@@ -46,7 +46,16 @@ sdk list java
 ```shell
 sdk install java 21.0.2-open 
 ```
+```shell
+sdk use java 21.0.2-open
+```
 
+## Set the default Java version for your system:
+
+* To set the newly installed Java version as the default:
+```shell
+sdk default java 21.0.2-open
+```
 * To verify if the java version is correct use:
 ```shell
 java -version
