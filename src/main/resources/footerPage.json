@@ -31,6 +31,6 @@
   "link": {
     "title": "Experiencing Technical Issues?",
     "label": "Send us a report",
-    "url": "https://github.com/WomenCodingCommunity/WomenCodingCommunity.github.io/issues/new?template=bug_report.md&title=bug%20title"
+    "uri": "https://github.com/WomenCodingCommunity/WomenCodingCommunity.github.io/issues/new?template=bug_report.md&title=bug%20title"
   }
 }

@@ -89,7 +89,7 @@ public class TestFactories {
     }
 
     public static LabelLink createLabelLink() {
-        return new LabelLink("link_title", "link_label", "link_url");
+        return new LabelLink("link_title", "link_label", "link_uri");
     }
 
 
