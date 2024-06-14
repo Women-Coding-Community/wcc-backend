@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
+import static com.wcc.platform.factories.TestFactories.createFooterPageTest;
 import static com.wcc.platform.factories.TestFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,5 +33,19 @@ class CmsServiceIntegrationTest {
         assertNull(result.membersByType().directors().get(0).getMemberType());
         assertNull(result.membersByType().leads().get(0).getMemberType());
         assertNull(result.membersByType().evangelists().get(0).getMemberType());
+    }
+
+    @Test
+    void getFooterPageTest() {
+        var result = service.getFooter();
+
+        var expectedTeamPage = createFooterPageTest(FOOTER.getFileName());
+
+        assertEquals(expectedTeamPage.title(), result.title());
+        assertEquals(expectedTeamPage.subtitle(), result.subtitle());
+        assertEquals(expectedTeamPage.description(), result.description());
+
+        assertEquals(6, result.network().size());
+        assertEquals(expectedTeamPage.link(), result.link());
     }
 }
