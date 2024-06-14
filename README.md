@@ -46,6 +46,7 @@ sdk list java
 ```shell
 sdk install java 21.0.2-open 
 ```
+* Use the specific java version in the current session on your terminal
 ```shell
 sdk use java 21.0.2-open
 ```
