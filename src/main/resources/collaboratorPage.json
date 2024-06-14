@@ -1,8 +1,8 @@
 {
   "page": {
     "title": "Team",
-    "subtitle": "Core Team",
-    "description": "The core team of our community is composed of visionary directors and dynamic leaders, who bring a wealth of experience and dedication to empowering women in technology. These esteemed professionals are committed to fostering an environment of growth, inclusivity and support, guiding our community toward achieving its mission and goals."
+    "subtitle": "Collaborators",
+    "description": "Our collaborators are the backbone of our community, offering vital expertise and support that drive our initiatives forward and enhance our digital presence."
   },
   "contact": {
     "title": "Contact us",
@@ -19,22 +19,136 @@
   },
   "collaborators": [
     {
-      "fullName": "Full name",
-      "position": "Senior Software Engineer",
+      "fullName": "Lily N.",
+      "position": "UX/UI Designer & Engineer",
       "images": [
         {
-          "path": "https://cloudprovider.com/image.png",
-          "alt": "There are two women talking during a productive mentoring session",
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/1.jpeg",
+          "alt": "Collaborator profile image",
           "type": "desktop"
         }
       ],
       "network": [
         {
-          "type": "youtube",
-          "link": "https://www.linkedin.com"
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/lilynguyendk"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/lilyndk"
         }
       ],
-      "memberType": "director"
+      "memberType": "MEMBER"
+    },
+    {
+      "fullName": "Chloe Britland-Whiting",
+      "position": "Data Analyst",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/9.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/chloe-britland-whiting/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/cribw27"
+        }
+      ],
+      "memberType": "MEMBER"
+    },
+    {
+      "fullName": "Neha Sharma",
+      "position": "Principal Engineer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/5.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/nehha/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/Neha"
+        }
+      ],
+      "memberType": "MEMBER"
+    },
+    {
+      "fullName": "Sophy O.",
+      "position": "UI Developer/UX Designer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/10.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/sophyo/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/sssoz"
+        }
+      ],
+      "memberType": "MEMBER"
+    },
+    {
+      "fullName": "Chiara Pigoni",
+      "position": "Software Developer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/11.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/chiarapigoni/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/kikilondon"
+        }
+      ],
+      "memberType": "MEMBER"
+    },
+    {
+      "fullName": "Nevena Verbič",
+      "position": "Software Developer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/12.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "link: https://www.linkedin.com/in/nevena-verbič-83a16ab/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/nverbic"
+        }
+      ],
+      "memberType": "MEMBER"
     }
   ]
 }
