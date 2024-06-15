@@ -46,7 +46,31 @@ class AboutControllerTest {
         mockMvc.perform(get("/api/cms/v1/team").contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status", is(500)))
-                .andExpect(jsonPath("$.message", is("internal error")))
+                .andExpect(jsonPath("$.message", is("Err internal error")))
                 .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/team")));
+    }
+
+    @Test
+    void testCollaboratorNotFound() throws Exception {
+        when(service.getCollaborator()).thenThrow(new ContentNotFoundException("Not Found Exception"));
+
+        mockMvc.perform(get("/api/cms/v1/collaborators")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status", is(404)))
+                .andExpect(jsonPath("$.message", is("Not Found Exception")))
+                .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
+    }
+
+    @Test
+    void testCollaboratorInternalError() throws Exception {
+        var internalError = new PlatformInternalException("internal error", new RuntimeException());
+        when(service.getCollaborator()).thenThrow(internalError);
+
+        mockMvc.perform(get("/api/cms/v1/collaborators").contentType(APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status", is(500)))
+                .andExpect(jsonPath("$.message", is("internal error")))
+                .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
     }
 }
