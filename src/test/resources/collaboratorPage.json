@@ -1,0 +1,40 @@
+{
+  "page": {
+    "title": "title",
+    "subtitle": "subtitle",
+    "description": "description"
+  },
+  "contact": {
+    "title": "Contact us",
+    "links": [
+      {
+        "type": "email",
+        "link": "london@wcc.com"
+      },
+      {
+        "type": "slack",
+        "link": "http://shortlink_to_slack.com"
+      }
+    ]
+  },
+  "collaborators": [
+    {
+      "fullName": "Member1",
+      "position": "Senior Software Engineer",
+      "images": [
+        {
+          "path": "image.png",
+          "alt": "director alt",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "Linkedin",
+          "link": "https://www.linkedin.com/member"
+        }
+      ],
+      "memberType": "MEMBER"
+    }
+  ]
+}

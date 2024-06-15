@@ -5,6 +5,8 @@ import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.MemberByType;
+import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.platform.LeadershipMember;
@@ -34,11 +36,28 @@ public class TestFactories {
         }
     }
 
+    public static CollaboratorPage createCollaboratorPageTest() {
+        return new CollaboratorPage(createPageTest(), createContactTest(), List.of(createCollaboratorsTest()));
+    }
+
+    public static CollaboratorPage createCollaboratorPageTest(String fileName) {
+        try {
+            String content = FileUtil.readFileAsString(fileName);
+            return ObjectMapperTestFactory.getInstance().readValue(content, CollaboratorPage.class);
+        } catch (JsonProcessingException e) {
+            return createCollaboratorPageTest();
+        }
+    }
+
     public static MemberByType createMemberByTypeTest() {
         var directors = List.of(createMemberTest(MemberType.DIRECTOR));
         var leaders = List.of(createMemberTest(MemberType.LEADER));
         var evangelist = List.of(createMemberTest(MemberType.EVANGELIST));
         return new MemberByType(directors, leaders, evangelist);
+    }
+
+    public static Member createCollaboratorsTest() {
+        return(createCollaboratorMemberTest(MemberType.MEMBER));
     }
 
     public static Page createPageTest() {
@@ -47,6 +66,11 @@ public class TestFactories {
 
     public static LeadershipMember createMemberTest(MemberType type) {
         return new LeadershipMember("fullName " + type.name(),
+                "position " + type.name(), type, List.of(createImageTest()), List.of(createSocialNetworkTest()));
+    }
+
+    public static Member createCollaboratorMemberTest(MemberType type) {
+        return new Member("fullName " + type.name(),
                 "position " + type.name(), type, List.of(createImageTest()), List.of(createSocialNetworkTest()));
     }
 
