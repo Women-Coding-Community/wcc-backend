@@ -46,7 +46,7 @@ class AboutControllerTest {
         mockMvc.perform(get("/api/cms/v1/team").contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status", is(500)))
-                .andExpect(jsonPath("$.message", is("Err internal error")))
+                .andExpect(jsonPath("$.message", is("internal error")))
                 .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/team")));
     }
 
