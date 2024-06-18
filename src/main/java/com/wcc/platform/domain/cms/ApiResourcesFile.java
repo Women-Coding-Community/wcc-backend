@@ -5,6 +5,7 @@ package com.wcc.platform.domain.cms;
  */
 public enum ApiResourcesFile {
     TEAM("TeamPage.json"),
+    FOOTER("FooterPage.json"),
     COLLABORATOR("CollaboratorPage.json");
 
     private final String fileName;

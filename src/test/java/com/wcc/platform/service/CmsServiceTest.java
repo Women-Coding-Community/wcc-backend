@@ -1,6 +1,7 @@
 package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -11,6 +12,7 @@ import org.mockito.Mockito;
 import java.io.File;
 import java.io.IOException;
 
+import static com.wcc.platform.factories.TestFactories.createFooterPageTest;
 import static com.wcc.platform.factories.TestFactories.createTeamPageTest;
 import static com.wcc.platform.factories.TestFactories.createCollaboratorPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +48,24 @@ class CmsServiceTest {
         var response = service.getTeam();
 
         assertEquals(teamPage, response);
+    }
+
+    @Test
+    void whenGetFooterGivenInvalidJson() throws IOException {
+        when(objectMapper.readValue(any(File.class), Mockito.eq(FooterPage.class))).thenThrow(new IOException("Invalid JSON"));
+        var exception = assertThrows(PlatformInternalException.class, () -> service.getFooter());
+
+        assertEquals("Invalid JSON", exception.getMessage());
+    }
+
+    @Test
+    void whenGetFooterGivenValidJson() throws IOException {
+        var footer = createFooterPageTest();
+        when(objectMapper.readValue(any(File.class), Mockito.eq(FooterPage.class))).thenReturn(footer);
+
+        var response = service.getFooter();
+
+        assertEquals(footer, response);
     }
 
     @Test

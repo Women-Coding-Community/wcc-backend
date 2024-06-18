@@ -1,6 +1,7 @@
 package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
 
@@ -33,6 +35,20 @@ public class CmsService {
         try {
             File file = Path.of(FileUtil.getFileUri(TEAM.getFileName())).toFile();
             return objectMapper.readValue(file, TeamPage.class);
+        } catch (IOException e) {
+            throw new PlatformInternalException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * API to retrieve the footer page information.
+     *
+     * @return Footer page
+     */
+    public FooterPage getFooter() {
+        try {
+            File file = Path.of(FileUtil.getFileUri(FOOTER.getFileName())).toFile();
+            return objectMapper.readValue(file, FooterPage.class);
         } catch (IOException e) {
             throw new PlatformInternalException(e.getMessage(), e);
         }

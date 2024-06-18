@@ -1,3 +1,11 @@
 spring:
   application:
     name: wcc-platform
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+  paths-to-match: /api/cms/v1/**
