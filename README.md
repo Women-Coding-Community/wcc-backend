@@ -22,7 +22,7 @@
 
 * Access application on http://localhost:8080/api/cms/v1/team
 
-********************************************************************************************************************
+
 
 ## JAVA 21
 This project uses Java 21, you can run in 21.0.2 or 21.0.3. If you have installed a different version on your machine and don't want to remove it, you can use **SDKMAN** development tool.
@@ -61,4 +61,8 @@ sdk default java 21.0.2-open
 ```shell
 java -version
 ```
+
+
+* Access swagger at http://localhost:8080/swagger-ui/index.html
+    and corresponding openAPI docs at http://localhost:8080/api-docs
 

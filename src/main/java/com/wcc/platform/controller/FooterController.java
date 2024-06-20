@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/cms/v1/")
-@Tag(name = "APIs relevant About Us section")
-public class AboutController {
+@Tag(name = "API relevant to footer section")
+public class FooterController {
 
     private final CmsService cmsService;
 
     @Autowired
-    public AboutController(CmsService service) {
-        this.cmsService = service;
+    public FooterController(CmsService cmsService) {
+        this.cmsService = cmsService;
     }
 
-    @GetMapping("/team")
-    @Operation(summary = "API to retrieve information about leadership team members")
+    @GetMapping("/footer")
+    @Operation(summary = "API to retrieve footer section details")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TeamPage> getTeamPage() {
-        return ResponseEntity.ok(cmsService.getTeam());
+    public ResponseEntity<FooterPage> getFooterPage() {
+        return ResponseEntity.ok(cmsService.getFooter());
     }
 }

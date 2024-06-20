@@ -1,10 +1,8 @@
 package com.wcc.platform.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wcc.platform.domain.cms.attributes.Contact;
-import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.ImageType;
-import com.wcc.platform.domain.cms.attributes.MemberByType;
+import com.wcc.platform.domain.cms.attributes.*;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.platform.LeadershipMember;
@@ -72,5 +70,27 @@ public class TestFactories {
     public static SocialNetwork createSocialNetworkTest() {
         return createSocialNetworkTest(SocialNetworkType.INSTAGRAM);
     }
+
+    public static FooterPage createFooterPageTest() {
+        return new FooterPage("footer_title", "footer_subtitle", "footer_description", createNetworks(), createLabelLink());
+    }
+
+    public static FooterPage createFooterPageTest(String fileName) {
+        try {
+            String content = FileUtil.readFileAsString(fileName);
+            return ObjectMapperTestFactory.getInstance().readValue(content, FooterPage.class);
+        } catch (JsonProcessingException e) {
+            return createFooterPageTest();
+        }
+    }
+
+    public static List<Network> createNetworks() {
+        return List.of(new Network("type1", "link1"), new Network("type2", "link2"));
+    }
+
+    public static LabelLink createLabelLink() {
+        return new LabelLink("link_title", "link_label", "link_uri");
+    }
+
 
 }
