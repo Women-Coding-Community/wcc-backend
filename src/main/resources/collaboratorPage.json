@@ -9,7 +9,7 @@
     "links": [
       {
         "type": "email",
-        "link": "london@wcc.com"
+        "link": "london@womencodingcommunity.com"
       },
       {
         "type": "slack",
@@ -38,7 +38,7 @@
           "link": "https://github.com/lilyndk"
         }
       ],
-      "memberType": "MEMBER"
+      "memberType": "COLLABORATOR"
     },
     {
       "fullName": "Chloe Britland-Whiting",
@@ -60,7 +60,7 @@
           "link": "https://github.com/cribw27"
         }
       ],
-      "memberType": "MEMBER"
+      "memberType": "COLLABORATOR"
     },
     {
       "fullName": "Neha Sharma",
@@ -82,7 +82,7 @@
           "link": "https://github.com/Neha"
         }
       ],
-      "memberType": "MEMBER"
+      "memberType": "COLLABORATOR"
     },
     {
       "fullName": "Sophy O.",
@@ -104,7 +104,7 @@
           "link": "https://github.com/sssoz"
         }
       ],
-      "memberType": "MEMBER"
+      "memberType": "COLLABORATOR"
     },
     {
       "fullName": "Chiara Pigoni",
@@ -126,7 +126,7 @@
           "link": "https://github.com/kikilondon"
         }
       ],
-      "memberType": "MEMBER"
+      "memberType": "COLLABORATOR"
     },
     {
       "fullName": "Nevena Verbič",
@@ -148,7 +148,29 @@
           "link": "https://github.com/nverbic"
         }
       ],
-      "memberType": "MEMBER"
+      "memberType": "COLLABORATOR"
+    },
+    {
+      "fullName": "Joana Brito",
+      "position": "Frontend Engineer",
+      "images": [
+        {
+          "path": "image5.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/joana-brito216"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/joanaBrit"
+        }
+      ],
+      "memberType": "VOLUNTEER"
     }
   ]
 }

@@ -75,8 +75,15 @@ public class TestFactories {
     }
 
     public static Member createCollaboratorMemberTest(MemberType type) {
-        return new Member("fullName " + type.name(),
-                "position " + type.name(), type, List.of(createImageTest()), List.of(createSocialNetworkTest()));
+        var member = new Member();
+
+        member.setFullName("fullName " + type.name());
+        member.setPosition("position " + type.name());
+        member.setMemberType(type);
+        member.setImages(List.of(createImageTest()));
+        member.setNetwork(List.of(createSocialNetworkTest()));
+
+        return member;
     }
 
     public static Image createImageTest(ImageType type) {

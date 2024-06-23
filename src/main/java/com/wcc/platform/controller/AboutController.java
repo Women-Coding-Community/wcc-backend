@@ -33,7 +33,8 @@ public class AboutController {
     }
 
     @GetMapping("/collaborators")
-    @ApiOperation(value = "API to retrieve information about collaborators")
+    @Operation(summary = "API to retrieve information about collaborators")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CollaboratorPage> getCollaboratorPage() {
         return ResponseEntity.ok(cmsService.getCollaborator());
     }
