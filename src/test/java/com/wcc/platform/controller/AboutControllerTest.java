@@ -1,7 +1,16 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
+import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.service.CmsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +24,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
 
 
 @WebMvcTest(AboutController.class)
@@ -64,13 +75,50 @@ class AboutControllerTest {
 
     @Test
     void testCollaboratorInternalError() throws Exception {
-        var internalError = new PlatformInternalException("internal error", new RuntimeException());
+        var internalError = new PlatformInternalException("internal Json", new RuntimeException());
         when(service.getCollaborator()).thenThrow(internalError);
 
-        mockMvc.perform(get("/api/cms/v1/collaborators").contentType(APPLICATION_JSON))
+        mockMvc.perform(get("/api/cms/v1/collaborators")
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status", is(500)))
-                .andExpect(jsonPath("$.message", is("internal error")))
+                .andExpect(jsonPath("$.message", is("internal Json")))
                 .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
+    }
+
+    @Test
+    void testCollaboratorOKResponse() throws Exception {
+        var collaborator = new Member();
+
+        collaborator.setFullName("fullName");
+        collaborator.setPosition("position");
+        collaborator.setMemberType(MemberType.COLLABORATOR);
+        collaborator.setImages(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)));
+        collaborator.setNetwork(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")));
+
+        var collaboratorPage = new CollaboratorPage(
+            new Page("collaborator_title", "collaborator_subtitle", "collaborator_desc"),
+            new Contact("contact_title", List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "page_link"))),
+            List.of(collaborator));
+
+        when(service.getCollaborator()).thenReturn(collaboratorPage);
+
+        mockMvc.perform(get("/api/cms/v1/collaborators")
+                        .contentType(APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.page.title", is("collaborator_title")))
+                        .andExpect(jsonPath("$.page.subtitle", is("collaborator_subtitle")))
+                        .andExpect(jsonPath("$.page.description", is("collaborator_desc")))
+                        .andExpect(jsonPath("$.contact.title", is("contact_title")))
+                        .andExpect(jsonPath("$.contact.links[0].type", is("LINKEDIN")))
+                        .andExpect(jsonPath("$.contact.links[0].link", is("page_link")))
+                        .andExpect(jsonPath("$.collaborators[0].fullName", is("fullName")))
+                        .andExpect(jsonPath("$.collaborators[0].position", is("position")))
+                        .andExpect(jsonPath("$.collaborators[0].memberType", is("COLLABORATOR")))
+                        .andExpect(jsonPath("$.collaborators[0].images[0].path", is("image.png")))
+                        .andExpect(jsonPath("$.collaborators[0].images[0].alt", is("alt image")))
+                        .andExpect(jsonPath("$.collaborators[0].images[0].type", is("DESKTOP")))
+                        .andExpect(jsonPath("$.collaborators[0].network[0].type", is("LINKEDIN")))
+                        .andExpect(jsonPath("$.collaborators[0].network[0].link", is("collaborator_link")));
     }
 }
