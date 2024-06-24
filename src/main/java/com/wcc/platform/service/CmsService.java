@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.utils.FileUtil;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
 
 @Service
 public class CmsService {
@@ -47,6 +49,20 @@ public class CmsService {
         try {
             File file = Path.of(FileUtil.getFileUri(FOOTER.getFileName())).toFile();
             return objectMapper.readValue(file, FooterPage.class);
+        } catch (IOException e) {
+            throw new PlatformInternalException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * API to retrieve information about collaborators.
+     *
+     * @return Collaborators page content.
+     */
+    public CollaboratorPage getCollaborator() {
+        try {
+            File file = Path.of(FileUtil.getFileUri(COLLABORATOR.getFileName())).toFile();
+            return objectMapper.readValue(file, CollaboratorPage.class);
         } catch (IOException e) {
             throw new PlatformInternalException(e.getMessage(), e);
         }

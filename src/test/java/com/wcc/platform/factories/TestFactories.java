@@ -3,6 +3,8 @@ package com.wcc.platform.factories;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.*;
 import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.platform.LeadershipMember;
@@ -32,11 +34,28 @@ public class TestFactories {
         }
     }
 
+    public static CollaboratorPage createCollaboratorPageTest() {
+        return new CollaboratorPage(createPageTest(), createContactTest(), List.of(createCollaboratorsTest()));
+    }
+
+    public static CollaboratorPage createCollaboratorPageTest(String fileName) {
+        try {
+            String content = FileUtil.readFileAsString(fileName);
+            return ObjectMapperTestFactory.getInstance().readValue(content, CollaboratorPage.class);
+        } catch (JsonProcessingException e) {
+            return createCollaboratorPageTest();
+        }
+    }
+
     public static MemberByType createMemberByTypeTest() {
         var directors = List.of(createMemberTest(MemberType.DIRECTOR));
         var leaders = List.of(createMemberTest(MemberType.LEADER));
         var evangelist = List.of(createMemberTest(MemberType.EVANGELIST));
         return new MemberByType(directors, leaders, evangelist);
+    }
+
+    public static Member createCollaboratorsTest() {
+        return(createCollaboratorMemberTest(MemberType.MEMBER));
     }
 
     public static Page createPageTest() {
@@ -53,6 +72,18 @@ public class TestFactories {
         team.setNetwork(List.of(createSocialNetworkTest()));
 
         return team;
+    }
+
+    public static Member createCollaboratorMemberTest(MemberType type) {
+        var member = new Member();
+
+        member.setFullName("fullName " + type.name());
+        member.setPosition("position " + type.name());
+        member.setMemberType(type);
+        member.setImages(List.of(createImageTest()));
+        member.setNetwork(List.of(createSocialNetworkTest()));
+
+        return member;
     }
 
     public static Image createImageTest(ImageType type) {
