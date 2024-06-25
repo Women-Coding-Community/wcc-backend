@@ -2,8 +2,10 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.pages.Section;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -120,5 +122,51 @@ class AboutControllerTest {
                         .andExpect(jsonPath("$.collaborators[0].images[0].type", is("DESKTOP")))
                         .andExpect(jsonPath("$.collaborators[0].network[0].type", is("LINKEDIN")))
                         .andExpect(jsonPath("$.collaborators[0].network[0].link", is("collaborator_link")));
+    }
+
+    @Test
+    void testCodeOfConductNotFound() throws Exception {
+        when(service.getCodeOfConduct()).thenThrow(new ContentNotFoundException("Not Found Exception"));
+
+        mockMvc.perform(get("/api/cms/v1/code-of-conduct")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status", is(404)))
+                .andExpect(jsonPath("$.message", is("Not Found Exception")))
+                .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/code-of-conduct")));
+    }
+
+    @Test
+    void testCodeOfConductInternalError() throws Exception {
+        var internalError = new PlatformInternalException("internal Json", new RuntimeException());
+        when(service.getCodeOfConduct()).thenThrow(internalError);
+
+        mockMvc.perform(get("/api/cms/v1/code-of-conduct")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status", is(500)))
+                .andExpect(jsonPath("$.message", is("internal Json")))
+                .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/code-of-conduct")));
+    }
+
+    @Test
+    void testCodeOfConductOKResponse() throws Exception {
+        var codeOfConductPage = new CodeOfConductPage(
+            new Page("code_of_conduct_title", "code_of_conduct_subtitle", "code_of_conduct_desc"),
+            List.of(new Section("section_title", "section_description", List.of("item_1", "item_2", "item_3"))));
+
+        when(service.getCodeOfConduct()).thenReturn(codeOfConductPage);
+
+        mockMvc.perform(get("/api/cms/v1/code-of-conduct")
+                        .contentType(APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.page.title", is("code_of_conduct_title")))
+                        .andExpect(jsonPath("$.page.subtitle", is("code_of_conduct_subtitle")))
+                        .andExpect(jsonPath("$.page.description", is("code_of_conduct_desc")))
+                        .andExpect(jsonPath("$.items[0].title", is("section_title")))
+                        .andExpect(jsonPath("$.items[0].description", is("section_description")))
+                        .andExpect(jsonPath("$.items[0].items[0]", is("item_1")))
+                        .andExpect(jsonPath("$.items[0].items[1]", is("item_2")))
+                        .andExpect(jsonPath("$.items[0].items[2]", is("item_3")));
     }
 }
