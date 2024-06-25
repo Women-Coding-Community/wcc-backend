@@ -14,10 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
 
 @Service
 public class CmsService {
@@ -71,7 +68,7 @@ public class CmsService {
     }
 
     /**
-     * API to retrieve Code of conduct.
+     * API to retrieve WCC Code of conduct.
      *
      * @return Code of conduct page content.
      */

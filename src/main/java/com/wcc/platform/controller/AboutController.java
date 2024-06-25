@@ -41,7 +41,8 @@ public class AboutController {
     }
 
     @GetMapping("/code-of-conduct")
-    @ApiOperation(value = "API to retrieve Code of Ccnduct")
+    @Operation(summary = "API to retrieve Code of Ccnduct")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CodeOfConductPage> getCodeOfConductPage() {
         return ResponseEntity.ok(cmsService.getCodeOfConduct());
     }
