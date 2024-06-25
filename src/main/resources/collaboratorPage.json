@@ -1,0 +1,176 @@
+{
+  "page": {
+    "title": "Team",
+    "subtitle": "Collaborators",
+    "description": "Our collaborators are the backbone of our community, offering vital expertise and support that drive our initiatives forward and enhance our digital presence."
+  },
+  "contact": {
+    "title": "Contact us",
+    "links": [
+      {
+        "type": "email",
+        "link": "london@womencodingcommunity.com"
+      },
+      {
+        "type": "slack",
+        "link": "http://shortlink_to_slack.com"
+      }
+    ]
+  },
+  "collaborators": [
+    {
+      "fullName": "Lily N.",
+      "position": "UX/UI Designer & Engineer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/1.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/lilynguyendk"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/lilyndk"
+        }
+      ],
+      "memberType": "COLLABORATOR"
+    },
+    {
+      "fullName": "Chloe Britland-Whiting",
+      "position": "Data Analyst",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/9.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/chloe-britland-whiting/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/cribw27"
+        }
+      ],
+      "memberType": "COLLABORATOR"
+    },
+    {
+      "fullName": "Neha Sharma",
+      "position": "Principal Engineer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/5.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/nehha/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/Neha"
+        }
+      ],
+      "memberType": "COLLABORATOR"
+    },
+    {
+      "fullName": "Sophy O.",
+      "position": "UI Developer/UX Designer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/10.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/sophyo/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/sssoz"
+        }
+      ],
+      "memberType": "COLLABORATOR"
+    },
+    {
+      "fullName": "Chiara Pigoni",
+      "position": "Software Developer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/11.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/chiarapigoni/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/kikilondon"
+        }
+      ],
+      "memberType": "COLLABORATOR"
+    },
+    {
+      "fullName": "Nevena Verbič",
+      "position": "Software Developer",
+      "images": [
+        {
+          "path": "https://womencodingcommunity.com/assets/images/collaborators/12.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "link: https://www.linkedin.com/in/nevena-verbič-83a16ab/"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/nverbic"
+        }
+      ],
+      "memberType": "COLLABORATOR"
+    },
+    {
+      "fullName": "Joana Brito",
+      "position": "Frontend Engineer",
+      "images": [
+        {
+          "path": "image5.jpeg",
+          "alt": "Collaborator profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/joana-brito216"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/joanaBrit"
+        }
+      ],
+      "memberType": "VOLUNTEER"
+    }
+  ]
+}

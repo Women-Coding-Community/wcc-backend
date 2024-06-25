@@ -10,8 +10,8 @@ class FileUtilTest {
     @Test
     void testReadFileAsString() {
         String fileContent = FileUtil.readFileAsString("example.txt");
-
-        assertEquals("Line 1\nLine 2\nLine 3", fileContent);
+        String testContent = "Line 1" + System.lineSeparator() + "Line 2" + System.lineSeparator() + "Line 3";
+        assertEquals(testContent, fileContent);
     }
 
     @Test
