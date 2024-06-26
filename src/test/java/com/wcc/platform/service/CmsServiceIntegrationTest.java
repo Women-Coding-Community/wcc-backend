@@ -6,9 +6,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
 import static com.wcc.platform.factories.TestFactories.createFooterPageTest;
 import static com.wcc.platform.factories.TestFactories.createTeamPageTest;
+import static com.wcc.platform.factories.TestFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.TestFactories.createCollaboratorPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -64,5 +66,20 @@ class CmsServiceIntegrationTest {
         assertEquals(1, result.collaborators().size());
 
         assertNotNull(result.collaborators().get(0).getMemberType());
+    }
+
+    @Test
+    void getCodeOfConductPageTest() {
+        var result = service.getCodeOfConduct();
+
+        var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
+
+        assertEquals(expectedCodeOfConductPage.page(), result.page());
+        
+        assertEquals(2, result.items().size());
+        assertNotNull(result.items().get(0).title());
+        assertNotNull(result.items().get(0).description());
+        assertEquals(5, result.items().get(0).items().size());
+        assertNotNull(result.items().get(0).items().get(0));
     }
 }
