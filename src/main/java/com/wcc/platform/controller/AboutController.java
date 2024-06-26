@@ -26,6 +26,11 @@ public class AboutController {
         this.cmsService = service;
     }
 
+    /**
+     * API to retrieve information about leadership team members.
+     *
+     * @return Leadership team page content.
+     */
     @GetMapping("/team")
     @Operation(summary = "API to retrieve information about leadership team members")
     @ResponseStatus(HttpStatus.OK)
@@ -33,6 +38,11 @@ public class AboutController {
         return ResponseEntity.ok(cmsService.getTeam());
     }
 
+    /**
+     * API to retrieve information about collaborators.
+     *
+     * @return Collaborators page content.
+     */
     @GetMapping("/collaborators")
     @Operation(summary = "API to retrieve information about collaborators")
     @ResponseStatus(HttpStatus.OK)
@@ -40,8 +50,13 @@ public class AboutController {
         return ResponseEntity.ok(cmsService.getCollaborator());
     }
 
+    /**
+     * API to retrieve information about Code of conduct.
+     *
+     * @return Code of conduct page content.
+     */
     @GetMapping("/code-of-conduct")
-    @Operation(summary = "API to retrieve Code of Ccnduct")
+    @Operation(summary = "API to retrieve information about Code of conduct")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CodeOfConductPage> getCodeOfConductPage() {
         return ResponseEntity.ok(cmsService.getCodeOfConduct());

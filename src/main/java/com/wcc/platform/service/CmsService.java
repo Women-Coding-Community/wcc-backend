@@ -26,9 +26,9 @@ public class CmsService {
     }
 
     /**
-     * API to retrieve information about leadership team members.
+     * Read JSON and convert to Pojo TeamPage.
      *
-     * @return Leadership team page content.
+     * @return Pojo TeamPage.
      */
     public TeamPage getTeam() {
         try {
@@ -40,7 +40,7 @@ public class CmsService {
     }
 
     /**
-     * API to retrieve the footer page information.
+     * Read JSON and convert to Pojo FooterPage.
      *
      * @return Footer page
      */
@@ -54,9 +54,9 @@ public class CmsService {
     }
 
     /**
-     * API to retrieve information about collaborators.
+     * Read JSON and convert to Pojo CollaboratorPage.
      *
-     * @return Collaborators page content.
+     * @return Pojo CollaboratorPage.
      */
     public CollaboratorPage getCollaborator() {
         try {
@@ -68,9 +68,9 @@ public class CmsService {
     }
 
     /**
-     * API to retrieve WCC Code of conduct.
+     * Read JSON and convert to Pojo CodeOfConductPage.
      *
-     * @return Code of conduct page content.
+     * @return Pojo CodeOfConductPage.
      */
     public CodeOfConductPage getCodeOfConduct() {
         try {
