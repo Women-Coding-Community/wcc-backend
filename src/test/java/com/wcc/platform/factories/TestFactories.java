@@ -2,15 +2,11 @@ package com.wcc.platform.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.*;
-import com.wcc.platform.domain.cms.pages.FooterPage;
-import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.TeamPage;
-import com.wcc.platform.domain.platform.LeadershipMember;
-import com.wcc.platform.domain.platform.MemberType;
-import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.domain.platform.SocialNetworkType;
+import com.wcc.platform.domain.platform.*;
 import com.wcc.platform.utils.FileUtil;
 
 import java.util.List;
@@ -55,7 +51,7 @@ public class TestFactories {
     }
 
     public static Member createCollaboratorsTest() {
-        return(createCollaboratorMemberTest(MemberType.MEMBER));
+        return (createCollaboratorMemberTest(MemberType.MEMBER));
     }
 
     public static Page createPageTest() {
@@ -103,7 +99,7 @@ public class TestFactories {
     }
 
     public static FooterPage createFooterPageTest() {
-        return new FooterPage("footer_title", "footer_subtitle", "footer_description", createNetworks(), createLabelLink());
+        return new FooterPage("footer_title", "footer_subtitle", "footer_description", createNetworksTest(), createLabelLinkTest());
     }
 
     public static FooterPage createFooterPageTest(String fileName) {
@@ -115,13 +111,19 @@ public class TestFactories {
         }
     }
 
-    public static List<Network> createNetworks() {
+    public static List<Network> createNetworksTest() {
         return List.of(new Network("type1", "link1"), new Network("type2", "link2"));
     }
 
-    public static LabelLink createLabelLink() {
+    public static LabelLink createLabelLinkTest() {
         return new LabelLink("link_title", "link_label", "link_uri");
     }
 
+    public static SimpleLink createSimpleLinkTest() {
+        return new SimpleLink("Simple Link", "/simple-link");
+    }
 
+    public static PageSection createPageSectionTest(String title) {
+        return new PageSection(title, title + "description", createSimpleLinkTest(), List.of("topic1 " + title, "topic2 " + title));
+    }
 }
