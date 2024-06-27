@@ -14,6 +14,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
@@ -30,7 +32,7 @@ public class FileUtil {
         try {
             InputStream inputStream = classLoader.getResourceAsStream(fileName);
             if (inputStream != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
 
                 return reader.lines().collect(Collectors.joining(System.lineSeparator()));
             }
