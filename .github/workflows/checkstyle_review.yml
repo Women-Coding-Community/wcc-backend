@@ -8,10 +8,13 @@ jobs:
   checkstyle:
     name: runner / checkstyle
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: dbelyaev/action-checkstyle@master
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           checkstyle_config: google_checks.xml
