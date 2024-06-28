@@ -1,16 +1,19 @@
 name: reviewdog
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
+    types: [ opened, synchronize ]
 jobs:
   checkstyle:
     name: runner / checkstyle
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dbelyaev/action-checkstyle@master
+      - name: Run Checkstyle
+        run: |
+          # Run your checkstyle command here
+          java -jar checkstyle.jar -c /google_checks.xml src/
+      - name: reviewdog
+        uses: reviewdog/action-checkstyle@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
