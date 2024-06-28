@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wcc.platform.deserializers.ImageTypeDeserializer;
 import com.wcc.platform.deserializers.MemberTypeDeserializer;
 import com.wcc.platform.deserializers.SocialNetworkTypeDeserializer;
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetworkType;
-import com.wcc.platform.domain.cms.attributes.ImageType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,9 +27,9 @@ public class ObjectMapperConfig {
 
     private void registerCustomDeserializers(ObjectMapper objectMapper) {
         objectMapper.registerModule(
-                new SimpleModule()
-                        .addDeserializer(MemberType.class, new MemberTypeDeserializer())
-                        .addDeserializer(ImageType.class, new ImageTypeDeserializer())
-                        .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
+            new SimpleModule()
+                .addDeserializer(MemberType.class, new MemberTypeDeserializer())
+                .addDeserializer(ImageType.class, new ImageTypeDeserializer())
+                .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
     }
 }

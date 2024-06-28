@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.wcc.platform.domain.cms.attributes.ImageType;
-
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -12,13 +11,13 @@ public class ImageTypeDeserializer extends JsonDeserializer<ImageType> {
 
     @Override
     public ImageType deserialize(JsonParser jsonParser, DeserializationContext context)
-            throws IOException {
+        throws IOException {
 
         var value = jsonParser.getText();
 
         return Arrays.stream(ImageType.values())
-                .filter(type -> type.name().equalsIgnoreCase(value))
-                .findFirst()
-                .orElse(ImageType.DESKTOP);
+            .filter(type -> type.name().equalsIgnoreCase(value))
+            .findFirst()
+            .orElse(ImageType.DESKTOP);
     }
 }
