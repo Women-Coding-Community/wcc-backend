@@ -21,3 +21,4 @@ jobs:
           #          reporter: github-check
           reporter: github-pr-review
           checkstyle_config: google_checks.xml
+          fail_on_error: true
