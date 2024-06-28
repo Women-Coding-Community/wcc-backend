@@ -16,5 +16,6 @@ jobs:
       - uses: dbelyaev/action-checkstyle@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-check
+          #          reporter: github-check
+          reporter: github-pr-review
           checkstyle_config: google_checks.xml
