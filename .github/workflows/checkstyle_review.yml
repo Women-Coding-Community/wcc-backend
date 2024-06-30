@@ -5,6 +5,17 @@ on:
       - opened
       - synchronize
 jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Thank you for contribuite by creating an issue"
+        pr-message: "Thank you for contribuite with your first pull request"
   checkstyle:
     name: runner / checkstyle
     runs-on: ubuntu-latest
