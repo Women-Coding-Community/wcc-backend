@@ -5,29 +5,19 @@ on:
       - opened
       - synchronize
 jobs:
-  greeting:
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
-    steps:
-      - uses: actions/first-interaction@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          issue-message: "Thank you for contribute by creating an issue"
-          pr-message: "Thank you for contribute with your first pull request"
   checkstyle:
     name: runner / checkstyle
     runs-on: ubuntu-latest
+    env: 
+      $REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.CHECSTYLE_TOKEN }}
     permissions:
       contents: write
       pull-requests: write
       checks: write
+      actions: write
     steps:
       - uses: actions/checkout@v4
       - uses: dbelyaev/action-checkstyle@master
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.CHECSTYLE_TOKEN }}
         with:
           github_token: ${{ secrets.CHECSTYLE_TOKEN }}
           reporter: github-pr-review
