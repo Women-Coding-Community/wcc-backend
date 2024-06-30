@@ -1,8 +1,8 @@
 package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.utils.FileUtil;
@@ -13,12 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
 
 @Service
 public class CmsService {
+
     private final ObjectMapper objectMapper;
 
     @Autowired
