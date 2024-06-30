@@ -18,7 +18,6 @@ import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
 @Service
 public class CmsService {
 
-    private final String VARIABLE_NOT_USED = "AAAAA";
     private final ObjectMapper objectMapper;
 
     @Autowired
