@@ -1,12 +1,10 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
-import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.Page;
-import com.wcc.platform.domain.cms.pages.Section;
-import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Member;
@@ -14,28 +12,31 @@ import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.service.CmsService;
+import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
+import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
+import static com.wcc.platform.factories.TestFactories.createCodeOfConductPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @WebMvcTest(AboutController.class)
 class AboutControllerTest {
 
+    private static final String API_CODE_OF_CONDUCT = "/api/cms/v1/code-of-conduct";
+
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private CmsService service;
 
@@ -81,7 +82,7 @@ class AboutControllerTest {
         when(service.getCollaborator()).thenThrow(internalError);
 
         mockMvc.perform(get("/api/cms/v1/collaborators")
-                .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status", is(500)))
                 .andExpect(jsonPath("$.message", is("internal Json")))
@@ -99,36 +100,36 @@ class AboutControllerTest {
         collaborator.setNetwork(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")));
 
         var collaboratorPage = new CollaboratorPage(
-            new Page("collaborator_title", "collaborator_subtitle", "collaborator_desc"),
-            new Contact("contact_title", List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "page_link"))),
-            List.of(collaborator));
+                new Page("collaborator_title", "collaborator_subtitle", "collaborator_desc"),
+                new Contact("contact_title", List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "page_link"))),
+                List.of(collaborator));
 
         when(service.getCollaborator()).thenReturn(collaboratorPage);
 
         mockMvc.perform(get("/api/cms/v1/collaborators")
                         .contentType(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.page.title", is("collaborator_title")))
-                        .andExpect(jsonPath("$.page.subtitle", is("collaborator_subtitle")))
-                        .andExpect(jsonPath("$.page.description", is("collaborator_desc")))
-                        .andExpect(jsonPath("$.contact.title", is("contact_title")))
-                        .andExpect(jsonPath("$.contact.links[0].type", is("LINKEDIN")))
-                        .andExpect(jsonPath("$.contact.links[0].link", is("page_link")))
-                        .andExpect(jsonPath("$.collaborators[0].fullName", is("fullName")))
-                        .andExpect(jsonPath("$.collaborators[0].position", is("position")))
-                        .andExpect(jsonPath("$.collaborators[0].memberType", is("COLLABORATOR")))
-                        .andExpect(jsonPath("$.collaborators[0].images[0].path", is("image.png")))
-                        .andExpect(jsonPath("$.collaborators[0].images[0].alt", is("alt image")))
-                        .andExpect(jsonPath("$.collaborators[0].images[0].type", is("DESKTOP")))
-                        .andExpect(jsonPath("$.collaborators[0].network[0].type", is("LINKEDIN")))
-                        .andExpect(jsonPath("$.collaborators[0].network[0].link", is("collaborator_link")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page.title", is("collaborator_title")))
+                .andExpect(jsonPath("$.page.subtitle", is("collaborator_subtitle")))
+                .andExpect(jsonPath("$.page.description", is("collaborator_desc")))
+                .andExpect(jsonPath("$.contact.title", is("contact_title")))
+                .andExpect(jsonPath("$.contact.links[0].type", is("LINKEDIN")))
+                .andExpect(jsonPath("$.contact.links[0].link", is("page_link")))
+                .andExpect(jsonPath("$.collaborators[0].fullName", is("fullName")))
+                .andExpect(jsonPath("$.collaborators[0].position", is("position")))
+                .andExpect(jsonPath("$.collaborators[0].memberType", is("COLLABORATOR")))
+                .andExpect(jsonPath("$.collaborators[0].images[0].path", is("image.png")))
+                .andExpect(jsonPath("$.collaborators[0].images[0].alt", is("alt image")))
+                .andExpect(jsonPath("$.collaborators[0].images[0].type", is("DESKTOP")))
+                .andExpect(jsonPath("$.collaborators[0].network[0].type", is("LINKEDIN")))
+                .andExpect(jsonPath("$.collaborators[0].network[0].link", is("collaborator_link")));
     }
 
     @Test
     void testCodeOfConductNotFound() throws Exception {
         when(service.getCodeOfConduct()).thenThrow(new ContentNotFoundException("Not Found Exception"));
 
-        mockMvc.perform(get("/api/cms/v1/code-of-conduct")
+        mockMvc.perform(get(API_CODE_OF_CONDUCT)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status", is(404)))
@@ -141,7 +142,7 @@ class AboutControllerTest {
         var internalError = new PlatformInternalException("internal Json", new RuntimeException());
         when(service.getCodeOfConduct()).thenThrow(internalError);
 
-        mockMvc.perform(get("/api/cms/v1/code-of-conduct")
+        mockMvc.perform(get(API_CODE_OF_CONDUCT)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status", is(500)))
@@ -151,22 +152,14 @@ class AboutControllerTest {
 
     @Test
     void testCodeOfConductOKResponse() throws Exception {
-        var codeOfConductPage = new CodeOfConductPage(
-            new Page("code_of_conduct_title", "code_of_conduct_subtitle", "code_of_conduct_desc"),
-            List.of(new Section("section_title", "section_description", List.of("item_1", "item_2", "item_3"))));
 
-        when(service.getCodeOfConduct()).thenReturn(codeOfConductPage);
+        var fileName = CODE_OF_CONDUCT.getFileName();
+        var expectedJson = FileUtil.readFileAsString(fileName);
 
-        mockMvc.perform(get("/api/cms/v1/code-of-conduct")
-                        .contentType(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.page.title", is("code_of_conduct_title")))
-                        .andExpect(jsonPath("$.page.subtitle", is("code_of_conduct_subtitle")))
-                        .andExpect(jsonPath("$.page.description", is("code_of_conduct_desc")))
-                        .andExpect(jsonPath("$.items[0].title", is("section_title")))
-                        .andExpect(jsonPath("$.items[0].description", is("section_description")))
-                        .andExpect(jsonPath("$.items[0].items[0]", is("item_1")))
-                        .andExpect(jsonPath("$.items[0].items[1]", is("item_2")))
-                        .andExpect(jsonPath("$.items[0].items[2]", is("item_3")));
+        when(service.getCodeOfConduct()).thenReturn(createCodeOfConductPageTest(fileName));
+
+        mockMvc.perform(get(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson));
     }
 }
