@@ -1,11 +1,12 @@
 package com.wcc.platform.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.Volunteer;
 import com.wcc.platform.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,10 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
 
 @Service
 public class CmsService {
@@ -69,7 +70,27 @@ public class CmsService {
         }
     }
 
-    public Member createVolunteer() {
-        return null;
+    /**
+     * API to save information about volunteer.
+     */
+    public Volunteer createVolunteer(Volunteer volunteer) {
+        try {
+            File file = Path.of(FileUtil.getFileUri(VOLUNTEER.getFileName())).toFile();
+            List<Volunteer> volunteers;
+
+            if (file.length() > 0) {
+                volunteers = objectMapper.readValue(file, new TypeReference<List<Volunteer>>() {
+                });
+            } else {
+                volunteers = new ArrayList<>();
+            }
+
+            volunteers.add(volunteer);
+
+            objectMapper.writeValue(file, volunteers);
+            return volunteer;
+        } catch (IOException e) {
+            throw new PlatformInternalException(e.getMessage(), e);
+        }
     }
 }

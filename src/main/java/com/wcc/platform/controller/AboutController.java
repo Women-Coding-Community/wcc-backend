@@ -2,7 +2,7 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.Volunteer;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,10 +37,10 @@ public class AboutController {
         return ResponseEntity.ok(cmsService.getCollaborator());
     }
 
-    @PutMapping("/volunteer")
+    @PutMapping("/volunteer/")
     @Operation(summary = "API to submit volunteer registration")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Member> createVolunteer() {
-        return ResponseEntity.ok(cmsService.createVolunteer());
+    public ResponseEntity<Volunteer> createVolunteer(@RequestBody Volunteer volunteer) {
+        return ResponseEntity.ok(cmsService.createVolunteer(volunteer));
     }
 }
