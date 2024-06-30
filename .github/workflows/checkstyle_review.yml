@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/first-interaction@v1
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.WCC_CHECKSTYLE }}
           issue-message: "Thank you for contribute by creating an issue"
           pr-message: "Thank you for contribute with your first pull request"
   checkstyle:
@@ -25,9 +25,12 @@ jobs:
       checks: write
     steps:
       - uses: actions/checkout@v4
+      - name: Debug Info
+        run:
+          echo "Permissions: ${{ toJson(github.event) }}"
       - uses: dbelyaev/action-checkstyle@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.WCC_CHECKSTYLE }}
           reporter: github-pr-review
           checkstyle_config: google_checks.xml
           fail_on_error: true
