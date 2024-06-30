@@ -25,9 +25,17 @@ jobs:
       checks: write
     steps:
       - uses: actions/checkout@v4
-      - uses: dbelyaev/action-checkstyle@master
+      - name: Run Checkstyle
+        run: |
+          wget -O checkstyle.jar https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.41/checkstyle-8.41-all.jar
+          java -jar checkstyle.jar -c /google_checks.xml src/
+      - name: Debug Info
+        run:
+          echo "Permissions: ${{ toJson(github.event) }}"
+      - name: reviewdog
+        uses: reviewdog/action-checkstyle@v1
         env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.PAT }}
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.CHECSTYLE_TOKEN }}
         with:
           github_token: ${{ secrets.CHECSTYLE_TOKEN }}
           reporter: github-pr-review
