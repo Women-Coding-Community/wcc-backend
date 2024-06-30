@@ -55,14 +55,9 @@ Set the default Java version for your system:
 sdk default java 21.0.2-open
 ```
 
-* Check the java 
-
+To verify if the java version is correct use:
 ```shell
 java -version
-* To verify if the java version is correct use:
-
-```shell
-span
 ```
 
 ### Setup IntelliJ
