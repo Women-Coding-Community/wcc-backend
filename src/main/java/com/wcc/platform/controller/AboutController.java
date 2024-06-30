@@ -2,16 +2,14 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cms/v1/")
@@ -37,5 +35,12 @@ public class AboutController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CollaboratorPage> getCollaboratorPage() {
         return ResponseEntity.ok(cmsService.getCollaborator());
+    }
+
+    @PutMapping("/volunteer")
+    @Operation(summary = "API to submit volunteer registration")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Member> createVolunteer() {
+        return ResponseEntity.ok(cmsService.createVolunteer());
     }
 }

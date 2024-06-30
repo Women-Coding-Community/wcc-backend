@@ -5,6 +5,7 @@ import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,5 +67,9 @@ public class CmsService {
         } catch (IOException e) {
             throw new PlatformInternalException(e.getMessage(), e);
         }
+    }
+
+    public Member createVolunteer() {
+        return null;
     }
 }
