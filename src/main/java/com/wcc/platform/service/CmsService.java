@@ -5,7 +5,8 @@ import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.Volunteer;
+import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.repository.file.FileMemberRepository;
 import com.wcc.platform.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,11 @@ import java.nio.file.Path;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
 
+
 @Service
 public class CmsService {
     private final ObjectMapper objectMapper;
+
 
     @Autowired
     public CmsService(ObjectMapper objectMapper) {
@@ -68,10 +71,15 @@ public class CmsService {
     }
 
     /**
-     * API to save information about volunteer.
+     * API to save information about member.
      */
-    public Volunteer createVolunteer(Volunteer volunteer) {
-        return volunteer;
-//        todo: store volunteer
+    public Member createMember(Member member) {
+        try {
+            FileMemberRepository fileMemberRepo = new FileMemberRepository(objectMapper);
+            fileMemberRepo.save(member);
+            return member;
+        } catch (Exception e) {
+            throw new PlatformInternalException(e.getMessage(), e);
+        }
     }
 }
