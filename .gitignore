@@ -10,4 +10,4 @@ build/*
 !.idea/codeStyles/codeStyleConfig.xml
 !.idea/codeStyleSettings.xml
 !.idea/externalDependencies.xml
-!.idea/google-java-format.xml
+!.idea/codeStyles

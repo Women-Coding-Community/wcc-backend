@@ -1,6 +1,6 @@
 spring:
   application:
-    name: wcc-platform
+    name: wcc-backend
 
 springdoc:
   api-docs:
