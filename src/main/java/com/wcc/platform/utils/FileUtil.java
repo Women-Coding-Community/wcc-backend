@@ -13,6 +13,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
@@ -29,7 +31,7 @@ public class FileUtil {
         try {
             InputStream inputStream = classLoader.getResourceAsStream(fileName);
             if (inputStream != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, UTF_8));
 
                 return reader.lines().collect(Collectors.joining(System.lineSeparator()));
             }

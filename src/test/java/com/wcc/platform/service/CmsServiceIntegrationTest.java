@@ -4,15 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
-import static com.wcc.platform.factories.TestFactories.createFooterPageTest;
-import static com.wcc.platform.factories.TestFactories.createTeamPageTest;
-import static com.wcc.platform.factories.TestFactories.createCollaboratorPageTest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
+import static com.wcc.platform.factories.TestFactories.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CmsServiceIntegrationTest {
@@ -64,5 +58,14 @@ class CmsServiceIntegrationTest {
         assertEquals(1, result.collaborators().size());
 
         assertNotNull(result.collaborators().get(0).getMemberType());
+    }
+
+    @Test
+    void getCodeOfConductPageTest() {
+        var result = service.getCodeOfConduct();
+
+        var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
+
+        assertEquals(expectedCodeOfConductPage, result);
     }
 }

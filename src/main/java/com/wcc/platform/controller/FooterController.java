@@ -24,6 +24,11 @@ public class FooterController {
         this.cmsService = cmsService;
     }
 
+    /**
+     * API to retrieve footer section details.
+     *
+     * @return Footer content.
+     */
     @GetMapping("/footer")
     @Operation(summary = "API to retrieve footer section details")
     @ResponseStatus(HttpStatus.OK)
