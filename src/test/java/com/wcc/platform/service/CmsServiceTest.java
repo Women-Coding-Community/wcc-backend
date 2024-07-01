@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.wcc.platform.factories.TestFactories.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -85,5 +88,24 @@ class CmsServiceTest {
         var response = service.getCollaborator();
 
         assertEquals(collaboratorPage, response);
+    }
+
+    @Test
+    void whenGetCodeOfConductGivenInvalidJson() throws IOException {
+        when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class))).thenThrow(new IOException("Invalid JSON"));
+
+        var exception = assertThrows(PlatformInternalException.class, () -> service.getCodeOfConduct());
+
+        assertEquals("Invalid JSON", exception.getMessage());
+    }
+
+    @Test
+    void whenGetCodeOfConductGivenValidJson() throws IOException {
+        var codeOfConductPage = createCodeOfConductPageTest();
+        when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class))).thenReturn(codeOfConductPage);
+
+        var response = service.getCodeOfConduct();
+
+        assertEquals(codeOfConductPage, response);
     }
 }

@@ -8,6 +8,7 @@ public enum ApiResourcesFile {
     MENTORSHIP("mentorshipPage.json"),
     FOOTER("footerPage.json"),
     COLLABORATOR("collaboratorPage.json");
+    CODE_OF_CONDUCT("CodeOfConductPage.json");
 
     private final String fileName;
 

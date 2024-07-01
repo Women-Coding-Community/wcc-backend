@@ -2,9 +2,11 @@ package com.wcc.platform.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.*;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.pages.Section;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.platform.*;
 import com.wcc.platform.utils.FileUtil;
@@ -43,6 +45,19 @@ public class TestFactories {
         }
     }
 
+    public static CodeOfConductPage createCodeOfConductPageTest() {
+        return new CodeOfConductPage(createPageTest(), List.of(createSectionTest()));
+    }
+
+    public static CodeOfConductPage createCodeOfConductPageTest(String fileName) {
+        try {
+            String content = FileUtil.readFileAsString(fileName);
+            return ObjectMapperTestFactory.getInstance().readValue(content, CodeOfConductPage.class);
+        } catch (JsonProcessingException e) {
+            return createCodeOfConductPageTest();
+        }
+    }
+
     public static MemberByType createMemberByTypeTest() {
         var directors = List.of(createMemberTest(MemberType.DIRECTOR));
         var leaders = List.of(createMemberTest(MemberType.LEADER));
@@ -56,6 +71,11 @@ public class TestFactories {
 
     public static Page createPageTest() {
         return new Page("title", "subtitle", "description");
+    }
+
+    public static Section createSectionTest() {
+        return new Section("title", "description",
+            List.of("item_1", "item_2", "item_3"));
     }
 
     public static LeadershipMember createMemberTest(MemberType type) {
