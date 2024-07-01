@@ -1,6 +1,7 @@
 package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
@@ -13,13 +14,12 @@ import org.mockito.Mockito;
 import java.io.File;
 import java.io.IOException;
 
-import static com.wcc.platform.factories.TestFactories.createFooterPageTest;
-import static com.wcc.platform.factories.TestFactories.createTeamPageTest;
-import static com.wcc.platform.factories.TestFactories.createCodeOfConductPageTest;
-import static com.wcc.platform.factories.TestFactories.createCollaboratorPageTest;
+import static com.wcc.platform.factories.TestFactories.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class CmsServiceTest {
@@ -35,7 +35,7 @@ class CmsServiceTest {
 
     @Test
     void whenGetTeamGivenInvalidJsonThenThrowsInternalException() throws IOException {
-        when(objectMapper.readValue(any(File.class), Mockito.eq(TeamPage.class))).thenThrow(new IOException("Invalid JSON"));
+        when(objectMapper.readValue(any(File.class), eq(TeamPage.class))).thenThrow(new IOException("Invalid JSON"));
 
         var exception = assertThrows(PlatformInternalException.class, () -> service.getTeam());
 
@@ -45,7 +45,7 @@ class CmsServiceTest {
     @Test
     void whenGetTeamGivenValidResourceThenReturnValidObjectResponse() throws IOException {
         var teamPage = createTeamPageTest();
-        when(objectMapper.readValue(any(File.class), Mockito.eq(TeamPage.class))).thenReturn(teamPage);
+        when(objectMapper.readValue(any(File.class), eq(TeamPage.class))).thenReturn(teamPage);
 
         var response = service.getTeam();
 
@@ -54,7 +54,7 @@ class CmsServiceTest {
 
     @Test
     void whenGetFooterGivenInvalidJson() throws IOException {
-        when(objectMapper.readValue(any(File.class), Mockito.eq(FooterPage.class))).thenThrow(new IOException("Invalid JSON"));
+        when(objectMapper.readValue(any(File.class), eq(FooterPage.class))).thenThrow(new IOException("Invalid JSON"));
         var exception = assertThrows(PlatformInternalException.class, () -> service.getFooter());
 
         assertEquals("Invalid JSON", exception.getMessage());
@@ -63,7 +63,7 @@ class CmsServiceTest {
     @Test
     void whenGetFooterGivenValidJson() throws IOException {
         var footer = createFooterPageTest();
-        when(objectMapper.readValue(any(File.class), Mockito.eq(FooterPage.class))).thenReturn(footer);
+        when(objectMapper.readValue(any(File.class), eq(FooterPage.class))).thenReturn(footer);
 
         var response = service.getFooter();
 
@@ -71,8 +71,9 @@ class CmsServiceTest {
     }
 
     @Test
-    void whenGetCollabortorGivenInvalidJsonThenThrowsInternalException() throws IOException {
-        when(objectMapper.readValue(any(File.class), Mockito.eq(CollaboratorPage.class))).thenThrow(new IOException("Invalid JSON"));
+    void whenGetCollaboratorGivenInvalidJsonThenThrowsInternalException() throws IOException {
+        when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class)))
+                .thenThrow(new IOException("Invalid JSON"));
 
         var exception = assertThrows(PlatformInternalException.class, () -> service.getCollaborator());
 
@@ -82,7 +83,7 @@ class CmsServiceTest {
     @Test
     void whenGetCollaboratorGivenValidResourceThenReturnValidObjectResponse() throws IOException {
         var collaboratorPage = createCollaboratorPageTest();
-        when(objectMapper.readValue(any(File.class), Mockito.eq(CollaboratorPage.class))).thenReturn(collaboratorPage);
+        when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class))).thenReturn(collaboratorPage);
 
         var response = service.getCollaborator();
 
