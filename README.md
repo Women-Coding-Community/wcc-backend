@@ -62,9 +62,9 @@ java -version
 
 ### Setup IntelliJ
 
-#### Lombok Configuration
+#### Lombok
 
-In order to lombok to work you need to enable Annotation Processing, as the image below: 
+Install lombok plugin and enable Annotation Processing, as the image below: 
 
 ![image](docs/images/annotation-procession.png)
 
@@ -73,6 +73,8 @@ In order to lombok to work you need to enable Annotation Processing, as the imag
  ![image](docs/images/save-actions.png)
 
 #### Enable Checkstyle Warnings
+
+Install checkstyle plugin and the configuration will be enabled
 
 ## Run Locally
 
