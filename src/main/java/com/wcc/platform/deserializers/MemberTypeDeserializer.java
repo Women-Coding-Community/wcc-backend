@@ -7,7 +7,7 @@ import com.wcc.platform.domain.platform.MemberType;
 import java.io.IOException;
 import java.util.Arrays;
 
-/** Custom deserializer for {@link MemberType} enum. */
+/** Custom deserializer for {@code MemberType} enum. */
 public class MemberTypeDeserializer extends JsonDeserializer<MemberType> {
 
   @Override

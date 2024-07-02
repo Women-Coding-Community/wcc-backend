@@ -13,9 +13,6 @@
                 * [IntelliJ JRE Config](#intellij-jre-config)
     * [Run Locally](#run-locally)
     * [Open API Documentation](#open-api-documentation)
-    * [JAVA 21](#java-21)
-    * [Set the default Java version for your system:](#set-the-default-java-version-for-your-system)
-    * [Api documentation](#api-documentation)
 
 <!-- TOC -->
 
@@ -25,8 +22,6 @@
 
 This project uses Java 21, you can run in 21.0.2 or 21.0.3. If you have installed a different
 version on your machine and don't want to remove it, you can use **SDKMAN** development tool.
-It will allow you to switch based on the Java version you want to use.
-Here is the [link](https://sdkman.io).
 
 * Install SDKMAN
 
@@ -143,4 +138,4 @@ Once you've done that, restart the IDE.
 ## Open API Documentation
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html) and
-  corresponding [openAPI docs here](http://localhost:8080/api-docs) 
+  corresponding [openAPI docs here](http://localhost:8080/api-docs)

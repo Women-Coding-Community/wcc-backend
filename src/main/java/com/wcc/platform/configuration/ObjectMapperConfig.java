@@ -13,9 +13,11 @@ import com.wcc.platform.domain.platform.SocialNetworkType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/** ObjectMapperConfig. */
 @Configuration
 public class ObjectMapperConfig {
 
+  /** Create ObjectMapper bean and include custom serializer. */
   @Bean
   public ObjectMapper objectMapper() {
     ObjectMapper objectMapper = new ObjectMapper();

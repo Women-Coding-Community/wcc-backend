@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Rest controller for footer api. */
 @RestController
 @RequestMapping("/api/cms/v1/")
 @Tag(name = "API relevant to footer section")

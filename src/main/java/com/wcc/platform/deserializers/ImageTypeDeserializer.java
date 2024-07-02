@@ -7,7 +7,7 @@ import com.wcc.platform.domain.cms.attributes.ImageType;
 import java.io.IOException;
 import java.util.Arrays;
 
-/** Custom deserializer for {@link ImageType} Enum. */
+/** Custom deserializer for ImageType Enum. */
 public class ImageTypeDeserializer extends JsonDeserializer<ImageType> {
 
   @Override
