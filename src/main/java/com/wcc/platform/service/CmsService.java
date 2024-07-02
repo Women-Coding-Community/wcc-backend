@@ -18,69 +18,69 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/** CMS service responsible for simple pages. */
 @Service
 public class CmsService {
+  private final ObjectMapper objectMapper;
 
-    private final ObjectMapper objectMapper;
+  @Autowired
+  public CmsService(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
-    @Autowired
-    public CmsService(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+  /**
+   * Read JSON and convert to Pojo TeamPage.
+   *
+   * @return Pojo TeamPage.
+   */
+  public TeamPage getTeam() {
+    try {
+      File file = Path.of(FileUtil.getFileUri(TEAM.getFileName())).toFile();
+      return objectMapper.readValue(file, TeamPage.class);
+    } catch (IOException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
     }
+  }
 
-    /**
-     * Read JSON and convert to Pojo TeamPage.
-     *
-     * @return Pojo TeamPage.
-     */
-    public TeamPage getTeam() {
-        try {
-            File file = Path.of(FileUtil.getFileUri(TEAM.getFileName())).toFile();
-            return objectMapper.readValue(file, TeamPage.class);
-        } catch (IOException e) {
-            throw new PlatformInternalException(e.getMessage(), e);
-        }
+  /**
+   * Read JSON and convert to Pojo FooterPage.
+   *
+   * @return Footer page
+   */
+  public FooterPage getFooter() {
+    try {
+      File file = Path.of(FileUtil.getFileUri(FOOTER.getFileName())).toFile();
+      return objectMapper.readValue(file, FooterPage.class);
+    } catch (IOException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
     }
+  }
 
-    /**
-     * Read JSON and convert to Pojo FooterPage.
-     *
-     * @return Footer page
-     */
-    public FooterPage getFooter() {
-        try {
-            File file = Path.of(FileUtil.getFileUri(FOOTER.getFileName())).toFile();
-            return objectMapper.readValue(file, FooterPage.class);
-        } catch (IOException e) {
-            throw new PlatformInternalException(e.getMessage(), e);
-        }
+  /**
+   * Read JSON and convert to Pojo CollaboratorPage.
+   *
+   * @return Pojo CollaboratorPage.
+   */
+  public CollaboratorPage getCollaborator() {
+    try {
+      File file = Path.of(FileUtil.getFileUri(COLLABORATOR.getFileName())).toFile();
+      return objectMapper.readValue(file, CollaboratorPage.class);
+    } catch (IOException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
     }
+  }
 
-    /**
-     * Read JSON and convert to Pojo CollaboratorPage.
-     *
-     * @return Pojo CollaboratorPage.
-     */
-    public CollaboratorPage getCollaborator() {
-        try {
-            File file = Path.of(FileUtil.getFileUri(COLLABORATOR.getFileName())).toFile();
-            return objectMapper.readValue(file, CollaboratorPage.class);
-        } catch (IOException e) {
-            throw new PlatformInternalException(e.getMessage(), e);
-        }
+  /**
+   * Read JSON and convert to Pojo CodeOfConductPage.
+   *
+   * @return Pojo CodeOfConductPage.
+   */
+  public CodeOfConductPage getCodeOfConduct() {
+    try {
+      File file = Path.of(FileUtil.getFileUri(CODE_OF_CONDUCT.getFileName())).toFile();
+      return objectMapper.readValue(file, CodeOfConductPage.class);
+    } catch (IOException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
     }
-
-    /**
-     * Read JSON and convert to Pojo CodeOfConductPage.
-     *
-     * @return Pojo CodeOfConductPage.
-     */
-    public CodeOfConductPage getCodeOfConduct() {
-        try {
-            File file = Path.of(FileUtil.getFileUri(CODE_OF_CONDUCT.getFileName())).toFile();
-            return objectMapper.readValue(file, CodeOfConductPage.class);
-        } catch (IOException e) {
-            throw new PlatformInternalException(e.getMessage(), e);
-        }
-    }
+  }
 }

@@ -7,17 +7,18 @@ import com.wcc.platform.domain.platform.MemberType;
 import java.io.IOException;
 import java.util.Arrays;
 
+/** Custom deserializer for {@code MemberType} enum. */
 public class MemberTypeDeserializer extends JsonDeserializer<MemberType> {
 
-    @Override
-    public MemberType deserialize(JsonParser jsonParser, DeserializationContext context)
-        throws IOException {
+  @Override
+  public MemberType deserialize(JsonParser jsonParser, DeserializationContext context)
+      throws IOException {
 
-        var value = jsonParser.getText();
+    var value = jsonParser.getText();
 
-        return Arrays.stream(MemberType.values())
-            .filter(memberType -> memberType.name().equalsIgnoreCase(value))
-            .findFirst()
-            .orElse(MemberType.MEMBER);
-    }
+    return Arrays.stream(MemberType.values())
+        .filter(memberType -> memberType.name().equalsIgnoreCase(value))
+        .findFirst()
+        .orElse(MemberType.MEMBER);
+  }
 }
