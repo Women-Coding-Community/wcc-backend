@@ -1,5 +1,10 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
@@ -9,14 +14,11 @@ import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.file.FileMemberRepository;
 import com.wcc.platform.utils.FileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-
-import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CmsService {
@@ -71,7 +73,7 @@ public class CmsService {
     }
 
     /**
-     * API to save information about member.
+     * Write Pojo Member to JSON.
      */
     public Member createMember(Member member) {
         try {
