@@ -7,5 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class PlatformApplicationTests {
 
   @Test
-  void contextLoads() {}
+  void contextLoads() {
+    // test the application is starting without any problem.
+  }
 }

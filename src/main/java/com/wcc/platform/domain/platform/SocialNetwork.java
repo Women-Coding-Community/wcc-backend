@@ -1,4 +1,4 @@
 package com.wcc.platform.domain.platform;
 
-public record SocialNetwork(SocialNetworkType type, String link) {
-}
+/** Pojo of social network data of member, event or programme. */
+public record SocialNetwork(SocialNetworkType type, String link) {}

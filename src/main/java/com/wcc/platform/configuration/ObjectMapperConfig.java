@@ -16,22 +16,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ObjectMapperConfig {
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+  @Bean
+  public ObjectMapper objectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-        registerCustomDeserializers(objectMapper);
-        return objectMapper;
-    }
+    registerCustomDeserializers(objectMapper);
+    return objectMapper;
+  }
 
-    private void registerCustomDeserializers(ObjectMapper objectMapper) {
-        objectMapper
-                .registerModule(new JavaTimeModule())
-                .registerModule(new SimpleModule()
-                        .addDeserializer(MemberType.class, new MemberTypeDeserializer())
-                        .addDeserializer(ImageType.class, new ImageTypeDeserializer())
-                        .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
-    }
+  private void registerCustomDeserializers(ObjectMapper objectMapper) {
+    objectMapper
+        .registerModule(new JavaTimeModule())
+        .registerModule(
+            new SimpleModule()
+                .addDeserializer(MemberType.class, new MemberTypeDeserializer())
+                .addDeserializer(ImageType.class, new ImageTypeDeserializer())
+                .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
+  }
 }
