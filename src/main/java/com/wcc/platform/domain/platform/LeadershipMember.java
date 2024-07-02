@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * Represents the core team of the community: {@link MemberType#DIRECTOR}, {@link MemberType#LEADER} and
- * {@link MemberType#EVANGELIST}
+ * Represents the core team of the community: {@link MemberType#DIRECTOR}, {@link MemberType#LEADER}
+ * and {@link MemberType#EVANGELIST}
  */
 @Data
 @NoArgsConstructor

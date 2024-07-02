@@ -1,6 +1,7 @@
 package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
@@ -17,11 +18,10 @@ import java.nio.file.Path;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
 
-
 @Service
 public class CmsService {
-    private final ObjectMapper objectMapper;
 
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public CmsService(ObjectMapper objectMapper) {
@@ -79,6 +79,20 @@ public class CmsService {
             fileMemberRepo.save(member);
             return member;
         } catch (Exception e) {
+            throw new PlatformInternalException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Read JSON and convert to Pojo CodeOfConductPage.
+     *
+     * @return Pojo CodeOfConductPage.
+     */
+    public CodeOfConductPage getCodeOfConduct() {
+        try {
+            File file = Path.of(FileUtil.getFileUri(CODE_OF_CONDUCT.getFileName())).toFile();
+            return objectMapper.readValue(file, CodeOfConductPage.class);
+        } catch (IOException e) {
             throw new PlatformInternalException(e.getMessage(), e);
         }
     }

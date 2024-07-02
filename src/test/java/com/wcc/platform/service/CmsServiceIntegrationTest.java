@@ -59,4 +59,13 @@ class CmsServiceIntegrationTest {
 
         assertNotNull(result.collaborators().get(0).getMemberType());
     }
+
+    @Test
+    void getCodeOfConductPageTest() {
+        var result = service.getCodeOfConduct();
+
+        var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
+
+        assertEquals(expectedCodeOfConductPage, result);
+    }
 }
