@@ -7,7 +7,7 @@ build/*
 # IntelliJ customizations
 !.idea/checkstyle-idea.xml
 !.idea/saveactions_settings.xml
-!.idea/codeStyles/codeStyleConfig.xml
+!.idea/codeStyles/*
 !.idea/codeStyleSettings.xml
 !.idea/externalDependencies.xml
-!.idea/codeStyles
+!.idea/google-java-format.xml

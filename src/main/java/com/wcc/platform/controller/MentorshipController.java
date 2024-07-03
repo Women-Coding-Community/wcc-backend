@@ -12,23 +12,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Rest controller for mentorship apis. */
 @RestController
 @RequestMapping("/api/cms/v1/mentorship")
 @Tag(name = "APIs relevant Mentorship pages")
 public class MentorshipController {
 
-    private final MentorshipService service;
+  private final MentorshipService service;
 
-    @Autowired
-    public MentorshipController(MentorshipService service) {
-        this.service = service;
-    }
+  @Autowired
+  public MentorshipController(MentorshipService service) {
+    this.service = service;
+  }
 
-    @GetMapping("/overview")
-    @Operation(summary = "API to retrieve mentorship overview page")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<MentorshipPage> getMentorshipOverview() {
-        return ResponseEntity.ok(service.getOverview());
-    }
-
+  @GetMapping("/overview")
+  @Operation(summary = "API to retrieve mentorship overview page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipPage> getMentorshipOverview() {
+    return ResponseEntity.ok(service.getOverview());
+  }
 }

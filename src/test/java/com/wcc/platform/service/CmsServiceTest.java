@@ -1,111 +1,113 @@
 package com.wcc.platform.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.FooterPage;
-import com.wcc.platform.domain.cms.pages.TeamPage;
-import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
-import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.io.File;
-import java.io.IOException;
-
 import static com.wcc.platform.factories.TestFactories.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
+import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 class CmsServiceTest {
 
-    private ObjectMapper objectMapper;
-    private CmsService service;
+  private ObjectMapper objectMapper;
+  private CmsService service;
 
-    @BeforeEach
-    void setUp() {
-        objectMapper = Mockito.mock(ObjectMapper.class);
-        service = new CmsService(objectMapper);
-    }
+  @BeforeEach
+  void setUp() {
+    objectMapper = Mockito.mock(ObjectMapper.class);
+    service = new CmsService(objectMapper);
+  }
 
-    @Test
-    void whenGetTeamGivenInvalidJsonThenThrowsInternalException() throws IOException {
-        when(objectMapper.readValue(any(File.class), eq(TeamPage.class))).thenThrow(new IOException("Invalid JSON"));
+  @Test
+  void whenGetTeamGivenInvalidJsonThenThrowsInternalException() throws IOException {
+    when(objectMapper.readValue(any(File.class), eq(TeamPage.class)))
+        .thenThrow(new IOException("Invalid JSON"));
 
-        var exception = assertThrows(PlatformInternalException.class, () -> service.getTeam());
+    var exception = assertThrows(PlatformInternalException.class, () -> service.getTeam());
 
-        assertEquals("Invalid JSON", exception.getMessage());
-    }
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
 
-    @Test
-    void whenGetTeamGivenValidResourceThenReturnValidObjectResponse() throws IOException {
-        var teamPage = createTeamPageTest();
-        when(objectMapper.readValue(any(File.class), eq(TeamPage.class))).thenReturn(teamPage);
+  @Test
+  void whenGetTeamGivenValidResourceThenReturnValidObjectResponse() throws IOException {
+    var teamPage = createTeamPageTest();
+    when(objectMapper.readValue(any(File.class), eq(TeamPage.class))).thenReturn(teamPage);
 
-        var response = service.getTeam();
+    var response = service.getTeam();
 
-        assertEquals(teamPage, response);
-    }
+    assertEquals(teamPage, response);
+  }
 
-    @Test
-    void whenGetFooterGivenInvalidJson() throws IOException {
-        when(objectMapper.readValue(any(File.class), eq(FooterPage.class))).thenThrow(new IOException("Invalid JSON"));
-        var exception = assertThrows(PlatformInternalException.class, () -> service.getFooter());
+  @Test
+  void whenGetFooterGivenInvalidJson() throws IOException {
+    when(objectMapper.readValue(any(File.class), eq(FooterPage.class)))
+        .thenThrow(new IOException("Invalid JSON"));
+    var exception = assertThrows(PlatformInternalException.class, () -> service.getFooter());
 
-        assertEquals("Invalid JSON", exception.getMessage());
-    }
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
 
-    @Test
-    void whenGetFooterGivenValidJson() throws IOException {
-        var footer = createFooterPageTest();
-        when(objectMapper.readValue(any(File.class), eq(FooterPage.class))).thenReturn(footer);
+  @Test
+  void whenGetFooterGivenValidJson() throws IOException {
+    var footer = createFooterPageTest();
+    when(objectMapper.readValue(any(File.class), eq(FooterPage.class))).thenReturn(footer);
 
-        var response = service.getFooter();
+    var response = service.getFooter();
 
-        assertEquals(footer, response);
-    }
+    assertEquals(footer, response);
+  }
 
-    @Test
-    void whenGetCollaboratorGivenInvalidJsonThenThrowsInternalException() throws IOException {
-        when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class)))
-                .thenThrow(new IOException("Invalid JSON"));
+  @Test
+  void whenGetCollaboratorGivenInvalidJsonThenThrowsInternalException() throws IOException {
+    when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class)))
+        .thenThrow(new IOException("Invalid JSON"));
 
-        var exception = assertThrows(PlatformInternalException.class, () -> service.getCollaborator());
+    var exception = assertThrows(PlatformInternalException.class, () -> service.getCollaborator());
 
-        assertEquals("Invalid JSON", exception.getMessage());
-    }
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
 
-    @Test
-    void whenGetCollaboratorGivenValidResourceThenReturnValidObjectResponse() throws IOException {
-        var collaboratorPage = createCollaboratorPageTest();
-        when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class))).thenReturn(collaboratorPage);
+  @Test
+  void whenGetCollaboratorGivenValidResourceThenReturnValidObjectResponse() throws IOException {
+    var collaboratorPage = createCollaboratorPageTest();
+    when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class)))
+        .thenReturn(collaboratorPage);
 
-        var response = service.getCollaborator();
+    var response = service.getCollaborator();
 
-        assertEquals(collaboratorPage, response);
-    }
+    assertEquals(collaboratorPage, response);
+  }
 
-    @Test
-    void whenGetCodeOfConductGivenInvalidJson() throws IOException {
-        when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class))).thenThrow(new IOException("Invalid JSON"));
+  @Test
+  void whenGetCodeOfConductGivenInvalidJson() throws IOException {
+    when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class)))
+        .thenThrow(new IOException("Invalid JSON"));
 
-        var exception = assertThrows(PlatformInternalException.class, () -> service.getCodeOfConduct());
+    var exception = assertThrows(PlatformInternalException.class, () -> service.getCodeOfConduct());
 
-        assertEquals("Invalid JSON", exception.getMessage());
-    }
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
 
-    @Test
-    void whenGetCodeOfConductGivenValidJson() throws IOException {
-        var codeOfConductPage = createCodeOfConductPageTest();
-        when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class))).thenReturn(codeOfConductPage);
+  @Test
+  void whenGetCodeOfConductGivenValidJson() throws IOException {
+    var codeOfConductPage = createCodeOfConductPageTest();
+    when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class)))
+        .thenReturn(codeOfConductPage);
 
-        var response = service.getCodeOfConduct();
+    var response = service.getCodeOfConduct();
 
-        assertEquals(codeOfConductPage, response);
-    }
+    assertEquals(codeOfConductPage, response);
+  }
 }
