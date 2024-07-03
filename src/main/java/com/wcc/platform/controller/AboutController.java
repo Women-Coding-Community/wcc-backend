@@ -54,6 +54,7 @@ public class AboutController {
     return ResponseEntity.ok(cmsService.getCollaborator());
   }
 
+  // todo: Create MemberController class
   /**
    * API to store information about members.
    *
