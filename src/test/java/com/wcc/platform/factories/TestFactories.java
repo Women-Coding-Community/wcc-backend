@@ -97,9 +97,7 @@ public class TestFactories {
   }
 
   public static LeadershipMember createLeadershipMemberTest(MemberType type) {
-    //    var team = new LeadershipMember();
-    // Member member = createMemberTest(type);
-    LeadershipMember team =
+    var team =
         LeadershipMember.leadershipMemberBuilder()
             .fullName("fullName " + type.name())
             .position("position " + type.name())
