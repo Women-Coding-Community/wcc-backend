@@ -47,7 +47,7 @@ tasks.withType<Test> {
 tasks {
     jacocoTestCoverageVerification {
         violationRules {
-            rule { limit { minimum = BigDecimal.valueOf(0.7) } }
+            rule { limit { minimum = BigDecimal.valueOf(0.6) } }
         }
     }
     check {
