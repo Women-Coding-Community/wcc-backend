@@ -9,7 +9,7 @@ jobs:
     name: runner / checkstyle
     runs-on: ubuntu-latest
     env: 
-      $REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.CHECSTYLE_TOKEN }}
+      $REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
     permissions:
       contents: write
       pull-requests: write
@@ -18,8 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dbelyaev/action-checkstyle@master
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
         with:
-          github_token: ${{ secrets.CHECSTYLE_TOKEN }}
+          github_token: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
           reporter: github-pr-review
           checkstyle_config: google_checks.xml
           fail_on_error: true
