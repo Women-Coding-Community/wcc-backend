@@ -1,5 +1,8 @@
 plugins {
     java
+    pmd
+    jacoco
+
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
@@ -29,7 +32,7 @@ dependencies {
 
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -39,4 +42,15 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks {
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule { limit { minimum = BigDecimal.valueOf(0.7) } }
+        }
+    }
+    check {
+        dependsOn(jacocoTestCoverageVerification)
+    }
 }
