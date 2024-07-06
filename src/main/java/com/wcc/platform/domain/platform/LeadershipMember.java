@@ -12,12 +12,13 @@ import lombok.EqualsAndHashCode;
  * Represents the core team of the community: {@link MemberType#DIRECTOR}, {@link MemberType#LEADER}
  * and {@link MemberType#EVANGELIST}.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class LeadershipMember extends Member {
 
   @JsonIgnore private MemberType memberType;
 
+  /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")
   public LeadershipMember(
       String fullName,
@@ -42,4 +43,6 @@ public class LeadershipMember extends Member {
         images,
         network);
   }
+
+  public LeadershipMember() {}
 }
