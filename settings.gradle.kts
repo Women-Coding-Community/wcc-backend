@@ -1,1 +1,1 @@
-rootProject.name = "wcc-platform"
+rootProject.name = "wcc-backend"
