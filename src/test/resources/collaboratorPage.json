@@ -21,6 +21,14 @@
     {
       "fullName": "Member1",
       "position": "Senior Software Engineer",
+      "email": "member@wcc.com",
+      "country": {
+        "countryCode": "Country code",
+        "countryName": "Country name"
+      },
+      "city": "City",
+      "jobTitle": "Job title",
+      "companyName": "Company name",
       "images": [
         {
           "path": "image.png",
