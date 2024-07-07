@@ -15,6 +15,10 @@ jobs:
     strategy:
       matrix:
         java-version: [ '21' ]
+    
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
     steps:
       - name: Setup Node.js
@@ -51,7 +55,7 @@ jobs:
 
       - name: Upload code coverage report
         if: success() || failure()  
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: build/reports/jacoco/test/html/
