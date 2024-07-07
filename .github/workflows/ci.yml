@@ -50,6 +50,9 @@ jobs:
       - name: Build and test
         run: ./gradlew test jacocoTestReport
 
+      - name: Pmd Check
+        run: ./gradlew pmdMain pmdTest
+
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
         env:
