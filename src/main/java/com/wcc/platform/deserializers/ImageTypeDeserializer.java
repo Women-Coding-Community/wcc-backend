@@ -11,10 +11,10 @@ import java.util.Arrays;
 public class ImageTypeDeserializer extends JsonDeserializer<ImageType> {
 
   @Override
-  public ImageType deserialize(JsonParser jsonParser, DeserializationContext context)
+  public ImageType deserialize(final JsonParser jsonParser, final DeserializationContext context)
       throws IOException {
 
-    var value = jsonParser.getText();
+    final var value = jsonParser.getText();
 
     return Arrays.stream(ImageType.values())
         .filter(type -> type.name().equalsIgnoreCase(value))

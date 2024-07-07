@@ -1,6 +1,6 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.TestFactories.*;
+import static com.wcc.platform.factories.SetupFactories.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

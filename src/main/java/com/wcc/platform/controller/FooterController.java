@@ -21,7 +21,7 @@ public class FooterController {
   private final CmsService cmsService;
 
   @Autowired
-  public FooterController(CmsService cmsService) {
+  public FooterController(final CmsService cmsService) {
     this.cmsService = cmsService;
   }
 

@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.platform;
 
+import java.util.Locale;
+
 /** Community available network types. */
 public enum SocialNetworkType {
   YOUTUBE,
@@ -7,7 +9,7 @@ public enum SocialNetworkType {
   LINKEDIN,
   INSTAGRAM,
   FACEBOOK,
-  X,
+  TWITTER,
   MEDIUM,
   SLACK,
   MEETUP,
@@ -16,6 +18,6 @@ public enum SocialNetworkType {
 
   @Override
   public String toString() {
-    return this.name().toLowerCase();
+    return this.name().toLowerCase(Locale.getDefault());
   }
 }
