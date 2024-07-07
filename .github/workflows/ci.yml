@@ -12,23 +12,43 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        java-version: [ '21' ]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 21
+      - name: Set up JDK  Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
           distribution: 'temurin'
+          java-version: ${{ matrix.java-version }}  
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+    
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Build and test with Gradle
-        run: ./gradlew clean build jacocoTestCoverageVerification
+        run: ./gradlew test jacocoTestReport
+        
+      - name: Build and test with Gradle
+        run: ./gradlew jacocoTestCoverageVerification
         env:
           JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
 
       - name: Upload code coverage report
-        if: success() || failure()  # Make sure to run even if the previous step fails
+        if: success() || failure()  
         uses: actions/upload-artifact@v3
         with:
           name: jacoco-report
