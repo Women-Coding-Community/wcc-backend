@@ -54,3 +54,23 @@ tasks {
         dependsOn(jacocoTestCoverageVerification)
     }
 }
+
+tasks.withType<Pmd> {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    doFirst {
+        println("Running PMD...")
+    }
+    doLast {
+        println("PMD completed.")
+    }
+}
+
+pmd {
+    toolVersion = "7.0.0"
+    isConsoleOutput = true
+}
+
+logging.captureStandardOutput(LogLevel.INFO)
