@@ -75,4 +75,11 @@ pmd {
     ruleSetFiles = files("config/pmd/custom-ruleset.xml")
 }
 
+val baseDir = project.projectDir
+
+tasks.named<Pmd>("pmdMain") {
+    exclude("**/FileUtil.java")
+    exclude("**/PlatformApplication.java")
+}
+
 logging.captureStandardOutput(LogLevel.INFO)

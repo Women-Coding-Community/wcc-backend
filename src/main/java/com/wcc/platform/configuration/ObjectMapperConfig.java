@@ -20,7 +20,7 @@ public class ObjectMapperConfig {
   /** Create ObjectMapper bean and include custom serializer. */
   @Bean
   public ObjectMapper objectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
+    final ObjectMapper objectMapper = new ObjectMapper();
 
     objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
@@ -28,7 +28,7 @@ public class ObjectMapperConfig {
     return objectMapper;
   }
 
-  private void registerCustomDeserializers(ObjectMapper objectMapper) {
+  private void registerCustomDeserializers(final ObjectMapper objectMapper) {
     objectMapper
         .registerModule(new JavaTimeModule())
         .registerModule(

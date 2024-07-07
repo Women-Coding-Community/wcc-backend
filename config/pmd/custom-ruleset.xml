@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  name="Custom Ruleset"
+  xmlns="http://pmd.sf.net/ruleset/2.0.0"
+  xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
+  xsi:schemaLocation="http://pmd.sf.net/ruleset/2.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+  <description>
+    Custom PMD ruleset for my project, including all standard rules and excluding
+    MissingSerialVersionUID.
+  </description>
+
+  <rule ref="category/java/bestpractices.xml"/>
+  <rule ref="category/java/multithreading.xml"/>
+  <rule ref="category/java/performance.xml"/>
+  <rule ref="category/java/security.xml"/>
+  <rule ref="rulesets/java/quickstart.xml"/>
+  
+  <rule ref="category/java/design.xml">
+    <exclude name="UseUtilityClass"/>
+    <exclude name="LoosePackageCoupling"/>
+  </rule>
+  <rule ref="category/java/errorprone.xml">
+    <exclude name="MissingSerialVersionUID"/>
+  </rule>
+
+  <!--  CODE STYLE -->
+  <rule ref="category/java/codestyle.xml">
+    <exclude name="UseExplicitTypes"/>
+    <exclude name="OnlyOneReturn"/>
+    <exclude name="AtLeastOneConstructor"/>
+  </rule>
+  <rule ref="category/java/codestyle.xml/ShortVariable">
+    <properties>
+      <property name="minimum" value="2"/>
+    </properties>
+  </rule>
+  <!--  END CODE STYLE -->
+
+  <!--  DOCUMENTATION -->
+  <rule ref="category/java/documentation.xml">
+    <exclude name="CommentRequired"/>
+  </rule>
+  <rule ref="category/java/documentation.xml/CommentSize">
+    <properties>
+      <property name="maxLines" value="6"/>
+      <property name="maxLineLength" value="97"/>
+    </properties>
+  </rule>
+  <!--  END CODE DOCUMENTATION -->
+</ruleset>

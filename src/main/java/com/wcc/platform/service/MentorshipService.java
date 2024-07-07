@@ -18,7 +18,7 @@ public class MentorshipService {
   private final ObjectMapper objectMapper;
 
   @Autowired
-  public MentorshipService(ObjectMapper objectMapper) {
+  public MentorshipService(final ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }
 
@@ -29,7 +29,7 @@ public class MentorshipService {
    */
   public MentorshipPage getOverview() {
     try {
-      File file = Path.of(FileUtil.getFileUri(MENTORSHIP.getFileName())).toFile();
+      final File file = Path.of(FileUtil.getFileUri(MENTORSHIP.getFileName())).toFile();
       return objectMapper.readValue(file, MentorshipPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);

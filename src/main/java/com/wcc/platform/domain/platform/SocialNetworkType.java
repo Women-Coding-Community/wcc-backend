@@ -9,7 +9,7 @@ public enum SocialNetworkType {
   LINKEDIN,
   INSTAGRAM,
   FACEBOOK,
-  X,
+  TWITTER,
   MEDIUM,
   SLACK,
   MEETUP,
