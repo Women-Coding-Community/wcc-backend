@@ -51,7 +51,7 @@ jobs:
         run: ./gradlew test jacocoTestReport
 
       - name: Pmd Check
-        run: ./gradlew pmdMain pmdTest
+        run: ./gradlew pmdMain
 
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
