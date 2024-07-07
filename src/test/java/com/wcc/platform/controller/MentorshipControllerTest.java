@@ -36,7 +36,7 @@ public class MentorshipControllerTest {
     mockMvc
         .perform(get(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.status", is(300)))
+        .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("Invalid Json")))
         .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/mentorship/overview")));
   }
