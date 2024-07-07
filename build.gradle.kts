@@ -69,8 +69,10 @@ tasks.withType<Pmd> {
 }
 
 pmd {
-    toolVersion = "7.0.0"
+    toolVersion = "7.3.0"
     isConsoleOutput = true
+    ruleSets = listOf()
+    ruleSetFiles = files("config/pmd/custom-ruleset.xml")
 }
 
 logging.captureStandardOutput(LogLevel.INFO)
