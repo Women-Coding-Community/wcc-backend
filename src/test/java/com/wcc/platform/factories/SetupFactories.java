@@ -64,9 +64,9 @@ public class SetupFactories {
   }
 
   public static MemberByType createMemberByTypeTest() {
-    var directors = List.of(createMemberTest(MemberType.DIRECTOR));
-    var leaders = List.of(createMemberTest(MemberType.LEADER));
-    var evangelist = List.of(createMemberTest(MemberType.EVANGELIST));
+    var directors = List.of(createLeadershipMemberTest(MemberType.DIRECTOR));
+    var leaders = List.of(createLeadershipMemberTest(MemberType.LEADER));
+    var evangelist = List.of(createLeadershipMemberTest(MemberType.EVANGELIST));
     return new MemberByType(directors, leaders, evangelist);
   }
 
@@ -82,26 +82,56 @@ public class SetupFactories {
     return new Section("title", "description", List.of("item_1", "item_2", "item_3"));
   }
 
-  public static LeadershipMember createMemberTest(MemberType type) {
-    var team = new LeadershipMember();
+  public static Member createMemberTest(MemberType type) {
+    var member =
+        Member.builder()
+            .fullName("fullName " + type.name())
+            .position("position " + type.name())
+            .email("member@wcc.com")
+            .country(new Country("Country code", "Country name"))
+            .city("City")
+            .jobTitle("Job title")
+            .companyName("Company name")
+            .memberType(type)
+            .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
+            .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
+            .build();
 
-    team.setFullName("fullName " + type.name());
-    team.setPosition("position " + type.name());
-    team.setMemberType(type);
-    team.setImages(List.of(createImageTest()));
-    team.setNetwork(List.of(createSocialNetworkTest()));
+    return member;
+  }
+
+  public static LeadershipMember createLeadershipMemberTest(MemberType type) {
+    var team =
+        LeadershipMember.leadershipMemberBuilder()
+            .fullName("fullName " + type.name())
+            .position("position " + type.name())
+            .email("member@wcc.com")
+            .country(new Country("Country code", "Country name"))
+            .city("City")
+            .jobTitle("Job title")
+            .companyName("Company name")
+            .memberType(type)
+            .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
+            .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
+            .build();
 
     return team;
   }
 
   public static Member createCollaboratorMemberTest(MemberType type) {
-    var member = new Member();
-
-    member.setFullName("fullName " + type.name());
-    member.setPosition("position " + type.name());
-    member.setMemberType(type);
-    member.setImages(List.of(createImageTest()));
-    member.setNetwork(List.of(createSocialNetworkTest()));
+    var member =
+        Member.builder()
+            .fullName("fullName " + type.name())
+            .position("position " + type.name())
+            .email("member@wcc.com")
+            .country(new Country("Country code", "Country name"))
+            .city("City")
+            .jobTitle("Job title")
+            .companyName("Company name")
+            .memberType(type)
+            .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
+            .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
+            .build();
 
     return member;
   }
