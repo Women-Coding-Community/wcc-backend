@@ -23,7 +23,7 @@ public class AboutController {
   private final CmsService cmsService;
 
   @Autowired
-  public AboutController(CmsService service) {
+  public AboutController(final CmsService service) {
     this.cmsService = service;
   }
 

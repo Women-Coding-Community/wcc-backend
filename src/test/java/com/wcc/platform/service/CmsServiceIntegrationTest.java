@@ -1,7 +1,7 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
-import static com.wcc.platform.factories.TestFactories.*;
+import static com.wcc.platform.factories.SetupFactories.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;

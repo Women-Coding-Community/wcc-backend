@@ -11,10 +11,10 @@ import java.util.Arrays;
 public class MemberTypeDeserializer extends JsonDeserializer<MemberType> {
 
   @Override
-  public MemberType deserialize(JsonParser jsonParser, DeserializationContext context)
+  public MemberType deserialize(final JsonParser jsonParser, final DeserializationContext context)
       throws IOException {
 
-    var value = jsonParser.getText();
+    final var value = jsonParser.getText();
 
     return Arrays.stream(MemberType.values())
         .filter(memberType -> memberType.name().equalsIgnoreCase(value))

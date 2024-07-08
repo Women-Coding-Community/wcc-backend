@@ -1,6 +1,6 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.TestMentorshipFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

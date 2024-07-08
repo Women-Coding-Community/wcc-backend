@@ -19,19 +19,20 @@ public class GlobalExceptionHandler {
 
   /** Receive ContentNotFoundException and return {@link HttpStatus#NOT_FOUND}. */
   @ExceptionHandler(ContentNotFoundException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseStatus(NOT_FOUND)
   public ResponseEntity<?> handleNotFoundException(
-      ContentNotFoundException ex, WebRequest request) {
-    var errorDetails =
+      final ContentNotFoundException ex, final WebRequest request) {
+    final var errorDetails =
         new ErrorDetails(NOT_FOUND.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, NOT_FOUND);
   }
 
   /** Receive PlatformInternalException and return {@link HttpStatus#INTERNAL_SERVER_ERROR}. */
   @ExceptionHandler(PlatformInternalException.class)
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ResponseEntity<?> handleInternalError(PlatformInternalException ex, WebRequest request) {
-    var errorDetails =
+  @ResponseStatus(INTERNAL_SERVER_ERROR)
+  public ResponseEntity<?> handleInternalError(
+      final PlatformInternalException ex, final WebRequest request) {
+    final var errorDetails =
         new ErrorDetails(
             INTERNAL_SERVER_ERROR.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);

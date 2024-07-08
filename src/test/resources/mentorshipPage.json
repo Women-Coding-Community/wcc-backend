@@ -3,7 +3,7 @@
     "title": "Mentorship Programme",
     "description": "Mentorship is a fantastic way to get support for your personal growth and career development."
   },
-  "becomeMentorSection": {
+  "mentorSection": {
     "title": "Become a Mentor",
     "description": "You should apply to be a mentor if you:",
     "topics": [
@@ -17,7 +17,7 @@
       "uri": "/mentorship/mentor-registration"
     }
   },
-  "becomeMenteeSection": {
+  "menteeSection": {
     "title": "Become a Mentee",
     "description": "You should apply to be a mentee if you:",
     "topics": [

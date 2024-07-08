@@ -139,3 +139,30 @@ Once you've done that, restart the IDE.
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html) and
   corresponding [openAPI docs here](http://localhost:8080/api-docs)
+    
+## Quality Checks
+
+### Jacoco
+
+* Generate Test reports and open [coverage report](build/reports/jacoco/test/html/index.html) 
+```shell
+./gradlew test jacocoTestReport
+```
+
+* Check coverage minimum of 70%
+```shell
+./gradlew clean test jacocoTestCoverageVerification
+```
+
+
+### PMD
+
+* Run pmd for src
+```shell
+./gradlew pmdMain
+```
+
+* Run pmd for test
+```shell
+./gradlew pmdTest
+```
