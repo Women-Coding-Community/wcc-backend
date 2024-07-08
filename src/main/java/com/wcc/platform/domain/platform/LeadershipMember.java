@@ -44,5 +44,7 @@ public class LeadershipMember extends Member {
         network);
   }
 
-  public LeadershipMember() {}
+  public LeadershipMember() {
+    // This constructor is intentionally empty. Nothing special is needed here.
+  }
 }

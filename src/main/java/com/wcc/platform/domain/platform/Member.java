@@ -45,5 +45,7 @@ public class Member {
     this.network = network;
   }
 
-  public Member() {}
+  public Member() {
+    // This constructor is intentionally empty. Nothing special is needed here.
+  }
 }
