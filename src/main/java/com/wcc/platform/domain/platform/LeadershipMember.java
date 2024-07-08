@@ -21,16 +21,16 @@ public class LeadershipMember extends Member {
   /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")
   public LeadershipMember(
-      String fullName,
-      String position,
-      String email,
-      Country country,
-      String city,
-      String jobTitle,
-      String companyName,
-      MemberType memberType,
-      List<Image> images,
-      List<SocialNetwork> network) {
+      final String fullName,
+      final String position,
+      final String email,
+      final Country country,
+      final String city,
+      final String jobTitle,
+      final String companyName,
+      final MemberType memberType,
+      final List<Image> images,
+      final List<SocialNetwork> network) {
     super(
         fullName,
         position,
