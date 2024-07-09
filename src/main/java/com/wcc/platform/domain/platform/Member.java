@@ -45,9 +45,7 @@ public class Member {
     this.network = network;
   }
 
-    /**
-     * Necessary constructor for jackson.
-     **/
     public Member() {
+        // Necessary constructor for jackson.
     }
 }

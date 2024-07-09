@@ -40,7 +40,6 @@
   <!--  DOCUMENTATION -->
   <rule ref="category/java/documentation.xml">
     <exclude name="CommentRequired"/>
-    <exclude name="UncommentedEmptyConstructor"/>
   </rule>
   <rule ref="category/java/documentation.xml/CommentSize">
     <properties>
