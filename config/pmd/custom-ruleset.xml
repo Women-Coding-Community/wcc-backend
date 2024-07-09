@@ -15,7 +15,7 @@
   <rule ref="category/java/performance.xml"/>
   <rule ref="category/java/security.xml"/>
   <rule ref="rulesets/java/quickstart.xml"/>
-  
+
   <rule ref="category/java/design.xml">
     <exclude name="UseUtilityClass"/>
     <exclude name="LoosePackageCoupling"/>
@@ -40,6 +40,7 @@
   <!--  DOCUMENTATION -->
   <rule ref="category/java/documentation.xml">
     <exclude name="CommentRequired"/>
+    <exclude name="UncommentedEmptyConstructor"/>
   </rule>
   <rule ref="category/java/documentation.xml/CommentSize">
     <properties>
