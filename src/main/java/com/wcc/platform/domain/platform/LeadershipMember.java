@@ -46,4 +46,11 @@ public class LeadershipMember extends Member {
             images,
             network);
     }
+
+    /**
+     * Necessary constructor for jackson.
+     **/
+    public LeadershipMember() {
+        super();
+    }
 }

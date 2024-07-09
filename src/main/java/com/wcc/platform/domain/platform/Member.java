@@ -45,7 +45,9 @@ public class Member {
     this.network = network;
   }
 
-  public Member() {
-    // This constructor is intentionally empty. Nothing special is needed here.
-  }
+    /**
+     * Necessary constructor for jackson.
+     **/
+    public Member() {
+    }
 }
