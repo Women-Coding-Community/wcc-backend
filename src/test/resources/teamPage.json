@@ -22,6 +22,14 @@
       {
         "fullName": "Director1",
         "position": "Senior Software Engineer",
+        "email": "member@wcc.com",
+        "country": {
+          "countryCode": "Country code",
+          "countryName": "Country name"
+        },
+        "city": "City",
+        "jobTitle": "Job title",
+        "companyName": "Company name",
         "images": [
           {
             "path": "image.png",
@@ -41,6 +49,14 @@
       {
         "fullName": "Full name Leader",
         "position": "Software Engineer",
+        "email": "member@wcc.com",
+        "country": {
+          "countryCode": "Country code",
+          "countryName": "Country name"
+        },
+        "city": "City",
+        "jobTitle": "Job title",
+        "companyName": "Company name",
         "images": [
           {
             "path": "leader.png",
@@ -60,6 +76,14 @@
       {
         "fullName": "Full name Evangelists",
         "position": "Senior Software Engineer",
+        "email": "member@wcc.com",
+        "country": {
+          "countryCode": "Country code",
+          "countryName": "Country name"
+        },
+        "city": "City",
+        "jobTitle": "Job title",
+        "companyName": "Company name",
         "images": [
           {
             "path": "evangelist.png",

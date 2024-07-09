@@ -15,7 +15,7 @@
   <rule ref="category/java/performance.xml"/>
   <rule ref="category/java/security.xml"/>
   <rule ref="rulesets/java/quickstart.xml"/>
-  
+
   <rule ref="category/java/design.xml">
     <exclude name="UseUtilityClass"/>
     <exclude name="LoosePackageCoupling"/>
