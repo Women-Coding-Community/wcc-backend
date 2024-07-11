@@ -54,19 +54,6 @@ public class AboutController {
     return ResponseEntity.ok(cmsService.getCollaborator());
   }
 
-  // todo: Create MemberController class
-  /**
-   * API to store information about members.
-   *
-   * @return Created new Member content.
-   */
-  @PutMapping("/member/")
-  @Operation(summary = "API to submit member registration")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Member> createMember(@RequestBody Member member) {
-    return ResponseEntity.ok(cmsService.createMember(member));
-  }
-
   /**
    * API to retrieve information about Code of conduct.
    *

@@ -1,18 +1,23 @@
 package com.wcc.platform.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** Platform service. */
 @Service
 public class PlatformService {
-  private final ObjectMapper objectMapper;
+
+  private final MemberRepository memberRepository;
 
   @Autowired
-  public PlatformService(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
+  public PlatformService(MemberRepository memberRepository) {
+    this.memberRepository = memberRepository;
   }
 
-  // todo: Move here declaration: public Member createMember(Member member) {} from CmsService
+  /** Write Pojo Member to JSON. */
+  public Member createMember(Member member) {
+    return memberRepository.save(member);
+  }
 }
