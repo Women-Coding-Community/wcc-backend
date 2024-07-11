@@ -1,5 +1,8 @@
 plugins {
     java
+    pmd
+    jacoco
+
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
@@ -29,7 +32,7 @@ dependencies {
 
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -40,3 +43,43 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks {
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule { limit { minimum = BigDecimal.valueOf(0.7) } }
+        }
+    }
+    check {
+        dependsOn(jacocoTestCoverageVerification)
+    }
+}
+
+tasks.withType<Pmd> {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    doFirst {
+        println("Running PMD...")
+    }
+    doLast {
+        println("PMD completed.")
+    }
+}
+
+pmd {
+    toolVersion = "7.3.0"
+    isConsoleOutput = true
+    ruleSets = listOf()
+    ruleSetFiles = files("config/pmd/custom-ruleset.xml")
+}
+
+val baseDir = project.projectDir
+
+tasks.named<Pmd>("pmdMain") {
+    exclude("**/FileUtil.java")
+    exclude("**/PlatformApplication.java")
+}
+
+logging.captureStandardOutput(LogLevel.INFO)
