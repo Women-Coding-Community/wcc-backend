@@ -16,46 +16,46 @@ import java.util.List;
 
 public class FileMemberRepository implements MemberRepository {
 
-    private final ObjectMapper objectMapper;
-    private List<Member> members;
-    private File file;
+  private final ObjectMapper objectMapper;
+  private final File file;
+  private List<Member> members;
 
-    public FileMemberRepository(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-        file = Path.of(FileUtil.getFileUri(MEMBERS_FILE.getFileName())).toFile();
-    }
+  public FileMemberRepository(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+    file = Path.of(FileUtil.getFileUri(MEMBERS_FILE.getFileName())).toFile();
+  }
 
-    @Override
-    public void save(Member member) {
-        members = getAll();
-        members.add(member);
-        writeFile(members);
-    }
+  @Override
+  public Member save(Member member) {
+    members = getAll();
+    members.add(member);
 
-    @Override
-    public List<Member> getAll() {
-        try {
-            if (file.length() > 0) {
-                members = objectMapper.readValue(
-                    file,
-                    new TypeReference<List<Member>>() {
-                    });
-            } else {
-                members = new ArrayList<>();
-            }
-            return members;
-        } catch (IOException e) {
-            // todo: FileRepositoryException - create
-            throw new PlatformInternalException(e.getMessage(), e);
-        }
-    }
+    writeFile(members);
 
-    private void writeFile(List<Member> list) {
-        try {
-            objectMapper.writeValue(file, list);
-        } catch (IOException e) {
-            //todo: FileRepositoryException - create
-            throw new PlatformInternalException(e.getMessage(), e);
-        }
+    return member;
+  }
+
+  @Override
+  public List<Member> getAll() {
+    try {
+      if (file.length() > 0) {
+        members = objectMapper.readValue(file, new TypeReference<List<Member>>() {});
+      } else {
+        members = new ArrayList<>();
+      }
+      return members;
+    } catch (IOException e) {
+      // todo: FileRepositoryException - create
+      throw new PlatformInternalException(e.getMessage(), e);
     }
+  }
+
+  private void writeFile(List<Member> list) {
+    try {
+      objectMapper.writeValue(file, list);
+    } catch (IOException e) {
+      // todo: FileRepositoryException - create
+      throw new PlatformInternalException(e.getMessage(), e);
+    }
+  }
 }
