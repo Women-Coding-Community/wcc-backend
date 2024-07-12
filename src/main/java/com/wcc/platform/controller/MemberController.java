@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Rest controller for about pages apis. */
+/** Rest controller for members pages apis. */
 @RestController
 @RequestMapping("/api/platform/v1")
-@Tag(name = "APIs relevant About Us section")
+@Tag(name = "APIs relevant Members section")
 public class MemberController {
 
   private final PlatformService service;
 
   @Autowired
-  public MemberController(PlatformService service) {
+  public MemberController(final PlatformService service) {
     this.service = service;
   }
 
