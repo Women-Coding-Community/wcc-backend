@@ -24,7 +24,7 @@ public class CmsService {
   private final ObjectMapper objectMapper;
 
   @Autowired
-  public CmsService(ObjectMapper objectMapper) {
+  public CmsService(final ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }
 
@@ -35,7 +35,7 @@ public class CmsService {
    */
   public TeamPage getTeam() {
     try {
-      File file = Path.of(FileUtil.getFileUri(TEAM.getFileName())).toFile();
+      final File file = Path.of(FileUtil.getFileUri(TEAM.getFileName())).toFile();
       return objectMapper.readValue(file, TeamPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);
@@ -49,7 +49,7 @@ public class CmsService {
    */
   public FooterPage getFooter() {
     try {
-      File file = Path.of(FileUtil.getFileUri(FOOTER.getFileName())).toFile();
+      final File file = Path.of(FileUtil.getFileUri(FOOTER.getFileName())).toFile();
       return objectMapper.readValue(file, FooterPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);
@@ -63,7 +63,7 @@ public class CmsService {
    */
   public CollaboratorPage getCollaborator() {
     try {
-      File file = Path.of(FileUtil.getFileUri(COLLABORATOR.getFileName())).toFile();
+      final File file = Path.of(FileUtil.getFileUri(COLLABORATOR.getFileName())).toFile();
       return objectMapper.readValue(file, CollaboratorPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);
@@ -77,7 +77,7 @@ public class CmsService {
    */
   public CodeOfConductPage getCodeOfConduct() {
     try {
-      File file = Path.of(FileUtil.getFileUri(CODE_OF_CONDUCT.getFileName())).toFile();
+      final File file = Path.of(FileUtil.getFileUri(CODE_OF_CONDUCT.getFileName())).toFile();
       return objectMapper.readValue(file, CodeOfConductPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);

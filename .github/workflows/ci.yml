@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [ '21' ]
+    
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+      - name: Set up JDK  Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java-version }}
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build and test
+        run: ./gradlew test jacocoTestReport
+
+      - name: Pmd Check
+        run: ./gradlew pmdMain
+
+      - name: Jacoco Test Coverage Verification
+        run: ./gradlew jacocoTestCoverageVerification
+        env:
+          JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
+
+      - name: Upload code coverage report
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/test/html/
+
+      - name: Check coverage report
+        if: failure()
+        run: |
+          echo "Coverage verification failed. Check the report for details."
+          cat build/reports/jacoco/test/html/index.html

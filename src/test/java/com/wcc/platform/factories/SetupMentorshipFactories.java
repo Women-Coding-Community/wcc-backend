@@ -1,7 +1,8 @@
 package com.wcc.platform.factories;
 
-import static com.wcc.platform.factories.TestFactories.createPageSectionTest;
-import static com.wcc.platform.factories.TestFactories.createPageTest;
+import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
+import static com.wcc.platform.factories.SetupFactories.createPageSectionTest;
+import static com.wcc.platform.factories.SetupFactories.createPageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
@@ -12,13 +13,13 @@ import java.time.Year;
 import java.util.List;
 
 /** Mentorship test factories. */
-public class TestMentorshipFactories {
+public class SetupMentorshipFactories {
 
   /** Test factory. */
   public static MentorshipPage createMentorshipPageTest(String fileName) {
     try {
       String content = FileUtil.readFileAsString(fileName);
-      return ObjectMapperTestFactory.getInstance().readValue(content, MentorshipPage.class);
+      return OBJECT_MAPPER.readValue(content, MentorshipPage.class);
     } catch (JsonProcessingException e) {
       return createMentorshipPageTest();
     }

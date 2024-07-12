@@ -11,9 +11,10 @@ import java.util.Arrays;
 public class SocialNetworkTypeDeserializer extends JsonDeserializer<SocialNetworkType> {
 
   @Override
-  public SocialNetworkType deserialize(JsonParser jsonParser, DeserializationContext context) {
+  public SocialNetworkType deserialize(
+      final JsonParser jsonParser, final DeserializationContext context) {
     try {
-      var value = jsonParser.getText();
+      final var value = jsonParser.getText();
 
       return Arrays.stream(SocialNetworkType.values())
           .filter(memberType -> memberType.name().equalsIgnoreCase(value))
