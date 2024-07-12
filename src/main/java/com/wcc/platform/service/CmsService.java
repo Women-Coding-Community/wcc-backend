@@ -11,8 +11,6 @@ import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.Member;
-import com.wcc.platform.repository.file.FileMemberRepository;
 import com.wcc.platform.utils.FileUtil;
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +57,7 @@ public class CmsService {
   }
 
   /**
-   * API to retrieve information about collaborators.
+   * Read JSON and convert to Pojo CollaboratorPage.
    *
    * @return Collaborators page content.
    */
@@ -71,20 +69,7 @@ public class CmsService {
       throw new PlatformInternalException(e.getMessage(), e);
     }
   }
-
-  /**
-   * Write Pojo Member to JSON.
-   */
-  public Member createMember(Member member) {
-    try {
-        FileMemberRepository fileMemberRepo = new FileMemberRepository(objectMapper);
-        fileMemberRepo.save(member);
-        return member;
-    } catch (Exception e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-    }
-  }
-
+  
   /**
    * Read JSON and convert to Pojo CodeOfConductPage.
    *

@@ -3,7 +3,6 @@ package com.wcc.platform.controller;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
-import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,19 +49,6 @@ public class AboutController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<CollaboratorPage> getCollaboratorPage() {
     return ResponseEntity.ok(cmsService.getCollaborator());
-  }
-
-  // todo: Create MemberController class
-  /**
-   * API to store information about members.
-   *
-   * @return Created new Member content.
-   */
-  @PutMapping("/member/")
-  @Operation(summary = "API to submit member registration")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Member> createMember(@RequestBody Member member) {
-    return ResponseEntity.ok(cmsService.createMember(member));
   }
 
   /**
