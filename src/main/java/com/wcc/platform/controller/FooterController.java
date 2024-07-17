@@ -38,7 +38,7 @@ public class FooterController {
   }
 
   @GetMapping("/heath")
-  @Operation(summary = "API to retrieve footer section details")
+  @Operation(summary = "Heath Check api")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Boolean> isHeath() {
     return ResponseEntity.ok(true);
