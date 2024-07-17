@@ -36,4 +36,11 @@ public class FooterController {
   public ResponseEntity<FooterPage> getFooterPage() {
     return ResponseEntity.ok(cmsService.getFooter());
   }
+
+  @GetMapping("/heath")
+  @Operation(summary = "API to retrieve footer section details")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<Boolean> isHeath() {
+    return ResponseEntity.ok(true);
+  }
 }
