@@ -139,30 +139,33 @@ Once you've done that, restart the IDE.
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html) and
   corresponding [openAPI docs here](http://localhost:8080/api-docs)
-    
+
 ## Quality Checks
 
 ### Jacoco
 
-* Generate Test reports and open [coverage report](build/reports/jacoco/test/html/index.html) 
+* Generate Test reports and open [coverage report](build/reports/jacoco/test/html/index.html)
+
 ```shell
 ./gradlew test jacocoTestReport
 ```
 
 * Check coverage minimum of 70%
+
 ```shell
 ./gradlew clean test jacocoTestCoverageVerification
 ```
 
-
 ### PMD
 
 * Run pmd for src
+
 ```shell
 ./gradlew pmdMain
 ```
 
 * Run pmd for test
+
 ```shell
 ./gradlew pmdTest
 ```
@@ -170,45 +173,73 @@ Once you've done that, restart the IDE.
 ### SONAR
 
 #### Install sonarqube docker image locally
-  - Make sure you have docker installed on your machine - 
-    Download the installer using the url https://docs.docker.com/get-docker/. ( Prefer Docker Desktop Application )
-  - Start the docker application. Double-click Docker.app to start Docker.
+
+- Make sure you have docker installed on your machine -
+  Download the installer using the url https://docs.docker.com/get-docker/. ( Prefer Docker Desktop
+  Application )
+- Start the docker application. Double-click Docker.app to start Docker.
 
 Get the “SonarQube” image using the command
+
 ```shell
 docker pull sonarqube
 ```
+
 Start the "SonarQube" instance
+
 ```shell
 docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
 ```
 
 * Access SonarQube dashboard - http://localhost:9000</br>
   (default credentials )
-login: admin
-password: admin
+  login: admin
+  password: admin
 
 Ref: https://docs.sonarsource.com/sonarqube/latest/try-out-sonarqube/
 
-#### Set-up wcc-backend project on local sonarQube instance 
+#### Set-up wcc-backend project on local sonarQube instance
+
 #### Step 1
+
 1. Select create a local project
 2. "Project display name" = wcc-backend
 3. "Project key" = wcc-backend
 4. "Main branch name" = *
+
 #### Step 2
+
 1. Choose the baseline for new code for this project</br>
-select "Use the global setting"
+   select "Use the global setting"
 2. Click "Create Project" at the bottom
 
 #### Step 3
+
 Generate token to replace in the project.
+
 1. Click "Locally" on the main dashboard
 2. Generate a token on the next screen ( choose Expires in - No expiration) [ Click Generate]
 3. Copy the token = "sqp_XXXXXXX" and replace in the file <b> build.gradle.kts </b><br>
    <b>property("sonar.token", "PLACE_YOUR_TOKEN_HERE")</b>
 
 #### Perform SONAR ANALYSIS
+
 ```shell
 ./gradlew sonarQubeAnalysis -PlocalProfile
 ```
+
+## Deploy application
+
+* build image: `./gradlew bootBuildImage --imageName=womencodingcommunity/wcc-backend`
+
+* start app via docker
+
+```shell
+docker run -e -p 8080:8080
+```
+
+* start app via docker with remote debug
+
+```shell
+docker run -e "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n" -p 8080:8080 -p 5005:5005 -t springio/gs-spring-boot-docker
+``` 
