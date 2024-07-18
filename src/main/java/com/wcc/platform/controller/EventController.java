@@ -1,7 +1,6 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.EventsPage;
-import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
