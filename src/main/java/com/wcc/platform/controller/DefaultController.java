@@ -8,20 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for footer api. */
 @RestController
-@RequestMapping("/api/cms/v1/")
-@Tag(name = "API relevant to footer section")
-public class FooterController {
+@Tag(name = "General APIs")
+public class DefaultController {
 
   private final CmsService cmsService;
 
   @Autowired
-  public FooterController(final CmsService cmsService) {
+  public DefaultController(final CmsService cmsService) {
     this.cmsService = cmsService;
   }
 
@@ -30,17 +28,22 @@ public class FooterController {
    *
    * @return Footer content.
    */
-  @GetMapping("/footer")
+  @GetMapping("/api/cms/v1/footer")
   @Operation(summary = "API to retrieve footer section details")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<FooterPage> getFooterPage() {
     return ResponseEntity.ok(cmsService.getFooter());
   }
 
-  @GetMapping("/heath")
-  @Operation(summary = "Heath Check api")
+  /**
+   * Create default api response for WCC Platform
+   *
+   * @return "Women Coding Community Platform"
+   */
+  @GetMapping("/")
+  @Operation(summary = "API to retrieve default page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Boolean> isHeath() {
-    return ResponseEntity.ok(true);
+  public ResponseEntity<String> helloWorld() {
+    return ResponseEntity.ok("Women Coding Community Platform");
   }
 }
