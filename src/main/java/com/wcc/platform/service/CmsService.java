@@ -2,7 +2,6 @@ package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
@@ -86,6 +85,11 @@ public class CmsService {
         }
     }
 
+    /**
+     * read Json and convert to POJO event page
+     *
+     * @return POJO eventsPage
+     */
     public EventsPage getEvents() {
         try {
             final File file = Path.of(FileUtil.getFileUri(EVENTS.getFileName())).toFile();

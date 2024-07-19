@@ -2,13 +2,11 @@
   "hero": {
     "title": "Online and In-Person Events",
     "description": "Join the Women Coding Community for events and meetups that enhance your skills, deepen your knowledge, and expand your professional network.\n\nOur events include webinars, hands-on workshops, study groups, panel discussions, and keynotes with industry experts. Whether online or in-person, these gatherings offer valuable opportunities to share insights, learn collaboratively, and stay updated on the latest trends. Connect, grow, and thrive with fellow members in a supportive environment.",
-    "images": [
-      {
-        "path": "https://cloudprovider.com/image.png",
-        "alt": "There is a group of women showing WCC logo",
-        "type": "desktop"
-      }
-    ]
+    "image": {
+      "path": "https://cloudprovider.com/image.png",
+      "alt": "There is a group of women showing WCC logo",
+      "type": "desktop"
+    }
   },
   "contact": {
     "title": "Contact us",
@@ -23,78 +21,71 @@
       }
     ]
   },
-  "event": {
-    "items": [
-      {
-        "topic":"Book Club",
-        "category": "UPCOMING_IN_PERSON",
-        "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
-        "title": "Book Club: The Pragmatic Programmer",
-        "speaker":"Jane Doe",
-        "description":"Join us for a discussion of this essential guide to writing clear and maintainable code!",
-        "images": [
-          {
-            "path": "https://cloudprovider.com/image.png",
-            "alt": "Pragmatic programmer book cover",
-            "type": "desktop"
-          }
-        ],
-        "link": {
-          "label": "Go to Meetup Event",
-          "uri": "https://meetup.com/event1"
-        },
-        "eventResources": {
-          "items":[
-            {
-              "slides": {
-                "label": "Slides",
-                "uri": "https://meetup.com/event1"
-              },
-              "recording": {
-                "label": "Recording",
-                "uri": "https://meetup.com/event1"
-              }
-            }
-          ]
-        }
+  "events": [
+    {
+      "topic": "Book Club",
+      "category": "IN_PERSON",
+      "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
+      "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+      "title": "Book Club: The Pragmatic Programmer",
+      "speaker": "Jane Doe",
+      "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!",
+      "image": {
+        "path": "https://cloudprovider.com/image.png",
+        "alt": "Pragmatic programmer book cover",
+        "type": "desktop"
       },
-      {
-        "topic":"Tech Talk",
-        "category": "UPCOMING_ONLINE_MEETUP",
-        "startDate":"WED, JULY 17, 2024, 8:00 PM CEST",
-        "endDate": "WED, JULY 17, 2024, 9.30 CEST",
-        "title": "Tech Talk: Getting started with FaaS: An introduction to AWS Lambda ",
-        "speaker":"Madhura Chaganty",
-        "description":"Join us for an introductory session on serverless computing, with main focus on AWS Lambda for Function As A Service (FaaS)!",
-        "images": [
-          {
-            "path": "https://cloudprovider.com/image.png",
-            "alt": "Madhura Chaganty profile picture",
-            "type": "desktop"
+      "link": {
+        "label": "Go to Meetup Event",
+        "uri": "https://meetup.com/event1"
+      },
+      "eventResources": [
+        {
+          "link": {
+            "label": "Slides",
+            "uri": "https://googledrive/event1"
           }
-        ],
-        "link": {
-          "label": "Go to Meetup Event",
-          "uri": "https://meetup.com/event1"
         },
-        "eventResources": {
-          "items":[
-            {
-              "slides": {
-                "label": "Slides",
-                "uri": "https://meetup.com/event1"
-              },
-              "recording": {
-                "label": "Recording",
-                "uri": "https://meetup.com/event1"
-              }
-            }
-          ]
+        {
+          "link": {
+            "label": "Recording",
+            "uri": "https://meetup.com/event1"
+          }
         }
-      }
-    ]
-  }
+      ]
+    },
+    {
+      "topic": "Tech Talk",
+      "category": "ONLINE_MEETUP",
+      "startDate": "WED, JULY 17, 2024, 8:00 PM CEST",
+      "endDate": "WED, JULY 17, 2024, 9.30 CEST",
+      "title": "Tech Talk: Getting started with FaaS: An introduction to AWS Lambda ",
+      "speaker": "Madhura Chaganty",
+      "description": "Join us for an introductory session on serverless computing, with main focus on AWS Lambda for Function As A Service (FaaS)!",
+      "image": {
+        "path": "https://cloudprovider.com/image.png",
+        "alt": "Madhura Chaganty profile picture",
+        "type": "desktop"
+      },
+      "link": {
+        "label": "Go to Meetup Event",
+        "uri": "https://meetup.com/event1"
+      },
+      "eventResources": [
+        {
+          "link": {
+            "label": "Slides",
+            "uri": "https://googledrive/event2"
+          }
+        },
+        {
+          "link": {
+            "label": "Recording",
+            "uri": "https://meetup.com/event2"
+          }
+        }
+      ]
+    }
+  ]
 }
-
 

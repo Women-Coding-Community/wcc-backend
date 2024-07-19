@@ -1,5 +1,10 @@
 package com.wcc.platform.domain.cms.attributes;
 
-public record EventResource(SimpleLink simpleLink) {
+/**
+ * Record for an external link
+ *
+ * @param link
+ */
+public record EventResource(SimpleLink link) {
 
 }
