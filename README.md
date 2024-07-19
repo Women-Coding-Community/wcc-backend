@@ -230,16 +230,31 @@ Generate token to replace in the project.
 
 ## Deploy application
 
-* build image: `./gradlew bootBuildImage --imageName=womencodingcommunity/wcc-backend`
+* build create jar: `./gradlew clean bootJar`
 
 * start app via docker
 
 ```shell
-docker run -e -p 8080:8080
+docker build -t wcc-backend .
+docker run -d -p 8080:8080 --name wcc-backend-container wcc-backend
 ```
 
 * start app via docker with remote debug
 
 ```shell
-docker run -e "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n" -p 8080:8080 -p 5005:5005 -t springio/gs-spring-boot-docker
+docker run -e "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n" -p 8080:8080 -p 5005:5005 -t wcc-backend
 ``` 
+
+### Start docker with remote debug
+
+```shell
+docker build -t wcc-backend .
+
+docker run -p 8080:8080 -p 5005:5005 --name wcc-backend-container wcc-backend    
+```
+
+### Helpful commands with docker
+
+* List resources in docker container
+  docker exec -it wcc-backend ls -al /app/resources
+* 
