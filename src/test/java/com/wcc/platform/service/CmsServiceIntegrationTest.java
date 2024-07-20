@@ -14,7 +14,7 @@ class CmsServiceIntegrationTest {
   @Autowired private CmsService service;
 
   @Test
-  void getTeamPageTest() {
+  void testGetTeamPageTest() {
     var result = service.getTeam();
 
     var expectedTeamPage = createTeamPageTest(TEAM.getFileName());
@@ -32,7 +32,7 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  void getFooterPageTest() {
+  void testGetFooterPageTest() {
     var result = service.getFooter();
 
     var expectedTeamPage = createFooterPageTest(FOOTER.getFileName());
@@ -46,7 +46,7 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  void getCollaboratorPageTest() {
+  void testGetCollaboratorPageTest() {
     var result = service.getCollaborator();
 
     var expectedCollaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
@@ -60,7 +60,7 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  void getCodeOfConductPageTest() {
+  void testGetCodeOfConductPageTest() {
     var result = service.getCodeOfConduct();
 
     var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());

@@ -46,7 +46,7 @@ class MentorshipServiceTest {
     when(objectMapper.readValue(anyString(), eq(MentorshipPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getOverview());
+    var exception = assertThrows(PlatformInternalException.class, service::getOverview);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }

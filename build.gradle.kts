@@ -83,6 +83,10 @@ tasks.named<Pmd>("pmdMain") {
     exclude("**/PlatformApplication.java")
 }
 
+tasks.named<Pmd>("pmdTest") {
+    ruleSetFiles = files("config/pmd/custom-ruleset-test.xml")
+}
+
 tasks.register("sonarQubeAnalysis") {
     group = "Code Quality"
     description = "Runs sonarQube analysis on the project."

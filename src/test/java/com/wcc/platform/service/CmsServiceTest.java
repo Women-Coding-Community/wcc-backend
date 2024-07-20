@@ -34,7 +34,7 @@ class CmsServiceTest {
   void whenGetTeamGivenInvalidJsonThenThrowsInternalException() throws IOException {
     when(objectMapper.readValue(anyString(), eq(TeamPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getTeam());
+    var exception = assertThrows(PlatformInternalException.class, service::getTeam);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -53,7 +53,7 @@ class CmsServiceTest {
   void whenGetFooterGivenInvalidJson() throws IOException {
     when(objectMapper.readValue(anyString(), eq(FooterPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getFooter());
+    var exception = assertThrows(PlatformInternalException.class, service::getFooter);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -73,7 +73,7 @@ class CmsServiceTest {
     when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getCollaborator());
+    var exception = assertThrows(PlatformInternalException.class, service::getCollaborator);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -94,7 +94,7 @@ class CmsServiceTest {
     when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getCodeOfConduct());
+    var exception = assertThrows(PlatformInternalException.class, service::getCodeOfConduct);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
