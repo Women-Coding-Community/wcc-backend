@@ -1,0 +1,42 @@
+version: "3"
+services:
+   app:
+     build:
+       context:
+       dockerfile: dockerfile
+     ports:
+        - "8080:8080"
+     environment:
+        - SPRING_PROFILES_ACTIVE=docker   #please edit this as your current value.
+        - JAVA_OPTS=-Xmx512m -Xms256m
+     depends_on:
+        -db
+     volumes:
+        - ./build/reports:/app/reports
+   db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:      #configure this as yor db id passwd.
+      - POSTGRES_DB=wccdb
+      - POSTGRES_USER=wccuser
+      - POSTGRES_PASSWORD=wccpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+sonarqube:
+    image: sonarqube:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+volumes:  #please config. it as your current values.
+  postgres_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
