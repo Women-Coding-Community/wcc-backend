@@ -188,7 +188,7 @@ Once you've done that, restart the IDE.
 
 ### PMD
 
-* Run pmd for src
+* Run [pmd](https://pmd.github.io/) checks in src folder
 
 ```shell
 ./gradlew pmdMain
