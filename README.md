@@ -188,7 +188,7 @@ Once you've done that, restart the IDE.
 
 ### PMD
 
-* Run pmd for src
+* Run [pmd](https://pmd.github.io/) checks in src folder
 
 ```shell
 ./gradlew pmdMain
@@ -270,12 +270,6 @@ Generate token to replace in the project.
 docker build -t wcc-backend .
 docker run -d -p 8080:8080 --name wcc-backend-container wcc-backend
 ```
-
-* start app via docker with remote debug
-
-```shell
-docker run -e "JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n" -p 8080:8080 -p 5005:5005 -t wcc-backend
-``` 
 
 #### Start docker with remote debug
 
