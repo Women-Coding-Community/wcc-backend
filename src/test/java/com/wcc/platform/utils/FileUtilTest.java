@@ -7,31 +7,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileUtilTest {
 
-    @Test
-    void testReadFileAsString() {
-        String fileContent = FileUtil.readFileAsString("example.txt");
-        String testContent = "Line 1" + System.lineSeparator() + "Line 2" + System.lineSeparator() + "Line 3";
-        assertEquals(testContent, fileContent);
-    }
+  @Test
+  void testReadFileAsString() {
+    String fileContent = FileUtil.readFileAsString("example.txt");
+    String testContent =
+        "Line 1" + System.lineSeparator() + "Line 2" + System.lineSeparator() + "Line 3";
+    assertEquals(testContent, fileContent);
+  }
 
-    @Test
-    void testReadFileAsStringWhenDoesNotExist() {
-        String fileContent = FileUtil.readFileAsString("example1.txt");
+  @Test
+  void testReadFileAsStringWhenDoesNotExist() {
+    String fileContent = FileUtil.readFileAsString("example1.txt");
 
-        assertEquals("", fileContent);
-    }
+    assertEquals("", fileContent);
+  }
 
-    @Test
-    void testGetUriFromFile() {
-        var uri = FileUtil.getFileUri("example.txt");
+  @Test
+  void testGetUriFromFile() {
+    var uri = FileUtil.getFileUri("example.txt");
 
-        assertTrue(uri.getPath().endsWith("resources/test/example.txt"));
-    }
+    assertTrue(uri.getPath().endsWith("resources/test/example.txt"));
+  }
 
-    @Test
-    void whenFileDoNotExistThrowsException() {
-        var exception = assertThrows(ContentNotFoundException.class, () -> FileUtil.getFileUri("example_invalid.txt"));
+  @Test
+  void whenFileDoNotExistThrowsException() {
+    var exception =
+        assertThrows(
+            ContentNotFoundException.class, () -> FileUtil.getFileUri("example_invalid.txt"));
 
-        assertEquals("File example_invalid.txt not found.", exception.getMessage());
-    }
+    assertEquals("File example_invalid.txt not found.", exception.getMessage());
+  }
 }
