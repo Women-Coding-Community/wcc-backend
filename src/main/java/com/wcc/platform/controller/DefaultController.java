@@ -34,16 +34,4 @@ public class DefaultController {
   public ResponseEntity<FooterPage> getFooterPage() {
     return ResponseEntity.ok(cmsService.getFooter());
   }
-
-  /**
-   * Create default api response for WCC Platform
-   *
-   * @return "Women Coding Community Platform"
-   */
-  @GetMapping("/")
-  @Operation(summary = "API to retrieve default page")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> helloWorld() {
-    return ResponseEntity.ok("Women Coding Community Platform");
-  }
 }
