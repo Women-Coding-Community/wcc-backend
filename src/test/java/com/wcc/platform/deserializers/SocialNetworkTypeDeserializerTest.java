@@ -30,7 +30,7 @@ class SocialNetworkTypeDeserializerTest {
 
   @ParameterizedTest
   @EnumSource(SocialNetworkType.class)
-  void testDeserialize(SocialNetworkType type) throws IOException {
+  void testDeserialize(final SocialNetworkType type) throws IOException {
     when(jsonParser.getText()).thenReturn(type.name());
 
     var response = deserializer.deserialize(jsonParser, context);

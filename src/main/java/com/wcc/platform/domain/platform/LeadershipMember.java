@@ -16,41 +16,36 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class LeadershipMember extends Member {
 
-    @JsonIgnore
-    private MemberType memberType;
+  @JsonIgnore private MemberType memberType;
 
-    /**
-     * Leadership Builder.
-     */
-    @Builder(builderMethodName = "leadershipMemberBuilder")
-    public LeadershipMember(
-        final String fullName,
-        final String position,
-        final String email,
-        final Country country,
-        final String city,
-        final String jobTitle,
-        final String companyName,
-        final MemberType memberType,
-        final List<Image> images,
-        final List<SocialNetwork> network) {
-        super(
-            fullName,
-            position,
-            email,
-            country,
-            city,
-            jobTitle,
-            companyName,
-            memberType,
-            images,
-            network);
-    }
+  /** Leadership Builder. */
+  @Builder(builderMethodName = "leadershipMemberBuilder")
+  public LeadershipMember(
+      final String fullName,
+      final String position,
+      final String email,
+      final Country country,
+      final String city,
+      final String jobTitle,
+      final String companyName,
+      final MemberType memberType,
+      final List<Image> images,
+      final List<SocialNetwork> network) {
+    super(
+        fullName,
+        position,
+        email,
+        country,
+        city,
+        jobTitle,
+        companyName,
+        memberType,
+        images,
+        network);
+  }
 
-    /**
-     * Necessary constructor for jackson.
-     **/
-    public LeadershipMember() {
-        super();
-    }
+  /** Necessary constructor for jackson. */
+  public LeadershipMember() {
+    super();
+  }
 }
