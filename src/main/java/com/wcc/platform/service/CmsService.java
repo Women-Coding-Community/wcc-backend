@@ -12,9 +12,7 @@ import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.utils.FileUtil;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +33,7 @@ public class CmsService {
    */
   public TeamPage getTeam() {
     try {
-      final File file = Path.of(FileUtil.getFileUri(TEAM.getFileName())).toFile();
-      return objectMapper.readValue(file, TeamPage.class);
+      return objectMapper.readValue(FileUtil.readFileAsString(TEAM.getFileName()), TeamPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
@@ -49,8 +46,8 @@ public class CmsService {
    */
   public FooterPage getFooter() {
     try {
-      final File file = Path.of(FileUtil.getFileUri(FOOTER.getFileName())).toFile();
-      return objectMapper.readValue(file, FooterPage.class);
+      return objectMapper.readValue(
+          FileUtil.readFileAsString(FOOTER.getFileName()), FooterPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
@@ -63,8 +60,8 @@ public class CmsService {
    */
   public CollaboratorPage getCollaborator() {
     try {
-      final File file = Path.of(FileUtil.getFileUri(COLLABORATOR.getFileName())).toFile();
-      return objectMapper.readValue(file, CollaboratorPage.class);
+      final var data = FileUtil.readFileAsString(COLLABORATOR.getFileName());
+      return objectMapper.readValue(data, CollaboratorPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
@@ -77,8 +74,8 @@ public class CmsService {
    */
   public CodeOfConductPage getCodeOfConduct() {
     try {
-      final File file = Path.of(FileUtil.getFileUri(CODE_OF_CONDUCT.getFileName())).toFile();
-      return objectMapper.readValue(file, CodeOfConductPage.class);
+      final var data = FileUtil.readFileAsString(CODE_OF_CONDUCT.getFileName());
+      return objectMapper.readValue(data, CodeOfConductPage.class);
     } catch (IOException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }

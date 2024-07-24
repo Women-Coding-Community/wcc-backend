@@ -20,8 +20,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for footer api. */
-@WebMvcTest(FooterController.class)
-public class FooterControllerTest {
+@WebMvcTest(DefaultController.class)
+public class DefaultControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private CmsService mockCmsService;

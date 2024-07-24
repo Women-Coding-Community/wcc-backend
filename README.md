@@ -1,9 +1,10 @@
-# Women Coding Community Platform Backend Service
+# WCC: Platform Backend Service
 
 <!-- TOC -->
 
-* [Women Coding Community Platform Backend Service](#women-coding-community-platform-backend-service)
-    * [Setup](#setup)
+* [WCC: Platform Backend Service](#wcc--platform-backend-service)
+    * [How to start?](#how-to-start)
+    * [Setup locally](#setup-locally)
         * [JAVA 21 with SDKMAN](#java-21-with-sdkman)
         * [Setup IntelliJ](#setup-intellij)
             * [Lombok](#lombok)
@@ -13,10 +14,39 @@
                 * [IntelliJ JRE Config](#intellij-jre-config)
     * [Run Locally](#run-locally)
     * [Open API Documentation](#open-api-documentation)
+    * [Quality Checks](#quality-checks)
+        * [Jacoco](#jacoco)
+        * [PMD](#pmd)
+        * [SONAR](#sonar)
+            * [Install sonarqube docker image locally](#install-sonarqube-docker-image-locally)
+            * [Set-up wcc-backend project on local sonarQube instance](#set-up-wcc-backend-project-on-local-sonarqube-instance)
+            * [Perform SONAR ANALYSIS](#perform-sonar-analysis)
+    * [Deploy application](#deploy-application)
+        * [Deploy with docker](#deploy-with-docker)
+            * [Start docker with remote debug](#start-docker-with-remote-debug)
+            * [Helpful commands with docker](#helpful-commands-with-docker)
+        * [Deploy with Fly.io](#deploy-with-flyio)
+            * [Setup Fly.io locally](#setup-flyio-locally)
+            * [Deploying to Fly.io](#deploying-to-flyio)
 
 <!-- TOC -->
 
-## Setup
+## How to start?
+
+**1.** Start by making a Fork
+of [wcc-backend](https://github.com/Women-Coding-Community/wcc-backend) repository.
+Click on the <a href="https://github.com/Women-Coding-Community/wcc-backend/fork">
+<img src="https://i.imgur.com/G4z1kEe.png" height="21" width="21"></a>
+Fork symbol at the top right corner.
+
+**2.** Clone your new fork of the repository in the terminal/CLI on your computer with the following
+command:
+
+```bash
+git clone https://github.com/<your-github-username>/wcc-backend
+``` 
+
+## Setup locally
 
 ### JAVA 21 with SDKMAN
 
@@ -139,30 +169,33 @@ Once you've done that, restart the IDE.
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html) and
   corresponding [openAPI docs here](http://localhost:8080/api-docs)
-    
+
 ## Quality Checks
 
 ### Jacoco
 
-* Generate Test reports and open [coverage report](build/reports/jacoco/test/html/index.html) 
+* Generate Test reports and open [coverage report](build/reports/jacoco/test/html/index.html)
+
 ```shell
 ./gradlew test jacocoTestReport
 ```
 
 * Check coverage minimum of 70%
+
 ```shell
 ./gradlew clean test jacocoTestCoverageVerification
 ```
 
-
 ### PMD
 
-* Run pmd for src
+* Run [pmd](https://pmd.github.io/) checks in src folder
+
 ```shell
 ./gradlew pmdMain
 ```
 
 * Run pmd for test
+
 ```shell
 ./gradlew pmdTest
 ```
@@ -170,45 +203,96 @@ Once you've done that, restart the IDE.
 ### SONAR
 
 #### Install sonarqube docker image locally
-  - Make sure you have docker installed on your machine - 
-    Download the installer using the url https://docs.docker.com/get-docker/. ( Prefer Docker Desktop Application )
-  - Start the docker application. Double-click Docker.app to start Docker.
+
+- Make sure you have docker installed on your machine -
+  Download the installer using the url https://docs.docker.com/get-docker/. ( Prefer Docker Desktop
+  Application )
+- Start the docker application. Double-click Docker.app to start Docker.
 
 Get the “SonarQube” image using the command
+
 ```shell
 docker pull sonarqube
 ```
+
 Start the "SonarQube" instance
+
 ```shell
 docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
 ```
 
 * Access SonarQube dashboard - http://localhost:9000</br>
   (default credentials )
-login: admin
-password: admin
+  login: admin
+  password: admin
 
 Ref: https://docs.sonarsource.com/sonarqube/latest/try-out-sonarqube/
 
-#### Set-up wcc-backend project on local sonarQube instance 
-#### Step 1
+#### Set-up wcc-backend project on local sonarQube instance
+
+* Step 1
+
 1. Select create a local project
 2. "Project display name" = wcc-backend
 3. "Project key" = wcc-backend
 4. "Main branch name" = *
-#### Step 2
+
+* Step 2
+
 1. Choose the baseline for new code for this project</br>
-select "Use the global setting"
+   select "Use the global setting"
 2. Click "Create Project" at the bottom
 
-#### Step 3
+* Step 3
+
 Generate token to replace in the project.
+
 1. Click "Locally" on the main dashboard
 2. Generate a token on the next screen ( choose Expires in - No expiration) [ Click Generate]
 3. Copy the token = "sqp_XXXXXXX" and replace in the file <b> build.gradle.kts </b><br>
    <b>property("sonar.token", "PLACE_YOUR_TOKEN_HERE")</b>
 
 #### Perform SONAR ANALYSIS
+
 ```shell
 ./gradlew sonarQubeAnalysis -PlocalProfile
 ```
+
+## Deploy application
+
+### Deploy with docker
+
+* build create jar: `./gradlew clean bootJar`
+
+* start app via docker
+
+```shell
+docker build -t wcc-backend .
+docker run -d -p 8080:8080 --name wcc-backend-container wcc-backend
+```
+
+#### Start docker with remote debug
+
+```shell
+docker build -t wcc-backend .
+
+docker run -p 8080:8080 -p 5005:5005 --name wcc-backend-container wcc-backend    
+```
+
+#### Helpful commands with docker
+
+* List resources in docker container
+  docker exec -it wcc-backend ls -al /app/resources
+
+### Deploy with Fly.io
+
+#### Setup Fly.io locally
+
+1. Install [fly.io](https://fly.io/docs/flyctl/install)
+2. Login `fly auth login` or create account `fly auth signup`
+3. First deploy `fly launch`
+
+#### Deploying to Fly.io
+
+1. build create jar: `./gradlew clean bootJar`
+2. Update deploy `fly deploy`
