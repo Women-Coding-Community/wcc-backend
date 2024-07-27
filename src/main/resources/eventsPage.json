@@ -24,7 +24,7 @@
   "events": [
     {
       "topic": "Book Club",
-      "category": "IN_PERSON",
+      "eventType": "IN_PERSON",
       "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
       "endDate": "THU, MAY 30, 2024, 9.30 CEST",
       "title": "Book Club: The Pragmatic Programmer",
@@ -56,7 +56,7 @@
     },
     {
       "topic": "Tech Talk",
-      "category": "ONLINE_MEETUP",
+      "eventType": "ONLINE_MEETUP",
       "startDate": "WED, JULY 17, 2024, 8:00 PM CEST",
       "endDate": "WED, JULY 17, 2024, 9.30 CEST",
       "title": "Tech Talk: Getting started with FaaS: An introduction to AWS Lambda ",
