@@ -212,3 +212,43 @@ Generate token to replace in the project.
 ```shell
 ./gradlew sonarQubeAnalysis -PlocalProfile
 ```
+
+Sure, here it is formatted to fit into a README:
+
+---
+
+## 🐋 Docker Setup
+
+### Docker Compose
+
+This project uses Docker Compose to manage and run the application services. Follow these steps to set up and run the services:
+
+1. **Install Docker and Docker Compose**
+
+   Make sure you have Docker and Docker Compose installed on your machine. You can download Docker from [here](https://docs.docker.com/get-docker/).
+
+2. **Build and start the services**
+
+   In the root directory of the project, run the following command to build and start the services:
+
+   ```sh
+   docker-compose up --build
+   ```
+
+3. **Access the services**
+
+   - **Spring Boot Application**: [http://localhost:8080](http://localhost:8080)
+   - **PostgreSQL**: Accessible at `localhost:5432`
+   - **SonarQube**: [http://localhost:9000](http://localhost:9000)
+
+4. **Stop the services**
+
+   To stop the services, use the following command:
+
+   ```sh
+   docker-compose down
+   ```
+
+---
+
+
