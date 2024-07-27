@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  name="Custom Ruleset"
+  xmlns="http://pmd.sf.net/ruleset/2.0.0"
+  xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
+  xsi:schemaLocation="http://pmd.sf.net/ruleset/2.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+  <description>
+    Custom PMD ruleset for my project, including all standard rules and excluding
+    MissingSerialVersionUID.
+  </description>
+
+  <rule ref="category/java/codestyle.xml">
+    <exclude name="TooManyStaticImports"/>
+    <exclude name="UseExplicitTypes"/>
+    <exclude name="AtLeastOneConstructor"/>
+    <exclude name="LocalVariableCouldBeFinal"/>
+    <exclude name="CommentDefaultAccessModifier"/>
+    <exclude name="OnlyOneReturn"/>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/LongVariable">
+    <properties>
+      <property name="minimum" value="25"/>
+    </properties>
+  </rule>
+</ruleset>

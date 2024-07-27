@@ -29,7 +29,7 @@ class MemberTypeDeserializerTest {
 
   @ParameterizedTest
   @EnumSource(MemberType.class)
-  void testDeserialize(MemberType type) throws IOException {
+  void testDeserialize(final MemberType type) throws IOException {
     when(jsonParser.getText()).thenReturn(type.name());
 
     var response = deserializer.deserialize(jsonParser, context);
