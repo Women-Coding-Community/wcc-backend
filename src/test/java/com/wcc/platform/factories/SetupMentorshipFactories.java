@@ -16,9 +16,9 @@ import java.util.List;
 public class SetupMentorshipFactories {
 
   /** Test factory. */
-  public static MentorshipPage createMentorshipPageTest(String fileName) {
+  public static MentorshipPage createMentorshipPageTest(final String fileName) {
     try {
-      String content = FileUtil.readFileAsString(fileName);
+      final String content = FileUtil.readFileAsString(fileName);
       return OBJECT_MAPPER.readValue(content, MentorshipPage.class);
     } catch (JsonProcessingException e) {
       return createMentorshipPageTest();
@@ -34,7 +34,7 @@ public class SetupMentorshipFactories {
         createFeedbackSectionTest());
   }
 
-  public static FeedbackItem createFeedbackItemTest(boolean isMentor) {
+  public static FeedbackItem createFeedbackItemTest(final boolean isMentor) {
     return new FeedbackItem("Person Name", "Nice feedback", isMentor, Year.of(2023));
   }
 

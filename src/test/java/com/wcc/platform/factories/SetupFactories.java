@@ -26,6 +26,7 @@ import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.utils.FileUtil;
 import java.util.List;
 
+/** Setup Factory tests. */
 public class SetupFactories {
 
   public static final ObjectMapper OBJECT_MAPPER = new ObjectMapperConfig().objectMapper();
@@ -39,21 +40,24 @@ public class SetupFactories {
     return new TeamPage(createPageTest(), createContactTest(), createMemberByTypeTest());
   }
 
-  public static TeamPage createTeamPageTest(String fileName) {
+  /** Factory test. */
+  public static TeamPage createTeamPageTest(final String fileName) {
     try {
-      String content = FileUtil.readFileAsString(fileName);
+      final String content = FileUtil.readFileAsString(fileName);
       return OBJECT_MAPPER.readValue(content, TeamPage.class);
     } catch (JsonProcessingException e) {
       return createTeamPageTest();
     }
   }
 
+  /** Factory test. */
   public static CollaboratorPage createCollaboratorPageTest() {
     return new CollaboratorPage(
         createPageTest(), createContactTest(), List.of(createCollaboratorsTest()));
   }
 
-  public static CollaboratorPage createCollaboratorPageTest(String fileName) {
+  /** Factory test. */
+  public static CollaboratorPage createCollaboratorPageTest(final String fileName) {
     try {
       String content = FileUtil.readFileAsString(fileName);
       return OBJECT_MAPPER.readValue(content, CollaboratorPage.class);
@@ -66,24 +70,26 @@ public class SetupFactories {
     return new CodeOfConductPage(createPageTest(), List.of(createSectionTest()));
   }
 
-  public static CodeOfConductPage createCodeOfConductPageTest(String fileName) {
+  /** Code of conduct factory for testing. */
+  public static CodeOfConductPage createCodeOfConductPageTest(final String fileName) {
     try {
-      String content = FileUtil.readFileAsString(fileName);
+      final String content = FileUtil.readFileAsString(fileName);
       return OBJECT_MAPPER.readValue(content, CodeOfConductPage.class);
     } catch (JsonProcessingException e) {
       return createCodeOfConductPageTest();
     }
   }
 
+  /** Factory test. */
   public static MemberByType createMemberByTypeTest() {
-    var directors = List.of(createLeadershipMemberTest(MemberType.DIRECTOR));
-    var leaders = List.of(createLeadershipMemberTest(MemberType.LEADER));
-    var evangelist = List.of(createLeadershipMemberTest(MemberType.EVANGELIST));
+    final var directors = List.of(createLeadershipMemberTest(MemberType.DIRECTOR));
+    final var leaders = List.of(createLeadershipMemberTest(MemberType.LEADER));
+    final var evangelist = List.of(createLeadershipMemberTest(MemberType.EVANGELIST));
     return new MemberByType(directors, leaders, evangelist);
   }
 
   public static Member createCollaboratorsTest() {
-    return (createCollaboratorMemberTest(MemberType.MEMBER));
+    return createCollaboratorMemberTest(MemberType.MEMBER);
   }
 
   public static Page createPageTest() {
@@ -94,7 +100,8 @@ public class SetupFactories {
     return new Section("title", "description", List.of("item_1", "item_2", "item_3"));
   }
 
-  public static Member createMemberTest(MemberType type) {
+  /** Factory test. */
+  public static Member createMemberTest(final MemberType type) {
     return Member.builder()
         .fullName("fullName " + type.name())
         .position("position " + type.name())
@@ -110,7 +117,8 @@ public class SetupFactories {
         .build();
   }
 
-  public static LeadershipMember createLeadershipMemberTest(MemberType type) {
+  /** Factory test. */
+  public static LeadershipMember createLeadershipMemberTest(final MemberType type) {
     return LeadershipMember.leadershipMemberBuilder()
         .fullName("fullName " + type.name())
         .position("position " + type.name())
@@ -126,7 +134,8 @@ public class SetupFactories {
         .build();
   }
 
-  public static Member createCollaboratorMemberTest(MemberType type) {
+  /** Factory test. */
+  public static Member createCollaboratorMemberTest(final MemberType type) {
     return Member.builder()
         .fullName("fullName " + type.name())
         .position("position " + type.name())
@@ -142,7 +151,7 @@ public class SetupFactories {
         .build();
   }
 
-  public static Image createImageTest(ImageType type) {
+  public static Image createImageTest(final ImageType type) {
     return new Image(type + ".png", "alt image" + type, type);
   }
 
@@ -150,14 +159,16 @@ public class SetupFactories {
     return createImageTest(ImageType.MOBILE);
   }
 
-  public static SocialNetwork createSocialNetworkTest(SocialNetworkType type) {
+  public static SocialNetwork createSocialNetworkTest(final SocialNetworkType type) {
     return new SocialNetwork(type, type + ".com");
   }
 
+  /** Factory test. */
   public static SocialNetwork createSocialNetworkTest() {
     return createSocialNetworkTest(SocialNetworkType.INSTAGRAM);
   }
 
+  /** Factory test. */
   public static FooterPage createFooterPageTest() {
     return new FooterPage(
         "footer_title",
@@ -167,7 +178,8 @@ public class SetupFactories {
         createLabelLinkTest());
   }
 
-  public static FooterPage createFooterPageTest(String fileName) {
+  /** Factory test. */
+  public static FooterPage createFooterPageTest(final String fileName) {
     try {
       String content = FileUtil.readFileAsString(fileName);
       return OBJECT_MAPPER.readValue(content, FooterPage.class);
@@ -184,11 +196,13 @@ public class SetupFactories {
     return new LabelLink("link_title", "link_label", "link_uri");
   }
 
+  /** Factory test. */
   public static SimpleLink createSimpleLinkTest() {
     return new SimpleLink("Simple Link", "/simple-link");
   }
 
-  public static PageSection createPageSectionTest(String title) {
+  /** Factory test for page section. */
+  public static PageSection createPageSectionTest(final String title) {
     return new PageSection(
         title,
         title + "description",

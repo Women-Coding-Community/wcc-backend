@@ -3,17 +3,17 @@ package com.wcc.platform.service;
 import static com.wcc.platform.factories.SetupFactories.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,10 @@ class CmsServiceTest {
 
   @Test
   void whenGetTeamGivenInvalidJsonThenThrowsInternalException() throws IOException {
-    when(objectMapper.readValue(any(File.class), eq(TeamPage.class)))
-        .thenThrow(new IOException("Invalid JSON"));
+    when(objectMapper.readValue(anyString(), eq(TeamPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getTeam());
+    var exception = assertThrows(PlatformInternalException.class, service::getTeam);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -43,7 +43,7 @@ class CmsServiceTest {
   @Test
   void whenGetTeamGivenValidResourceThenReturnValidObjectResponse() throws IOException {
     var teamPage = createTeamPageTest();
-    when(objectMapper.readValue(any(File.class), eq(TeamPage.class))).thenReturn(teamPage);
+    when(objectMapper.readValue(anyString(), eq(TeamPage.class))).thenReturn(teamPage);
 
     var response = service.getTeam();
 
@@ -52,9 +52,10 @@ class CmsServiceTest {
 
   @Test
   void whenGetFooterGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(any(File.class), eq(FooterPage.class)))
-        .thenThrow(new IOException("Invalid JSON"));
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getFooter());
+    when(objectMapper.readValue(anyString(), eq(FooterPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+
+    var exception = assertThrows(PlatformInternalException.class, service::getFooter);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -62,7 +63,7 @@ class CmsServiceTest {
   @Test
   void whenGetFooterGivenValidJson() throws IOException {
     var footer = createFooterPageTest();
-    when(objectMapper.readValue(any(File.class), eq(FooterPage.class))).thenReturn(footer);
+    when(objectMapper.readValue(anyString(), eq(FooterPage.class))).thenReturn(footer);
 
     var response = service.getFooter();
 
@@ -71,10 +72,10 @@ class CmsServiceTest {
 
   @Test
   void whenGetCollaboratorGivenInvalidJsonThenThrowsInternalException() throws IOException {
-    when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class)))
-        .thenThrow(new IOException("Invalid JSON"));
+    when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getCollaborator());
+    var exception = assertThrows(PlatformInternalException.class, service::getCollaborator);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -82,7 +83,7 @@ class CmsServiceTest {
   @Test
   void whenGetCollaboratorGivenValidResourceThenReturnValidObjectResponse() throws IOException {
     var collaboratorPage = createCollaboratorPageTest();
-    when(objectMapper.readValue(any(File.class), eq(CollaboratorPage.class)))
+    when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenReturn(collaboratorPage);
 
     var response = service.getCollaborator();
@@ -92,10 +93,10 @@ class CmsServiceTest {
 
   @Test
   void whenGetCodeOfConductGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class)))
-        .thenThrow(new IOException("Invalid JSON"));
+    when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, () -> service.getCodeOfConduct());
+    var exception = assertThrows(PlatformInternalException.class, service::getCodeOfConduct);
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -103,7 +104,7 @@ class CmsServiceTest {
   @Test
   void whenGetCodeOfConductGivenValidJson() throws IOException {
     var codeOfConductPage = createCodeOfConductPageTest();
-    when(objectMapper.readValue(any(File.class), Mockito.eq(CodeOfConductPage.class)))
+    when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
         .thenReturn(codeOfConductPage);
 
     var response = service.getCodeOfConduct();

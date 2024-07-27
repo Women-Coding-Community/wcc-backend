@@ -6,6 +6,7 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
+    id("org.sonarqube") version "5.0.0.4638"
 }
 
 group = "com.wcc.cms"
@@ -81,5 +82,29 @@ tasks.named<Pmd>("pmdMain") {
     exclude("**/FileUtil.java")
     exclude("**/PlatformApplication.java")
 }
+
+tasks.named<Pmd>("pmdTest") {
+    ruleSetFiles = files("config/pmd/custom-ruleset-test.xml")
+}
+
+tasks.register("sonarQubeAnalysis") {
+    group = "Code Quality"
+    description = "Runs sonarQube analysis on the project."
+    dependsOn("test")
+    finalizedBy("sonarqube")
+}
+
+if (project.hasProperty("localProfile")) {
+    apply(plugin = "org.sonarqube")
+    sonarqube {
+        properties {
+            property("sonar.projectKey", "wcc-backend")
+            property("sonar.projectName", "wcc-backend")
+            property("sonar.host.url", "http://localhost:9000")
+            property("sonar.token", "PLACE_YOUR_TOKEN_HERE")
+        }
+    }
+}
+
 
 logging.captureStandardOutput(LogLevel.INFO)

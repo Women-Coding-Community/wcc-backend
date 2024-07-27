@@ -1,6 +1,9 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.*;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
 import static com.wcc.platform.factories.SetupFactories.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +17,7 @@ class CmsServiceIntegrationTest {
   @Autowired private CmsService service;
 
   @Test
-  void getTeamPageTest() {
+  void testGetTeamPage() {
     var result = service.getTeam();
 
     var expectedTeamPage = createTeamPageTest(TEAM.getFileName());
@@ -32,7 +35,7 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  void getFooterPageTest() {
+  void testGetFooterPageTest() {
     var result = service.getFooter();
 
     var expectedTeamPage = createFooterPageTest(FOOTER.getFileName());
@@ -46,7 +49,7 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  void getCollaboratorPageTest() {
+  void testGetCollaboratorPage() {
     var result = service.getCollaborator();
 
     var expectedCollaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
@@ -60,7 +63,7 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  void getCodeOfConductPageTest() {
+  void testGetCodeOfConductPage() {
     var result = service.getCodeOfConduct();
 
     var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());

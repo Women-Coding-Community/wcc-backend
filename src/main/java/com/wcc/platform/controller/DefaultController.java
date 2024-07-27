@@ -8,20 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for footer api. */
 @RestController
-@RequestMapping("/api/cms/v1/")
-@Tag(name = "API relevant to footer section")
-public class FooterController {
+@Tag(name = "General APIs")
+public class DefaultController {
 
   private final CmsService cmsService;
 
   @Autowired
-  public FooterController(final CmsService cmsService) {
+  public DefaultController(final CmsService cmsService) {
     this.cmsService = cmsService;
   }
 
@@ -30,7 +28,7 @@ public class FooterController {
    *
    * @return Footer content.
    */
-  @GetMapping("/footer")
+  @GetMapping("/api/cms/v1/footer")
   @Operation(summary = "API to retrieve footer section details")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<FooterPage> getFooterPage() {
