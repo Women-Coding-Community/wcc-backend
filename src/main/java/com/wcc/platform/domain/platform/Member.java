@@ -11,10 +11,10 @@ import lombok.Data;
 @Builder
 public class Member {
 
-  // Use builder
   private String fullName;
   private String position;
   private String email;
+  private String slackDisplayName;
   private Country country;
   private String city;
   private String jobTitle;
@@ -28,6 +28,7 @@ public class Member {
       final String fullName,
       final String position,
       final String email,
+      final String slackDisplayName,
       final Country country,
       final String city,
       final String jobTitle,
@@ -38,6 +39,7 @@ public class Member {
     this.fullName = fullName;
     this.position = position;
     this.email = email;
+    this.slackDisplayName = slackDisplayName;
     this.country = country;
     this.city = city;
     this.jobTitle = jobTitle;
@@ -47,7 +49,7 @@ public class Member {
     this.network = network;
   }
 
-    public Member() {
-        // Necessary constructor for jackson.
-    }
+  public Member() {
+    // Necessary constructor for jackson.
+  }
 }

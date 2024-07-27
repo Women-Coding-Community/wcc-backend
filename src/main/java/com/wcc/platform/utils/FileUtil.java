@@ -45,6 +45,10 @@ public final class FileUtil {
     return Strings.EMPTY;
   }
 
+  // TODO: Implement public static String writeFileAsString(final String fileName) as default to
+  // (resources)/repository
+  // TODO later: public static String writeFileAsString(final String fileName, filePath)
+
   /**
    * Get file absolut path based in project resource folder.
    *

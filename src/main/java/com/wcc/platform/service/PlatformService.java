@@ -20,4 +20,9 @@ public class PlatformService {
   public Member createMember(Member member) {
     return memberRepository.save(member);
   }
+
+  /** Write Pojo Volunteer to JSON. */
+  //  public Volunteer createVolunteer(Volunteer volunteer) {
+  //    return memberRepository.save(volunteer);
+  //  }
 }
