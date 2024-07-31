@@ -14,19 +14,26 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/** FileMemberRepository class to write/read member's data to/from file repository. */
 public class FileMemberRepository implements MemberRepository {
 
   private final ObjectMapper objectMapper;
   private final File file;
   private List<Member> members;
 
-  public FileMemberRepository(ObjectMapper objectMapper) {
+  public FileMemberRepository(final ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
     file = Path.of(FileUtil.getFileUri(MEMBERS_FILE.getFileName())).toFile();
   }
 
+  /**
+   * Save member to file
+   *
+   * @param member member to be saved to file
+   * @return member pojo
+   */
   @Override
-  public Member save(Member member) {
+  public Member save(final Member member) {
     members = getAll();
     members.add(member);
 
@@ -35,6 +42,11 @@ public class FileMemberRepository implements MemberRepository {
     return member;
   }
 
+  /**
+   * Read all members from file
+   *
+   * @return list of members
+   */
   @Override
   public List<Member> getAll() {
     try {
@@ -50,7 +62,12 @@ public class FileMemberRepository implements MemberRepository {
     }
   }
 
-  private void writeFile(List<Member> list) {
+  /**
+   * Write list of members to the file
+   *
+   * @param list list of members
+   */
+  private void writeFile(final List<Member> list) {
     try {
       objectMapper.writeValue(file, list);
     } catch (IOException e) {

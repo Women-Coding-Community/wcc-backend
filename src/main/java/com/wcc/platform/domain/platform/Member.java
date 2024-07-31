@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
-/** Member Domain class with all attributes for all types of members. */
+/** Member class with all attributes for all types of members. */
 @Data
 @Builder
 public class Member {

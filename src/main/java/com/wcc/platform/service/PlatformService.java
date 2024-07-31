@@ -12,17 +12,12 @@ public class PlatformService {
   private final MemberRepository memberRepository;
 
   @Autowired
-  public PlatformService(MemberRepository memberRepository) {
+  public PlatformService(final MemberRepository memberRepository) {
     this.memberRepository = memberRepository;
   }
 
   /** Write Pojo Member to JSON. */
-  public Member createMember(Member member) {
+  public Member createMember(final Member member) {
     return memberRepository.save(member);
   }
-
-  /** Write Pojo Volunteer to JSON. */
-  //  public Volunteer createVolunteer(Volunteer volunteer) {
-  //    return memberRepository.save(volunteer);
-  //  }
 }

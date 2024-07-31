@@ -2,9 +2,6 @@ package com.wcc.platform.domain.platform;
 
 import lombok.AllArgsConstructor;
 
+/** Volunteer class. */
 @AllArgsConstructor
-
-public class Volunteer extends Member {
-    // Interests - what kind of support - mentor, speaker ...
-    // Irina - ask for Google form for volunteers
-}
+public class Volunteer extends Member {}

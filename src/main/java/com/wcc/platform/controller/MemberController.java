@@ -34,19 +34,7 @@ public class MemberController {
   @PutMapping("/member")
   @Operation(summary = "API to submit member registration")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Member> createMember(@RequestBody Member member) {
+  public ResponseEntity<Member> createMember(@RequestBody final Member member) {
     return ResponseEntity.ok(service.createMember(member));
   }
-
-  /**
-   * API to create volunteer.
-   *
-   * @return Created new Volunteer content.
-   */
-  //  @PutMapping("/volunteer")
-  //  @Operation(summary = "API to submit member registration")
-  //  @ResponseStatus(HttpStatus.OK)
-  //  public ResponseEntity<Member> createVolunteer(@RequestBody Volunteer volunteer) {
-  //    return ResponseEntity.ok(service.createVolunteer(volunteer));
-  //  }
 }

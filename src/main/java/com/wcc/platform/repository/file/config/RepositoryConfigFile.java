@@ -6,7 +6,7 @@ public enum RepositoryConfigFile {
 
   private final String fileName;
 
-  RepositoryConfigFile(String fileName) {
+  RepositoryConfigFile(final String fileName) {
     this.fileName = fileName;
   }
 
