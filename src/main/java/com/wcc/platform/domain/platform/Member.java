@@ -6,13 +6,15 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
-/** Member Domain class with all attributes for all types of members. */
+/** Member class with all attributes for all types of members. */
 @Data
 @Builder
 public class Member {
+
   private String fullName;
   private String position;
   private String email;
+  private String slackDisplayName;
   private Country country;
   private String city;
   private String jobTitle;
@@ -26,6 +28,7 @@ public class Member {
       final String fullName,
       final String position,
       final String email,
+      final String slackDisplayName,
       final Country country,
       final String city,
       final String jobTitle,
@@ -36,6 +39,7 @@ public class Member {
     this.fullName = fullName;
     this.position = position;
     this.email = email;
+    this.slackDisplayName = slackDisplayName;
     this.country = country;
     this.city = city;
     this.jobTitle = jobTitle;
@@ -45,7 +49,7 @@ public class Member {
     this.network = network;
   }
 
-    public Member() {
-        // Necessary constructor for jackson.
-    }
+  public Member() {
+    // Necessary constructor for jackson.
+  }
 }

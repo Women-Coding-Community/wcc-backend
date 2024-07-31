@@ -8,4 +8,4 @@ springdoc:
     path: /api-docs
   swagger-ui:
     enabled: true
-  paths-to-match: /api/cms/v1/**
+  paths-to-match: /api/cms/v1/**, /api/platform/v1/**

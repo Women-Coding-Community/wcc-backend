@@ -40,7 +40,7 @@ public class DefaultControllerTest {
   }
 
   @Test
-  void testOKResponse() throws Exception {
+  void testOkResponse() throws Exception {
     when(mockCmsService.getFooter())
         .thenReturn(
             new FooterPage(
