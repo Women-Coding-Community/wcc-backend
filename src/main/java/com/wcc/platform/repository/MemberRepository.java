@@ -7,7 +7,7 @@ import java.util.List;
 public interface MemberRepository {
 
   /**
-   * Save member to file
+   * Save member to file.
    *
    * @param member member to be saved to file
    * @return member
@@ -15,7 +15,7 @@ public interface MemberRepository {
   Member save(Member member);
 
   /**
-   * Read all members from file
+   * Read all members from file.
    *
    * @return list of members
    */

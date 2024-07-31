@@ -27,7 +27,7 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
-   * Save member to file
+   * Save member to file.
    *
    * @param member member to be saved to file
    * @return member pojo
@@ -43,7 +43,7 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
-   * Read all members from file
+   * Read all members from file.
    *
    * @return list of members
    */
@@ -51,7 +51,7 @@ public class FileMemberRepository implements MemberRepository {
   public List<Member> getAll() {
     try {
       if (file.length() > 0) {
-        members = objectMapper.readValue(file, new TypeReference<List<Member>>() {});
+        members = objectMapper.readValue(file, new TypeReference<>() {});
       } else {
         members = new ArrayList<>();
       }
@@ -63,7 +63,7 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
-   * Write list of members to the file
+   * Write list of members to the file.
    *
    * @param list list of members
    */

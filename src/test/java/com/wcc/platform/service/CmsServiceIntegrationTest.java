@@ -4,8 +4,13 @@ import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
-import static com.wcc.platform.factories.SetupFactories.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
+import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
+import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
+import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +34,9 @@ class CmsServiceIntegrationTest {
     assertEquals(1, result.membersByType().leads().size());
     assertEquals(1, result.membersByType().evangelists().size());
 
-    assertNull(result.membersByType().directors().get(0).getMemberType());
-    assertNull(result.membersByType().leads().get(0).getMemberType());
-    assertNull(result.membersByType().evangelists().get(0).getMemberType());
+    assertNull(result.membersByType().directors().getFirst().getMemberType());
+    assertNull(result.membersByType().leads().getFirst().getMemberType());
+    assertNull(result.membersByType().evangelists().getFirst().getMemberType());
   }
 
   @Test
@@ -59,7 +64,7 @@ class CmsServiceIntegrationTest {
 
     assertEquals(1, result.collaborators().size());
 
-    assertNotNull(result.collaborators().get(0).getMemberType());
+    assertNotNull(result.collaborators().getFirst().getMemberType());
   }
 
   @Test

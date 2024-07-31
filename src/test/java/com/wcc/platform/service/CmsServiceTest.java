@@ -1,6 +1,9 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.SetupFactories.*;
+import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
+import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
+import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
+import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
