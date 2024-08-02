@@ -23,19 +23,27 @@
   },
   "events": [
     {
-      "topic": "Book Club",
+      "topics": "BOOK_CLUB",
       "eventType": "IN_PERSON",
       "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
       "endDate": "THU, MAY 30, 2024, 9.30 CEST",
       "title": "Book Club: The Pragmatic Programmer",
       "speaker": "Jane Doe",
-      "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!",
-      "image": {
-        "path": "https://cloudprovider.com/image.png",
-        "alt": "Pragmatic programmer book cover",
-        "type": "desktop"
+      "speakerLink": {
+        "label": "John Doe",
+        "uri": "https://meetup.com/event1"
       },
-      "link": {
+      "host": null,
+      "hostLink": null,
+      "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!",
+      "images": [
+        {
+          "path": "https://cloudprovider.com/image.png",
+          "alt": "Pragmatic programmer book cover",
+          "type": "desktop"
+        }
+      ],
+      "eventLink": {
         "label": "Go to Meetup Event",
         "uri": "https://meetup.com/event1"
       },
@@ -50,38 +58,6 @@
           "link": {
             "label": "Recording",
             "uri": "https://meetup.com/event1"
-          }
-        }
-      ]
-    },
-    {
-      "topic": "Tech Talk",
-      "eventType": "ONLINE_MEETUP",
-      "startDate": "WED, JULY 17, 2024, 8:00 PM CEST",
-      "endDate": "WED, JULY 17, 2024, 9.30 CEST",
-      "title": "Tech Talk: Getting started with FaaS: An introduction to AWS Lambda ",
-      "speaker": "Madhura Chaganty",
-      "description": "Join us for an introductory session on serverless computing, with main focus on AWS Lambda for Function As A Service (FaaS)!",
-      "image": {
-        "path": "https://cloudprovider.com/image.png",
-        "alt": "Madhura Chaganty profile picture",
-        "type": "desktop"
-      },
-      "link": {
-        "label": "Go to Meetup Event",
-        "uri": "https://meetup.com/event1"
-      },
-      "eventResources": [
-        {
-          "link": {
-            "label": "Slides",
-            "uri": "https://googledrive/event2"
-          }
-        },
-        {
-          "link": {
-            "label": "Recording",
-            "uri": "https://meetup.com/event2"
           }
         }
       ]
