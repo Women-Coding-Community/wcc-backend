@@ -4,7 +4,7 @@ import static com.wcc.platform.domain.cms.ApiResourcesFile.PROG_BOOK_CLUB;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.programme.BookClubPage;
+import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,10 @@ public class ProgrammeService {
    *
    * @return BookClub json response
    */
-  public BookClubPage getBookClub() {
+  public ProgrammePage getBookClub() {
     try {
       final String data = FileUtil.readFileAsString(PROG_BOOK_CLUB.getFileName());
-      return objectMapper.readValue(data, BookClubPage.class);
+      return objectMapper.readValue(data, ProgrammePage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }

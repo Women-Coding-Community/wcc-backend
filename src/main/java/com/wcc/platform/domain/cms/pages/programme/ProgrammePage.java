@@ -8,6 +8,6 @@ import com.wcc.platform.domain.cms.pages.Page;
  *
  * @param page basic information of the page
  * @param contact social network contact information
- * @param programme programme details section
+ * @param programmeInfo programme details section
  */
-public record BookClubPage(Page page, Contact contact, Programme programme) {}
+public record ProgrammePage(Page page, Contact contact, ProgrammeInfo programmeInfo) {}

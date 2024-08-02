@@ -4,8 +4,8 @@ import com.wcc.platform.domain.cms.attributes.SimpleDetails;
 import java.util.List;
 
 /**
- * Common programme information
+ * Common programme information.
  *
  * @param details for the programme
  */
-public record Programme(List<SimpleDetails> details) {}
+public record ProgrammeInfo(List<SimpleDetails> details) {}

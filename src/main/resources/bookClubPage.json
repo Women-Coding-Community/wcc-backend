@@ -38,6 +38,45 @@
           }
         }
       }
+    ],
+    "event": {
+      "title": "Upcoming events",
+      "link": {
+        "label": "View past events",
+        "uri": "/eventsPage_link"
+      },
+      "eventCard": {
+        "title": "Book Club: book name",
+        "description": "Book description",
+        "host": [
+          {
+            "link": {
+              "label": "Anna",
+              "uri": "profile"
+            }
+          },
+          {
+            "link": {
+              "label": "Lana",
+              "uri": "profile"
+            }
+          }
+        ],
+        "eventLink": {
+          "label": "Go to Meetup Event",
+          "link": "https:/meet-up-link"
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Presentation files",
+        "link": "/drive/presentation"
+      },
+      {
+        "type": "pdf",
+        "link": "/drive/presentation"
+      }
     ]
   }
 }

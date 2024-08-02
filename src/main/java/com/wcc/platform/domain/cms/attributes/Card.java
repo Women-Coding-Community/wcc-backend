@@ -1,7 +1,7 @@
 package com.wcc.platform.domain.cms.attributes;
 
 /**
- * Basic card details for a page or section
+ * Basic card details for a page or section.
  *
  * @param title of the card
  * @param subtitle on the card
