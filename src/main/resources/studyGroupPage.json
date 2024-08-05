@@ -18,62 +18,72 @@
     "groups": [
       {
         "groupName": "Data Analytics and Generative AI concepts",
+        "groupPage": null,
         "description": "The study group focuses more on the Data Analytics and Generative AI concepts and guiding on the insights across the span of industries upskilling on relevant knowledge and practical work.",
-        "howItWorks": "",
-        "benefitsOfJoining": "",
-        "join": "",
-        "resources": "",
-        "events": "",
-        "mentorFullName": "Kirthikka Devi Venkataram",
-        "mentorProfile": "",
+        "mentor": [
+          {
+            "link": {
+              "label": "Kirthikka Devi Venkataram",
+              "uri": "/mentor?name=profile=NAME"
+            }
+          }
+        ],
         "participants": 3
       },
       {
         "groupName": "Frontend React",
+        "groupPage": null,
         "description": "Project based study group, working towards a shared application (including SDLC introduction, gaining more experience in reviewing PR, git etc), with guidance on different aspects like testing, CI/CD.",
-        "howItWorks": "",
-        "benefitsOfJoining": "",
-        "join": "",
-        "resources": "",
-        "events": "",
-        "mentorFullName": "Stephanie Senoner",
-        "mentorProfile": "",
+        "mentor": [
+          {
+            "link": {
+              "label": "Stephanie Senoner",
+              "uri": "/mentor?name=profile=NAME"
+            }
+          }
+        ],
         "participants": 3
       },
       {
         "groupName": "Backend with Java and Rust",
+        "groupPage": null,
         "description": "Focus on Java including the whole developing process with creating projects and push them to git doing pairing review.",
-        "howItWorks": "",
-        "benefitsOfJoining": "",
-        "join": "",
-        "resources": "",
-        "events": "",
-        "mentorFullName": "Liliia Rafikova",
-        "mentorProfile": "",
+        "mentor": [
+          {
+            "link": {
+              "label": "Liliia Rafikova",
+              "uri": "/mentor?name=profile=NAME"
+            }
+          }
+        ],
         "participants": 5
       },
       {
         "groupName": "Full Stack- ReactJs and Java (Spring Boot)",
+        "groupPage": null,
         "description": "Group study on project-based learning, including pair programming. Gain deep knowledge of web-based microservice architecture, system design, and CI/CD best practices. Integrate backend services with ReactJS frontend to craft full-stack projects.",
-        "howItWorks": "",
-        "benefitsOfJoining": "",
-        "join": "",
-        "resources": "",
-        "events": "",
-        "mentorFullName": "Hersi Kopani",
-        "mentorProfile": "",
+        "mentor": [
+          {
+            "link": {
+              "label": "Hersi Kopani",
+              "uri": "/mentor?name=profile=NAME"
+            }
+          }
+        ],
         "participants": 7
       },
       {
         "groupName": "API Test Automation",
+        "groupPage": null,
         "description": "The study group focuses on mastering API testing using Postman, a popular API development and testing tool. Sessions feature hands-on exercises and real-world scenarios to deepen understanding of testing techniques and gain practical knowledge on API automation.",
-        "howItWorks": "",
-        "benefitsOfJoining": "",
-        "join": "",
-        "resources": "",
-        "events": "",
-        "mentorFullName": "",
-        "mentorProfile": "Eleonora Belova",
+        "mentor": [
+          {
+            "link": {
+              "label": "Eleonora Belova",
+              "uri": "/mentor?name=profile=NAME"
+            }
+          }
+        ],
         "participants": 3
       }
     ]
@@ -81,184 +91,3 @@
 }
 
 
-
-
-
-
-
-//{
-  "page": {
-    "title": "Team",
-    "subtitle": "Collaborators",
-    "description": "Our collaborators are the backbone of our community, offering vital expertise and support that drive our initiatives forward and enhance our digital presence."
-  },
-  "contact": {
-    "title": "Contact us",
-    "links": [
-      {
-        "type": "email",
-        "link": "london@womencodingcommunity.com"
-      },
-      {
-        "type": "slack",
-        "link": "http://shortlink_to_slack.com"
-      }
-    ]
-  },
-  "collaborators": [
-    {
-      "fullName": "Lily N.",
-      "position": "UX/UI Designer & Engineer",
-      "images": [
-        {
-          "path": "https://womencodingcommunity.com/assets/images/collaborators/1.jpeg",
-          "alt": "Collaborator profile image",
-          "type": "desktop"
-        }
-      ],
-      "network": [
-        {
-          "type": "linkedin",
-          "link": "https://www.linkedin.com/in/lilynguyendk"
-        },
-        {
-          "type": "github",
-          "link": "https://github.com/lilyndk"
-        }
-      ],
-      "memberType": "COLLABORATOR"
-    },
-    {
-      "fullName": "Chloe Britland-Whiting",
-      "position": "Data Analyst",
-      "images": [
-        {
-          "path": "https://womencodingcommunity.com/assets/images/collaborators/9.jpeg",
-          "alt": "Collaborator profile image",
-          "type": "desktop"
-        }
-      ],
-      "network": [
-        {
-          "type": "linkedin",
-          "link": "https://www.linkedin.com/in/chloe-britland-whiting/"
-        },
-        {
-          "type": "github",
-          "link": "https://github.com/cribw27"
-        }
-      ],
-      "memberType": "COLLABORATOR"
-    },
-    {
-      "fullName": "Neha Sharma",
-      "position": "Principal Engineer",
-      "images": [
-        {
-          "path": "https://womencodingcommunity.com/assets/images/collaborators/5.jpeg",
-          "alt": "Collaborator profile image",
-          "type": "desktop"
-        }
-      ],
-      "network": [
-        {
-          "type": "linkedin",
-          "link": "https://www.linkedin.com/in/nehha/"
-        },
-        {
-          "type": "github",
-          "link": "https://github.com/Neha"
-        }
-      ],
-      "memberType": "COLLABORATOR"
-    },
-    {
-      "fullName": "Sophy O.",
-      "position": "UI Developer/UX Designer",
-      "images": [
-        {
-          "path": "https://womencodingcommunity.com/assets/images/collaborators/10.jpeg",
-          "alt": "Collaborator profile image",
-          "type": "desktop"
-        }
-      ],
-      "network": [
-        {
-          "type": "linkedin",
-          "link": "https://www.linkedin.com/in/sophyo/"
-        },
-        {
-          "type": "github",
-          "link": "https://github.com/sssoz"
-        }
-      ],
-      "memberType": "COLLABORATOR"
-    },
-    {
-      "fullName": "Chiara Pigoni",
-      "position": "Software Developer",
-      "images": [
-        {
-          "path": "https://womencodingcommunity.com/assets/images/collaborators/11.jpeg",
-          "alt": "Collaborator profile image",
-          "type": "desktop"
-        }
-      ],
-      "network": [
-        {
-          "type": "linkedin",
-          "link": "https://www.linkedin.com/in/chiarapigoni/"
-        },
-        {
-          "type": "github",
-          "link": "https://github.com/kikilondon"
-        }
-      ],
-      "memberType": "COLLABORATOR"
-    },
-    {
-      "fullName": "Nevena Verbič",
-      "position": "Software Developer",
-      "images": [
-        {
-          "path": "https://womencodingcommunity.com/assets/images/collaborators/12.jpeg",
-          "alt": "Collaborator profile image",
-          "type": "desktop"
-        }
-      ],
-      "network": [
-        {
-          "type": "linkedin",
-          "link": "link: https://www.linkedin.com/in/nevena-verbič-83a16ab/"
-        },
-        {
-          "type": "github",
-          "link": "https://github.com/nverbic"
-        }
-      ],
-      "memberType": "COLLABORATOR"
-    },
-    {
-      "fullName": "Joana Brito",
-      "position": "Frontend Engineer",
-      "images": [
-        {
-          "path": "image5.jpeg",
-          "alt": "Collaborator profile image",
-          "type": "desktop"
-        }
-      ],
-      "network": [
-        {
-          "type": "linkedin",
-          "link": "https://www.linkedin.com/in/joana-brito216"
-        },
-        {
-          "type": "github",
-          "link": "https://github.com/joanaBrit"
-        }
-      ],
-      "memberType": "VOLUNTEER"
-    }
-  ]
-}
