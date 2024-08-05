@@ -4,11 +4,11 @@ package com.wcc.platform.domain.cms;
 public enum ApiResourcesFile {
   CODE_OF_CONDUCT("codeOfConductPage.json"),
   COLLABORATOR("collaboratorPage.json"),
+  EVENTS("eventsPage.json"),
   FOOTER("footerPage.json"),
   MENTORSHIP("mentorshipPage.json"),
-
-  PROG_BOOK_CLUB("bookClubPage.json"),
-  TEAM("teamPage.json");
+  TEAM("teamPage.json"),
+  PROG_BOOK_CLUB("bookClubPage.json");
 
   private final String fileName;
 
