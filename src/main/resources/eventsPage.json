@@ -29,12 +29,12 @@
       "endDate": "THU, MAY 30, 2024, 9.30 CEST",
       "title": "Book Club: The Pragmatic Programmer",
       "speaker": "Jane Doe",
-      "speakerLink": {
+      "speakerProfileLink": {
         "label": "John Doe",
         "uri": "https://meetup.com/event1"
       },
       "host": null,
-      "hostLink": null,
+      "hostProfileLink": null,
       "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!",
       "images": [
         {
