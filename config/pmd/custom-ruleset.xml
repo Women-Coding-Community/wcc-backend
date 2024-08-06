@@ -48,4 +48,12 @@
     </properties>
   </rule>
   <!--  END CODE DOCUMENTATION -->
+
+  <!-- DESIGN -->
+  <rule ref="rulesets/design.xml/ExcessiveParameterList">
+    <properties>
+      <property name="maxParameters" value="10"/>
+    </properties>
+  </rule>
+  <!-- END CODE DESIGN -->
 </ruleset>

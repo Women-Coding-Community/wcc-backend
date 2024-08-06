@@ -28,8 +28,8 @@ public class ProgrammeController {
   @GetMapping("/api/cms/v1/programme")
   @Operation(summary = "API to retrieve programme page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<ProgrammePage> getProgrammePage(
-      @RequestParam(required = false, name = "type") ProgramType programmeType) {
-    return ResponseEntity.ok(service.getProgrammePage(programmeType));
+  public ResponseEntity<ProgrammePage> getProgramme(
+      @RequestParam(required = false, name = "type") final ProgramType programmeType) {
+    return ResponseEntity.ok(service.getProgramme(programmeType));
   }
 }

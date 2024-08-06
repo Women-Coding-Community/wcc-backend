@@ -21,10 +21,8 @@ public class Event {
   private String endDate;
   private ProgramType topics;
   private List<Image> images;
-  private String speaker;
-  private SimpleLink speakerProfileLink;
-  private String host;
-  private SimpleLink hostProfileLink;
+  private SimpleLink speakerProfile;
+  private SimpleLink hostProfile;
   private SimpleLink eventLink;
   private List<EventResource> eventResources;
 
@@ -37,12 +35,11 @@ public class Event {
       final String endDate,
       final ProgramType topics,
       final List<Image> images,
-      final String speaker,
-      final SimpleLink speakerProfileLink,
-      final String host,
-      final SimpleLink hostProfileLink,
+      final SimpleLink speakerProfile,
+      final SimpleLink hostProfile,
       final SimpleLink eventLink,
       final List<EventResource> eventResources) {
+    this.id = UUID.randomUUID();
     this.title = title;
     this.description = description;
     this.eventType = eventType;
@@ -50,13 +47,13 @@ public class Event {
     this.endDate = endDate;
     this.topics = topics;
     this.images = images;
-    this.speaker = speaker;
-    this.speakerProfileLink = speakerProfileLink;
-    this.host = host;
-    this.hostProfileLink = hostProfileLink;
+    this.speakerProfile = speakerProfile;
+    this.hostProfile = hostProfile;
     this.eventLink = eventLink;
     this.eventResources = eventResources;
   }
 
-  public Event() {}
+  public Event() {
+    // Necessary constructor for jackson.
+  }
 }

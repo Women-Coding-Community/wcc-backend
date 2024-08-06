@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 @Builder
 public class EventSection {
-  String title;
-  SimpleLink link;
-  List<Event> events;
+  private String title;
+  private SimpleLink link;
+  private List<Event> events;
 
   public EventSection(final String title, final SimpleLink link, final List<Event> events) {
     this.title = title;
@@ -18,5 +18,7 @@ public class EventSection {
     this.events = events;
   }
 
-  public EventSection() {}
+  public EventSection() {
+    // Necessary constructor for jackson.
+  }
 }

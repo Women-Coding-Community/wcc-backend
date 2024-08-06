@@ -27,7 +27,7 @@ public class ProgrammeService {
    *
    * @return Programme Page json response
    */
-  public ProgrammePage getProgrammePage(ProgramType programType) {
+  public ProgrammePage getProgramme(final ProgramType programType) {
     try {
       String data = null;
       if (ProgramType.BOOK_CLUB.equals(programType)) {

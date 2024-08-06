@@ -8,11 +8,11 @@ import lombok.Data;
 @Builder
 public class Programme {
 
-  String title;
+  private String title;
 
-  String description;
+  private String description;
 
-  Card card;
+  private Card card;
 
   public Programme(final String title, final String description, final Card card) {
     this.title = title;
@@ -20,5 +20,7 @@ public class Programme {
     this.card = card;
   }
 
-  public Programme() {}
+  public Programme() {
+    // Necessary constructor for jackson.
+  }
 }
