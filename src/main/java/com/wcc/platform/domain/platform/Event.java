@@ -29,20 +29,23 @@ public class Event {
   private List<EventResource> eventResources;
 
   public Event(
-      final UUID id,
-      final String title,
-      final String description,
-      final EventType eventType,
-      final String startDate,
-      final String endDate,
-      final ProgramType topics,
-      final List<Image> images,
-      final String speaker,
-      final SimpleLink speakerProfile,
-      final String host,
-      final SimpleLink hostProfile,
-      final SimpleLink eventLink,
-      final List<EventResource> eventResources) {
+      UUID id,
+      String title,
+      String description,
+      EventType eventType,
+      String startDate,
+      String endDate,
+      ProgramType topics,
+      List<Image> images,
+      String speaker,
+      SimpleLink speakerProfile,
+      String host,
+      SimpleLink hostProfile,
+      SimpleLink eventLink,
+      List<EventResource> eventResources) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
     this.eventType = eventType;
     this.startDate = startDate;
     this.endDate = endDate;
@@ -56,5 +59,7 @@ public class Event {
     this.eventResources = eventResources;
   }
 
-  public Event() {}
+  public Event() {
+    // Necessary constructor for jackson.
+  }
 }
