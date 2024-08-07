@@ -1,12 +1,10 @@
 package com.wcc.platform.domain.cms.attributes;
 
 /**
- * Record for the intro section
+ * Intro section.
  *
- * @param title
- * @param description
- * @param image
+ * @param title title of section
+ * @param description section description not mandatory
+ * @param image mandatory image
  */
-public record HeroSection(String title, String description, Image image) {
-
-}
+public record HeroSection(String title, String description, Image image) {}

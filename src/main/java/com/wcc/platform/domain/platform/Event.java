@@ -22,9 +22,9 @@ public class Event {
   private ProgramType topics;
   private List<Image> images;
   private String speaker;
-  private SimpleLink speakerLink; // linkedin
+  private SimpleLink speakerProfile;
   private String host;
-  private SimpleLink hostLink; // linkedin
+  private SimpleLink hostProfile;
   private SimpleLink eventLink;
   private List<EventResource> eventResources;
 
@@ -38,9 +38,9 @@ public class Event {
       final ProgramType topics,
       final List<Image> images,
       final String speaker,
-      final SimpleLink speakerLink, // linkedin
+      final SimpleLink speakerProfile,
       final String host,
-      final SimpleLink hostLink, // linkedin
+      final SimpleLink hostProfile,
       final SimpleLink eventLink,
       final List<EventResource> eventResources) {
     this.eventType = eventType;
@@ -49,9 +49,9 @@ public class Event {
     this.topics = topics;
     this.images = images;
     this.speaker = speaker;
-    this.speakerLink = speakerLink; // linkedin
+    this.speakerProfile = speakerProfile;
     this.host = host;
-    this.hostLink = hostLink; // linkedin
+    this.hostProfile = hostProfile;
     this.eventLink = eventLink;
     this.eventResources = eventResources;
   }

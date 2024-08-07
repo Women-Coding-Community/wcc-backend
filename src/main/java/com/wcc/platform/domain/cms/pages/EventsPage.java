@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * Events page details
  *
- * @param events
- * @param hero
- * @param contact
+ * @param events list of events
+ * @param hero hero section to show banner
+ * @param contact contact information to get more information about events
  */
 public record EventsPage(List<Event> events, HeroSection hero, Contact contact) {}
