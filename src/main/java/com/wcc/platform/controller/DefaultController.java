@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,5 +34,13 @@ public class DefaultController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<FooterPage> getFooterPage() {
     return ResponseEntity.ok(cmsService.getFooter());
+  }
+
+  /** API to retrieve landing page. */
+  @GetMapping("/api/cms/v1/landingPage")
+  @Operation(summary = "API to retrieve landing page sections")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<LandingPage> getLandingPage() {
+    return ResponseEntity.ok(cmsService.getLandingPage());
   }
 }

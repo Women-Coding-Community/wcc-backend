@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 public class EventControllerTest {
 
   @Autowired private MockMvc mockMvc;
-
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private CmsService service;
