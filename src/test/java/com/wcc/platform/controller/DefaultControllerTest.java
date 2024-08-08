@@ -4,13 +4,24 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Network;
 import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.LandingPage;
+import com.wcc.platform.domain.cms.pages.Section;
+import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.Event;
+import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.factories.SetupEventFactories;
+import com.wcc.platform.factories.SetupFactories;
+import com.wcc.platform.factories.SetupProgrammeFactories;
 import com.wcc.platform.service.CmsService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -24,11 +35,13 @@ import org.springframework.test.web.servlet.MockMvc;
 public class DefaultControllerTest {
   @Autowired private MockMvc mockMvc;
 
-  @MockBean private CmsService mockCmsService;
+  @MockBean private CmsService service;
+
+  @Autowired private ObjectMapper objectMapper;
 
   @Test
-  void testInternalServerError() throws Exception {
-    when(mockCmsService.getFooter())
+  void testInternalServerErrorFooter() throws Exception {
+    when(service.getFooter())
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
@@ -40,8 +53,8 @@ public class DefaultControllerTest {
   }
 
   @Test
-  void testOKResponse() throws Exception {
-    when(mockCmsService.getFooter())
+  void testOkResponseFooter() throws Exception {
+    when(service.getFooter())
         .thenReturn(
             new FooterPage(
                 "footer_title",
@@ -61,5 +74,59 @@ public class DefaultControllerTest {
         .andExpect(jsonPath("$.link.title", is("label_title")))
         .andExpect(jsonPath("$.link.label", is("label")))
         .andExpect(jsonPath("$.link.uri", is("label_uri")));
+  }
+
+  @Test
+  void testLandingPageInternalServerError() throws Exception {
+    when(service.getLandingPage())
+        .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
+
+    mockMvc
+        .perform(get("/api/cms/v1/landingPage").contentType(APPLICATION_JSON))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.status", is(500)))
+        .andExpect(jsonPath("$.message", is("Invalid Json")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/landingPage")));
+  }
+
+  @Test
+  void testLandingPageOkResponse() throws Exception {
+    var page =
+        LandingPage.builder()
+            .heroSection(SetupFactories.createPageTest())
+            .programmes(createSectionProgramme())
+            .events(createSection("Events", ProgramType.TECH_TALK))
+            .announcements(createSection("Announcements", ProgramType.OTHERS))
+            .build();
+
+    when(service.getLandingPage()).thenReturn(page);
+
+    mockMvc
+        .perform(get("/api/cms/v1/landingPage").contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(page)));
+  }
+
+  private Section<Event> createSection(String title, ProgramType techTalk) {
+    return new Section<>(
+        title,
+        "check our latest " + techTalk,
+        List.of(SetupEventFactories.createEventTest(techTalk)));
+  }
+
+  private Section<ProgrammeItem> createSectionProgramme() {
+    var programmeItem1 =
+        SetupProgrammeFactories.createProgrammeItemTest(
+            ProgramType.MENTORSHIP, CmsIcon.DIVERSITY_2);
+    var programmeItem2 =
+        SetupProgrammeFactories.createProgrammeItemTest(ProgramType.BOOK_CLUB, CmsIcon.ICON_3);
+    var programmeItem3 =
+        SetupProgrammeFactories.createProgrammeItemTest(ProgramType.TECH_TALK, CmsIcon.ICON_1);
+    var programmeItem4 =
+        SetupProgrammeFactories.createProgrammeItemTest(ProgramType.WRITING_CLUB, CmsIcon.ICON_2);
+
+    var programmes = List.of(programmeItem1, programmeItem2);
+
+    return new Section<>("Programmes ", "Description Programme", programmes);
   }
 }

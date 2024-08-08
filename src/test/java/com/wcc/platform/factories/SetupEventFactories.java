@@ -4,10 +4,10 @@ import static com.wcc.platform.factories.SetupFactories.createContactTest;
 import static com.wcc.platform.factories.SetupFactories.createImageTest;
 
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.cms.attributes.ProgramType;
 import com.wcc.platform.domain.cms.attributes.SimpleLink;
 import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.platform.Event;
+import com.wcc.platform.domain.platform.ProgramType;
 import java.util.List;
 
 public class SetupEventFactories {

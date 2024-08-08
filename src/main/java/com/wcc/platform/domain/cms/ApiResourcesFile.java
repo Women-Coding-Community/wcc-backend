@@ -3,6 +3,7 @@ package com.wcc.platform.domain.cms;
 /** Create custom api configurations. */
 public enum ApiResourcesFile {
   TEAM("teamPage.json"),
+  LANDING_PAGE("landingPage.json"),
   MENTORSHIP("mentorshipPage.json"),
   FOOTER("footerPage.json"),
   COLLABORATOR("collaboratorPage.json"),

@@ -3,14 +3,17 @@ package com.wcc.platform.domain.platform;
 import com.wcc.platform.domain.cms.attributes.EventResource;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.ProgramType;
 import com.wcc.platform.domain.cms.attributes.SimpleLink;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@Getter
+@EqualsAndHashCode
+@ToString
 @Builder
 public class Event {
   private UUID id;

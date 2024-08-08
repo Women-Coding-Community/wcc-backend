@@ -92,11 +92,18 @@ public class SetupFactories {
     return createCollaboratorMemberTest(MemberType.MEMBER);
   }
 
+  /** Factory test for page. */
   public static Page createPageTest() {
-    return new Page("title", "subtitle", "description");
+    return Page.builder()
+        .title("collaborator_title")
+        .subtitle("collaborator_subtitle")
+        .description("collaborator_desc")
+        .link(createSimpleLinkTest())
+        .images(List.of(createImageTest()))
+        .build();
   }
 
-  public static Section createSectionTest() {
+  public static Section<String> createSectionTest() {
     return new Section("title", "description", List.of("item_1", "item_2", "item_3"));
   }
 
