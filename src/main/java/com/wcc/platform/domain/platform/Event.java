@@ -39,7 +39,7 @@ public class Event {
       final SimpleLink hostProfile,
       final SimpleLink eventLink,
       final List<EventResource> eventResources) {
-    this.id = UUID.randomUUID();
+    this.id = id;
     this.title = title;
     this.description = description;
     this.eventType = eventType;

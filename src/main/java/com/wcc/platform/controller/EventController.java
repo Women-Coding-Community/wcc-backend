@@ -12,29 +12,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Rest controller for event pages API
- */
+/** Rest controller for event pages API */
 @RestController
 @RequestMapping("/api/cms/v1/")
 @Tag(name = "APIs relevant Event Page")
 public class EventController {
 
-    private final CmsService cmsService;
+  private final CmsService cmsService;
 
-    @Autowired
-    public EventController(final CmsService service) {
-        this.cmsService = service;
-    }
+  @Autowired
+  public EventController(final CmsService service) {
+    this.cmsService = service;
+  }
 
-    /**
-     * API to retrieve information about events page
-     */
-    @GetMapping("/events")
-    @Operation(summary = "API to retrieve information about events page")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<EventsPage> getEventsPage() {
-        return ResponseEntity.ok(cmsService.getEvents());
-    }
-
+  /** API to retrieve information about events page */
+  @GetMapping("/events")
+  @Operation(summary = "API to retrieve information about events page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<EventsPage> getEventsPage() {
+    return ResponseEntity.ok(cmsService.getEvents());
+  }
 }
