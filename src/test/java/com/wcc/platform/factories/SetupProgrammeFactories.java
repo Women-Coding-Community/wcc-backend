@@ -7,6 +7,7 @@ import static com.wcc.platform.factories.SetupFactories.createPageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.Card;
+import com.wcc.platform.domain.cms.attributes.ProgramType;
 import com.wcc.platform.domain.cms.attributes.SimpleLink;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.domain.platform.EventSection;
@@ -41,8 +42,17 @@ public class SetupProgrammeFactories {
     return new ProgrammePage(
         createPageTest(),
         createContactTest(),
-        Collections.singletonList(createProgrammeDetails()),
+        Collections.singletonList(createProgramme()),
         Collections.singletonList(createEventSection()));
+  }
+
+  public static Programme createProgrammeByType(final ProgramType type) {
+    if (ProgramType.BOOK_CLUB.equals(type)) {
+      createProgramme();
+    } else {
+      return createProgrammeWithoutCard();
+    }
+    return null;
   }
 
   /**
@@ -50,7 +60,7 @@ public class SetupProgrammeFactories {
    *
    * @return Programme object
    */
-  public static Programme createProgrammeDetails() {
+  public static Programme createProgramme() {
     return Programme.builder()
         .title("What We Are Reading")
         .description("Every month we vote we read a book this is current month book.")
@@ -60,6 +70,18 @@ public class SetupProgrammeFactories {
                 "Author of the book",
                 "test book description",
                 new SimpleLink("Good read", "htpp/link")))
+        .build();
+  }
+
+  /**
+   * Create Programme object with test data.
+   *
+   * @return Programme object
+   */
+  public static Programme createProgrammeWithoutCard() {
+    return Programme.builder()
+        .title("What We Are Reading")
+        .description("Every month we vote we read a book this is current month book.")
         .build();
   }
 
