@@ -2,8 +2,10 @@ package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENTS;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
+import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static com.wcc.platform.factories.SetupFactories.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,9 +67,16 @@ class CmsServiceIntegrationTest {
   @Test
   void testGetCodeOfConductPage() {
     var result = service.getCodeOfConduct();
-
     var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
 
     assertEquals(expectedCodeOfConductPage, result);
+  }
+
+  @Test
+  void testGetEventsPage() {
+    var result = service.getEvents();
+    var expectedEventsPage = createEventTest(EVENTS.getFileName());
+
+    assertEquals(expectedEventsPage, result);
   }
 }

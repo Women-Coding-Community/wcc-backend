@@ -107,7 +107,7 @@ public class DefaultControllerTest {
         .andExpect(content().json(objectMapper.writeValueAsString(page)));
   }
 
-  private Section<Event> createSection(String title, ProgramType techTalk) {
+  private Section<Event> createSection(final String title, final ProgramType techTalk) {
     return new Section<>(
         title,
         "check our latest " + techTalk,
@@ -116,14 +116,14 @@ public class DefaultControllerTest {
 
   private Section<ProgrammeItem> createSectionProgramme() {
     var programmeItem1 =
-        SetupProgrammeFactories.createProgrammeItemTest(
+        SetupProgrammeFactories.createProgrammeItemsTest(
             ProgramType.MENTORSHIP, CmsIcon.DIVERSITY_2);
     var programmeItem2 =
-        SetupProgrammeFactories.createProgrammeItemTest(ProgramType.BOOK_CLUB, CmsIcon.ICON_3);
+        SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.BOOK_CLUB, CmsIcon.ICON_3);
     var programmeItem3 =
-        SetupProgrammeFactories.createProgrammeItemTest(ProgramType.TECH_TALK, CmsIcon.ICON_1);
+        SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.TECH_TALK, CmsIcon.ICON_1);
     var programmeItem4 =
-        SetupProgrammeFactories.createProgrammeItemTest(ProgramType.WRITING_CLUB, CmsIcon.ICON_2);
+        SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.WRITING_CLUB, CmsIcon.ICON_2);
 
     var programmes = List.of(programmeItem1, programmeItem2);
 

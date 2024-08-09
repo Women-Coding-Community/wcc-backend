@@ -2,13 +2,14 @@ package com.wcc.platform.domain.cms;
 
 /** Create custom api configurations. */
 public enum ApiResourcesFile {
-  TEAM("teamPage.json"),
+  CODE_OF_CONDUCT("codeOfConductPage.json"),
+  COLLABORATOR("collaboratorPage.json"),
+  EVENTS("eventsPage.json"),
+  FOOTER("footerPage.json"),
   LANDING_PAGE("landingPage.json"),
   MENTORSHIP("mentorshipPage.json"),
-  FOOTER("footerPage.json"),
-  COLLABORATOR("collaboratorPage.json"),
-  CODE_OF_CONDUCT("codeOfConductPage.json"),
-  EVENTS("eventsPage.json");
+  TEAM("teamPage.json"),
+  PROG_BOOK_CLUB("bookClubPage.json");
 
   private final String fileName;
 

@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+/** Event class with all the relevant attributes for an event. */
 @Getter
 @EqualsAndHashCode
 @ToString
@@ -24,28 +25,26 @@ public class Event {
   private String endDate;
   private ProgramType topics;
   private List<Image> images;
-  private String speaker;
   private SimpleLink speakerProfile;
-  private String host;
   private SimpleLink hostProfile;
   private SimpleLink eventLink;
   private List<EventResource> eventResources;
 
+  /** Event builder. */
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   public Event(
-      UUID id,
-      String title,
-      String description,
-      EventType eventType,
-      String startDate,
-      String endDate,
-      ProgramType topics,
-      List<Image> images,
-      String speaker,
-      SimpleLink speakerProfile,
-      String host,
-      SimpleLink hostProfile,
-      SimpleLink eventLink,
-      List<EventResource> eventResources) {
+      final UUID id,
+      final String title,
+      final String description,
+      final EventType eventType,
+      final String startDate,
+      final String endDate,
+      final ProgramType topics,
+      final List<Image> images,
+      final SimpleLink speakerProfile,
+      final SimpleLink hostProfile,
+      final SimpleLink eventLink,
+      final List<EventResource> eventResources) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -54,9 +53,7 @@ public class Event {
     this.endDate = endDate;
     this.topics = topics;
     this.images = images;
-    this.speaker = speaker;
     this.speakerProfile = speakerProfile;
-    this.host = host;
     this.hostProfile = hostProfile;
     this.eventLink = eventLink;
     this.eventResources = eventResources;

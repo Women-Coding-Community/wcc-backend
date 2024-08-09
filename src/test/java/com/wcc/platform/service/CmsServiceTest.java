@@ -125,4 +125,14 @@ class CmsServiceTest {
 
     assertEquals(page, response);
   }
+
+  @Test
+  void whenGetEventsInValidJson() throws IOException {
+    when(objectMapper.readValue(anyString(), eq(EventsPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+
+    var exception = assertThrows(PlatformInternalException.class, service::getEvents);
+
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
 }

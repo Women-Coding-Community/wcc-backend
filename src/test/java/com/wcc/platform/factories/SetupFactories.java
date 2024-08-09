@@ -104,7 +104,7 @@ public class SetupFactories {
   }
 
   public static Section<String> createSectionTest() {
-    return new Section("title", "description", List.of("item_1", "item_2", "item_3"));
+    return new Section<>("title", "description", List.of("item_1", "item_2", "item_3"));
   }
 
   /** Factory test. */

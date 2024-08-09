@@ -1,8 +1,5 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENTS;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.ApiResourcesFile;
@@ -92,7 +89,7 @@ public class CmsService {
    */
   public CodeOfConductPage getCodeOfConduct() {
     try {
-      final var data = FileUtil.readFileAsString(CODE_OF_CONDUCT.getFileName());
+      final var data = FileUtil.readFileAsString(ApiResourcesFile.CODE_OF_CONDUCT.getFileName());
       return objectMapper.readValue(data, CodeOfConductPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
@@ -106,7 +103,7 @@ public class CmsService {
    */
   public EventsPage getEvents() {
     try {
-      final var data = FileUtil.readFileAsString(EVENTS.getFileName());
+      final var data = FileUtil.readFileAsString(ApiResourcesFile.EVENTS.getFileName());
       return objectMapper.readValue(data, EventsPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
