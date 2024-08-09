@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.wcc.platform.deserializers.CmsIconDeserializer;
 import com.wcc.platform.deserializers.ImageTypeDeserializer;
 import com.wcc.platform.deserializers.MemberTypeDeserializer;
 import com.wcc.platform.deserializers.SocialNetworkTypeDeserializer;
+import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetworkType;
@@ -35,6 +37,7 @@ public class ObjectMapperConfig {
             new SimpleModule()
                 .addDeserializer(MemberType.class, new MemberTypeDeserializer())
                 .addDeserializer(ImageType.class, new ImageTypeDeserializer())
+                .addDeserializer(CmsIcon.class, new CmsIconDeserializer())
                 .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
   }
 }
