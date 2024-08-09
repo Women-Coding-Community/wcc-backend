@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.platform;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wcc.platform.domain.cms.attributes.EventResource;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -17,6 +19,7 @@ import lombok.ToString;
 @ToString
 @Builder
 public class Event {
+
   private UUID id;
   private String title;
   private String description;
@@ -25,9 +28,16 @@ public class Event {
   private String endDate;
   private ProgramType topics;
   private List<Image> images;
+
+  @JsonInclude(Include.NON_NULL)
   private SimpleLink speakerProfile;
+
+  @JsonInclude(Include.NON_NULL)
   private SimpleLink hostProfile;
+
   private SimpleLink eventLink;
+
+  @JsonInclude(Include.NON_NULL)
   private List<EventResource> eventResources;
 
   /** Event builder. */

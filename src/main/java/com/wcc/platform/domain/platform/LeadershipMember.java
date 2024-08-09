@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -16,6 +17,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString
+@NoArgsConstructor
 public class LeadershipMember extends Member {
 
   @JsonIgnore private MemberType memberType;
@@ -46,10 +48,5 @@ public class LeadershipMember extends Member {
         network);
 
     this.memberType = memberType;
-  }
-
-  /** Necessary constructor for jackson. */
-  public LeadershipMember() {
-    super();
   }
 }

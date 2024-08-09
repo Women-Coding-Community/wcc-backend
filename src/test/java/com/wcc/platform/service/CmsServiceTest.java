@@ -15,8 +15,10 @@ import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.factories.SetupFactories;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -134,5 +136,29 @@ class CmsServiceTest {
     var exception = assertThrows(PlatformInternalException.class, service::getEvents);
 
     assertEquals("Invalid JSON", exception.getMessage());
+  }
+
+  @Test
+  void whenGetLandingPageGivenInvalidJson() throws IOException {
+    when(objectMapper.readValue(anyString(), eq(LandingPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+
+    var exception = assertThrows(PlatformInternalException.class, service::getLandingPage);
+
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
+
+  @Test
+  void whenGetLandingPageGivenValidJsonThenReturnPage() throws IOException {
+    var page =
+        LandingPage.builder()
+            .heroSection(SetupFactories.createPageTest("Hero"))
+            .volunteerSection(SetupFactories.createPageTest("Volunteer"))
+            .build();
+    when(objectMapper.readValue(anyString(), eq(LandingPage.class))).thenReturn(page);
+
+    var response = service.getLandingPage();
+
+    assertEquals(page, response);
   }
 }

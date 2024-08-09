@@ -94,9 +94,9 @@ public class DefaultControllerTest {
     var page =
         LandingPage.builder()
             .heroSection(SetupFactories.createPageTest())
-            .programmes(createSectionProgramme())
-            .events(createSection("Events", ProgramType.TECH_TALK))
-            .announcements(createSection("Announcements", ProgramType.OTHERS))
+            .programmesSection(createSectionProgramme())
+            .eventsSection(createSection("Events", ProgramType.TECH_TALK))
+            .announcementSection(createSection("Announcements", ProgramType.OTHERS))
             .build();
 
     when(service.getLandingPage()).thenReturn(page);

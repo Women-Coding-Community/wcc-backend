@@ -3,7 +3,7 @@ package com.wcc.platform.domain.cms.pages;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.SimpleLink;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,10 +26,11 @@ public class Page {
   @JsonInclude(Include.NON_NULL)
   private String subtitle;
 
+  @JsonInclude(Include.NON_NULL)
   private String description;
 
   @JsonInclude(Include.NON_NULL)
-  private SimpleLink link;
+  private LabelLink link;
 
   @JsonInclude(Include.NON_NULL)
   private List<Image> images;

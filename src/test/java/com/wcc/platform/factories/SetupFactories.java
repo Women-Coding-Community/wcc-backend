@@ -93,14 +93,18 @@ public class SetupFactories {
   }
 
   /** Factory test for page. */
-  public static Page createPageTest() {
+  public static Page createPageTest(String title) {
     return Page.builder()
-        .title("collaborator_title")
-        .subtitle("collaborator_subtitle")
-        .description("collaborator_desc")
-        .link(createSimpleLinkTest())
+        .title("title " + title)
+        .subtitle("subtitle " + title)
+        .description("desc " + title)
+        .link(createLabelLinkTest())
         .images(List.of(createImageTest()))
         .build();
+  }
+
+  public static Page createPageTest() {
+    return createPageTest("defaultPage");
   }
 
   public static Section<String> createSectionTest() {

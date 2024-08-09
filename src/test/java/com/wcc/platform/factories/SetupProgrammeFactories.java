@@ -2,7 +2,7 @@ package com.wcc.platform.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
-import com.wcc.platform.domain.cms.attributes.SimpleLink;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
@@ -66,7 +66,7 @@ public class SetupProgrammeFactories {
                 "Test book title",
                 "Author of the book",
                 "test book description",
-                new SimpleLink("Good read", "htpp/link"),
+                new LabelLink("Title Link", "Good read", "http://link"),
                 List.of()))
         .build();
   }

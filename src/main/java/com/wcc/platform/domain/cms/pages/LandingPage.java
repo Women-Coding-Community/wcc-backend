@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.cms.pages;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
 import lombok.AllArgsConstructor;
@@ -18,9 +20,18 @@ import lombok.ToString;
 @Builder
 public class LandingPage {
   private Page heroSection;
+
+  @JsonInclude(Include.NON_NULL)
   private Page fullBannerSection;
-  private Section<ProgrammeItem> programmes;
-  private Section<Event> announcements;
-  private Section<Event> events;
+
+  private Section<ProgrammeItem> programmesSection;
+
+  @JsonInclude(Include.NON_NULL)
+  private Section<Event> announcementSection;
+
+  @JsonInclude(Include.NON_NULL)
+  private Section<Event> eventsSection;
+
+  @JsonInclude(Include.NON_NULL)
   private Page volunteerSection;
 }

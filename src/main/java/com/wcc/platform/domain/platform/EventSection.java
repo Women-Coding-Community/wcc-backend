@@ -1,32 +1,28 @@
 package com.wcc.platform.domain.platform;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wcc.platform.domain.cms.attributes.SimpleLink;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /** EventSection representing list of events {@link Event}. */
-@Data
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Builder
 public class EventSection {
   private String title;
+
+  @JsonInclude(Include.NON_NULL)
   private SimpleLink link;
+
   private List<Event> events;
-
-  /**
-   * Builder for the EventSection.
-   *
-   * @param title like - "Upcoming Events" or "Past Events"
-   * @param link link to the Events page
-   * @param events list of events to show
-   */
-  public EventSection(final String title, final SimpleLink link, final List<Event> events) {
-    this.title = title;
-    this.link = link;
-    this.events = events;
-  }
-
-  public EventSection() {
-    // Necessary constructor for jackson.
-  }
 }
