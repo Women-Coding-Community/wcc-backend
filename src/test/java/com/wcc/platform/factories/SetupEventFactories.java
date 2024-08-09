@@ -10,6 +10,7 @@ import com.wcc.platform.domain.cms.attributes.ProgramType;
 import com.wcc.platform.domain.cms.attributes.SimpleLink;
 import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.platform.Event;
+import com.wcc.platform.domain.platform.EventSection;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
 import java.util.List;
@@ -50,5 +51,31 @@ public class SetupEventFactories {
   public static EventsPage createEventPageTest(final List<Event> events) {
     var hero = new HeroSection("title", "event description", createImageTest());
     return new EventsPage(events, hero, createContactTest());
+  }
+
+  /**
+   * Create an EventSection object with test data.
+   *
+   * @return EventSection object
+   */
+  public static EventSection createEventSection() {
+    return EventSection.builder()
+        .title("Upcoming Events")
+        .link(new SimpleLink("view events", "/events"))
+        .events(Collections.singletonList(createEventTest()))
+        .build();
+  }
+
+  /**
+   * Create an EventSection object with test data.
+   *
+   * @return EventSection object
+   */
+  public static EventSection createEventSection(final ProgramType programType) {
+    return EventSection.builder()
+        .title("Upcoming Events")
+        .link(new SimpleLink("view events", "/events"))
+        .events(Collections.singletonList(createEventTest(programType)))
+        .build();
   }
 }

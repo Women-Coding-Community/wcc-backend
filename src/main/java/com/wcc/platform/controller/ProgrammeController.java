@@ -29,7 +29,7 @@ public class ProgrammeController {
   @Operation(summary = "API to retrieve programme page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<ProgrammePage> getProgramme(
-      @RequestParam(required = false, name = "type") final ProgramType programmeType) {
+      @RequestParam(name = "type") final ProgramType programmeType) {
     return ResponseEntity.ok(service.getProgramme(programmeType));
   }
 }

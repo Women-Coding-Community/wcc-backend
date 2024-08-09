@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /** Test class for ProgrammeService. */
-public class ProgrammeServiceTest {
+class ProgrammeServiceTest {
   private ObjectMapper objectMapper;
   private ProgrammeService service;
 

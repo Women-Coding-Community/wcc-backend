@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
+@SuppressWarnings("PMD.TooManyStaticImports")
 @Service
 public class CmsService {
   private final ObjectMapper objectMapper;

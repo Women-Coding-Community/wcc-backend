@@ -10,6 +10,7 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 
+/** Event class with all the relevant attributes for an event. */
 @Data
 @Builder
 public class Event {
@@ -26,6 +27,8 @@ public class Event {
   private SimpleLink eventLink;
   private List<EventResource> eventResources;
 
+  /** Event builder. */
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   public Event(
       final UUID id,
       final String title,

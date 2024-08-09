@@ -10,7 +10,8 @@ import com.wcc.platform.domain.cms.attributes.ProgramType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ProgrammeTest {
+/** Test class for {@link Programme}. */
+class ProgrammeTest {
 
   Programme testProgramme;
 
