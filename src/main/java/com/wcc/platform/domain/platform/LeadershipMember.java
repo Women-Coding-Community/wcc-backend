@@ -20,7 +20,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class LeadershipMember extends Member {
 
-  @JsonIgnore private MemberType memberType;
+  @SuppressWarnings("PMD.ImmutableField")
+  @JsonIgnore
+  private MemberType memberType;
 
   /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")

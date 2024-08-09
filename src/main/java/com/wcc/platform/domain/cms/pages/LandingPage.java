@@ -24,13 +24,13 @@ public class LandingPage {
   @JsonInclude(Include.NON_NULL)
   private Page fullBannerSection;
 
-  private Section<ProgrammeItem> programmesSection;
+  private Section<ProgrammeItem> programmes;
 
   @JsonInclude(Include.NON_NULL)
-  private Section<Event> announcementSection;
+  private Section<Event> announcements;
 
   @JsonInclude(Include.NON_NULL)
-  private Section<Event> eventsSection;
+  private Section<Event> events;
 
   @JsonInclude(Include.NON_NULL)
   private Page volunteerSection;

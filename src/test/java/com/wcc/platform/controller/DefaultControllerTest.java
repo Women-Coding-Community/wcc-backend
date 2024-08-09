@@ -94,9 +94,9 @@ public class DefaultControllerTest {
     var page =
         LandingPage.builder()
             .heroSection(SetupFactories.createPageTest())
-            .programmesSection(createSectionProgramme())
-            .eventsSection(createSection("Events", ProgramType.TECH_TALK))
-            .announcementSection(createSection("Announcements", ProgramType.OTHERS))
+            .programmes(createSectionProgramme())
+            .events(createSection("Events", ProgramType.TECH_TALK))
+            .announcements(createSection("Announcements", ProgramType.OTHERS))
             .build();
 
     when(service.getLandingPage()).thenReturn(page);
@@ -111,6 +111,7 @@ public class DefaultControllerTest {
     return new Section<>(
         title,
         "check our latest " + techTalk,
+        SetupFactories.createLabelLinkTest(),
         List.of(SetupEventFactories.createEventTest(techTalk)));
   }
 
@@ -125,8 +126,8 @@ public class DefaultControllerTest {
     var programmeItem4 =
         SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.WRITING_CLUB, CmsIcon.ICON_2);
 
-    var programmes = List.of(programmeItem1, programmeItem2);
+    var programmes = List.of(programmeItem1, programmeItem2, programmeItem3, programmeItem4);
 
-    return new Section<>("Programmes ", "Description Programme", programmes);
+    return new Section<>("Programmes ", "Description Programme", null, programmes);
   }
 }

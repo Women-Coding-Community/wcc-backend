@@ -2,7 +2,6 @@ package com.wcc.platform.service;
 
 import static com.wcc.platform.factories.SetupEventFactories.createEventPageTest;
 import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
-import static com.wcc.platform.factories.SetupFactories.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -48,7 +47,7 @@ class CmsServiceTest {
 
   @Test
   void whenGetTeamGivenValidResourceThenReturnValidObjectResponse() throws IOException {
-    var teamPage = createTeamPageTest();
+    var teamPage = SetupFactories.createTeamPageTest();
     when(objectMapper.readValue(anyString(), eq(TeamPage.class))).thenReturn(teamPage);
 
     var response = service.getTeam();
@@ -68,7 +67,7 @@ class CmsServiceTest {
 
   @Test
   void whenGetFooterGivenValidJson() throws IOException {
-    var footer = createFooterPageTest();
+    var footer = SetupFactories.createFooterPageTest();
     when(objectMapper.readValue(anyString(), eq(FooterPage.class))).thenReturn(footer);
 
     var response = service.getFooter();
@@ -88,7 +87,7 @@ class CmsServiceTest {
 
   @Test
   void whenGetCollaboratorGivenValidResourceThenReturnValidObjectResponse() throws IOException {
-    var collaboratorPage = createCollaboratorPageTest();
+    var collaboratorPage = SetupFactories.createCollaboratorPageTest();
     when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenReturn(collaboratorPage);
 
@@ -109,7 +108,7 @@ class CmsServiceTest {
 
   @Test
   void whenGetCodeOfConductGivenValidJson() throws IOException {
-    var codeOfConductPage = createCodeOfConductPageTest();
+    var codeOfConductPage = SetupFactories.createCodeOfConductPageTest();
     when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
         .thenReturn(codeOfConductPage);
 

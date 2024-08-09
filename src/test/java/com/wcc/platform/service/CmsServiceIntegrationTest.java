@@ -79,4 +79,11 @@ class CmsServiceIntegrationTest {
 
     assertEquals(expectedEventsPage, result);
   }
+
+  @Test
+  void testGetLandingPage() {
+    var result = service.getLandingPage();
+
+    assertNotNull(result);
+  }
 }

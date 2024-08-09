@@ -9,11 +9,11 @@ import java.io.IOException;
 public class CmsIconDeserializer extends JsonDeserializer<CmsIcon> {
 
   @Override
-  public CmsIcon deserialize(final JsonParser p, final DeserializationContext context)
+  public CmsIcon deserialize(final JsonParser parser, final DeserializationContext context)
       throws IOException {
-    String value = p.getText();
+    final String value = parser.getText();
 
-    for (CmsIcon icon : CmsIcon.values()) {
+    for (final CmsIcon icon : CmsIcon.values()) {
       if (icon.getClassName().equals(value)) {
         return icon;
       }

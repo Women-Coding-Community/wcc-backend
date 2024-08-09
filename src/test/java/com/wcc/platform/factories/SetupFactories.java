@@ -93,7 +93,7 @@ public class SetupFactories {
   }
 
   /** Factory test for page. */
-  public static Page createPageTest(String title) {
+  public static Page createPageTest(final String title) {
     return Page.builder()
         .title("title " + title)
         .subtitle("subtitle " + title)
@@ -108,7 +108,7 @@ public class SetupFactories {
   }
 
   public static Section<String> createSectionTest() {
-    return new Section<>("title", "description", List.of("item_1", "item_2", "item_3"));
+    return new Section<>("title", "description", null, List.of("item_1", "item_2", "item_3"));
   }
 
   /** Factory test. */
@@ -169,11 +169,6 @@ public class SetupFactories {
 
   public static SocialNetwork createSocialNetworkTest(final SocialNetworkType type) {
     return new SocialNetwork(type, type + ".com");
-  }
-
-  /** Factory test. */
-  public static SocialNetwork createSocialNetworkTest() {
-    return createSocialNetworkTest(SocialNetworkType.INSTAGRAM);
   }
 
   /** Factory test. */
