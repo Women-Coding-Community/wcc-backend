@@ -10,4 +10,5 @@ jobs:
       - uses: dbelyaev/action-checkstyle@master
         with:
           github_token: ${{ secrets.PAT_TOKEN }}
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.PAT_TOKEN }}
           reporter: github-pr-review
