@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.attributes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public enum CmsIcon {
   private final String className;
 
   @Override
+  @JsonValue
   public String toString() {
     return className;
   }
