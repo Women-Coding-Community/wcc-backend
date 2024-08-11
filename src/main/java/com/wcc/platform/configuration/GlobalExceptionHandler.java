@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+/** Global controller to handle all exceptions for the API */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  /** Receive ContentNotFoundException and return {@link HttpStatus#NOT_FOUND} */
+  /** Receive ContentNotFoundException and return {@link HttpStatus#NOT_FOUND}. */
   @ExceptionHandler(ContentNotFoundException.class)
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<?> handleNotFoundException(

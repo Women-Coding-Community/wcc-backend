@@ -8,11 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dbelyaev/action-checkstyle@master
-        env:
-          ENV_TEST_ADRI: MARIA -"${{ secrets.PAT_TOKEN_ADRIANA }}".
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.PAT_TOKEN_ADRIANA }}
-          run: |
-            echo This is the variable $ENV_TEST_ADRI
         with:
           github_token: ${{ secrets.PAT_TOKEN_ADRIANA }}
-          reporter: github-pr-review
+          reporter: github-pr-check
