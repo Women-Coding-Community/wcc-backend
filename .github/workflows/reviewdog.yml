@@ -1,6 +1,6 @@
 name: reviewdog
 
-on: [ pull_request, workflow_dispatch, synchronize ]
+on: [ pull_request, workflow_dispatch ]
 jobs:
   checkstyle:
     name: runner / checkstyle
