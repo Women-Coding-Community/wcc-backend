@@ -43,6 +43,7 @@ public class SetupProgrammeFactories {
         Collections.singletonList(SetupEventFactories.createEventSection()));
   }
 
+  /** Create Factory. */
   public static Programme createProgrammeByType(final ProgramType type) {
     if (ProgramType.BOOK_CLUB.equals(type)) {
       createProgramme();

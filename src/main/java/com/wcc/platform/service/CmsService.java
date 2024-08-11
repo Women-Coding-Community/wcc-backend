@@ -97,7 +97,7 @@ public class CmsService {
   }
 
   /**
-   * read Json and convert to POJO event page
+   * Read Json and convert to POJO event page.
    *
    * @return POJO eventsPage
    */
