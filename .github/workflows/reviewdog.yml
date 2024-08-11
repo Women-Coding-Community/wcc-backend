@@ -1,8 +1,6 @@
 name: reviewdog
 
-on:
-  pull_request_target:
-    types: [ opened, synchronize, reopened ]
+on: [ pull_request, workflow_dispatch ]
 jobs:
   checkstyle:
     name: try review api
