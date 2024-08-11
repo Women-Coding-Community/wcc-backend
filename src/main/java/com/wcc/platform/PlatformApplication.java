@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-/** Spring application service. */
+/** Spring application service */
 @SpringBootApplication
 @Import(ObjectMapperConfig.class)
 public class PlatformApplication {
