@@ -296,3 +296,5 @@ docker run -p 8080:8080 -p 5005:5005 --name wcc-backend-container wcc-backend
 
 1. build create jar: `./gradlew clean bootJar`
 2. Update deploy `fly deploy`
+3. Access the application [here](https://wcc-backend.fly.dev/swagger-ui/index.html) and the api
+   for [landing page here](https://wcc-backend.fly.dev/api/cms/v1/landingPage)
