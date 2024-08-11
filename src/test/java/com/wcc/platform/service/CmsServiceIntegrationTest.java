@@ -6,9 +6,19 @@ import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENTS;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
 import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
-import static com.wcc.platform.factories.SetupFactories.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
+import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
+import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
+import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
+import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.wcc.platform.domain.cms.ApiResourcesFile;
+import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,9 +91,17 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  void testGetLandingPage() {
+  void testGetLandingPage() throws JsonProcessingException {
     var result = service.getLandingPage();
 
     assertNotNull(result);
+
+    var expected = FileUtil.readFileAsString(ApiResourcesFile.LANDING_PAGE.getFileName());
+    var jsonResponse = OBJECT_MAPPER.writeValueAsString(result);
+
+    JsonNode actualJsonNode = OBJECT_MAPPER.readTree(jsonResponse);
+    JsonNode expectedJsonNode = OBJECT_MAPPER.readTree(expected);
+
+    assertEquals(expectedJsonNode, actualJsonNode);
   }
 }

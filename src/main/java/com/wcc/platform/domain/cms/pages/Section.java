@@ -1,7 +1,5 @@
 package com.wcc.platform.domain.cms.pages;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import java.util.List;
 
@@ -9,5 +7,5 @@ import java.util.List;
 public record Section<T>(
     String title,
     String description,
-    @JsonInclude(Include.NON_NULL) LabelLink link,
+    LabelLink link,
     List<T> items) {}

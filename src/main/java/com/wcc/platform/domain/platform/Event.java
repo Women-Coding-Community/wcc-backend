@@ -1,7 +1,5 @@
 package com.wcc.platform.domain.platform;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wcc.platform.domain.cms.attributes.EventResource;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -32,15 +30,8 @@ public class Event {
   private String endDate; // TODO convert to Date
   private ProgramType topics;
   private List<Image> images;
-
-  @JsonInclude(Include.NON_NULL)
   private SimpleLink speakerProfile;
-
-  @JsonInclude(Include.NON_NULL)
   private SimpleLink hostProfile;
-
   private SimpleLink eventLink;
-
-  @JsonInclude(Include.NON_NULL)
   private List<EventResource> eventResources;
 }

@@ -6,7 +6,7 @@
       {
         "path": "https://cloudprovider.com/image.png",
         "alt": "There are two women talking during a productive mentoring session",
-        "type": "desktop"
+        "type": "DESKTOP"
       }
     ]
   },
@@ -17,7 +17,7 @@
       {
         "path": "https://cloudprovider.com/image.png",
         "alt": "There are two women talking during a productive mentoring session",
-        "type": "desktop"
+        "type": "DESKTOP"
       }
     ],
     "link": {
@@ -62,7 +62,7 @@
           {
             "path": "https://cloudprovider.com/image.png",
             "alt": "Pragmatic programmer book cover",
-            "type": "desktop"
+            "type": "DESKTOP"
           }
         ],
         "eventLink": {
@@ -98,7 +98,7 @@
           {
             "path": "https://cloudprovider.com/image.png",
             "alt": "There are two women talking during a productive mentoring session",
-            "type": "desktop"
+            "type": "DESKTOP"
           }
         ],
         "eventLink": {
@@ -120,7 +120,7 @@
       {
         "path": "https://cloudprovider.com/image.png",
         "alt": "There are two women talking during a productive mentoring session",
-        "type": "desktop"
+        "type": "DESKTOP"
       }
     ]
   }
