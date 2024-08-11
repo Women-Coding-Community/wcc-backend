@@ -1,39 +1,61 @@
 package com.wcc.platform.repository.file;
 
-import static com.wcc.platform.repository.file.config.RepositoryConfigFile.MEMBERS_FILE;
+import static java.nio.file.Files.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.MemberRepository;
-import com.wcc.platform.utils.FileUtil;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 
 /** FileMemberRepository class to write/read member's data to/from file repository. */
 public class FileMemberRepository implements MemberRepository {
-
+  private final String FILE_NAME = "members.json";
+  private final String FOLDER_NAME = "data";
   private final ObjectMapper objectMapper;
-  private final File file;
+  boolean isRunningInDocker = true;
+  private File file;
   private List<Member> members;
 
-  public FileMemberRepository(final ObjectMapper objectMapper) {
+  @Value("${file.storage.directory}")
+  private String directoryPath;
+
+  /**
+   * FileMemberRepository constructor.
+   *
+   * @param objectMapper objectMapper for reading/writing of JSON
+   */
+  public FileMemberRepository(final ObjectMapper objectMapper) throws IOException {
     this.objectMapper = objectMapper;
-    file = Path.of(FileUtil.getFileUri(MEMBERS_FILE.getFileName())).toFile();
   }
 
   /**
-   * Save member to file.
+   * Create file path to the data folder
+   *
+   * @return file
+   */
+  private File getFile() {
+    isRunningInDocker = System.getenv("RUNNING_IN_DOCKER") != null;
+    if (!isRunningInDocker) {
+      directoryPath = FOLDER_NAME;
+    }
+    return new File(directoryPath + File.separator + FILE_NAME);
+  }
+
+  /**
+   * Save member to temporary variable?.
    *
    * @param member member to be saved to file
-   * @return member pojo
+   * @return Member pojo
    */
   @Override
   public Member save(final Member member) {
+    file = getFile();
     members = getAll();
     members.add(member);
 
@@ -50,12 +72,10 @@ public class FileMemberRepository implements MemberRepository {
   @Override
   public List<Member> getAll() {
     try {
-      if (file.length() > 0) {
-        members = objectMapper.readValue(file, new TypeReference<>() {});
-      } else {
-        members = new ArrayList<>();
+      if (!file.exists()) {
+        return new ArrayList<>();
       }
-      return members;
+      return objectMapper.readValue(file, new TypeReference<List<Member>>() {});
     } catch (IOException e) {
       // todo: FileRepositoryException - create
       throw new PlatformInternalException(e.getMessage(), e);

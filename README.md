@@ -275,9 +275,32 @@ docker run -d -p 8080:8080 --name wcc-backend-container wcc-backend
 
 ```shell
 docker build -t wcc-backend .
-
 docker run -p 8080:8080 -p 5005:5005 --name wcc-backend-container wcc-backend    
 ```
+
+#### Start docker with mounted data volume
+
+If you are running your Spring Boot application inside a Docker container, ensure that the external
+directory path is accessible from within the container.
+
+* Windows:
+
+```shell
+  docker run -v ${PWD}/data:/app/data -d -p 8080:8080 --name wcc-backend-container wcc-backend
+
+```
+
+* Linux:
+
+```shell
+  docker run -v $(pwd)/data:/app/data -d -p 8080:8080 --name wcc-backend-container wcc-backend
+
+```
+
+Check main/resources/application.yml is set as below:
+file:
+storage:
+directory: /app/data
 
 #### Helpful commands with docker
 

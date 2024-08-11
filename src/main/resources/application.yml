@@ -2,6 +2,10 @@ spring:
   application:
     name: wcc-backend
 
+file:
+  storage:
+    directory: /app/data
+
 springdoc:
   api-docs:
     enabled: true
