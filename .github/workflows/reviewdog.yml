@@ -6,10 +6,11 @@ jobs:
     name: runner / checkstyle
     runs-on: ubuntu-latest
     steps:
+      - name: Run reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.PAT_TOKEN }}
       - uses: actions/checkout@v4
       - uses: dbelyaev/action-checkstyle@master
         with:
           github_token: ${{ secrets.PAT_TOKEN }}
           reporter: github-pr-review
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.PAT_TOKEN }}
