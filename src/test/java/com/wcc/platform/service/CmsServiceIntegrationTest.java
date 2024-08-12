@@ -2,8 +2,11 @@ package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENTS;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
+import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
+import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
 import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
@@ -12,6 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.wcc.platform.domain.cms.ApiResourcesFile;
+import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -70,9 +77,31 @@ class CmsServiceIntegrationTest {
   @Test
   void testGetCodeOfConductPage() {
     var result = service.getCodeOfConduct();
-
     var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
 
     assertEquals(expectedCodeOfConductPage, result);
+  }
+
+  @Test
+  void testGetEventsPage() {
+    var result = service.getEvents();
+    var expectedEventsPage = createEventTest(EVENTS.getFileName());
+
+    assertEquals(expectedEventsPage, result);
+  }
+
+  @Test
+  void testGetLandingPage() throws JsonProcessingException {
+    var result = service.getLandingPage();
+
+    assertNotNull(result);
+
+    var expected = FileUtil.readFileAsString(ApiResourcesFile.LANDING_PAGE.getFileName());
+    var jsonResponse = OBJECT_MAPPER.writeValueAsString(result);
+
+    JsonNode actualJsonNode = OBJECT_MAPPER.readTree(jsonResponse);
+    JsonNode expectedJsonNode = OBJECT_MAPPER.readTree(expected);
+
+    assertEquals(expectedJsonNode, actualJsonNode);
   }
 }

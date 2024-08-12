@@ -309,9 +309,12 @@ directory path is accessible from within the container.
 
 1. Install [fly.io](https://fly.io/docs/flyctl/install)
 2. Login `fly auth login` or create account `fly auth signup`
-3. First deploy `fly launch`
+3. build create jar: `./gradlew clean bootJar`
+4. First deploy `fly launch`
 
 #### Deploying to Fly.io
 
 1. build create jar: `./gradlew clean bootJar`
 2. Update deploy `fly deploy`
+3. Access the application [here](https://wcc-backend.fly.dev/swagger-ui/index.html) and the api
+   for [landing page here](https://wcc-backend.fly.dev/api/cms/v1/landingPage)

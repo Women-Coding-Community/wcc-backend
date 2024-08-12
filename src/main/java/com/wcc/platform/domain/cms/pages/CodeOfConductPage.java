@@ -8,4 +8,4 @@ import java.util.List;
  * @param page Page details as title and description
  * @param items all details
  */
-public record CodeOfConductPage(Page page, List<Section> items) {}
+public record CodeOfConductPage(Page page, List<Section<String>> items) {}

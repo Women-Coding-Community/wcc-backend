@@ -108,7 +108,11 @@ class AboutControllerTest {
 
     var collaboratorPage =
         new CollaboratorPage(
-            new Page("collaborator_title", "collaborator_subtitle", "collaborator_desc"),
+            Page.builder()
+                .title("collaborator_title")
+                .subtitle("collaborator_subtitle")
+                .description("collaborator_desc")
+                .build(),
             new Contact(
                 "contact_title",
                 List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "page_link"))),
