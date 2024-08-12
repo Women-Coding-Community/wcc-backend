@@ -1,7 +1,7 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.attributes.ProgramType;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
+import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.service.ProgrammeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -5,18 +5,24 @@ import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import java.util.List;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * Represents the core team of the community: {@link MemberType#DIRECTOR}, {@link MemberType#LEADER}
  * and {@link MemberType#EVANGELIST}.
  */
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true)
+@ToString
+@NoArgsConstructor
 public class LeadershipMember extends Member {
 
-  @JsonIgnore private MemberType memberType;
+  @SuppressWarnings("PMD.ImmutableField")
+  @JsonIgnore
+  private MemberType memberType;
 
   /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")
@@ -42,10 +48,7 @@ public class LeadershipMember extends Member {
         memberType,
         images,
         network);
-  }
 
-  /** Necessary constructor for jackson. */
-  public LeadershipMember() {
-    super();
+    this.memberType = memberType;
   }
 }

@@ -1,17 +1,13 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENTS;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.ApiResourcesFile;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.utils.FileUtil;
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
-@SuppressWarnings("PMD.TooManyStaticImports")
 @Service
 public class CmsService {
   private final ObjectMapper objectMapper;
@@ -36,7 +31,8 @@ public class CmsService {
    */
   public TeamPage getTeam() {
     try {
-      return objectMapper.readValue(FileUtil.readFileAsString(TEAM.getFileName()), TeamPage.class);
+      return objectMapper.readValue(
+          FileUtil.readFileAsString(ApiResourcesFile.TEAM.getFileName()), TeamPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
@@ -50,7 +46,22 @@ public class CmsService {
   public FooterPage getFooter() {
     try {
       return objectMapper.readValue(
-          FileUtil.readFileAsString(FOOTER.getFileName()), FooterPage.class);
+          FileUtil.readFileAsString(ApiResourcesFile.FOOTER.getFileName()), FooterPage.class);
+    } catch (JsonProcessingException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Read JSON and convert to Pojo FooterPage.
+   *
+   * @return Landing page of the community.
+   */
+  public LandingPage getLandingPage() {
+    try {
+      return objectMapper.readValue(
+          FileUtil.readFileAsString(ApiResourcesFile.LANDING_PAGE.getFileName()),
+          LandingPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
@@ -63,8 +74,9 @@ public class CmsService {
    */
   public CollaboratorPage getCollaborator() {
     try {
-      final var data = FileUtil.readFileAsString(COLLABORATOR.getFileName());
-      return objectMapper.readValue(data, CollaboratorPage.class);
+      return objectMapper.readValue(
+          FileUtil.readFileAsString(ApiResourcesFile.COLLABORATOR.getFileName()),
+          CollaboratorPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
@@ -77,7 +89,7 @@ public class CmsService {
    */
   public CodeOfConductPage getCodeOfConduct() {
     try {
-      final var data = FileUtil.readFileAsString(CODE_OF_CONDUCT.getFileName());
+      final var data = FileUtil.readFileAsString(ApiResourcesFile.CODE_OF_CONDUCT.getFileName());
       return objectMapper.readValue(data, CodeOfConductPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
@@ -91,7 +103,7 @@ public class CmsService {
    */
   public EventsPage getEvents() {
     try {
-      final var data = FileUtil.readFileAsString(EVENTS.getFileName());
+      final var data = FileUtil.readFileAsString(ApiResourcesFile.EVENTS.getFileName());
       return objectMapper.readValue(data, EventsPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);

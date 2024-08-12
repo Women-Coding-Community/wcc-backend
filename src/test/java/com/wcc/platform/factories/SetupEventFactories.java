@@ -1,16 +1,15 @@
 package com.wcc.platform.factories;
 
-import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createContactTest;
 import static com.wcc.platform.factories.SetupFactories.createImageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.cms.attributes.ProgramType;
 import com.wcc.platform.domain.cms.attributes.SimpleLink;
 import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.EventSection;
+import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +21,7 @@ public class SetupEventFactories {
   public static EventsPage createEventTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, EventsPage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, EventsPage.class);
     } catch (JsonProcessingException e) {
       return createEventPageTest(Collections.singletonList(createEventTest(ProgramType.BOOK_CLUB)));
     }

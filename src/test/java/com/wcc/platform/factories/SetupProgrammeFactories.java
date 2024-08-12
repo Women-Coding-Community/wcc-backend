@@ -1,18 +1,16 @@
 package com.wcc.platform.factories;
 
-import static com.wcc.platform.factories.SetupEventFactories.createEventSection;
-import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
-import static com.wcc.platform.factories.SetupFactories.createContactTest;
-import static com.wcc.platform.factories.SetupFactories.createPageTest;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wcc.platform.domain.cms.attributes.Card;
-import com.wcc.platform.domain.cms.attributes.ProgramType;
-import com.wcc.platform.domain.cms.attributes.SimpleLink;
+import com.wcc.platform.domain.cms.attributes.CmsIcon;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
+import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
+import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.domain.platform.Programme;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
+import java.util.List;
 
 /** Test factories for Programme. */
 public class SetupProgrammeFactories {
@@ -26,7 +24,7 @@ public class SetupProgrammeFactories {
   public static ProgrammePage createProgrammePageTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, ProgrammePage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, ProgrammePage.class);
     } catch (JsonProcessingException e) {
       return createProgrammePageTest();
     }
@@ -39,10 +37,10 @@ public class SetupProgrammeFactories {
    */
   public static ProgrammePage createProgrammePageTest() {
     return new ProgrammePage(
-        createPageTest(),
-        createContactTest(),
+        SetupFactories.createPageTest(),
+        SetupFactories.createContactTest(),
         Collections.singletonList(createProgramme()),
-        Collections.singletonList(createEventSection()));
+        Collections.singletonList(SetupEventFactories.createEventSection()));
   }
 
   public static Programme createProgrammeByType(final ProgramType type) {
@@ -64,11 +62,12 @@ public class SetupProgrammeFactories {
         .title("What We Are Reading")
         .description("Every month we vote we read a book this is current month book.")
         .card(
-            new Card(
+            new Page(
                 "Test book title",
                 "Author of the book",
                 "test book description",
-                new SimpleLink("Good read", "htpp/link")))
+                new LabelLink("Title Link", "Good read", "http://link"),
+                List.of()))
         .build();
   }
 
@@ -82,5 +81,10 @@ public class SetupProgrammeFactories {
         .title("What We Are Reading")
         .description("Every month we vote we read a book this is current month book.")
         .build();
+  }
+
+  /** Test factory. * */
+  public static ProgrammeItem createProgrammeItemsTest(final ProgramType type, final CmsIcon icon) {
+    return new ProgrammeItem(type, SetupFactories.createSimpleLinkTest(), icon);
   }
 }

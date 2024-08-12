@@ -1,0 +1,127 @@
+{
+  "heroSection": {
+    "title": "Women Coding Community",
+    "description": "Empowering Women in Their Tech Careers",
+    "images": [
+      {
+        "path": "https://cloudprovider.com/image.png",
+        "alt": "There are two women talking during a productive mentoring session",
+        "type": "DESKTOP"
+      }
+    ]
+  },
+  "fullBannerSection": {
+    "title": "Become a Mentor",
+    "description": "Ready to empower and be empowered in tech? Become a mentor! Expand your network, give back, share expertise, and discover new perspectives.\n",
+    "images": [
+      {
+        "path": "https://cloudprovider.com/image.png",
+        "alt": "There are two women talking during a productive mentoring session",
+        "type": "DESKTOP"
+      }
+    ],
+    "link": {
+      "label": "Send us a report on Github",
+      "uri": "https://github.com/Women-Coding-Community/wcc-frontend/issues",
+      "title": "Page Title"
+    }
+  },
+  "programmes": {
+    "title": "Opportunities and Programmes",
+    "description": "Join our community and unlock endless opportunities. Network, find mentors, and access leadership programs. Whether you're aiming to enhance your skills, grow your professional network, or advance your career, we have what you need. We offer a wide range of opportunities to help you achieve your goals.\n",
+    "items": [
+      {
+        "name": "MENTORSHIP",
+        "link": {
+          "label": "mentorship link",
+          "uri": "/mentorship"
+        },
+        "icon": "Diversity2"
+      }
+    ]
+  },
+  "announcements": {
+    "title": "Announcements",
+    "items": [
+      {
+        "topics": "BOOK_CLUB",
+        "eventType": "IN_PERSON",
+        "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
+        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "title": "Book Club: The Pragmatic Programmer",
+        "speakerProfile": {
+          "label": "Jane Doe Profile",
+          "uri": "https://linkedin"
+        },
+        "hostProfile": {
+          "label": "Host Profile",
+          "uri": "https://linkedin.host"
+        },
+        "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!",
+        "images": [
+          {
+            "path": "https://cloudprovider.com/image.png",
+            "alt": "Pragmatic programmer book cover",
+            "type": "DESKTOP"
+          }
+        ],
+        "eventLink": {
+          "label": "Go to Meetup Event",
+          "uri": "https://meetup.com/event1"
+        }
+      }
+    ]
+  },
+  "events": {
+    "title": "Page Title",
+    "link": {
+      "label": "Send us a report on Github",
+      "uri": "https://github.com/Women-Coding-Community/wcc-frontend/issues"
+    },
+    "items": [
+      {
+        "topics": "BOOK_CLUB",
+        "eventType": "IN_PERSON",
+        "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
+        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "title": "Book Club: The Pragmatic Programmer",
+        "hostProfile": {
+          "label": "Host Profile",
+          "uri": "https://linkedin.host"
+        },
+        "speakerProfile": {
+          "label": "Jane Doe Profile",
+          "uri": "https://linkedin"
+        },
+        "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!\n",
+        "images": [
+          {
+            "path": "https://cloudprovider.com/image.png",
+            "alt": "There are two women talking during a productive mentoring session",
+            "type": "DESKTOP"
+          }
+        ],
+        "eventLink": {
+          "label": "Send us a report on Github",
+          "uri": "https://github.com/Women-Coding-Community/wcc-frontend/issues"
+        }
+      }
+    ]
+  },
+  "volunteerSection": {
+    "title": "Volunteer With Us",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n",
+    "link": {
+      "label": "Send us a report on Github",
+      "uri": "https://github.com/Women-Coding-Community/wcc-frontend/issues",
+      "title": "Page Title"
+    },
+    "images": [
+      {
+        "path": "https://cloudprovider.com/image.png",
+        "alt": "There are two women talking during a productive mentoring session",
+        "type": "DESKTOP"
+      }
+    ]
+  }
+}

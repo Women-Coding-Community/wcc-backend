@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.wcc.platform.domain.cms.attributes.ProgramType;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.service.ProgrammeService;
 import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;

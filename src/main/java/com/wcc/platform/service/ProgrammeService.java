@@ -1,12 +1,11 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.PROG_BOOK_CLUB;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.attributes.ProgramType;
+import com.wcc.platform.domain.cms.ApiResourcesFile;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class ProgrammeService {
     try {
       String data = null;
       if (ProgramType.BOOK_CLUB.equals(programType)) {
-        data = FileUtil.readFileAsString(PROG_BOOK_CLUB.getFileName());
+        data = FileUtil.readFileAsString(ApiResourcesFile.PROG_BOOK_CLUB.getFileName());
       }
       return objectMapper.readValue(data, ProgrammePage.class);
     } catch (JsonProcessingException e) {

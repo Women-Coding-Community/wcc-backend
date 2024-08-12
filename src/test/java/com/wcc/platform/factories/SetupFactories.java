@@ -92,12 +92,23 @@ public class SetupFactories {
     return createCollaboratorMemberTest(MemberType.MEMBER);
   }
 
-  public static Page createPageTest() {
-    return new Page("title", "subtitle", "description");
+  /** Factory test for page. */
+  public static Page createPageTest(final String title) {
+    return Page.builder()
+        .title("title " + title)
+        .subtitle("subtitle " + title)
+        .description("desc " + title)
+        .link(createLabelLinkTest())
+        .images(List.of(createImageTest()))
+        .build();
   }
 
-  public static Section createSectionTest() {
-    return new Section("title", "description", List.of("item_1", "item_2", "item_3"));
+  public static Page createPageTest() {
+    return createPageTest("defaultPage");
+  }
+
+  public static Section<String> createSectionTest() {
+    return new Section<>("title", "description", null, List.of("item_1", "item_2", "item_3"));
   }
 
   /** Factory test. */
@@ -158,11 +169,6 @@ public class SetupFactories {
 
   public static SocialNetwork createSocialNetworkTest(final SocialNetworkType type) {
     return new SocialNetwork(type, type + ".com");
-  }
-
-  /** Factory test. */
-  public static SocialNetwork createSocialNetworkTest() {
-    return createSocialNetworkTest(SocialNetworkType.INSTAGRAM);
   }
 
   /** Factory test. */

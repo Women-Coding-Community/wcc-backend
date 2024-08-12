@@ -6,6 +6,7 @@ public enum ApiResourcesFile {
   COLLABORATOR("collaboratorPage.json"),
   EVENTS("eventsPage.json"),
   FOOTER("footerPage.json"),
+  LANDING_PAGE("landingPage.json"),
   MENTORSHIP("mentorshipPage.json"),
   TEAM("teamPage.json"),
   PROG_BOOK_CLUB("bookClubPage.json");
