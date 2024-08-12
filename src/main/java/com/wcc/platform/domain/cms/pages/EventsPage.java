@@ -6,7 +6,7 @@ import com.wcc.platform.domain.platform.Event;
 import java.util.List;
 
 /**
- * Events page details
+ * Events page details.
  *
  * @param events list of events
  * @param hero hero section to show banner

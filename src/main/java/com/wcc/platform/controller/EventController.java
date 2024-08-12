@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Rest controller for event pages API */
+/** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/cms/v1/")
 @Tag(name = "APIs relevant Event Page")
@@ -25,7 +25,7 @@ public class EventController {
     this.cmsService = service;
   }
 
-  /** API to retrieve information about events page */
+  /** API to retrieve information about events page. */
   @GetMapping("/events")
   @Operation(summary = "API to retrieve information about events page")
   @ResponseStatus(HttpStatus.OK)

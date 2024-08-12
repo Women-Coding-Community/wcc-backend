@@ -1,15 +1,19 @@
 package com.wcc.platform.domain.platform;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/** Program types and/or event category. */
+@AllArgsConstructor
+@Getter
 public enum ProgramType {
-  BOOK_CLUB,
-  TECH_TALK,
+  BOOK_CLUB(false),
+  MENTORSHIP(false),
+  WRITING_CLUB(false),
 
-  MENTORSHIP,
-  WRITING_CLUB,
-  OTHERS;
+  /** It is not a program, but an event category. */
+  OTHERS(true),
+  TECH_TALK(true);
 
-  @Override
-  public String toString() {
-    return name();
-  }
+  private final boolean eventTopicOnly;
 }

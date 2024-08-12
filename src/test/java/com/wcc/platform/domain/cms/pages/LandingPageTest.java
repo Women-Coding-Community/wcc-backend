@@ -1,6 +1,8 @@
 package com.wcc.platform.domain.cms.pages;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.factories.SetupFactories;
 import org.junit.jupiter.api.BeforeEach;

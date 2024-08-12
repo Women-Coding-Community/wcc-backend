@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/** Available cms icons to be used by programs and internal pages. */
 @Getter
 @AllArgsConstructor
 public enum CmsIcon {

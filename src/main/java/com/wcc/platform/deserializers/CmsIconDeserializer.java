@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import java.io.IOException;
 
+/** Custom Deserialize for CMS ICONS. */
 public class CmsIconDeserializer extends JsonDeserializer<CmsIcon> {
 
   @Override
