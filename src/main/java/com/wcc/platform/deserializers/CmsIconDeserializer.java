@@ -8,6 +8,7 @@ import java.io.IOException;
 
 /** Custom Deserialize for CMS ICONS. */
 public class CmsIconDeserializer extends JsonDeserializer<CmsIcon> {
+
   @Override
   public CmsIcon deserialize(final JsonParser parser, final DeserializationContext context)
       throws IOException {
