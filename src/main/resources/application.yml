@@ -1,10 +1,12 @@
 spring:
   application:
     name: wcc-backend
+  profiles:
+    active: default
 
 file:
   storage:
-    directory: /app/data
+    directory: data
 
 springdoc:
   api-docs:

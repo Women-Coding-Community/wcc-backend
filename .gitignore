@@ -2,6 +2,7 @@
 build/*
 .idea/*
 .ideaDataSources/
+data-test/*
 
 
 # IntelliJ customizations

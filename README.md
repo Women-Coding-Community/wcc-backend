@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-* [WCC: Platform Backend Service](#wcc--platform-backend-service)
+* [WCC: Platform Backend Service](#wcc-platform-backend-service)
     * [How to start?](#how-to-start)
     * [Setup locally](#setup-locally)
         * [JAVA 21 with SDKMAN](#java-21-with-sdkman)
@@ -24,6 +24,7 @@
     * [Deploy application](#deploy-application)
         * [Deploy with docker](#deploy-with-docker)
             * [Start docker with remote debug](#start-docker-with-remote-debug)
+            * [Start docker with mounted data volume](#start-docker-with-mounted-data-volume)
             * [Helpful commands with docker](#helpful-commands-with-docker)
         * [Deploy with Fly.io](#deploy-with-flyio)
             * [Setup Fly.io locally](#setup-flyio-locally)
@@ -296,11 +297,6 @@ directory path is accessible from within the container.
   docker run -v $(pwd)/data:/app/data -d -p 8080:8080 --name wcc-backend-container wcc-backend
 
 ```
-
-Check main/resources/application.yml is set as below:
-file:
-storage:
-directory: /app/data
 
 #### Helpful commands with docker
 

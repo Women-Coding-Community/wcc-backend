@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+file:
+  storage:
+    directory: data-test

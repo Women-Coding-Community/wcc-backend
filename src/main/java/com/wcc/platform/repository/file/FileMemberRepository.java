@@ -15,35 +15,24 @@ import org.springframework.beans.factory.annotation.Value;
 public class FileMemberRepository implements MemberRepository {
 
   private static final String fileName = "members.json";
-  private static final String folderName = "data";
   private final ObjectMapper objectMapper;
-  boolean isRunningInDocker = true;
-  private File file;
+  private final String directoryPath;
+  private final File file;
   private List<Member> members;
-
-  @Value("${file.storage.directory}")
-  private String directoryPath;
 
   /**
    * FileMemberRepository constructor.
    *
    * @param objectMapper objectMapper for reading/writing of JSON
+   * @param directoryPath path to the data folder where the file is saved
    */
-  public FileMemberRepository(final ObjectMapper objectMapper) throws IOException {
+  public FileMemberRepository(
+      final ObjectMapper objectMapper,
+      @Value("${file.storage.directory}") final String directoryPath)
+      throws IOException {
     this.objectMapper = objectMapper;
-  }
-
-  /**
-   * Create file path to the data folder.
-   *
-   * @return file
-   */
-  private File getFile() {
-    isRunningInDocker = System.getenv("RUNNING_IN_DOCKER") != null;
-    if (!isRunningInDocker) {
-      directoryPath = folderName;
-    }
-    return new File(directoryPath + File.separator + fileName);
+    this.directoryPath = directoryPath;
+    file = new File(directoryPath + File.separator + fileName);
   }
 
   /**
@@ -54,7 +43,6 @@ public class FileMemberRepository implements MemberRepository {
    */
   @Override
   public Member save(final Member member) {
-    file = getFile();
     members = getAll();
     members.add(member);
 
