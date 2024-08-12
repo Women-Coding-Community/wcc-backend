@@ -1,7 +1,5 @@
 package com.wcc.platform.repository.file;
 
-import static java.nio.file.Files.*;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -15,8 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 /** FileMemberRepository class to write/read member's data to/from file repository. */
 public class FileMemberRepository implements MemberRepository {
-  private final String FILE_NAME = "members.json";
-  private final String FOLDER_NAME = "data";
+
+  private static final String fileName = "members.json";
+  private static final String folderName = "data";
   private final ObjectMapper objectMapper;
   boolean isRunningInDocker = true;
   private File file;
@@ -35,16 +34,16 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
-   * Create file path to the data folder
+   * Create file path to the data folder.
    *
    * @return file
    */
   private File getFile() {
     isRunningInDocker = System.getenv("RUNNING_IN_DOCKER") != null;
     if (!isRunningInDocker) {
-      directoryPath = FOLDER_NAME;
+      directoryPath = folderName;
     }
-    return new File(directoryPath + File.separator + FILE_NAME);
+    return new File(directoryPath + File.separator + fileName);
   }
 
   /**
