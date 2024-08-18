@@ -15,7 +15,7 @@ public class CmsIconDeserializer extends JsonDeserializer<CmsIcon> {
     final String value = parser.getText();
 
     for (final CmsIcon icon : CmsIcon.values()) {
-      if (icon.getClassName().equals(value)) {
+      if (icon.getIconName().equals(value)) {
         return icon;
       }
     }

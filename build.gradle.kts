@@ -31,11 +31,11 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.skyscreamer:jsonassert:1.5.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")

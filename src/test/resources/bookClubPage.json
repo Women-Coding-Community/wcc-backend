@@ -45,7 +45,7 @@
       },
       "events": [
         {
-          "topics": "BOOK_CLUB",
+          "topics": "Book Club",
           "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
           "endDate": "THU, MAY 30, 2024, 9.30 CEST",
           "title": "BOOK MONTH AUG",
@@ -60,11 +60,11 @@
           }
         },
         {
-          "topics": "BOOK_CLUB",
+          "topics": "Writing Club",
           "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
           "endDate": "THU, MAY 30, 2024, 9.30 CEST",
-          "title": "BOOK MONTH SEP",
-          "description": "Book description",
+          "title": "Writing Clu Sept",
+          "description": "Write Club description",
           "hostProfile": {
             "label": "Jane Doe",
             "uri": "https://linkedIn/host"

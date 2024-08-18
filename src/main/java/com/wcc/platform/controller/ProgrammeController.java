@@ -29,7 +29,13 @@ public class ProgrammeController {
   @Operation(summary = "API to retrieve programme page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<ProgrammePage> getProgramme(
-      @RequestParam(name = "type") final ProgramType programmeType) {
-    return ResponseEntity.ok(service.getProgramme(programmeType));
+      @RequestParam(name = "type") final String programmeType) {
+    final ProgramType programType = ProgramType.fromString(programmeType);
+
+    if (ProgramType.BOOK_CLUB.equals(programType)) {
+      return ResponseEntity.ok(service.getProgramme(programType));
+    }
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 }

@@ -86,6 +86,6 @@ public class SetupProgrammeFactories {
 
   /** Test factory. * */
   public static ProgrammeItem createProgrammeItemsTest(final ProgramType type, final CmsIcon icon) {
-    return new ProgrammeItem(type, SetupFactories.createSimpleLinkTest(), icon);
+    return new ProgrammeItem(type, SetupFactories.createLinkTest(), icon);
   }
 }

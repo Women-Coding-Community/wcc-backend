@@ -11,7 +11,6 @@ import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.MemberByType;
 import com.wcc.platform.domain.cms.attributes.Network;
 import com.wcc.platform.domain.cms.attributes.PageSection;
-import com.wcc.platform.domain.cms.attributes.SimpleLink;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
@@ -98,7 +97,7 @@ public class SetupFactories {
         .title("title " + title)
         .subtitle("subtitle " + title)
         .description("desc " + title)
-        .link(createLabelLinkTest())
+        .link(createLinkTest())
         .images(List.of(createImageTest()))
         .build();
   }
@@ -167,10 +166,6 @@ public class SetupFactories {
     return createImageTest(ImageType.MOBILE);
   }
 
-  public static SocialNetwork createSocialNetworkTest(final SocialNetworkType type) {
-    return new SocialNetwork(type, type + ".com");
-  }
-
   /** Factory test. */
   public static FooterPage createFooterPageTest() {
     return new FooterPage(
@@ -178,7 +173,7 @@ public class SetupFactories {
         "footer_subtitle",
         "footer_description",
         createNetworksTest(),
-        createLabelLinkTest());
+        createLinkTest());
   }
 
   /** Factory test. */
@@ -195,13 +190,8 @@ public class SetupFactories {
     return List.of(new Network("type1", "link1"), new Network("type2", "link2"));
   }
 
-  public static LabelLink createLabelLinkTest() {
+  public static LabelLink createLinkTest() {
     return new LabelLink("link_title", "link_label", "link_uri");
-  }
-
-  /** Factory test. */
-  public static SimpleLink createSimpleLinkTest() {
-    return new SimpleLink("Simple Link", "/simple-link");
   }
 
   /** Factory test for page section. */
@@ -209,7 +199,7 @@ public class SetupFactories {
     return new PageSection(
         title,
         title + "description",
-        createSimpleLinkTest(),
+        createLinkTest(),
         List.of("topic1 " + title, "topic2 " + title));
   }
 }

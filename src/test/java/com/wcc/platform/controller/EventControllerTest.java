@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for event controller. */
 @WebMvcTest(EventController.class)
-public class EventControllerTest {
+class EventControllerTest {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
