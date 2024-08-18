@@ -53,28 +53,28 @@
       {
         "name": "Book Club",
         "link": {
-          "uri": "/program/book-club"
+          "uri": "/programmes/book-club"
         },
         "icon": "book_2"
       },
       {
         "name": "CV clinic",
         "link": {
-          "uri": "/program/cv-clinic"
+          "uri": "/programmes/cv-clinic"
         },
         "icon": "work"
       },
       {
         "name": "Mock interviews",
         "link": {
-          "uri": "/program/interviews"
+          "uri": "/programmes/interviews"
         },
         "icon": "group"
       },
       {
         "name": "Leetcode",
         "link": {
-          "uri": "/program/leetcode"
+          "uri": "/programmes/leetcode"
         },
         "icon": "code_blocks"
       }
