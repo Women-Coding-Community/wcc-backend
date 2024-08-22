@@ -23,6 +23,8 @@ public class PlatformService {
   }
 
   /**
+   * Read JSON and convert to List of Member.
+   *
    * @return List of members.
    */
   public List<Member> getAll() {

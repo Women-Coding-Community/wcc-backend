@@ -1,7 +1,7 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.wcc.platform.domain.platform.MemberType;
 import org.junit.jupiter.api.Test;

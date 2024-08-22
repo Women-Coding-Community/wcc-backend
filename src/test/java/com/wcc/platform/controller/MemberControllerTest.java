@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+/** Unit test for members pages apis. */
 @WebMvcTest(MemberController.class)
 public class MemberControllerTest {
   private static final String API_MEMBERS = "/api/platform/v1/members";
