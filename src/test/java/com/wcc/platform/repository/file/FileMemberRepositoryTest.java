@@ -16,14 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class FileMemberRepositoryTest {
 
-  private String mockDirectoryPath;
   private ObjectMapper objectMapper;
   @InjectMocks private FileMemberRepository fileMemberRepository;
 
   @BeforeEach
   void setUp() {
     objectMapper = Mockito.mock(ObjectMapper.class);
-    mockDirectoryPath = "mockDirPath" + File.separator + "data";
+    String mockDirectoryPath = "mockDirPath" + File.separator + "data";
     fileMemberRepository = new FileMemberRepository(objectMapper, mockDirectoryPath);
   }
 
