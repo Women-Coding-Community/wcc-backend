@@ -2,7 +2,7 @@ package com.wcc.platform.repository.file;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.exceptions.FileRepositoryException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.MemberRepository;
 import java.io.File;
@@ -14,11 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 /** FileMemberRepository class to write/read member's data to/from file repository. */
 public class FileMemberRepository implements MemberRepository {
 
-  private static final String fileName = "members.json";
+  private static final String FILE_NAME = "members.json";
   private final ObjectMapper objectMapper;
-  private final String directoryPath;
   private final File file;
-  private List<Member> members;
 
   /**
    * FileMemberRepository constructor.
@@ -28,11 +26,9 @@ public class FileMemberRepository implements MemberRepository {
    */
   public FileMemberRepository(
       final ObjectMapper objectMapper,
-      @Value("${file.storage.directory}") final String directoryPath)
-      throws IOException {
+      @Value("${file.storage.directory}") final String directoryPath) {
     this.objectMapper = objectMapper;
-    this.directoryPath = directoryPath;
-    file = new File(directoryPath + File.separator + fileName);
+    file = new File(directoryPath + File.separator + FILE_NAME);
   }
 
   /**
@@ -43,7 +39,7 @@ public class FileMemberRepository implements MemberRepository {
    */
   @Override
   public Member save(final Member member) {
-    members = getAll();
+    var members = getAll();
     members.add(member);
 
     writeFile(members);
@@ -59,13 +55,12 @@ public class FileMemberRepository implements MemberRepository {
   @Override
   public List<Member> getAll() {
     try {
-      if (!file.exists()) {
+      if (!file.exists() || file.length() == 0) {
         return new ArrayList<>();
       }
       return objectMapper.readValue(file, new TypeReference<List<Member>>() {});
     } catch (IOException e) {
-      // todo: FileRepositoryException - create
-      throw new PlatformInternalException(e.getMessage(), e);
+      throw new FileRepositoryException(e.getMessage(), e);
     }
   }
 
@@ -78,8 +73,7 @@ public class FileMemberRepository implements MemberRepository {
     try {
       objectMapper.writeValue(file, list);
     } catch (IOException e) {
-      // todo: FileRepositoryException - create
-      throw new PlatformInternalException(e.getMessage(), e);
+      throw new FileRepositoryException(e.getMessage(), e);
     }
   }
 }

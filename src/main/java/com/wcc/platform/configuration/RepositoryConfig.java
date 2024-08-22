@@ -3,7 +3,6 @@ package com.wcc.platform.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.file.FileMemberRepository;
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +16,6 @@ public class RepositoryConfig {
   public MemberRepository createFileRepository(
       final ObjectMapper objectMapper,
       @Value("${file.storage.directory}") final String directoryPath) {
-    try {
-      return new FileMemberRepository(objectMapper, directoryPath);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return new FileMemberRepository(objectMapper, directoryPath);
   }
 }

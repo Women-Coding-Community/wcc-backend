@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.repository.MemberRepository;
-import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ class PlatformServiceTest {
   }
 
   @Test
-  void whenGetAllGivenValidJson() throws IOException {
+  void whenGetAllGivenValidJson() {
     var member = SetupFactories.createMemberTest(MemberType.MEMBER);
     when(memberRepository.getAll()).thenReturn(List.of(member));
     var response = service.getAll();

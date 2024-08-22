@@ -7,9 +7,10 @@ import com.wcc.platform.domain.platform.MemberType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class PlatformServiceIntegrationTest {
   @Autowired private PlatformService service;
@@ -23,7 +24,7 @@ class PlatformServiceIntegrationTest {
   }
 
   @Test
-  void testGetALl() {
+  void testGetAll() {
     var total = service.getAll().size();
 
     var member = createMemberTest(MemberType.MEMBER);

@@ -22,8 +22,11 @@ public class PlatformService {
     return memberRepository.save(member);
   }
 
+  /**
+   * @return List of members.
+   */
   public List<Member> getAll() {
-    var allMembers = memberRepository.getAll();
+    final var allMembers = memberRepository.getAll();
     if (allMembers == null) {
       return List.of();
     }

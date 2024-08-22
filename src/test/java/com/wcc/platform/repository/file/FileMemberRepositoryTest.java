@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.platform.Member;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ class FileMemberRepositoryTest {
   }
 
   @Test
-  void whenGetAllFileDoesNotExist() throws IOException {
+  void whenGetAllFileDoesNotExist() {
     List<Member> result = fileMemberRepository.getAll();
     assertTrue(result.isEmpty());
   }

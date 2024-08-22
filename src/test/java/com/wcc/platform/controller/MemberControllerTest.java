@@ -49,5 +49,5 @@ public class MemberControllerTest {
   }
 
   @Test
-  void testMembersOkResponse() throws Exception {}
+  void testMembersOkResponse() {}
 }
