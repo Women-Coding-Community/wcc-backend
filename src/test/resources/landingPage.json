@@ -31,12 +31,12 @@
     "description": "Join our community and unlock endless opportunities. Network, find mentors, and access leadership programs. Whether you're aiming to enhance your skills, grow your professional network, or advance your career, we have what you need. We offer a wide range of opportunities to help you achieve your goals.\n",
     "items": [
       {
-        "name": "MENTORSHIP",
+        "name": "Mentorship",
         "link": {
           "label": "mentorship link",
           "uri": "/mentorship"
         },
-        "icon": "Diversity2"
+        "icon": "diversity_2"
       }
     ]
   },
@@ -44,7 +44,7 @@
     "title": "Announcements",
     "items": [
       {
-        "topics": "BOOK_CLUB",
+        "topics": "Book Club",
         "eventType": "IN_PERSON",
         "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
         "endDate": "THU, MAY 30, 2024, 9.30 CEST",
@@ -80,7 +80,7 @@
     },
     "items": [
       {
-        "topics": "BOOK_CLUB",
+        "topics": "Book Club",
         "eventType": "IN_PERSON",
         "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
         "endDate": "THU, MAY 30, 2024, 9.30 CEST",

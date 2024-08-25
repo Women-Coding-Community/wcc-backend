@@ -5,4 +5,4 @@ package com.wcc.platform.domain.cms.attributes;
  *
  * @param link simple link of resources.
  */
-public record EventResource(SimpleLink link) {}
+public record EventResource(LabelLink link) {}

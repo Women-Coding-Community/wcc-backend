@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for footer api. */
 @WebMvcTest(DefaultController.class)
-public class DefaultControllerTest {
+class DefaultControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private CmsService service;
@@ -111,23 +111,21 @@ public class DefaultControllerTest {
     return new Section<>(
         title,
         "check our latest " + techTalk,
-        SetupFactories.createLabelLinkTest(),
+        SetupFactories.createLinkTest(),
         List.of(SetupEventFactories.createEventTest(techTalk)));
   }
 
   private Section<ProgrammeItem> createSectionProgramme() {
-    var programmeItem1 =
-        SetupProgrammeFactories.createProgrammeItemsTest(
-            ProgramType.MENTORSHIP, CmsIcon.DIVERSITY_2);
-    var programmeItem2 =
-        SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.BOOK_CLUB, CmsIcon.ICON_3);
-    var programmeItem3 =
-        SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.TECH_TALK, CmsIcon.ICON_1);
-    var programmeItem4 =
-        SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.WRITING_CLUB, CmsIcon.ICON_2);
-
-    var programmes = List.of(programmeItem1, programmeItem2, programmeItem3, programmeItem4);
-
-    return new Section<>("Programmes ", "Description Programme", null, programmes);
+    return new Section<>(
+        "Programmes ",
+        "Description Programme",
+        null,
+        List.of(
+            SetupProgrammeFactories.createProgrammeItemsTest(
+                ProgramType.MENTORSHIP, CmsIcon.DIVERSITY),
+            SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.BOOK_CLUB, CmsIcon.BOOK),
+            SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.TECH_TALK, CmsIcon.WORK),
+            SetupProgrammeFactories.createProgrammeItemsTest(
+                ProgramType.WRITING_CLUB, CmsIcon.CALENDAR)));
   }
 }

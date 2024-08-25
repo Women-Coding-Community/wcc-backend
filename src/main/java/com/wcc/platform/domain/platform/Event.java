@@ -3,7 +3,7 @@ package com.wcc.platform.domain.platform;
 import com.wcc.platform.domain.cms.attributes.EventResource;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.SimpleLink;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -30,8 +30,8 @@ public class Event {
   private String endDate; // TODO convert to Date
   private ProgramType topics;
   private List<Image> images;
-  private SimpleLink speakerProfile;
-  private SimpleLink hostProfile;
-  private SimpleLink eventLink;
+  private LabelLink speakerProfile;
+  private LabelLink hostProfile;
+  private LabelLink eventLink;
   private List<EventResource> eventResources;
 }

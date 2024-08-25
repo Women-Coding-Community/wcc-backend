@@ -40,7 +40,7 @@ public class SetupProgrammeFactories {
         SetupFactories.createPageTest(),
         SetupFactories.createContactTest(),
         Collections.singletonList(createProgramme()),
-        Collections.singletonList(SetupEventFactories.createEventSection()));
+        SetupEventFactories.createEventSection());
   }
 
   /** Create Factory. */
@@ -86,6 +86,6 @@ public class SetupProgrammeFactories {
 
   /** Test factory. * */
   public static ProgrammeItem createProgrammeItemsTest(final ProgramType type, final CmsIcon icon) {
-    return new ProgrammeItem(type, SetupFactories.createSimpleLinkTest(), icon);
+    return new ProgrammeItem(type, SetupFactories.createLinkTest(), icon);
   }
 }

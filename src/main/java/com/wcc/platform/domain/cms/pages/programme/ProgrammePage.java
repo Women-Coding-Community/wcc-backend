@@ -23,6 +23,6 @@ public class ProgrammePage {
   private Page page;
   private Contact contact;
   private List<Programme> programmeDetails;
-  private List<EventSection> eventSection;
+  private EventSection eventSection;
   // TODO Add resources section
 }

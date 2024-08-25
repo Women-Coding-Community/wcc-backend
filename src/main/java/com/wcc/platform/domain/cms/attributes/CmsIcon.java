@@ -8,16 +8,18 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CmsIcon {
-  ICON_1("classIcon1"),
-  ICON_2("classIcon2"),
-  ICON_3("classIcon3"),
-  DIVERSITY_2("Diversity2");
+  BOOK("book_2"),
+  CALENDAR("calendar_month"),
+  CODE("code_blocks"),
+  DIVERSITY("diversity_2"),
+  GROUP("group"),
+  WORK("work");
 
-  private final String className;
+  private final String iconName;
 
   @Override
   @JsonValue
   public String toString() {
-    return className;
+    return iconName;
   }
 }

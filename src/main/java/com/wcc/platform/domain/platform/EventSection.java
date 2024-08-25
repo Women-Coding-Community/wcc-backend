@@ -2,7 +2,7 @@ package com.wcc.platform.domain.platform;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.wcc.platform.domain.cms.attributes.SimpleLink;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +22,7 @@ public class EventSection {
   private String title;
 
   @JsonInclude(Include.NON_NULL)
-  private SimpleLink link;
+  private LabelLink link;
 
   private List<Event> events;
 }
