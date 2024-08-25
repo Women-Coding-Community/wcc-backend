@@ -176,16 +176,15 @@
     ]
   },
   "volunteerSection": {
-    "title": "Volunteer With Us",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n",
+    "title": "Do you want to volunteer with us?",
+    "description": "Empowering women in their tech careers through education, mentorship, community building, and career services is our mission. We provide workshops and events, connect members with industry mentors, foster a supportive community through meetups and conferences, and raise awareness for more inclusive industry practices.",
     "link": {
-      "label": "Send us a report on Github",
-      "uri": "https://github.com/Women-Coding-Community/wcc-frontend/issues",
-      "title": "Page Title"
+      "uri": "/about-us/volunteer",
+      "title": "Learn more about volunteering"
     },
     "images": [
       {
-        "path": "https://cloudprovider.com/image.png",
+        "path": "square_image_2.jpg",
         "alt": "There are two women talking during a productive mentoring session",
         "type": "desktop"
       }

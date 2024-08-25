@@ -25,12 +25,13 @@ public class ProgrammeController {
     this.service = programmeService;
   }
 
+  /** Get programm API. For now only supports Book Club. */
   @GetMapping("/api/cms/v1/programme")
   @Operation(summary = "API to retrieve programme page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<ProgrammePage> getProgramme(
       @RequestParam(name = "type") final String programmeType) {
-    final ProgramType programType = ProgramType.fromString(programmeType);
+    final ProgramType programType = ProgramType.findByValue(programmeType);
 
     if (ProgramType.BOOK_CLUB.equals(programType)) {
       return ResponseEntity.ok(service.getProgramme(programType));

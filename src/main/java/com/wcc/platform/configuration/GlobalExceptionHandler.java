@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
   }
 
-  /** Receive PlatformInternalException and return {@link HttpStatus#INTERNAL_SERVER_ERROR}. */
+  /** Receive PlatformInternalException and return {@link HttpStatus#BAD_REQUEST}. */
   @ExceptionHandler(InvalidProgramTypeException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ErrorDetails> handleProgramTypeError(

@@ -15,6 +15,6 @@ public class ProgramTypeDeserializer extends JsonDeserializer<ProgramType> {
 
     final var value = jsonParser.getText();
 
-    return ProgramType.fromString(value);
+    return ProgramType.findByValue(value);
   }
 }

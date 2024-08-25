@@ -20,8 +20,9 @@ public enum ProgramType {
   private final String description;
   private final boolean eventTopicOnly;
 
+  /** Find program type by value string. */
   @JsonCreator
-  public static ProgramType fromString(final String value) {
+  public static ProgramType findByValue(final String value) {
     for (final ProgramType type : values()) {
       if (type.description.equalsIgnoreCase(value) || type.name().equalsIgnoreCase(value)) {
         return type;
