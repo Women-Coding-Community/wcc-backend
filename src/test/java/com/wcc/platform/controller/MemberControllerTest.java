@@ -1,15 +1,18 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.factories.SetupFactories.createMembersTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.service.PlatformService;
+import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -50,5 +53,14 @@ public class MemberControllerTest {
   }
 
   @Test
-  void testMembersOkResponse() {}
+  void testMembersOkResponse() throws Exception {
+    var expectedJson = FileUtil.readFileAsString("members.json");
+
+    when(service.getAll()).thenReturn(createMembersTest("members.json"));
+
+    mockMvc
+        .perform(get(API_MEMBERS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
 }
