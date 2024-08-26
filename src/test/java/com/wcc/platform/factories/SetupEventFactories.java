@@ -5,7 +5,7 @@ import static com.wcc.platform.factories.SetupFactories.createImageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.cms.attributes.SimpleLink;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.EventSection;
@@ -37,11 +37,11 @@ public class SetupEventFactories {
     return Event.builder()
         .title("Test event title for " + programType)
         .topics(programType)
-        .hostProfile(new SimpleLink("hostName", "http://host-profile-link"))
+        .hostProfile(new LabelLink(null, "hostName", "http://host-profile-link"))
         .title("title")
         .description("description")
-        .speakerProfile(new SimpleLink("speaker", "http://speaker-profile-link"))
-        .eventLink(new SimpleLink("Meetup", "http://meetup/link"))
+        .speakerProfile(new LabelLink(null, "speaker", "http://speaker-profile-link"))
+        .eventLink(new LabelLink(null, "Meetup", "http://meetup/link"))
         .startDate("THU, MAY 30, 2024, 8:00 PM CEST")
         .build();
   }
@@ -60,7 +60,7 @@ public class SetupEventFactories {
   public static EventSection createEventSection() {
     return EventSection.builder()
         .title("Upcoming Events")
-        .link(new SimpleLink("view events", "/events"))
+        .link(new LabelLink(null, "view events", "/events"))
         .events(Collections.singletonList(createEventTest()))
         .build();
   }
@@ -73,7 +73,7 @@ public class SetupEventFactories {
   public static EventSection createEventSection(final ProgramType programType) {
     return EventSection.builder()
         .title("Upcoming Events")
-        .link(new SimpleLink("view events", "/events"))
+        .link(new LabelLink(null, "view events", "/events"))
         .events(Collections.singletonList(createEventTest(programType)))
         .build();
   }

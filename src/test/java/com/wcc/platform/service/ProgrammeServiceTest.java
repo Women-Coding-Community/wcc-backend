@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
+import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.ProgramType;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ class ProgrammeServiceTest {
   }
 
   @Test
-  void whenInvalidJsonProvided() throws JsonProcessingException {
+  void givenInvalidJsonWhenGetProgramThenThrowsException() throws JsonProcessingException {
     when(objectMapper.readValue(anyString(), eq(ProgrammePage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
@@ -39,11 +40,16 @@ class ProgrammeServiceTest {
   }
 
   @Test
-  void whenValidJsonProvided() throws JsonProcessingException {
+  void givenValidJsonWhenGetProgramThenReturnSuccessResponse() throws JsonProcessingException {
     var programmePage = createProgrammePageTest("bookClubPage.json");
     when(objectMapper.readValue(anyString(), eq(ProgrammePage.class))).thenReturn(programmePage);
 
     var response = service.getProgramme(ProgramType.BOOK_CLUB);
     assertEquals(programmePage, response);
+  }
+
+  @Test
+  void givenProgramTypeWhenInvalidThenThrowsInvalidProgramTypeException() {
+    assertThrows(InvalidProgramTypeException.class, () -> service.getProgramme(ProgramType.OTHERS));
   }
 }

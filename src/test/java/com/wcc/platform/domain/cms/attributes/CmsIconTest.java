@@ -9,12 +9,12 @@ class CmsIconTest {
 
   @Test
   void testToString() {
-    assertEquals(CmsIcon.ICON_2.toString(), CmsIcon.ICON_2.getClassName());
+    assertEquals(CmsIcon.BOOK.toString(), CmsIcon.BOOK.getIconName());
   }
 
   @Test
   void testEquals() {
-    assertEquals(CmsIcon.ICON_2, CmsIcon.ICON_2);
-    assertNotEquals(CmsIcon.ICON_1, CmsIcon.ICON_2);
+    assertEquals(CmsIcon.CODE, CmsIcon.CODE);
+    assertNotEquals(CmsIcon.CALENDAR, CmsIcon.GROUP);
   }
 }

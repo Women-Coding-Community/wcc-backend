@@ -1,4 +1,4 @@
-package com.wcc.platform.service;
+package com.wcc.platform.integrationtests;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
@@ -15,18 +15,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.wcc.platform.domain.cms.ApiResourcesFile;
+import com.wcc.platform.service.CmsService;
 import com.wcc.platform.utils.FileUtil;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 class CmsServiceIntegrationTest {
 
   @Autowired private CmsService service;
@@ -93,8 +92,9 @@ class CmsServiceIntegrationTest {
     assertEquals(expectedEventsPage, result);
   }
 
+  @SneakyThrows
   @Test
-  void testGetLandingPage() throws JsonProcessingException {
+  void testGetLandingPage() {
     var result = service.getLandingPage();
 
     assertNotNull(result);
@@ -102,9 +102,6 @@ class CmsServiceIntegrationTest {
     var expected = FileUtil.readFileAsString(ApiResourcesFile.LANDING_PAGE.getFileName());
     var jsonResponse = OBJECT_MAPPER.writeValueAsString(result);
 
-    JsonNode actualJsonNode = OBJECT_MAPPER.readTree(jsonResponse);
-    JsonNode expectedJsonNode = OBJECT_MAPPER.readTree(expected);
-
-    assertEquals(expectedJsonNode, actualJsonNode);
+    JSONAssert.assertEquals(expected, jsonResponse, false);
   }
 }
