@@ -58,7 +58,7 @@ public class FileMemberRepository implements MemberRepository {
       if (!file.exists() || file.length() == 0) {
         return new ArrayList<>();
       }
-      return objectMapper.readValue(file, new TypeReference<List<Member>>() {});
+      return objectMapper.readValue(file, new TypeReference<>() {});
     } catch (IOException e) {
       throw new FileRepositoryException(e.getMessage(), e);
     }

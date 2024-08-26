@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.platform.Member;
-import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,12 +21,20 @@ class FileMemberRepositoryTest {
   @BeforeEach
   void setUp() {
     objectMapper = Mockito.mock(ObjectMapper.class);
-    String mockDirectoryPath = "mockDirPath" + File.separator + "data";
-    fileMemberRepository = new FileMemberRepository(objectMapper, mockDirectoryPath);
   }
 
   @Test
   void whenGetAllFileDoesNotExist() {
+    fileMemberRepository = new FileMemberRepository(objectMapper, "invalid");
+    List<Member> result = fileMemberRepository.getAll();
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void whenGetAllFileEmpty() {
+    final String tempPath =
+        this.getClass().getClassLoader().getResource("members/empty/").getPath();
+    fileMemberRepository = new FileMemberRepository(objectMapper, tempPath);
     List<Member> result = fileMemberRepository.getAll();
     assertTrue(result.isEmpty());
   }
