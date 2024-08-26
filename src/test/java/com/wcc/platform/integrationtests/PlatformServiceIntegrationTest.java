@@ -1,9 +1,10 @@
-package com.wcc.platform.service;
+package com.wcc.platform.integrationtests;
 
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.service.PlatformService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
