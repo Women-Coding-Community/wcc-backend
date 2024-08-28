@@ -11,6 +11,7 @@ import com.wcc.platform.domain.platform.Programme;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /** Test factories for Programme. */
 public class SetupProgrammeFactories {
@@ -64,6 +65,7 @@ public class SetupProgrammeFactories {
         .description("Every month we vote we read a book this is current month book.")
         .card(
             new Page(
+                UUID.randomUUID(),
                 "Test book title",
                 "Author of the book",
                 "test book description",

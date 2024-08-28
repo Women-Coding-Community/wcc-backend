@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "9005:9005"
+    depends_on:
+      - surrealdb
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:surrealdb://surrealdb:8000/wcc/platform"
+      SPRING_DATASOURCE_USERNAME: "wcc-backend"
+      SPRING_DATASOURCE_PASSWORD: "wcc-platform"
+
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: surrealdb
+    ports:
+      - "8000:8000"
+    command:
+      - start
+      - --log=trace
+      - --user=root
+      - --pass=root
+    restart: always

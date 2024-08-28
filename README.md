@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-* [WCC: Platform Backend Service](#wcc-platform-backend-service)
+* [WCC: Platform Backend Service](#wcc--platform-backend-service)
     * [How to start?](#how-to-start)
     * [Setup locally](#setup-locally)
         * [JAVA 21 with SDKMAN](#java-21-with-sdkman)
@@ -37,7 +37,7 @@
 of [wcc-backend](https://github.com/Women-Coding-Community/wcc-backend) repository.
 Click on the <a href="https://github.com/Women-Coding-Community/wcc-backend/fork">
 <img src="https://i.imgur.com/G4z1kEe.png" height="21" width="21"></a>
-Fork symbol in the top right corner.
+Fork symbol at the top right corner.
 
 **2.** Clone your new fork of the repository in the terminal/CLI on your computer with the following
 command:
