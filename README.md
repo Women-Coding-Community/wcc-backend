@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-* [WCC: Platform Backend Service](#wcc--platform-backend-service)
+* [WCC: Platform Backend Service](#wcc-platform-backend-service)
     * [How to start?](#how-to-start)
     * [Setup locally](#setup-locally)
         * [JAVA 21 with SDKMAN](#java-21-with-sdkman)
@@ -22,6 +22,7 @@
             * [Set-up wcc-backend project on local sonarQube instance](#set-up-wcc-backend-project-on-local-sonarqube-instance)
             * [Perform SONAR ANALYSIS](#perform-sonar-analysis)
     * [Deploy application](#deploy-application)
+        * [Deploy with docker compose](#deploy-with-docker-compose)
         * [Deploy with docker](#deploy-with-docker)
             * [Start docker with remote debug](#start-docker-with-remote-debug)
             * [Helpful commands with docker](#helpful-commands-with-docker)
