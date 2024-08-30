@@ -260,6 +260,22 @@ Generate token to replace in the project.
 
 ## Deploy application
 
+### Deploy with docker compose
+
+* build create jar: `./gradlew clean bootJar`
+* Start docker compose
+
+```shell
+docker-compose -f docker/docker-compose.yml up --build
+```
+
+* Stop docker compose
+
+```shell
+cd docker
+docker-compose down
+```
+
 ### Deploy with docker
 
 * build create jar: `./gradlew clean bootJar`

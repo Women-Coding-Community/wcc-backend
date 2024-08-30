@@ -33,6 +33,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.surrealdb:surrealdb-driver:0.1.0")
+    implementation("org.java-websocket:Java-WebSocket:1.5.7")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
