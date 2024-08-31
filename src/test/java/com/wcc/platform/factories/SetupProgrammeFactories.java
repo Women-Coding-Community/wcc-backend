@@ -40,14 +40,14 @@ public class SetupProgrammeFactories {
     return new ProgrammePage(
         SetupFactories.createPageTest(),
         SetupFactories.createContactTest(),
-        Collections.singletonList(createProgramme()),
+        Collections.singletonList(createProgramme(UUID.randomUUID())),
         SetupEventFactories.createEventSection());
   }
 
   /** Create Factory. */
   public static Programme createProgrammeByType(final ProgramType type) {
     if (ProgramType.BOOK_CLUB.equals(type)) {
-      createProgramme();
+      createProgramme(UUID.randomUUID());
     } else {
       return createProgrammeWithoutCard();
     }
@@ -59,13 +59,13 @@ public class SetupProgrammeFactories {
    *
    * @return Programme object
    */
-  public static Programme createProgramme() {
+  public static Programme createProgramme(UUID uuid) {
     return Programme.builder()
         .title("What We Are Reading")
         .description("Every month we vote we read a book this is current month book.")
         .card(
             new Page(
-                UUID.randomUUID(),
+                uuid,
                 "Test book title",
                 "Author of the book",
                 "test book description",

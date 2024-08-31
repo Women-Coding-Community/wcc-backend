@@ -8,4 +8,12 @@ springdoc:
     path: /api-docs
   swagger-ui:
     enabled: true
-  paths-to-match: /api/cms/v1/**
+  paths-to-match: /api/**
+
+surrealdb:
+  host: localhost
+  port: 8000
+  tls: false
+  connections: 5
+  namespace: wcc
+  database: platform

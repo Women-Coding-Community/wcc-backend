@@ -32,11 +32,8 @@ public class PlatformController {
   @PostMapping("/resource")
   @Operation(summary = "/api/v1/resource")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<ResourceContent> addResource(@RequestBody ResourceContent resource) {
-
-    var content = service.saveResourceContent(resource);
-
-    return ResponseEntity.ok(content);
+  public ResponseEntity<ResourceContent> addResource(@RequestBody final ResourceContent resource) {
+    return ResponseEntity.ok(service.saveResourceContent(resource));
   }
 
   /** Get all resources content. */
@@ -44,9 +41,6 @@ public class PlatformController {
   @Operation(summary = "/api/v1/resources")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Collection<ResourceContent>> getAllResources() {
-
-    var content = service.getAllResources();
-
-    return ResponseEntity.ok(content);
+    return ResponseEntity.ok(service.getAllResources());
   }
 }

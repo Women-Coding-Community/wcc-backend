@@ -1,21 +1,22 @@
 package com.wcc.platform.repository.surrealdb;
 
-import com.surrealdb.connection.SurrealConnection;
 import com.surrealdb.connection.SurrealWebSocketConnection;
 import com.surrealdb.driver.SyncSurrealDriver;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Component
 public class DBConnection {
 
-  private SyncSurrealDriver driver = null;
+  private final SyncSurrealDriver driver;
 
-  public DBConnection() {
-    SurrealConnection conn = new SurrealWebSocketConnection("localhost", 8000, false);
-    conn.connect(5);
+  @Autowired
+  public DBConnection(final SurrealDBConfig config) {
+    var conn = new SurrealWebSocketConnection(config.getHost(), config.getPort(), config.isTls());
+    conn.connect(config.getConnections());
     driver = new SyncSurrealDriver(conn);
-    driver.use("spring", "todo");
+    driver.use(config.getNamespace(), config.getDatabase());
   }
 }
