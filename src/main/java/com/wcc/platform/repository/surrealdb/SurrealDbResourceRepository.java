@@ -6,10 +6,10 @@ import com.wcc.platform.repository.ResourceContentRepository;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+/** SurrealDB repository implementation for resources. */
 @Repository
 public class SurrealDbResourceRepository implements ResourceContentRepository {
 
@@ -17,8 +17,8 @@ public class SurrealDbResourceRepository implements ResourceContentRepository {
   private final SyncSurrealDriver driver;
 
   @Autowired
-  public SurrealDbResourceRepository(final DBConnection connection) {
-    this.driver = connection.getDriver();
+  public SurrealDbResourceRepository(final SyncSurrealDriver driver) {
+    this.driver = driver;
   }
 
   @Override
@@ -32,12 +32,10 @@ public class SurrealDbResourceRepository implements ResourceContentRepository {
   }
 
   @Override
-  public Optional<ResourceContent> findById(final UUID uuid) {
-    var query =
+  public Optional<ResourceContent> findById(final String id) {
+    final var query =
         driver.query(
-            "SELECT id FROM " + TABLE + " WHERE id=$id LIMIT BY 1;",
-            Map.of("id", uuid.toString()),
-            ResourceContent.class);
+            "SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", id), ResourceContent.class);
 
     if (query.isEmpty()) {
       return Optional.empty();
@@ -49,5 +47,10 @@ public class SurrealDbResourceRepository implements ResourceContentRepository {
     }
 
     return Optional.of(result.getFirst());
+  }
+
+  @Override
+  public void deleteById(final String id) {
+    driver.delete(id);
   }
 }

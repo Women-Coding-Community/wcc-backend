@@ -59,7 +59,7 @@ public class SetupProgrammeFactories {
    *
    * @return Programme object
    */
-  public static Programme createProgramme(UUID uuid) {
+  public static Programme createProgramme(final UUID uuid) {
     return Programme.builder()
         .title("What We Are Reading")
         .description("Every month we vote we read a book this is current month book.")

@@ -3,7 +3,6 @@ package com.wcc.platform.domain.platform;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import java.util.List;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +17,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResourceContent {
-  private UUID uuid;
+  private String id;
   private String name;
   private String description;
-  private String content;
+  private String rawContent;
   private ResourceType type;
   private List<Image> images;
 }

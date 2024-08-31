@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 /** SurrealDB connection configuration. */
 @Data
 @NoArgsConstructor
-public class SurrealDBConfig {
+public class SurrealDbConfig {
   private String host;
   private int port;
   private boolean tls;
