@@ -14,7 +14,8 @@ public class DBConnection {
 
   @Autowired
   public DBConnection(final SurrealDBConfig config) {
-    var conn = new SurrealWebSocketConnection(config.getHost(), config.getPort(), config.isTls());
+    final var conn =
+        new SurrealWebSocketConnection(config.getHost(), config.getPort(), config.isTls());
     conn.connect(config.getConnections());
     driver = new SyncSurrealDriver(conn);
     driver.use(config.getNamespace(), config.getDatabase());

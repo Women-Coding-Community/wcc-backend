@@ -11,19 +11,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlatformService {
 
-  private final ResourceContentRepository resourceRepository;
+  private final ResourceContentRepository resource;
 
   @Autowired
   public PlatformService(
-      @Qualifier("getResourceRepository") final ResourceContentRepository resourceRepository) {
-    this.resourceRepository = resourceRepository;
+      @Qualifier("getResourceRepository") final ResourceContentRepository resource) {
+    this.resource = resource;
   }
 
   public ResourceContent saveResourceContent(final ResourceContent resourceContent) {
-    return resourceRepository.save(resourceContent);
+    return resource.save(resourceContent);
   }
 
   public Collection<ResourceContent> getAllResources() {
-    return resourceRepository.findAll();
+    return resource.findAll();
   }
 }

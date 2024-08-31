@@ -4,7 +4,6 @@ import com.surrealdb.driver.SyncSurrealDriver;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.ResourceContentRepository;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,12 +17,12 @@ public class SurrealDbResourceRepository implements ResourceContentRepository {
   private final SyncSurrealDriver driver;
 
   @Autowired
-  public SurrealDbResourceRepository(DBConnection connection) {
+  public SurrealDbResourceRepository(final DBConnection connection) {
     this.driver = connection.getDriver();
   }
 
   @Override
-  public ResourceContent save(ResourceContent entity) {
+  public ResourceContent save(final ResourceContent entity) {
     return driver.create(TABLE, entity);
   }
 
@@ -33,17 +32,21 @@ public class SurrealDbResourceRepository implements ResourceContentRepository {
   }
 
   @Override
-  public Optional<ResourceContent> findById(UUID uuid) {
+  public Optional<ResourceContent> findById(final UUID uuid) {
     var query =
         driver.query(
             "SELECT id FROM " + TABLE + " WHERE id=$id LIMIT BY 1;",
             Map.of("id", uuid.toString()),
             ResourceContent.class);
 
-    if (query.isEmpty()) return Optional.empty();
+    if (query.isEmpty()) {
+      return Optional.empty();
+    }
 
-    List<ResourceContent> result = query.getFirst().getResult();
-    if (result.isEmpty()) return Optional.empty();
+    final var result = query.getFirst().getResult();
+    if (result.isEmpty()) {
+      return Optional.empty();
+    }
 
     return Optional.of(result.getFirst());
   }

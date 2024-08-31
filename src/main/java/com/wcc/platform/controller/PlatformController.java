@@ -24,7 +24,7 @@ public class PlatformController {
   private final PlatformService service;
 
   @Autowired
-  public PlatformController(PlatformService service) {
+  public PlatformController(final PlatformService service) {
     this.service = service;
   }
 
