@@ -90,8 +90,6 @@ public class MemberControllerTest {
   @Test
   void testMembersPostInternalError() throws Exception {
     var internalError = new PlatformInternalException("internal Json", new RuntimeException());
-    // Member member = createMemberTest(MemberType.MEMBER);
-    // when(service.createMember(member)).thenThrow(internalError);
 
     when(service.createMember(any(Member.class))).thenThrow(internalError);
 
@@ -107,7 +105,7 @@ public class MemberControllerTest {
   }
 
   @Test
-  void testMembersPostOkResponse() throws Exception {
+  void testMembersPostCreatedResponse() throws Exception {
 
     Member member = createMembersTest("members/data/members.json").getFirst();
 
@@ -118,7 +116,7 @@ public class MemberControllerTest {
             post(API_MEMBERS)
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(member)))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(content().json(memberAsString(member)));
   }
 

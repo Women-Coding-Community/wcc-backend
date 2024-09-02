@@ -17,13 +17,13 @@ public class PlatformService {
     this.memberRepository = memberRepository;
   }
 
-  /** Write Pojo Member to JSON. */
+  /** Save Member into storage. */
   public Member createMember(final Member member) {
     return memberRepository.save(member);
   }
 
   /**
-   * Read JSON and convert to List of Member.
+   * Return all stored members.
    *
    * @return List of members.
    */

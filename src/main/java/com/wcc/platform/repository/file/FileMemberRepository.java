@@ -39,7 +39,7 @@ public class FileMemberRepository implements MemberRepository {
    */
   @Override
   public Member save(final Member member) {
-    var members = getAll();
+    final var members = getAll();
     members.add(member);
 
     writeFile(members);

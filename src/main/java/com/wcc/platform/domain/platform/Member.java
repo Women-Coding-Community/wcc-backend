@@ -5,8 +5,14 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /** Member class with common attributes for all community members. */
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Data
 @Builder
 public class Member {
@@ -47,9 +53,5 @@ public class Member {
     this.memberType = memberType;
     this.images = images;
     this.network = network;
-  }
-
-  public Member() {
-    // Necessary constructor for jackson.
   }
 }

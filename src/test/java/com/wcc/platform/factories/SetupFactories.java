@@ -132,7 +132,7 @@ public class SetupFactories {
   public static List<Member> createMembersTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, new TypeReference<List<Member>>() {});
+      return OBJECT_MAPPER.readValue(content, new TypeReference<>() {});
     } catch (JsonProcessingException e) {
       return List.of(createMemberTest(MemberType.MEMBER));
     }

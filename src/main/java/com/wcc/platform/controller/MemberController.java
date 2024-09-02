@@ -48,8 +48,8 @@ public class MemberController {
    */
   @PostMapping
   @Operation(summary = "API to submit member registration")
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Member> createMember(@RequestBody final Member member) {
-    return ResponseEntity.ok(platformService.createMember(member));
+    return new ResponseEntity<>(platformService.createMember(member), HttpStatus.CREATED);
   }
 }
