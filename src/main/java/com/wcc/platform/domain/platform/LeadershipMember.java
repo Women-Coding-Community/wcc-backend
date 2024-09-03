@@ -26,6 +26,7 @@ public class LeadershipMember extends Member {
 
   /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   public LeadershipMember(
       final String fullName,
       final String position,
