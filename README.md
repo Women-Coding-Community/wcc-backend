@@ -24,6 +24,7 @@
     * [Deploy application](#deploy-application)
         * [Deploy with docker](#deploy-with-docker)
             * [Start docker with remote debug](#start-docker-with-remote-debug)
+            * [Start docker with mounted data volume](#start-docker-with-mounted-data-volume)
             * [Helpful commands with docker](#helpful-commands-with-docker)
         * [Deploy with Fly.io](#deploy-with-flyio)
             * [Setup Fly.io locally](#setup-flyio-locally)
@@ -275,8 +276,26 @@ docker run -d -p 8080:8080 --name wcc-backend-container wcc-backend
 
 ```shell
 docker build -t wcc-backend .
-
 docker run -p 8080:8080 -p 5005:5005 --name wcc-backend-container wcc-backend    
+```
+
+#### Start docker with mounted data volume
+
+If you are running your Spring Boot application inside a Docker container, ensure that the external
+directory path is accessible from within the container.
+
+* Windows:
+
+```shell
+  docker run -v ${PWD}/data:/app/data -d -p 8080:8080 --name wcc-backend-container wcc-backend
+
+```
+
+* Linux:
+
+```shell
+  docker run -v $(pwd)/data:/app/data -d -p 8080:8080 --name wcc-backend-container wcc-backend
+
 ```
 
 #### Helpful commands with docker

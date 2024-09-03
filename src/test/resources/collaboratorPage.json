@@ -22,6 +22,7 @@
       "fullName": "Member1",
       "position": "Senior Software Engineer",
       "email": "member@wcc.com",
+      "slackDisplayName": "Slack name",
       "country": {
         "countryCode": "Country code",
         "countryName": "Country name"

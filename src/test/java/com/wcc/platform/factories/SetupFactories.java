@@ -1,6 +1,7 @@
 package com.wcc.platform.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.ObjectMapperConfig;
 import com.wcc.platform.domain.cms.attributes.Contact;
@@ -116,6 +117,7 @@ public class SetupFactories {
         .fullName("fullName " + type.name())
         .position("position " + type.name())
         .email("member@wcc.com")
+        .slackDisplayName("Slack name")
         .country(new Country("Country code", "Country name"))
         .city("City")
         .jobTitle("Job title")
@@ -126,12 +128,23 @@ public class SetupFactories {
         .build();
   }
 
+  /** Factory test to get a list of members for testing get members API. */
+  public static List<Member> createMembersTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, new TypeReference<>() {});
+    } catch (JsonProcessingException e) {
+      return List.of(createMemberTest(MemberType.MEMBER));
+    }
+  }
+
   /** Factory test. */
   public static LeadershipMember createLeadershipMemberTest(final MemberType type) {
     return LeadershipMember.leadershipMemberBuilder()
         .fullName("fullName " + type.name())
         .position("position " + type.name())
         .email("member@wcc.com")
+        .slackDisplayName("Slack name")
         .country(new Country("Country code", "Country name"))
         .city("City")
         .jobTitle("Job title")
@@ -148,6 +161,7 @@ public class SetupFactories {
         .fullName("fullName " + type.name())
         .position("position " + type.name())
         .email("member@wcc.com")
+        .slackDisplayName("Slack name")
         .country(new Country("Country code", "Country name"))
         .city("City")
         .jobTitle("Job title")
