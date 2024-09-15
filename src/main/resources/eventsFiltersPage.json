@@ -1,0 +1,21 @@
+{
+  "title": "Filter By",
+  "type": [
+    "IN_PERSON",
+    "ONLINE_MEETUP"
+  ],
+  "topics": [
+    "BOOK_CLUB",
+    "WRITING_CLUB",
+    "TECH_TALK"
+  ],
+  "date": [
+    "IN_30_DAYS",
+    "BETWEEN_30_TO_60_DAYS",
+    "MORE_THAN_60_DAYS"
+  ],
+  "region": [
+    "London",
+    "Spain"
+  ]
+}

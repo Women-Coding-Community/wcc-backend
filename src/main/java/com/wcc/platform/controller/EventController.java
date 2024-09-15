@@ -32,4 +32,14 @@ public class EventController {
   public ResponseEntity<EventsPage> getEventsPage() {
     return ResponseEntity.ok(cmsService.getEvents());
   }
+
+  /*  */
+  /** API to retrieve filters on events page. */
+  /*
+  @GetMapping("/events/filters")
+  @Operation(summary = "API to retrieve information about events page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<FiltersPage> getEventsFilters() {
+    return ResponseEntity.ok(cmsService.getEvents());
+  }*/
 }

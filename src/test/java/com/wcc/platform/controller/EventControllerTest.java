@@ -43,7 +43,7 @@ class EventControllerTest {
   }
 
   @Test
-  void testOkResponse() throws Exception {
+  void testOkResponseForEvents() throws Exception {
     var eventPage = createEventPageTest(List.of(createEventTest()));
 
     when(service.getEvents()).thenReturn(eventPage);
@@ -53,4 +53,7 @@ class EventControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(eventPage)));
   }
+
+  @Test
+  void testOkResponseForFilters() throws Exception {}
 }
