@@ -26,10 +26,12 @@ public class LeadershipMember extends Member {
 
   /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   public LeadershipMember(
       final String fullName,
       final String position,
       final String email,
+      final String slackDisplayName,
       final Country country,
       final String city,
       final String jobTitle,
@@ -41,6 +43,7 @@ public class LeadershipMember extends Member {
         fullName,
         position,
         email,
+        slackDisplayName,
         country,
         city,
         jobTitle,

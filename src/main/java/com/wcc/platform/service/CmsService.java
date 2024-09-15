@@ -70,7 +70,7 @@ public class CmsService {
   /**
    * Read JSON and convert to Pojo CollaboratorPage.
    *
-   * @return Pojo CollaboratorPage.
+   * @return Collaborators page content.
    */
   public CollaboratorPage getCollaborator() {
     try {
@@ -81,7 +81,7 @@ public class CmsService {
       throw new PlatformInternalException(e.getMessage(), e);
     }
   }
-
+  
   /**
    * Read JSON and convert to Pojo CodeOfConductPage.
    *

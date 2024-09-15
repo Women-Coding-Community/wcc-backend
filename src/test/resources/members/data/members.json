@@ -1,0 +1,56 @@
+[
+  {
+    "fullName": "Member's name",
+    "position": "Senior Software Engineer",
+    "email": "member@wcc.com",
+    "slackDisplayName": "Slack name",
+    "country": {
+      "countryCode": "Country code",
+      "countryName": "Country name"
+    },
+    "city": "City",
+    "jobTitle": "Job title",
+    "companyName": "Company name",
+    "memberType": "MEMBER",
+    "images": [
+      {
+        "path": "image.png",
+        "alt": "member alt",
+        "type": "DESKTOP"
+      }
+    ],
+    "network": [
+      {
+        "type": "LINKEDIN",
+        "link": "https://www.linkedin.com/member"
+      }
+    ]
+  },
+  {
+    "fullName": "Member's name",
+    "position": "Senior Software Engineer",
+    "email": "member@wcc.com",
+    "slackDisplayName": "Slack name",
+    "country": {
+      "countryCode": "Country code",
+      "countryName": "Country name"
+    },
+    "city": "City",
+    "jobTitle": "Job title",
+    "companyName": "Company name",
+    "memberType": "DIRECTOR",
+    "images": [
+      {
+        "path": "image.png",
+        "alt": "director alt",
+        "type": "TABLET"
+      }
+    ],
+    "network": [
+      {
+        "type": "GITHUB",
+        "link": "https://github.com/director"
+      }
+    ]
+  }
+]

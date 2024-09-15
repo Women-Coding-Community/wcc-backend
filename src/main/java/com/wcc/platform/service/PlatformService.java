@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.ResourceContentRepository;
@@ -7,17 +8,25 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.repository.MemberRepository;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /** Platform Service. */
 @Service
 public class PlatformService {
 
   private final ResourceContentRepository resource;
+  private final MemberRepository memberRepository;
 
   @Autowired
   public PlatformService(
-      @Qualifier("getResourceRepository") final ResourceContentRepository resource) {
+      @Qualifier("getResourceRepository") final ResourceContentRepository resource, 
+      final MemberRepository memberRepository) {
     this.resource = resource;
+    this.memberRepository = memberRepository;
   }
 
   public ResourceContent saveResourceContent(final ResourceContent resourceContent) {
@@ -49,5 +58,23 @@ public class PlatformService {
     final var result = getResourceById(id);
 
     resource.deleteById(result.getId());
+  }
+
+  /** Save Member into storage. */
+  public Member createMember(final Member member) {
+    return memberRepository.save(member);
+  }
+
+  /**
+   * Return all stored members.
+   *
+   * @return List of members.
+   */
+  public List<Member> getAll() {
+    final var allMembers = memberRepository.getAll();
+    if (allMembers == null) {
+      return List.of();
+    }
+    return allMembers;
   }
 }
