@@ -23,3 +23,5 @@ surrealdb:
   connections: 5
   namespace: wcc
   database: platform
+  username: root
+  password: root
