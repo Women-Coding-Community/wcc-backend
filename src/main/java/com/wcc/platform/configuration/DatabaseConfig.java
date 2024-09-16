@@ -14,7 +14,8 @@ public class DatabaseConfig {
   /** Create Sync driver connection for SurrealDB. */
   @Bean
   public SyncSurrealDriver getDriver(final SurrealDbConfig config) {
-    final var conn = new SurrealWebSocketConnection("surrealdb", config.getPort(), config.isTls());
+    final var conn =
+        new SurrealWebSocketConnection(config.getHost(), config.getPort(), config.isTls());
     conn.connect(config.getConnections());
     final var driver = new SyncSurrealDriver(conn);
     driver.use(config.getNamespace(), config.getDatabase());
