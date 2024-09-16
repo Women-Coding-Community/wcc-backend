@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: surrealdb
+    ports:
+      - "8000:8000"
+    command: start --log trace --user root --pass root
+    networks:
+      - app-network
+
+  springboot-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: springboot-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - surrealdb
+    environment:
+      - SURREALDB_URL=ws://surrealdb:8000/rpc
+      - SURREALDB_USER=root
+      - SURREALDB_PASS=root
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
