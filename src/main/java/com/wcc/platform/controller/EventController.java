@@ -1,7 +1,9 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.EventsPage;
+import com.wcc.platform.domain.cms.pages.FiltersSection;
 import com.wcc.platform.service.CmsService;
+import com.wcc.platform.service.FilterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController {
 
   private final CmsService cmsService;
+  private final FilterService filterService;
 
   @Autowired
-  public EventController(final CmsService service) {
+  public EventController(final CmsService service, FilterService filterService) {
     this.cmsService = service;
+    this.filterService = filterService;
   }
 
   /** API to retrieve information about events page. */
@@ -33,13 +37,11 @@ public class EventController {
     return ResponseEntity.ok(cmsService.getEvents());
   }
 
-  /*  */
   /** API to retrieve filters on events page. */
-  /*
   @GetMapping("/events/filters")
-  @Operation(summary = "API to retrieve information about events page")
+  @Operation(summary = "API to retrieve information about filters on event page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<FiltersPage> getEventsFilters() {
-    return ResponseEntity.ok(cmsService.getEvents());
-  }*/
+  public ResponseEntity<FiltersSection> getEventsFilters() {
+    return ResponseEntity.ok(filterService.getEventsFilters());
+  }
 }

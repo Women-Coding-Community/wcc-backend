@@ -40,7 +40,7 @@ public class SetupProgrammeFactories {
         SetupFactories.createPageTest(),
         SetupFactories.createContactTest(),
         Collections.singletonList(createProgramme()),
-        SetupEventFactories.createEventSection());
+        SetupEventFactories.createEventSectionTest());
   }
 
   /** Create Factory. */

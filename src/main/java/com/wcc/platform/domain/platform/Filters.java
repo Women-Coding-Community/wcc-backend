@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/** Filters model. */
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
