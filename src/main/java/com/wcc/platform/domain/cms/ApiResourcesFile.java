@@ -9,6 +9,7 @@ public enum ApiResourcesFile {
   LANDING_PAGE("landingPage.json"),
   MENTORSHIP("mentorshipPage.json"),
   TEAM("teamPage.json"),
+  MENTORSHIP_FAQ("mentorshipFaq.json"),
   PROG_BOOK_CLUB("bookClubPage.json");
 
   private final String fileName;
