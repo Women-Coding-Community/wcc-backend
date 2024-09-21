@@ -9,4 +9,3 @@ file:
 
 surrealdb:
   host: surrealdb
-  database: platform-docker
