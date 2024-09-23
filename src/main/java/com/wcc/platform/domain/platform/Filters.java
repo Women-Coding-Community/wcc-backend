@@ -18,8 +18,8 @@ import lombok.ToString;
 @ToString
 @Getter
 public class Filters {
-  List<EventType> type;
-  List<ProgramType> topics;
-  List<EventDays> date;
-  List<String> region;
+  private List<EventType> type;
+  private List<ProgramType> topics;
+  private List<EventDays> date;
+  private List<String> region;
 }

@@ -57,7 +57,7 @@ public class SetupEventFactories {
    *
    * @return EventSection object
    */
-  public static EventSection createEventSectionTest() {
+  public static EventSection createEventSection() {
     return EventSection.builder()
         .title("Upcoming Events")
         .link(new LabelLink(null, "view events", "/events"))
@@ -70,7 +70,7 @@ public class SetupEventFactories {
    *
    * @return EventSection object
    */
-  public static EventSection createEventSectionTest(final ProgramType programType) {
+  public static EventSection createEventSection(final ProgramType programType) {
     return EventSection.builder()
         .title("Upcoming Events")
         .link(new LabelLink(null, "view events", "/events"))

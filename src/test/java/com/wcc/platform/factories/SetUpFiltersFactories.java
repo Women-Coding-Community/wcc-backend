@@ -32,7 +32,7 @@ public class SetUpFiltersFactories {
    * @param eventType - {@link EventType} IN_PERSON, ONLINE
    * @return - {@link Filters}
    */
-  public static Filters createFilterTest(List<EventType> eventType) {
+  public static Filters createFilterTest(final List<EventType> eventType) {
     return Filters.builder()
         .type(eventType)
         .topics(List.of(ProgramType.BOOK_CLUB))

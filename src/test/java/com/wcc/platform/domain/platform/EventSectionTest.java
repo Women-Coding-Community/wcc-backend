@@ -1,11 +1,10 @@
 package com.wcc.platform.domain.platform;
 
-import static com.wcc.platform.factories.SetupEventFactories.createEventSectionTest;
+import static com.wcc.platform.factories.SetupEventFactories.createEventSection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.wcc.platform.factories.SetupEventFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,33 +15,28 @@ class EventSectionTest {
 
   @BeforeEach
   void setup() {
-    testEventSection = createEventSectionTest();
+    testEventSection = createEventSection();
   }
 
   @Test
   void testEquals() {
-    assertEquals(
-        testEventSection, SetupEventFactories.createEventSectionTest(ProgramType.BOOK_CLUB));
+    assertEquals(testEventSection, createEventSection(ProgramType.BOOK_CLUB));
   }
 
   @Test
   void testNotEquals() {
-    assertNotEquals(
-        testEventSection, SetupEventFactories.createEventSectionTest(ProgramType.TECH_TALK));
+    assertNotEquals(testEventSection, createEventSection(ProgramType.TECH_TALK));
   }
 
   @Test
   void testHashCode() {
-    assertEquals(
-        testEventSection.hashCode(),
-        SetupEventFactories.createEventSectionTest(ProgramType.BOOK_CLUB).hashCode());
+    assertEquals(testEventSection.hashCode(), createEventSection(ProgramType.BOOK_CLUB).hashCode());
   }
 
   @Test
   void testHashCodeNotEquals() {
     assertNotEquals(
-        testEventSection.hashCode(),
-        SetupEventFactories.createEventSectionTest(ProgramType.TECH_TALK).hashCode());
+        testEventSection.hashCode(), createEventSection(ProgramType.TECH_TALK).hashCode());
   }
 
   @Test

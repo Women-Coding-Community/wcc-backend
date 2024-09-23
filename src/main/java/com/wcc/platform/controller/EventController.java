@@ -24,7 +24,7 @@ public class EventController {
   private final FilterService filterService;
 
   @Autowired
-  public EventController(final CmsService service, FilterService filterService) {
+  public EventController(final CmsService service, final FilterService filterService) {
     this.cmsService = service;
     this.filterService = filterService;
   }

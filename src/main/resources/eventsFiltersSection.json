@@ -8,13 +8,13 @@
       "ONLINE_MEETUP"
     ],
     "topics": [
-      "BOOK_CLUB",
-      "WRITING_CLUB",
-      "TECH_TALK"
+      "Book Club",
+      "Writing Club",
+      "Tech Talk"
     ],
     "date": [
       "IN_30_DAYS",
-      "BETWEEN_30_TO_60_DAYS",
+      "IN_30_TO_60_DAYS",
       "MORE_THAN_60_DAYS"
     ],
     "region": [
