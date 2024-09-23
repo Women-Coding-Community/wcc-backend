@@ -18,6 +18,7 @@ import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
+import com.wcc.platform.repository.PageRepository;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,8 @@ class CmsServiceTest {
   @BeforeEach
   void setUp() {
     objectMapper = Mockito.mock(ObjectMapper.class);
-    service = new CmsService(objectMapper);
+    var repository = Mockito.mock(PageRepository.class);
+    service = new CmsService(objectMapper, repository);
   }
 
   @Test

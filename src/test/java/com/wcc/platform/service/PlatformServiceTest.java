@@ -6,19 +6,23 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.ResourceContentRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class PlatformServiceTest {
+
   private MemberRepository memberRepository;
+  private ResourceContentRepository resource;
   private PlatformService service;
 
   @BeforeEach
   void setUp() {
     memberRepository = Mockito.mock(MemberRepository.class);
-    service = new PlatformService(memberRepository);
+    resource = Mockito.mock(ResourceContentRepository.class);
+    service = new PlatformService(resource, memberRepository);
   }
 
   @Test
