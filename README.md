@@ -159,6 +159,12 @@ Once you've done that, restart the IDE.
 ./gradlew clean bootJar
 ```
 
+* Start database
+
+```shell
+docker run --pull always --name surrealdb -p 8000:8000 -d surrealdb/surrealdb:latest start
+```
+
 * Start Spring Boot Application:
 
 ```shell
@@ -268,14 +274,14 @@ Generate token to replace in the project.
 * Start docker compose
 
 ```shell
-docker-compose -f docker/docker-compose.yml up --build
+docker compose -f docker/docker-compose.yml up --build
 ```
 
 * Stop docker compose
 
 ```shell
 cd docker
-docker-compose down
+docker compose down
 ```
 
 ### Deploy with docker
