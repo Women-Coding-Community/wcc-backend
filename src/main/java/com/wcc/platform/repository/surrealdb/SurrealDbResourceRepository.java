@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class SurrealDbResourceRepository implements ResourceContentRepository {
 
-  private static final String TABLE = "resource_content";
+  static final String TABLE = "resource_content";
   private final SyncSurrealDriver driver;
 
   @Autowired

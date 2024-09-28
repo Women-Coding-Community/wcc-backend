@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class SurrealDbPageRepository implements PageRepository {
 
-  private static final String TABLE = "page";
+  static final String TABLE = "page";
   private final SyncSurrealDriver driver;
 
   @Autowired

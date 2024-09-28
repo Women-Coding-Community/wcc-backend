@@ -1,17 +1,14 @@
 package com.wcc.platform.service;
 
-
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.ResourceContent;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.ResourceContentRepository;
 import java.util.Collection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import com.wcc.platform.domain.platform.Member;
-import com.wcc.platform.repository.MemberRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** Platform Service. */
@@ -23,7 +20,7 @@ public class PlatformService {
 
   @Autowired
   public PlatformService(
-      @Qualifier("getResourceRepository") final ResourceContentRepository resource, 
+      @Qualifier("getResourceRepository") final ResourceContentRepository resource,
       final MemberRepository memberRepository) {
     this.resource = resource;
     this.memberRepository = memberRepository;
