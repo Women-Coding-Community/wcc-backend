@@ -10,25 +10,18 @@ import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
 @Service
 public class CmsService {
   private final ObjectMapper objectMapper;
-  private final PageRepository repository;
 
   @Autowired
-  public CmsService(
-      final ObjectMapper objectMapper,
-      @Qualifier("getPageRepository") final PageRepository repository) {
+  public CmsService(final ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
-    this.repository = repository;
   }
 
   /**
@@ -65,8 +58,6 @@ public class CmsService {
    * @return Landing page of the community.
    */
   public LandingPage getLandingPage() {
-    Optional<Object> page = repository.findById("page:⟨landing_page⟩");
-
     try {
       return objectMapper.readValue(
           FileUtil.readFileAsString(ApiResourcesFile.LANDING_PAGE.getFileName()),

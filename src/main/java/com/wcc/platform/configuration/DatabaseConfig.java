@@ -16,8 +16,13 @@ public class DatabaseConfig {
   public SyncSurrealDriver getDriver(final SurrealDbConfig config) {
     final var conn =
         new SurrealWebSocketConnection(config.getHost(), config.getPort(), config.isTls());
+
     conn.connect(config.getConnections());
+
     final var driver = new SyncSurrealDriver(conn);
+
+    driver.signIn(config.getUsername(), config.getPassword());
+
     driver.use(config.getNamespace(), config.getDatabase());
 
     return driver;

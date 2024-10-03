@@ -1,3 +1,5 @@
+import java.time.Duration
+
 plugins {
     java
     pmd
@@ -26,6 +28,8 @@ repositories {
     mavenCentral()
 }
 
+val testContainer = "1.19.0"
+
 dependencies {
 
     compileOnly("org.projectlombok:lombok")
@@ -38,6 +42,11 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
+
+    testImplementation("com.surrealdb:surrealdb-driver:0.1.0")
+    testImplementation("org.testcontainers:testcontainers:${testContainer}")
+    testImplementation("org.testcontainers:junit-jupiter:$testContainer")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
@@ -45,6 +54,8 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs = listOf("-Xmx2048m")
+    timeout.set(Duration.ofMinutes(2))
 }
 
 tasks {
