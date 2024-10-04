@@ -12,11 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      docker:
+        image: docker:20.10.7
+        options: --privileged # Needed for Docker-in-Docker (dind)
+
     strategy:
       matrix:
         java-version: [ '21' ]
-    
-
 
     steps:
       - name: Checkout code
@@ -25,7 +28,7 @@ jobs:
           FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
           ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
-      - name: Set up JDK  Set up JDK ${{ matrix.java-version }}
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         env:
           FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
@@ -49,6 +52,10 @@ jobs:
 
       - name: Build and test
         run: ./gradlew test jacocoTestReport
+        env:
+          DOCKER_HOST: "tcp://localhost:2375"
+          DOCKER_TLS_VERIFY: "0"
+          TESTCONTAINERS_RYUK_DISABLED: "true" # Optional to disable Ryuk
 
       - name: Pmd Check
         run: ./gradlew pmdMain
