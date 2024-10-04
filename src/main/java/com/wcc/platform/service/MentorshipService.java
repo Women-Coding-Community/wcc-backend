@@ -1,9 +1,11 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.MENTORSHIP;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.MENTORSHIP_FAQ;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.mentorship.FaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.utils.FileUtil;
@@ -29,6 +31,15 @@ public class MentorshipService {
     try {
       final String data = FileUtil.readFileAsString(MENTORSHIP.getFileName());
       return objectMapper.readValue(data, MentorshipPage.class);
+    } catch (JsonProcessingException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
+    }
+  }
+
+  public FaqPage getFaq() {
+    try {
+      final String data = FileUtil.readFileAsString(MENTORSHIP_FAQ.getFileName());
+      return objectMapper.readValue(data, FaqPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }

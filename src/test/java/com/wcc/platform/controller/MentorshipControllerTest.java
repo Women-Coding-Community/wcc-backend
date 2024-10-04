@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.ApiResourcesFile.MENTORSHIP;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.MENTORSHIP_FAQ;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -44,6 +45,19 @@ public class MentorshipControllerTest {
   @Test
   void testOkResponse() throws Exception {
     var fileName = MENTORSHIP.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getOverview()).thenReturn(createMentorshipPageTest(fileName));
+
+    mockMvc
+        .perform(get(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testOkResponseForFaq() throws Exception {
+    var fileName = MENTORSHIP_FAQ.getFileName();
     var expectedJson = FileUtil.readFileAsString(fileName);
 
     when(service.getOverview()).thenReturn(createMentorshipPageTest(fileName));
