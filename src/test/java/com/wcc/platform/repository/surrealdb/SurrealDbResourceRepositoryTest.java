@@ -20,8 +20,8 @@ import org.mockito.MockitoAnnotations;
 
 class SurrealDbResourceRepositoryTest {
 
+  private static final String TEST_ID = "test-id";
   private static final String TABLE = SurrealDbResourceRepository.TABLE;
-
   private final ResourceContent entity = new ResourceContent();
   private final Class<ResourceContent> className = ResourceContent.class;
 
@@ -57,22 +57,18 @@ class SurrealDbResourceRepositoryTest {
   }
 
   @Test
-  void testFindById_NotFoundCase1() {
-    String id = "test-id";
-
-    var result = repository.findById(id);
+  void testFindByIdNotFoundCase1() {
+    var result = repository.findById(TEST_ID);
 
     verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(className));
     assertTrue(result.isEmpty());
   }
 
   @Test
-  void testFindById_NotFoundCase2() {
-    String id = "test-id";
-
+  void testFindByIdNotFoundCase2() {
     when(mockDriver.query(anyString(), anyMap(), eq(className))).thenReturn(List.of());
 
-    var result = repository.findById(id);
+    var result = repository.findById(TEST_ID);
 
     verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(className));
     assertTrue(result.isEmpty());
@@ -80,10 +76,8 @@ class SurrealDbResourceRepositoryTest {
 
   @Test
   void testDeleteById() {
-    String id = "test-id";
+    repository.deleteById(TEST_ID);
 
-    repository.deleteById(id);
-
-    verify(mockDriver, times(1)).delete(id);
+    verify(mockDriver, times(1)).delete(TEST_ID);
   }
 }

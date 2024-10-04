@@ -13,7 +13,7 @@ class SurrealDbConfigTest {
 
   @Test
   @DisplayName("Given NoArgsConstructor, when initialized, then fields have default values")
-  void givenNoArgsConstructor_whenInitialized_thenFieldsHaveDefaultValues() {
+  void givenNoArgsConstructorWhenInitializedThenFieldsHaveDefaultValues() {
     SurrealDbConfig config = new SurrealDbConfig();
 
     assertNotNull(config);
@@ -29,7 +29,7 @@ class SurrealDbConfigTest {
 
   @Test
   @DisplayName("Given Setters, when fields are set, then values are correctly assigned")
-  void givenSetters_whenFieldsAreSet_thenValuesAreCorrectlyAssigned() {
+  void givenSettersWhenFieldsAreSetThenValuesAreCorrectlyAssigned() {
     SurrealDbConfig config = new SurrealDbConfig();
 
     config.setHost("localhost");
@@ -54,7 +54,7 @@ class SurrealDbConfigTest {
   @Test
   @DisplayName(
       "Given Partial Setters, when some fields are set, then unset fields have default values")
-  void givenPartialSetters_whenSomeFieldsAreSet_thenUnsetFieldsHaveDefaultValues() {
+  void givenPartialSettersWhenSomeFieldsAreSetThenUnsetFieldsHaveDefaultValues() {
     SurrealDbConfig config = new SurrealDbConfig();
 
     config.setHost("localhost");
@@ -72,7 +72,7 @@ class SurrealDbConfigTest {
 
   @Test
   @DisplayName("Given ToString, when called, then returns correct string representation")
-  void givenToString_whenCalled_thenReturnsCorrectStringRepresentation() {
+  void givenToStringWhenCalledThenReturnsCorrectStringRepresentation() {
     SurrealDbConfig config = new SurrealDbConfig();
     config.setHost("localhost");
     config.setPort(8000);
@@ -84,15 +84,17 @@ class SurrealDbConfigTest {
     config.setDatabase("test_db");
 
     String expected =
-        "SurrealDbConfig(host=localhost, port=8000, tls=true, username=admin, password=password, connections=10, namespace=test_ns, database=test_db)";
+        "SurrealDbConfig(host=localhost, port=8000, tls=true, username=admin, "
+            + "password=password, connections=10, namespace=test_ns, database=test_db)";
 
     assertEquals(expected, config.toString());
   }
 
   @Test
   @DisplayName(
-      "Given Equals and HashCode, when fields are identical, then objects are equal and hash codes match")
-  void givenEqualsAndHashCode_whenFieldsAreIdentical_thenObjectsAreEqualAndHashCodesMatch() {
+      "Given Equals and HashCode, when fields are identical, "
+          + "then objects are equal and hash codes match")
+  void givenEqualsAndHashCodeWhenFieldsAreIdenticalThenObjectsAreEqualAndHashCodesMatch() {
     SurrealDbConfig config1 = new SurrealDbConfig();
     config1.setHost("localhost");
     config1.setPort(8000);

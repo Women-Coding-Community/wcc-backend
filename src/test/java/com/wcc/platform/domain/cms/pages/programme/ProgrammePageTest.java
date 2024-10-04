@@ -1,7 +1,8 @@
 package com.wcc.platform.domain.cms.pages.programme;
 
 import static com.wcc.platform.factories.SetupFactories.createContactTest;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.pages.Page;
@@ -74,7 +75,7 @@ class ProgrammePageTest {
   @DisplayName(
       "Given ProgrammePage, when toString is called, "
           + "then it should return correct string representation")
-  void toStringTest() {
+  void testToString() {
     ProgrammePage programmePage = new ProgrammePage(page, contact, programmeDetails, eventSection);
     String expected =
         "ProgrammePage(page="

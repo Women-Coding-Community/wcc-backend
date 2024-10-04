@@ -56,21 +56,18 @@ class SurrealDbPageRepositoryTest {
   }
 
   @Test
-  void testFindById_NotFoundCase1() {
-    String id = "test-id";
-
-    Optional<Object> result = repository.findById(id);
+  void testFindByIdNotFoundCase1() {
+    Optional<Object> result = repository.findById("test-id");
 
     verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(Object.class));
     assertTrue(result.isEmpty());
   }
 
   @Test
-  void testFindById_NotFoundCase2() {
-    String id = "test-id";
+  void testFindByIdNotFoundCase2() {
     when(mockDriver.query(anyString(), anyMap(), eq(Object.class))).thenReturn(List.of());
 
-    Optional<Object> result = repository.findById(id);
+    Optional<Object> result = repository.findById("test-id-2");
 
     verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(Object.class));
     assertTrue(result.isEmpty());
@@ -78,10 +75,10 @@ class SurrealDbPageRepositoryTest {
 
   @Test
   void testDeleteById() {
-    String id = "test-id";
+    String pageId = "test-pageId";
 
-    repository.deleteById(id);
+    repository.deleteById(pageId);
 
-    verify(mockDriver, times(1)).delete(id);
+    verify(mockDriver, times(1)).delete("test-pageId");
   }
 }

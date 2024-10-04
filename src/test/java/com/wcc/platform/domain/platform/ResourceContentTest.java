@@ -107,7 +107,7 @@ class ResourceContentTest {
   @Test
   @DisplayName(
       "Given ResourceContent, when toString is called, then it should return correct string representation")
-  void toStringTest() {
+  void testToString() {
     ResourceContent resource =
         new ResourceContent(
             "1", "Test Resource", "Test Description", "Raw Content", ResourceType.IMAGE, images);

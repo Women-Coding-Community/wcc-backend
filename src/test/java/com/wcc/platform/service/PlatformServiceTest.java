@@ -50,7 +50,7 @@ class PlatformServiceTest {
 
   @Test
   @DisplayName("Given ResourceContent, when saved, then should return saved resource content")
-  void saveResourceContent() {
+  void testSaveResourceContent() {
     when(resourceContentRepository.save(any(ResourceContent.class))).thenReturn(resourceContent);
 
     ResourceContent result = service.saveResourceContent(resourceContent);
@@ -62,7 +62,7 @@ class PlatformServiceTest {
   @Test
   @DisplayName(
       "Given resources exist, when getting all resources, then should return all resources")
-  void getAllResources() {
+  void testGetAllResources() {
     var resources = List.of(resourceContent);
     when(resourceContentRepository.findAll()).thenReturn(resources);
 
@@ -74,7 +74,7 @@ class PlatformServiceTest {
 
   @Test
   @DisplayName("Given valid id, when getting resource by id, then should return resource content")
-  void getResourceById() {
+  void testGetResourceById() {
     when(resourceContentRepository.findById("1")).thenReturn(Optional.of(resourceContent));
 
     ResourceContent result = service.getResourceById("1");
@@ -86,7 +86,7 @@ class PlatformServiceTest {
   @Test
   @DisplayName(
       "Given invalid id, when getting resource by id, then should throw ContentNotFoundException")
-  void getResourceByIdNotFound() {
+  void testGetResourceByIdNotFound() {
     when(resourceContentRepository.findById("1")).thenReturn(Optional.empty());
 
     assertThrows(ContentNotFoundException.class, () -> service.getResourceById("1"));
@@ -94,7 +94,7 @@ class PlatformServiceTest {
 
   @Test
   @DisplayName("Given valid id, when deleting resource by id, then should delete the resource")
-  void deleteById() {
+  void testDeleteById() {
     when(resourceContentRepository.findById("1")).thenReturn(Optional.of(resourceContent));
 
     service.deleteById("1");
@@ -105,7 +105,7 @@ class PlatformServiceTest {
   @Test
   @DisplayName(
       "Given invalid id, when deleting resource by id, then should throw ContentNotFoundException")
-  void deleteByIdNotFound() {
+  void testDeleteByIdNotFound() {
     when(resourceContentRepository.findById("1")).thenReturn(Optional.empty());
 
     assertThrows(ContentNotFoundException.class, () -> service.deleteById("1"));
@@ -113,7 +113,7 @@ class PlatformServiceTest {
 
   @Test
   @DisplayName("Given Member, when created, then should return created member")
-  void createMember() {
+  void testCreateMember() {
     when(memberRepository.save(any(Member.class))).thenReturn(member);
 
     Member result = service.createMember(member);
@@ -124,7 +124,7 @@ class PlatformServiceTest {
 
   @Test
   @DisplayName("When getting all members, then should return list of members")
-  void getAllMembers() {
+  void testGetAllMembers() {
     List<Member> members = List.of(member);
     when(memberRepository.getAll()).thenReturn(members);
 
@@ -136,7 +136,7 @@ class PlatformServiceTest {
 
   @Test
   @DisplayName("When getting all members and none exist, then should return empty list")
-  void getAllMembersEmpty() {
+  void testGetAllMembersEmpty() {
     when(memberRepository.getAll()).thenReturn(null);
 
     List<Member> result = service.getAll();

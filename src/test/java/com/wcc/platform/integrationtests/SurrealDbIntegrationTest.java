@@ -6,8 +6,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
@@ -17,16 +15,16 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 class SurrealDbIntegrationTest {
 
-  private static final GenericContainer<?> surrealDbContainer =
+  private static final GenericContainer<?> SURREAL_DB_CONTAINER =
       new GenericContainer<>(DockerImageName.parse("surrealdb/surrealdb:latest"))
           .withExposedPorts(8000)
           .withCommand("start --user root --pass root");
 
   @DynamicPropertySource
-  static void registerSurrealDbProperties(DynamicPropertyRegistry registry) {
-    surrealDbContainer.start();
-    String host = surrealDbContainer.getHost();
-    Integer port = surrealDbContainer.getMappedPort(8000);
+  static void registerSurrealDbProperties(final DynamicPropertyRegistry registry) {
+    SURREAL_DB_CONTAINER.start();
+    String host = SURREAL_DB_CONTAINER.getHost();
+    Integer port = SURREAL_DB_CONTAINER.getMappedPort(8000);
     registry.add("surrealdb.host", () -> host);
     registry.add("surrealdb.port", port::toString);
     registry.add("surrealdb.username", () -> "root");
@@ -37,18 +35,18 @@ class SurrealDbIntegrationTest {
 
   @BeforeAll
   static void setUp() {
-    surrealDbContainer.start();
+    SURREAL_DB_CONTAINER.start();
   }
 
   @AfterAll
   static void tearDown() {
-    surrealDbContainer.stop();
+    SURREAL_DB_CONTAINER.stop();
   }
 
   @Test
   @DisplayName("Should create and retrieve a ResourceContent entity")
   void testSurrealDbConnection() {
-    assertTrue(surrealDbContainer.isCreated());
-    assertTrue(surrealDbContainer.isRunning());
+    assertTrue(SURREAL_DB_CONTAINER.isCreated());
+    assertTrue(SURREAL_DB_CONTAINER.isRunning());
   }
 }
