@@ -2,7 +2,7 @@
 build/*
 .idea/*
 .ideaDataSources/
-
+data-test/*
 
 # IntelliJ customizations
 !.idea/checkstyle-idea.xml
