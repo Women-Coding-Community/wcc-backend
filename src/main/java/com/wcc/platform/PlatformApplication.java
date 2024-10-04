@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Import;
 
-/** Spring application service. */
+/** Spring application service */
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @Import(ObjectMapperConfig.class)
