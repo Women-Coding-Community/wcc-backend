@@ -12,11 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      docker:
-        image: docker:20.10.7
-        options: --privileged # Needed for Docker-in-Docker (dind)
-
     strategy:
       matrix:
         java-version: [ '21' ]
@@ -24,24 +19,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
 
       - name: Cache Gradle packages
         uses: actions/cache@v3
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           path: |
             ~/.gradle/caches
@@ -53,20 +39,17 @@ jobs:
       - name: Build and test
         run: ./gradlew test jacocoTestReport
         env:
-          DOCKER_HOST: "tcp://localhost:2375"
-          DOCKER_TLS_VERIFY: "0"
-          TESTCONTAINERS_RYUK_DISABLED: "true" # Optional to disable Ryuk
+          DOCKER_HOST: "unix:///var/run/docker.sock"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Pmd Check
         run: ./gradlew pmdMain
 
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
 
       - name: Upload code coverage report
-        if: success() || failure()
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
