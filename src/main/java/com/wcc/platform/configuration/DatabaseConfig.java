@@ -17,7 +17,7 @@ public class DatabaseConfig {
     final var conn =
         new SurrealWebSocketConnection(config.getHost(), config.getPort(), config.isTls());
 
-    conn.connect(config.getConnections());
+    conn.connect(config.getTimoutSeconds());
 
     final var driver = new SyncSurrealDriver(conn);
 

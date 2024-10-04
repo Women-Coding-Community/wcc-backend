@@ -22,6 +22,7 @@ class SurrealDbResourceRepositoryTest {
 
   private static final String TEST_ID = "test-id";
   private static final String TABLE = SurrealDbResourceRepository.TABLE;
+
   private final ResourceContent entity = new ResourceContent();
   private final Class<ResourceContent> className = ResourceContent.class;
 

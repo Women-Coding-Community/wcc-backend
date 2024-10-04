@@ -20,7 +20,7 @@ surrealdb:
   host: localhost
   port: 8000
   tls: false
-  connections: 5
+  timout-seconds: 60
   namespace: wcc
   database: platform
   username: root
