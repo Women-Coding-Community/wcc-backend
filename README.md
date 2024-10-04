@@ -153,6 +153,9 @@ Once you've done that, restart the IDE.
 ./gradlew clean build
 ```
 
+**Note**: Make sure you have docker daemon running locally to be able to run integration test, by
+execute ``docker ps``
+
 * Create Jar
 
 ```shell
