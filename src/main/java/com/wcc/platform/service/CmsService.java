@@ -81,7 +81,7 @@ public class CmsService {
       throw new PlatformInternalException(e.getMessage(), e);
     }
   }
-  
+
   /**
    * Read JSON and convert to Pojo CodeOfConductPage.
    *

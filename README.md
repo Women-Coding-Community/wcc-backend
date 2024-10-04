@@ -22,6 +22,7 @@
             * [Set-up wcc-backend project on local sonarQube instance](#set-up-wcc-backend-project-on-local-sonarqube-instance)
             * [Perform SONAR ANALYSIS](#perform-sonar-analysis)
     * [Deploy application](#deploy-application)
+        * [Deploy with docker compose](#deploy-with-docker-compose)
         * [Deploy with docker](#deploy-with-docker)
             * [Start docker with remote debug](#start-docker-with-remote-debug)
             * [Start docker with mounted data volume](#start-docker-with-mounted-data-volume)
@@ -152,10 +153,19 @@ Once you've done that, restart the IDE.
 ./gradlew clean build
 ```
 
+**Note**: Make sure you have docker daemon running locally to be able to run integration test, by
+execute ``docker ps``
+
 * Create Jar
 
 ```shell
 ./gradlew clean bootJar
+```
+
+* Start database
+
+```shell
+docker run --pull always --name surrealdb -p 8000:8000 -d surrealdb/surrealdb:latest start
 ```
 
 * Start Spring Boot Application:
@@ -260,6 +270,22 @@ Generate token to replace in the project.
 ```
 
 ## Deploy application
+
+### Deploy with docker compose
+
+* build create jar: `./gradlew clean bootJar`
+* Start docker compose
+
+```shell
+docker compose -f docker/docker-compose.yml up --build
+```
+
+* Stop docker compose
+
+```shell
+cd docker
+docker compose down
+```
 
 ### Deploy with docker
 
