@@ -9,4 +9,4 @@ file:
 
 surrealdb:
   host: surrealdb
-  timout-seconds: 30
+  timout-seconds: 90
