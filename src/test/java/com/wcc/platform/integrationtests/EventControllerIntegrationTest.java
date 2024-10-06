@@ -1,10 +1,13 @@
 package com.wcc.platform.integrationtests;
 
+import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENTS;
+import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENT_FILTERS;
+import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.wcc.platform.controller.EventController;
-import com.wcc.platform.domain.cms.ApiResourcesFile;
+import com.wcc.platform.service.EventService;
 import com.wcc.platform.utils.FileUtil;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,8 @@ public class EventControllerIntegrationTest {
 
   @Autowired private EventController eventController;
 
+  @Autowired private EventService service;
+
   @SneakyThrows
   @Test
   void testEventsAPISuccess() {
@@ -26,7 +31,7 @@ public class EventControllerIntegrationTest {
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    var expected = FileUtil.readFileAsString(ApiResourcesFile.EVENTS.getFileName());
+    var expected = FileUtil.readFileAsString(EVENTS.getFileName());
     var jsonResponse = OBJECT_MAPPER.writeValueAsString(response.getBody());
 
     JSONAssert.assertEquals(expected, jsonResponse, false);
@@ -39,9 +44,17 @@ public class EventControllerIntegrationTest {
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    var expected = FileUtil.readFileAsString(ApiResourcesFile.EVENT_FILTERS.getFileName());
+    var expected = FileUtil.readFileAsString(EVENT_FILTERS.getFileName());
     var jsonResponse = OBJECT_MAPPER.writeValueAsString(response.getBody());
 
     JSONAssert.assertEquals(expected, jsonResponse, false);
+  }
+
+  @Test
+  void testGetEventsPage() {
+    var result = service.getEvents();
+    var expectedEventsPage = createEventTest(EVENTS.getFileName());
+
+    assertEquals(expectedEventsPage, result);
   }
 }

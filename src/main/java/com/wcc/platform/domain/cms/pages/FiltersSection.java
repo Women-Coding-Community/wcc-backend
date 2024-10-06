@@ -5,7 +5,6 @@ import com.wcc.platform.domain.platform.Filters;
 /**
  * Filters section for any page.
  *
- * @param page {@link Page}
  * @param filters {@link Filters}
  */
-public record FiltersSection(Page page, Filters filters) {}
+public record FiltersSection(String title, Filters filters) {}

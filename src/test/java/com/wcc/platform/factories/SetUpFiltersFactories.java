@@ -1,7 +1,5 @@
 package com.wcc.platform.factories;
 
-import static com.wcc.platform.factories.SetupFactories.createPageTest;
-
 import com.wcc.platform.domain.cms.attributes.EventDays;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.pages.FiltersSection;
@@ -22,7 +20,7 @@ public class SetUpFiltersFactories {
         .type(List.of(EventType.IN_PERSON))
         .topics(List.of(ProgramType.BOOK_CLUB))
         .date(List.of(EventDays.IN_30_DAYS))
-        .region(List.of("London", "Spain"))
+        .location(List.of("London", "Spain"))
         .build();
   }
 
@@ -37,7 +35,7 @@ public class SetUpFiltersFactories {
         .type(eventType)
         .topics(List.of(ProgramType.BOOK_CLUB))
         .date(List.of(EventDays.IN_30_DAYS))
-        .region(List.of("London", "Spain"))
+        .location(List.of("London", "Spain"))
         .build();
   }
 
@@ -47,6 +45,6 @@ public class SetUpFiltersFactories {
    * @return {@link FiltersSection}
    */
   public static FiltersSection createFilterSectionTest() {
-    return new FiltersSection(createPageTest(), createFilterTest());
+    return new FiltersSection("default_title", createFilterTest());
   }
 }

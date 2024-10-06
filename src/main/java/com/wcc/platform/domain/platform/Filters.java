@@ -21,5 +21,5 @@ public class Filters {
   private List<EventType> type;
   private List<ProgramType> topics;
   private List<EventDays> date;
-  private List<String> region;
+  private List<String> location;
 }

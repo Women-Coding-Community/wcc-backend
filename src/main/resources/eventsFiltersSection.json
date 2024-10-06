@@ -1,11 +1,10 @@
 {
-  "page": {
-    "title": "Filter By"
-  },
+  "title": "Filter By",
   "filters": {
     "type": [
       "IN_PERSON",
-      "ONLINE_MEETUP"
+      "ONLINE_MEETUP",
+      "HYBRID"
     ],
     "topics": [
       "Book Club",
@@ -17,9 +16,8 @@
       "IN_30_TO_60_DAYS",
       "MORE_THAN_60_DAYS"
     ],
-    "region": [
-      "London",
-      "Spain"
+    "location": [
+      "London"
     ]
   }
 }

@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.service.CmsService;
+import com.wcc.platform.service.EventService;
 import com.wcc.platform.service.FilterService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -29,13 +29,13 @@ class EventControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean private CmsService cmsService;
+  @MockBean private EventService eventService;
 
   @MockBean private FilterService filterService;
 
   @Test
   void testInternalServerError() throws Exception {
-    when(cmsService.getEvents())
+    when(eventService.getEvents())
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
@@ -50,7 +50,7 @@ class EventControllerTest {
   void testOkResponseForEvents() throws Exception {
     var eventPage = createEventPageTest(List.of(createEventTest()));
 
-    when(cmsService.getEvents()).thenReturn(eventPage);
+    when(eventService.getEvents()).thenReturn(eventPage);
 
     mockMvc
         .perform(get("/api/cms/v1/events").contentType(APPLICATION_JSON))

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.ApiResourcesFile;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
@@ -81,7 +80,7 @@ public class CmsService {
       throw new PlatformInternalException(e.getMessage(), e);
     }
   }
-  
+
   /**
    * Read JSON and convert to Pojo CodeOfConductPage.
    *
@@ -91,20 +90,6 @@ public class CmsService {
     try {
       final var data = FileUtil.readFileAsString(ApiResourcesFile.CODE_OF_CONDUCT.getFileName());
       return objectMapper.readValue(data, CodeOfConductPage.class);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
-    }
-  }
-
-  /**
-   * Read Json and convert to POJO event page.
-   *
-   * @return POJO eventsPage
-   */
-  public EventsPage getEvents() {
-    try {
-      final var data = FileUtil.readFileAsString(ApiResourcesFile.EVENTS.getFileName());
-      return objectMapper.readValue(data, EventsPage.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
