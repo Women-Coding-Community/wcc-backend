@@ -122,7 +122,7 @@ public class SetupFactories {
         .city("City")
         .jobTitle("Job title")
         .companyName("Company name")
-        .memberType(type)
+        .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
         .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
         .build();
@@ -149,7 +149,7 @@ public class SetupFactories {
         .city("City")
         .jobTitle("Job title")
         .companyName("Company name")
-        .memberType(type)
+        .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
         .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
         .build();
@@ -166,7 +166,7 @@ public class SetupFactories {
         .city("City")
         .jobTitle("Job title")
         .companyName("Company name")
-        .memberType(type)
+        .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
         .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
         .build();

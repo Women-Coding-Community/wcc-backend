@@ -11,7 +11,9 @@
     "city": "City",
     "jobTitle": "Job title",
     "companyName": "Company name",
-    "memberType": "MEMBER",
+    "memberTypes": [
+      "MEMBER"
+    ],
     "images": [
       {
         "path": "image.png",
@@ -38,7 +40,9 @@
     "city": "City",
     "jobTitle": "Job title",
     "companyName": "Company name",
-    "memberType": "DIRECTOR",
+    "memberTypes": [
+      "DIRECTOR"
+    ],
     "images": [
       {
         "path": "image.png",

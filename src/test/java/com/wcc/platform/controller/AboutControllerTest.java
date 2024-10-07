@@ -101,7 +101,7 @@ class AboutControllerTest {
             .city("City")
             .jobTitle("Job title")
             .companyName("Company name")
-            .memberType(MemberType.COLLABORATOR)
+            .memberTypes(List.of(MemberType.COLLABORATOR))
             .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
             .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
             .build();
@@ -138,7 +138,7 @@ class AboutControllerTest {
         .andExpect(jsonPath("$.collaborators[0].city", is("City")))
         .andExpect(jsonPath("$.collaborators[0].jobTitle", is("Job title")))
         .andExpect(jsonPath("$.collaborators[0].companyName", is("Company name")))
-        .andExpect(jsonPath("$.collaborators[0].memberType", is("COLLABORATOR")))
+        .andExpect(jsonPath("$.collaborators[0].memberTypes[0]", is("COLLABORATOR")))
         .andExpect(jsonPath("$.collaborators[0].images[0].path", is("image.png")))
         .andExpect(jsonPath("$.collaborators[0].images[0].alt", is("alt image")))
         .andExpect(jsonPath("$.collaborators[0].images[0].type", is("DESKTOP")))

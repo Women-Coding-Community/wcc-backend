@@ -3,18 +3,19 @@ package com.wcc.platform.domain.platform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class LeadershipMemberTest {
 
   private final LeadershipMember director1 =
-      LeadershipMember.leadershipMemberBuilder().memberType(MemberType.DIRECTOR).build();
+      LeadershipMember.leadershipMemberBuilder().memberTypes(List.of(MemberType.DIRECTOR)).build();
 
   private final LeadershipMember director2 =
-      LeadershipMember.leadershipMemberBuilder().memberType(MemberType.DIRECTOR).build();
+      LeadershipMember.leadershipMemberBuilder().memberTypes(List.of(MemberType.DIRECTOR)).build();
 
   private final LeadershipMember leader =
-      LeadershipMember.leadershipMemberBuilder().memberType(MemberType.LEADER).build();
+      LeadershipMember.leadershipMemberBuilder().memberTypes(List.of(MemberType.LEADER)).build();
 
   @Test
   void testEquals() {
@@ -31,8 +32,10 @@ class LeadershipMemberTest {
   @Test
   void testToString() {
     var evangelist =
-        LeadershipMember.leadershipMemberBuilder().memberType(MemberType.EVANGELIST).build();
+        LeadershipMember.leadershipMemberBuilder()
+            .memberTypes(List.of(MemberType.EVANGELIST))
+            .build();
 
-    assertEquals("LeadershipMember(memberType=EVANGELIST)", evangelist.toString());
+    assertEquals("LeadershipMember(memberTypes=[EVANGELIST])", evangelist.toString());
   }
 }
