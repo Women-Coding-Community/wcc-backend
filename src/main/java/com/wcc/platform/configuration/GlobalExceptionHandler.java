@@ -40,7 +40,10 @@ public class GlobalExceptionHandler {
   }
 
   /** Receive PlatformInternalException and return {@link HttpStatus#BAD_REQUEST}. */
-  @ExceptionHandler(InvalidProgramTypeException.class)
+  // TODO: Add new exception about duplicated member/email ...
+  @ExceptionHandler({
+    InvalidProgramTypeException.class,
+  })
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ErrorDetails> handleProgramTypeError(
       final InvalidProgramTypeException ex, final WebRequest request) {

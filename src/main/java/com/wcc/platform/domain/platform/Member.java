@@ -25,6 +25,7 @@ public class Member {
   private String slackDisplayName;
   private Country country;
   private String city;
+  // TODO: remove jobTitle
   private String jobTitle;
   private String companyName;
   private List<MemberType> memberTypes;

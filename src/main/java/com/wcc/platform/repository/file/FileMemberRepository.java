@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 
 /** FileMemberRepository class to write/read member's data to/from file repository. */
@@ -32,7 +33,7 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
-   * Save member to temporary variable?.
+   * Save new member.
    *
    * @param member member to be saved to file
    * @return Member pojo
@@ -48,6 +49,28 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
+   * Update an existing member.
+   *
+   * @param updatedMember member with updated fields
+   * @return updated member
+   */
+  @Override
+  public Member update(final Member updatedMember) {
+    List<Member> members = getAll();
+
+    for (int i = 0; i < members.size(); i++) {
+      Member member = members.get(i);
+      if (member.getEmail().equals(updatedMember.getEmail())) {
+        members.set(i, updatedMember);
+        break;
+      }
+    }
+    writeFile(members);
+
+    return updatedMember;
+  }
+
+  /**
    * Read all members from file.
    *
    * @return list of members
@@ -58,14 +81,36 @@ public class FileMemberRepository implements MemberRepository {
       if (!file.exists() || file.length() == 0) {
         return new ArrayList<>();
       }
-      return objectMapper.readValue(file, new TypeReference<>() {});
+      return objectMapper.readValue(file, new TypeReference<ArrayList<Member>>() {});
     } catch (IOException e) {
       throw new FileRepositoryException(e.getMessage(), e);
     }
   }
 
   /**
-   * Write list of members to the file.
+   * Find member by email.
+   *
+   * @param email member's email as unique identifier
+   * @return Optional with Member object or empty Optional
+   */
+  @Override
+  public Optional<Member> findByEmail(final String email) {
+    final var members = getAll();
+
+    if (!members.isEmpty()) {
+      final Member existingMember =
+          members.stream()
+              .filter(member -> member.getEmail().equals(email))
+              .findFirst()
+              .orElse(null);
+
+      return Optional.ofNullable(existingMember);
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Write list of members to file.
    *
    * @param list list of members
    */
