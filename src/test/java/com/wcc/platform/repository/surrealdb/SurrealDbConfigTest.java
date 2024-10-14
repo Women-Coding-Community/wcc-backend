@@ -22,7 +22,7 @@ class SurrealDbConfigTest {
     assertFalse(config.isTls());
     assertNull(config.getUsername());
     assertNull(config.getPassword());
-    assertEquals(0, config.getTimoutSeconds());
+    assertEquals(0, config.getTimeoutSeconds());
     assertNull(config.getNamespace());
     assertNull(config.getDatabase());
   }
@@ -37,7 +37,7 @@ class SurrealDbConfigTest {
     config.setTls(true);
     config.setUsername("admin");
     config.setPassword("password");
-    config.setTimoutSeconds(10);
+    config.setTimeoutSeconds(10);
     config.setNamespace("test_ns");
     config.setDatabase("test_db");
 
@@ -46,7 +46,7 @@ class SurrealDbConfigTest {
     assertTrue(config.isTls());
     assertEquals("admin", config.getUsername());
     assertEquals("password", config.getPassword());
-    assertEquals(10, config.getTimoutSeconds());
+    assertEquals(10, config.getTimeoutSeconds());
     assertEquals("test_ns", config.getNamespace());
     assertEquals("test_db", config.getDatabase());
   }
@@ -65,7 +65,7 @@ class SurrealDbConfigTest {
     assertFalse(config.isTls());
     assertNull(config.getUsername());
     assertNull(config.getPassword());
-    assertEquals(0, config.getTimoutSeconds());
+    assertEquals(0, config.getTimeoutSeconds());
     assertNull(config.getNamespace());
     assertNull(config.getDatabase());
   }
@@ -79,13 +79,13 @@ class SurrealDbConfigTest {
     config.setTls(true);
     config.setUsername("admin");
     config.setPassword("password");
-    config.setTimoutSeconds(10);
+    config.setTimeoutSeconds(10);
     config.setNamespace("test_ns");
     config.setDatabase("test_db");
 
     String expected =
         "SurrealDbConfig(host=localhost, port=8000, tls=true, username=admin, "
-            + "password=password, timoutSeconds=10, namespace=test_ns, database=test_db)";
+            + "password=password, timeoutSeconds=10, namespace=test_ns, database=test_db)";
 
     assertEquals(expected, config.toString());
   }
@@ -101,7 +101,7 @@ class SurrealDbConfigTest {
     config1.setTls(true);
     config1.setUsername("admin");
     config1.setPassword("password");
-    config1.setTimoutSeconds(10);
+    config1.setTimeoutSeconds(10);
     config1.setNamespace("test_ns");
     config1.setDatabase("test_db");
 
@@ -111,7 +111,7 @@ class SurrealDbConfigTest {
     config2.setTls(true);
     config2.setUsername("admin");
     config2.setPassword("password");
-    config2.setTimoutSeconds(10);
+    config2.setTimeoutSeconds(10);
     config2.setNamespace("test_ns");
     config2.setDatabase("test_db");
 

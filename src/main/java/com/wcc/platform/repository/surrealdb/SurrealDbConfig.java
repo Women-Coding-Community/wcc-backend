@@ -12,7 +12,7 @@ public class SurrealDbConfig {
   private boolean tls;
   private String username;
   private String password;
-  private int timoutSeconds;
+  private int timeoutSeconds;
   private String namespace;
   private String database;
 }

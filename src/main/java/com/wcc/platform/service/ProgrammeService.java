@@ -2,7 +2,7 @@ package com.wcc.platform.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.ApiResourcesFile;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -30,8 +30,7 @@ public class ProgrammeService {
   public ProgrammePage getProgramme(final ProgramType programType) {
     if (ProgramType.BOOK_CLUB.equals(programType)) {
       try {
-        final String data =
-            FileUtil.readFileAsString(ApiResourcesFile.PROG_BOOK_CLUB.getFileName());
+        final String data = FileUtil.readFileAsString(PageType.PROG_BOOK_CLUB.getFileName());
 
         return objectMapper.readValue(data, ProgrammePage.class);
       } catch (JsonProcessingException e) {

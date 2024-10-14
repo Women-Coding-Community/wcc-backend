@@ -15,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 class SurrealDbIntegrationTest {
 
-  private static final GenericContainer<?> SURREAL_DB_CONTAINER =
+  protected static final GenericContainer<?> SURREAL_DB_CONTAINER =
       new GenericContainer<>(DockerImageName.parse("surrealdb/surrealdb:latest"))
           .withExposedPorts(8000)
           .withCommand("start --user root --pass root");

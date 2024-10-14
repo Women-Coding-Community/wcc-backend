@@ -1,5 +1,6 @@
 package com.wcc.platform.repository.surrealdb;
 
+import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -10,12 +11,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.surrealdb.driver.SyncSurrealDriver;
+import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.pages.FooterPage;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -25,16 +27,18 @@ class SurrealDbPageRepositoryTest {
 
   @Mock private SyncSurrealDriver mockDriver;
 
-  @InjectMocks private SurrealDbPageRepository repository;
+  private SurrealDbPageRepository<FooterPage> repository;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
+
+    repository = new SurrealDbPageRepository<>(mockDriver, FooterPage.class);
   }
 
   @Test
   void testSave() {
-    Object entity = new Object();
+    FooterPage entity = createFooterPageTest();
     when(mockDriver.create(TABLE, entity)).thenReturn(entity);
 
     var savedEntity = repository.save(entity);
@@ -45,31 +49,31 @@ class SurrealDbPageRepositoryTest {
 
   @Test
   void testFindAll() {
-    List<Object> mockResult = List.of(new Object(), new Object());
+    List<FooterPage> mockResult = List.of(createFooterPageTest());
 
-    when(mockDriver.select(TABLE, Object.class)).thenReturn(mockResult);
+    when(mockDriver.select(TABLE, FooterPage.class)).thenReturn(mockResult);
 
-    Collection<Object> result = repository.findAll();
+    Collection<FooterPage> result = repository.findAll();
 
-    verify(mockDriver, times(1)).select(TABLE, Object.class);
+    verify(mockDriver, times(1)).select(TABLE, FooterPage.class);
     assertEquals(mockResult, result);
   }
 
   @Test
   void testFindByIdNotFoundCase1() {
-    Optional<Object> result = repository.findById("test-id");
+    Optional<FooterPage> result = repository.findById(PageType.FOOTER.name());
 
-    verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(Object.class));
+    verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(FooterPage.class));
     assertTrue(result.isEmpty());
   }
 
   @Test
   void testFindByIdNotFoundCase2() {
-    when(mockDriver.query(anyString(), anyMap(), eq(Object.class))).thenReturn(List.of());
+    when(mockDriver.query(anyString(), anyMap(), eq(FooterPage.class))).thenReturn(List.of());
 
-    Optional<Object> result = repository.findById("test-id-2");
+    Optional<FooterPage> result = repository.findById("test-id-2");
 
-    verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(Object.class));
+    verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(FooterPage.class));
     assertTrue(result.isEmpty());
   }
 

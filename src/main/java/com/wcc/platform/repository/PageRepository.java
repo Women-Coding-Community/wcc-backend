@@ -1,4 +1,4 @@
 package com.wcc.platform.repository;
 
-
-public interface PageRepository extends CrudRepository<Object, String> {}
+/** Generic page repository interface. */
+public interface PageRepository<T> extends CrudRepository<T, String> {}

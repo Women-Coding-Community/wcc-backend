@@ -57,6 +57,7 @@ class DefaultControllerTest {
     when(service.getFooter())
         .thenReturn(
             new FooterPage(
+                "",
                 "footer_title",
                 "footer_subtitle",
                 "footer_desc",

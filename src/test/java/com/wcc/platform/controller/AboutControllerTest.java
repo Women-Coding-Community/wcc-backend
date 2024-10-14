@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
+import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
