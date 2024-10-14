@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.MENTORSHIP;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;

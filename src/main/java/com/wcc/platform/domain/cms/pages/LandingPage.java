@@ -13,10 +13,11 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class LandingPage {
+  private String id;
   private Page heroSection;
   private Page fullBannerSection;
   private Section<ProgrammeItem> programmes;
