@@ -74,13 +74,13 @@ public class PlatformService {
    */
   private Member mergeToMember(Member member, MemberDto memberDto) {
     return member.toBuilder()
-        .fullName(memberDto.getFullName())
-        .position(memberDto.getPosition())
-        .slackDisplayName(memberDto.getSlackDisplayName())
-        .country(memberDto.getCountry())
-        .city(memberDto.getCity())
-        .companyName(memberDto.getCompanyName())
-        .network(memberDto.getNetwork())
+        .fullName(memberDto.fullName())
+        .position(memberDto.position())
+        .slackDisplayName(memberDto.slackDisplayName())
+        .country(memberDto.country())
+        .city(memberDto.city())
+        .companyName(memberDto.companyName())
+        .network(memberDto.network())
         .build();
   }
 }
