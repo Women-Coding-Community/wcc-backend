@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class EventControllerIntegrationTest {
+public class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @Autowired private EventController eventController;
 
