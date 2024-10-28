@@ -11,6 +11,7 @@ import com.wcc.platform.domain.platform.Programme;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /** Test factories for Programme. */
 public class SetupProgrammeFactories {
@@ -39,14 +40,14 @@ public class SetupProgrammeFactories {
     return new ProgrammePage(
         SetupFactories.createPageTest(),
         SetupFactories.createContactTest(),
-        Collections.singletonList(createProgramme()),
+        Collections.singletonList(createProgramme(UUID.randomUUID())),
         SetupEventFactories.createEventSection());
   }
 
   /** Create Factory. */
   public static Programme createProgrammeByType(final ProgramType type) {
     if (ProgramType.BOOK_CLUB.equals(type)) {
-      createProgramme();
+      createProgramme(UUID.randomUUID());
     } else {
       return createProgrammeWithoutCard();
     }
@@ -58,12 +59,13 @@ public class SetupProgrammeFactories {
    *
    * @return Programme object
    */
-  public static Programme createProgramme() {
+  public static Programme createProgramme(final UUID uuid) {
     return Programme.builder()
         .title("What We Are Reading")
         .description("Every month we vote we read a book this is current month book.")
         .card(
             new Page(
+                uuid,
                 "Test book title",
                 "Author of the book",
                 "test book description",

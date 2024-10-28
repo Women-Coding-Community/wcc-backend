@@ -3,6 +3,7 @@ package com.wcc.platform.domain.cms.pages;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Builder
 public class Page {
+  private UUID id;
   private String title;
   private String subtitle;
   private String description;

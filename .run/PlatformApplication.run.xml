@@ -6,7 +6,7 @@
     <module name="wcc-backend.main" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.wcc.platform.*" />
+        <option name="PATTERN" value="com.wcc.platform.integrationtests.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
