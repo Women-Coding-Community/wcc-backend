@@ -8,6 +8,7 @@ import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,7 +21,7 @@ import org.springframework.web.context.request.WebRequest;
 public class GlobalExceptionHandler {
 
   /** Receive ContentNotFoundException and return {@link HttpStatus#NOT_FOUND}. */
-  @ExceptionHandler(ContentNotFoundException.class)
+  @ExceptionHandler({ContentNotFoundException.class, NoSuchElementException.class})
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
       final ContentNotFoundException ex, final WebRequest request) {

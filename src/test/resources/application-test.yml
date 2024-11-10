@@ -6,3 +6,8 @@ spring:
 file:
   storage:
     directory: data-test
+
+surrealdb:
+  host: localhost
+  namespace: test_namespace
+  database: test_db

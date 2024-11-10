@@ -6,3 +6,6 @@ spring:
 file:
   storage:
     directory: /app/data
+
+surrealdb:
+  host: surrealdb

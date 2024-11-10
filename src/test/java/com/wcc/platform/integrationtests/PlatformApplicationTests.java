@@ -1,19 +1,20 @@
-package com.wcc.platform;
+package com.wcc.platform.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.ApplicationContext;
 
-@SpringBootTest
-class PlatformApplicationTests {
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+class PlatformApplicationTests extends SurrealDbIntegrationTest {
 
   @Autowired private ApplicationContext context;
 
   @Test
   void contextLoads() {
-    assertNotNull(context, "The application context should have loaded.");
+    assertNotNull(context, "The application context should have loaded");
   }
 }

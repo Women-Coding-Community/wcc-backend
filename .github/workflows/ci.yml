@@ -15,30 +15,19 @@ jobs:
     strategy:
       matrix:
         java-version: [ '21' ]
-    
-
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
-      - name: Set up JDK  Set up JDK ${{ matrix.java-version }}
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
 
       - name: Cache Gradle packages
         uses: actions/cache@v3
-        env:
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           path: |
             ~/.gradle/caches
@@ -49,14 +38,15 @@ jobs:
 
       - name: Build and test
         run: ./gradlew test jacocoTestReport
+        env:
+          DOCKER_HOST: "unix:///var/run/docker.sock"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Pmd Check
         run: ./gradlew pmdMain
 
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
 
       - name: Upload code coverage report
         if: success() || failure()
