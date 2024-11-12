@@ -47,7 +47,7 @@
         "topics": "Book Club",
         "eventType": "IN_PERSON",
         "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "endDate": "THU, MAY 30, 2024, 9:30 CEST",
         "title": "Book Club: The Pragmatic Programmer",
         "speakerProfile": {
           "label": "Jane Doe Profile",
@@ -83,7 +83,7 @@
         "topics": "Book Club",
         "eventType": "IN_PERSON",
         "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "endDate": "THU, MAY 30, 2024, 9:30 CEST",
         "title": "Book Club: The Pragmatic Programmer",
         "hostProfile": {
           "label": "Host Profile",
