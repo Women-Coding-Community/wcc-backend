@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.pages;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 public class LandingPage {
-  private String id;
+  @JsonIgnore private String id;
   private Page heroSection;
   private Page fullBannerSection;
   private Section<ProgrammeItem> programmes;
