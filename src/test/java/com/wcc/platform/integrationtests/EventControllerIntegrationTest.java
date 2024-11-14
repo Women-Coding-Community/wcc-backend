@@ -1,7 +1,7 @@
 package com.wcc.platform.integrationtests;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENTS;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENT_FILTERS;
+import static com.wcc.platform.domain.cms.PageType.EVENTS;
+import static com.wcc.platform.domain.cms.PageType.EVENT_FILTERS;
 import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
+class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @Autowired private EventController eventController;
 
@@ -26,7 +28,7 @@ public class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @SneakyThrows
   @Test
-  void testEventsAPISuccess() {
+  void testEventsApiSuccess() {
     var response = eventController.getEventsPage();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -39,7 +41,7 @@ public class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @SneakyThrows
   @Test
-  void testEventsFiltersAPISuccess() {
+  void testEventsFiltersApiSuccess() {
     var response = eventController.getEventsFilters();
 
     assertEquals(HttpStatus.OK, response.getStatusCode());

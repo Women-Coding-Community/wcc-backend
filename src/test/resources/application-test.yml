@@ -11,3 +11,4 @@ surrealdb:
   host: localhost
   namespace: test_namespace
   database: test_db
+  timeout-seconds: 80

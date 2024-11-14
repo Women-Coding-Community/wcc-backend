@@ -1,6 +1,6 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.EVENT_FILTERS;
+import static com.wcc.platform.domain.cms.PageType.EVENT_FILTERS;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

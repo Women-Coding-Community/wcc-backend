@@ -4,9 +4,14 @@
     "description": "Empowering Women in Their Tech Careers",
     "images": [
       {
-        "path": "home_16x9_ratio.jpg",
+        "path": "https://drive.google.com/file/d/1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF",
         "alt": "There are two women talking during a productive mentoring session",
         "type": "desktop"
+      },
+      {
+        "path": "home_16x9_ratio.jpg",
+        "alt": "There are two women talking during a productive mentoring session",
+        "type": "mobile"
       }
     ]
   },

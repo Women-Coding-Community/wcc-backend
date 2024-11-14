@@ -183,6 +183,7 @@ public class SetupFactories {
   /** Factory test. */
   public static FooterPage createFooterPageTest() {
     return new FooterPage(
+        "id",
         "footer_title",
         "footer_subtitle",
         "footer_description",

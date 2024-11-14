@@ -6,7 +6,7 @@ services:
     container_name: surrealdb
     ports:
       - "8000:8000"
-    command: start --log trace --user root --pass root
+    command: start --log debug --user root --pass root
     networks:
       - app-network
 
