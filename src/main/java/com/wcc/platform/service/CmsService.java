@@ -9,7 +9,6 @@ import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
@@ -56,7 +55,16 @@ public class CmsService {
    */
   public FooterPage getFooter() {
     final var page = footerRepository.findById(PageType.FOOTER.name());
-    return page.orElseThrow(() -> new ContentNotFoundException(PageType.FOOTER));
+    return page.orElseGet(this::getFooterFallback);
+  }
+
+  private FooterPage getFooterFallback() {
+    try {
+      return objectMapper.readValue(
+          FileUtil.readFileAsString(PageType.FOOTER.getFileName()), FooterPage.class);
+    } catch (JsonProcessingException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
+    }
   }
 
   /**

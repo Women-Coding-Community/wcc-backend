@@ -1,7 +1,6 @@
 package com.wcc.platform.domain.cms.pages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Network;
 import java.util.List;
