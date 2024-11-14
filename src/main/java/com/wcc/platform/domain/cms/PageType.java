@@ -14,7 +14,8 @@ public enum PageType {
   LANDING_PAGE("landingPage.json"),
   MENTORSHIP("mentorshipPage.json"),
   TEAM("teamPage.json"),
-  PROG_BOOK_CLUB("bookClubPage.json");
+  PROG_BOOK_CLUB("bookClubPage.json"),
+  EVENT_FILTERS("eventsFiltersSection.json");
 
   private final String fileName;
 }

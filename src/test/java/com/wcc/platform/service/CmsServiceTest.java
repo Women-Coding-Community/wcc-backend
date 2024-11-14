@@ -1,7 +1,5 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.SetupEventFactories.createEventPageTest;
-import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -12,7 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
@@ -20,7 +17,6 @@ import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.repository.PageRepository;
 import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -120,26 +116,6 @@ class CmsServiceTest {
     var response = service.getCodeOfConduct();
 
     assertEquals(codeOfConductPage, response);
-  }
-
-  @Test
-  void whenGetEventsValidJson() throws IOException {
-    var page = createEventPageTest(List.of(createEventTest()));
-    when(objectMapper.readValue(anyString(), eq(EventsPage.class))).thenReturn(page);
-
-    var response = service.getEvents();
-
-    assertEquals(page, response);
-  }
-
-  @Test
-  void whenGetEventsInValidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(EventsPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
-
-    var exception = assertThrows(PlatformInternalException.class, service::getEvents);
-
-    assertEquals("Invalid JSON", exception.getMessage());
   }
 
   @Test

@@ -2,10 +2,8 @@ package com.wcc.platform.integrationtests;
 
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
-import static com.wcc.platform.domain.cms.PageType.EVENTS;
 import static com.wcc.platform.domain.cms.PageType.FOOTER;
 import static com.wcc.platform.domain.cms.PageType.TEAM;
-import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
@@ -84,14 +82,6 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
 
     assertEquals(expectedCodeOfConductPage, result);
-  }
-
-  @Test
-  void testGetEventsPage() {
-    var result = service.getEvents();
-    var expectedEventsPage = createEventTest(EVENTS.getFileName());
-
-    assertEquals(expectedEventsPage, result);
   }
 
   @SneakyThrows

@@ -1,5 +1,6 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.factories.SetUpFiltersFactories.createFilterSectionTest;
 import static com.wcc.platform.factories.SetupEventFactories.createEventPageTest;
 import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static org.hamcrest.Matchers.is;
@@ -12,7 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.service.CmsService;
+import com.wcc.platform.service.EventService;
+import com.wcc.platform.service.FilterService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,13 @@ class EventControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean private CmsService service;
+  @MockBean private EventService eventService;
+
+  @MockBean private FilterService filterService;
 
   @Test
   void testInternalServerError() throws Exception {
-    when(service.getEvents())
+    when(eventService.getEvents())
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
@@ -43,14 +47,26 @@ class EventControllerTest {
   }
 
   @Test
-  void testOkResponse() throws Exception {
+  void testOkResponseForEvents() throws Exception {
     var eventPage = createEventPageTest(List.of(createEventTest()));
 
-    when(service.getEvents()).thenReturn(eventPage);
+    when(eventService.getEvents()).thenReturn(eventPage);
 
     mockMvc
         .perform(get("/api/cms/v1/events").contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(eventPage)));
+  }
+
+  @Test
+  void testOkResponseForFilters() throws Exception {
+    var eventsFilterSection = createFilterSectionTest();
+
+    when(filterService.getEventsFilters()).thenReturn(eventsFilterSection);
+
+    mockMvc
+        .perform(get("/api/cms/v1/events/filters").contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(eventsFilterSection)));
   }
 }
