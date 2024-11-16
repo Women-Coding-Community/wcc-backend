@@ -23,8 +23,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class CmsServiceTest {
-  @Mock private PageRepository<FooterPage> footerRepository;
-  @Mock private PageRepository<LandingPage> landingPageRepository;
+  @Mock private PageRepository pageRepository;
   @Mock private ObjectMapper objectMapper;
 
   private CmsService service;
@@ -33,7 +32,7 @@ class CmsServiceTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
-    service = new CmsService(objectMapper, footerRepository, landingPageRepository);
+    service = new CmsService(objectMapper, pageRepository);
   }
 
   @Test
