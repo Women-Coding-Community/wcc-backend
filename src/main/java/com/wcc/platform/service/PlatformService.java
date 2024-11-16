@@ -1,6 +1,8 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.domain.platform.ResourceContent;
@@ -61,7 +63,12 @@ public class PlatformService {
 
   /** Save Member into storage. */
   public Member createMember(final Member member) {
-    // TODO: Check if email exists => save or throw exception
+    Optional<Member> memberOptional = emailExists(member.getEmail());
+
+    if (memberOptional.isPresent()) {
+      throw new DuplicatedMemberException(member.getEmail());
+    }
+
     return memberRepository.save(member);
   }
 
@@ -79,17 +86,16 @@ public class PlatformService {
   }
 
   /**
-   * Update Member data
+   * Update Member data.
    *
-   * @email member's email as unique identifier
+   * @param email member's email as unique identifier
    * @param memberDto MemberDto with updated member's data
    * @return Updated member.
    */
   public Member updateMember(String email, MemberDto memberDto) {
     Optional<Member> memberOptional = emailExists(email);
 
-    Member existingMember =
-        memberOptional.orElseThrow(() -> new RuntimeException("Member not found"));
+    Member existingMember = memberOptional.orElseThrow(() -> new MemberNotFoundException(email));
     Member updatedMember = mergeToMember(existingMember, memberDto);
     return memberRepository.update(updatedMember);
   }
@@ -104,7 +110,6 @@ public class PlatformService {
     return memberRepository.findByEmail(email);
   }
 
-  // TODO: Create new service for Member
   /**
    * Update member fields using DTO.
    *

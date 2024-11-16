@@ -2,7 +2,6 @@ package com.wcc.platform.repository.file;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.exceptions.FileRepositoryException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.MemberRepository;
 import java.io.File;
@@ -58,15 +57,18 @@ public class FileMemberRepository implements MemberRepository {
   public Member update(final Member updatedMember) {
     List<Member> members = getAll();
 
-    for (int i = 0; i < members.size(); i++) {
-      Member member = members.get(i);
-      if (member.getEmail().equals(updatedMember.getEmail())) {
-        members.set(i, updatedMember);
-        break;
-      }
-    }
-    writeFile(members);
+    var updatedMembers =
+        members.stream()
+            .map(
+                member -> {
+                  if (member.getEmail().equals(updatedMember.getEmail())) {
+                    return updatedMember;
+                  }
+                  return member;
+                })
+            .toList();
 
+    writeFile(updatedMembers);
     return updatedMember;
   }
 
