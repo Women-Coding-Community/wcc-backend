@@ -1,11 +1,8 @@
 import {expect, request, test} from '@playwright/test';
-import ApiHost from "../ApiHost";
 
 test('GET /api/cms/v1/landingPage returns correct data', async () => {
-  const apiHost = ApiHost.get();
   const context = await request.newContext();
-
-  const response = await context.get(`${apiHost}/api/cms/v1/landingPage`);
+  const response = await context.get(`/api/cms/v1/landingPage`);
 
   expect(response.status()).toBe(200);
 

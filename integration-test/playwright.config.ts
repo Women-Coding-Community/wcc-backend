@@ -1,11 +1,10 @@
-import {defineConfig, devices} from '@playwright/test';
+import {defineConfig} from '@playwright/test';
+import EnvVariables from "./tests/envVariables";
 
 export default defineConfig({
   globalSetup: require.resolve('./global-setup'),
-  projects: [
-    {
-      name: 'chrome',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
+  use: {
+    baseURL: EnvVariables.getApiTest(),
+  },
+  projects: [ { name: 'chrome' }],
 });
