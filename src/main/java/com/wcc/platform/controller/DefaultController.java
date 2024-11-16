@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for footer api. */
 @RestController
-@Tag(name = "General APIs")
+@Tag(name = "Pages: Others", description = "All other APIs")
 public class DefaultController {
 
   private final CmsService cmsService;

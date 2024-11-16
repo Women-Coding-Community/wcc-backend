@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/platform/v1/page")
-@Tag(name = "Platform Page APIs")
+@Tag(name = "Platform", description = "All platform Internal APIs")
 public class PageController {
 
   private final PlatformService service;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for all the programme apis. */
 @RestController
-@Tag(name = "APIs relevant Programme pages")
+@Tag(name = "Pages: Programme", description = "All APIs under session Programme")
 public class ProgrammeController {
 
   private final ProgrammeService service;
