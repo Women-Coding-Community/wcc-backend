@@ -3,6 +3,7 @@ package com.wcc.platform.domain.platform;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,7 @@ public class LeadershipMember extends Member {
 
   @SuppressWarnings("PMD.ImmutableField")
   @JsonIgnore
+  @NotNull
   private MemberType memberType;
 
   /** Leadership Builder. */

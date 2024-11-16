@@ -4,6 +4,8 @@ import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.platform.EventSection;
 import com.wcc.platform.domain.platform.Programme;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +22,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Builder
 public class ProgrammePage {
-  private Page page;
-  private Contact contact;
-  private List<Programme> programmeDetails;
-  private EventSection eventSection;
+  @NotNull private Page page;
+  @NotNull private Contact contact;
+  @NotEmpty private List<Programme> programmeDetails;
+  @NotNull private EventSection eventSection;
   // TODO Add resources section
 }
