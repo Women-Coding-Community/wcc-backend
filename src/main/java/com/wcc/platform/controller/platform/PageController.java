@@ -37,7 +37,10 @@ public class PageController {
 
   /** Create Landing Page and store into database. */
   @PostMapping("/landingPage")
-  @Operation(summary = "Save Landing Page")
+  @Operation(
+      summary = "Create new landing page",
+      description =
+          "Create a page which represents landing page. The response is stored landing page.")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> saveLandingPage(@RequestBody final LandingPage page) {
     return ResponseEntity.ok(service.savePage(page));
