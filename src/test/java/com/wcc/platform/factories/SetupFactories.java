@@ -133,6 +133,7 @@ public class SetupFactories {
         .build();
   }
 
+  /** Factory test to create MemberDto object. */
   public static MemberDto createMemberDtoTest(final MemberType type) {
     return new MemberDto(
         "fullName updated " + type.name(),
@@ -146,6 +147,7 @@ public class SetupFactories {
         List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)));
   }
 
+  /** Factory test to create new member from combining data from member and memberDto. */
   public static Member createUpdatedMemberTest(final Member member, final MemberDto memberDto) {
     return Member.builder()
         .fullName(memberDto.fullName())

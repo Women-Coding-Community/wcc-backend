@@ -34,7 +34,8 @@ class PlatformServiceTest {
   @InjectMocks private PlatformService service;
 
   private ResourceContent resourceContent;
-  private Member member, updatedMember;
+  private Member member;
+  private Member updatedMember;
   private MemberDto memberDto;
 
   @BeforeEach
