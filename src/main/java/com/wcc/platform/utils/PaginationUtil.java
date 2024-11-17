@@ -18,10 +18,16 @@ public class PaginationUtil {
    * @return list of items on the current page
    */
   public static <T> List<T> getPaginatedResult(List<T> items, int currentPage, int pageSize) {
+    if (items == null || items.isEmpty()) {
+      throw new IllegalArgumentException("Items list cannot be null or empty.");
+    }
+    if (pageSize <= 0) {
+      throw new IllegalArgumentException("Page size must be greater than zero.");
+    }
     int totalItems = items.size();
     int totalPages = getTotalPages(items, pageSize);
 
-    if (currentPage > totalPages) {
+    if (currentPage < 1 || currentPage > totalPages) {
       throw new IllegalArgumentException(
           "currentPage exceeds total pages. Total Pages: "
               + totalPages
@@ -42,6 +48,12 @@ public class PaginationUtil {
    * @return no. of pages
    */
   public static <T> int getTotalPages(List<T> items, int pageSize) {
+    if (items == null || items.isEmpty()) {
+      throw new IllegalArgumentException("Items list cannot be null or empty.");
+    }
+    if (pageSize <= 0) {
+      throw new IllegalArgumentException("Page size must be greater than zero.");
+    }
     int totalItems = items.size();
     return (int) Math.ceil((double) totalItems / pageSize);
   }

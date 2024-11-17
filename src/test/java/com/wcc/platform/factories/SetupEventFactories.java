@@ -96,7 +96,7 @@ public class SetupEventFactories {
    * @return pagination metadata
    */
   public static Pagination createPaginationTest(
-      List<Event> items, final int currentPage, final int pageSize) {
+      final List<Event> items, final int currentPage, final int pageSize) {
     int totalItems = items.size();
     int totalPages = (int) Math.ceil((double) totalItems / pageSize);
     return new Pagination(totalItems, totalPages, currentPage, pageSize);
