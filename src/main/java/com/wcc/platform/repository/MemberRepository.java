@@ -31,7 +31,7 @@ public interface MemberRepository {
   List<Member> getAll();
 
   /**
-   * Find member by email
+   * Find member by email.
    *
    * @param email member's email
    * @return Optional with Member object or empty Optional

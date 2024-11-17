@@ -67,7 +67,7 @@ public class MemberController {
   @Operation(summary = "API to update member data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
-      @PathVariable String email, @RequestBody final MemberDto memberDto) {
+      @PathVariable final String email, @RequestBody final MemberDto memberDto) {
     return new ResponseEntity<>(platformService.updateMember(email, memberDto), HttpStatus.OK);
   }
 }

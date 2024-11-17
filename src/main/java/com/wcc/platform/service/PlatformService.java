@@ -63,7 +63,7 @@ public class PlatformService {
 
   /** Save Member into storage. */
   public Member createMember(final Member member) {
-    Optional<Member> memberOptional = emailExists(member.getEmail());
+    final Optional<Member> memberOptional = emailExists(member.getEmail());
 
     if (memberOptional.isPresent()) {
       throw new DuplicatedMemberException(member.getEmail());
@@ -92,11 +92,11 @@ public class PlatformService {
    * @param memberDto MemberDto with updated member's data
    * @return Updated member.
    */
-  public Member updateMember(String email, MemberDto memberDto) {
-    Optional<Member> memberOptional = emailExists(email);
+  public Member updateMember(final String email, final MemberDto memberDto) {
+    final Optional<Member> memberOptional = emailExists(email);
 
     Member existingMember = memberOptional.orElseThrow(() -> new MemberNotFoundException(email));
-    Member updatedMember = mergeToMember(existingMember, memberDto);
+    final Member updatedMember = mergeToMember(existingMember, memberDto);
     return memberRepository.update(updatedMember);
   }
 
@@ -106,7 +106,7 @@ public class PlatformService {
    * @param email member's email as unique identifier
    * @return Optional with Member object or empty Optional
    */
-  private Optional<Member> emailExists(String email) {
+  private Optional<Member> emailExists(final String email) {
     return memberRepository.findByEmail(email);
   }
 
@@ -117,7 +117,7 @@ public class PlatformService {
    * @param memberDto memberDto with updates
    * @return Updated member
    */
-  private Member mergeToMember(Member member, MemberDto memberDto) {
+  private Member mergeToMember(Member member, final MemberDto memberDto) {
     return member.toBuilder()
         .fullName(memberDto.fullName())
         .position(memberDto.position())

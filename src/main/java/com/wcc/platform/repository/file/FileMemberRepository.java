@@ -57,7 +57,7 @@ public class FileMemberRepository implements MemberRepository {
   public Member update(final Member updatedMember) {
     List<Member> members = getAll();
 
-    var updatedMembers =
+    final var updatedMembers =
         members.stream()
             .map(
                 member -> {
@@ -83,7 +83,7 @@ public class FileMemberRepository implements MemberRepository {
       if (!file.exists() || file.length() == 0) {
         return new ArrayList<>();
       }
-      return objectMapper.readValue(file, new TypeReference<ArrayList<Member>>() {});
+      return objectMapper.readValue(file, new TypeReference<>() {});
     } catch (IOException e) {
       throw new FileRepositoryException(e.getMessage(), e);
     }

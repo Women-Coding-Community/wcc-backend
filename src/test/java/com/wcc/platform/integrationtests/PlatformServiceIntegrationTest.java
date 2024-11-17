@@ -1,12 +1,16 @@
 package com.wcc.platform.integrationtests;
 
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
+import static com.wcc.platform.factories.SetupFactories.emptyFileRepositoryContent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.service.PlatformService;
+import java.io.File;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
@@ -15,7 +19,20 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class PlatformServiceIntegrationTest extends SurrealDbIntegrationTest {
 
+  private final File testFile;
+  private final String testFileName = "members.json";
   @Autowired private PlatformService service;
+
+  public PlatformServiceIntegrationTest(
+      @Value("${file.storage.directory}") final String directoryPath) {
+    super();
+    testFile = new File(directoryPath + File.separator + testFileName);
+  }
+
+  @BeforeEach
+  void deleteFileContent() {
+    emptyFileRepositoryContent(testFile);
+  }
 
   @Test
   void testSaveMember() {
@@ -27,7 +44,6 @@ class PlatformServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetAll() {
-
     var total = service.getAll().size();
 
     var member = createMemberTest(MemberType.MEMBER);

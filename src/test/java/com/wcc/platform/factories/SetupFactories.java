@@ -23,7 +23,11 @@ import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
+import com.wcc.platform.repository.file.FileRepositoryException;
 import com.wcc.platform.utils.FileUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Setup Factory tests. */
@@ -215,5 +219,18 @@ public class SetupFactories {
         title + "description",
         createLinkTest(),
         List.of("topic1 " + title, "topic2 " + title));
+  }
+
+  /**
+   * Factory test for repository file section to delete the content of the file used for testing.
+   */
+  public static void emptyFileRepositoryContent(final File testFile) {
+    try {
+      if (testFile.exists()) {
+        OBJECT_MAPPER.writeValue(testFile, new ArrayList<>());
+      }
+    } catch (IOException e) {
+      throw new FileRepositoryException(e.getMessage(), e);
+    }
   }
 }
