@@ -20,6 +20,7 @@ import com.wcc.platform.domain.cms.pages.Section;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.platform.LeadershipMember;
 import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
@@ -129,6 +130,35 @@ public class SetupFactories {
         .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
         .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
+        .build();
+  }
+
+  public static MemberDto createMemberDtoTest(final MemberType type) {
+    return new MemberDto(
+        "fullName updated " + type.name(),
+        "position updated " + type.name(),
+        "Slack name updated",
+        new Country("Country code updated", "Country name updated"),
+        "City updated",
+        "Job title updated",
+        "Company name updated",
+        List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link_updated")),
+        List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)));
+  }
+
+  public static Member createUpdatedMemberTest(final Member member, final MemberDto memberDto) {
+    return Member.builder()
+        .fullName(memberDto.fullName())
+        .position(memberDto.position())
+        .email(member.getEmail())
+        .slackDisplayName(memberDto.slackDisplayName())
+        .country(memberDto.country())
+        .city(memberDto.city())
+        .jobTitle(member.getJobTitle())
+        .companyName(memberDto.companyName())
+        .memberTypes(member.getMemberTypes())
+        .images(memberDto.images())
+        .network(memberDto.network())
         .build();
   }
 

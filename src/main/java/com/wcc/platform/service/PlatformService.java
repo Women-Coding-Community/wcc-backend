@@ -125,6 +125,7 @@ public class PlatformService {
         .country(memberDto.country())
         .city(memberDto.city())
         .companyName(memberDto.companyName())
+        .images(memberDto.images())
         .network(memberDto.network())
         .build();
   }

@@ -20,12 +20,12 @@ import org.springframework.test.context.ActiveProfiles;
 class PlatformServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   private final File testFile;
-  private final String testFileName = "members.json";
   @Autowired private PlatformService service;
 
   public PlatformServiceIntegrationTest(
       @Value("${file.storage.directory}") final String directoryPath) {
     super();
+    String testFileName = "members.json";
     testFile = new File(directoryPath + File.separator + testFileName);
   }
 
