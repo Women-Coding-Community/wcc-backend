@@ -1,5 +1,7 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupEventFactories.DEFAULT_CURRENT_PAGE;
+import static com.wcc.platform.factories.SetupEventFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupEventFactories.createEventPageTest;
 import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.EventsPage;
+import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +36,7 @@ public class EventServiceTest {
     var page = createEventPageTest(List.of(createEventTest()));
     when(objectMapper.readValue(anyString(), eq(EventsPage.class))).thenReturn(page);
 
-    var response = service.getEvents();
+    var response = service.getEvents(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     assertEquals(page, response);
   }
@@ -44,7 +46,10 @@ public class EventServiceTest {
     when(objectMapper.readValue(anyString(), eq(EventsPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, service::getEvents);
+    var exception =
+        assertThrows(
+            PlatformInternalException.class,
+            () -> service.getEvents(DEFAULT_CURRENT_PAGE, DEFAULT_CURRENT_PAGE));
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
