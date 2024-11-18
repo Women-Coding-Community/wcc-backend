@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/cms/v1/")
-@Tag(name = "APIs relevant Event Page")
+@Tag(name = "Pages: Event", description = "All APIs related to events")
 public class EventController {
 
   private final EventService eventService;

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for members pages apis. */
 @RestController
 @RequestMapping("/api/platform/v1/members")
-@Tag(name = "APIs relevant Members section")
+@Tag(name = "Platform", description = "All platform Internal APIs")
 public class MemberController {
 
   private final PlatformService platformService;

@@ -1,8 +1,7 @@
-import {expect, request, test} from '@playwright/test';
+import {expect, test} from '@playwright/test';
 
-test('GET /api/cms/v1/landingPage returns correct data', async () => {
-  const context = await request.newContext();
-  const response = await context.get(`/api/cms/v1/landingPage`);
+test('GET /api/cms/v1/landingPage returns correct data', async ({request}) => {
+  const response = await request.get(`/api/cms/v1/landingPage`);
 
   expect(response.status()).toBe(200);
 

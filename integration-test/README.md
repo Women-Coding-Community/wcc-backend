@@ -36,20 +36,14 @@ npm run test
 
 ### Command line by environment
 
-For local environment you can use `.env` file or `.env-local`.
+For local environment:
 
 ```shell
 npm run test-local
 ```
 
-For dev environment you should use `.env-local`.
+For dev environment:
 
 ```shell
 npm run test-dev
-```
-
-### Debugging
-
-```shell
-npm run test-debug 
 ```
