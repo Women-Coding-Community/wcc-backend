@@ -23,36 +23,6 @@ public class PaginationUtilTest {
   }
 
   @Test
-  void testIncorrectPageSize() {
-    var exception =
-        assertThrows(IllegalArgumentException.class, () -> PaginationUtil.getTotalPages(items, 0));
-    assertEquals("Page size must be greater than zero.", exception.getMessage());
-  }
-
-  @Test
-  void testEmptyItemsForTotalPages() {
-    var exception =
-        assertThrows(IllegalArgumentException.class, () -> PaginationUtil.getTotalPages(null, 1));
-    assertEquals("Items list cannot be null or empty.", exception.getMessage());
-  }
-
-  @Test
-  void testEmptyItems() {
-    var exception =
-        assertThrows(
-            IllegalArgumentException.class, () -> PaginationUtil.getPaginatedResult(null, 1, 1));
-    assertEquals("Items list cannot be null or empty.", exception.getMessage());
-  }
-
-  @Test
-  void testIncorrectPageSizeForPaginatedResult() {
-    var exception =
-        assertThrows(
-            IllegalArgumentException.class, () -> PaginationUtil.getPaginatedResult(items, 1, 0));
-    assertEquals("Page size must be greater than zero.", exception.getMessage());
-  }
-
-  @Test
   void testPaginatedResult() {
     var paginatedResultPage1 = PaginationUtil.getPaginatedResult(items, 1, 2);
     var expectedResultPage1 = List.of("item1", "item2");

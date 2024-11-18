@@ -1,15 +1,14 @@
 package com.wcc.platform.factories;
 
 import static com.wcc.platform.factories.SetupFactories.createContactTest;
-import static com.wcc.platform.factories.SetupFactories.createImageTest;
+import static com.wcc.platform.factories.SetupFactories.createHeroSectionTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.pages.PageData;
+import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
-import com.wcc.platform.domain.cms.pages.events.EventsPageMetaData;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.EventSection;
 import com.wcc.platform.domain.platform.ProgramType;
@@ -54,14 +53,10 @@ public class SetupEventFactories {
 
   /** Event page test. */
   public static EventsPage createEventPageTest(final List<Event> items) {
-    var hero = new HeroSection("title", "event description", createImageTest());
     var metadata =
-        new EventsPageMetaData(
-            createPaginationTest(items, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE),
-            hero,
-            createContactTest());
-    var data = new PageData<>(null, null, null, items);
-    return new EventsPage(metadata, data);
+        new PageMetadata(createPaginationTest(items, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
+    var data = new PageData<>(items);
+    return new EventsPage(metadata, createHeroSectionTest(), createContactTest(), data);
   }
 
   /**

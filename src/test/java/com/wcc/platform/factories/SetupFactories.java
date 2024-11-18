@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.ObjectMapperConfig;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.Country;
+import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
@@ -216,5 +217,10 @@ public class SetupFactories {
         title + "description",
         createLinkTest(),
         List.of("topic1 " + title, "topic2 " + title));
+  }
+
+  /** Factory test for hero section. */
+  public static HeroSection createHeroSectionTest() {
+    return new HeroSection("title", "hero description", createImageTest());
   }
 }

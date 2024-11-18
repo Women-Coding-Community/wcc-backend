@@ -5,9 +5,9 @@ import static com.wcc.platform.domain.cms.PageType.EVENTS;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.PageData;
+import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
-import com.wcc.platform.domain.cms.pages.events.EventsPageMetaData;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.utils.FileUtil;
@@ -47,12 +47,10 @@ public class EventService {
               PaginationUtil.getTotalPages(allEvents, pageSize),
               currentPage,
               pageSize);
-      final PageData<Event> eventPageData = new PageData<>(null, null, null, paginatedEvents);
+      final PageData<Event> eventPageData = new PageData<>(paginatedEvents);
 
       return new EventsPage(
-          new EventsPageMetaData(
-              paginationRecord, page.metadata().hero(), page.metadata().contact()),
-          eventPageData);
+          new PageMetadata(paginationRecord), page.hero(), page.contact(), eventPageData);
 
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
