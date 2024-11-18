@@ -164,29 +164,11 @@ This will create two Docker instances in your Docker desktop:
 1. the SurrealDB database
 2. the WCC backend app
 
-Stop the WCC backend app from the Docker desktop and then start the application from your IDE in
+Stop the WCC backend app from Docker desktop and then start the application in your IDE in
 debug mode.
-
-* Build and run tests
-
-```shell
-./gradlew clean build
-```
 
 **Note**: Make sure you have docker daemon running locally to be able to run integration test, by
 execute ``docker ps``
-
-* Create Jar
-
-```shell
-./gradlew clean bootJar
-```
-
-* Start database
-
-```shell
-docker run --pull always --name surrealdb -p 8000:8000 -d surrealdb/surrealdb:latest start
-```
 
 * Start Spring Boot Application:
 
