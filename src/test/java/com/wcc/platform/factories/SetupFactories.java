@@ -125,7 +125,6 @@ public class SetupFactories {
         .slackDisplayName("Slack name")
         .country(new Country("Country code", "Country name"))
         .city("City")
-        .jobTitle("Job title")
         .companyName("Company name")
         .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
@@ -141,9 +140,8 @@ public class SetupFactories {
         "Slack name updated",
         new Country("Country code updated", "Country name updated"),
         "City updated",
-        "Job title updated",
         "Company name updated",
-        List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link_updated")),
+        List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")),
         List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)));
   }
 
@@ -156,7 +154,6 @@ public class SetupFactories {
         .slackDisplayName(memberDto.slackDisplayName())
         .country(memberDto.country())
         .city(memberDto.city())
-        .jobTitle(member.getJobTitle())
         .companyName(memberDto.companyName())
         .memberTypes(member.getMemberTypes())
         .images(memberDto.images())
@@ -183,7 +180,6 @@ public class SetupFactories {
         .slackDisplayName("Slack name")
         .country(new Country("Country code", "Country name"))
         .city("City")
-        .jobTitle("Job title")
         .companyName("Company name")
         .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
@@ -200,7 +196,6 @@ public class SetupFactories {
         .slackDisplayName("Slack name")
         .country(new Country("Country code", "Country name"))
         .city("City")
-        .jobTitle("Job title")
         .companyName("Company name")
         .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))

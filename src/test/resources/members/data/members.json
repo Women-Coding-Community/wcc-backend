@@ -9,7 +9,6 @@
       "countryName": "Country name"
     },
     "city": "City",
-    "jobTitle": "Job title",
     "companyName": "Company name",
     "memberTypes": [
       "MEMBER"
@@ -38,7 +37,6 @@
       "countryName": "Country name"
     },
     "city": "City",
-    "jobTitle": "Job title",
     "companyName": "Company name",
     "memberTypes": [
       "DIRECTOR"

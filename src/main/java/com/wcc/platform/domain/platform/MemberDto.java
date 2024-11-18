@@ -11,8 +11,6 @@ public record MemberDto(
     String slackDisplayName,
     Country country,
     String city,
-    // TODO: Remove jobTitle
-    String jobTitle,
     String companyName,
     List<SocialNetwork> network,
     List<Image> images) {}
