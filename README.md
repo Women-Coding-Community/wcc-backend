@@ -159,12 +159,13 @@ Once you've done that, restart the IDE.
   docker compose -f docker/docker-compose.yml up --build
 ```
 
-And after this it will create 2 docker instances in your docker desktop
-the surreal db
-the wcc-backend app
-Just stop the the wcc-backend app from the docker desktop
-then
-Start the application from your IDE in debug (edited)
+This will create two Docker instances in your Docker desktop:
+
+1. the SurrealDB database
+2. the WCC backend app
+
+Stop the WCC backend app from the Docker desktop and then start the application from your IDE in
+debug mode.
 
 * Build and run tests
 
