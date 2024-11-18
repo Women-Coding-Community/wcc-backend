@@ -55,7 +55,7 @@ public class FileMemberRepository implements MemberRepository {
    */
   @Override
   public Member update(final Member updatedMember) {
-    List<Member> members = getAll();
+    final List<Member> members = getAll();
 
     final var updatedMembers =
         members.stream()

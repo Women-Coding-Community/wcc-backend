@@ -115,7 +115,8 @@ public class PlatformService {
   public Member updateMember(final String email, final MemberDto memberDto) {
     final Optional<Member> memberOptional = emailExists(email);
 
-    Member existingMember = memberOptional.orElseThrow(() -> new MemberNotFoundException(email));
+    final Member existingMember =
+        memberOptional.orElseThrow(() -> new MemberNotFoundException(email));
     final Member updatedMember = mergeToMember(existingMember, memberDto);
     return memberRepository.update(updatedMember);
   }
@@ -137,7 +138,7 @@ public class PlatformService {
    * @param memberDto memberDto with updates
    * @return Updated member
    */
-  private Member mergeToMember(Member member, final MemberDto memberDto) {
+  private Member mergeToMember(final Member member, final MemberDto memberDto) {
     return member.toBuilder()
         .fullName(memberDto.fullName())
         .position(memberDto.position())
