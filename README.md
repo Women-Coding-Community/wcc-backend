@@ -147,6 +147,25 @@ Once you've done that, restart the IDE.
 
 ## Run Locally
 
+* Build and create jar:
+
+```shell
+./gradlew clean bootJar
+```
+
+* Start Docker Compose
+
+```shell
+  docker compose -f docker/docker-compose.yml up --build
+```
+
+And after this it will create 2 docker instances in your docker desktop
+the surreal db
+the wcc-backend app
+Just stop the the wcc-backend app from the docker desktop
+then
+Start the application from your IDE in debug (edited)
+
 * Build and run tests
 
 ```shell
