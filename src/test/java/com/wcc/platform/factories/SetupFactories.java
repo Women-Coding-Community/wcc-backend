@@ -250,11 +250,9 @@ public class SetupFactories {
    * Factory test for repository file section to delete the content of the file used for testing.
    */
   public static void deleteFile(final File file) {
-    if (file.exists()) {
-      if (!file.delete()) {
-        final String msg = "Error deleting file " + file.getAbsolutePath();
-        throw new RuntimeException(msg);
-      }
+    if (file.exists() && !file.delete()) {
+      final String msg = "Error deleting file " + file.getAbsolutePath();
+      throw new RuntimeException(msg);
     }
   }
 }
