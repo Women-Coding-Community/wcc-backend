@@ -4,6 +4,9 @@ import com.wcc.platform.domain.cms.attributes.EventResource;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -23,15 +26,16 @@ import lombok.ToString;
 public class Event {
 
   private UUID id;
-  private String title;
-  private String description;
-  private EventType eventType;
-  private String startDate; // TODO convert to Date
-  private String endDate; // TODO convert to Date
-  private ProgramType topics;
-  private List<Image> images;
+
+  @NotBlank private String title;
+  @NotBlank private String description;
+  @NotNull private EventType eventType;
+  @NotNull private String startDate; // TODO convert to Date
+  @NotNull private String endDate; // TODO convert to Date
+  @NotNull private ProgramType topics;
+  @NotEmpty private List<Image> images;
   private LabelLink speakerProfile;
   private LabelLink hostProfile;
-  private LabelLink eventLink;
+  @NotNull private LabelLink eventLink;
   private List<EventResource> eventResources;
 }

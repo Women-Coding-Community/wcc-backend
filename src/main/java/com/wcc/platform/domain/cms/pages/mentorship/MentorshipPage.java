@@ -2,6 +2,7 @@ package com.wcc.platform.domain.cms.pages.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.PageSection;
 import com.wcc.platform.domain.cms.pages.Page;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * CMS Mentorship Page Overview details.
@@ -12,7 +13,7 @@ import com.wcc.platform.domain.cms.pages.Page;
  * @param feedbackSection section related to mentorship feedbacks
  */
 public record MentorshipPage(
-    Page page,
-    PageSection mentorSection,
-    PageSection menteeSection,
+    @NotNull Page page,
+    @NotNull PageSection mentorSection,
+    @NotNull PageSection menteeSection,
     FeedbackSection feedbackSection) {}

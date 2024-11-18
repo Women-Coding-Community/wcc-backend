@@ -2,6 +2,10 @@ package com.wcc.platform.domain.platform;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,15 +23,15 @@ import lombok.ToString;
 @Builder
 public class Member {
 
-  private String fullName;
-  private String position;
-  private String email;
-  private String slackDisplayName;
-  private Country country;
+  @NotBlank private String fullName;
+  @NotBlank private String position;
+  @NotBlank @Email private String email;
+  @NotBlank private String slackDisplayName;
+  @NotBlank private Country country;
   private String city;
   private String jobTitle;
   private String companyName;
-  private MemberType memberType;
-  private List<Image> images;
+  @NotNull private MemberType memberType;
+  @NotEmpty private List<Image> images;
   private List<SocialNetwork> network;
 }

@@ -2,6 +2,7 @@ package com.wcc.platform.domain.cms.pages;
 
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ import lombok.ToString;
 @Builder
 public class Page {
   private UUID id;
-  private String title;
+  @NotNull private String title;
   private String subtitle;
   private String description;
   private LabelLink link;

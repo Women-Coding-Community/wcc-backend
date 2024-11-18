@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.cms.attributes;
 
+import jakarta.validation.constraints.NotNull;
+
 /**
  * Intro section.
  *
@@ -7,4 +9,4 @@ package com.wcc.platform.domain.cms.attributes;
  * @param description section description not mandatory
  * @param image mandatory image
  */
-public record HeroSection(String title, String description, Image image) {}
+public record HeroSection(@NotNull String title, String description, @NotNull Image image) {}
