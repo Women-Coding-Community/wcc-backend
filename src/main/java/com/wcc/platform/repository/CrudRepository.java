@@ -5,7 +5,6 @@ import java.util.Optional;
 
 /** Simple Crud method to be implemented for all repositories. */
 public interface CrudRepository<T, K> {
-
   T save(T entity);
 
   Collection<T> findAll();

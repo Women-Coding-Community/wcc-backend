@@ -1,9 +1,9 @@
 package com.wcc.platform.integrationtests;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.CODE_OF_CONDUCT;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.COLLABORATOR;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.FOOTER;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.TEAM;
+import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
+import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
+import static com.wcc.platform.domain.cms.PageType.FOOTER;
+import static com.wcc.platform.domain.cms.PageType.TEAM;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.wcc.platform.domain.cms.ApiResourcesFile;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.service.CmsService;
 import com.wcc.platform.utils.FileUtil;
 import lombok.SneakyThrows;
@@ -22,7 +22,9 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
@@ -84,12 +86,12 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @SneakyThrows
   @Test
-  void testGetLandingPage() {
+  void testGetLandingPageFallback() {
     var result = service.getLandingPage();
 
     assertNotNull(result);
 
-    var expected = FileUtil.readFileAsString(ApiResourcesFile.LANDING_PAGE.getFileName());
+    var expected = FileUtil.readFileAsString(PageType.LANDING_PAGE.getFileName());
     var jsonResponse = OBJECT_MAPPER.writeValueAsString(result);
 
     JSONAssert.assertEquals(expected, jsonResponse, false);

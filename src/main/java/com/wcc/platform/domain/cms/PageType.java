@@ -1,7 +1,12 @@
 package com.wcc.platform.domain.cms;
 
-/** Create custom api configurations. */
-public enum ApiResourcesFile {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/** Define existent pages types. */
+@Getter
+@AllArgsConstructor
+public enum PageType {
   CODE_OF_CONDUCT("codeOfConductPage.json"),
   COLLABORATOR("collaboratorPage.json"),
   EVENTS("eventsPage.json"),
@@ -13,12 +18,4 @@ public enum ApiResourcesFile {
   EVENT_FILTERS("eventsFiltersSection.json");
 
   private final String fileName;
-
-  ApiResourcesFile(final String fileName) {
-    this.fileName = fileName;
-  }
-
-  public String getFileName() {
-    return fileName;
-  }
 }

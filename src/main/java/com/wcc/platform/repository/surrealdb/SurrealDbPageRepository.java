@@ -5,36 +5,35 @@ import com.wcc.platform.repository.PageRepository;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 /** SurrealDB repository implementation for page. */
-@Repository
-public class SurrealDbPageRepository implements PageRepository {
+public class SurrealDbPageRepository<T> implements PageRepository<T> {
 
   /* default */ static final String TABLE = "page";
 
   private final SyncSurrealDriver driver;
+  private final Class<T> entityType;
 
-  @Autowired
-  public SurrealDbPageRepository(final SyncSurrealDriver driver) {
+  public SurrealDbPageRepository(final SyncSurrealDriver driver, final Class<T> entityType) {
     this.driver = driver;
+    this.entityType = entityType;
   }
 
   @Override
-  public Object save(final Object entity) {
+  public T save(final T entity) {
     return driver.create(TABLE, entity);
   }
 
   @Override
-  public Collection<Object> findAll() {
-    return driver.select(TABLE, Object.class);
+  public Collection<T> findAll() {
+    return driver.select(TABLE, entityType);
   }
 
   @Override
-  public Optional<Object> findById(final String id) {
+  public Optional<T> findById(final String id) {
+    final var key = TABLE + ":" + id;
     final var query =
-        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", id), Object.class);
+        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", key), entityType);
 
     if (query.isEmpty()) {
       return Optional.empty();
