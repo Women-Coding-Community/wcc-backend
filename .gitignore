@@ -18,4 +18,4 @@ application-prod.yml
 integration-test/node_modules/*
 integration-test/test-results/*
 integration-test/package-lock.json
-integration-test/.env.dev
+integration-test/.env

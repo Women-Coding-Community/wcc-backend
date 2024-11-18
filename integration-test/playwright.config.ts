@@ -1,10 +1,21 @@
 import {defineConfig} from '@playwright/test';
-import EnvVariables from "./tests/envVariables";
+import dotenv from 'dotenv';
+
+dotenv.config(); 
 
 export default defineConfig({
-  globalSetup: require.resolve('./global-setup'),
-  use: {
-    baseURL: EnvVariables.getApiTest(),
-  },
-  projects: [ { name: 'chrome' }],
+  projects: [ 
+    {
+      name: 'api_dev',
+      use: { 
+        baseURL: process.env.API_HOST
+       },
+    },
+    {
+      name: 'api_local',
+      use: { 
+        baseURL: 'http://localhost:8080'
+       },
+    },
+  ],
 });
