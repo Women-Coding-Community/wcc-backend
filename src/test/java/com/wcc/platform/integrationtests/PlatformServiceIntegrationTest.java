@@ -1,7 +1,7 @@
 package com.wcc.platform.integrationtests;
 
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
-import static com.wcc.platform.factories.SetupFactories.emptyFileRepositoryContent;
+import static com.wcc.platform.factories.SetupFactories.deleteFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.wcc.platform.domain.platform.MemberType;
@@ -31,7 +31,7 @@ class PlatformServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @BeforeEach
   void deleteFileContent() {
-    emptyFileRepositoryContent(testFile);
+    deleteFile(testFile);
   }
 
   @Test
