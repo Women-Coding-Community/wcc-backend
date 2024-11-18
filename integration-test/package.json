@@ -8,9 +8,8 @@
   },
   "scripts": {
     "test": "npx playwright test",
-    "test-local": "NODE_ENV=local npx playwright test",
-    "test-dev": "NODE_ENV=dev npx playwright test",
-    "test-debug": "DEBUG=pw:api npx playwright test"
+    "test-local": "npx playwright test --project=api_local",
+    "test-dev": "npx playwright test --project=api_dev"
   },
   "keywords": [],
   "author": "",
