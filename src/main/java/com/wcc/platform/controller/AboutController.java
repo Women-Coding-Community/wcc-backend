@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for about pages apis. */
 @RestController
 @RequestMapping("/api/cms/v1/")
-@Tag(name = "APIs relevant About Us section")
+@Tag(name = "Pages: About Us", description = "All APIs under session About-Us")
 public class AboutController {
 
   private final CmsService cmsService;

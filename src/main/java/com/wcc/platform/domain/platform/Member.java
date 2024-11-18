@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @Data
-@Builder
+@Builder(toBuilder = true)
 public class Member {
 
   private String fullName;
@@ -25,9 +25,8 @@ public class Member {
   private String slackDisplayName;
   private Country country;
   private String city;
-  private String jobTitle;
   private String companyName;
-  private MemberType memberType;
+  private List<MemberType> memberTypes;
   private List<Image> images;
   private List<SocialNetwork> network;
 }

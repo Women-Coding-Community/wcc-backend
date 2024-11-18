@@ -38,7 +38,9 @@
           "link": "https://github.com/lilyndk"
         }
       ],
-      "memberType": "COLLABORATOR"
+      "memberTypes": [
+        "COLLABORATOR"
+      ]
     },
     {
       "fullName": "Chloe Britland-Whiting",
@@ -60,7 +62,9 @@
           "link": "https://github.com/cribw27"
         }
       ],
-      "memberType": "COLLABORATOR"
+      "memberTypes": [
+        "COLLABORATOR"
+      ]
     },
     {
       "fullName": "Neha Sharma",
@@ -82,7 +86,9 @@
           "link": "https://github.com/Neha"
         }
       ],
-      "memberType": "COLLABORATOR"
+      "memberTypes": [
+        "COLLABORATOR"
+      ]
     },
     {
       "fullName": "Sophy O.",
@@ -104,7 +110,9 @@
           "link": "https://github.com/sssoz"
         }
       ],
-      "memberType": "COLLABORATOR"
+      "memberTypes": [
+        "COLLABORATOR"
+      ]
     },
     {
       "fullName": "Chiara Pigoni",
@@ -126,7 +134,9 @@
           "link": "https://github.com/kikilondon"
         }
       ],
-      "memberType": "COLLABORATOR"
+      "memberTypes": [
+        "COLLABORATOR"
+      ]
     },
     {
       "fullName": "Nevena Verbič",
@@ -148,7 +158,9 @@
           "link": "https://github.com/nverbic"
         }
       ],
-      "memberType": "COLLABORATOR"
+      "memberTypes": [
+        "COLLABORATOR"
+      ]
     },
     {
       "fullName": "Joana Brito",
@@ -170,7 +182,9 @@
           "link": "https://github.com/joanaBrit"
         }
       ],
-      "memberType": "VOLUNTEER"
+      "memberTypes": [
+        "VOLUNTEER"
+      ]
     }
   ]
 }
