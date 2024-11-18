@@ -35,8 +35,8 @@ public class EventController {
   @Operation(summary = "API to retrieve information about events page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<EventsPage> getEventsPage(
-      @RequestParam(defaultValue = "1") int currentPage,
-      @RequestParam(defaultValue = "10") int pageSize) {
+      @RequestParam(defaultValue = "1") final int currentPage,
+      @RequestParam(defaultValue = "10") final int pageSize) {
     return ResponseEntity.ok(eventService.getEvents(currentPage, pageSize));
   }
 

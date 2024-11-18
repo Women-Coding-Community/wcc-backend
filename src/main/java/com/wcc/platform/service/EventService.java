@@ -32,22 +32,22 @@ public class EventService {
    *
    * @return POJO eventsPage
    */
-  public EventsPage getEvents(int currentPage, int pageSize) {
+  public EventsPage getEvents(final int currentPage, final int pageSize) {
     try {
       final var data = FileUtil.readFileAsString(EVENTS.getFileName());
 
-      EventsPage page = objectMapper.readValue(data, EventsPage.class);
-      List<Event> allEvents = page.data().items();
+      final var page = objectMapper.readValue(data, EventsPage.class);
+      final var allEvents = page.data().items();
 
-      List<Event> paginatedEvents =
+      final List<Event> paginatedEvents =
           PaginationUtil.getPaginatedResult(allEvents, currentPage, pageSize);
-      Pagination paginationRecord =
+      final Pagination paginationRecord =
           new Pagination(
               allEvents.size(),
               PaginationUtil.getTotalPages(allEvents, pageSize),
               currentPage,
               pageSize);
-      PageData<Event> eventPageData = new PageData<>(null, null, null, paginatedEvents);
+      final PageData<Event> eventPageData = new PageData<>(null, null, null, paginatedEvents);
 
       return new EventsPage(
           new EventsPageMetaData(

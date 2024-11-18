@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /** Util class for pagination data for any page. */
 @Slf4j
-public class PaginationUtil {
+public final class PaginationUtil {
 
   private PaginationUtil() {}
 
@@ -17,15 +17,16 @@ public class PaginationUtil {
    * @param pageSize items per page
    * @return list of items on the current page
    */
-  public static <T> List<T> getPaginatedResult(List<T> items, int currentPage, int pageSize) {
+  public static <T> List<T> getPaginatedResult(
+      final List<T> items, final int currentPage, final int pageSize) {
     if (items == null || items.isEmpty()) {
       throw new IllegalArgumentException("Items list cannot be null or empty.");
     }
     if (pageSize <= 0) {
       throw new IllegalArgumentException("Page size must be greater than zero.");
     }
-    int totalItems = items.size();
-    int totalPages = getTotalPages(items, pageSize);
+    final int totalItems = items.size();
+    final int totalPages = getTotalPages(items, pageSize);
 
     if (currentPage < 1 || currentPage > totalPages) {
       throw new IllegalArgumentException(
@@ -35,8 +36,8 @@ public class PaginationUtil {
               + currentPage);
     }
 
-    int fromIndex = (currentPage - 1) * pageSize;
-    int toIndex = Math.min(fromIndex + pageSize, totalItems); // Handle the last page
+    final int fromIndex = (currentPage - 1) * pageSize;
+    final int toIndex = Math.min(fromIndex + pageSize, totalItems); // Handle the last page
     return items.subList(fromIndex, toIndex);
   }
 
@@ -47,14 +48,14 @@ public class PaginationUtil {
    * @param pageSize items per page
    * @return no. of pages
    */
-  public static <T> int getTotalPages(List<T> items, int pageSize) {
+  public static <T> int getTotalPages(final List<T> items, final int pageSize) {
     if (items == null || items.isEmpty()) {
       throw new IllegalArgumentException("Items list cannot be null or empty.");
     }
     if (pageSize <= 0) {
       throw new IllegalArgumentException("Page size must be greater than zero.");
     }
-    int totalItems = items.size();
+    final int totalItems = items.size();
     return (int) Math.ceil((double) totalItems / pageSize);
   }
 }
