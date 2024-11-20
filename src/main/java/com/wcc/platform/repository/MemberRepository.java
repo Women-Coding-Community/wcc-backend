@@ -2,6 +2,7 @@ package com.wcc.platform.repository;
 
 import com.wcc.platform.domain.platform.Member;
 import java.util.List;
+import java.util.Optional;
 
 /** Interface to save and retrieve member's data to and from a file repository. */
 public interface MemberRepository {
@@ -15,9 +16,25 @@ public interface MemberRepository {
   Member save(Member member);
 
   /**
+   * Update an existing member.
+   *
+   * @param updatedMember member with updated fields
+   * @return updated member
+   */
+  Member update(Member updatedMember);
+
+  /**
    * Return all saved members.
    *
    * @return list of members
    */
   List<Member> getAll();
+
+  /**
+   * Find member by email.
+   *
+   * @param email member's email
+   * @return Optional with Member object or empty Optional
+   */
+  Optional<Member> findByEmail(String email);
 }

@@ -1,6 +1,8 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupFactories.createMemberDtoTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
+import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.MemberRepository;
@@ -32,20 +35,16 @@ class PlatformServiceTest {
 
   private ResourceContent resourceContent;
   private Member member;
+  private Member updatedMember;
+  private MemberDto memberDto;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
     resourceContent = new ResourceContent();
     member = createMemberTest(MemberType.DIRECTOR);
-  }
-
-  @Test
-  void whenGetAllGivenValidJson() {
-    var member = createMemberTest(MemberType.MEMBER);
-    when(memberRepository.getAll()).thenReturn(List.of(member));
-    var response = service.getAll();
-    assertEquals(List.of(member), response);
+    memberDto = createMemberDtoTest(MemberType.COLLABORATOR);
+    updatedMember = createUpdatedMemberTest(member, memberDto);
   }
 
   @Test
@@ -143,5 +142,18 @@ class PlatformServiceTest {
 
     assertTrue(result.isEmpty());
     verify(memberRepository).getAll();
+  }
+
+  @Test
+  @DisplayName(
+      "When updating the member with memberDto, then should return the member with "
+          + "updated data from memberDto")
+  void testUpdateMember() {
+    when(memberRepository.update(updatedMember)).thenReturn(updatedMember);
+    when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.ofNullable(member));
+    Member result = service.updateMember(member.getEmail(), memberDto);
+
+    assertEquals(updatedMember, result);
+    verify(memberRepository).update(updatedMember);
   }
 }

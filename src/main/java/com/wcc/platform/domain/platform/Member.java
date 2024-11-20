@@ -20,7 +20,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @Data
-@Builder
+@Builder(toBuilder = true)
 public class Member {
 
   @NotBlank private String fullName;
@@ -29,9 +29,8 @@ public class Member {
   @NotBlank private String slackDisplayName;
   @NotBlank private Country country;
   private String city;
-  private String jobTitle;
   private String companyName;
-  @NotNull private MemberType memberType;
+  @NotNull private List<MemberType> memberTypes;
   @NotEmpty private List<Image> images;
   private List<SocialNetwork> network;
 }

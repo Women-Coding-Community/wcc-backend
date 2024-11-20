@@ -24,7 +24,7 @@ public class LeadershipMember extends Member {
   @SuppressWarnings("PMD.ImmutableField")
   @JsonIgnore
   @NotNull
-  private MemberType memberType;
+  private List<MemberType> memberTypes;
 
   /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")
@@ -36,9 +36,8 @@ public class LeadershipMember extends Member {
       final String slackDisplayName,
       final Country country,
       final String city,
-      final String jobTitle,
       final String companyName,
-      final MemberType memberType,
+      final List<MemberType> memberTypes,
       final List<Image> images,
       final List<SocialNetwork> network) {
     super(
@@ -48,12 +47,11 @@ public class LeadershipMember extends Member {
         slackDisplayName,
         country,
         city,
-        jobTitle,
         companyName,
-        memberType,
+        memberTypes,
         images,
         network);
 
-    this.memberType = memberType;
+    this.memberTypes = memberTypes;
   }
 }

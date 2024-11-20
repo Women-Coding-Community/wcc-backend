@@ -28,7 +28,6 @@
         "countryName": "Country name"
       },
       "city": "City",
-      "jobTitle": "Job title",
       "companyName": "Company name",
       "images": [
         {
@@ -43,7 +42,9 @@
           "link": "https://www.linkedin.com/member"
         }
       ],
-      "memberType": "MEMBER"
+      "memberTypes": [
+        "MEMBER"
+      ]
     }
   ]
 }

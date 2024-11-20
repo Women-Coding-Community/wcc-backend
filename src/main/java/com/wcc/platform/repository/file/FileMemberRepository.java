@@ -2,13 +2,13 @@ package com.wcc.platform.repository.file;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.exceptions.FileRepositoryException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.MemberRepository;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 
 /** FileMemberRepository class to write/read member's data to/from file repository. */
@@ -32,7 +32,7 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
-   * Save member to temporary variable?.
+   * Save new member.
    *
    * @param member member to be saved to file
    * @return Member pojo
@@ -45,6 +45,31 @@ public class FileMemberRepository implements MemberRepository {
     writeFile(members);
 
     return member;
+  }
+
+  /**
+   * Update an existing member.
+   *
+   * @param updatedMember member with updated fields
+   * @return updated member
+   */
+  @Override
+  public Member update(final Member updatedMember) {
+    final List<Member> members = getAll();
+
+    final var updatedMembers =
+        members.stream()
+            .map(
+                member -> {
+                  if (member.getEmail().equals(updatedMember.getEmail())) {
+                    return updatedMember;
+                  }
+                  return member;
+                })
+            .toList();
+
+    writeFile(updatedMembers);
+    return updatedMember;
   }
 
   /**
@@ -65,7 +90,29 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   /**
-   * Write list of members to the file.
+   * Find member by email.
+   *
+   * @param email member's email as unique identifier
+   * @return Optional with Member object or empty Optional
+   */
+  @Override
+  public Optional<Member> findByEmail(final String email) {
+    final var members = getAll();
+
+    if (!members.isEmpty()) {
+      final Member existingMember =
+          members.stream()
+              .filter(member -> member.getEmail().equals(email))
+              .findFirst()
+              .orElse(null);
+
+      return Optional.ofNullable(existingMember);
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Write list of members to file.
    *
    * @param list list of members
    */

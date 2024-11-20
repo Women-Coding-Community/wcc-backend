@@ -43,9 +43,9 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(1, result.membersByType().leads().size());
     assertEquals(1, result.membersByType().evangelists().size());
 
-    assertNull(result.membersByType().directors().getFirst().getMemberType());
-    assertNull(result.membersByType().leads().getFirst().getMemberType());
-    assertNull(result.membersByType().evangelists().getFirst().getMemberType());
+    assertNull(result.membersByType().directors().getFirst().getMemberTypes());
+    assertNull(result.membersByType().leads().getFirst().getMemberTypes());
+    assertNull(result.membersByType().evangelists().getFirst().getMemberTypes());
   }
 
   @Test
@@ -73,7 +73,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
     assertEquals(1, result.collaborators().size());
 
-    assertNotNull(result.collaborators().getFirst().getMemberType());
+    assertNotNull(result.collaborators().getFirst().getMemberTypes());
   }
 
   @Test
