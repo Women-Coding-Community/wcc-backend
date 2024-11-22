@@ -29,7 +29,6 @@
           "countryName": "Country name"
         },
         "city": "City",
-        "jobTitle": "Job title",
         "companyName": "Company name",
         "images": [
           {
@@ -57,7 +56,6 @@
           "countryName": "Country name"
         },
         "city": "City",
-        "jobTitle": "Job title",
         "companyName": "Company name",
         "images": [
           {
@@ -85,7 +83,6 @@
           "countryName": "Country name"
         },
         "city": "City",
-        "jobTitle": "Job title",
         "companyName": "Company name",
         "images": [
           {

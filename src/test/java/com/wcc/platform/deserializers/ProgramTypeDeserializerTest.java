@@ -1,6 +1,6 @@
 package com.wcc.platform.deserializers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonParser;

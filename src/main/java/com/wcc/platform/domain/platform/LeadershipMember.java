@@ -3,6 +3,7 @@ package com.wcc.platform.domain.platform;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -22,7 +23,8 @@ public class LeadershipMember extends Member {
 
   @SuppressWarnings("PMD.ImmutableField")
   @JsonIgnore
-  private MemberType memberType;
+  @NotNull
+  private List<MemberType> memberTypes;
 
   /** Leadership Builder. */
   @Builder(builderMethodName = "leadershipMemberBuilder")
@@ -34,9 +36,8 @@ public class LeadershipMember extends Member {
       final String slackDisplayName,
       final Country country,
       final String city,
-      final String jobTitle,
       final String companyName,
-      final MemberType memberType,
+      final List<MemberType> memberTypes,
       final List<Image> images,
       final List<SocialNetwork> network) {
     super(
@@ -46,12 +47,11 @@ public class LeadershipMember extends Member {
         slackDisplayName,
         country,
         city,
-        jobTitle,
         companyName,
-        memberType,
+        memberTypes,
         images,
         network);
 
-    this.memberType = memberType;
+    this.memberTypes = memberTypes;
   }
 }

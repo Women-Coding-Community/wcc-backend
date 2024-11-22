@@ -14,4 +14,16 @@ springdoc:
     path: /api-docs
   swagger-ui:
     enabled: true
-  paths-to-match: /api/cms/v1/**, /api/platform/v1/**
+    tagsSorter: alpha
+    operations-sorter: alpha
+  paths-to-match: /api/**
+
+surrealdb:
+  host: localhost
+  port: 8000
+  tls: false
+  timeout-seconds: 60
+  namespace: wcc
+  database: platform
+  username: root
+  password: root

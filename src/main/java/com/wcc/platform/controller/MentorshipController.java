@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for mentorship apis. */
 @RestController
 @RequestMapping("/api/cms/v1/mentorship")
-@Tag(name = "APIs relevant Mentorship pages")
+@Tag(name = "Pages: Mentorship", description = "All APIs under session Mentorship")
 public class MentorshipController {
 
   private final MentorshipService service;

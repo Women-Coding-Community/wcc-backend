@@ -1,7 +1,8 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.ApiResourcesFile.MENTORSHIP;
-import static com.wcc.platform.domain.cms.ApiResourcesFile.MENTORSHIP_FAQ;
+
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
