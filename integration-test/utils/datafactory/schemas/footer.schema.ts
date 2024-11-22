@@ -1,77 +1,91 @@
 export const footerSchema = {
-    type: "object",
-    properties: {
+    "type": "object",
+    "properties": {
       "title": {
-        type: "string",
-        minLength: 1
+        "type": "string",
+        "minLength": 1
       },
       "subtitle": {
-        type: "string",
-        minLength: 1
+        "type": "string",
+        "minLength": 1
       },
       "description": {
-        type: "string",
-        minLength: 1
+        "type": "string",
+        "minLength": 1
       },
       "network": {
-        type: "array",
-        items: [
-          {
-            type: "object",
-            properties: {
-              type: {
-                type: "string",
-                minLength: 1,
-                enum: ["linkedIn", "twitter", "github", "instagram", "email", "slack"]
-              },
-              "link": {
-                type: "string",
-                format: "uri", 
-                pattern: "^https?://",
-                minLength: 1
-              }
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["linkedIn", "twitter", "github", "instagram", "email", "slack"]
             },
-            required: [
-              "type",
-              "link"
-            ],
-            additionalProperties: false
+            "link": {
+              "type": "string", 
+              "minLength": 1
+            }
           },
-          ]  
-      },
-      "link": {
-        type: "object",
-        properties: {
-          "title": {
-            type: "string",
-            minLength: 1
+          "required": ["type", "link"],
+          "additionalProperties": false,
+          "if": {
+            "properties": {
+              "type": { "const": "email" }
+            }
           },
-          "label": {
-            type: "string",
-            minLength: 1
+          "then": {
+            "properties": {
+              "link": {
+                "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"  // Custom email regex
+              }
+            }
           },
-          "uri": {
-            type: "string",
-            format: "uri", 
-            pattern: "^https?://",
-            minLength: 1
+          "else": {
+            "properties": {
+              "link": {
+                "format": "uri",  // Format as URI
+                "pattern": "^https?://",  // URL pattern
+                "minLength": 1
+              }
+            }
           }
         },
-        required: [
+        "minItems": 6,
+        "maxItems": 6,
+      },
+      "link": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://",  
+            "minLength": 1
+          }
+        },
+        "required": [
           "title",
           "label",
           "uri"
         ],
-        additionalProperties: false
+        "additionalProperties": false
       }
     },
-    required: [
+    "required": [
       "title",
       "subtitle",
       "description",
       "network",
       "link"
     ],
-    additionalProperties: false
+    "additionalProperties": false
   }
-
