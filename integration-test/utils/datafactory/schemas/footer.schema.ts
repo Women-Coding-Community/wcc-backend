@@ -1,65 +1,77 @@
 export const footerSchema = {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
+    type: "object",
+    properties: {
       "title": {
-        "type": "string"
+        type: "string",
+        minLength: 1
       },
       "subtitle": {
-        "type": "string"
+        type: "string",
+        minLength: 1
       },
       "description": {
-        "type": "string"
+        type: "string",
+        minLength: 1
       },
       "network": {
-        "type": "array",
-        "items": [
+        type: "array",
+        items: [
           {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string"
+            type: "object",
+            properties: {
+              type: {
+                type: "string",
+                minLength: 1,
+                enum: ["linkedIn", "twitter", "github", "instagram", "email", "slack"]
               },
               "link": {
-                "type": "string",
-                "format": "uri", 
-                "pattern": "^https?://"
+                type: "string",
+                format: "uri", 
+                pattern: "^https?://",
+                minLength: 1
               }
             },
-            "required": [
+            required: [
               "type",
               "link"
-            ]
+            ],
+            additionalProperties: false
           },
           ]  
       },
       "link": {
-        "type": "object",
-        "properties": {
+        type: "object",
+        properties: {
           "title": {
-            "type": "string"
+            type: "string",
+            minLength: 1
           },
           "label": {
-            "type": "string"
+            type: "string",
+            minLength: 1
           },
           "uri": {
-            "type": "string",
-            "format": "uri", 
-            "pattern": "^https?://"
+            type: "string",
+            format: "uri", 
+            pattern: "^https?://",
+            minLength: 1
           }
         },
-        "required": [
+        required: [
           "title",
           "label",
           "uri"
-        ]
+        ],
+        additionalProperties: false
       }
     },
-    "required": [
+    required: [
       "title",
       "subtitle",
       "description",
       "network",
       "link"
-    ]
+    ],
+    additionalProperties: false
   }
+
