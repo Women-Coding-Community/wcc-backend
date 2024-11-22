@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.Year;
 
 /**
@@ -10,4 +12,5 @@ import java.time.Year;
  * @param mentee flag to identify if it was a mentee or mentor feedback.
  * @param year which year the feedback was given.
  */
-public record FeedbackItem(String name, String feedback, boolean mentee, Year year) {}
+public record FeedbackItem(
+    @NotBlank String name, @NotBlank String feedback, boolean mentee, @NotNull Year year) {}

@@ -3,13 +3,16 @@ package com.wcc.platform.domain.cms.pages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Network;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /** CMS Footer section details. */
 public record FooterPage(
     @JsonIgnore String id,
-    String title,
-    String subtitle,
-    String description,
-    List<Network> network,
-    LabelLink link) {}
+    @NotBlank String title,
+    @NotBlank String subtitle,
+    @NotBlank String description,
+    @NotEmpty List<Network> network,
+    @NotNull LabelLink link) {}

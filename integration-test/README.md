@@ -26,7 +26,7 @@ npm install
 
 ## Run Tests
 
-Make sure you have created .env file `.env` with `API_HOST` configured with respective server.
+Make sure you have created .env file `.env` with `API_HOST` configured with respective server. Example is provided in `.env.example` file. 
 
 ### Command line
 
