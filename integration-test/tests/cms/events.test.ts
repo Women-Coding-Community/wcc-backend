@@ -1,13 +1,9 @@
 import {expect, test} from '@playwright/test';
 import { eventsExepctedInformation } from '../../utils/datafactory/events.data';
 test('GET /api/cms/v1/code-of-conduct returns correct team data', async ({request}) => {
-    const response = await request.get(`https://wcc-backend.fly.dev/api/cms/v1/events`);
+    const response = await request.get(`/api/cms/v1/footer`);
  
-      if (response.status() === 200) {
-      console.log('API Test Passed: Status 200');
-    } else {
-      console.error('API Test Failed');
-    }
+    expect(response.status()).toBe(200);
    
     const body = await response.json();
   
