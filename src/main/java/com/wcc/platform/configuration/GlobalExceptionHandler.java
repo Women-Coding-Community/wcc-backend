@@ -10,6 +10,7 @@ import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.file.FileRepositoryException;
+import jakarta.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
-      final ContentNotFoundException ex, final WebRequest request) {
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(NOT_FOUND.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, NOT_FOUND);
@@ -40,17 +41,17 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({PlatformInternalException.class, FileRepositoryException.class})
   @ResponseStatus(INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorDetails> handleInternalError(
-      final PlatformInternalException ex, final WebRequest request) {
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
             INTERNAL_SERVER_ERROR.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
   }
 
-  /** Receive PlatformInternalException and return {@link HttpStatus#BAD_REQUEST}. */
+  /** Receive InvalidProgramTypeException and return {@link HttpStatus#BAD_REQUEST}. */
   @ExceptionHandler({InvalidProgramTypeException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ErrorDetails> handleProgramTypeError(
+  public ResponseEntity<ErrorDetails> handleBadRequestError(
       final InvalidProgramTypeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
@@ -67,5 +68,16 @@ public class GlobalExceptionHandler {
         new ErrorDetails(
             HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+  }
+
+  /** Receive ConstraintViolationException and return {@link HttpStatus#NOT_ACCEPTABLE}. */
+  @ExceptionHandler({ConstraintViolationException.class})
+  @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+  public ResponseEntity<ErrorDetails> handleBadRequestError(
+      final ConstraintViolationException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.NOT_ACCEPTABLE.value(), ex.getMessage(), request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
   }
 }
