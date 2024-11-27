@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
   /** Receive InvalidProgramTypeException and return {@link HttpStatus#BAD_REQUEST}. */
   @ExceptionHandler({InvalidProgramTypeException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ErrorDetails> handleBadRequestError(
+  public ResponseEntity<ErrorDetails> handleProgramTypeError(
       final InvalidProgramTypeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
   /** Receive ConstraintViolationException and return {@link HttpStatus#NOT_ACCEPTABLE}. */
   @ExceptionHandler({ConstraintViolationException.class})
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-  public ResponseEntity<ErrorDetails> handleBadRequestError(
+  public ResponseEntity<ErrorDetails> handleNotAcceptableError(
       final ConstraintViolationException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
