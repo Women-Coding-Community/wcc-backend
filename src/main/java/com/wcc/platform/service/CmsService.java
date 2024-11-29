@@ -3,6 +3,7 @@ package com.wcc.platform.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.pages.AboutUs;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
@@ -124,6 +125,20 @@ public class CmsService {
     try {
       final var data = FileUtil.readFileAsString(PageType.EVENTS.getFileName());
       return objectMapper.readValue(data, EventsPage.class);
+    } catch (JsonProcessingException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Read JSON and convert to Pojo AboutUs.
+   *
+   * @return Pojo AboutUs
+   */
+  public AboutUs getAboutUs() {
+    try {
+      final var data = FileUtil.readFileAsString(PageType.ABOUT_US.getFileName());
+      return objectMapper.readValue(data, AboutUs.class);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
