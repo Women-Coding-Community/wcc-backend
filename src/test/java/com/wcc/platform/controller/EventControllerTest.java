@@ -71,4 +71,16 @@ class EventControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(eventsFilterSection)));
   }
+
+  @Test
+  void testNotAcceptableForInvalidPageSize() throws Exception {
+    mockMvc
+        .perform(get("/api/cms/v1/events?currentPage=1&pageSize=0").contentType(APPLICATION_JSON))
+        .andExpect(status().isNotAcceptable())
+        .andExpect(jsonPath("$.status", is(406)))
+        .andExpect(
+            jsonPath(
+                "$.message", is("getEventsPage.pageSize: Page size must be greater than zero")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/events")));
+  }
 }
