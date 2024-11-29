@@ -35,7 +35,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-    implementation("org.springframework.boot:spring-boot-starter-validation:3.4.0")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.surrealdb:surrealdb-driver:0.1.0")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
