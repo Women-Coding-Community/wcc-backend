@@ -2,7 +2,6 @@ package com.wcc.platform.utils;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,9 +46,7 @@ public final class PaginationUtil {
    * @param pageSize items per page
    * @return no. of pages
    */
-  public static <T> int getTotalPages(
-      @NotNull(message = "Items list cannot be null or empty.") final List<T> items,
-      @Min(value = 1, message = "Page size must be greater than zero") final int pageSize) {
+  public static <T> int getTotalPages(final List<T> items, final int pageSize) {
     final int totalItems = items.size();
     return (int) Math.ceil((double) totalItems / pageSize);
   }
