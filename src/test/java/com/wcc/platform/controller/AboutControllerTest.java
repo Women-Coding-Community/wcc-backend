@@ -16,6 +16,8 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.pages.PageMetadata;
+import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Member;
@@ -107,6 +109,7 @@ class AboutControllerTest {
 
     var collaboratorPage =
         new CollaboratorPage(
+            new PageMetadata(new Pagination(1, 1, 1, 10)),
             Page.builder()
                 .title("collaborator_title")
                 .subtitle("collaborator_subtitle")

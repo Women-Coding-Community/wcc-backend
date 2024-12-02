@@ -17,6 +17,8 @@ import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.pages.PageMetadata;
+import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.Section;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.platform.LeadershipMember;
@@ -56,7 +58,10 @@ public class SetupFactories {
   /** Factory test. */
   public static CollaboratorPage createCollaboratorPageTest() {
     return new CollaboratorPage(
-        createPageTest(), createContactTest(), List.of(createCollaboratorsTest()));
+        createPaginationTest(),
+        createPageTest(),
+        createContactTest(),
+        List.of(createCollaboratorsTest()));
   }
 
   /** Factory test. */
@@ -93,6 +98,10 @@ public class SetupFactories {
 
   public static Member createCollaboratorsTest() {
     return createCollaboratorMemberTest(MemberType.MEMBER);
+  }
+
+  private static PageMetadata createPaginationTest() {
+    return new PageMetadata(new Pagination(1, 1, 1, 10));
   }
 
   /** Factory test for page. */
