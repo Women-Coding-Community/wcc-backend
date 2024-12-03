@@ -6,9 +6,11 @@ import com.wcc.platform.service.EventService;
 import com.wcc.platform.service.FilterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/cms/v1/")
 @Tag(name = "Pages: Event", description = "All APIs related to events")
+@Validated
 public class EventController {
 
   private final EventService eventService;
@@ -36,7 +39,9 @@ public class EventController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<EventsPage> getEventsPage(
       @RequestParam(defaultValue = "1") final int currentPage,
-      @RequestParam(defaultValue = "10") final int pageSize) {
+      @Min(value = 1, message = "Page size must be greater than zero")
+          @RequestParam(defaultValue = "10")
+          final int pageSize) {
     return ResponseEntity.ok(eventService.getEvents(currentPage, pageSize));
   }
 
