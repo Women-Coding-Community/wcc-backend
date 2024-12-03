@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/platform/v1/page")
-@Tag(name = "Platform Page APIs")
+@Tag(name = "Platform", description = "All platform Internal APIs")
 public class PageController {
 
   private final PlatformService service;
@@ -41,7 +41,10 @@ public class PageController {
 
   /** Create Landing Page and store into database. */
   @PostMapping("/landingPage")
-  @Operation(summary = "Save Landing Page")
+  @Operation(
+      summary = "Create new landing page",
+      description =
+          "Create a page which represents landing page. The response is stored landing page.")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> saveLandingPage(@RequestBody final LandingPage page) {
     return ResponseEntity.ok(service.savePage(page));

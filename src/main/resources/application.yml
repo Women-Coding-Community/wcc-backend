@@ -14,6 +14,8 @@ springdoc:
     path: /api-docs
   swagger-ui:
     enabled: true
+    tagsSorter: alpha
+    operations-sorter: alpha
   paths-to-match: /api/**
 
 surrealdb:

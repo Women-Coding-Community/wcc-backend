@@ -1,6 +1,7 @@
 package com.wcc.platform.domain.cms.attributes;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +16,7 @@ public enum CmsIcon {
   GROUP("group"),
   WORK("work");
 
-  private final String iconName;
+  @NotBlank private final String iconName;
 
   @Override
   @JsonValue

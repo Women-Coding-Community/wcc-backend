@@ -2,6 +2,8 @@ package com.wcc.platform.integrationtests;
 
 import static com.wcc.platform.domain.cms.PageType.EVENTS;
 import static com.wcc.platform.domain.cms.PageType.EVENT_FILTERS;
+import static com.wcc.platform.factories.SetupEventFactories.DEFAULT_CURRENT_PAGE;
+import static com.wcc.platform.factories.SetupEventFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +31,7 @@ class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
   @SneakyThrows
   @Test
   void testEventsApiSuccess() {
-    var response = eventController.getEventsPage();
+    var response = eventController.getEventsPage(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -54,7 +56,7 @@ class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetEventsPage() {
-    var result = service.getEvents();
+    var result = service.getEvents(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
     var expectedEventsPage = createEventTest(EVENTS.getFileName());
 
     assertEquals(expectedEventsPage, result);

@@ -1,23 +1,27 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.pages.EventsPage;
 import com.wcc.platform.domain.cms.pages.FiltersSection;
+import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.service.EventService;
 import com.wcc.platform.service.FilterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/cms/v1/")
-@Tag(name = "APIs relevant Event Page")
+@Tag(name = "Pages: Event", description = "All APIs related to events")
+@Validated
 public class EventController {
 
   private final EventService eventService;
@@ -33,8 +37,12 @@ public class EventController {
   @GetMapping("/events")
   @Operation(summary = "API to retrieve information about events page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<EventsPage> getEventsPage() {
-    return ResponseEntity.ok(eventService.getEvents());
+  public ResponseEntity<EventsPage> getEventsPage(
+      @RequestParam(defaultValue = "1") final int currentPage,
+      @Min(value = 1, message = "Page size must be greater than zero")
+          @RequestParam(defaultValue = "10")
+          final int pageSize) {
+    return ResponseEntity.ok(eventService.getEvents(currentPage, pageSize));
   }
 
   /** API to retrieve filters on events page. */

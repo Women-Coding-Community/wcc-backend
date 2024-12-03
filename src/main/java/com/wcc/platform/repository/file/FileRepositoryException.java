@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.exceptions;
+package com.wcc.platform.repository.file;
 
 /** File Repository generic exception. */
 public class FileRepositoryException extends RuntimeException {

@@ -1,6 +1,8 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.factories.SetUpFiltersFactories.createFilterSectionTest;
+import static com.wcc.platform.factories.SetupEventFactories.DEFAULT_CURRENT_PAGE;
+import static com.wcc.platform.factories.SetupEventFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupEventFactories.createEventPageTest;
 import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static org.hamcrest.Matchers.is;
@@ -35,7 +37,7 @@ class EventControllerTest {
 
   @Test
   void testInternalServerError() throws Exception {
-    when(eventService.getEvents())
+    when(eventService.getEvents(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE))
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
@@ -50,7 +52,7 @@ class EventControllerTest {
   void testOkResponseForEvents() throws Exception {
     var eventPage = createEventPageTest(List.of(createEventTest()));
 
-    when(eventService.getEvents()).thenReturn(eventPage);
+    when(eventService.getEvents(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE)).thenReturn(eventPage);
 
     mockMvc
         .perform(get("/api/cms/v1/events").contentType(APPLICATION_JSON))
@@ -68,5 +70,17 @@ class EventControllerTest {
         .perform(get("/api/cms/v1/events/filters").contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(eventsFilterSection)));
+  }
+
+  @Test
+  void testNotAcceptableForInvalidPageSize() throws Exception {
+    mockMvc
+        .perform(get("/api/cms/v1/events?currentPage=1&pageSize=0").contentType(APPLICATION_JSON))
+        .andExpect(status().isNotAcceptable())
+        .andExpect(jsonPath("$.status", is(406)))
+        .andExpect(
+            jsonPath(
+                "$.message", is("getEventsPage.pageSize: Page size must be greater than zero")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/events")));
   }
 }
