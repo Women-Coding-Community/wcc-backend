@@ -36,7 +36,9 @@ public class SetupFactories {
 
   public static Contact createContactTest() {
     return new Contact(
-        "Contact Us", List.of(new SocialNetwork(SocialNetworkType.EMAIL, "test@test.com")));
+        "Contact Us",
+        "Contact description",
+        List.of(new SocialNetwork(SocialNetworkType.EMAIL, "test@test.com")));
   }
 
   public static TeamPage createTeamPageTest() {

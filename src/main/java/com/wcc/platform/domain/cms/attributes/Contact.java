@@ -6,4 +6,5 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 /** Record for Contact CMS data. */
-public record Contact(@NotBlank String title, @NotEmpty List<SocialNetwork> links) {}
+public record Contact(
+    @NotBlank String title, String description, @NotEmpty List<SocialNetwork> links) {}

@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.pages.AboutUs;
+import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
@@ -72,7 +72,7 @@ public class AboutController {
   @GetMapping("/about")
   @Operation(summary = "API to retrieve information about About Us page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<AboutUs> getAboutUsPage() {
+  public ResponseEntity<AboutUsPage> getAboutUsPage() {
     return ResponseEntity.ok(cmsService.getAboutUs());
   }
 }

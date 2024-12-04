@@ -114,6 +114,7 @@ class AboutControllerTest {
                 .build(),
             new Contact(
                 "contact_title",
+                null,
                 List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "page_link"))),
             List.of(collaborator));
 
