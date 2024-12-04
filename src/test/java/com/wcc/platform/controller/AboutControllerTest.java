@@ -1,6 +1,8 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.domain.cms.PageType.ABOUT_US;
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
+import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -35,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class AboutControllerTest {
 
   private static final String API_CODE_OF_CONDUCT = "/api/cms/v1/code-of-conduct";
+  private static final String API_ABOUT_US = "/api/cms/v1/about";
 
   @Autowired private MockMvc mockMvc;
   @MockBean private CmsService service;
@@ -180,6 +183,44 @@ class AboutControllerTest {
 
     mockMvc
         .perform(get(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testAboutUsNotFound() throws Exception {
+    when(service.getAboutUs()).thenThrow(new ContentNotFoundException("Not Found Exception"));
+
+    mockMvc
+        .perform(get(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.status", is(404)))
+        .andExpect(jsonPath("$.message", is("Not Found Exception")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/about")));
+  }
+
+  @Test
+  void testAboutUsInternalError() throws Exception {
+    var internalError = new PlatformInternalException("internal Json", new RuntimeException());
+    when(service.getAboutUs()).thenThrow(internalError);
+
+    mockMvc
+        .perform(get(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.status", is(500)))
+        .andExpect(jsonPath("$.message", is("internal Json")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/about")));
+  }
+
+  @Test
+  void testAboutUsOkResponse() throws Exception {
+    var fileName = ABOUT_US.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getAboutUs()).thenReturn(createAboutUsPageTest(fileName));
+
+    mockMvc
+        .perform(get(API_ABOUT_US).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

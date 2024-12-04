@@ -13,6 +13,7 @@ import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.MemberByType;
 import com.wcc.platform.domain.cms.attributes.Network;
 import com.wcc.platform.domain.cms.attributes.PageSection;
+import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
@@ -261,5 +262,20 @@ public class SetupFactories {
   /** Factory test for hero section. */
   public static HeroSection createHeroSectionTest() {
     return new HeroSection("title", "hero description", createImageTest());
+  }
+
+  /** About Us factory for testing. */
+  public static AboutUsPage createAboutUsPageTest() {
+    return new AboutUsPage(createPageTest(), List.of(createSectionTest()), createContactTest());
+  }
+
+  /** About Us factory for testing. */
+  public static AboutUsPage createAboutUsPageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, AboutUsPage.class);
+    } catch (JsonProcessingException e) {
+      return createAboutUsPageTest();
+    }
   }
 }

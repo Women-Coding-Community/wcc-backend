@@ -5,12 +5,12 @@
       {
         "path": "https://drive.google.com/file/d/1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF",
         "alt": "Women coding community group photo",
-        "type": "desktop"
+        "type": "DESKTOP"
       },
       {
         "path": "about_us_mobile.jpg",
         "alt": "Women coding community group photo",
-        "type": "mobile"
+        "type": "MOBILE"
       }
     ]
   },
@@ -41,11 +41,11 @@
     "description": "Ready to join the conversation, or have a question for us? We'd love to hear from you!",
     "links": [
       {
-        "type": "email",
+        "type": "EMAIL",
         "link": "london@womencodingcommunity.com"
       },
       {
-        "type": "slack",
+        "type": "SLACK",
         "link": "http://shortlink_to_slack.com"
       }
     ]
