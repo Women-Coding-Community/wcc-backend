@@ -50,12 +50,12 @@ class PlatformServiceTest {
   @Test
   @DisplayName("Given ResourceContent, when saved, then should return saved resource content")
   void testSaveResourceContent() {
-    when(resourceContentRepository.save(any(ResourceContent.class))).thenReturn(resourceContent);
+    when(resourceContentRepository.create(any(ResourceContent.class))).thenReturn(resourceContent);
 
     ResourceContent result = service.saveResourceContent(resourceContent);
 
     assertEquals(resourceContent, result);
-    verify(resourceContentRepository).save(resourceContent);
+    verify(resourceContentRepository).create(resourceContent);
   }
 
   @Test
