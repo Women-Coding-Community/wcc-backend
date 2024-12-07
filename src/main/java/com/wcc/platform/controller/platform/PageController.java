@@ -31,7 +31,9 @@ public class PageController {
 
   /** Create Footer Page and store into database. */
   @PostMapping("/footer")
-  @Operation(summary = "Create Footer Page")
+  @Operation(
+      summary = "Create Footer Data",
+      description = "Create footer data to be displayed in footer component.")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> createPage(@RequestBody final FooterPage footerPage) {
     return ResponseEntity.ok(service.create(footerPage));
@@ -39,15 +41,17 @@ public class PageController {
 
   /** Create Landing Page and store into database. */
   @PostMapping("/landingPage")
-  @Operation(summary = "Update landing page", description = "Update landing page data.")
+  @Operation(
+      summary = "Create landing page",
+      description = "Create new page for landing page data.")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> createPage(@RequestBody final LandingPage page) {
     return ResponseEntity.ok(service.create(page));
   }
 
-  /** Create Footer Page and store into database. */
+  /** Update Footer Page and store into database. */
   @PutMapping("/footer")
-  @Operation(summary = "Save Footer Page")
+  @Operation(summary = "Update Footer Page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> updatePage(@RequestBody final FooterPage footerPage) {
     return ResponseEntity.ok(service.update(footerPage));
@@ -57,7 +61,7 @@ public class PageController {
   @PutMapping("/landingPage")
   @Operation(
       summary = "Update landing page",
-      description = "Update a page which represents landing page.")
+      description = "Update the content of existent landing page.")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> updatePage(@RequestBody final LandingPage page) {
     return ResponseEntity.ok(service.update(page));
