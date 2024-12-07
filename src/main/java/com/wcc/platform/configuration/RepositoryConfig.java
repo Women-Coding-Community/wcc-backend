@@ -2,6 +2,8 @@ package com.wcc.platform.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.surrealdb.driver.SyncSurrealDriver;
+import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.repository.ResourceContentRepository;
@@ -22,9 +24,14 @@ public class RepositoryConfig {
     return new SurrealDbResourceRepository(driver);
   }
 
-  @Bean
-  public PageRepository getPageRepository(final SyncSurrealDriver driver) {
-    return new SurrealDbPageRepository(driver);
+  @Bean(name = "footerRepository")
+  public PageRepository<FooterPage> getFooterPageRepository(final SyncSurrealDriver driver) {
+    return new SurrealDbPageRepository<>(driver, FooterPage.class);
+  }
+
+  @Bean(name = "landingPageRepository")
+  public PageRepository<LandingPage> getLandingPageRepository(final SyncSurrealDriver driver) {
+    return new SurrealDbPageRepository<>(driver, LandingPage.class);
   }
 
   /** Create FileMemberRepository bean. */
