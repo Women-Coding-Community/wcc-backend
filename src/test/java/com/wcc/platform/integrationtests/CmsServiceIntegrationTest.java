@@ -1,10 +1,12 @@
 package com.wcc.platform.integrationtests;
 
+import static com.wcc.platform.domain.cms.PageType.ABOUT_US;
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.FOOTER;
 import static com.wcc.platform.domain.cms.PageType.TEAM;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
+import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
 import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
@@ -95,5 +97,15 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     var jsonResponse = OBJECT_MAPPER.writeValueAsString(result);
 
     JSONAssert.assertEquals(expected, jsonResponse, false);
+  }
+
+  @Test
+  void testGetAboutUsPage() {
+    var result = service.getAboutUs();
+    var expectedAboutUsPage = createAboutUsPageTest(ABOUT_US.getFileName());
+
+    assertEquals(expectedAboutUsPage.heroSection(), result.heroSection());
+    assertEquals(expectedAboutUsPage.items(), result.items());
+    assertEquals(expectedAboutUsPage.contact(), result.contact());
   }
 }
