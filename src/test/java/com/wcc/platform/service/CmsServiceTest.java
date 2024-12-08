@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
@@ -140,5 +141,25 @@ class CmsServiceTest {
     var response = service.getLandingPage();
 
     assertEquals(page, response);
+  }
+
+  @Test
+  void getAboutUsPageGivenInvalidJson() throws IOException {
+    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+
+    var exception = assertThrows(PlatformInternalException.class, service::getAboutUs);
+
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
+
+  @Test
+  void getAboutUsPageGivenValidJson() throws IOException {
+    var aboutUsPage = SetupFactories.createAboutUsPageTest();
+    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
+
+    var response = service.getAboutUs();
+
+    assertEquals(aboutUsPage, response);
   }
 }
