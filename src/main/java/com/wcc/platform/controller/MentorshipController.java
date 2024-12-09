@@ -1,5 +1,6 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.domain.cms.pages.mentorship.FaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,5 +31,12 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipPage> getMentorshipOverview() {
     return ResponseEntity.ok(service.getOverview());
+  }
+
+  @GetMapping("/faq")
+  @Operation(summary = "API to retrieve mentor and mentees FAQ")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<FaqPage> getFaq() {
+    return ResponseEntity.ok(service.getFaq());
   }
 }
