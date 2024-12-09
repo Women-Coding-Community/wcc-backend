@@ -7,33 +7,31 @@ import java.util.Map;
 import java.util.Optional;
 
 /** SurrealDB repository implementation for page. */
-public class SurrealDbPageRepository<T> implements PageRepository<T> {
+public class SurrealDbPageRepository implements PageRepository {
 
   /* default */ static final String TABLE = "page";
 
   private final SyncSurrealDriver driver;
-  private final Class<T> entityType;
 
-  public SurrealDbPageRepository(final SyncSurrealDriver driver, final Class<T> entityType) {
+  public SurrealDbPageRepository(final SyncSurrealDriver driver) {
     this.driver = driver;
-    this.entityType = entityType;
   }
 
   @Override
-  public T save(final T entity) {
+  public String save(final String entity) {
     return driver.create(TABLE, entity);
   }
 
   @Override
-  public Collection<T> findAll() {
-    return driver.select(TABLE, entityType);
+  public Collection<String> findAll() {
+    return driver.select(TABLE, String.class);
   }
 
   @Override
-  public Optional<T> findById(final String id) {
+  public Optional<String> findById(final String id) {
     final var key = TABLE + ":" + id;
     final var query =
-        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", key), entityType);
+        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", key), String.class);
 
     if (query.isEmpty()) {
       return Optional.empty();
