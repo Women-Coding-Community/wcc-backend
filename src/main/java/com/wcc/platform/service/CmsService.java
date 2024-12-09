@@ -14,25 +14,19 @@ import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
 @Service
 public class CmsService {
   private final ObjectMapper objectMapper;
-  private final PageRepository<FooterPage> footerRepository;
-  private final PageRepository<LandingPage> lpRepository;
+  private final PageRepository pageRepository;
 
   /** Init repositories with respective qualifiers. */
   @Autowired
-  public CmsService(
-      final ObjectMapper objectMapper,
-      @Qualifier("footerRepository") final PageRepository<FooterPage> footerRepository,
-      @Qualifier("landingPageRepository") final PageRepository<LandingPage> lpRepository) {
+  public CmsService(final ObjectMapper objectMapper, final PageRepository pageRepository) {
     this.objectMapper = objectMapper;
-    this.footerRepository = footerRepository;
-    this.lpRepository = lpRepository;
+    this.pageRepository = pageRepository;
   }
 
   /**
@@ -55,8 +49,17 @@ public class CmsService {
    * @return Footer page
    */
   public FooterPage getFooter() {
-    final var page = footerRepository.findById(PageType.FOOTER.name());
-    return page.orElseGet(this::getFooterFallback);
+    final var page = pageRepository.findById(PageType.FOOTER.name());
+
+    if (page.isPresent()) {
+      try {
+        return objectMapper.readValue(page.get(), FooterPage.class);
+      } catch (JsonProcessingException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+
+    return getFooterFallback();
   }
 
   private FooterPage getFooterFallback() {
@@ -74,9 +77,16 @@ public class CmsService {
    * @return Landing page of the community.
    */
   public LandingPage getLandingPage() {
-    final var page = lpRepository.findById(PageType.LANDING_PAGE.name());
+    final var page = pageRepository.findById(PageType.LANDING_PAGE.name());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.readValue(page.get(), LandingPage.class);
+      } catch (JsonProcessingException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
 
-    return page.orElseGet(this::getLandingPageFallback);
+    return getLandingPageFallback();
   }
 
   private LandingPage getLandingPageFallback() {
