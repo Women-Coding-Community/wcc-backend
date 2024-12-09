@@ -1,6 +1,5 @@
 package com.wcc.platform.domain.cms.pages;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +18,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 public class LandingPage {
-  @JsonIgnore private String id;
+  @NotNull private String id;
   @NotNull private Page heroSection;
   @NotNull private Page fullBannerSection;
   @NotNull private Section<ProgrammeItem> programmes;

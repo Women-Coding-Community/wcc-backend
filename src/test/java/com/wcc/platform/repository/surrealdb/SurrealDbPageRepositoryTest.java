@@ -41,7 +41,7 @@ class SurrealDbPageRepositoryTest {
     FooterPage entity = createFooterPageTest();
     when(mockDriver.create(TABLE, entity)).thenReturn(entity);
 
-    var savedEntity = repository.save(entity);
+    var savedEntity = repository.create(entity);
 
     verify(mockDriver, times(1)).create(TABLE, entity);
     assertEquals(entity, savedEntity);
