@@ -144,7 +144,7 @@ class CmsServiceTest {
   }
 
   @Test
-  void getAboutUsPageGivenInvalidJson() throws IOException {
+  void whenGetAboutUsPageGivenInvalidJson() throws IOException {
     when(objectMapper.readValue(anyString(), eq(AboutUsPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
@@ -154,7 +154,7 @@ class CmsServiceTest {
   }
 
   @Test
-  void getAboutUsPageGivenValidJson() throws IOException {
+  void whenGetAboutUsPageGivenValidJson() throws IOException {
     var aboutUsPage = SetupFactories.createAboutUsPageTest();
     when(objectMapper.readValue(anyString(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
 
