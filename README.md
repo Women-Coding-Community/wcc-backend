@@ -23,9 +23,6 @@
             * [Perform SONAR ANALYSIS](#perform-sonar-analysis)
     * [Deploy application](#deploy-application)
         * [Deploy with docker compose](#deploy-with-docker-compose)
-        * [Deploy with docker](#deploy-with-docker)
-            * [Start docker with remote debug](#start-docker-with-remote-debug)
-            * [Start docker with mounted data volume](#start-docker-with-mounted-data-volume)
             * [Helpful commands with docker](#helpful-commands-with-docker)
         * [Deploy with Fly.io](#deploy-with-flyio)
             * [Setup Fly.io locally](#setup-flyio-locally)
@@ -156,23 +153,23 @@ Once you've done that, restart the IDE.
 **Note**: Make sure you have docker daemon running locally to be able to run integration test, by
 execute ``docker ps``
 
-* Create Jar
-
-```shell
-./gradlew clean bootJar
-```
-
 * Start database
 
 ```shell
-docker run --pull always --name surrealdb -p 8000:8000 -d surrealdb/surrealdb:latest start
+docker run --pull always --name surrealdb -p 8000:8000 -d surrealdb/surrealdb:latest start --user root --pass root --log debug
 ```
 
-* Start Spring Boot Application:
+* Start Spring Boot Application (from your IDE):
 
 ```shell
 ./gradlew bootRun
 ```
+
+**Note**: You can start application in a debug mode through your IDE.
+
+IntelliJ IDEA:
+Select \src\main\java\com\wcc\platform\PlatformApplication.java and mouse right-click to
+select debugging option.
 
 * Access application on http://localhost:8080/api/cms/v1/team
 
@@ -273,55 +270,33 @@ Generate token to replace in the project.
 
 ### Deploy with docker compose
 
-* build create jar: `./gradlew clean bootJar`
+* Build and create jar
+
+```shell
+ ./gradlew clean bootJar`
+ ```
+
 * Start docker compose
 
 ```shell
 docker compose -f docker/docker-compose.yml up --build
 ```
 
+**Note**: This will create two Docker instances in your Docker desktop:
+
+1. surrealdb
+2. springboot-app
+
+* Debug application
+
+To debug application STOP the docker container of the application, springboot-app. Do not stop the
+container of the SurrealDB. Start the application from your IDE.
+
 * Stop docker compose
 
 ```shell
 cd docker
 docker compose down
-```
-
-### Deploy with docker
-
-* build create jar: `./gradlew clean bootJar`
-
-* start app via docker
-
-```shell
-docker build -t wcc-backend .
-docker run -d -p 8080:8080 --name wcc-backend-container wcc-backend
-```
-
-#### Start docker with remote debug
-
-```shell
-docker build -t wcc-backend .
-docker run -p 8080:8080 -p 5005:5005 --name wcc-backend-container wcc-backend    
-```
-
-#### Start docker with mounted data volume
-
-If you are running your Spring Boot application inside a Docker container, ensure that the external
-directory path is accessible from within the container.
-
-* Windows:
-
-```shell
-  docker run -v ${PWD}/data:/app/data -d -p 8080:8080 --name wcc-backend-container wcc-backend
-
-```
-
-* Linux:
-
-```shell
-  docker run -v $(pwd)/data:/app/data -d -p 8080:8080 --name wcc-backend-container wcc-backend
-
 ```
 
 #### Helpful commands with docker
