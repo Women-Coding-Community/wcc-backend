@@ -18,9 +18,11 @@ Provide description of a new feature. Include:
 *Example: Create Members GET API to retrieve a list of members from the file (database) repository.
 GET
 API* *does not modify data. It will also handle GET API Response Codes:*
-*- HTTP response code 200 (OK)*
-*- HTTP response code 404 (NOT FOUND)*
-*- HTTP response code 400 (BAD REQUEST)*
+
+- *HTTP response code 200 (OK)*
+- *HTTP response code 404 (NOT FOUND)*
+- *HTTP response code 400 (BAD REQUEST)*
+
 *GET API will return all member's data from the repository*
 
 ### Expected behavior
