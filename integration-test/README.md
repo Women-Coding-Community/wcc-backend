@@ -54,7 +54,7 @@ npm run test-dev
 
 #### Postman Collection import in repo
 
-Link - https://app.getpostman.com/join-team?invite_code=188096ad281000ecd33932a724d74e5f&target_code=d1271d0429db3e9126cc48e18bfa08fb
+Link - https://womencodingcommunity.postman.co/workspace/OrgPlatform~39b013e7-f18f-43a2-88f2-e78632be555d
 
 ### 1. Export Collection Postman
 
