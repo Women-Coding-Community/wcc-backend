@@ -20,8 +20,19 @@ public class SurrealDbPageRepository<T> implements PageRepository<T> {
   }
 
   @Override
-  public T save(final T entity) {
+  public T create(final T entity) {
     return driver.create(TABLE, entity);
+  }
+
+  @Override
+  public T update(final String id, final T entity) {
+    final var result = driver.update(id, entity);
+
+    if (result.isEmpty()) {
+      return null;
+    }
+
+    return result.getFirst();
   }
 
   @Override

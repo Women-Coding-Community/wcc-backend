@@ -22,8 +22,19 @@ public class SurrealDbResourceRepository implements ResourceContentRepository {
   }
 
   @Override
-  public ResourceContent save(final ResourceContent entity) {
+  public ResourceContent create(final ResourceContent entity) {
     return driver.create(TABLE, entity);
+  }
+
+  @Override
+  public ResourceContent update(final String id, final ResourceContent entity) {
+    final var result = driver.update(id, entity);
+
+    if (result.isEmpty()) {
+      return null;
+    }
+
+    return result.getFirst();
   }
 
   @Override
