@@ -1,5 +1,7 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
+import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class CmsServiceTest {
+
   @Mock private PageRepository pageRepository;
   @Mock private ObjectMapper objectMapper;
 
@@ -81,7 +84,10 @@ class CmsServiceTest {
     when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, service::getCollaborator);
+    var exception =
+        assertThrows(
+            PlatformInternalException.class,
+            () -> service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -92,7 +98,7 @@ class CmsServiceTest {
     when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenReturn(collaboratorPage);
 
-    var response = service.getCollaborator();
+    var response = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     assertEquals(collaboratorPage, response);
   }
