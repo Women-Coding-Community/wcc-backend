@@ -4,9 +4,6 @@
 
 Firstly thanks for your contributions!!! :sparkling_heart::sparkling_heart:
 
-If you have resources you would like to share from your event or resources you think our community
-would benefit from keep reading!
-
 ## PRE-REQUISITE
 
 1. 📖 Read up on fork & pull request models
@@ -14,7 +11,7 @@ would benefit from keep reading!
 3. 🌱 Create a branch for the change you intend to make in your fork
 4. ✍️ Make your changes to the above created branch in your fork
 5. 🔨 Follow the contributing guidelines below
-6. 🔧 Send a pull request from your fork's branch to our `master` branch
+6. 🔧 Send a pull request from your fork's branch to our `main` branch
 7. :running_woman: Share your PR with the code owners on Slack
 8. 🎉 Get your pull request approved - success!
 
@@ -23,7 +20,7 @@ would benefit from keep reading!
 **1.** Start by making a Fork of the [**Women Coding Community/wcc-backend
 **](https://github.com/Women-Coding-Community/wcc-backend)
 repository. Click on
-the <a href="https://github.com/WomenCodingCommunity/WomenCodingCommunity.github.io/fork"><img src="https://i.imgur.com/G4z1kEe.png" height="21" width="21"></a>
+the <a href="https://github.com/Women-Coding-Community/wcc-backend/fork"><img src="https://i.imgur.com/G4z1kEe.png" height="21" width="21"></a>
 Fork symbol at the top right corner.
 
 **2.** Clone your new fork of the repository in the terminal/CLI on your computer with the following
@@ -49,20 +46,6 @@ git checkout -b YourBranchName
 
 - In your forked repository, click on "Fetch upstream"
 - Click "Fetch and merge"
-
-### Alternatively, Git CLI way to Sync forked repository with origin repository:
-
-```bash
-git remote add upstream git@github.com:Women-Coding-Community/wcc-backend.git
-```
-
-```bash
-git fetch upstream
-```
-
-```bash
-git merge upstream/main
-```
 
 ### Additional way to Sync forked repository with origin repository using Git CLI:
 
@@ -118,39 +101,11 @@ needed to add the PR to the codebase._**
 
 ## Find something to work on
 
-The first step to getting starting contributing is to find something
-to work on. Help is always welcome, and no contribution is too small!
+The first step to start contributing is to find something to work on.
+Help is always welcome, and no contribution is too small!
 
-Here are some things you can do today to get started contributing:
-
-1. You can browse the issues labeled
-   as [help wanted](https://github.com/WomenCodingCommunity/WomenCodingCommunity.github.io/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-   and [good first issue](https://github.com/WomenCodingCommunity/WomenCodingCommunity.github.io/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
-   to see who is looking for help.
-
-The `good first issue` label also indicates that Women Coding Community - London Members have
-committed to providing extra assistance for newcontributors.
-
-## Code Pattern Guide :memo:
-
-- Use single quotes pattern for simple strings.
-    - Example: `const containerEl = jQuery('#container')`
-      instead of `const containerEl = jQuery("#container")`)
-- Define constants that may be used multiple times ahead, and with uppercase variables.
-    - Example:
-
-```
-const MENTOR_TYPE_BOTH = 'both';
-
-...
-
-if (someValue === MENTOR_TYPE_BOTH) {
-    ...
-}
-```
-
-- Consider defining variables and functions with `const` instead of `let` for declarations that
-  should not change.
+Please browse the current
+open [issues](https://github.com/Women-Coding-Community/wcc-backend/issues).
 
 ## Style Guide for Git Commit Messages :memo:
 
@@ -185,7 +140,7 @@ if (someValue === MENTOR_TYPE_BOTH) {
 ## Reporting issues OR suggesting changes/features to the existing repo:
 
 1. In order to discuss changes, you are welcome
-   to [open an issue](https://github.com/WomenCodingCommunity/WomenCodingCommunity.github.io/issues/new/choose)
+   to [open an issue](https://github.com/Women-Coding-Community/wcc-backend/issues/new/choose)
    about what you would like to contribute. Enhancements are always encouraged and appreciated.
 2. A repository owner will review the issue and provide feedback.
 
