@@ -8,4 +8,7 @@ import java.util.List;
 
 /** CMS Collaborators Page to highlight volunteers in the community. */
 public record CollaboratorPage(
-    @NotNull Page page, @NotNull Contact contact, @NotEmpty List<Member> collaborators) {}
+    @NotNull PageMetadata metadata,
+    @NotNull Page page,
+    @NotNull Contact contact,
+    @NotEmpty List<Member> collaborators) {}
