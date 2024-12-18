@@ -41,6 +41,9 @@ dependencies {
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
 
