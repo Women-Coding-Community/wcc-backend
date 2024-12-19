@@ -1,6 +1,5 @@
 package com.wcc.platform.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.FooterPage;
@@ -15,8 +14,8 @@ import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.repository.ResourceContentRepository;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,29 +48,23 @@ public class PlatformService {
   }
 
   /** Save any type of page based on page Type. */
+  @SuppressWarnings("unchecked")
   public Object savePage(final LandingPage page) {
     try {
-      return pageRepository.save(objectMapper.writeValueAsString(page));
-    } catch (JsonProcessingException e) {
+      return pageRepository.save(objectMapper.convertValue(page, Map.class));
+    } catch (IllegalArgumentException e) {
       throw new PlatformInternalException(PageType.LANDING_PAGE, e);
     }
   }
 
   /** Save any type of page based on page Type. */
+  @SuppressWarnings("unchecked")
   public Object savePage(final FooterPage page) {
     try {
-      return pageRepository.save(objectMapper.writeValueAsString(page));
-    } catch (JsonProcessingException e) {
+      return pageRepository.save(objectMapper.convertValue(page, Map.class));
+    } catch (IllegalArgumentException e) {
       throw new PlatformInternalException(PageType.FOOTER, e);
     }
-  }
-
-  public Collection<String> getAllPages() {
-    return pageRepository.findAll();
-  }
-
-  public Collection<ResourceContent> getAllResources() {
-    return resource.findAll();
   }
 
   /**
@@ -98,7 +91,7 @@ public class PlatformService {
   }
 
   public void deletePageById(final String id) {
-    pageRepository.findById(id).ifPresent(pageRepository::deleteById);
+    //    pageRepository.findById(id).ifPresent(pageRepository::deleteById);
   }
 
   /** Save Member into storage. */

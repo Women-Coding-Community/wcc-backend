@@ -2,11 +2,11 @@ package com.wcc.platform.repository.surrealdb;
 
 import com.surrealdb.driver.SyncSurrealDriver;
 import com.wcc.platform.repository.PageRepository;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 /** SurrealDB repository implementation for page. */
+@SuppressWarnings("unchecked")
 public class SurrealDbPageRepository implements PageRepository {
 
   /* default */ static final String TABLE = "page";
@@ -18,20 +18,16 @@ public class SurrealDbPageRepository implements PageRepository {
   }
 
   @Override
-  public String save(final String entity) {
+  public Map<String, Object> save(final Map<String, Object> entity) {
     return driver.create(TABLE, entity);
   }
 
   @Override
-  public Collection<String> findAll() {
-    return driver.select(TABLE, String.class);
-  }
-
-  @Override
-  public Optional<String> findById(final String id) {
+  public Optional<Map<String, Object>> findById(final String id) {
     final var key = TABLE + ":" + id;
+
     final var query =
-        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", key), String.class);
+        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", key), Map.class);
 
     if (query.isEmpty()) {
       return Optional.empty();

@@ -53,8 +53,8 @@ public class CmsService {
 
     if (page.isPresent()) {
       try {
-        return objectMapper.readValue(page.get(), FooterPage.class);
-      } catch (JsonProcessingException e) {
+        return objectMapper.convertValue(page.get(), FooterPage.class);
+      } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
@@ -80,8 +80,8 @@ public class CmsService {
     final var page = pageRepository.findById(PageType.LANDING_PAGE.name());
     if (page.isPresent()) {
       try {
-        return objectMapper.readValue(page.get(), LandingPage.class);
-      } catch (JsonProcessingException e) {
+        return objectMapper.convertValue(page.get(), LandingPage.class);
+      } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }

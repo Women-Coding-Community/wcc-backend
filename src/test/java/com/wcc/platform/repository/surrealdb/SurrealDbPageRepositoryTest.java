@@ -11,9 +11,8 @@ import static org.mockito.Mockito.when;
 
 import com.surrealdb.driver.SyncSurrealDriver;
 import com.wcc.platform.domain.cms.PageType;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,7 +21,6 @@ import org.mockito.MockitoAnnotations;
 class SurrealDbPageRepositoryTest {
 
   private static final String TABLE = SurrealDbPageRepository.TABLE;
-  private static final String PAGE = "{ 'page': { 'title': 'title 1' } }";
 
   @Mock private SyncSurrealDriver mockDriver;
 
@@ -36,31 +34,23 @@ class SurrealDbPageRepositoryTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testSave() {
-    when(mockDriver.create(TABLE, PAGE)).thenReturn(PAGE);
+    var page = Map.of("page", Map.of("title", "title 1"));
+    when(mockDriver.create(TABLE, page)).thenReturn(page);
 
-    var savedEntity = repository.save(PAGE);
+    var savedEntity = repository.save((Map<String, Object>) (Map) page);
 
-    verify(mockDriver, times(1)).create(TABLE, PAGE);
-    assertEquals(PAGE, savedEntity);
-  }
-
-  @Test
-  void testFindAll() {
-    List<String> mockResult = Collections.singletonList(PAGE);
-    when(mockDriver.select(TABLE, String.class)).thenReturn(mockResult);
-
-    Collection<String> result = repository.findAll();
-
-    verify(mockDriver, times(1)).select(TABLE, String.class);
-    assertEquals(mockResult, result);
+    verify(mockDriver, times(1)).create(TABLE, page);
+    assertEquals(page, savedEntity);
   }
 
   @Test
   void testFindByIdNotFoundCase1() {
     var result = repository.findById(PageType.FOOTER.name());
 
-    verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(String.class));
+    verify(mockDriver, times(1))
+        .query("SELECT * FROM page WHERE id = $id", Map.of("id", "page:FOOTER"), Map.class);
     assertTrue(result.isEmpty());
   }
 
@@ -70,7 +60,8 @@ class SurrealDbPageRepositoryTest {
 
     var result = repository.findById("test-id-2");
 
-    verify(mockDriver, times(1)).query(anyString(), anyMap(), eq(String.class));
+    verify(mockDriver, times(1))
+        .query("SELECT * FROM page WHERE id = $id", Map.of("id", "page:test-id-2"), Map.class);
     assertTrue(result.isEmpty());
   }
 

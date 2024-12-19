@@ -59,19 +59,6 @@ class PlatformServiceTest {
   }
 
   @Test
-  @DisplayName(
-      "Given resources exist, when getting all resources, then should return all resources")
-  void testGetAllResources() {
-    var resources = List.of(resourceContent);
-    when(resourceContentRepository.findAll()).thenReturn(resources);
-
-    var result = service.getAllResources();
-
-    assertEquals(resources, result);
-    verify(resourceContentRepository).findAll();
-  }
-
-  @Test
   @DisplayName("Given valid id, when getting resource by id, then should return resource content")
   void testGetResourceById() {
     when(resourceContentRepository.findById("1")).thenReturn(Optional.of(resourceContent));
