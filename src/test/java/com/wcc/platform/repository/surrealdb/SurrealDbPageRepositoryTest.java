@@ -48,13 +48,13 @@ class SurrealDbPageRepositoryTest {
   @Test
   @SuppressWarnings("unchecked")
   void testUpdate() {
-    var id = "test-id";
+    var pageId = "test-pageId";
     var page = Map.of("page", Map.of("title", "title 2"));
-    when(mockDriver.update(id, page)).thenReturn(List.of(page));
+    when(mockDriver.update(pageId, page)).thenReturn(List.of(page));
 
-    var savedEntity = repository.update(id, (Map<String, Object>) (Map) page);
+    var savedEntity = repository.update(pageId, (Map<String, Object>) (Map) page);
 
-    verify(mockDriver, times(1)).update(id, page);
+    verify(mockDriver, times(1)).update(pageId, page);
     assertEquals(page, savedEntity);
   }
 

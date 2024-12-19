@@ -49,7 +49,7 @@ public class CmsService {
    * @return Footer page
    */
   public FooterPage getFooter() {
-    final var page = pageRepository.findById(PageType.FOOTER.name());
+    final var page = pageRepository.findById(PageType.FOOTER.getPageId());
 
     if (page.isPresent()) {
       try {
@@ -77,7 +77,7 @@ public class CmsService {
    * @return Landing page of the community.
    */
   public LandingPage getLandingPage() {
-    final var page = pageRepository.findById(PageType.LANDING_PAGE.name());
+    final var page = pageRepository.findById(PageType.LANDING_PAGE.getPageId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), LandingPage.class);
