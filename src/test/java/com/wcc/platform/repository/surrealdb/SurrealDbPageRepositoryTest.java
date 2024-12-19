@@ -35,13 +35,26 @@ class SurrealDbPageRepositoryTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  void testSave() {
+  void testCreate() {
     var page = Map.of("page", Map.of("title", "title 1"));
     when(mockDriver.create(TABLE, page)).thenReturn(page);
 
-    var savedEntity = repository.save((Map<String, Object>) (Map) page);
+    var savedEntity = repository.create((Map<String, Object>) (Map) page);
 
     verify(mockDriver, times(1)).create(TABLE, page);
+    assertEquals(page, savedEntity);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testUpdate() {
+    var pageId = "test-pageId";
+    var page = Map.of("page", Map.of("title", "title 2"));
+    when(mockDriver.update(pageId, page)).thenReturn(List.of(page));
+
+    var savedEntity = repository.update(pageId, (Map<String, Object>) (Map) page);
+
+    verify(mockDriver, times(1)).update(pageId, page);
     assertEquals(page, savedEntity);
   }
 

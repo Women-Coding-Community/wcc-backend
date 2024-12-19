@@ -18,8 +18,19 @@ public class SurrealDbPageRepository implements PageRepository {
   }
 
   @Override
-  public Map<String, Object> save(final Map<String, Object> entity) {
+  public Map<String, Object> create(final Map<String, Object> entity) {
     return driver.create(TABLE, entity);
+  }
+
+  @Override
+  public Map<String, Object> update(final String id, final Map<String, Object> entity) {
+    final var result = driver.update(id, entity);
+
+    if (result.isEmpty()) {
+      return Map.of();
+    }
+
+    return result.getFirst();
   }
 
   @Override
