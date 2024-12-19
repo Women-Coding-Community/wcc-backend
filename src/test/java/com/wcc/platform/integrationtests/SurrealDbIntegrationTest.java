@@ -1,52 +1,92 @@
 package com.wcc.platform.integrationtests;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.wcc.platform.factories.SetupFactories.createLinkTest;
+import static com.wcc.platform.factories.SetupFactories.createNetworksTest;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import com.surrealdb.connection.SurrealConnection;
+import com.surrealdb.connection.SurrealWebSocketConnection;
+import com.surrealdb.driver.SyncSurrealDriver;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
+import com.wcc.platform.domain.cms.attributes.Network;
+import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.repository.surrealdb.SurrealDbPageRepository;
+import java.util.Collection;
+import java.util.List;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
 class SurrealDbIntegrationTest {
-
-  protected static final GenericContainer<?> SURREAL_DB_CONTAINER =
-      new GenericContainer<>(DockerImageName.parse("surrealdb/surrealdb:latest"))
+  @Container
+  static final GenericContainer<?> surrealDbContainer =
+      new GenericContainer<>("surrealdb/surrealdb:latest")
           .withExposedPorts(8000)
-          .withCommand("start --user root --pass root");
+          .withCommand("start", "--log", "debug", "--user", "root", "--pass", "password");
 
-  @DynamicPropertySource
-  static void registerSurrealDbProperties(final DynamicPropertyRegistry registry) {
-    SURREAL_DB_CONTAINER.start();
-    String host = SURREAL_DB_CONTAINER.getHost();
-    Integer port = SURREAL_DB_CONTAINER.getMappedPort(8000);
-    registry.add("surrealdb.host", () -> host);
-    registry.add("surrealdb.port", port::toString);
-    registry.add("surrealdb.username", () -> "root");
-    registry.add("surrealdb.password", () -> "root");
-    registry.add("surrealdb.namespace", () -> "test_namespace");
-    registry.add("surrealdb.database", () -> "test_db");
-  }
+  static final String TABLE = "page";
+  private static SurrealConnection connection;
+  private static SyncSurrealDriver driver;
+  private SurrealDbPageRepository repository;
 
   @BeforeAll
-  static void setUp() {
-    SURREAL_DB_CONTAINER.start();
+  static void setUpContainer() {
+    surrealDbContainer.start();
+
+    // Initialize SyncSurrealDriver with container connection
+    String host = surrealDbContainer.getHost();
+    Integer port = surrealDbContainer.getFirstMappedPort();
+    // String url = "ws://" + host + ":" + port + "/rpc";
+
+    connection = new SurrealWebSocketConnection(host, port, false);
+    connection.connect(1200); // timeout second
+
+    driver = new SyncSurrealDriver(connection);
+    driver.signIn("root", "password");
+    driver.use("test", "test");
   }
 
   @AfterAll
-  static void tearDown() {
-    SURREAL_DB_CONTAINER.stop();
+  static void tearDownContainer() {
+    connection.disconnect();
+    surrealDbContainer.stop();
+  }
+
+  @BeforeEach
+  void setUp() {
+    repository = new SurrealDbPageRepository(driver, FooterPage.class);
+  }
+
+  @AfterEach
+  void tearDown() {
+    driver.delete(TABLE);
   }
 
   @Test
-  @DisplayName("Should create and retrieve a ResourceContent entity")
-  void testSurrealDbConnection() {
-    assertTrue(SURREAL_DB_CONTAINER.isCreated());
-    assertTrue(SURREAL_DB_CONTAINER.isRunning());
+  void testSaveAndFindAll() {
+    // Arrange
+    List<Network> networks = createNetworksTest();
+    LabelLink link = createLinkTest();
+    FooterPage page1 =
+        new FooterPage(
+            "id", "footer_title", "footer_subtitle", "footer_description", networks, link);
+
+    FooterPage page2 =
+        new FooterPage(
+            "id1", "footer1_title", "footer1_subtitle", "footer1_description", networks, link);
+
+    // Act
+    repository.save(page1);
+    repository.save(page2);
+    Collection<FooterPage> pages = repository.findAll();
+
+    // Assert
+    assertNotNull(pages);
+    assertEquals(2, pages.size());
+
+    assertTrue(pages.stream().anyMatch(page -> page.id().equals(TABLE + ":" + page1.id())));
+    assertTrue(pages.stream().anyMatch(page -> page.id().equals(TABLE + ":" + page2.id())));
   }
 }
