@@ -46,6 +46,19 @@ class SurrealDbPageRepositoryTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
+  void testUpdate() {
+    var id = "test-id";
+    var page = Map.of("page", Map.of("title", "title 2"));
+    when(mockDriver.update(id, page)).thenReturn(List.of(page));
+
+    var savedEntity = repository.update(id, (Map<String, Object>) (Map) page);
+
+    verify(mockDriver, times(1)).update(id, page);
+    assertEquals(page, savedEntity);
+  }
+
+  @Test
   void testFindByIdNotFoundCase1() {
     var result = repository.findById(PageType.FOOTER.name());
 
