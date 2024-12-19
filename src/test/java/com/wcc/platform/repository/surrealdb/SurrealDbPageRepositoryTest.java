@@ -50,7 +50,7 @@ class SurrealDbPageRepositoryTest {
     var result = repository.findById(PageType.FOOTER.name());
 
     verify(mockDriver, times(1))
-        .query("SELECT * FROM page WHERE id = $id", Map.of("id", "page:FOOTER"), Map.class);
+        .query("SELECT * FROM page WHERE id = $id", Map.of("id", "FOOTER"), Map.class);
     assertTrue(result.isEmpty());
   }
 
@@ -61,7 +61,7 @@ class SurrealDbPageRepositoryTest {
     var result = repository.findById("test-id-2");
 
     verify(mockDriver, times(1))
-        .query("SELECT * FROM page WHERE id = $id", Map.of("id", "page:test-id-2"), Map.class);
+        .query("SELECT * FROM page WHERE id = $id", Map.of("id", "test-id-2"), Map.class);
     assertTrue(result.isEmpty());
   }
 

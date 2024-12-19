@@ -24,10 +24,8 @@ public class SurrealDbPageRepository implements PageRepository {
 
   @Override
   public Optional<Map<String, Object>> findById(final String id) {
-    final var key = TABLE + ":" + id;
-
     final var query =
-        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", key), Map.class);
+        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", id), Map.class);
 
     if (query.isEmpty()) {
       return Optional.empty();

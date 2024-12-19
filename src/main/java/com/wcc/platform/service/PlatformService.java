@@ -90,8 +90,12 @@ public class PlatformService {
     resource.deleteById(result.getId());
   }
 
+  /** Delete page by id. */
   public void deletePageById(final String id) {
-    //    pageRepository.findById(id).ifPresent(pageRepository::deleteById);
+    if (pageRepository.findById(id).isEmpty()) {
+      throw new ContentNotFoundException("Page not found for id: " + id);
+    }
+    pageRepository.deleteById(id);
   }
 
   /** Save Member into storage. */
