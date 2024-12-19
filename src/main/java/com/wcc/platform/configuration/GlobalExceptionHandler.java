@@ -3,6 +3,7 @@ package com.wcc.platform.configuration;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import com.surrealdb.connection.exception.SurrealRecordAlreadyExitsException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
@@ -59,14 +60,19 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
-  /** Receive DuplicatedMemberException and return {@link HttpStatus#CONFLICT}. */
-  @ExceptionHandler({DuplicatedMemberException.class})
+  /**
+   * Receive {@link DuplicatedMemberException} or {@link SurrealRecordAlreadyExitsException} and
+   * return {@link HttpStatus#CONFLICT}.
+   */
+  @ExceptionHandler({DuplicatedMemberException.class, SurrealRecordAlreadyExitsException.class})
   @ResponseStatus(HttpStatus.CONFLICT)
-  public ResponseEntity<ErrorDetails> handleDuplicatedMemberError(
-      final DuplicatedMemberException ex, final WebRequest request) {
+  public ResponseEntity<ErrorDetails> handleRecordAlreadyExitsException(
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
-            HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false));
+            HttpStatus.CONFLICT.value(),
+            "Record already exists: " + ex.getMessage(),
+            request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
