@@ -3,7 +3,6 @@ package com.wcc.platform.repository.surrealdb;
 import com.surrealdb.driver.SyncSurrealDriver;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.ResourceContentRepository;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +34,6 @@ public class SurrealDbResourceRepository implements ResourceContentRepository {
     }
 
     return result.getFirst();
-  }
-
-  @Override
-  public Collection<ResourceContent> findAll() {
-    return driver.select(TABLE, ResourceContent.class);
   }
 
   @Override

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
@@ -23,8 +24,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class CmsServiceTest {
-  @Mock private PageRepository<FooterPage> footerRepository;
-  @Mock private PageRepository<LandingPage> landingPageRepository;
+  @Mock private PageRepository pageRepository;
   @Mock private ObjectMapper objectMapper;
 
   private CmsService service;
@@ -33,7 +33,7 @@ class CmsServiceTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
 
-    service = new CmsService(objectMapper, footerRepository, landingPageRepository);
+    service = new CmsService(objectMapper, pageRepository);
   }
 
   @Test
@@ -140,5 +140,25 @@ class CmsServiceTest {
     var response = service.getLandingPage();
 
     assertEquals(page, response);
+  }
+
+  @Test
+  void whenGetAboutUsPageGivenInvalidJson() throws IOException {
+    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class)))
+        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+
+    var exception = assertThrows(PlatformInternalException.class, service::getAboutUs);
+
+    assertEquals("Invalid JSON", exception.getMessage());
+  }
+
+  @Test
+  void whenGetAboutUsPageGivenValidJson() throws IOException {
+    var aboutUsPage = SetupFactories.createAboutUsPageTest();
+    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
+
+    var response = service.getAboutUs();
+
+    assertEquals(aboutUsPage, response);
   }
 }

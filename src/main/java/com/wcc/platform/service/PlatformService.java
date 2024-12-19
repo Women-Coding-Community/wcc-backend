@@ -8,7 +8,6 @@ import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.ResourceContentRepository;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +32,6 @@ public class PlatformService {
 
   public ResourceContent saveResourceContent(final ResourceContent resourceContent) {
     return resource.create(resourceContent);
-  }
-
-  public Collection<ResourceContent> getAllResources() {
-    return resource.findAll();
   }
 
   /**

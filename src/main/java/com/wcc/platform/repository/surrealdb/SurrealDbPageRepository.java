@@ -2,49 +2,41 @@ package com.wcc.platform.repository.surrealdb;
 
 import com.surrealdb.driver.SyncSurrealDriver;
 import com.wcc.platform.repository.PageRepository;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 /** SurrealDB repository implementation for page. */
-public class SurrealDbPageRepository<T> implements PageRepository<T> {
+@SuppressWarnings("unchecked")
+public class SurrealDbPageRepository implements PageRepository {
 
   /* default */ static final String TABLE = "page";
 
   private final SyncSurrealDriver driver;
-  private final Class<T> entityType;
 
-  public SurrealDbPageRepository(final SyncSurrealDriver driver, final Class<T> entityType) {
+  public SurrealDbPageRepository(final SyncSurrealDriver driver) {
     this.driver = driver;
-    this.entityType = entityType;
   }
 
   @Override
-  public T create(final T entity) {
+  public Map<String, Object> create(final Map<String, Object> entity) {
     return driver.create(TABLE, entity);
   }
 
   @Override
-  public T update(final String id, final T entity) {
+  public Map<String, Object> update(final String id, final Map<String, Object> entity) {
     final var result = driver.update(id, entity);
 
     if (result.isEmpty()) {
-      return null;
+      return Map.of();
     }
 
     return result.getFirst();
   }
 
   @Override
-  public Collection<T> findAll() {
-    return driver.select(TABLE, entityType);
-  }
-
-  @Override
-  public Optional<T> findById(final String id) {
-    final var key = TABLE + ":" + id;
+  public Optional<Map<String, Object>> findById(final String id) {
     final var query =
-        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", key), entityType);
+        driver.query("SELECT * FROM " + TABLE + " WHERE id = $id", Map.of("id", id), Map.class);
 
     if (query.isEmpty()) {
       return Optional.empty();

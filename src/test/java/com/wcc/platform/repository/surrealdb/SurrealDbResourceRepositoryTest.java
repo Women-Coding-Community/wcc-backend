@@ -46,18 +46,6 @@ class SurrealDbResourceRepositoryTest {
   }
 
   @Test
-  void testFindAll() {
-    List<ResourceContent> mockResult = List.of(entity);
-
-    when(mockDriver.select(TABLE, className)).thenReturn(mockResult);
-
-    var result = repository.findAll();
-
-    verify(mockDriver, times(1)).select(TABLE, className);
-    assertEquals(mockResult, result);
-  }
-
-  @Test
   void testFindByIdNotFoundCase1() {
     var result = repository.findById(TEST_ID);
 
