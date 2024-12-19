@@ -2,6 +2,8 @@ package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.ABOUT_US;
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
+import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
+import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static org.hamcrest.Matchers.is;
@@ -18,6 +20,8 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.pages.PageMetadata;
+import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Member;
@@ -69,7 +73,8 @@ class AboutControllerTest {
 
   @Test
   void testCollaboratorNotFound() throws Exception {
-    when(service.getCollaborator()).thenThrow(new ContentNotFoundException("Not Found Exception"));
+    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE))
+        .thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
         .perform(get("/api/cms/v1/collaborators").contentType(APPLICATION_JSON))
@@ -82,7 +87,7 @@ class AboutControllerTest {
   @Test
   void testCollaboratorInternalError() throws Exception {
     var internalError = new PlatformInternalException("internal Json", new RuntimeException());
-    when(service.getCollaborator()).thenThrow(internalError);
+    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE)).thenThrow(internalError);
 
     mockMvc
         .perform(get("/api/cms/v1/collaborators").contentType(APPLICATION_JSON))
@@ -110,6 +115,7 @@ class AboutControllerTest {
 
     var collaboratorPage =
         new CollaboratorPage(
+            new PageMetadata(new Pagination(1, 1, 1, 10)),
             Page.builder()
                 .title("collaborator_title")
                 .subtitle("collaborator_subtitle")
@@ -121,7 +127,8 @@ class AboutControllerTest {
                 List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "page_link"))),
             List.of(collaborator));
 
-    when(service.getCollaborator()).thenReturn(collaboratorPage);
+    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE))
+        .thenReturn(collaboratorPage);
 
     mockMvc
         .perform(get("/api/cms/v1/collaborators").contentType(APPLICATION_JSON))

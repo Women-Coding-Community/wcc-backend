@@ -24,6 +24,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class CmsServiceTest {
+
+  public static final int DEFAULT_CURRENT_PAGE = 1;
+  public static final int DEFAULT_PAGE_SIZE = 10;
+
   @Mock private PageRepository<FooterPage> footerRepository;
   @Mock private PageRepository<LandingPage> landingPageRepository;
   @Mock private ObjectMapper objectMapper;
@@ -82,7 +86,10 @@ class CmsServiceTest {
     when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
-    var exception = assertThrows(PlatformInternalException.class, service::getCollaborator);
+    var exception =
+        assertThrows(
+            PlatformInternalException.class,
+            () -> service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
 
     assertEquals("Invalid JSON", exception.getMessage());
   }
@@ -93,7 +100,7 @@ class CmsServiceTest {
     when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenReturn(collaboratorPage);
 
-    var response = service.getCollaborator();
+    var response = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     assertEquals(collaboratorPage, response);
   }

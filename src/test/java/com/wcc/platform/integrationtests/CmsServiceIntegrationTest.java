@@ -30,6 +30,9 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
+  public static final int DEFAULT_CURRENT_PAGE = 1;
+  public static final int DEFAULT_PAGE_SIZE = 10;
+
   @Autowired private CmsService service;
 
   @Test
@@ -66,7 +69,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetCollaboratorPage() {
-    var result = service.getCollaborator();
+    var result = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     var expectedCollaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
 
