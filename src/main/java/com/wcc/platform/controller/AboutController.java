@@ -7,11 +7,13 @@ import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,8 +50,12 @@ public class AboutController {
   @GetMapping("/collaborators")
   @Operation(summary = "API to retrieve information about collaborators")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<CollaboratorPage> getCollaboratorPage() {
-    return ResponseEntity.ok(cmsService.getCollaborator());
+  public ResponseEntity<CollaboratorPage> getCollaboratorPage(
+      @RequestParam(defaultValue = "1") final int currentPage,
+      @Min(value = 1, message = "Page size must be greater than zero")
+          @RequestParam(defaultValue = "10")
+          final int pageSize) {
+    return ResponseEntity.ok(cmsService.getCollaborator(currentPage, pageSize));
   }
 
   /**
