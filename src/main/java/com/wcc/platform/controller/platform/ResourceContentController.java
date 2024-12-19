@@ -4,7 +4,6 @@ import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,14 +36,6 @@ public class ResourceContentController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<ResourceContent> addResource(@RequestBody final ResourceContent resource) {
     return ResponseEntity.ok(service.saveResourceContent(resource));
-  }
-
-  /** Get all resources content. */
-  @GetMapping("/resources")
-  @Operation(summary = "Get all resources")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Collection<ResourceContent>> getAllResources() {
-    return ResponseEntity.ok(service.getAllResources());
   }
 
   /** Get all resources content. */
