@@ -5,9 +5,12 @@ import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +53,13 @@ public class PageController {
   @GetMapping("/test")
   @Operation(summary = "API to test security")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> testAuthentication() {
-    return ResponseEntity.ok("Test working");
+  public ResponseEntity<String> testAuthentication(@AuthenticationPrincipal OAuth2User principal) {
+    String name = principal.getAttribute("name");
+    return ResponseEntity.ok("Hello, " + name + "! Welcome to the test page.");
+  }
+
+  @GetMapping("/user-info")
+  public Map<String, Object> getUserInfo(@AuthenticationPrincipal OAuth2User principal) {
+    return principal.getAttributes(); // Returns user attributes from GitHub
   }
 }

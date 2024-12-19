@@ -5,10 +5,20 @@ spring:
     active: default
   security:
     oauth2:
-      resource-server:
-        jwt:
-          issuer-uri: https://github.com
-
+      client:
+        registration:
+          github:
+            client-id: APP-CLIENT-ID-REGISTERED-ON-GITHUB
+            client-secret: APP-SECRET-ID-REGISTERED-ON-GITHUB
+            scope: read:user,user:email,read:org
+            redirect-uri: "{baseUrl}/login/oauth2/code/github"
+            authorization-grant-type: authorization_code
+            client-name: GitHub
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
 
 file:
   storage:
