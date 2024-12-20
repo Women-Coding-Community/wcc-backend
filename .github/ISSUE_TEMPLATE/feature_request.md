@@ -44,3 +44,10 @@ Controller and use Repository functions to get data from the database. -->
 ### Additional Context
 
 Include any other context, logs, or screenshots that might help explain your request.
+
+<!-- 
+For example: 
+- Enhanced feature designs Screenshot
+- API structure
+- Schema
+-->
