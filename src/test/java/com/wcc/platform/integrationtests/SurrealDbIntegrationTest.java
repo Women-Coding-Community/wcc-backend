@@ -7,16 +7,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.surrealdb.connection.SurrealConnection;
 import com.surrealdb.connection.SurrealWebSocketConnection;
 import com.surrealdb.driver.SyncSurrealDriver;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Network;
-import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.repository.surrealdb.SurrealDbPageRepository;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.*;
-import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -26,8 +25,7 @@ class SurrealDbIntegrationTest {
   static final GenericContainer<?> surrealDbContainer =
       new GenericContainer<>("surrealdb/surrealdb:latest")
           .withExposedPorts(8000)
-          .withCommand("start", "--log", "debug", "--user", "root", "--pass", "password")
-          .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("surrealDbContainer")));
+          .withCommand("start", "--log", "debug", "--user", "root", "--pass", "password");
 
   private static final String TABLE = "page";
   private static SurrealConnection connection;
@@ -43,7 +41,7 @@ class SurrealDbIntegrationTest {
     Integer port = surrealDbContainer.getFirstMappedPort();
 
     connection = new SurrealWebSocketConnection(host, port, false);
-    connection.connect(120); // timeout second
+    connection.connect(1200); // timeout second
 
     driver = new SyncSurrealDriver(connection);
     driver.signIn("root", "password");
@@ -58,7 +56,7 @@ class SurrealDbIntegrationTest {
 
   @BeforeEach
   void setUp() {
-    repository = new SurrealDbPageRepository(driver, FooterPage.class);
+    repository = new SurrealDbPageRepository(driver);
   }
 
   @AfterEach
@@ -71,24 +69,29 @@ class SurrealDbIntegrationTest {
     // Arrange
     List<Network> networks = createNetworksTest();
     LabelLink link = createLinkTest();
-    FooterPage page1 =
-        new FooterPage(
-            "id", "footer_title", "footer_subtitle", "footer_description", networks, link);
 
-    FooterPage page2 =
-        new FooterPage(
-            "id1", "footer1_title", "footer1_subtitle", "footer1_description", networks, link);
+    Map<String, Object> map =
+        Map.of(
+            "id",
+            "page:FOOTER",
+            "title",
+            "footer_title",
+            "subtitle",
+            "footer_subtitle",
+            "description",
+            "footer_description",
+            "network",
+            networks,
+            "link",
+            link);
 
     // Act
-    repository.save(page1);
-    repository.save(page2);
-    Collection<FooterPage> pages = repository.findAll();
+    repository.create(map);
+    Optional<Map<String, Object>> page = repository.findById(PageType.FOOTER.getPageId());
 
     // Assert
-    assertNotNull(pages);
-    assertEquals(2, pages.size());
-
-    assertTrue(pages.stream().anyMatch(page -> page.id().equals(TABLE + ":" + page1.id())));
-    assertTrue(pages.stream().anyMatch(page -> page.id().equals(TABLE + ":" + page2.id())));
+    assertTrue(page.isPresent());
+    assertEquals(6, page.get().size());
+    assertTrue(page.get().containsValue(PageType.FOOTER.getPageId()));
   }
 }
