@@ -40,6 +40,16 @@ public class PageController {
     return ResponseEntity.ok(service.create(footerPage));
   }
 
+  /** Create Any Page and store into database. */
+  @PostMapping()
+  @Operation(
+      summary = "Create any type of page",
+      description = "Create new page with any content type.")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<Object> createPage(@RequestBody final Object page) {
+    return ResponseEntity.ok(service.create(page));
+  }
+
   /** Create Landing Page and store into database. */
   @PostMapping("/landingPage")
   @Operation(
@@ -67,7 +77,7 @@ public class PageController {
   public ResponseEntity<Object> updatePage(@RequestBody final LandingPage page) {
     return ResponseEntity.ok(service.update(page));
   }
-  
+
   /** Delete Page By ID. */
   @DeleteMapping
   @Operation(summary = "Delete page by id")

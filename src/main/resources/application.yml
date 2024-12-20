@@ -18,6 +18,7 @@ springdoc:
     operations-sorter: alpha
   paths-to-match: /api/**
 
+#  to deploy to DEV env update application-docker.yml
 surrealdb:
   host: localhost
   port: 8000
