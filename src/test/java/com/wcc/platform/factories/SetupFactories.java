@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.ObjectMapperConfig;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
@@ -35,6 +36,7 @@ public class SetupFactories {
 
   public static final ObjectMapper OBJECT_MAPPER = new ObjectMapperConfig().objectMapper();
 
+  /** Factory test. */
   public static Contact createContactTest() {
     return new Contact(
         "Contact Us",
@@ -43,7 +45,8 @@ public class SetupFactories {
   }
 
   public static TeamPage createTeamPageTest() {
-    return new TeamPage(createPageTest(), createContactTest(), createMemberByTypeTest());
+    final String pageId = PageType.TEAM.getPageId();
+    return new TeamPage(pageId, createPageTest(), createContactTest(), createMemberByTypeTest());
   }
 
   /** Factory test. */
@@ -215,7 +218,7 @@ public class SetupFactories {
   /** Factory test. */
   public static FooterPage createFooterPageTest() {
     return new FooterPage(
-        "id",
+        PageType.FOOTER.getPageId(),
         "footer_title",
         "footer_subtitle",
         "footer_description",

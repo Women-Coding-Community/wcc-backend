@@ -5,7 +5,6 @@ import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.FOOTER;
 import static com.wcc.platform.domain.cms.PageType.TEAM;
-import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
@@ -15,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.wcc.platform.domain.cms.PageType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.CmsService;
-import com.wcc.platform.utils.FileUtil;
-import lombok.SneakyThrows;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -31,15 +30,24 @@ import org.springframework.test.context.ActiveProfiles;
 class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Autowired private CmsService service;
+  @Autowired private PageRepository pageRepository;
+  @Autowired private ObjectMapper objectMapper;
+
+  @BeforeEach
+  void deletePages() {
+    pageRepository.deleteById(TEAM.getPageId());
+    pageRepository.deleteById(FOOTER.getPageId());
+  }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testGetTeamPage() {
+    var teamPage = createTeamPageTest(TEAM.getFileName());
+    pageRepository.create(objectMapper.convertValue(teamPage, Map.class));
     var result = service.getTeam();
 
-    var expectedTeamPage = createTeamPageTest(TEAM.getFileName());
-
-    assertEquals(expectedTeamPage.page(), result.page());
-    assertEquals(expectedTeamPage.contact(), result.contact());
+    assertEquals(teamPage.page(), result.page());
+    assertEquals(teamPage.contact(), result.contact());
 
     assertEquals(1, result.membersByType().directors().size());
     assertEquals(1, result.membersByType().leads().size());
@@ -51,17 +59,19 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testGetFooterPageTest() {
+    var footerPage = createFooterPageTest(FOOTER.getFileName());
+    pageRepository.create(objectMapper.convertValue(footerPage, Map.class));
+
     var result = service.getFooter();
 
-    var expectedTeamPage = createFooterPageTest(FOOTER.getFileName());
-
-    assertEquals(expectedTeamPage.title(), result.title());
-    assertEquals(expectedTeamPage.subtitle(), result.subtitle());
-    assertEquals(expectedTeamPage.description(), result.description());
+    assertEquals(footerPage.title(), result.title());
+    assertEquals(footerPage.subtitle(), result.subtitle());
+    assertEquals(footerPage.description(), result.description());
 
     assertEquals(6, result.network().size());
-    assertEquals(expectedTeamPage.link(), result.link());
+    assertEquals(footerPage.link(), result.link());
   }
 
   @Test
@@ -84,19 +94,6 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
 
     assertEquals(expectedCodeOfConductPage, result);
-  }
-
-  @SneakyThrows
-  @Test
-  void testGetLandingPageFallback() {
-    var result = service.getLandingPage();
-
-    assertNotNull(result);
-
-    var expected = FileUtil.readFileAsString(PageType.LANDING_PAGE.getFileName());
-    var jsonResponse = OBJECT_MAPPER.writeValueAsString(result);
-
-    JSONAssert.assertEquals(expected, jsonResponse, false);
   }
 
   @Test

@@ -10,6 +10,7 @@ import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
@@ -35,12 +36,17 @@ public class CmsService {
    * @return Pojo TeamPage.
    */
   public TeamPage getTeam() {
-    try {
-      return objectMapper.readValue(
-          FileUtil.readFileAsString(PageType.TEAM.getFileName()), TeamPage.class);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
+    final var page = pageRepository.findById(PageType.TEAM.getPageId());
+
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), TeamPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
     }
+
+    throw new ContentNotFoundException(PageType.TEAM);
   }
 
   /**
@@ -59,16 +65,7 @@ public class CmsService {
       }
     }
 
-    return getFooterFallback();
-  }
-
-  private FooterPage getFooterFallback() {
-    try {
-      return objectMapper.readValue(
-          FileUtil.readFileAsString(PageType.FOOTER.getFileName()), FooterPage.class);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
-    }
+    throw new ContentNotFoundException(PageType.FOOTER);
   }
 
   /**
@@ -86,16 +83,7 @@ public class CmsService {
       }
     }
 
-    return getLandingPageFallback();
-  }
-
-  private LandingPage getLandingPageFallback() {
-    try {
-      return objectMapper.readValue(
-          FileUtil.readFileAsString(PageType.LANDING_PAGE.getFileName()), LandingPage.class);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
-    }
+    throw new ContentNotFoundException(PageType.LANDING_PAGE);
   }
 
   /**
