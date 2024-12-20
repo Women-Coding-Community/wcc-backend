@@ -14,7 +14,9 @@ import com.wcc.platform.repository.surrealdb.SurrealDbPageRepository;
 import java.util.Collection;
 import java.util.List;
 import org.junit.jupiter.api.*;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -24,9 +26,10 @@ class SurrealDbIntegrationTest {
   static final GenericContainer<?> surrealDbContainer =
       new GenericContainer<>("surrealdb/surrealdb:latest")
           .withExposedPorts(8000)
-          .withCommand("start", "--log", "debug", "--user", "root", "--pass", "password");
+          .withCommand("start", "--log", "debug", "--user", "root", "--pass", "password")
+          .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("surrealDbContainer")));
 
-  static final String TABLE = "page";
+  private static final String TABLE = "page";
   private static SurrealConnection connection;
   private static SyncSurrealDriver driver;
   private SurrealDbPageRepository repository;
@@ -38,10 +41,9 @@ class SurrealDbIntegrationTest {
     // Initialize SyncSurrealDriver with container connection
     String host = surrealDbContainer.getHost();
     Integer port = surrealDbContainer.getFirstMappedPort();
-    // String url = "ws://" + host + ":" + port + "/rpc";
 
     connection = new SurrealWebSocketConnection(host, port, false);
-    connection.connect(1200); // timeout second
+    connection.connect(120); // timeout second
 
     driver = new SyncSurrealDriver(connection);
     driver.signIn("root", "password");

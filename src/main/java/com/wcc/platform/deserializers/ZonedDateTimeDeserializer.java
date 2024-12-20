@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/** Custom Deserialize for ZonedDateTime. */
 public class ZonedDateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
   DateTimeFormatter formatter;
 
