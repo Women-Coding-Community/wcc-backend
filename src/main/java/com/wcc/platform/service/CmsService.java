@@ -8,31 +8,31 @@ import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
+import com.wcc.platform.domain.cms.pages.PageMetadata;
+import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
+import com.wcc.platform.utils.PaginationUtil;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
 @Service
 public class CmsService {
+
   private final ObjectMapper objectMapper;
-  private final PageRepository<FooterPage> footerRepository;
-  private final PageRepository<LandingPage> lpRepository;
+  private final PageRepository pageRepository;
 
   /** Init repositories with respective qualifiers. */
   @Autowired
-  public CmsService(
-      final ObjectMapper objectMapper,
-      @Qualifier("footerRepository") final PageRepository<FooterPage> footerRepository,
-      @Qualifier("landingPageRepository") final PageRepository<LandingPage> lpRepository) {
+  public CmsService(final ObjectMapper objectMapper, final PageRepository pageRepository) {
     this.objectMapper = objectMapper;
-    this.footerRepository = footerRepository;
-    this.lpRepository = lpRepository;
+    this.pageRepository = pageRepository;
   }
 
   /**
@@ -55,8 +55,17 @@ public class CmsService {
    * @return Footer page
    */
   public FooterPage getFooter() {
-    final var page = footerRepository.findById(PageType.FOOTER.name());
-    return page.orElseGet(this::getFooterFallback);
+    final var page = pageRepository.findById(PageType.FOOTER.getPageId());
+
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), FooterPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+
+    return getFooterFallback();
   }
 
   private FooterPage getFooterFallback() {
@@ -74,9 +83,16 @@ public class CmsService {
    * @return Landing page of the community.
    */
   public LandingPage getLandingPage() {
-    final var page = lpRepository.findById(PageType.LANDING_PAGE.name());
+    final var page = pageRepository.findById(PageType.LANDING_PAGE.getPageId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), LandingPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
 
-    return page.orElseGet(this::getLandingPageFallback);
+    return getLandingPageFallback();
   }
 
   private LandingPage getLandingPageFallback() {
@@ -93,10 +109,26 @@ public class CmsService {
    *
    * @return Collaborators page content.
    */
-  public CollaboratorPage getCollaborator() {
+  public CollaboratorPage getCollaborator(final int currentPage, final int pageSize) {
     try {
-      return objectMapper.readValue(
-          FileUtil.readFileAsString(PageType.COLLABORATOR.getFileName()), CollaboratorPage.class);
+      final var page =
+          objectMapper.readValue(
+              FileUtil.readFileAsString(PageType.COLLABORATOR.getFileName()),
+              CollaboratorPage.class);
+      final var allCollaborators = page.collaborators();
+
+      final List<Member> pagCollaborators =
+          PaginationUtil.getPaginatedResult(allCollaborators, currentPage, pageSize);
+
+      final Pagination paginationRecord =
+          new Pagination(
+              allCollaborators.size(),
+              PaginationUtil.getTotalPages(allCollaborators, pageSize),
+              currentPage,
+              pageSize);
+
+      return new CollaboratorPage(
+          new PageMetadata(paginationRecord), page.page(), page.contact(), pagCollaborators);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }

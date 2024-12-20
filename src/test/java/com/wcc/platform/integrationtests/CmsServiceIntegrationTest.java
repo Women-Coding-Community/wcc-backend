@@ -5,6 +5,8 @@ import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.FOOTER;
 import static com.wcc.platform.domain.cms.PageType.TEAM;
+import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
+import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
@@ -66,7 +68,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetCollaboratorPage() {
-    var result = service.getCollaborator();
+    var result = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     var expectedCollaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
 
