@@ -8,18 +8,24 @@ import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
+import com.wcc.platform.domain.cms.pages.PageMetadata;
+import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
+import com.wcc.platform.utils.PaginationUtil;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
 @Service
 public class CmsService {
+
   private final ObjectMapper objectMapper;
   private final PageRepository pageRepository;
 
@@ -91,10 +97,26 @@ public class CmsService {
    *
    * @return Collaborators page content.
    */
-  public CollaboratorPage getCollaborator() {
+  public CollaboratorPage getCollaborator(final int currentPage, final int pageSize) {
     try {
-      return objectMapper.readValue(
-          FileUtil.readFileAsString(PageType.COLLABORATOR.getFileName()), CollaboratorPage.class);
+      final var page =
+          objectMapper.readValue(
+              FileUtil.readFileAsString(PageType.COLLABORATOR.getFileName()),
+              CollaboratorPage.class);
+      final var allCollaborators = page.collaborators();
+
+      final List<Member> pagCollaborators =
+          PaginationUtil.getPaginatedResult(allCollaborators, currentPage, pageSize);
+
+      final Pagination paginationRecord =
+          new Pagination(
+              allCollaborators.size(),
+              PaginationUtil.getTotalPages(allCollaborators, pageSize),
+              currentPage,
+              pageSize);
+
+      return new CollaboratorPage(
+          new PageMetadata(paginationRecord), page.page(), page.contact(), pagCollaborators);
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);
     }
