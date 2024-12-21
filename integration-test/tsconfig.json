@@ -13,11 +13,13 @@
     }
   },
   "include": [
-    "**/*" 
+    "playwright.config.ts",
+    "src/**/*",
+    "tests/**/*",
+    "utils/**/*"  
   ],
   "exclude": [
     "node_modules",
     "eslint.config.js",
-    "playwright.config.ts"
   ]
 }
