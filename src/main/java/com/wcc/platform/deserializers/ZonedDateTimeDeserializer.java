@@ -9,14 +9,16 @@ import java.time.format.DateTimeFormatter;
 
 /** Custom Deserialize for ZonedDateTime. */
 public class ZonedDateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
-  DateTimeFormatter formatter;
+  private final DateTimeFormatter formatter;
 
-  public ZonedDateTimeDeserializer(DateTimeFormatter formatter) {
+  public ZonedDateTimeDeserializer(final DateTimeFormatter formatter) {
+    super();
     this.formatter = formatter;
   }
 
   @Override
-  public ZonedDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-    return ZonedDateTime.parse(p.getText(), formatter);
+  public ZonedDateTime deserialize(final JsonParser parser, DeserializationContext ctxt)
+      throws IOException {
+    return ZonedDateTime.parse(parser.getText(), formatter);
   }
 }

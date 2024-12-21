@@ -41,10 +41,10 @@ public class ObjectMapperConfig {
   }
 
   private void registerCustomDeserializers(final ObjectMapper objectMapper) {
-    DateTimeFormatter formatter =
+    final DateTimeFormatter formatter =
         DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy, h:mm a z", Locale.ENGLISH);
 
-    JavaTimeModule javaTimeModule = new JavaTimeModule();
+    final JavaTimeModule javaTimeModule = new JavaTimeModule();
     javaTimeModule.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(formatter));
     javaTimeModule.addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(formatter));
 
