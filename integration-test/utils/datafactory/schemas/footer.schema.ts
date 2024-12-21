@@ -32,7 +32,6 @@ export const footerSchema = {
                                 "minLength": 1
                             }
                         },
-                        "required": ["type", "link"],
                         "additionalProperties": false,
                         "if": {
                             "properties": {

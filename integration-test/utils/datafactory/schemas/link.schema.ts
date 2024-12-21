@@ -20,8 +20,6 @@ export const linkSchema = {
                 }
             },
             "required": [
-                "title",
-                "label",
                 "uri"
             ],
             "additionalProperties": false
