@@ -57,7 +57,7 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
     jvmArgs = listOf("-Xmx2048m")
-    timeout.set(Duration.ofMinutes(5))
+    timeout.set(Duration.ofMinutes(2))
 }
 
 tasks {

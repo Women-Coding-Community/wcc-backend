@@ -28,44 +28,29 @@ class SurrealDbIntegrationTest {
           .withCommand("start", "--log", "debug", "--user", "root", "--pass", "password");
 
   private static final String TABLE = "page";
-  private static SurrealConnection connection;
-  private static SyncSurrealDriver driver;
-  private SurrealDbPageRepository repository;
 
   @BeforeAll
   static void setUpContainer() {
     surrealDbContainer.start();
-
-    // Initialize SyncSurrealDriver with container connection
-    String host = surrealDbContainer.getHost();
-    Integer port = surrealDbContainer.getFirstMappedPort();
-
-    connection = new SurrealWebSocketConnection(host, port, false);
-    connection.connect(1200); // timeout second
-
-    driver = new SyncSurrealDriver(connection);
-    driver.signIn("root", "password");
-    driver.use("test", "test");
   }
 
   @AfterAll
   static void tearDownContainer() {
-    connection.disconnect();
     surrealDbContainer.stop();
-  }
-
-  @BeforeEach
-  void setUp() {
-    repository = new SurrealDbPageRepository(driver);
-  }
-
-  @AfterEach
-  void tearDown() {
-    driver.delete(TABLE);
   }
 
   @Test
   void testSaveAndFindAll() {
+    String host = surrealDbContainer.getHost();
+    Integer port = surrealDbContainer.getFirstMappedPort();
+
+    SurrealConnection connection = new SurrealWebSocketConnection(host, port, false);
+    connection.connect(120); // timeout second
+
+    SyncSurrealDriver driver = new SyncSurrealDriver(connection);
+    driver.signIn("root", "password");
+    driver.use("test", "test");
+    SurrealDbPageRepository repository = new SurrealDbPageRepository(driver);
     // Arrange
     List<Network> networks = createNetworksTest();
     LabelLink link = createLinkTest();
@@ -93,5 +78,7 @@ class SurrealDbIntegrationTest {
     assertTrue(page.isPresent());
     assertEquals(6, page.get().size());
     assertTrue(page.get().containsValue(PageType.FOOTER.getPageId()));
+    driver.delete(TABLE);
+    connection.disconnect();
   }
 }
