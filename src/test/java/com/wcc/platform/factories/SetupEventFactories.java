@@ -13,6 +13,8 @@ import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.EventSection;
 import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.utils.FileUtil;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class SetupEventFactories {
         .description("description")
         .speakerProfile(new LabelLink(null, "speaker", "http://speaker-profile-link"))
         .eventLink(new LabelLink(null, "Meetup", "http://meetup/link"))
-        .startDate("THU, MAY 30, 2024, 8:00 PM CEST")
+        .startDate(ZonedDateTime.of(2024, 5, 30, 20, 0, 0, 0, ZoneId.of("Europe/Paris")))
         .build();
   }
 
