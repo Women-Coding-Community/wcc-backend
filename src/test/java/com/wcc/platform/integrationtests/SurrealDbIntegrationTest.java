@@ -15,40 +15,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.*;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
 class SurrealDbIntegrationTest {
-  @Container
-  static final GenericContainer<?> surrealDbContainer =
-      new GenericContainer<>("surrealdb/surrealdb:latest")
-          .withExposedPorts(8000)
-          .withCommand("start", "--log", "debug", "--user", "root", "--pass", "password");
 
+  protected static final GenericContainer<?> SURREAL_DB_CONTAINER =
+      new GenericContainer<>(DockerImageName.parse("surrealdb/surrealdb:latest"))
+          .withExposedPorts(8000)
+          .withCommand("start --user root --pass root");
   private static final String TABLE = "page";
 
+  @DynamicPropertySource
+  static void registerSurrealDbProperties(final DynamicPropertyRegistry registry) {
+    SURREAL_DB_CONTAINER.start();
+    String host = SURREAL_DB_CONTAINER.getHost();
+    Integer port = SURREAL_DB_CONTAINER.getMappedPort(8000);
+    registry.add("surrealdb.host", () -> host);
+    registry.add("surrealdb.port", port::toString);
+    registry.add("surrealdb.username", () -> "root");
+    registry.add("surrealdb.password", () -> "root");
+    registry.add("surrealdb.namespace", () -> "test_namespace");
+    registry.add("surrealdb.database", () -> "test_db");
+  }
+
   @BeforeAll
-  static void setUpContainer() {
-    surrealDbContainer.start();
+  static void setUp() {
+    SURREAL_DB_CONTAINER.start();
   }
 
   @AfterAll
-  static void tearDownContainer() {
-    surrealDbContainer.stop();
+  static void tearDown() {
+    SURREAL_DB_CONTAINER.stop();
   }
 
   @Test
   void testSaveAndFindAll() {
-    String host = surrealDbContainer.getHost();
-    Integer port = surrealDbContainer.getFirstMappedPort();
+    String host = SURREAL_DB_CONTAINER.getHost();
+    Integer port = SURREAL_DB_CONTAINER.getFirstMappedPort();
 
     SurrealConnection connection = new SurrealWebSocketConnection(host, port, false);
     connection.connect(120); // timeout second
 
     SyncSurrealDriver driver = new SyncSurrealDriver(connection);
-    driver.signIn("root", "password");
+    driver.signIn("root", "root");
     driver.use("test", "test");
     SurrealDbPageRepository repository = new SurrealDbPageRepository(driver);
     // Arrange
