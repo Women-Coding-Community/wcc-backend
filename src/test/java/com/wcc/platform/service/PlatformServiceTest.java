@@ -50,25 +50,12 @@ class PlatformServiceTest {
   @Test
   @DisplayName("Given ResourceContent, when saved, then should return saved resource content")
   void testSaveResourceContent() {
-    when(resourceContentRepository.save(any(ResourceContent.class))).thenReturn(resourceContent);
+    when(resourceContentRepository.create(any(ResourceContent.class))).thenReturn(resourceContent);
 
     ResourceContent result = service.saveResourceContent(resourceContent);
 
     assertEquals(resourceContent, result);
-    verify(resourceContentRepository).save(resourceContent);
-  }
-
-  @Test
-  @DisplayName(
-      "Given resources exist, when getting all resources, then should return all resources")
-  void testGetAllResources() {
-    var resources = List.of(resourceContent);
-    when(resourceContentRepository.findAll()).thenReturn(resources);
-
-    var result = service.getAllResources();
-
-    assertEquals(resources, result);
-    verify(resourceContentRepository).findAll();
+    verify(resourceContentRepository).create(resourceContent);
   }
 
   @Test

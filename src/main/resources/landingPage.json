@@ -1,4 +1,5 @@
 {
+  "id": "LANDING_PAGE",
   "heroSection": {
     "title": "Women Coding Community",
     "description": "Empowering Women in Their Tech Careers",
@@ -91,8 +92,8 @@
       {
         "topics": "BOOK CLUB",
         "eventType": "IN_PERSON",
-        "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
+        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
         "title": "Book Club: The Pragmatic Programmer",
         "speakerProfile": {
           "label": "Jane Doe Profile",
@@ -127,8 +128,8 @@
       {
         "topics": "BOOK CLUB",
         "eventType": "IN_PERSON",
-        "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
+        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
         "title": "Kedro: An open-source project for building maintainable data science pipelines",
         "hostProfile": {
           "label": "Silke Nodwell",
@@ -155,7 +156,7 @@
         "topics": "TECH_TALK",
         "eventType": "ONLINE_MEETUP",
         "startDate": "THU, JUN 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, JUN 30, 2024, 9.30 CEST",
+        "endDate": "THU, JUN 30, 2024, 9:30 PM CEST",
         "title": "Coding Club with Women Coding Community",
         "hostProfile": {
           "label": "Irina Kamalova",

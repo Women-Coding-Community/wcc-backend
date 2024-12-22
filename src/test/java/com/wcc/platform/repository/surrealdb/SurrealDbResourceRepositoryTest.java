@@ -36,25 +36,13 @@ class SurrealDbResourceRepositoryTest {
   }
 
   @Test
-  void testSave() {
+  void testCreate() {
     when(mockDriver.create(TABLE, entity)).thenReturn(entity);
 
-    var savedEntity = repository.save(entity);
+    var savedEntity = repository.create(entity);
 
     verify(mockDriver, times(1)).create(TABLE, entity);
     assertEquals(entity, savedEntity);
-  }
-
-  @Test
-  void testFindAll() {
-    List<ResourceContent> mockResult = List.of(entity);
-
-    when(mockDriver.select(TABLE, className)).thenReturn(mockResult);
-
-    var result = repository.findAll();
-
-    verify(mockDriver, times(1)).select(TABLE, className);
-    assertEquals(mockResult, result);
   }
 
   @Test
