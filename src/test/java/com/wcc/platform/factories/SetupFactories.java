@@ -1,5 +1,7 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.factories.SetUpStyleFactories.backgroundSecondary;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -273,7 +275,7 @@ public class SetupFactories {
 
   /** Factory test for hero section. */
   public static HeroSection createHeroSectionTest() {
-    return new HeroSection("title", "hero description", createImageTest());
+    return new HeroSection("title", "hero description", createImageTest(), backgroundSecondary());
   }
 
   /** About Us factory for testing. */

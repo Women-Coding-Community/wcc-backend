@@ -1,5 +1,7 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
@@ -41,7 +43,8 @@ public class SetupProgrammeFactories {
         SetupFactories.createPageTest(),
         SetupFactories.createContactTest(),
         Collections.singletonList(createProgramme(UUID.randomUUID())),
-        SetupEventFactories.createEventSection());
+        SetupEventFactories.createEventSection(),
+        createCustomStyleTest());
   }
 
   /** Create Factory. */
@@ -70,7 +73,8 @@ public class SetupProgrammeFactories {
                 "Author of the book",
                 "test book description",
                 new LabelLink("Title Link", "Good read", "http://link"),
-                List.of()))
+                List.of(),
+                createCustomStyleTest()))
         .build();
   }
 
