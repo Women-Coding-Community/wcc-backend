@@ -74,7 +74,7 @@ public class SetupProgrammeFactories {
                 "test book description",
                 new LabelLink("Title Link", "Good read", "http://link"),
                 List.of(),
-                createCustomStyleTest()))
+                null))
         .build();
   }
 

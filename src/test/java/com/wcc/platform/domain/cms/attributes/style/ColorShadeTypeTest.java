@@ -10,8 +10,8 @@ class ColorShadeTypeTest {
 
   @ParameterizedTest
   @EnumSource(ColorShadeType.class)
-  void testToString(ColorShadeType shadeType) {
-    String expected = shadeType.name().toLowerCase(Locale.ENGLISH);
+  void testToString(final ColorShadeType shadeType) {
+    final String expected = shadeType.name().toLowerCase(Locale.ENGLISH);
     assertEquals(expected, shadeType.toString());
   }
 }
