@@ -11,10 +11,10 @@
     "test-local": "npx playwright test --project=api_local",
     "test-dev": "npx playwright test --project=api_dev",
     "prepare": "husky install",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prettier": "prettier . --check",
-    "prettier:fix": "prettier . --write"
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix",
+    "prettier": "npx prettier . --check",
+    "prettier:fix": "npx prettier . --write"
   },
   "keywords": [],
   "author": "",
@@ -25,14 +25,16 @@
   "devDependencies": {
     "@playwright/test": "^1.48.2",
     "@types/node": "^22.9.0",
-    "@typescript-eslint/eslint-plugin": "^8.18.1",
-    "@typescript-eslint/parser": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "dotenv": "^16.4.5",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
-    "typescript": "^5.7.2",
-    "husky": "^8.0.0"
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^8.0.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
   }
 }

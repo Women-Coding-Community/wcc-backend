@@ -19,7 +19,6 @@ module.exports = [
     rules: {
       ...(recommendedConfigs['recommended'].rules || {}),
       ...(stylisticConfigs['stylistic'].rules || {}),
-      'prettier/prettier': 'error',
     },
     settings: {
       prettier: {
@@ -28,8 +27,5 @@ module.exports = [
         trailingComma: 'all',
       },
     },
-  },
-  {
-    extends: ['plugin:prettier/recommended'],
   },
 ];
