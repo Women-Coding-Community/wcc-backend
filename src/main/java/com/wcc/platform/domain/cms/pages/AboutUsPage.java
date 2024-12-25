@@ -1,6 +1,7 @@
 package com.wcc.platform.domain.cms.pages;
 
 import com.wcc.platform.domain.cms.attributes.Contact;
+import com.wcc.platform.domain.cms.attributes.HeroSection;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -13,4 +14,7 @@ import java.util.List;
  * @param contact all details
  */
 public record AboutUsPage(
-    @NotNull Page heroSection, @NotEmpty List<Section<String>> items, @NotEmpty Contact contact) {}
+    @NotNull String id,
+    @NotNull Page heroSection,
+    @NotEmpty List<Section<String>> items,
+    @NotEmpty Contact contact) {}

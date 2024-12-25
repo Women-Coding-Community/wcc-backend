@@ -148,19 +148,20 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetAboutUsPageGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+  void whenGetAboutUsPageGivenNotStoredInDatabaseThenThrowsException() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getAboutUs);
 
-    var exception = assertThrows(PlatformInternalException.class, service::getAboutUs);
-
-    assertEquals("Invalid JSON", exception.getMessage());
+    assertEquals("Content of Page ABOUT_US not found", exception.getMessage());
   }
 
+  @SuppressWarnings("unchecked")
   @Test
-  void whenGetAboutUsPageGivenValidJson() throws IOException {
+  void whenGetAboutUsPageGivenExistOnDatabaseThenReturnValidResponse() {
     var aboutUsPage = SetupFactories.createAboutUsPageTest();
-    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
+    var mapPage = new ObjectMapper().convertValue(aboutUsPage, Map.class);
+
+    when(pageRepository.findById(PageType.ABOUT_US.getPageId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
 
     var response = service.getAboutUs();
 
