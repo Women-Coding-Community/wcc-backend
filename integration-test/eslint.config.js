@@ -4,10 +4,7 @@ const { configs: stylisticConfigs } = require('@typescript-eslint/eslint-plugin'
 module.exports = [
   {
     files: ['**/*.ts', '**/*.tsx'],
-    ignores: [
-      'node_modules/',
-      '*.config.js',
-    ],
+    ignores: ['node_modules/', '*.config.js'],
     languageOptions: {
       parser: require('@typescript-eslint/parser'),
       parserOptions: {
@@ -17,10 +14,22 @@ module.exports = [
     },
     plugins: {
       '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
+      prettier: require('eslint-plugin-prettier'),
     },
     rules: {
       ...(recommendedConfigs['recommended'].rules || {}),
       ...(stylisticConfigs['stylistic'].rules || {}),
+      'prettier/prettier': 'error',
     },
+    settings: {
+      prettier: {
+        semi: false,
+        singleQuote: true,
+        trailingComma: 'all',
+      },
+    },
+  },
+  {
+    extends: ['plugin:prettier/recommended'],
   },
 ];
