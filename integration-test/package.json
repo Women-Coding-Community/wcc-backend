@@ -9,7 +9,12 @@
   "scripts": {
     "test": "npx playwright test",
     "test-local": "npx playwright test --project=api_local",
-    "test-dev": "npx playwright test --project=api_dev"
+    "test-dev": "npx playwright test --project=api_dev",
+    "prepare": "husky install",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier . --check",
+    "prettier:fix": "prettier . --write"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +32,7 @@
     "dotenv": "^16.4.5",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "husky": "^8.0.0"
   }
 }
