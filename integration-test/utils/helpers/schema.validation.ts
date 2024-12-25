@@ -1,5 +1,5 @@
 import Ajv, { ErrorObject } from 'ajv';
-const addFormats = require('ajv-formats');
+import addFormats from 'ajv-formats';
 
 const ajv = new Ajv({
     allErrors: true,      // Collect all errors, not just the first one
@@ -23,9 +23,9 @@ addFormats(ajv);  // Add extended formats like "uri"
 interface FormattedError {
   message: string;
   path: string;
-  value: any;
+  value: unknown;
   keyword: string;
-  params: any;
+  params: unknown;
 }
 
 /**

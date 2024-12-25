@@ -4,18 +4,23 @@ const { configs: stylisticConfigs } = require('@typescript-eslint/eslint-plugin'
 module.exports = [
   {
     files: ['**/*.ts', '**/*.tsx'],
+    ignores: [
+      'node_modules/',
+      '*.config.js',
+    ],
     languageOptions: {
-      parser: require('@typescript-eslint/parser'), 
+      parser: require('@typescript-eslint/parser'),
       parserOptions: {
+        tsconfigRootDir: __dirname,
         project: './tsconfig.json',
       },
     },
     plugins: {
-      '@typescript-eslint': recommendedConfigs,
+      '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
     },
     rules: {
-      ...recommendedConfigs.rules,
-      ...stylisticConfigs.rules,
+      ...(recommendedConfigs['recommended'].rules || {}),
+      ...(stylisticConfigs['stylistic'].rules || {}),
     },
   },
 ];
