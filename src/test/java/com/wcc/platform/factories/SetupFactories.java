@@ -283,7 +283,8 @@ public class SetupFactories {
 
   /** About Us factory for testing. */
   public static AboutUsPage createAboutUsPageTest() {
-    return new AboutUsPage(createPageTest(), List.of(createSectionTest()), createContactTest());
+    final String pageId = PageType.ABOUT_US.getPageId();
+    return new AboutUsPage(pageId, createPageTest(), List.of(createSectionTest()), createContactTest());
   }
 
   /** About Us factory for testing. */
