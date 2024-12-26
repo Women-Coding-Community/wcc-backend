@@ -6,6 +6,10 @@ export const footerSchema = {
         footerSchema: {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "string",
+                    "const": "page:FOOTER"
+                },
                 "title": {
                     "type": "string",
                     "minLength": 1
@@ -32,7 +36,6 @@ export const footerSchema = {
                                 "minLength": 1
                             }
                         },
-                        "required": ["type", "link"],
                         "additionalProperties": false,
                         "if": {
                             "properties": {
@@ -62,6 +65,7 @@ export const footerSchema = {
                 "link": {...linkSchema.definitions.linkSchema}
             },
             "required": [
+                "id",
                 "title",
                 "subtitle",
                 "description",
