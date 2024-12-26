@@ -1,18 +1,22 @@
 {
-  "id": "LANDING_PAGE",
+  "id": "page:LANDING_PAGE",
   "heroSection": {
     "title": "Women Coding Community",
     "description": "Empowering Women in Their Tech Careers",
+    "customStyle": {
+      "backgroundColour": {
+        "color": "PRIMARY",
+        "shade": {
+          "name": "LIGHT",
+          "value": 90
+        }
+      }
+    },
     "images": [
       {
-        "path": "https://drive.google.com/file/d/1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF",
+        "path": "https://drive.google.com/uc?id=1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF&export=download",
         "alt": "There are two women talking during a productive mentoring session",
         "type": "desktop"
-      },
-      {
-        "path": "home_16x9_ratio.jpg",
-        "alt": "There are two women talking during a productive mentoring session",
-        "type": "mobile"
       }
     ]
   },
@@ -190,7 +194,7 @@
     },
     "images": [
       {
-        "path": "square_image_2.jpg",
+        "path": "https://drive.google.com/uc?id=1fWzte4q2adiMf7MFAjMRlNDbccZVs7iL&export=download",
         "alt": "There are two women talking during a productive mentoring session",
         "type": "desktop"
       }
