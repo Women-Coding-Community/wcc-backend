@@ -52,7 +52,7 @@ npm run test-dev
 
 ```shell
 npm run lint && npm run prettier
-``` 
+```
 
 **What It Does:**
 
@@ -69,6 +69,7 @@ npm run lint && npm run prettier
 ```
 
 **Check the output:**
+
 - ESLint will display any linting errors or warnings.
 - Prettier will indicate whether it formatted any files.
 - If there are errors, follow the provided messages to fix them manually.
@@ -80,6 +81,7 @@ npm run lint:fix && npm run prettier:fix
 ```
 
 **What It Does:**
+
 - `npm run lint:fix`: Runs ESLint with the --fix flag to automatically correct fixable issues.
 - `npm run prettier:fix`: Formats all supported files automatically using Prettier.
 
@@ -92,6 +94,7 @@ npm run lint:fix && npm run prettier:fix
 ```
 
 **The command will:**
+
 - Fix as many ESLint issues as possible.
 - Reformat code according to Prettier's rules.
 - Review the changes to ensure correctness before committing.
