@@ -10,7 +10,6 @@
     "test": "npx playwright test",
     "test-local": "npx playwright test --project=api_local",
     "test-dev": "npx playwright test --project=api_dev",
-    "prepare": "husky install",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "prettier": "npx prettier . --check",
@@ -33,7 +32,6 @@
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "husky": "^8.0.3",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   }
