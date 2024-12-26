@@ -11,3 +11,4 @@ test('GET /api/cms/v1/code-of-conduct returns correct data', async ({ request })
 
   expect(body).toEqual(expectedResponse);
 });
+
