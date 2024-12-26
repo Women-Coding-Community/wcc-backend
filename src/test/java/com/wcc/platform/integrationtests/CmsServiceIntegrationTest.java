@@ -39,6 +39,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   void deletePages() {
     pageRepository.deleteById(TEAM.getPageId());
     pageRepository.deleteById(FOOTER.getPageId());
+    pageRepository.deleteById(ABOUT_US.getPageId());
   }
 
   @Test
@@ -100,11 +101,12 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetAboutUsPage() {
+    var aboutUsPage = createAboutUsPageTest(ABOUT_US.getFileName());
+    pageRepository.create(objectMapper.convertValue(aboutUsPage, Map.class));
     var result = service.getAboutUs();
-    var expectedAboutUsPage = createAboutUsPageTest(ABOUT_US.getFileName());
 
-    assertEquals(expectedAboutUsPage.heroSection(), result.heroSection());
-    assertEquals(expectedAboutUsPage.items(), result.items());
-    assertEquals(expectedAboutUsPage.contact(), result.contact());
+    assertEquals(aboutUsPage.heroSection(), result.heroSection());
+    assertEquals(aboutUsPage.items(), result.items());
+    assertEquals(aboutUsPage.contact(), result.contact());
   }
 }

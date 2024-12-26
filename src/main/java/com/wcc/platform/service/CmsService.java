@@ -156,11 +156,16 @@ public class CmsService {
    * @return Pojo AboutUs
    */
   public AboutUsPage getAboutUs() {
-    try {
-      final var data = FileUtil.readFileAsString(PageType.ABOUT_US.getFileName());
-      return objectMapper.readValue(data, AboutUsPage.class);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
+    final var page = pageRepository.findById(PageType.ABOUT_US.getPageId());
+
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), AboutUsPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
     }
+
+    throw new ContentNotFoundException(PageType.ABOUT_US);
   }
 }
