@@ -47,8 +47,8 @@
     "events": [
       {
         "topics": "BOOK_CLUB",
-        "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
+        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
         "title": "BOOK MONTH AUG",
         "description": "Book description",
         "hostProfile": {
@@ -62,8 +62,8 @@
       },
       {
         "topics": "BOOK_CLUB",
-        "startDate": "THU, MAY 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, MAY 30, 2024, 9.30 CEST",
+        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
+        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
         "title": "BOOK MONTH SEP",
         "description": "Book description",
         "speakerProfile": {

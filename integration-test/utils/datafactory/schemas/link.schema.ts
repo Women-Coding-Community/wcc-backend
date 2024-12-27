@@ -19,7 +19,7 @@ export const linkSchema = {
           minLength: 1,
         },
       },
-      required: ['title', 'label', 'uri'],
+      required: ['uri'],
       additionalProperties: false,
     },
   },

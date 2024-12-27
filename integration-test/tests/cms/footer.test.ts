@@ -16,9 +16,9 @@ test('GET /api/cms/v1/footer returns correct footer data', async ({ request }) =
     validateSchema(footerSchema, body);
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.error(e.message);
+      throw new Error(`Schema validation failed: ${e.message}`);
     } else {
-      console.error('An unknown error occurred');
+      throw new Error('Schema validation failed with an unknown error');
     }
   }
 

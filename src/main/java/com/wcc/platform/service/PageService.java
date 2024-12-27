@@ -63,6 +63,15 @@ public class PageService {
     }
   }
 
+  /** Create any page. */
+  public Object create(final Object page) {
+    try {
+      return pageRepository.create(objectMapper.convertValue(page, Map.class));
+    } catch (IllegalArgumentException e) {
+      throw new PlatformInternalException(page.toString(), e);
+    }
+  }
+
   /** Delete page by id. */
   public void deletePageById(final String id) {
     if (pageRepository.findById(id).isEmpty()) {

@@ -4,32 +4,39 @@ import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.repository.PageRepository;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class CmsServiceTest {
-
+  private final LandingPage landingPage =
+      LandingPage.builder()
+          .heroSection(SetupFactories.createPageTest("Hero"))
+          .volunteerSection(SetupFactories.createPageTest("Volunteer"))
+          .build();
   @Mock private PageRepository pageRepository;
   @Mock private ObjectMapper objectMapper;
-
   private CmsService service;
 
   @BeforeEach
@@ -40,19 +47,21 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetTeamGivenInvalidJsonThenThrowsInternalException() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(TeamPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+  void whenGetTeamGivenNotOnDatabaseThenThrowsException() {
 
-    var exception = assertThrows(PlatformInternalException.class, service::getTeam);
+    var exception = assertThrows(ContentNotFoundException.class, service::getTeam);
 
-    assertEquals("Invalid JSON", exception.getMessage());
+    assertEquals("Content of Page TEAM not found", exception.getMessage());
   }
 
   @Test
-  void whenGetTeamGivenValidResourceThenReturnValidObjectResponse() throws IOException {
+  @SuppressWarnings("unchecked")
+  void whenGetTeamGivenRecordExistOnDatabaseThenReturnValidResponse() {
     var teamPage = SetupFactories.createTeamPageTest();
-    when(objectMapper.readValue(anyString(), eq(TeamPage.class))).thenReturn(teamPage);
+    var mapPage = new ObjectMapper().convertValue(teamPage, Map.class);
+
+    when(pageRepository.findById(PageType.TEAM.getPageId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(TeamPage.class))).thenReturn(teamPage);
 
     var response = service.getTeam();
 
@@ -60,27 +69,7 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetFooterGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(FooterPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
-
-    var exception = assertThrows(PlatformInternalException.class, service::getFooter);
-
-    assertEquals("Invalid JSON", exception.getMessage());
-  }
-
-  @Test
-  void whenGetFooterGivenValidJson() throws IOException {
-    var footer = SetupFactories.createFooterPageTest();
-    when(objectMapper.readValue(anyString(), eq(FooterPage.class))).thenReturn(footer);
-
-    var response = service.getFooter();
-
-    assertEquals(footer, response);
-  }
-
-  @Test
-  void whenGetCollaboratorGivenInvalidJsonThenThrowsInternalException() throws IOException {
+  void whenGetCollaboratorGivenNotFoundThenThrowsInternalException() throws IOException {
     when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
         .thenThrow(new JsonProcessingException("Invalid JSON") {});
 
@@ -125,43 +114,54 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetLandingPageGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(LandingPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+  void whenGetLandingPageGivenNotStoredInDatabaseThenThrowsException() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getLandingPage);
 
-    var exception = assertThrows(PlatformInternalException.class, service::getLandingPage);
-
-    assertEquals("Invalid JSON", exception.getMessage());
+    assertEquals("Content of Page LANDING_PAGE not found", exception.getMessage());
   }
 
   @Test
-  void whenGetLandingPageGivenValidJsonThenReturnPage() throws IOException {
-    var page =
-        LandingPage.builder()
-            .heroSection(SetupFactories.createPageTest("Hero"))
-            .volunteerSection(SetupFactories.createPageTest("Volunteer"))
-            .build();
-    when(objectMapper.readValue(anyString(), eq(LandingPage.class))).thenReturn(page);
+  @SuppressWarnings("unchecked")
+  void whenGetLandingPageGivenRecordExistOnDatabaseThenReturnPage() {
+    var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
+
+    when(pageRepository.findById(PageType.LANDING_PAGE.getPageId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(LandingPage.class))).thenReturn(landingPage);
 
     var response = service.getLandingPage();
 
-    assertEquals(page, response);
+    assertEquals(landingPage, response);
   }
 
   @Test
-  void whenGetAboutUsPageGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+  @SuppressWarnings("unchecked")
+  void whenGetLandingPageGivenRecordExistOnDatabaseAndHasExceptionToConvertThenThrowsException() {
+    var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
 
-    var exception = assertThrows(PlatformInternalException.class, service::getAboutUs);
+    when(pageRepository.findById(PageType.LANDING_PAGE.getPageId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(LandingPage.class)))
+        .thenThrow(new IllegalArgumentException());
 
-    assertEquals("Invalid JSON", exception.getMessage());
+    assertThrows(PlatformInternalException.class, service::getLandingPage);
   }
 
   @Test
-  void whenGetAboutUsPageGivenValidJson() throws IOException {
+  void whenGetAboutUsPageGivenNotStoredInDatabaseThenThrowsException() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getAboutUs);
+
+    assertEquals("Content of Page ABOUT_US not found", exception.getMessage());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void whenGetAboutUsPageGivenExistOnDatabaseThenReturnValidResponse() {
     var aboutUsPage = SetupFactories.createAboutUsPageTest();
-    when(objectMapper.readValue(anyString(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
+    var mapPage = new ObjectMapper().convertValue(aboutUsPage, Map.class);
+
+    when(pageRepository.findById(PageType.ABOUT_US.getPageId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
 
     var response = service.getAboutUs();
 

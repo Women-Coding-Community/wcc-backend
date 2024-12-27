@@ -6,4 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 /** CMS Community Core Team Page grouped by members types. */
 public record TeamPage(
-    @NotNull Page page, @NotNull Contact contact, @NotNull MemberByType membersByType) {}
+    @NotNull String id,
+    @NotNull Page page,
+    @NotNull Contact contact,
+    @NotNull MemberByType membersByType) {}
