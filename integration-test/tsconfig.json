@@ -1,23 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es2016", 
+    "target": "es2016",
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": ".", 
+    "baseUrl": ".",
     "paths": {
-      "@utils/*": ["utils/*"],  
-      "@integration-test/*": ["*"]  
+      "@utils/*": ["utils/*"],
+      "@integration-test/*": ["*"]
     }
   },
-  "include": [
-    "**/*" 
-  ],
-  "exclude": [
-    "node_modules",
-    "eslint.config.js",
-    "playwright.config.ts"
-  ]
+  "include": ["playwright.config.ts", "tests/**/*", "utils/**/*"],
+  "exclude": ["node_modules", "eslint.config.js"]
 }
