@@ -25,14 +25,9 @@
     "description": "Ready to empower and be empowered in tech? Become a mentor! Expand your network, give back, share expertise, and discover new perspectives.\n",
     "images": [
       {
-        "path": "home_21x9_ratio.jpg",
+        "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
         "alt": "There are two women talking during a productive mentoring session",
         "type": "desktop"
-      },
-      {
-        "path": "square_ratio_1.jpg",
-        "alt": "There are two women talking during a productive mentoring session",
-        "type": "mobile"
       }
     ],
     "link": {
