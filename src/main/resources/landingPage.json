@@ -5,9 +5,9 @@
     "description": "Empowering Women in Their Tech Careers",
     "customStyle": {
       "backgroundColour": {
-        "color": "PRIMARY",
+        "color": "primary",
         "shade": {
-          "name": "LIGHT",
+          "name": "light",
           "value": 90
         }
       }
@@ -159,8 +159,8 @@
       {
         "topics": "TECH_TALK",
         "eventType": "ONLINE_MEETUP",
-        "startDate": "THU, JUN 30, 2024, 8:00 PM CEST",
-        "endDate": "THU, JUN 30, 2024, 9:30 PM CEST",
+        "startDate": "Sun, Jun 30, 2024, 8:00 PM CEST",
+        "endDate": "Sun, Jun 30, 2024, 9:30 PM CEST",
         "title": "Coding Club with Women Coding Community",
         "hostProfile": {
           "label": "Irina Kamalova",

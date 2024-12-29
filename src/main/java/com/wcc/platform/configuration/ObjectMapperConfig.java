@@ -31,6 +31,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ObjectMapperConfig {
 
+  public static final String DATE_TIME_FORMAT = "EEE, MMM dd, yyyy, h:mm a z";
+
   /** Create ObjectMapper bean and include custom serializer. */
   @Bean
   public ObjectMapper objectMapper() {
@@ -46,7 +48,7 @@ public class ObjectMapperConfig {
 
   private void registerCustomDeserializers(final ObjectMapper objectMapper) {
     final DateTimeFormatter formatter =
-        DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy, h:mm a z", Locale.ENGLISH);
+        DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH);
 
     final JavaTimeModule javaTimeModule = new JavaTimeModule();
     javaTimeModule.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(formatter));
