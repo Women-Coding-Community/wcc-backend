@@ -17,12 +17,12 @@
       {
         "path": "image.png",
         "alt": "member alt",
-        "type": "DESKTOP"
+        "type": "desktop"
       }
     ],
     "network": [
       {
-        "type": "LINKEDIN",
+        "type": "linkedin",
         "link": "https://www.linkedin.com/member"
       }
     ]
@@ -45,12 +45,12 @@
       {
         "path": "image.png",
         "alt": "director alt",
-        "type": "TABLET"
+        "type": "tablet"
       }
     ],
     "network": [
       {
-        "type": "GITHUB",
+        "type": "github",
         "link": "https://github.com/director"
       }
     ]

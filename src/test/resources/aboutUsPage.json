@@ -11,7 +11,7 @@
       {
         "path": "https://drive.google.com/uc?id=1MrPVQ3r2kzKcK9n6BRlPaJUaUrpxGGPl&export=download",
         "alt": "Women coding community group photo",
-        "type": "MOBILE"
+        "type": "mobile"
       }
     ]
   },
@@ -42,7 +42,7 @@
     "description": "Ready to join the conversation, or have a question for us? We'd love to hear from you!",
     "links": [
       {
-        "type": "EMAIL",
+        "type": "email",
         "link": "london@womencodingcommunity.com"
       },
       {
