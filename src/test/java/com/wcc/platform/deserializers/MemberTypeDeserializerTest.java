@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.wcc.platform.domain.platform.MemberType;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
@@ -37,6 +38,7 @@ class MemberTypeDeserializerTest {
     assertEquals(type, response);
   }
 
+  @Test
   void testDeserializeInvalid() throws IOException {
     when(jsonParser.getText()).thenReturn("UNDEFINED");
 
