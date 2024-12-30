@@ -253,7 +253,7 @@ public class SetupFactories {
 
   public static List<SocialNetwork> createSocialNetworksTest() {
     return List.of(
-        new SocialNetwork(YOUTUBE, "youtube"), new SocialNetwork(TWITTER, "twitter.link"));
+        new SocialNetwork(YOUTUBE, "youtube.com"), new SocialNetwork(TWITTER, "twitter.com"));
   }
 
   public static LabelLink createLinkTest() {
