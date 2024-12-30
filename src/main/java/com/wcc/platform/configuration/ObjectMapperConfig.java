@@ -50,7 +50,6 @@ public class ObjectMapperConfig {
   private void registerCustomDeserializers(final ObjectMapper objectMapper) {
     final DateTimeFormatter formatter =
         DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH);
-
     objectMapper
         .registerModule(
             new JavaTimeModule()
