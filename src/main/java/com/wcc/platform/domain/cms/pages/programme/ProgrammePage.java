@@ -1,6 +1,7 @@
 package com.wcc.platform.domain.cms.pages.programme;
 
 import com.wcc.platform.domain.cms.attributes.Contact;
+import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.platform.EventSection;
 import com.wcc.platform.domain.platform.Programme;
@@ -26,5 +27,5 @@ public class ProgrammePage {
   @NotNull private Contact contact;
   @NotEmpty private List<Programme> programmeDetails;
   @NotNull private EventSection eventSection;
-  // TODO Add resources section
+  @NotNull private CustomStyle customStyle;
 }

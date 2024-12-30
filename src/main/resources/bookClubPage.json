@@ -76,5 +76,14 @@
         }
       }
     ]
+  },
+  "customStyle": {
+    "backgroundColour": {
+      "color": "PRIMARY",
+      "shade": {
+        "name": "LIGHT",
+        "value": 90
+      }
+    }
   }
 }

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.wcc.platform.deserializers.CmsIconDeserializer;
+import com.wcc.platform.deserializers.ColorShadeTypeDeserializer;
+import com.wcc.platform.deserializers.ColorTypeDeserializer;
 import com.wcc.platform.deserializers.ImageTypeDeserializer;
 import com.wcc.platform.deserializers.MemberTypeDeserializer;
 import com.wcc.platform.deserializers.ProgramTypeDeserializer;
@@ -14,6 +16,8 @@ import com.wcc.platform.deserializers.SocialNetworkTypeDeserializer;
 import com.wcc.platform.deserializers.ZonedDateTimeDeserializer;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.cms.attributes.style.ColorShadeType;
+import com.wcc.platform.domain.cms.attributes.style.ColorType;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.domain.platform.SocialNetworkType;
@@ -26,6 +30,8 @@ import org.springframework.context.annotation.Configuration;
 /** ObjectMapperConfig. */
 @Configuration
 public class ObjectMapperConfig {
+
+  public static final String DATE_TIME_FORMAT = "EEE, MMM dd, yyyy, h:mm a z";
 
   /** Create ObjectMapper bean and include custom serializer. */
   @Bean
@@ -42,7 +48,7 @@ public class ObjectMapperConfig {
 
   private void registerCustomDeserializers(final ObjectMapper objectMapper) {
     final DateTimeFormatter formatter =
-        DateTimeFormatter.ofPattern("EEE, MMM dd, yyyy, h:mm a z", Locale.ENGLISH);
+        DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH);
 
     final JavaTimeModule javaTimeModule = new JavaTimeModule();
     javaTimeModule.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(formatter));
@@ -54,6 +60,8 @@ public class ObjectMapperConfig {
             new SimpleModule()
                 .addDeserializer(ProgramType.class, new ProgramTypeDeserializer())
                 .addDeserializer(MemberType.class, new MemberTypeDeserializer())
+                .addDeserializer(ColorType.class, new ColorTypeDeserializer())
+                .addDeserializer(ColorShadeType.class, new ColorShadeTypeDeserializer())
                 .addDeserializer(ImageType.class, new ImageTypeDeserializer())
                 .addDeserializer(CmsIcon.class, new CmsIconDeserializer())
                 .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
