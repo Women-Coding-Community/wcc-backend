@@ -8,7 +8,7 @@
     "title": "Join us in our Study Group Slack channel",
     "links": [
       {
-        "type": "SLACK",
+        "type": "slack",
         "link": "http://shortlink_to_slack.com/prog_book_club"
       }
     ]
