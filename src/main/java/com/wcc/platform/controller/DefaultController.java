@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +32,7 @@ public class DefaultController {
   @GetMapping("/api/cms/v1/footer")
   @Operation(summary = "API to retrieve footer section details")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<FooterPage> getFooterPage() {
+  public ResponseEntity<FooterSection> getFooterPage() {
     return ResponseEntity.ok(cmsService.getFooter());
   }
 

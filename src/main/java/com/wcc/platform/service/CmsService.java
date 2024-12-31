@@ -6,7 +6,7 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
@@ -60,12 +60,12 @@ public class CmsService {
    *
    * @return Footer page
    */
-  public FooterPage getFooter() {
+  public FooterSection getFooter() {
     final var page = pageRepository.findById(PageType.FOOTER.getPageId());
 
     if (page.isPresent()) {
       try {
-        return objectMapper.convertValue(page.get(), FooterPage.class);
+        return objectMapper.convertValue(page.get(), FooterSection.class);
       } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
