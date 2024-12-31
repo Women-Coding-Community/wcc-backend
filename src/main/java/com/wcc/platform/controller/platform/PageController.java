@@ -1,9 +1,9 @@
 package com.wcc.platform.controller.platform;
 
-import com.wcc.platform.domain.cms.pages.FooterPage;
-import com.wcc.platform.domain.cms.pages.LandingPage;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.service.PageService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,52 +30,32 @@ public class PageController {
     this.service = service;
   }
 
-  /** Create Footer Page and store into database. */
-  @PostMapping("/footer")
+  /** Create Page Content and store into database. */
+  @PostMapping
   @Operation(
-      summary = "Create Footer Data",
-      description = "Create footer data to be displayed in footer component.")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Object> createPage(@RequestBody final FooterPage footerPage) {
-    return ResponseEntity.ok(service.create(footerPage));
-  }
-
-  /** Create Any Page and store into database. */
-  @PostMapping()
-  @Operation(
-      summary = "Create any type of page",
+      summary = "Create page content by id",
       description = "Create new page with any content type.")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Object> createPage(@RequestBody final Object page) {
-    return ResponseEntity.ok(service.create(page));
+  public ResponseEntity<Object> createPage(
+      @Parameter(description = "Page Type, for example: ABOUT_US", required = true)
+          @RequestParam(name = "pageType")
+          final PageType pageType,
+      @RequestBody final Object page) {
+    return ResponseEntity.ok(service.create(pageType, page));
   }
 
-  /** Create Landing Page and store into database. */
-  @PostMapping("/landingPage")
+  /** Update Page and store into database. */
+  @PutMapping
   @Operation(
-      summary = "Create landing page",
-      description = "Create new page for landing page data.")
+      summary = "Update page content by page type",
+      description = "Update the content of existent page.")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Object> createPage(@RequestBody final LandingPage page) {
-    return ResponseEntity.ok(service.create(page));
-  }
-
-  /** Update Footer Page and store into database. */
-  @PutMapping("/footer")
-  @Operation(summary = "Update Footer Page")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Object> updatePage(@RequestBody final FooterPage footerPage) {
-    return ResponseEntity.ok(service.update(footerPage));
-  }
-
-  /** Update Landing Page and store into database. */
-  @PutMapping("/landingPage")
-  @Operation(
-      summary = "Update landing page",
-      description = "Update the content of existent landing page.")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Object> updatePage(@RequestBody final LandingPage page) {
-    return ResponseEntity.ok(service.update(page));
+  public ResponseEntity<Object> updatePage(
+      @Parameter(description = "Page Type, for example: ABOUT_US", required = true)
+          @RequestParam(name = "pageType")
+          final PageType pageType,
+      @RequestBody final Object page) {
+    return ResponseEntity.ok(service.update(pageType, page));
   }
 
   /** Delete Page By ID. */
