@@ -40,6 +40,7 @@ public class SetupProgrammeFactories {
    */
   public static ProgrammePage createProgrammePageTest() {
     return new ProgrammePage(
+        "page:program",
         SetupFactories.createPageTest(),
         SetupFactories.createContactTest(),
         Collections.singletonList(createProgramme(UUID.randomUUID())),

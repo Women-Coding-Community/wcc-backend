@@ -25,7 +25,7 @@ class ProgramControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testBookClubProgramSuccess() {
-    var result = controller.getProgramme(ProgramType.BOOK_CLUB.toString());
+    var result = controller.getProgramme(ProgramType.BOOK_CLUB);
 
     assertEquals(HttpStatus.OK, result.getStatusCode());
   }
@@ -33,7 +33,7 @@ class ProgramControllerIntegrationTest extends SurrealDbIntegrationTest {
   @SneakyThrows
   @Test
   void givenBookClubProgramApiWhenProgramTypeCorrectNameThenReturnSuccess() {
-    var result = controller.getProgramme(ProgramType.BOOK_CLUB.name());
+    var result = controller.getProgramme(ProgramType.BOOK_CLUB);
 
     assertEquals(HttpStatus.OK, result.getStatusCode());
     assertNotNull(result.getBody());
@@ -46,7 +46,7 @@ class ProgramControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void givenBookClubProgramApiWhenNotValidParamThenReturnBadRequest() {
-    var result = controller.getProgramme(ProgramType.MENTORSHIP.name());
+    var result = controller.getProgramme(ProgramType.MACHINE_LEARNING);
 
     assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
   }

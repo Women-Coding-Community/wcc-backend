@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.cms;
 
+import static com.wcc.platform.repository.PageRepository.ID_PREFIX;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,16 +9,16 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PageType {
-  CODE_OF_CONDUCT("codeOfConductPage.json", "page:CODE_OF_CONDUCT"),
-  COLLABORATOR("collaboratorPage.json", "page:COLLABORATORS"),
-  EVENTS("eventsPage.json", "page:EVENTS"),
-  FOOTER("footerPage.json", "page:FOOTER"),
-  LANDING_PAGE("landingPage.json", "page:LANDING_PAGE"),
-  MENTORSHIP("mentorshipPage.json", "page:MENTORSHIP_OVERVIEW"),
-  TEAM("teamPage.json", "page:TEAM"),
-  PROG_BOOK_CLUB("bookClubPage.json", "UNDEFINED"),
+  EVENTS("eventsPage.json", ID_PREFIX + "EVENTS"),
+  FOOTER("footerPage.json", ID_PREFIX + "FOOTER"),
+  LANDING_PAGE("landingPage.json", ID_PREFIX + "LANDING_PAGE"),
+  MENTORSHIP("mentorshipPage.json", ID_PREFIX + "MENTORSHIP_OVERVIEW"),
+  PROG_BOOK_CLUB("bookClubPage.json", ID_PREFIX + "BOOK_CLUB"),
   EVENT_FILTERS("eventsFiltersSection.json", "UNDEFINED"),
-  ABOUT_US("aboutUsPage.json", "page:ABOUT_US");
+  ABOUT_US("aboutUsPage.json", ID_PREFIX + "ABOUT_US"),
+  TEAM("teamPage.json", ID_PREFIX + "TEAM"),
+  COLLABORATOR("collaboratorPage.json", ID_PREFIX + "COLLABORATORS"),
+  CODE_OF_CONDUCT("codeOfConductPage.json", ID_PREFIX + "CODE_OF_CONDUCT");
 
   private final String fileName;
   private final String pageId;

@@ -2,17 +2,17 @@ package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.cms.pages.FooterPage;
-import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/** Pages Service. */
+/** Page Service. */
 @SuppressWarnings("unchecked")
+@Slf4j
 @Service
 public class PageService {
 
@@ -27,48 +27,24 @@ public class PageService {
     this.objectMapper = objectMapper;
   }
 
-  /** Save any type of page based on page Type. */
-  public Object update(final LandingPage page) {
+  /** Save page content based on page Type. */
+  public Object update(final PageType pageType, final Object page) {
     try {
-      return pageRepository.update(page.getId(), objectMapper.convertValue(page, Map.class));
+      return pageRepository.update(
+          String.valueOf(pageType.getPageId()), objectMapper.convertValue(page, Map.class));
     } catch (IllegalArgumentException e) {
-      throw new PlatformInternalException(PageType.LANDING_PAGE, e);
-    }
-  }
-
-  /** Save any type of page based on page Type. */
-  public Object update(final FooterPage page) {
-    try {
-      return pageRepository.update(page.id(), objectMapper.convertValue(page, Map.class));
-    } catch (IllegalArgumentException e) {
-      throw new PlatformInternalException(PageType.FOOTER, e);
-    }
-  }
-
-  /** Create footer page. */
-  public Object create(final FooterPage page) {
-    try {
-      return pageRepository.create(objectMapper.convertValue(page, Map.class));
-    } catch (IllegalArgumentException e) {
-      throw new PlatformInternalException(PageType.FOOTER, e);
-    }
-  }
-
-  /** Create landing page. */
-  public Object create(final LandingPage page) {
-    try {
-      return pageRepository.create(objectMapper.convertValue(page, Map.class));
-    } catch (IllegalArgumentException e) {
-      throw new PlatformInternalException(PageType.LANDING_PAGE, e);
+      log.error("Error while updating page: {}, {}", pageType, page.toString(), e);
+      throw new PlatformInternalException(pageType, e);
     }
   }
 
   /** Create any page. */
-  public Object create(final Object page) {
+  public Object create(final PageType pageType, final Object page) {
     try {
       return pageRepository.create(objectMapper.convertValue(page, Map.class));
     } catch (IllegalArgumentException e) {
-      throw new PlatformInternalException(page.toString(), e);
+      log.error("Error while creating page: {}, {}", pageType, page.toString(), e);
+      throw new PlatformInternalException(pageType, e);
     }
   }
 
