@@ -1,4 +1,5 @@
 {
+  "id": "page:TEAM",
   "page": {
     "title": "Team",
     "subtitle": "Core Team",
@@ -54,6 +55,10 @@
           {
             "type": "linkedin",
             "link": "https://www.linkedin.com/in/dricazenck"
+          },
+          {
+            "type": "github",
+            "link": "https://github.com/dricazenck"
           }
         ]
       },

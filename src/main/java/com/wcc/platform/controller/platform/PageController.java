@@ -1,6 +1,6 @@
 package com.wcc.platform.controller.platform;
 
-import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.service.PageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public class PageController {
       summary = "Create Footer Data",
       description = "Create footer data to be displayed in footer component.")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Object> createPage(@RequestBody final FooterPage footerPage) {
+  public ResponseEntity<Object> createPage(@RequestBody final FooterSection footerPage) {
     return ResponseEntity.ok(service.create(footerPage));
   }
 
@@ -64,7 +64,7 @@ public class PageController {
   @PutMapping("/footer")
   @Operation(summary = "Update Footer Page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Object> updatePage(@RequestBody final FooterPage footerPage) {
+  public ResponseEntity<Object> updatePage(@RequestBody final FooterSection footerPage) {
     return ResponseEntity.ok(service.update(footerPage));
   }
 
