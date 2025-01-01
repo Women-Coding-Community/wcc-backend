@@ -16,6 +16,4 @@ test('GET /api/cms/v1/team returns correct data', async ({request}) => {
           console.error('An unknown error occurred');
         }
       }
-    // expect(response).toBeDefined();
-    
-});
+      });

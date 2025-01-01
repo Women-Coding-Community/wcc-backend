@@ -1,29 +1,67 @@
 import { linkSchema } from "./link.schema"
+import { imagesSchema } from "./images.schema"
 export const teamSchema = {
     $ref: '#/definitions/teamSchema',
     definitions: {
         teamSchema: {
             "type": "object",
             "properties": {
-                "title": {
+                "id": {
                     "type": "string",
                     "minLength": 1
                 },
-          "images": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "type": {
-                                "type": "string",
-                                "enum": ["MOBILE","DESKTOP","TABLET"]
-                            },
-
-                    "alt": {
+                "properties": {
+                "page": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": {
                     "type": "string",
                     "minLength": 1
                 },
-                
+            },
+            "properties": {
+                "contact": {
+                    "type": "string",
+                    "minLength": 1,
+                    },
+            },
+               "membersByType": {
+                "type": "string",
+                "minLength": 1,
+                "directors": {
+                    "type": "string",
+                    "minLength": 1
+                },
+               
+                "leads": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "evenagelists": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                 "fullName": {
+                  "type": "string",
+                  "minLength": 1
+                 },
+                 "postion": {
+                    "type": "string",
+                    "minLength": 1
+                 },
+                "email": {
+                "type": "string",
+                 "minLength": 1
+                },
+                "slackDisplayName": {
+                "type": "string",
+                "minLength": 1
+                },
+                "country": {
+                "type": "string",
+                "minLength": 1
+                },       
+                                         
                 "links": {
                     "type": "array",
                     "items": {
@@ -66,11 +104,16 @@ export const teamSchema = {
                     "maxItems": 11,
                 },
 
-                "link": {...linkSchema.definitions.linkSchema}
+                "link": {...linkSchema.definitions.linkSchema},
+                "images": {...imagesSchema.definitions.imagesSchema}
             },
               "required": [
+                "id",
                 "title",
+                "page",
+                "contact",
                 "links",
+                "membersByType",
                 "directors",
                 "fullName",
                 "position",
@@ -79,15 +122,14 @@ export const teamSchema = {
                 "country",
                 "images",
                 "leads",
+                "evangelists",
                 "link",
-                "path",
-                "alt"
-                
+                              
             ],
             "additionalProperties": false
         }
+    
     }
 }
-        }
-    }
+}
 }
