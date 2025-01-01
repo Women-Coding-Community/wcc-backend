@@ -1,9 +1,9 @@
-import {expect, test} from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { footerExpectedInformation } from '@utils/datafactory/footer.data';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { footerSchema } from '@utils/datafactory/schemas/footer.schema';
 
-test('GET /api/cms/v1/footer returns correct footer data', async ({request}) => {
+test('GET /api/cms/v1/footer returns correct footer data', async ({ request }) => {
   const response = await request.get(`/api/cms/v1/footer`);
 
   // response status validation
@@ -16,9 +16,9 @@ test('GET /api/cms/v1/footer returns correct footer data', async ({request}) => 
     validateSchema(footerSchema, body);
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.error(e.message);
+      throw new Error(`Schema validation failed: ${e.message}`);
     } else {
-      console.error('An unknown error occurred');
+      throw new Error('Schema validation failed with an unknown error');
     }
   }
 

@@ -1,18 +1,17 @@
 package com.wcc.platform.integrationtests;
 
 import static com.wcc.platform.factories.SetupFactories.createLinkTest;
-import static com.wcc.platform.factories.SetupFactories.createNetworksTest;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.wcc.platform.factories.SetupFactories.createSocialNetworksTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.surrealdb.driver.SyncSurrealDriver;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.domain.cms.attributes.Network;
 import com.wcc.platform.repository.surrealdb.SurrealDbPageRepository;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -49,7 +48,7 @@ class SurrealDbIntegrationTest {
   void testSaveAndFindAll() {
     SurrealDbPageRepository repository = new SurrealDbPageRepository(driver);
     // Arrange
-    List<Network> networks = createNetworksTest();
+    var networks = createSocialNetworksTest();
     LabelLink link = createLinkTest();
 
     Map<String, Object> map =
