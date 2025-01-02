@@ -69,7 +69,7 @@ export const teamSchema = {
                         "properties": {
                             "type": {
                                 "type": "string",
-                                "enum": ["youtube", "github", "linkedin", "instagram", "facebook", "twitter", "medium", "slack", "meetup", "email", "unknown","MOBILE","DESKTOP","TABLET"]
+                                "enum": ["youtube", "github", "linkedin", "instagram", "facebook", "twitter", "medium", "slack", "meetup", "email", "unknown"," DEFAULT_LINK "]
                             },
                             "link": {
                                 "pattern": "^(https?)://[^\s/$.?#].[^\s]*$",
@@ -100,8 +100,8 @@ export const teamSchema = {
                             }
                         }
                     },
-                    "minItems": 11,
-                    "maxItems": 11,
+                    "minItems": 12,
+                    "maxItems": 12,
                 },
 
                 "link": {...linkSchema.definitions.linkSchema},
