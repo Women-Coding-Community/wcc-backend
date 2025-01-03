@@ -1,5 +1,6 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.domain.platform.SocialNetworkType.SLACK;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -11,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.domain.cms.attributes.Network;
 import com.wcc.platform.domain.cms.pages.FooterPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.Section;
@@ -19,6 +19,7 @@ import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.factories.SetupEventFactories;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.factories.SetupProgrammeFactories;
@@ -61,7 +62,7 @@ class DefaultControllerTest {
                 "footer_title",
                 "footer_subtitle",
                 "footer_desc",
-                List.of(new Network("net_type", "net_link")),
+                List.of(new SocialNetwork(SLACK, "slack_link")),
                 new LabelLink("label_title", "label", "label_uri")));
 
     mockMvc
@@ -70,8 +71,8 @@ class DefaultControllerTest {
         .andExpect(jsonPath("$.title", is("footer_title")))
         .andExpect(jsonPath("$.subtitle", is("footer_subtitle")))
         .andExpect(jsonPath("$.description", is("footer_desc")))
-        .andExpect(jsonPath("$.network[0].type", is("net_type")))
-        .andExpect(jsonPath("$.network[0].link", is("net_link")))
+        .andExpect(jsonPath("$.network[0].type", is("slack")))
+        .andExpect(jsonPath("$.network[0].link", is("slack_link")))
         .andExpect(jsonPath("$.link.title", is("label_title")))
         .andExpect(jsonPath("$.link.label", is("label")))
         .andExpect(jsonPath("$.link.uri", is("label_uri")));

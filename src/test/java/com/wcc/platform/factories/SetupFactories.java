@@ -1,5 +1,9 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.domain.platform.SocialNetworkType.TWITTER;
+import static com.wcc.platform.domain.platform.SocialNetworkType.YOUTUBE;
+import static com.wcc.platform.factories.SetUpStyleFactories.backgroundSecondary;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +16,6 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.MemberByType;
-import com.wcc.platform.domain.cms.attributes.Network;
 import com.wcc.platform.domain.cms.attributes.PageSection;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
@@ -234,7 +237,7 @@ public class SetupFactories {
         "footer_title",
         "footer_subtitle",
         "footer_description",
-        createNetworksTest(),
+        createSocialNetworksTest(),
         createLinkTest());
   }
 
@@ -248,8 +251,9 @@ public class SetupFactories {
     }
   }
 
-  public static List<Network> createNetworksTest() {
-    return List.of(new Network("type1", "link1"), new Network("type2", "link2"));
+  public static List<SocialNetwork> createSocialNetworksTest() {
+    return List.of(
+        new SocialNetwork(YOUTUBE, "youtube.com"), new SocialNetwork(TWITTER, "twitter.com"));
   }
 
   public static LabelLink createLinkTest() {
@@ -276,13 +280,14 @@ public class SetupFactories {
 
   /** Factory test for hero section. */
   public static HeroSection createHeroSectionTest() {
-    return new HeroSection("title", "hero description", createImageTest());
+    return new HeroSection("title", "hero description", createImageTest(), backgroundSecondary());
   }
 
   /** About Us factory for testing. */
   public static AboutUsPage createAboutUsPageTest() {
     final String pageId = PageType.ABOUT_US.getPageId();
-    return new AboutUsPage(pageId, createPageTest(), List.of(createSectionTest()), createContactTest());
+    return new AboutUsPage(
+        pageId, createPageTest(), List.of(createSectionTest()), createContactTest());
   }
 
   /** About Us factory for testing. */

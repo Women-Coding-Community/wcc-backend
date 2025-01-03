@@ -137,7 +137,7 @@ class AboutControllerTest {
         .andExpect(jsonPath("$.page.subtitle", is("collaborator_subtitle")))
         .andExpect(jsonPath("$.page.description", is("collaborator_desc")))
         .andExpect(jsonPath("$.contact.title", is("contact_title")))
-        .andExpect(jsonPath("$.contact.links[0].type", is("LINKEDIN")))
+        .andExpect(jsonPath("$.contact.links[0].type", is("linkedin")))
         .andExpect(jsonPath("$.contact.links[0].link", is("page_link")))
         .andExpect(jsonPath("$.collaborators[0].fullName", is("FullName")))
         .andExpect(jsonPath("$.collaborators[0].position", is("Position")))
@@ -150,8 +150,8 @@ class AboutControllerTest {
         .andExpect(jsonPath("$.collaborators[0].memberTypes[0]", is("COLLABORATOR")))
         .andExpect(jsonPath("$.collaborators[0].images[0].path", is("image.png")))
         .andExpect(jsonPath("$.collaborators[0].images[0].alt", is("alt image")))
-        .andExpect(jsonPath("$.collaborators[0].images[0].type", is("DESKTOP")))
-        .andExpect(jsonPath("$.collaborators[0].network[0].type", is("LINKEDIN")))
+        .andExpect(jsonPath("$.collaborators[0].images[0].type", is("desktop")))
+        .andExpect(jsonPath("$.collaborators[0].network[0].type", is("linkedin")))
         .andExpect(jsonPath("$.collaborators[0].network[0].link", is("collaborator_link")));
   }
 
