@@ -100,6 +100,28 @@ export const teamSchema = {
       },
       required: ['title', 'links'],
     },
+    backgroundcolor: {
+      type: 'object',
+      properties: {
+      items:{
+      type: 'array', 
+      color: {
+      type: 'string',
+       enum: ['primary', 'secondary', 'tertiary'],
+        },
+       shade: {
+       type: 'string',
+        minLength: 1,
+          },
+          name: {
+         type: 'string',
+         enum: [' main', 'light', 'dark'],
+         value:	{
+          type: 'integer',
+          
+          },  
+        },   
+      },
     membersByType: {
       type: 'object',
       properties: {
@@ -122,4 +144,8 @@ export const teamSchema = {
   },
   additionalProperties: false,
   required: ['id', 'page', 'contact', 'membersByType'],
+},
+  },
 };
+  
+
