@@ -119,7 +119,8 @@ export const teamSchema = {
          value:	{
           type: 'integer',
           
-          },  
+          }, 
+          additionalProperties: false, 
           required: ['color', 'shade', 'name', 'value'],
         },   
       },
