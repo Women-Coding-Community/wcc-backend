@@ -148,6 +148,4 @@ export const teamSchema = {
   required: ['id', 'page', 'contact', 'membersByType'],
 },
   },
-};
-  
-
+}; 

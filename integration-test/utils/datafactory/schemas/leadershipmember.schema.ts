@@ -67,5 +67,4 @@ export const leadershipMemberSchema = {
       required: ['fullName', 'position', 'images','email','slackDisplayName' ],
     },
   },
-  };
-
+ };
