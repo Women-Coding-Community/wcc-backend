@@ -68,7 +68,7 @@ export const teamSchema = {
                   ],
                 },
                 link: {
-                  "type": "string",
+                  type: 'string',
                 },
               },
               required: ['type', 'link'],
@@ -103,49 +103,48 @@ export const teamSchema = {
     backgroundcolor: {
       type: 'object',
       properties: {
-      items:{
-      type: 'array', 
-      color: {
-      type: 'string',
-       enum: ['primary', 'secondary', 'tertiary'],
-        },
-       shade: {
-       type: 'string',
-        minLength: 1,
+        items: {
+          type: 'array',
+          color: {
+            type: 'string',
+            enum: ['primary', 'secondary', 'tertiary'],
+          },
+          shade: {
+            type: 'string',
+            minLength: 1,
           },
           name: {
-         type: 'string',
-         enum: [' main', 'light', 'dark'],
-         value:	{
-          type: 'integer',
-          
-          }, 
-          additionalProperties: false, 
-          required: ['color', 'shade', 'name', 'value'],
-        },   
-      },
-    membersByType: {
-      type: 'object',
-      properties: {
-        directors: {
-          type: 'array',
-          items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+            type: 'string',
+            enum: [' main', 'light', 'dark'],
+            value: {
+              type: 'integer',
+            },
+            additionalProperties: false,
+            required: ['color', 'shade', 'name', 'value'],
+          },
         },
-        leads: {
-          type: 'array',
-          items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
-        },
-        evangelists: {
-          type: 'array',
-          items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+        membersByType: {
+          type: 'object',
+          properties: {
+            directors: {
+              type: 'array',
+              items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+            },
+            leads: {
+              type: 'array',
+              items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+            },
+            evangelists: {
+              type: 'array',
+              items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+            },
+          },
+          additionalProperties: false,
+          required: ['directors', 'leads', 'evangelists'],
         },
       },
       additionalProperties: false,
-      required: ['directors', 'leads', 'evangelists'],
+      required: ['id', 'page', 'contact', 'membersByType'],
     },
   },
-  additionalProperties: false,
-  required: ['id', 'page', 'contact', 'membersByType'],
-},
-  },
-}; 
+};
