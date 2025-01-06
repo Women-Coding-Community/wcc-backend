@@ -64,11 +64,11 @@ export const teamSchema = {
                     'meetup',
                     'email',
                     'unknown',
-                    ' DEFAULT_LINK ',
+                    'DEFAULT_LINK ',
                   ],
                 },
                 link: {
-                  minLength: 1,
+                  "type": "string",
                 },
               },
               required: ['type', 'link'],
