@@ -1,135 +1,125 @@
-import { linkSchema } from "./link.schema"
-import { imagesSchema } from "./images.schema"
+import { linkSchema } from './link.schema';
+import { imagesSchema } from './images.schema';
+import { leadershipMemberSchema } from './leadershipmember.schema';
 export const teamSchema = {
-    $ref: '#/definitions/teamSchema',
-    definitions: {
-        teamSchema: {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "minLength": 1
+  type: 'object',
+  properties: {
+    id: {
+      type: 'string',
+      const: 'page:TEAM',
+    },
+    page: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+          minLength: 1,
+        },
+        title: {
+          type: 'string',
+          const: 'Team',
+        },
+        subtitle: {
+          type: 'string',
+          minLength: 1,
+        },
+        description: {
+          type: 'string',
+          minLength: 1,
+        },
+        link: { ...linkSchema.definitions.linkSchema },
+        images: { ...imagesSchema.definitions.imagesSchema },
+      },
+      additionalProperties: false,
+      required: ['title'],
+    },
+    contact: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          minLength: 1,
+        },
+        description: {
+          type: 'string',
+          minLength: 1,
+        },
+        links: {
+          type: 'array',
+          items: [
+            {
+              type: 'object',
+              properties: {
+                type: {
+                  type: 'string',
+                  enum: [
+                    'youtube',
+                    'github',
+                    'linkedin',
+                    'instagram',
+                    'facebook',
+                    'twitter',
+                    'medium',
+                    'slack',
+                    'meetup',
+                    'email',
+                    'unknown',
+                    ' DEFAULT_LINK ',
+                  ],
                 },
-                "properties": {
-                "page": {
-                    "type": "string",
-                    "minLength": 1,
-                    "title": {
-                    "type": "string",
-                    "minLength": 1
+                link: {
+                  minLength: 1,
                 },
+              },
+              required: ['type', 'link'],
+              additionalProperties: false,
+              if: {
+                properties: {
+                  type: { const: 'email' },
+                },
+              },
+              then: {
+                properties: {
+                  link: {
+                    pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', // Custom email regex
+                  },
+                },
+              },
+              else: {
+                properties: {
+                  link: {
+                    format: 'uri', // Format as URI
+                    pattern: '^https?://', // URL pattern
+                    minLength: 1,
+                  },
+                },
+              },
             },
-            "properties": {
-                "contact": {
-                    "type": "string",
-                    "minLength": 1,
-                    },
-            },
-               "membersByType": {
-                "type": "string",
-                "minLength": 1,
-                "directors": {
-                    "type": "string",
-                    "minLength": 1
-                },
-               
-                "leads": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "evenagelists": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                 "fullName": {
-                  "type": "string",
-                  "minLength": 1
-                 },
-                 "postion": {
-                    "type": "string",
-                    "minLength": 1
-                 },
-                "email": {
-                "type": "string",
-                 "minLength": 1
-                },
-                "slackDisplayName": {
-                "type": "string",
-                "minLength": 1
-                },
-                "country": {
-                "type": "string",
-                "minLength": 1
-                },       
-                                         
-                "links": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "type": {
-                                "type": "string",
-                                "enum": ["youtube", "github", "linkedin", "instagram", "facebook", "twitter", "medium", "slack", "meetup", "email", "unknown"," DEFAULT_LINK "]
-                            },
-                            "link": {
-                                "pattern": "^(https?)://[^\s/$.?#].[^\s]*$",
-                                "minLength": 1
-                            }
-                        },
-                        "required": ["type", "link"],
-                        "additionalProperties": false,
-                        "if": {
-                            "properties": {
-                                "type": { "const": "email" }
-                            }
-                        },
-                        "then": {
-                            "properties": {
-                                "link": {
-                                    "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"  // Custom email regex
-                                }
-                            }
-                        },
-                        "else": {
-                            "properties": {
-                                "link": {
-                                    "format": "uri",  // Format as URI
-                                    "pattern": "^https?://",  // URL pattern
-                                    "minLength": 1
-                                }
-                            }
-                        }
-                    },
-                    "minItems": 12,
-                    "maxItems": 12,
-                },
-
-                "link": {...linkSchema.definitions.linkSchema},
-                "images": {...imagesSchema.definitions.imagesSchema}
-            },
-              "required": [
-                "id",
-                "title",
-                "page",
-                "contact",
-                "links",
-                "membersByType",
-                "directors",
-                "fullName",
-                "position",
-                "email",
-                "slackDisplayName",
-                "country",
-                "images",
-                "leads",
-                "evangelists",
-                "link",
-                              
-            ],
-            "additionalProperties": false
-        }
-    
-    }
-}
-}
-}
+          ],
+        },
+      },
+      required: ['title', 'links'],
+    },
+    membersByType: {
+      type: 'object',
+      properties: {
+        directors: {
+          type: 'array',
+          items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+        },
+        leads: {
+          type: 'array',
+          items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+        },
+        evangelists: {
+          type: 'array',
+          items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+        },
+      },
+      additionalProperties: false,
+      required: ['directors', 'leads', 'evangelists'],
+    },
+  },
+  additionalProperties: false,
+  required: ['id', 'page', 'contact', 'membersByType'],
+};
