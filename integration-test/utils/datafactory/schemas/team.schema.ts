@@ -120,6 +120,7 @@ export const teamSchema = {
           type: 'integer',
           
           },  
+          required: ['color', 'shade', 'name', 'value'],
         },   
       },
     membersByType: {
