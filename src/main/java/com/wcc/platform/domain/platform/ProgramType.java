@@ -2,7 +2,7 @@ package com.wcc.platform.domain.platform;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.wcc.platform.repository.PageRepository;
+import com.wcc.platform.domain.cms.PageType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -45,6 +45,6 @@ public enum ProgramType {
   }
 
   public String toPageId() {
-    return PageRepository.ID_PREFIX + name();
+    return PageType.ID_PREFIX + name();
   }
 }
