@@ -53,7 +53,7 @@ public class SetupFactories {
   }
 
   public static TeamPage createTeamPageTest() {
-    final String pageId = PageType.TEAM.getPageId();
+    final String pageId = PageType.TEAM.getId();
     return new TeamPage(pageId, createPageTest(), createContactTest(), createMemberByTypeTest());
   }
 
@@ -231,9 +231,9 @@ public class SetupFactories {
   }
 
   /** Factory test. */
-  public static FooterSection createFooterPageTest() {
+  public static FooterSection createFooterTest() {
     return new FooterSection(
-        PageType.FOOTER.getPageId(),
+        PageType.FOOTER.getId(),
         "footer_title",
         "footer_subtitle",
         "footer_description",
@@ -242,12 +242,12 @@ public class SetupFactories {
   }
 
   /** Factory test. */
-  public static FooterSection createFooterPageTest(final String fileName) {
+  public static FooterSection createFooterTest(final String fileName) {
     try {
       String content = FileUtil.readFileAsString(fileName);
       return OBJECT_MAPPER.readValue(content, FooterSection.class);
     } catch (JsonProcessingException e) {
-      return createFooterPageTest();
+      return createFooterTest();
     }
   }
 
@@ -285,7 +285,7 @@ public class SetupFactories {
 
   /** About Us factory for testing. */
   public static AboutUsPage createAboutUsPageTest() {
-    final String pageId = PageType.ABOUT_US.getPageId();
+    final String pageId = PageType.ABOUT_US.getId();
     return new AboutUsPage(
         pageId, createPageTest(), List.of(createSectionTest()), createContactTest());
   }

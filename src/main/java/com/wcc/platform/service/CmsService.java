@@ -42,7 +42,7 @@ public class CmsService {
    * @return Pojo TeamPage.
    */
   public TeamPage getTeam() {
-    final var page = pageRepository.findById(PageType.TEAM.getPageId());
+    final var page = pageRepository.findById(PageType.TEAM.getId());
 
     if (page.isPresent()) {
       try {
@@ -61,7 +61,7 @@ public class CmsService {
    * @return Footer page
    */
   public FooterSection getFooter() {
-    final var page = pageRepository.findById(PageType.FOOTER.getPageId());
+    final var page = pageRepository.findById(PageType.FOOTER.getId());
 
     if (page.isPresent()) {
       try {
@@ -80,7 +80,7 @@ public class CmsService {
    * @return Landing page of the community.
    */
   public LandingPage getLandingPage() {
-    final var page = pageRepository.findById(PageType.LANDING_PAGE.getPageId());
+    final var page = pageRepository.findById(PageType.LANDING_PAGE.getId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), LandingPage.class);
@@ -156,7 +156,7 @@ public class CmsService {
    * @return Pojo AboutUs
    */
   public AboutUsPage getAboutUs() {
-    final var page = pageRepository.findById(PageType.ABOUT_US.getPageId());
+    final var page = pageRepository.findById(PageType.ABOUT_US.getId());
 
     if (page.isPresent()) {
       try {

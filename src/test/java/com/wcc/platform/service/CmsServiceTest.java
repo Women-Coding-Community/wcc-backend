@@ -60,7 +60,7 @@ class CmsServiceTest {
     var teamPage = SetupFactories.createTeamPageTest();
     var mapPage = new ObjectMapper().convertValue(teamPage, Map.class);
 
-    when(pageRepository.findById(PageType.TEAM.getPageId())).thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.TEAM.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(TeamPage.class))).thenReturn(teamPage);
 
     var response = service.getTeam();
@@ -125,8 +125,7 @@ class CmsServiceTest {
   void whenGetLandingPageGivenRecordExistOnDatabaseThenReturnPage() {
     var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
 
-    when(pageRepository.findById(PageType.LANDING_PAGE.getPageId()))
-        .thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class))).thenReturn(landingPage);
 
     var response = service.getLandingPage();
@@ -139,8 +138,7 @@ class CmsServiceTest {
   void whenGetLandingPageGivenRecordExistOnDatabaseAndHasExceptionToConvertThenThrowsException() {
     var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
 
-    when(pageRepository.findById(PageType.LANDING_PAGE.getPageId()))
-        .thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class)))
         .thenThrow(new IllegalArgumentException());
 
@@ -160,7 +158,7 @@ class CmsServiceTest {
     var aboutUsPage = SetupFactories.createAboutUsPageTest();
     var mapPage = new ObjectMapper().convertValue(aboutUsPage, Map.class);
 
-    when(pageRepository.findById(PageType.ABOUT_US.getPageId())).thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.ABOUT_US.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
 
     var response = service.getAboutUs();
