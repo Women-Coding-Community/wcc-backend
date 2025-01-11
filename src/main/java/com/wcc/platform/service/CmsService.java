@@ -6,7 +6,7 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
@@ -42,7 +42,7 @@ public class CmsService {
    * @return Pojo TeamPage.
    */
   public TeamPage getTeam() {
-    final var page = pageRepository.findById(PageType.TEAM.getPageId());
+    final var page = pageRepository.findById(PageType.TEAM.getId());
 
     if (page.isPresent()) {
       try {
@@ -60,12 +60,12 @@ public class CmsService {
    *
    * @return Footer page
    */
-  public FooterPage getFooter() {
-    final var page = pageRepository.findById(PageType.FOOTER.getPageId());
+  public FooterSection getFooter() {
+    final var page = pageRepository.findById(PageType.FOOTER.getId());
 
     if (page.isPresent()) {
       try {
-        return objectMapper.convertValue(page.get(), FooterPage.class);
+        return objectMapper.convertValue(page.get(), FooterSection.class);
       } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
@@ -80,7 +80,7 @@ public class CmsService {
    * @return Landing page of the community.
    */
   public LandingPage getLandingPage() {
-    final var page = pageRepository.findById(PageType.LANDING_PAGE.getPageId());
+    final var page = pageRepository.findById(PageType.LANDING_PAGE.getId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), LandingPage.class);
@@ -156,7 +156,7 @@ public class CmsService {
    * @return Pojo AboutUs
    */
   public AboutUsPage getAboutUs() {
-    final var page = pageRepository.findById(PageType.ABOUT_US.getPageId());
+    final var page = pageRepository.findById(PageType.ABOUT_US.getId());
 
     if (page.isPresent()) {
       try {
