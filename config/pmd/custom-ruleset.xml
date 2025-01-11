@@ -48,4 +48,11 @@
     </properties>
   </rule>
   <!--  END CODE DOCUMENTATION -->
+
+  <rule ref="category/java/bestpractices.xml/GuardLogStatement">
+    <properties>
+      <property name="logLevels" value="debug"/>
+      <property name="guardsMethods" value="isDebugEnabled"/>
+    </properties>
+  </rule>
 </ruleset>

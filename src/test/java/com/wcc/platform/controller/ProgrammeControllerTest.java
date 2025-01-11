@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
+import static com.wcc.platform.domain.platform.ProgramType.BOOK_CLUB;
 import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -10,8 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.service.ProgrammeService;
 import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
@@ -23,25 +23,26 @@ import org.springframework.test.web.servlet.MockMvc;
 /** Unit test for the programme apis. */
 @WebMvcTest(ProgrammeController.class)
 public class ProgrammeControllerTest {
-  public static final String API_PROGRAMME = "/api/cms/v1/programme";
+  public static final String API_PROGRAMME = "/api/cms/v1/program";
   public static final String PROG_TYPE_BOOK_CLUB = "?type=BOOK_CLUB";
+
   @Autowired private MockMvc mockMvc;
 
   @MockBean private ProgrammeService service;
 
   @Test
-  void testInternalServerError() throws Exception {
-    when(service.getProgramme(ProgramType.BOOK_CLUB))
-        .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
+  void testNotFoundProgram() throws Exception {
+    when(service.getProgramme(BOOK_CLUB))
+        .thenThrow(new ContentNotFoundException(BOOK_CLUB));
 
     mockMvc
         .perform(
             get(String.format("%s%s", API_PROGRAMME, PROG_TYPE_BOOK_CLUB))
                 .contentType(APPLICATION_JSON))
-        .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.status", is(500)))
-        .andExpect(jsonPath("$.message", is("Invalid Json")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/programme")));
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.status", is(404)))
+        .andExpect(jsonPath("$.message", is("Content of Page page:BOOK_CLUB not found")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/program")));
   }
 
   @Test
@@ -49,7 +50,7 @@ public class ProgrammeControllerTest {
     var fileName = PROG_BOOK_CLUB.getFileName();
     var expectedJson = FileUtil.readFileAsString(fileName);
 
-    when(service.getProgramme(ProgramType.BOOK_CLUB)).thenReturn(createProgrammePageTest(fileName));
+    when(service.getProgramme(BOOK_CLUB)).thenReturn(createProgrammePageTest(fileName));
 
     mockMvc
         .perform(

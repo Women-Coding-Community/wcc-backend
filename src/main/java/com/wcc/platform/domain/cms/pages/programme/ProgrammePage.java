@@ -5,6 +5,7 @@ import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.platform.EventSection;
 import com.wcc.platform.domain.platform.Programme;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -23,6 +24,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Builder
 public class ProgrammePage {
+  @NotBlank private String id;
   @NotNull private Page page;
   @NotNull private Contact contact;
   @NotEmpty private List<Programme> programmeDetails;

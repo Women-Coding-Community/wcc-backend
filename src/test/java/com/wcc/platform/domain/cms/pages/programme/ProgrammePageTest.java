@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 class ProgrammePageTest {
 
+  public static final String PROG_ID = "1";
   private final Page page = new Page();
   private final Contact contact = createContactTest();
   private final List<Programme> programmeDetails = List.of(new Programme());
@@ -38,7 +39,7 @@ class ProgrammePageTest {
       "Given all-args constructor, when initialized, then fields should be correctly assigned")
   void allArgsConstructor() {
     ProgrammePage programmePage =
-        new ProgrammePage(page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage("id", page, contact, programmeDetails, eventSection, customStyle);
 
     assertEquals(page, programmePage.getPage());
     assertEquals(contact, programmePage.getContact());
@@ -69,9 +70,9 @@ class ProgrammePageTest {
           + "when compared, then they should be equal and hash codes should match")
   void equalsAndHashCode() {
     ProgrammePage programmePage1 =
-        new ProgrammePage(page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage(PROG_ID, page, contact, programmeDetails, eventSection, customStyle);
     ProgrammePage programmePage2 =
-        new ProgrammePage(page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage(PROG_ID, page, contact, programmeDetails, eventSection, customStyle);
 
     assertEquals(programmePage1, programmePage2);
     assertEquals(programmePage1.hashCode(), programmePage2.hashCode());
@@ -83,9 +84,11 @@ class ProgrammePageTest {
           + "then it should return correct string representation")
   void testToString() {
     ProgrammePage programmePage =
-        new ProgrammePage(page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage(PROG_ID, page, contact, programmeDetails, eventSection, customStyle);
     String expected =
-        "ProgrammePage(page="
+        "ProgrammePage(id="
+            + PROG_ID
+            + ", page="
             + page
             + ", contact="
             + contact

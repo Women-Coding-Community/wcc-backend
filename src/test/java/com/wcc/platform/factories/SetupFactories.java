@@ -20,7 +20,7 @@ import com.wcc.platform.domain.cms.attributes.PageSection;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
@@ -231,8 +231,8 @@ public class SetupFactories {
   }
 
   /** Factory test. */
-  public static FooterPage createFooterPageTest() {
-    return new FooterPage(
+  public static FooterSection createFooterPageTest() {
+    return new FooterSection(
         PageType.FOOTER.getPageId(),
         "footer_title",
         "footer_subtitle",
@@ -242,10 +242,10 @@ public class SetupFactories {
   }
 
   /** Factory test. */
-  public static FooterPage createFooterPageTest(final String fileName) {
+  public static FooterSection createFooterPageTest(final String fileName) {
     try {
       String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, FooterPage.class);
+      return OBJECT_MAPPER.readValue(content, FooterSection.class);
     } catch (JsonProcessingException e) {
       return createFooterPageTest();
     }

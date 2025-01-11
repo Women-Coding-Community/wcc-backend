@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/platform/v1/")
-@Tag(name = "Platform", description = "All platform Internal APIs")
 public class ResourceContentController {
 
   private final PlatformService service;
@@ -31,6 +30,7 @@ public class ResourceContentController {
   }
 
   /** Put resources content for a program. */
+  @Tag(name = "Platform: Resources", description = "All platform Internal APIs")
   @PutMapping("/resource")
   @Operation(summary = "Save resource")
   @ResponseStatus(HttpStatus.OK)
@@ -39,6 +39,7 @@ public class ResourceContentController {
   }
 
   /** Get all resources content. */
+  @Tag(name = "Platform: Resources", description = "All platform Internal APIs")
   @GetMapping("/resource")
   @Operation(summary = "Get Resource by ID")
   @ResponseStatus(HttpStatus.OK)
@@ -47,6 +48,7 @@ public class ResourceContentController {
   }
 
   /** Delete resource content if exists. */
+  @Tag(name = "Platform: Resources", description = "All platform Internal APIs")
   @DeleteMapping("/resource/{id}")
   @Operation(summary = "Delete resource content if exists")
   @ResponseStatus(HttpStatus.OK)
