@@ -24,7 +24,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Builder
 public class ProgrammePage {
-  @NotBlank String id;
+  @NotBlank private String id;
   @NotNull private Page page;
   @NotNull private Contact contact;
   @NotEmpty private List<Programme> programmeDetails;
