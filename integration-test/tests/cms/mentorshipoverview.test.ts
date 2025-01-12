@@ -1,13 +1,27 @@
 import { expect, test } from '@playwright/test';
+import { validateSchema } from '@utils/helpers/schema.validation';
+import { mentorshipSchema } from '@utils/datafactory/schemas/mentorship.schema';
 
 test('GET /api/cms/v1/mentorship/overview returns correct data', async ({ request }) => {
   const response = await request.get('/api/cms/v1/mentorship/overview');
   expect(response.status()).toBe(200);
-  const data = await response.json();
-  expect(data.page).toBeDefined();
-  expect(data.page.title).toBe('Mentorship Programme');
-  expect(data.mentorSection).toBeDefined();
-  expect(data.mentorSection.title).toBe('Become a Mentor');
-  expect(data.menteeSection).toBeDefined();
-  expect(data.menteeSection.title).toBe('Become a Mentee');
+  //  const data = await response.json();
+  const body = await response.json();
+  expect(body.page).toBeDefined();
+  expect(body.page.title).toBe('Mentorship Programme');
+  expect(body.mentorSection).toBeDefined();
+  expect(body.mentorSection.title).toBe('Become a Mentor');
+  expect(body.menteeSection).toBeDefined();
+  expect(body.menteeSection.title).toBe('Become a Mentee');
+
+  // schema validation
+  try {
+    validateSchema(mentorshipSchema, body);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      throw new Error(`Schema validation failed: ${e.message}`);
+    } else {
+      throw new Error('Schema validation failed with an unknown error');
+    }
+  }
 });
