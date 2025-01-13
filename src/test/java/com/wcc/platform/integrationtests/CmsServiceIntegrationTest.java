@@ -10,7 +10,7 @@ import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
-import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
+import static com.wcc.platform.factories.SetupFactories.createFooterTest;
 import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,10 +38,10 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @BeforeEach
   void deletePages() {
-    pageRepository.deleteById(TEAM.getPageId());
-    pageRepository.deleteById(FOOTER.getPageId());
-    pageRepository.deleteById(ABOUT_US.getPageId());
-    pageRepository.deleteById(COLLABORATOR.getPageId());
+    pageRepository.deleteById(TEAM.getId());
+    pageRepository.deleteById(FOOTER.getId());
+    pageRepository.deleteById(ABOUT_US.getId());
+    pageRepository.deleteById(COLLABORATOR.getId());
   }
 
   @Test
@@ -66,7 +66,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   @Test
   @SuppressWarnings("unchecked")
   void testGetFooterPageTest() {
-    var footerPage = createFooterPageTest(FOOTER.getFileName());
+    var footerPage = createFooterTest(FOOTER.getFileName());
     pageRepository.create(objectMapper.convertValue(footerPage, Map.class));
 
     var result = service.getFooter();

@@ -55,6 +55,10 @@
           {
             "type": "linkedin",
             "link": "https://www.linkedin.com/in/dricazenck"
+          },
+          {
+            "type": "github",
+            "link": "https://github.com/dricazenck"
           }
         ]
       },

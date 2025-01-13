@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /** CMS Footer section details. */
-public record FooterPage(
+public record FooterSection(
     @NotBlank String id,
     @NotBlank String title,
     @NotBlank String subtitle,
