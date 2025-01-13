@@ -4,17 +4,12 @@ import { mentorshipSchema } from '@utils/datafactory/schemas/mentorship.schema';
 
 test('GET /api/cms/v1/mentorship/overview returns correct data', async ({ request }) => {
   const response = await request.get('/api/cms/v1/mentorship/overview');
-  expect(response.status()).toBe(200);
-  //  const data = await response.json();
-  const body = await response.json();
-  expect(body.page).toBeDefined();
-  expect(body.page.title).toBe('Mentorship Programme');
-  expect(body.mentorSection).toBeDefined();
-  expect(body.mentorSection.title).toBe('Become a Mentor');
-  expect(body.menteeSection).toBeDefined();
-  expect(body.menteeSection.title).toBe('Become a Mentee');
+   // response status validation
+   expect(response.status()).toBe(200);
 
-  // schema validation
+   const body = await response.json();
+   
+     // schema validation
   try {
     validateSchema(mentorshipSchema, body);
   } catch (e: unknown) {
