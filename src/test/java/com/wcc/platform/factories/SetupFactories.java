@@ -69,7 +69,9 @@ public class SetupFactories {
 
   /** Factory test. */
   public static CollaboratorPage createCollaboratorPageTest() {
+    final String pageId = PageType.COLLABORATOR.getPageId();
     return new CollaboratorPage(
+        pageId,
         createPaginationTest(),
         createPageTest(),
         createContactTest(),

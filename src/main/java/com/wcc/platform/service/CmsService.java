@@ -37,7 +37,7 @@ public class CmsService {
   }
 
   /**
-   * Read JSON and convert to Pojo TeamPage.
+   * Find Team page in DB and convert to Pojo TeamPage.
    *
    * @return Pojo TeamPage.
    */
@@ -56,7 +56,7 @@ public class CmsService {
   }
 
   /**
-   * Read JSON and convert to Pojo FooterPage.
+   * Find Footer section in DB and convert to Pojo FooterPage.
    *
    * @return Footer page
    */
@@ -75,12 +75,13 @@ public class CmsService {
   }
 
   /**
-   * Read JSON and convert to Pojo FooterPage.
+   * Find Landing page in DB and convert to Pojo FooterPage.
    *
    * @return Landing page of the community.
    */
   public LandingPage getLandingPage() {
     final var page = pageRepository.findById(PageType.LANDING_PAGE.getPageId());
+
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), LandingPage.class);
@@ -93,33 +94,40 @@ public class CmsService {
   }
 
   /**
-   * Read JSON and convert to Pojo CollaboratorPage.
+   * Find Collaborators page in DB and convert to Pojo CollaboratorPage.
    *
    * @return Collaborators page content.
    */
   public CollaboratorPage getCollaborator(final int currentPage, final int pageSize) {
-    try {
-      final var page =
-          objectMapper.readValue(
-              FileUtil.readFileAsString(PageType.COLLABORATOR.getFileName()),
-              CollaboratorPage.class);
-      final var allCollaborators = page.collaborators();
+    final var pageOptional = pageRepository.findById(PageType.COLLABORATOR.getPageId());
 
-      final List<Member> pagCollaborators =
-          PaginationUtil.getPaginatedResult(allCollaborators, currentPage, pageSize);
+    if (pageOptional.isPresent()) {
+      try {
+        final var page = objectMapper.convertValue(pageOptional.get(), CollaboratorPage.class);
+        final var allCollaborators = page.collaborators();
+        final List<Member> pagCollaborators =
+            PaginationUtil.getPaginatedResult(allCollaborators, currentPage, pageSize);
 
-      final Pagination paginationRecord =
-          new Pagination(
-              allCollaborators.size(),
-              PaginationUtil.getTotalPages(allCollaborators, pageSize),
-              currentPage,
-              pageSize);
+        final Pagination paginationRecord =
+            new Pagination(
+                allCollaborators.size(),
+                PaginationUtil.getTotalPages(allCollaborators, pageSize),
+                currentPage,
+                pageSize);
 
-      return new CollaboratorPage(
-          new PageMetadata(paginationRecord), page.page(), page.contact(), pagCollaborators);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
+        return new CollaboratorPage(
+            PageType.COLLABORATOR.getPageId(),
+            new PageMetadata(paginationRecord),
+            page.page(),
+            page.contact(),
+            pagCollaborators);
+
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
     }
+
+    throw new ContentNotFoundException(PageType.COLLABORATOR);
   }
 
   /**
@@ -151,7 +159,7 @@ public class CmsService {
   }
 
   /**
-   * Read JSON and convert to Pojo AboutUs.
+   * Find About Us page in DB and convert to Pojo AboutUs.
    *
    * @return Pojo AboutUs
    */
