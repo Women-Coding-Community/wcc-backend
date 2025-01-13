@@ -69,7 +69,7 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetCollaboratorNotInDatabase() throws IOException {
+  void whenGetCollaboratorNotInDatabase() {
     var exception =
         assertThrows(
             ContentNotFoundException.class,
@@ -79,9 +79,9 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetCollaboratorInDatabase() throws IOException {
+  void whenGetCollaboratorInDatabase() {
     var collaboratorPage = SetupFactories.createCollaboratorPageTest();
-    var mapPage = new ObjectMapper().convertValue(collaboratorPage, Map.class);
+    Map mapPage = new ObjectMapper().convertValue(collaboratorPage, Map.class);
 
     when(pageRepository.findById(PageType.COLLABORATOR.getPageId()))
         .thenReturn(Optional.of(mapPage));

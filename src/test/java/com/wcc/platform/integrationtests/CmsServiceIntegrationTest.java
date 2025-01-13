@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.CmsService;
 import java.util.Map;
@@ -80,7 +81,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetCollaboratorPage() {
-    var collaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
+    CollaboratorPage collaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
     pageRepository.create(objectMapper.convertValue(collaboratorPage, Map.class));
     var result = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
