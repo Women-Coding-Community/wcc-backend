@@ -81,7 +81,7 @@ class CmsServiceTest {
   @Test
   void whenGetCollaboratorInDatabase() {
     var collaboratorPage = SetupFactories.createCollaboratorPageTest();
-    Map mapPage = new ObjectMapper().convertValue(collaboratorPage, Map.class);
+    var mapPage = new ObjectMapper().convertValue(collaboratorPage, Map.class);
 
     when(pageRepository.findById(PageType.COLLABORATOR.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(CollaboratorPage.class)))
