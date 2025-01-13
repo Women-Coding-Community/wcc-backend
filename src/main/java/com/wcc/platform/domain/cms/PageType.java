@@ -19,5 +19,5 @@ public enum PageType {
   ABOUT_US("aboutUsPage.json", "page:ABOUT_US");
 
   private final String fileName;
-  private final String pageId;
+  private final String id;
 }
