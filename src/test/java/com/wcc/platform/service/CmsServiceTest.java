@@ -93,19 +93,20 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetCodeOfConductGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+  void whenGetCodeOfConductNotInDatabase() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getCodeOfConduct);
 
-    var exception = assertThrows(PlatformInternalException.class, service::getCodeOfConduct);
-
-    assertEquals("Invalid JSON", exception.getMessage());
+    assertEquals("Content of Page CODE_OF_CONDUCT not found", exception.getMessage());
   }
 
   @Test
-  void whenGetCodeOfConductGivenValidJson() throws IOException {
+  void whenGetCodeOfConductInDatabase() {
     var codeOfConductPage = SetupFactories.createCodeOfConductPageTest();
-    when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
+    var mapPage = new ObjectMapper().convertValue(codeOfConductPage, Map.class);
+
+    when(pageRepository.findById(PageType.CODE_OF_CONDUCT.getId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(CodeOfConductPage.class)))
         .thenReturn(codeOfConductPage);
 
     var response = service.getCodeOfConduct();
