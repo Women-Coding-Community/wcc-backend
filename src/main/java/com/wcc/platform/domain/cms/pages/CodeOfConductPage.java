@@ -10,4 +10,5 @@ import java.util.List;
  * @param page Page details as title and description
  * @param items all details
  */
-public record CodeOfConductPage(@NotNull Page page, @NotEmpty List<Section<String>> items) {}
+public record CodeOfConductPage(
+    @NotNull String id, @NotNull Page page, @NotEmpty List<Section<String>> items) {}
