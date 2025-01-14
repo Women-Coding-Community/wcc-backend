@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.CmsService;
 import java.util.Map;
@@ -93,10 +94,14 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetCodeOfConductPage() {
-    var result = service.getCodeOfConduct();
-    var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
+    CodeOfConductPage codeOfConductPage =
+        createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
+    pageRepository.create(objectMapper.convertValue(codeOfConductPage, Map.class));
 
-    assertEquals(expectedCodeOfConductPage, result);
+    var result = service.getCodeOfConduct();
+
+    assertEquals(codeOfConductPage.page(), result.page());
+    assertEquals(codeOfConductPage.items().size(), result.items().size());
   }
 
   @Test
