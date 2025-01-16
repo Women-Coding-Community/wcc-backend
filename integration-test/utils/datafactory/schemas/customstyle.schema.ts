@@ -12,21 +12,22 @@ export const customstyleSchema = {
               enum: ['primary', 'secondary', 'tertiary'],
             },
             shade: {
-              type: 'string',
-              minLength: 1,
-            },
-            name: {
-              type: 'string',
-              enum: [' main', 'light', 'dark'],
-              value: {
-                type: 'integer',
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                  enum: [' main', 'light', 'dark'],
+                  value: {
+                    type: 'integer',
+                  },  
+                },
               },
-              additionalProperties: false,
-              required: ['color', 'shade', 'name', 'value'],
             },
-          },
-        },
+          }, 
+        } 
       },
-    },
-  },
-};
+   },
+ },
+}
+
+

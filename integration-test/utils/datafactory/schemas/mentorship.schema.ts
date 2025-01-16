@@ -1,14 +1,14 @@
 import { linkSchema } from './link.schema';
 import { imagesSchema } from './images.schema';
 import { customstyleSchema } from './customstyle.schema';
+import { kMaxLength } from 'buffer';
 export const mentorshipSchema = {
   $ref: '#/definitions/mentorshipSchema',
   definitions: {
     mentorshipSchema: {
       page: {
         type: 'object',
-        const: 'page:MENTORSHIP',
-        properties: {
+       properties: {
           id: {
             type: 'string',
             minLength: 1,
@@ -34,7 +34,7 @@ export const mentorshipSchema = {
         images: { ...imagesSchema.definitions.imagesSchema },
         customStyle: { ...customstyleSchema.definitions.customstyleSchema },
         additionalProperties: false,
-        required: ['id', 'title', 'subtitle', 'description', 'link', 'images', 'customStyle'],
+        required: ['title'],
       },
     },
   },
@@ -52,7 +52,7 @@ export const mentorshipSchema = {
         type: 'string',
       },
       additionalProperties: false,
-      required: ['title', 'description', 'link', 'topics'],
+      required: ['title'],
     },
     menteeSection: {
       type: 'object',
@@ -88,7 +88,9 @@ export const mentorshipSchema = {
         },
 
         additionalProperties: false,
-        required: ['title', 'description', 'link', 'topics'],
+        required: ['title'],
+        minItems: 1,
+        maxItems: 1,
       },
       feedbackSection: {
         type: 'object',
@@ -124,6 +126,7 @@ export const mentorshipSchema = {
                     required: ['value', 'leap'],
                   },
                 },
+                additionalProperties: false,
                 required: ['name', 'feedback', 'mentee', 'year'],
               },
             ],
