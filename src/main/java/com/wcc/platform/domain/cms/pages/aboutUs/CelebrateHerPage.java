@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * CMS About Us page.
+ * CMS Celebrate Her page.
  *
  * @param page Page details as title and images
  * @param members all details
