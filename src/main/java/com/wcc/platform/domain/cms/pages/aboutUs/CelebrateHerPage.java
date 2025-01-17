@@ -1,11 +1,7 @@
 package com.wcc.platform.domain.cms.pages.aboutUs;
 
-import com.wcc.platform.domain.cms.attributes.Contact;
-import com.wcc.platform.domain.cms.attributes.MemberByType;
 import com.wcc.platform.domain.cms.pages.Page;
-import com.wcc.platform.domain.cms.pages.Section;
 import com.wcc.platform.domain.platform.Member;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 

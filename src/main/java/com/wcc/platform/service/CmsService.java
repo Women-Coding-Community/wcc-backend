@@ -11,6 +11,7 @@ import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutUs.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -167,5 +168,19 @@ public class CmsService {
     }
 
     throw new ContentNotFoundException(PageType.ABOUT_US);
+  }
+
+  /**
+   * Read JSON and convert to Pojo CelebrateHerPage.
+   *
+   * @return Pojo CelebrateHerPage.
+   */
+  public CelebrateHerPage getCelebrateHer() {
+    try {
+      final var data = FileUtil.readFileAsString(PageType.CELEBRATE_HER.getFileName());
+      return objectMapper.readValue(data, CelebrateHerPage.class);
+    } catch (JsonProcessingException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
+    }
   }
 }
