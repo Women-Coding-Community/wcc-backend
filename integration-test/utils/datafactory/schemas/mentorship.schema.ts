@@ -1,7 +1,6 @@
 import { linkSchema } from './link.schema';
 import { imagesSchema } from './images.schema';
 import { customstyleSchema } from './customstyle.schema';
-import { kMaxLength } from 'buffer';
 export const mentorshipSchema = {
   $ref: '#/definitions/mentorshipSchema',
   definitions: {
