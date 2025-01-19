@@ -60,7 +60,7 @@ class CmsServiceTest {
     var teamPage = SetupFactories.createTeamPageTest();
     var mapPage = new ObjectMapper().convertValue(teamPage, Map.class);
 
-    when(pageRepository.findById(PageType.TEAM.getPageId())).thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.TEAM.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(TeamPage.class))).thenReturn(teamPage);
 
     var response = service.getTeam();
@@ -93,19 +93,20 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetCodeOfConductGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+  void whenGetCodeOfConductNotInDatabase() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getCodeOfConduct);
 
-    var exception = assertThrows(PlatformInternalException.class, service::getCodeOfConduct);
-
-    assertEquals("Invalid JSON", exception.getMessage());
+    assertEquals("Content of Page CODE_OF_CONDUCT not found", exception.getMessage());
   }
 
   @Test
-  void whenGetCodeOfConductGivenValidJson() throws IOException {
+  void whenGetCodeOfConductInDatabase() {
     var codeOfConductPage = SetupFactories.createCodeOfConductPageTest();
-    when(objectMapper.readValue(anyString(), eq(CodeOfConductPage.class)))
+    var mapPage = new ObjectMapper().convertValue(codeOfConductPage, Map.class);
+
+    when(pageRepository.findById(PageType.CODE_OF_CONDUCT.getId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(CodeOfConductPage.class)))
         .thenReturn(codeOfConductPage);
 
     var response = service.getCodeOfConduct();
@@ -125,8 +126,7 @@ class CmsServiceTest {
   void whenGetLandingPageGivenRecordExistOnDatabaseThenReturnPage() {
     var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
 
-    when(pageRepository.findById(PageType.LANDING_PAGE.getPageId()))
-        .thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class))).thenReturn(landingPage);
 
     var response = service.getLandingPage();
@@ -139,8 +139,7 @@ class CmsServiceTest {
   void whenGetLandingPageGivenRecordExistOnDatabaseAndHasExceptionToConvertThenThrowsException() {
     var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
 
-    when(pageRepository.findById(PageType.LANDING_PAGE.getPageId()))
-        .thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class)))
         .thenThrow(new IllegalArgumentException());
 
@@ -160,7 +159,7 @@ class CmsServiceTest {
     var aboutUsPage = SetupFactories.createAboutUsPageTest();
     var mapPage = new ObjectMapper().convertValue(aboutUsPage, Map.class);
 
-    when(pageRepository.findById(PageType.ABOUT_US.getPageId())).thenReturn(Optional.of(mapPage));
+    when(pageRepository.findById(PageType.ABOUT_US.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(AboutUsPage.class))).thenReturn(aboutUsPage);
 
     var response = service.getAboutUs();
