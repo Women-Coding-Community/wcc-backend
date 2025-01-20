@@ -20,5 +20,4 @@ test('GET /api/cms/v1/about returns correct about us data', async ({ request }) 
       throw new Error('Schema validation failed with an unknown error');
     }
   }
-  
 });
