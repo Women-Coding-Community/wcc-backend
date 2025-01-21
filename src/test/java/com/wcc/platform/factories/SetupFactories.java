@@ -20,7 +20,7 @@ import com.wcc.platform.domain.cms.attributes.PageSection;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
@@ -53,7 +53,7 @@ public class SetupFactories {
   }
 
   public static TeamPage createTeamPageTest() {
-    final String pageId = PageType.TEAM.getPageId();
+    final String pageId = PageType.TEAM.getId();
     return new TeamPage(pageId, createPageTest(), createContactTest(), createMemberByTypeTest());
   }
 
@@ -87,7 +87,8 @@ public class SetupFactories {
   }
 
   public static CodeOfConductPage createCodeOfConductPageTest() {
-    return new CodeOfConductPage(createPageTest(), List.of(createSectionTest()));
+    final String pageId = PageType.CODE_OF_CONDUCT.getId();
+    return new CodeOfConductPage(pageId, createPageTest(), List.of(createSectionTest()));
   }
 
   /** Code of conduct factory for testing. */
@@ -231,9 +232,9 @@ public class SetupFactories {
   }
 
   /** Factory test. */
-  public static FooterPage createFooterPageTest() {
-    return new FooterPage(
-        PageType.FOOTER.getPageId(),
+  public static FooterSection createFooterTest() {
+    return new FooterSection(
+        PageType.FOOTER.getId(),
         "footer_title",
         "footer_subtitle",
         "footer_description",
@@ -242,12 +243,12 @@ public class SetupFactories {
   }
 
   /** Factory test. */
-  public static FooterPage createFooterPageTest(final String fileName) {
+  public static FooterSection createFooterTest(final String fileName) {
     try {
       String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, FooterPage.class);
+      return OBJECT_MAPPER.readValue(content, FooterSection.class);
     } catch (JsonProcessingException e) {
-      return createFooterPageTest();
+      return createFooterTest();
     }
   }
 
@@ -285,7 +286,7 @@ public class SetupFactories {
 
   /** About Us factory for testing. */
   public static AboutUsPage createAboutUsPageTest() {
-    final String pageId = PageType.ABOUT_US.getPageId();
+    final String pageId = PageType.ABOUT_US.getId();
     return new AboutUsPage(
         pageId, createPageTest(), List.of(createSectionTest()), createContactTest());
   }

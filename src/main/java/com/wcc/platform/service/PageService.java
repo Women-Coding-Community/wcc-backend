@@ -2,7 +2,7 @@ package com.wcc.platform.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.cms.pages.FooterPage;
+import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -37,7 +37,7 @@ public class PageService {
   }
 
   /** Save any type of page based on page Type. */
-  public Object update(final FooterPage page) {
+  public Object update(final FooterSection page) {
     try {
       return pageRepository.update(page.id(), objectMapper.convertValue(page, Map.class));
     } catch (IllegalArgumentException e) {
@@ -46,7 +46,7 @@ public class PageService {
   }
 
   /** Create footer page. */
-  public Object create(final FooterPage page) {
+  public Object create(final FooterSection page) {
     try {
       return pageRepository.create(objectMapper.convertValue(page, Map.class));
     } catch (IllegalArgumentException e) {

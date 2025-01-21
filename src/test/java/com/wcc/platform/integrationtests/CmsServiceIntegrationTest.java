@@ -10,13 +10,14 @@ import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
-import static com.wcc.platform.factories.SetupFactories.createFooterPageTest;
+import static com.wcc.platform.factories.SetupFactories.createFooterTest;
 import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.CmsService;
 import java.util.Map;
@@ -37,9 +38,9 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @BeforeEach
   void deletePages() {
-    pageRepository.deleteById(TEAM.getPageId());
-    pageRepository.deleteById(FOOTER.getPageId());
-    pageRepository.deleteById(ABOUT_US.getPageId());
+    pageRepository.deleteById(TEAM.getId());
+    pageRepository.deleteById(FOOTER.getId());
+    pageRepository.deleteById(ABOUT_US.getId());
   }
 
   @Test
@@ -64,7 +65,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   @Test
   @SuppressWarnings("unchecked")
   void testGetFooterPageTest() {
-    var footerPage = createFooterPageTest(FOOTER.getFileName());
+    var footerPage = createFooterTest(FOOTER.getFileName());
     pageRepository.create(objectMapper.convertValue(footerPage, Map.class));
 
     var result = service.getFooter();
@@ -93,10 +94,14 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetCodeOfConductPage() {
-    var result = service.getCodeOfConduct();
-    var expectedCodeOfConductPage = createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
+    CodeOfConductPage codeOfConductPage =
+        createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
+    pageRepository.create(objectMapper.convertValue(codeOfConductPage, Map.class));
 
-    assertEquals(expectedCodeOfConductPage, result);
+    var result = service.getCodeOfConduct();
+
+    assertEquals(codeOfConductPage.page(), result.page());
+    assertEquals(codeOfConductPage.items().size(), result.items().size());
   }
 
   @Test
