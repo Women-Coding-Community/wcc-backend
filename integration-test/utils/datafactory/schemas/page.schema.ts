@@ -1,7 +1,6 @@
 import { linkSchema } from './link.schema';
 import { imagesSchema } from './images.schema';
 import { customstyleSchema } from './customstyle.schema';
-
 export const pageSchema = {
   $ref: '#/definitions/pageSchema',
   definitions: {
