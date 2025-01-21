@@ -1,6 +1,6 @@
 import { pageSchema } from './page.schema';
 import { contactSchema } from './contact.schema';
-import { leadershipMemberSchema } from './leadershipmember.schema';
+import { memberSchema } from './member.schema';
 import { paginationSchema } from './pagination.schema';
 
 export const collaboratorsSchema = {
@@ -18,7 +18,7 @@ export const collaboratorsSchema = {
     contact: { ...contactSchema.definitions.contactSchema },
     collaborators: {
       type: 'array',
-      items: { ...leadershipMemberSchema.definitions.leadershipMemberSchema },
+      items: { ...memberSchema.definitions.memberSchema },
     },
   },
   additionalProperties: false,

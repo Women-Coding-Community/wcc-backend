@@ -1,4 +1,6 @@
 import { imagesSchema } from './images.schema';
+import { socialNetworkSchema } from './social.network.schema';
+
 export const leadershipMemberSchema = {
   $ref: '#/definitions/leadershipMemberSchema',
   definitions: {
@@ -47,24 +49,11 @@ export const leadershipMemberSchema = {
         images: { ...imagesSchema.definitions.imagesSchema },
         network: {
           type: 'array',
-          items: [
-            {
-              type: 'object',
-              properties: {
-                type: {
-                  type: 'string',
-                },
-                link: {
-                  type: 'string',
-                },
-              },
-              required: ['type', 'link'],
-            },
-          ],
+          items: [{ ...socialNetworkSchema.definitions.socialNetworkSchema }],
         },
       },
       additionalProperties: false,
-      required: ['fullName', 'position', 'images', 'email', 'slackDisplayName'],
+      required: ['fullName', 'position', 'images'], // include email, slackDisplayName, country as required when there is a fix in API
     },
   },
 };
