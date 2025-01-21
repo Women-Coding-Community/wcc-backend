@@ -2,11 +2,11 @@ export const customstyleSchema = {
   $ref: '#/definitions/customstyleSchema',
   definitions: {
     customstyleSchema: {
-      backgroundcolor: {
-        type: 'object',
-        properties: {
-          items: {
-            type: 'array',
+      type: 'object',
+      properties: {
+        backgroundColour: {
+          type: 'object',
+          properties: {
             color: {
               type: 'string',
               enum: ['primary', 'secondary', 'tertiary'],
@@ -16,18 +16,19 @@ export const customstyleSchema = {
               properties: {
                 name: {
                   type: 'string',
-                  enum: [' main', 'light', 'dark'],
-                  value: {
-                    type: 'integer',
-                  },  
+                  enum: ['main', 'light', 'dark'],
+                },
+                value: {
+                  type: 'integer',
                 },
               },
+              additionalProperties: false,
             },
-          }, 
-        } 
+          },
+          additionalProperties: false,
+        },
       },
-   },
- },
-}
-
-
+      additionalProperties: false,
+    },
+  },
+};
