@@ -3,16 +3,19 @@ package com.wcc.platform.service;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.repository.PageRepository;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,19 +25,27 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MentorshipServiceTest {
   private ObjectMapper objectMapper;
+  private PageRepository pageRepository;
 
   private MentorshipService service;
 
   @BeforeEach
   void setUp() {
     objectMapper = Mockito.mock(ObjectMapper.class);
-    service = new MentorshipService(objectMapper);
+    objectMapper.registerModule(new JavaTimeModule());
+    pageRepository = Mockito.mock(PageRepository.class);
+    service = new MentorshipService(objectMapper, pageRepository);
   }
 
   @Test
-  void whenGetOverviewGivenValidJson() throws IOException {
-    var page = createMentorshipPageTest("mentorshipPage.json");
-    when(objectMapper.readValue(any(String.class), eq(MentorshipPage.class))).thenReturn(page);
+  @SuppressWarnings("unchecked")
+  void whenGetOverviewGivenRecordExistingInDatabaseThenReturnValidResponse() {
+    var page = createMentorshipPageTest();
+    var mapPage =
+        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+
+    when(pageRepository.findById(PageType.MENTORSHIP.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(MentorshipPage.class))).thenReturn(page);
 
     var response = service.getOverview();
 
@@ -42,12 +53,12 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenGetOverviewGivenInvalidJson() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(MentorshipPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
+  void whenGetOverviewGivenRecordNotInDatabaseThenThrowException() throws IOException {
 
-    var exception = assertThrows(PlatformInternalException.class, service::getOverview);
-    
-    assertEquals("Invalid JSON", exception.getMessage());
+    when(pageRepository.findById(PageType.MENTORSHIP.getId())).thenReturn(Optional.empty());
+
+    var exception = assertThrows(ContentNotFoundException.class, service::getOverview);
+
+    assertEquals("Content of Page MENTORSHIP not found", exception.getMessage());
   }
 }
