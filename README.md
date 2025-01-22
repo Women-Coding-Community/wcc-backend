@@ -273,7 +273,7 @@ Generate token to replace in the project.
 * Build and create jar
 
 ```shell
- ./gradlew clean bootJar`
+ ./gradlew clean bootJar
  ```
 
 * Start docker compose

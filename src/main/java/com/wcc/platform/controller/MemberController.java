@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for members pages apis. */
 @RestController
+@Tag(name = "Platform: Users", description = "User's Internal APIs: Member, Volunteer, etc.")
 @RequestMapping("/api/platform/v1/members")
-@Tag(name = "Platform", description = "All platform Internal APIs")
 public class MemberController {
 
   private final PlatformService platformService;
