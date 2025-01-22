@@ -130,17 +130,22 @@ public class CmsService {
   }
 
   /**
-   * Read JSON and convert to Pojo CodeOfConductPage.
+   * Find Code of conduct page in DB and convert to Pojo CodeOfConductPage.
    *
    * @return Pojo CodeOfConductPage.
    */
   public CodeOfConductPage getCodeOfConduct() {
-    try {
-      final var data = FileUtil.readFileAsString(PageType.CODE_OF_CONDUCT.getFileName());
-      return objectMapper.readValue(data, CodeOfConductPage.class);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
+    final var pageOptional = pageRepository.findById(PageType.CODE_OF_CONDUCT.getId());
+
+    if (pageOptional.isPresent()) {
+      try {
+        return objectMapper.convertValue(pageOptional.get(), CodeOfConductPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
     }
+
+    throw new ContentNotFoundException(PageType.CODE_OF_CONDUCT);
   }
 
   /**

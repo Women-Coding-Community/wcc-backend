@@ -1,15 +1,16 @@
 import { linkSchema } from './link.schema';
-import { socialNetworkSchema } from './social.network.schema';
+import { imagesSchema } from './images.schema';
+import { customStyleSchema } from './custom.style.schema';
 
-export const footerSchema = {
-  $ref: '#/definitions/footerSchema',
+export const pageSchema = {
+  $ref: '#/definitions/pageSchema',
   definitions: {
-    footerSchema: {
+    pageSchema: {
       type: 'object',
       properties: {
         id: {
           type: 'string',
-          const: 'page:FOOTER',
+          minLength: 1,
         },
         title: {
           type: 'string',
@@ -23,14 +24,12 @@ export const footerSchema = {
           type: 'string',
           minLength: 1,
         },
-        network: {
-          type: 'array',
-          items: [{ ...socialNetworkSchema.definitions.socialNetworkSchema }],
-        },
         link: { ...linkSchema.definitions.linkSchema },
+        images: { ...imagesSchema.definitions.imagesSchema },
+        customStyle: { ...customStyleSchema.definitions.customStyleSchema },
       },
-      required: ['id', 'title', 'subtitle', 'description', 'network', 'link'],
       additionalProperties: false,
+      required: ['title'],
     },
   },
 };
