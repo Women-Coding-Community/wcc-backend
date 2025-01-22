@@ -68,12 +68,12 @@ class SurrealDbIntegrationTest {
 
     // Act
     repository.create(map);
-    Optional<Map<String, Object>> page = repository.findById(PageType.FOOTER.getPageId());
+    Optional<Map<String, Object>> page = repository.findById(PageType.FOOTER.getId());
 
     // Assert
     assertTrue(page.isPresent());
     assertEquals(6, page.get().size());
-    assertTrue(page.get().containsValue(PageType.FOOTER.getPageId()));
+    assertTrue(page.get().containsValue(PageType.FOOTER.getId()));
 
     driver.delete(TABLE);
   }

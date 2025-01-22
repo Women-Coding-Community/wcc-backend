@@ -36,7 +36,7 @@ class ProgramControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @AfterEach
   void deletePage() {
-    pageRepository.deleteById(PROG_BOOK_CLUB.getPageId());
+    pageRepository.deleteById(PROG_BOOK_CLUB.getId());
   }
 
   @BeforeEach

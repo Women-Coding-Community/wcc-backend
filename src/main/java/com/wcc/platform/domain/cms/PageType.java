@@ -21,5 +21,5 @@ public enum PageType {
   public static final String ID_PREFIX = "page:";
 
   private final String fileName;
-  private final String pageId;
+  private final String id;
 }

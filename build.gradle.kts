@@ -28,7 +28,7 @@ repositories {
     mavenCentral()
 }
 
-val testContainer = "1.19.0"
+val testContainer = "1.20.4"
 
 dependencies {
 

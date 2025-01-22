@@ -1,4 +1,5 @@
 {
+  "id": "page:COLLABORATORS",
   "metadata": {
     "pagination": {
       "totalItems": 1,
@@ -46,7 +47,7 @@
       ],
       "network": [
         {
-          "type": "Linkedin",
+          "type": "linkedin",
           "link": "https://www.linkedin.com/member"
         }
       ],

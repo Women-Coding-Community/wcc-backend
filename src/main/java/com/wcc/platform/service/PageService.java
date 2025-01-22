@@ -31,7 +31,7 @@ public class PageService {
   public Object update(final PageType pageType, final Object page) {
     try {
       return pageRepository.update(
-          String.valueOf(pageType.getPageId()), objectMapper.convertValue(page, Map.class));
+          String.valueOf(pageType.getId()), objectMapper.convertValue(page, Map.class));
     } catch (IllegalArgumentException e) {
       log.error("Error while updating page: {}, {}", pageType, page.toString(), e);
       throw new PlatformInternalException(pageType, e);
