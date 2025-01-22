@@ -54,8 +54,6 @@ class MentorshipServiceTest {
 
   @Test
   void whenGetOverviewGivenRecordNotInDatabaseThenThrowException() throws IOException {
-    // var page = createMentorshipPageTest();
-    // var mapPage = objectMapper.convertValue(page, Map.class);
 
     when(pageRepository.findById(PageType.MENTORSHIP.getId())).thenReturn(Optional.empty());
 
