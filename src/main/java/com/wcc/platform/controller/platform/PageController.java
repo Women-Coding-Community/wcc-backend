@@ -33,7 +33,7 @@ public class PageController {
   /** Create Page Content and store into database. */
   @PostMapping
   @Operation(
-      summary = "Create page content by id",
+      summary = "Create page content by page type",
       description = "Create new page with any content type.")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> createPage(
