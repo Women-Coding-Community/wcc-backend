@@ -124,7 +124,7 @@ class DefaultControllerTest {
         null,
         List.of(
             SetupProgrammeFactories.createProgrammeItemsTest(
-                ProgramType.MENTORSHIP, CmsIcon.DIVERSITY),
+                ProgramType.MACHINE_LEARNING, CmsIcon.DIVERSITY),
             SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.BOOK_CLUB, CmsIcon.BOOK),
             SetupProgrammeFactories.createProgrammeItemsTest(ProgramType.TECH_TALK, CmsIcon.WORK),
             SetupProgrammeFactories.createProgrammeItemsTest(

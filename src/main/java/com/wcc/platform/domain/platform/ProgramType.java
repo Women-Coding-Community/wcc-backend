@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.wcc.platform.domain.cms.PageType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,8 +11,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ProgramType {
   BOOK_CLUB("Book Club", false),
-  MENTORSHIP("Mentorship", false),
+  CODING_CLUB("Coding Club Python", false),
+  CAREER_CLUB("Career Club", false),
+  SPEAKING_CLUB("Speaking Club", false),
   WRITING_CLUB("Writing Club", false),
+  CLOUD("Cloud and DevOps", false),
+  MACHINE_LEARNING("Machine Learning", false),
+  INTERVIEW_PREP("Interview Preparation", false),
 
   /** It is not a program, but an event category. */
   OTHERS("Others", true),
@@ -36,5 +42,9 @@ public enum ProgramType {
   @JsonValue
   public String toString() {
     return description;
+  }
+
+  public String toPageId() {
+    return PageType.ID_PREFIX + name();
   }
 }
