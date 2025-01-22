@@ -3,6 +3,11 @@ spring:
     name: wcc-backend
   profiles:
     active: default
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: https://github.com
 
 file:
   storage:
