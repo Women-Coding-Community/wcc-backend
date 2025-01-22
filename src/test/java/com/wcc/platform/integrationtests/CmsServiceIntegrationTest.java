@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.CmsService;
@@ -41,6 +42,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.deleteById(TEAM.getId());
     pageRepository.deleteById(FOOTER.getId());
     pageRepository.deleteById(ABOUT_US.getId());
+    pageRepository.deleteById(COLLABORATOR.getId());
   }
 
   @Test
@@ -80,12 +82,13 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetCollaboratorPage() {
+    CollaboratorPage collaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
+    pageRepository.create(objectMapper.convertValue(collaboratorPage, Map.class));
     var result = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
-    var expectedCollaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
-
-    assertEquals(expectedCollaboratorPage.page(), result.page());
-    assertEquals(expectedCollaboratorPage.contact(), result.contact());
+    assertEquals(collaboratorPage.page(), result.page());
+    assertEquals(collaboratorPage.contact(), result.contact());
+    assertEquals(collaboratorPage.metadata(), result.metadata());
 
     assertEquals(1, result.collaborators().size());
 
