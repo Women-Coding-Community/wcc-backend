@@ -16,7 +16,8 @@ public enum PageType {
   TEAM("teamPage.json", "page:TEAM"),
   PROG_BOOK_CLUB("bookClubPage.json", "UNDEFINED"),
   EVENT_FILTERS("eventsFiltersSection.json", "UNDEFINED"),
-  ABOUT_US("aboutUsPage.json", "page:ABOUT_US");
+  ABOUT_US("aboutUsPage.json", "page:ABOUT_US"),
+  CELEBRATE_HER("celebrateHerPage.json", "page:CELEBRATE_HER_PAGE");
 
   private final String fileName;
   private final String id;

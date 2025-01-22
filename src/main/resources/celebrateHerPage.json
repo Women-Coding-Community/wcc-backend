@@ -1,0 +1,18 @@
+{
+  "id": "page:CELEBRATEHER",
+  "page": {
+    "title": "Celebrate Her",
+    "description": ""
+  },
+  "members": [
+    {
+      "fullName": "Shannon Lee",
+      "description": "Celebrate Shannon for publishing the most beautiful diagram explaining the Rest API.",
+      "Related Link": [
+        {
+          "link": "https://www.linkedin.com/in/shannon-lee/"
+        }
+      ]
+    }
+  ]
+}
