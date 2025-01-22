@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
  * @param feedbackSection section related to mentorship feedbacks
  */
 public record MentorshipPage(
+    @NotNull String id,
     @NotNull Page page,
     @NotNull PageSection mentorSection,
     @NotNull PageSection menteeSection,

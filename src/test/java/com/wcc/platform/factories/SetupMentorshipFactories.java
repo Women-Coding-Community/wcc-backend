@@ -5,6 +5,7 @@ import static com.wcc.platform.factories.SetupFactories.createPageSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createPageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
@@ -27,7 +28,9 @@ public class SetupMentorshipFactories {
 
   /** Test factory. */
   public static MentorshipPage createMentorshipPageTest() {
+    final String pageId = PageType.MENTORSHIP.getId();
     return new MentorshipPage(
+        pageId,
         createPageTest(),
         createPageSectionTest("Mentor"),
         createPageSectionTest("Mentee"),
