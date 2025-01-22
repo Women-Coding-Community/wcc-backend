@@ -7,16 +7,18 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PageType {
-  CODE_OF_CONDUCT("codeOfConductPage.json", "page:CODE_OF_CONDUCT"),
-  COLLABORATOR("collaboratorPage.json", "page:COLLABORATORS"),
   EVENTS("eventsPage.json", "page:EVENTS"),
   FOOTER("footerPage.json", "page:FOOTER"),
   LANDING_PAGE("landingPage.json", "page:LANDING_PAGE"),
   MENTORSHIP("mentorshipPage.json", "page:MENTORSHIP_OVERVIEW"),
-  TEAM("teamPage.json", "page:TEAM"),
-  PROG_BOOK_CLUB("bookClubPage.json", "UNDEFINED"),
+  PROG_BOOK_CLUB("bookClubPage.json", "page:BOOK_CLUB"),
   EVENT_FILTERS("eventsFiltersSection.json", "UNDEFINED"),
-  ABOUT_US("aboutUsPage.json", "page:ABOUT_US");
+  ABOUT_US("aboutUsPage.json", "page:ABOUT_US"),
+  TEAM("teamPage.json", "page:TEAM"),
+  COLLABORATOR("collaboratorPage.json", "page:COLLABORATORS"),
+  CODE_OF_CONDUCT("codeOfConductPage.json", "page:CODE_OF_CONDUCT");
+
+  public static final String ID_PREFIX = "page:";
 
   private final String fileName;
   private final String id;

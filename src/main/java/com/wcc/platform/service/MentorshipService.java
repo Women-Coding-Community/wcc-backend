@@ -2,11 +2,11 @@ package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.utils.FileUtil;
+import com.wcc.platform.repository.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MentorshipService {
   private final ObjectMapper objectMapper;
+  private final PageRepository pageRepository;
 
   @Autowired
-  public MentorshipService(final ObjectMapper objectMapper) {
+  public MentorshipService(final ObjectMapper objectMapper, final PageRepository pageRepository) {
     this.objectMapper = objectMapper;
+    this.pageRepository = pageRepository;
   }
 
   /**
@@ -26,11 +28,14 @@ public class MentorshipService {
    * @return Mentorship overview page.
    */
   public MentorshipPage getOverview() {
-    try {
-      final String data = FileUtil.readFileAsString(MENTORSHIP.getFileName());
-      return objectMapper.readValue(data, MentorshipPage.class);
-    } catch (JsonProcessingException e) {
-      throw new PlatformInternalException(e.getMessage(), e);
+    final var page = pageRepository.findById(MENTORSHIP.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), MentorshipPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
     }
+    throw new ContentNotFoundException(MENTORSHIP);
   }
 }
