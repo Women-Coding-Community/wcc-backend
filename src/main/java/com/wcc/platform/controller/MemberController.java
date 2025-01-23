@@ -4,6 +4,7 @@ import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for members pages apis. */
 @RestController
 @RequestMapping("/api/platform/v1/members")
+@SecurityRequirement(name = "apiKey")
 @Tag(name = "Platform", description = "All platform Internal APIs")
 public class MemberController {
 

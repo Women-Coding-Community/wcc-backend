@@ -17,6 +17,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
   @Value("${security.api.key}")
   private String apiKey;
 
+  @SuppressWarnings("PMD.LawOfDemeter")
   @Override
   protected void doFilterInternal(
       final HttpServletRequest request,
@@ -24,11 +25,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
       final FilterChain filterChain)
       throws ServletException, IOException {
 
-    String requestUri = request.getRequestURI();
+    final String requestUri = request.getRequestURI();
 
     // Apply the API key check only to the /api/cms/v1/ endpoint
-    if (requestUri.startsWith("/api/cms/v1/")) {
-      String requestApiKey = request.getHeader(API_KEY_HEADER);
+    if (requestUri.startsWith("/api/cms/v1/") || requestUri.startsWith("/api/platform/v1/")) {
+      final String requestApiKey = request.getHeader(API_KEY_HEADER);
       if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Unauthorized: Invalid API Key");

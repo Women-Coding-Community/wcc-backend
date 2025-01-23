@@ -4,6 +4,7 @@ import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for footer api. */
 @RestController
+@SecurityRequirement(name = "apiKey")
 @Tag(name = "Pages: Others", description = "All other APIs")
 public class DefaultController {
 
