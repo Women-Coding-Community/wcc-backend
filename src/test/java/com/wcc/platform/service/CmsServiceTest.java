@@ -5,11 +5,9 @@ import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
@@ -21,7 +19,6 @@ import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.repository.PageRepository;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,22 +66,22 @@ class CmsServiceTest {
   }
 
   @Test
-  void whenGetCollaboratorGivenNotFoundThenThrowsInternalException() throws IOException {
-    when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
-        .thenThrow(new JsonProcessingException("Invalid JSON") {});
-
+  void whenGetCollaboratorNotInDatabase() {
     var exception =
         assertThrows(
-            PlatformInternalException.class,
+            ContentNotFoundException.class,
             () -> service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
 
-    assertEquals("Invalid JSON", exception.getMessage());
+    assertEquals("Content of Page COLLABORATOR not found", exception.getMessage());
   }
 
   @Test
-  void whenGetCollaboratorGivenValidResourceThenReturnValidObjectResponse() throws IOException {
+  void whenGetCollaboratorInDatabase() {
     var collaboratorPage = SetupFactories.createCollaboratorPageTest();
-    when(objectMapper.readValue(anyString(), eq(CollaboratorPage.class)))
+    var mapPage = new ObjectMapper().convertValue(collaboratorPage, Map.class);
+
+    when(pageRepository.findById(PageType.COLLABORATOR.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(CollaboratorPage.class)))
         .thenReturn(collaboratorPage);
 
     var response = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);

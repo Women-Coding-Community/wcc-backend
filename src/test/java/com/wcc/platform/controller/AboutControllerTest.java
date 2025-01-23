@@ -2,11 +2,14 @@ package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.ABOUT_US;
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
+import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
+import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -14,24 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.wcc.platform.configuration.SecurityConfig;
-import com.wcc.platform.domain.cms.attributes.Contact;
-import com.wcc.platform.domain.cms.attributes.Country;
-import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.ImageType;
-import com.wcc.platform.domain.cms.pages.CollaboratorPage;
-import com.wcc.platform.domain.cms.pages.Page;
-import com.wcc.platform.domain.cms.pages.PageMetadata;
-import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.Member;
-import com.wcc.platform.domain.platform.MemberType;
-import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.CmsService;
 import com.wcc.platform.utils.FileUtil;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -48,6 +38,9 @@ class AboutControllerTest {
 
   private static final String API_CODE_OF_CONDUCT = "/api/cms/v1/code-of-conduct";
   private static final String API_ABOUT_US = "/api/cms/v1/about";
+  private static final String API_COLLABORATORS = "/api/cms/v1/collaborators";
+  private static final String PAGINATION_COLLABORATORS =
+      "?currentPage=" + DEFAULT_CURRENT_PAGE + "&pageSize=" + DEFAULT_PAGE_SIZE;
 
   @Autowired private MockMvc mockMvc;
   @MockBean private CmsService service;
@@ -109,62 +102,19 @@ class AboutControllerTest {
 
   @Test
   void testCollaboratorOkResponse() throws Exception {
-    var collaborator =
-        Member.builder()
-            .fullName("FullName")
-            .position("Position")
-            .email("member@wcc.com")
-            .slackDisplayName("Slack name")
-            .country(new Country("Country code", "Country name"))
-            .city("City")
-            .companyName("Company name")
-            .memberTypes(List.of(MemberType.COLLABORATOR))
-            .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
-            .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
-            .build();
+    var fileName = COLLABORATOR.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
 
-    var collaboratorPage =
-        new CollaboratorPage(
-            new PageMetadata(new Pagination(1, 1, 1, 10)),
-            Page.builder()
-                .title("collaborator_title")
-                .subtitle("collaborator_subtitle")
-                .description("collaborator_desc")
-                .build(),
-            new Contact(
-                "contact_title",
-                null,
-                List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "page_link"))),
-            List.of(collaborator));
-
-    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE))
-        .thenReturn(collaboratorPage);
+    when(service.getCollaborator(anyInt(), anyInt()))
+        .thenReturn(createCollaboratorPageTest(fileName));
 
     mockMvc
         .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/collaborators")
+            MockMvcRequestFactory.getRequest(
+                    String.format("%s%s", API_COLLABORATORS, PAGINATION_COLLABORATORS))
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.page.title", is("collaborator_title")))
-        .andExpect(jsonPath("$.page.subtitle", is("collaborator_subtitle")))
-        .andExpect(jsonPath("$.page.description", is("collaborator_desc")))
-        .andExpect(jsonPath("$.contact.title", is("contact_title")))
-        .andExpect(jsonPath("$.contact.links[0].type", is("linkedin")))
-        .andExpect(jsonPath("$.contact.links[0].link", is("page_link")))
-        .andExpect(jsonPath("$.collaborators[0].fullName", is("FullName")))
-        .andExpect(jsonPath("$.collaborators[0].position", is("Position")))
-        .andExpect(jsonPath("$.collaborators[0].email", is("member@wcc.com")))
-        .andExpect(jsonPath("$.collaborators[0].slackDisplayName", is("Slack name")))
-        .andExpect(jsonPath("$.collaborators[0].country.countryCode", is("Country code")))
-        .andExpect(jsonPath("$.collaborators[0].country.countryName", is("Country name")))
-        .andExpect(jsonPath("$.collaborators[0].city", is("City")))
-        .andExpect(jsonPath("$.collaborators[0].companyName", is("Company name")))
-        .andExpect(jsonPath("$.collaborators[0].memberTypes[0]", is("COLLABORATOR")))
-        .andExpect(jsonPath("$.collaborators[0].images[0].path", is("image.png")))
-        .andExpect(jsonPath("$.collaborators[0].images[0].alt", is("alt image")))
-        .andExpect(jsonPath("$.collaborators[0].images[0].type", is("desktop")))
-        .andExpect(jsonPath("$.collaborators[0].network[0].type", is("linkedin")))
-        .andExpect(jsonPath("$.collaborators[0].network[0].link", is("collaborator_link")));
+        .andExpect(content().json(expectedJson));
   }
 
   @Test
