@@ -8,25 +8,25 @@ export const pageSectionSchema = {
       properties: {
         title: {
           type: 'string',
+          minLength: 1,
         },
         description: {
           type: 'string',
+          minLength: 1,
         },
         link: { ...linkSchema.definitions.linkSchema },
+        topics: {
+          type: 'array',
+          items: [
+            {
+              type: 'string',
+              minLength: 1,
+            },
+          ],
+        },
+        additionalProperties: false,
+        required: ['title'],
       },
-      topics: {
-        type: 'array',
-        items: [
-          {
-            type: 'string',
-          },
-        ],
-      },
-
-      additionalProperties: false,
-      required: ['title'],
-      minItems: 1,
-      maxItems: 1,
     },
   },
 };

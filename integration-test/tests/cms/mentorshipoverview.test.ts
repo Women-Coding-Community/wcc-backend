@@ -9,10 +9,10 @@ test('GET /api/cms/v1/mentorship/overview returns correct data', async ({ reques
   expect(response.status()).toBe(200);
 
   const body = await response.json();
-  
+
   // schema validation
   try {
-  validateSchema(mentorshipSchema, body);
+    validateSchema(mentorshipSchema, body);
   } catch (e: unknown) {
     if (e instanceof Error) {
       throw new Error(`Schema validation failed: ${e.message}`);
@@ -20,4 +20,4 @@ test('GET /api/cms/v1/mentorship/overview returns correct data', async ({ reques
       throw new Error('Schema validation failed with an unknown error');
     }
   }
-});  
+});
