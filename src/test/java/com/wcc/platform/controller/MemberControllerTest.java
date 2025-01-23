@@ -102,7 +102,7 @@ public class MemberControllerTest {
         .andExpect(jsonPath("$.details", is("uri=/api/platform/v1/members")));
   }
 
-  /*@Test
+  @Test
   void testMembersPostCreatedResponse() throws Exception {
 
     Member member = createMembersTest("members/data/members.json").getFirst();
@@ -113,7 +113,7 @@ public class MemberControllerTest {
         .perform(MockMvcRequestFactory.postRequest(API_MEMBERS, member))
         .andExpect(status().isCreated())
         .andExpect(content().json(memberAsString(member)));
-  }*/
+  }
 
   private String memberAsString(final Member member) {
     try {

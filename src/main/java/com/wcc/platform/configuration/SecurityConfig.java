@@ -17,7 +17,8 @@ public class SecurityConfig {
   }
 
   /** Filter configuration. */
-  @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+  @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "squid:S4502"})
+  // Suppress Sonar warning for CSRF disable
   @Bean
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
