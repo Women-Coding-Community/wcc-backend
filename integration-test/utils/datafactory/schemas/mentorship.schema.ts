@@ -25,7 +25,7 @@ export const mentorshipSchema = {
             },
             feedbackSection: {
               feedbackSection: {
-                link: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
+                feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
               },
               additionalProperties: false,
               required: ['id', 'page', 'mentorSection', 'menteeSection'],
