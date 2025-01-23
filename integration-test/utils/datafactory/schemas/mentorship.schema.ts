@@ -8,27 +8,31 @@ export const mentorshipSchema = {
     mentorshipSchema: {
       type: 'object',
       properties: {
+        id: {
+          type: 'string',
+          minLength: 1,
+        },
         page: {
-          link: { ...pageSchema.definitions.pageSchema },
+          page: { ...pageSchema.definitions.pageSchema },
         },
         mentorSection: {
           pageSection: {
-            link: { ...pageSectionSchema.definitions.pageSectionSchema },
+            pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
           },
           menteeSection: {
             pageSection: {
-              link: { ...pageSectionSchema.definitions.pageSectionSchema },
+              pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
             },
             feedbackSection: {
               feedbackSection: {
                 link: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
               },
               additionalProperties: false,
-              required: ['page', 'mentorSection', 'menteeSection', 'feedbackSection'],
+              required: ['id', 'page', 'mentorSection', 'menteeSection'],
             },
           },
         },
       },
     },
-  }
-};  
+  },
+};
