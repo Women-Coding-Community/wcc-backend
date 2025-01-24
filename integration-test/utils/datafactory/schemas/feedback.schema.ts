@@ -10,7 +10,6 @@ export const feedbackSectionSchema = {
         },
         feedbacks: {
           type: 'array',
-          minLength: 1,
           items: [
             {
               type: 'object',
@@ -36,10 +35,10 @@ export const feedbackSectionSchema = {
                       type: 'boolean',
                     },
                   },
+                  additionalProperties: false,
+                  required: ['name', 'feedback', 'year'],
                 },
               },
-              additionalProperties: false,
-              required: ['name', 'feedback', 'year'],
             },
           ],
         },

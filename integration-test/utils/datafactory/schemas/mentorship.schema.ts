@@ -11,22 +11,19 @@ export const mentorshipSchema = {
         id: {
           type: 'string',
           minLength: 1,
+          const: 'page:MENTORSHIP_OVERVIEW',
         },
-        page: {
-          page: { ...pageSchema.definitions.pageSchema },
-        },
+        page: { ...pageSchema.definitions.pageSchema },
+
         mentorSection: {
-          pageSection: {
-            pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
-          },
+          pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
+
           menteeSection: {
-            pageSection: {
-              pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
-            },
+            pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
+
             feedbackSection: {
-              feedbackSection: {
-                feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
-              },
+              feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
+
               additionalProperties: false,
               required: ['id', 'page', 'mentorSection', 'menteeSection'],
             },
