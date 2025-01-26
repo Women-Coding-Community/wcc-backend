@@ -53,7 +53,7 @@ export const leadershipMemberSchema = {
         },
       },
       additionalProperties: false,
-      required: ['fullName', 'position', 'images'], // include email, slackDisplayName, country as required when there is a fix in API
+      required: ['fullName', 'position', 'images'], // TODO include email, slackDisplayName, country as required when there is a fix in API
     },
   },
 };
