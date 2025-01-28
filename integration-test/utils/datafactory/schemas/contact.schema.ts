@@ -12,6 +12,7 @@ export const contactSchema = {
         },
         description: {
           type: 'string',
+          minLength: 1,
         },
         links: {
           type: 'array',
