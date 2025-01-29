@@ -2,7 +2,7 @@ import { pageSchema } from './page.schema';
 import { linkSchema } from './link.schema';
 
 export const codeofconductSchema = {
-  $ref: '#/definitions/pageSchema',
+  $ref: '#/definitions/codeofconductSchema',
   definitions: {
     codeofconductSchema: {
       type: 'object',
@@ -15,27 +15,37 @@ export const codeofconductSchema = {
           page: { ...pageSchema.definitions.pageSchema },
         },
         items: {
-          SectionString: {
-            properties: {
-            title: {
-             type: 'string',
-                minLength: 1,
+          type: 'array',
+          items: [
+            {
+              type: 'object',
+              properties: {
+                title: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                description: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                link: { ...linkSchema.definitions.linkSchema },
+                items: {
+                  type: 'array',
+                  items: [
+                    {
+                      type: 'string',
+                      minLength: 1,
+                    },
+                  ],
+                },
               },
-              description: {
-                type: 'string',
-                minLength: 1,
-              },
-              link: { ...linkSchema.definitions.linkSchema },
-              items: {
-                type: 'string',
-                minLength: 1,
-              },
-              additionalProperties: false,
-              required: ['id', 'page', 'items'],
+              required: ['title'],
             },
-          },
+          ],
         },
       },
+      additionalProperties: false,
+      required: ['id', 'page', 'items'],
     },
   },
 };
