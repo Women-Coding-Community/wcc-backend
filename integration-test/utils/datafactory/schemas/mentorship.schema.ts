@@ -17,19 +17,17 @@ export const mentorshipSchema = {
 
         mentorSection: {
           pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
-
-          menteeSection: {
-            pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
-
-             feedbackSection: {
-              feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
-
-              additionalProperties: false,
-              required: ['id', 'page', 'mentorSection', 'menteeSection'],
-            },
-          },
+        },
+        menteeSection: {
+          pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
+        },
+        feedbackSection: {
+          feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
         },
       },
+
+      additionalProperties: false,
+      required: ['id', 'page', 'mentorSection', 'menteeSection'],
     },
   },
 };

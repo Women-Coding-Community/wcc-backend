@@ -24,9 +24,9 @@ export const pageSectionSchema = {
             },
           ],
         },
-        additionalProperties: false,
-        required: ['title'],
       },
+      additionalProperties: false,
+      required: ['title'],
     },
   },
 };
