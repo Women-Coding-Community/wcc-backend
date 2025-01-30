@@ -95,6 +95,7 @@ public class SetupFactories {
     }
   }
 
+  /** Code of conduct factory for testing. */
   public static CodeOfConductPage createCodeOfConductPageTest() {
     final String pageId = PageType.CODE_OF_CONDUCT.getId();
     return new CodeOfConductPage(
