@@ -2,7 +2,7 @@
   "id": "page:LANDING_PAGE",
   "heroSection": {
     "title": "Women Coding Community",
-    "description": "Empowering Women in Their Tech Careers",
+    "subtitle": "Empowering Women in Their Tech Careers",
     "customStyle": {
       "backgroundColour": {
         "color": "primary",

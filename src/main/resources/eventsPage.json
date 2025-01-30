@@ -7,14 +7,18 @@
       "pageSize": 10
     }
   },
-  "hero": {
+  "heroSection": {
     "title": "Online and In-Person Events",
-    "description": "Join the Women Coding Community for events and meetups that enhance your skills, deepen your knowledge, and expand your professional network.\n\nOur events include webinars, hands-on workshops, study groups, panel discussions, and keynotes with industry experts. Whether online or in-person, these gatherings offer valuable opportunities to share insights, learn collaboratively, and stay updated on the latest trends. Connect, grow, and thrive with fellow members in a supportive environment.",
-    "image": {
-      "path": "https://cloudprovider.com/image.png",
-      "alt": "There is a group of women showing WCC logo",
-      "type": "desktop"
-    }
+    "images": [
+      {
+        "path": "https://cloudprovider.com/image.png",
+        "alt": "There is a group of women showing WCC logo",
+        "type": "desktop"
+      }
+    ]
+  },
+  "page": {
+    "description": "Join the Women Coding Community for events and meetups that enhance your skills, deepen your knowledge, and expand your professional network.\n\nOur events include webinars, hands-on workshops, study groups, panel discussions, and keynotes with industry experts. Whether online or in-person, these gatherings offer valuable opportunities to share insights, learn collaboratively, and stay updated on the latest trends. Connect, grow, and thrive with fellow members in a supportive environment."
   },
   "contact": {
     "title": "Contact us",

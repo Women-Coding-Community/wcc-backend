@@ -1,6 +1,7 @@
 package com.wcc.platform.factories;
 
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
+import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createPageSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createPageTest;
 
@@ -31,6 +32,7 @@ public class SetupMentorshipFactories {
     final String pageId = PageType.MENTORSHIP.getId();
     return new MentorshipPage(
         pageId,
+        createNoImageHeroSectionTest(),
         createPageTest(),
         createPageSectionTest("Mentor"),
         createPageSectionTest("Mentee"),

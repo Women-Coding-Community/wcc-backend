@@ -95,7 +95,7 @@ class DefaultControllerTest {
   void testLandingPageOkResponse() throws Exception {
     var page =
         LandingPage.builder()
-            .heroSection(SetupFactories.createPageTest())
+            .heroSection(SetupFactories.createHeroSectionTest())
             .programmes(createSectionProgramme())
             .events(createSection("Events", ProgramType.TECH_TALK))
             .announcements(createSection("Announcements", ProgramType.OTHERS))

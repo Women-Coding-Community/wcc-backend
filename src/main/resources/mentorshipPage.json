@@ -1,7 +1,9 @@
 {
   "id": "page:MENTORSHIP_OVERVIEW",
+  "heroSection": {
+    "title": "Mentorship Programme"
+  },
   "page": {
-    "title": "Mentorship Programme",
     "description": "Mentorship is a fantastic way to get support for your personal growth and career development. Mentorship relationships can be rewarding to both people, personally and professionally. It's an opportunity to develop communication skills, expand your viewpoints, and consider new ways of approaching situations. And both partners can advance their careers in the process."
   },
   "mentorSection": {

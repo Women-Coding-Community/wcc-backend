@@ -1,7 +1,9 @@
 {
   "id": "page:CODE_OF_CONDUCT",
+  "heroSection": {
+    "title": "WCC Code of Conduct"
+  },
   "page": {
-    "title": "Code of Conduct",
     "description": "At Women Coding Community we are committed to a vibrant, supportive community where women can network, share experiences, and foster professional relationships, regardless of age, gender, visible or invisible disability, ethnicity, gender expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, sexual orientation or preferred programming language(s)."
   },
   "items": [
