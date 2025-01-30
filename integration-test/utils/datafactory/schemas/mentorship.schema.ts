@@ -21,7 +21,7 @@ export const mentorshipSchema = {
           menteeSection: {
             pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
 
-            feedbackSection: {
+             feedbackSection: {
               feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
 
               additionalProperties: false,
