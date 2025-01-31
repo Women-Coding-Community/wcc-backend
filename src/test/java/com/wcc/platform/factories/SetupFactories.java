@@ -41,6 +41,7 @@ public class SetupFactories {
 
   public static final int DEFAULT_CURRENT_PAGE = 1;
   public static final int DEFAULT_PAGE_SIZE = 10;
+  public static final String HERO_TITLE = "Hero title";
 
   public static final ObjectMapper OBJECT_MAPPER = new ObjectMapperConfig().objectMapper();
 
@@ -54,7 +55,12 @@ public class SetupFactories {
 
   public static TeamPage createTeamPageTest() {
     final String pageId = PageType.TEAM.getId();
-    return new TeamPage(pageId, createPageTest(), createContactTest(), createMemberByTypeTest());
+    return new TeamPage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        createPageTest(),
+        createContactTest(),
+        createMemberByTypeTest());
   }
 
   /** Factory test. */
@@ -73,6 +79,7 @@ public class SetupFactories {
     return new CollaboratorPage(
         pageId,
         createPaginationTest(),
+        createNoImageHeroSectionTest(),
         createPageTest(),
         createContactTest(),
         List.of(createCollaboratorsTest()));
@@ -88,9 +95,11 @@ public class SetupFactories {
     }
   }
 
+  /** Code of conduct factory for testing. */
   public static CodeOfConductPage createCodeOfConductPageTest() {
     final String pageId = PageType.CODE_OF_CONDUCT.getId();
-    return new CodeOfConductPage(pageId, createPageTest(), List.of(createSectionTest()));
+    return new CodeOfConductPage(
+        pageId, createNoImageHeroSectionTest(), createPageTest(), List.of(createSectionTest()));
   }
 
   /** Code of conduct factory for testing. */
@@ -283,14 +292,20 @@ public class SetupFactories {
 
   /** Factory test for hero section. */
   public static HeroSection createHeroSectionTest() {
-    return new HeroSection("title", "hero description", createImageTest(), backgroundSecondary());
+    return new HeroSection(
+        HERO_TITLE, "Hero description", List.of(createImageTest()), backgroundSecondary());
+  }
+
+  /** Factory test for hero section. */
+  public static HeroSection createNoImageHeroSectionTest() {
+    return new HeroSection(HERO_TITLE, "Hero description", null, null);
   }
 
   /** About Us factory for testing. */
   public static AboutUsPage createAboutUsPageTest() {
     final String pageId = PageType.ABOUT_US.getId();
     return new AboutUsPage(
-        pageId, createPageTest(), List.of(createSectionTest()), createContactTest());
+        pageId, createHeroSectionTest(), List.of(createSectionTest()), createContactTest());
   }
 
   /** About Us factory for testing. */

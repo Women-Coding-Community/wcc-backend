@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.pages;
 
+import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ import lombok.ToString;
 @Builder
 public class LandingPage {
   @NotNull private String id;
-  @NotNull private Page heroSection;
+  @NotNull private HeroSection heroSection;
   @NotNull private Page fullBannerSection;
   @NotNull private Section<ProgrammeItem> programmes;
   private Section<Event> announcements;

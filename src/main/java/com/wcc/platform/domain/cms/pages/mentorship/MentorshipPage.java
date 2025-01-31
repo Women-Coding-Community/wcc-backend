@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
+import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.PageSection;
 import com.wcc.platform.domain.cms.pages.Page;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
  */
 public record MentorshipPage(
     @NotNull String id,
+    @NotNull HeroSection heroSection,
     @NotNull Page page,
     @NotNull PageSection mentorSection,
     @NotNull PageSection menteeSection,

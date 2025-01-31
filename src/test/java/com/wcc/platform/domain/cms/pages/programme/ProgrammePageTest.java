@@ -2,10 +2,12 @@ package com.wcc.platform.domain.cms.pages.programme;
 
 import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
 import static com.wcc.platform.factories.SetupFactories.createContactTest;
+import static com.wcc.platform.factories.SetupFactories.createHeroSectionTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.wcc.platform.domain.cms.attributes.Contact;
+import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
 import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.platform.EventSection;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test;
 class ProgrammePageTest {
 
   public static final String PROG_ID = "1";
+  private final HeroSection heroSection = createHeroSectionTest();
   private final Page page = new Page();
   private final Contact contact = createContactTest();
   private final List<Programme> programmeDetails = List.of(new Programme());
@@ -27,7 +30,7 @@ class ProgrammePageTest {
   @DisplayName("Given no-args constructor, when initialized, then fields should be null")
   void noArgsConstructor() {
     ProgrammePage programmePage = new ProgrammePage();
-
+    assertNull(programmePage.getHeroSection());
     assertNull(programmePage.getPage());
     assertNull(programmePage.getContact());
     assertNull(programmePage.getProgrammeDetails());
@@ -39,8 +42,10 @@ class ProgrammePageTest {
       "Given all-args constructor, when initialized, then fields should be correctly assigned")
   void allArgsConstructor() {
     ProgrammePage programmePage =
-        new ProgrammePage("id", page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage(
+            "id", heroSection, page, contact, programmeDetails, eventSection, customStyle);
 
+    assertEquals(heroSection, programmePage.getHeroSection());
     assertEquals(page, programmePage.getPage());
     assertEquals(contact, programmePage.getContact());
     assertEquals(programmeDetails, programmePage.getProgrammeDetails());
@@ -52,12 +57,14 @@ class ProgrammePageTest {
   void builder() {
     ProgrammePage programmePage =
         ProgrammePage.builder()
+            .heroSection(heroSection)
             .page(page)
             .contact(contact)
             .programmeDetails(programmeDetails)
             .eventSection(eventSection)
             .build();
 
+    assertEquals(heroSection, programmePage.getHeroSection());
     assertEquals(page, programmePage.getPage());
     assertEquals(contact, programmePage.getContact());
     assertEquals(programmeDetails, programmePage.getProgrammeDetails());
@@ -70,9 +77,11 @@ class ProgrammePageTest {
           + "when compared, then they should be equal and hash codes should match")
   void equalsAndHashCode() {
     ProgrammePage programmePage1 =
-        new ProgrammePage(PROG_ID, page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage(
+            PROG_ID, heroSection, page, contact, programmeDetails, eventSection, customStyle);
     ProgrammePage programmePage2 =
-        new ProgrammePage(PROG_ID, page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage(
+            PROG_ID, heroSection, page, contact, programmeDetails, eventSection, customStyle);
 
     assertEquals(programmePage1, programmePage2);
     assertEquals(programmePage1.hashCode(), programmePage2.hashCode());
@@ -84,10 +93,13 @@ class ProgrammePageTest {
           + "then it should return correct string representation")
   void testToString() {
     ProgrammePage programmePage =
-        new ProgrammePage(PROG_ID, page, contact, programmeDetails, eventSection, customStyle);
+        new ProgrammePage(
+            PROG_ID, heroSection, page, contact, programmeDetails, eventSection, customStyle);
     String expected =
         "ProgrammePage(id="
             + PROG_ID
+            + ", heroSection="
+            + heroSection
             + ", page="
             + page
             + ", contact="

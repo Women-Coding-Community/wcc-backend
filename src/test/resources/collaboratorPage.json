@@ -8,9 +8,10 @@
       "pageSize": 10
     }
   },
+  "heroSection": {
+    "title": "WCC Collaborators"
+  },
   "page": {
-    "title": "title",
-    "subtitle": "subtitle",
     "description": "description"
   },
   "contact": {

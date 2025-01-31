@@ -1,8 +1,9 @@
 {
   "id": "page:TEAM",
+  "heroSection": {
+    "title": "WCC Core Team"
+  },
   "page": {
-    "title": "Team",
-    "subtitle": "Core Team",
     "description": "The core team of our community is composed of visionary directors and dynamic leaders, who bring a wealth of experience and dedication to empowering women in technology. These esteemed professionals are committed to fostering an environment of growth, inclusivity and support, guiding our community toward achieving its mission and goals."
   },
   "contact": {
