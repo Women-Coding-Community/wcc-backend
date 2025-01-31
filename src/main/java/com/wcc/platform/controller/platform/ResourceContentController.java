@@ -3,6 +3,7 @@ package com.wcc.platform.controller.platform;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/platform/v1/")
+@SecurityRequirement(name = "apiKey")
 public class ResourceContentController {
 
   private final PlatformService service;
