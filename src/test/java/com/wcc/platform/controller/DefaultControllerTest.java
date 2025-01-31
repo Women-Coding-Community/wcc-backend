@@ -4,12 +4,12 @@ import static com.wcc.platform.domain.platform.SocialNetworkType.SLACK;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.pages.FooterSection;
@@ -20,6 +20,7 @@ import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.factories.SetupEventFactories;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.factories.SetupProgrammeFactories;
@@ -29,9 +30,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for footer api. */
+@ActiveProfiles("test")
+@Import(SecurityConfig.class)
 @WebMvcTest(DefaultController.class)
 class DefaultControllerTest {
   @Autowired private MockMvc mockMvc;
@@ -46,7 +51,8 @@ class DefaultControllerTest {
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
-        .perform(get("/api/cms/v1/footer").contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/footer").contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("Invalid Json")))
@@ -66,7 +72,8 @@ class DefaultControllerTest {
                 new LabelLink("label_title", "label", "label_uri")));
 
     mockMvc
-        .perform(get("/api/cms/v1/footer").contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/footer").contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.title", is("footer_title")))
         .andExpect(jsonPath("$.subtitle", is("footer_subtitle")))
@@ -84,7 +91,9 @@ class DefaultControllerTest {
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
-        .perform(get("/api/cms/v1/landingPage").contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/landingPage")
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("Invalid Json")))
@@ -104,7 +113,9 @@ class DefaultControllerTest {
     when(service.getLandingPage()).thenReturn(page);
 
     mockMvc
-        .perform(get("/api/cms/v1/landingPage").contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/landingPage")
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(page)));
   }

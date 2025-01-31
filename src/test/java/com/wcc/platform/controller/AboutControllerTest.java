@@ -12,21 +12,27 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.CmsService;
 import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+/** Unit test for about page apis. */
+@ActiveProfiles("test")
+@Import(SecurityConfig.class)
 @WebMvcTest(AboutController.class)
 class AboutControllerTest {
 
@@ -44,7 +50,7 @@ class AboutControllerTest {
     when(service.getTeam()).thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
-        .perform(get("/api/cms/v1/team").contentType(APPLICATION_JSON))
+        .perform(MockMvcRequestFactory.getRequest("/api/cms/v1/team").contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
         .andExpect(jsonPath("$.message", is("Not Found Exception")))
@@ -57,7 +63,7 @@ class AboutControllerTest {
     when(service.getTeam()).thenThrow(internalError);
 
     mockMvc
-        .perform(get("/api/cms/v1/team").contentType(APPLICATION_JSON))
+        .perform(MockMvcRequestFactory.getRequest("/api/cms/v1/team").contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("internal error")))
@@ -70,7 +76,9 @@ class AboutControllerTest {
         .thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
-        .perform(get("/api/cms/v1/collaborators").contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/collaborators")
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
         .andExpect(jsonPath("$.message", is("Not Found Exception")))
@@ -83,7 +91,9 @@ class AboutControllerTest {
     when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE)).thenThrow(internalError);
 
     mockMvc
-        .perform(get("/api/cms/v1/collaborators").contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/collaborators")
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("internal Json")))
@@ -100,7 +110,8 @@ class AboutControllerTest {
 
     mockMvc
         .perform(
-            get(String.format("%s%s", API_COLLABORATORS, PAGINATION_COLLABORATORS))
+            MockMvcRequestFactory.getRequest(
+                    String.format("%s%s", API_COLLABORATORS, PAGINATION_COLLABORATORS))
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
@@ -111,7 +122,8 @@ class AboutControllerTest {
     when(service.getCodeOfConduct()).thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
-        .perform(get(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
         .andExpect(jsonPath("$.message", is("Not Found Exception")))
@@ -124,7 +136,8 @@ class AboutControllerTest {
     when(service.getCodeOfConduct()).thenThrow(internalError);
 
     mockMvc
-        .perform(get(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("internal Json")))
@@ -140,7 +153,8 @@ class AboutControllerTest {
     when(service.getCodeOfConduct()).thenReturn(createCodeOfConductPageTest(fileName));
 
     mockMvc
-        .perform(get(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestFactory.getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
@@ -150,7 +164,7 @@ class AboutControllerTest {
     when(service.getAboutUs()).thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
-        .perform(get(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .perform(MockMvcRequestFactory.getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
         .andExpect(jsonPath("$.message", is("Not Found Exception")))
@@ -163,7 +177,7 @@ class AboutControllerTest {
     when(service.getAboutUs()).thenThrow(internalError);
 
     mockMvc
-        .perform(get(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .perform(MockMvcRequestFactory.getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("internal Json")))
@@ -178,7 +192,7 @@ class AboutControllerTest {
     when(service.getAboutUs()).thenReturn(createAboutUsPageTest(fileName));
 
     mockMvc
-        .perform(get(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .perform(MockMvcRequestFactory.getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

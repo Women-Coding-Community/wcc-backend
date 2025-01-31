@@ -5,6 +5,7 @@ import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.service.EventService;
 import com.wcc.platform.service.FilterService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/cms/v1/")
+@SecurityRequirement(name = "apiKey")
 @Tag(name = "Pages: Event", description = "All APIs related to events")
 @Validated
 public class EventController {

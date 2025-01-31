@@ -4,6 +4,7 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.service.PageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for event pages API. */
 @RestController
 @RequestMapping("/api/platform/v1/page")
+@SecurityRequirement(name = "apiKey")
 @Tag(name = "Platform: Pages", description = "Platform Internal Pages APIs")
 public class PageController {
 

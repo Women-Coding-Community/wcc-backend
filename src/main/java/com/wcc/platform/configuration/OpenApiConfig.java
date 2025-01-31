@@ -1,6 +1,8 @@
 package com.wcc.platform.configuration;
 
 import com.wcc.platform.domain.platform.config.PlatformServers;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
@@ -10,6 +12,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /** Custom configuration for open api. */
 @Configuration
+@SecurityScheme(
+    name = "apiKey",
+    type = SecuritySchemeType.APIKEY,
+    paramName = "X-API-KEY",
+    in = io.swagger.v3.oas.annotations.enums.SecuritySchemeIn.HEADER)
 public class OpenApiConfig implements WebMvcConfigurer {
 
   @Bean
