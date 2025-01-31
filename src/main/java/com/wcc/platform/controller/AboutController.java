@@ -7,6 +7,7 @@ import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.aboutUs.CelebrateHerPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** Rest controller for about pages apis. */
 @RestController
 @RequestMapping("/api/cms/v1/")
+@SecurityRequirement(name = "apiKey")
 @Tag(name = "Pages: About Us", description = "All APIs under session About-Us")
 public class AboutController {
 
