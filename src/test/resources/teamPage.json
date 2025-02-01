@@ -1,8 +1,9 @@
 {
   "id": "page:TEAM",
+  "heroSection": {
+    "title": "WCC Core Team"
+  },
   "page": {
-    "title": "title",
-    "subtitle": "subtitle",
     "description": "description"
   },
   "contact": {

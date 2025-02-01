@@ -8,9 +8,10 @@
       "pageSize": 10
     }
   },
+  "heroSection": {
+    "title": "WCC Collaborators"
+  },
   "page": {
-    "title": "Team",
-    "subtitle": "Collaborators",
     "description": "Our collaborators are the backbone of our community, offering vital expertise and support that drive our initiatives forward and enhance our digital presence."
   },
   "contact": {
