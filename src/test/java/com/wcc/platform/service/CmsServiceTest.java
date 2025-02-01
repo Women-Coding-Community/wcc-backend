@@ -29,7 +29,9 @@ import org.mockito.MockitoAnnotations;
 class CmsServiceTest {
   private final LandingPage landingPage =
       LandingPage.builder()
-          .heroSection(SetupFactories.createPageTest("Hero"))
+          .id(PageType.LANDING_PAGE.getId())
+          .heroSection(SetupFactories.createHeroSectionTest())
+          .fullBannerSection(SetupFactories.createPageTest("Page banner section"))
           .volunteerSection(SetupFactories.createPageTest("Volunteer"))
           .build();
   @Mock private PageRepository pageRepository;

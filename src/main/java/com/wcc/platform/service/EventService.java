@@ -50,7 +50,11 @@ public class EventService {
       final PageData<Event> eventPageData = new PageData<>(paginatedEvents);
 
       return new EventsPage(
-          new PageMetadata(paginationRecord), page.hero(), page.contact(), eventPageData);
+          new PageMetadata(paginationRecord),
+          page.heroSection(),
+          page.page(),
+          page.contact(),
+          eventPageData);
 
     } catch (JsonProcessingException e) {
       throw new PlatformInternalException(e.getMessage(), e);

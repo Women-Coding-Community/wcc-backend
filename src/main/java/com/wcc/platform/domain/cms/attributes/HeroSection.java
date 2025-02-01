@@ -2,14 +2,15 @@ package com.wcc.platform.domain.cms.attributes;
 
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Intro section.
  *
  * @param title title of section
- * @param description section description not mandatory
- * @param image mandatory image
+ * @param subtitle section description not mandatory
+ * @param images mandatory image
  * @param customStyle custom style
  */
 public record HeroSection(
-    @NotNull String title, String description, @NotNull Image image, CustomStyle customStyle) {}
+    @NotNull String title, String subtitle, List<Image> images, CustomStyle customStyle) {}

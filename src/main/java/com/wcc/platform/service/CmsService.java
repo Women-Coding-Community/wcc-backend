@@ -118,6 +118,7 @@ public class CmsService {
         return new CollaboratorPage(
             PageType.COLLABORATOR.getId(),
             new PageMetadata(paginationRecord),
+            page.heroSection(),
             page.page(),
             page.contact(),
             pagCollaborators);
