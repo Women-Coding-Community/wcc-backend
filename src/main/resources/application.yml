@@ -6,8 +6,7 @@ spring:
 
 security:
   api:
-    key: ${API_KEY:e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4}
-
+    key: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4
 
 file:
   storage:
