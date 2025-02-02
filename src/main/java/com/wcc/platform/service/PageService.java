@@ -28,8 +28,13 @@ public class PageService {
     this.objectMapper = objectMapper;
   }
 
-  /** Save page content based on page Type. */
+  /** Update page content based on page Type. */
   public Object update(final PageType pageType, final Object page) {
+    pageRepository
+        .findById(String.valueOf(pageType.getId()))
+        .orElseThrow(
+            () -> new ContentNotFoundException("Page not found for id: " + pageType.getId()));
+
     try {
       final var entity = new HashMap<>(objectMapper.convertValue(page, Map.class));
       entity.put("id", pageType.getId());

@@ -53,6 +53,16 @@ class PageServiceTest {
 
   @Test
   @DisplayName(
+      "Given update page, When page does not exist, "
+          + "Then it should throw ContentNotFoundException")
+  void updateShouldThrowsContentNotFound() {
+    when(pageRepository.findById(pageType.getId())).thenReturn(Optional.empty());
+
+    assertThrows(ContentNotFoundException.class, () -> pageService.update(pageType, pageEntity));
+  }
+
+  @Test
+  @DisplayName(
       "Given invalid pageType and page, When update is called, "
           + "Then it should throw PlatformInternalException")
   void updateShouldThrowExceptionOnConversionError() {
