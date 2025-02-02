@@ -11,15 +11,18 @@ export const heroSectionSchema = {
           type: 'string',
           minLength: 1,
         },
-        description: {
+        subtitle: {
           type: 'string',
           minLength: 1,
         },
-        image: { ...imagesSchema.definitions.imagesSchema },
+        images: {
+          type: 'array',
+          items: { ...imagesSchema.definitions.imagesSchema },
+        },
         customStyle: { ...customStyleSchema.definitions.customStyleSchema },
       },
       additionalProperties: false,
-      required: ['title', 'image'],
+      required: ['title'],
     },
   },
 };

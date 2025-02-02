@@ -1,4 +1,4 @@
-import { pageSchema } from './page.schema';
+import { heroSectionSchema } from './hero.section.schema';
 import { contactSchema } from './contact.schema';
 import { linkSchema } from './link.schema';
 
@@ -9,7 +9,7 @@ export const aboutSchema = {
       type: 'string',
       const: 'page:ABOUT_US',
     },
-    heroSection: { ...pageSchema.definitions.pageSchema },
+    heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
     items: {
       type: 'array',
       items: [
