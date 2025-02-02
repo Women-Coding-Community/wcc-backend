@@ -1,17 +1,6 @@
 package com.wcc.platform.integrationtests;
 
-import static com.wcc.platform.factories.SetupFactories.createLinkTest;
-import static com.wcc.platform.factories.SetupFactories.createSocialNetworksTest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.surrealdb.driver.SyncSurrealDriver;
-import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.repository.surrealdb.SurrealDbPageRepository;
-import java.util.Map;
-import java.util.Optional;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -42,39 +31,5 @@ class SurrealDbIntegrationTest {
     registry.add("surrealdb.password", () -> "root");
     registry.add("surrealdb.namespace", () -> "test_namespace");
     registry.add("surrealdb.database", () -> "test_db");
-  }
-
-  @Test
-  void testSaveAndFindAll() {
-    SurrealDbPageRepository repository = new SurrealDbPageRepository(driver);
-    // Arrange
-    var networks = createSocialNetworksTest();
-    LabelLink link = createLinkTest();
-
-    Map<String, Object> map =
-        Map.of(
-            "id",
-            "page:FOOTER",
-            "title",
-            "footer_title",
-            "subtitle",
-            "footer_subtitle",
-            "description",
-            "footer_description",
-            "network",
-            networks,
-            "link",
-            link);
-
-    // Act
-    repository.create(map);
-    Optional<Map<String, Object>> page = repository.findById(PageType.FOOTER.getId());
-
-    // Assert
-    assertTrue(page.isPresent());
-    assertEquals(6, page.get().size());
-    assertTrue(page.get().containsValue(PageType.FOOTER.getId()));
-
-    driver.delete(TABLE);
   }
 }

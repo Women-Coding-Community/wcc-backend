@@ -5,6 +5,7 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,10 @@ public class PageService {
   /** Save page content based on page Type. */
   public Object update(final PageType pageType, final Object page) {
     try {
-      return pageRepository.update(
-          String.valueOf(pageType.getId()), objectMapper.convertValue(page, Map.class));
+      final var entity = new HashMap<>(objectMapper.convertValue(page, Map.class));
+      entity.put("id", pageType.getId());
+
+      return pageRepository.update(String.valueOf(pageType.getId()), entity);
     } catch (IllegalArgumentException e) {
       log.error("Error while updating page: {}, {}", pageType, page.toString(), e);
       throw new PlatformInternalException(pageType, e);
@@ -41,7 +44,10 @@ public class PageService {
   /** Create any page. */
   public Object create(final PageType pageType, final Object page) {
     try {
-      return pageRepository.create(objectMapper.convertValue(page, Map.class));
+      final var entity = new HashMap<>(objectMapper.convertValue(page, Map.class));
+      entity.put("id", pageType.getId());
+
+      return pageRepository.create(entity);
     } catch (IllegalArgumentException e) {
       log.error("Error while creating page: {}, {}", pageType, page.toString(), e);
       throw new PlatformInternalException(pageType, e);
