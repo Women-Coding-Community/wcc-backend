@@ -21,4 +21,10 @@ export default defineConfig({
       },
     },
   ],
+
+  use: {
+    extraHTTPHeaders: {
+      'X-API-KEY': process.env.API_KEY!,
+    },
+  },
 });

@@ -1,5 +1,6 @@
 import { pageSchema } from './page.schema';
 import { linkSchema } from './link.schema';
+import { heroSectionSchema } from './hero.section.schema';
 
 export const codeofconductSchema = {
   $ref: '#/definitions/codeofconductSchema',
@@ -11,9 +12,8 @@ export const codeofconductSchema = {
           type: 'string',
           minLength: 1,
         },
-        page: {
-          page: { ...pageSchema.definitions.pageSchema },
-        },
+        heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
+        page: { ...pageSchema.definitions.pageSchema },
         items: {
           type: 'array',
           items: [
@@ -45,7 +45,7 @@ export const codeofconductSchema = {
         },
       },
       additionalProperties: false,
-      required: ['id', 'page', 'items'],
+      required: ['id', 'heroSection', 'page', 'items'],
     },
   },
 };

@@ -1,6 +1,7 @@
 import { pageSchema } from './page.schema';
 import { pageSectionSchema } from './pagesection.schema';
 import { feedbackSectionSchema } from './feedback.schema';
+import { heroSectionSchema } from './hero.section.schema';
 
 export const mentorshipSchema = {
   $ref: '#/definitions/mentorshipSchema',
@@ -13,21 +14,15 @@ export const mentorshipSchema = {
           minLength: 1,
           const: 'page:MENTORSHIP_OVERVIEW',
         },
+        heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
         page: { ...pageSchema.definitions.pageSchema },
-
-        mentorSection: {
-          pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
-        },
-        menteeSection: {
-          pageSection: { ...pageSectionSchema.definitions.pageSectionSchema },
-        },
-        feedbackSection: {
-          feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
-        },
+        mentorSection: { ...pageSectionSchema.definitions.pageSectionSchema },
+        menteeSection: { ...pageSectionSchema.definitions.pageSectionSchema },
+        feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
       },
 
       additionalProperties: false,
-      required: ['id', 'page', 'mentorSection', 'menteeSection'],
+      required: ['id', 'heroSection', 'page', 'mentorSection', 'menteeSection'],
     },
   },
 };
