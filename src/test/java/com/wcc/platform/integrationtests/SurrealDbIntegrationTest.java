@@ -1,6 +1,14 @@
 package com.wcc.platform.integrationtests;
 
+import static com.wcc.platform.domain.cms.PageType.FOOTER;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import com.surrealdb.driver.SyncSurrealDriver;
+import com.wcc.platform.repository.surrealdb.SurrealDbPageRepository;
+import java.util.Map;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -31,5 +39,19 @@ class SurrealDbIntegrationTest {
     registry.add("surrealdb.password", () -> "root");
     registry.add("surrealdb.namespace", () -> "test_namespace");
     registry.add("surrealdb.database", () -> "test_db");
+  }
+
+  @BeforeEach
+  void deletePage() {
+    final SurrealDbPageRepository repository = new SurrealDbPageRepository(driver);
+    repository.deleteById(FOOTER.getId());
+  }
+
+  @Test
+  void testFindById() {
+    final SurrealDbPageRepository repository = new SurrealDbPageRepository(driver);
+    Optional<Map<String, Object>> page = repository.findById(FOOTER.getId());
+
+    assertFalse(page.isPresent());
   }
 }

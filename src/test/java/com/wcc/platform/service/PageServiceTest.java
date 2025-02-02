@@ -42,6 +42,7 @@ class PageServiceTest {
       "Given valid pageType and page, When update is called, "
           + "Then it should update the page successfully")
   void updateShouldUpdatePageSuccessfully() {
+    when(pageRepository.findById(pageType.getId())).thenReturn(Optional.of(pageEntity));
     when(objectMapper.convertValue(any(), eq(Map.class))).thenReturn(pageEntity);
     when(pageRepository.update(anyString(), any())).thenReturn(pageEntity);
 
@@ -66,6 +67,7 @@ class PageServiceTest {
       "Given invalid pageType and page, When update is called, "
           + "Then it should throw PlatformInternalException")
   void updateShouldThrowExceptionOnConversionError() {
+    when(pageRepository.findById(pageType.getId())).thenReturn(Optional.of(pageEntity));
     when(objectMapper.convertValue(any(), eq(Map.class))).thenThrow(IllegalArgumentException.class);
 
     assertThrows(PlatformInternalException.class, () -> pageService.update(pageType, pageEntity));
