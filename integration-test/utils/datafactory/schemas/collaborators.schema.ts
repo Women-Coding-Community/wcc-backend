@@ -2,10 +2,15 @@ import { pageSchema } from './page.schema';
 import { contactSchema } from './contact.schema';
 import { memberSchema } from './member.schema';
 import { paginationSchema } from './pagination.schema';
+import { heroSectionSchema } from './hero.section.schema';
 
 export const collaboratorsSchema = {
   type: 'object',
   properties: {
+    id: {
+      type: 'string',
+      minLength: 1,
+    },
     metadata: {
       type: 'object',
       properties: {
@@ -14,6 +19,7 @@ export const collaboratorsSchema = {
       additionalProperties: false,
       required: ['pagination'],
     },
+    heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
     page: { ...pageSchema.definitions.pageSchema },
     contact: { ...contactSchema.definitions.contactSchema },
     collaborators: {
@@ -22,5 +28,5 @@ export const collaboratorsSchema = {
     },
   },
   additionalProperties: false,
-  required: ['metadata', 'page', 'contact', 'collaborators'],
+  required: ['id', 'metadata', 'heroSection', 'page', 'contact', 'collaborators'],
 };
