@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotNull;
 public record EventsPage(
     @NotNull String id,
     @NotNull PageMetadata metadata,
-    @NotNull HeroSection hero,
+    @NotNull HeroSection heroSection,
     @NotNull Page page,
     @NotNull Contact contact,
     @NotNull PageData<Event> data) {}

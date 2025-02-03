@@ -48,8 +48,9 @@ class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
     var response = eventController.getEventsPage(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     assertEquals(
-        eventsPage.hero().title(), Objects.requireNonNull(response.getBody()).hero().title());
-    assertEquals(eventsPage.hero().subtitle(), response.getBody().hero().subtitle());
+        eventsPage.heroSection().title(),
+        Objects.requireNonNull(response.getBody()).heroSection().title());
+    assertEquals(eventsPage.heroSection().subtitle(), response.getBody().heroSection().subtitle());
     assertEquals(eventsPage.contact(), response.getBody().contact());
     assertEquals(eventsPage.metadata(), response.getBody().metadata());
     assertEquals(eventsPage.data(), response.getBody().data());

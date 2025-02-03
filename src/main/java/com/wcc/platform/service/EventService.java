@@ -55,7 +55,7 @@ public class EventService {
         return new EventsPage(
             EVENTS.getId(),
             new PageMetadata(paginationRecord),
-            page.hero(),
+            page.heroSection(),
             page.page(),
             page.contact(),
             eventPageData);
