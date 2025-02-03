@@ -5,6 +5,7 @@ import static com.wcc.platform.factories.SetupFactories.createHeroSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createPageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.pages.PageData;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
@@ -60,7 +61,7 @@ public class SetupEventFactories {
         new PageMetadata(createPaginationTest(items, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
     var data = new PageData<>(items);
     return new EventsPage(
-        metadata, createHeroSectionTest(), createPageTest(), createContactTest(), data);
+        PageType.EVENTS.getId(), metadata, createHeroSectionTest(), createContactTest(), data);
   }
 
   /**

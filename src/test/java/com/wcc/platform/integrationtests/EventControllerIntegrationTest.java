@@ -8,10 +8,15 @@ import static com.wcc.platform.factories.SetupEventFactories.createEventTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.controller.EventController;
+import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.EventService;
 import com.wcc.platform.utils.FileUtil;
+import java.util.Map;
+import java.util.Objects;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +30,30 @@ import org.springframework.test.context.ActiveProfiles;
 class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @Autowired private EventController eventController;
-
+  @Autowired private PageRepository pageRepository;
+  @Autowired private ObjectMapper objectMapper;
   @Autowired private EventService service;
 
+  @BeforeEach
+  void deletePage() {
+    pageRepository.deleteById(EVENTS.getId());
+  }
+
   @SneakyThrows
+  @SuppressWarnings("unchecked")
   @Test
   void testEventsApiSuccess() {
+    var eventsPage = createEventTest(EVENTS.getFileName());
+    pageRepository.create(objectMapper.convertValue(eventsPage, Map.class));
     var response = eventController.getEventsPage(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
+
+    assertEquals(eventsPage.hero(), Objects.requireNonNull(response.getBody()).hero());
+    assertEquals(eventsPage.contact(), response.getBody().contact());
+    assertEquals(eventsPage.metadata(), response.getBody().metadata());
+    assertEquals(eventsPage.data(), response.getBody().data());
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    var expected = FileUtil.readFileAsString(EVENTS.getFileName());
-    var jsonResponse = OBJECT_MAPPER.writeValueAsString(response.getBody());
-
-    JSONAssert.assertEquals(expected, jsonResponse, false);
   }
 
   @SneakyThrows
