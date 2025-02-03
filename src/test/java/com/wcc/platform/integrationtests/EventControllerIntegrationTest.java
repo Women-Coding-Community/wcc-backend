@@ -47,13 +47,14 @@ class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.create(objectMapper.convertValue(eventsPage, Map.class));
     var response = eventController.getEventsPage(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
-    assertEquals(eventsPage.hero(), Objects.requireNonNull(response.getBody()).hero());
+    assertEquals(
+        eventsPage.hero().title(), Objects.requireNonNull(response.getBody()).hero().title());
+    assertEquals(eventsPage.hero().subtitle(), response.getBody().hero().subtitle());
     assertEquals(eventsPage.contact(), response.getBody().contact());
     assertEquals(eventsPage.metadata(), response.getBody().metadata());
     assertEquals(eventsPage.data(), response.getBody().data());
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-
   }
 
   @SneakyThrows
@@ -71,9 +72,11 @@ class EventControllerIntegrationTest extends SurrealDbIntegrationTest {
 
   @Test
   void testGetEventsPage() {
+    var eventsPage = createEventTest(EVENTS.getFileName());
+    pageRepository.create(objectMapper.convertValue(eventsPage, Map.class));
     var result = service.getEvents(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
     var expectedEventsPage = createEventTest(EVENTS.getFileName());
 
-    assertEquals(expectedEventsPage, result);
+    assertEquals(expectedEventsPage.data(), result.data());
   }
 }

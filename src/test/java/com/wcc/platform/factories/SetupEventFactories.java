@@ -61,7 +61,12 @@ public class SetupEventFactories {
         new PageMetadata(createPaginationTest(items, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
     var data = new PageData<>(items);
     return new EventsPage(
-        PageType.EVENTS.getId(), metadata, createHeroSectionTest(), createContactTest(), data);
+        PageType.EVENTS.getId(),
+        metadata,
+        createHeroSectionTest(),
+        createPageTest(),
+        createContactTest(),
+        data);
   }
 
   /**
