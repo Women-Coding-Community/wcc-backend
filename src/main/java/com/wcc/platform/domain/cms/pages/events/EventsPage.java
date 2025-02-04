@@ -6,11 +6,13 @@ import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.PageData;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.platform.Event;
+import jakarta.validation.constraints.NotNull;
 
 /** Events page details. */
 public record EventsPage(
-    PageMetadata metadata,
-    HeroSection heroSection,
-    Page page,
-    Contact contact,
-    PageData<Event> data) {}
+    @NotNull String id,
+    @NotNull PageMetadata metadata,
+    @NotNull HeroSection heroSection,
+    @NotNull Page page,
+    @NotNull Contact contact,
+    @NotNull PageData<Event> data) {}
