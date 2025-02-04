@@ -43,12 +43,16 @@ export const eventsfiltersSchema = {
         },
         location: {
           type: 'array',
+          items: [
+            {
+              type: 'string',
+              minLength: 1,
+            },
+          ],
         },
       },
       additionalProperties: false,
-      required: ['type', 'topics', 'date', 'location'],
     },
   },
   additionalProperties: false,
-  required: ['title', 'filters'],
 };
