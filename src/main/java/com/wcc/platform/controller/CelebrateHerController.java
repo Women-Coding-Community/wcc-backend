@@ -29,7 +29,7 @@ public class CelebrateHerController {
   @GetMapping("/overview")
   @Operation(summary = "API to retrieve celebrateHer page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<CelebrateHerPage> getMentorshipOverview() {
-    return ResponseEntity.ok(service.getOverview());
+  public ResponseEntity<CelebrateHerPage> getCelebrateHerPage() {
+    return ResponseEntity.ok(service.getCelebrateHer());
   }
 }

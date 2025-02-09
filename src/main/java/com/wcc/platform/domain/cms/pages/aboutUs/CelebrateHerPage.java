@@ -1,9 +1,11 @@
 package com.wcc.platform.domain.cms.pages.aboutUs;
 
+import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.pages.Page;
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.AboutHer;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+
 
 /**
  * CMS Celebrate Her page.
@@ -12,5 +14,8 @@ import java.util.List;
  * @param members all details
  */
 public record CelebrateHerPage(
+    @NotNull String id,
+    @NotNull HeroSection heroSection,
     @NotNull Page page,
-    @NotNull List<Member> members) {}
+    @NotNull List<AboutHer> data
+) {}
