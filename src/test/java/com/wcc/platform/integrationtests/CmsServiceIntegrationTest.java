@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
+import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.CmsService;
 import java.util.Map;
@@ -52,7 +52,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.create(objectMapper.convertValue(teamPage, Map.class));
     var result = service.getTeam();
 
-    assertEquals(teamPage.page(), result.page());
+    assertEquals(teamPage.commonSection(), result.commonSection());
     assertEquals(teamPage.contact(), result.contact());
 
     assertEquals(1, result.membersByType().directors().size());
@@ -86,7 +86,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.create(objectMapper.convertValue(collaboratorPage, Map.class));
     var result = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
-    assertEquals(collaboratorPage.page(), result.page());
+    assertEquals(collaboratorPage.commonSection(), result.commonSection());
     assertEquals(collaboratorPage.contact(), result.contact());
     assertEquals(collaboratorPage.metadata(), result.metadata());
 
@@ -103,7 +103,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
     var result = service.getCodeOfConduct();
 
-    assertEquals(codeOfConductPage.page(), result.page());
+    assertEquals(codeOfConductPage.commonSection(), result.commonSection());
     assertEquals(codeOfConductPage.items().size(), result.items().size());
   }
 

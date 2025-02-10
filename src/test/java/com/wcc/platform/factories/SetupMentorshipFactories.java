@@ -1,9 +1,9 @@
 package com.wcc.platform.factories;
 
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
+import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
+import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
-import static com.wcc.platform.factories.SetupFactories.createPageSectionTest;
-import static com.wcc.platform.factories.SetupFactories.createPageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
@@ -33,9 +33,9 @@ public class SetupMentorshipFactories {
     return new MentorshipPage(
         pageId,
         createNoImageHeroSectionTest(),
-        createPageTest(),
-        createPageSectionTest("Mentor"),
-        createPageSectionTest("Mentee"),
+        createCommonSectionTest(),
+        createListSectionTest("Mentor"),
+        createListSectionTest("Mentee"),
         createFeedbackSectionTest());
   }
 

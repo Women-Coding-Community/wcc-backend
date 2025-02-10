@@ -19,7 +19,7 @@ class LandingPageTest {
   @BeforeEach
   void setUp() {
     var hero = SetupFactories.createHeroSectionTest();
-    var volunteer = SetupFactories.createPageTest(VOLUNTEER_TITLE);
+    var volunteer = SetupFactories.createCommonSectionTest(VOLUNTEER_TITLE);
     page1 = LandingPage.builder().heroSection(hero).build();
     page2 = LandingPage.builder().heroSection(hero).build();
     page3 = LandingPage.builder().heroSection(hero).volunteerSection(volunteer).build();
