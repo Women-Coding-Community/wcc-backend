@@ -130,7 +130,7 @@ public class SetupFactories {
     return new PageMetadata(new Pagination(1, 1, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
   }
 
-  /** Factory test for commonSection. */
+  /** Factory test for CommonSection. */
   public static CommonSection createCommonSectionTest(final String title) {
     return CommonSection.builder()
         .title("title " + title)
@@ -141,12 +141,23 @@ public class SetupFactories {
         .build();
   }
 
+  /** Factory test for CommonSection. */
   public static CommonSection createCommonSectionTest() {
     return createCommonSectionTest("defaultPage");
   }
 
+  /** Factory test for ListSection. */
   public static ListSection<String> createListSectionTest() {
     return new ListSection<>("title", "description", null, List.of("item_1", "item_2", "item_3"));
+  }
+
+  /** Factory test for ListSection. */
+  public static ListSection<String> createListSectionTest(final String title) {
+    return new ListSection<>(
+        title,
+        title + "description",
+        createLinkTest(),
+        List.of("topic1 " + title, "topic2 " + title));
   }
 
   /** Factory test. */
@@ -272,15 +283,6 @@ public class SetupFactories {
 
   public static LabelLink createLinkTest() {
     return new LabelLink("link_title", "link_label", "link_uri");
-  }
-
-  /** Factory test for page section. */
-  public static ListSection<String> createListSectionTest(final String title) {
-    return new ListSection<>(
-        title,
-        title + "description",
-        createLinkTest(),
-        List.of("topic1 " + title, "topic2 " + title));
   }
 
   /**
