@@ -1,0 +1,40 @@
+name: Scheduled Playwright API Tests against Dev Env
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      API_HOST: "https://wcc-backend.fly.dev"
+      API_KEY: ${{ secrets.API_KEY_DEV }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: integration_tests/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: integration_tests
+        run: npm ci
+
+      - name: Run Playwright API Tests
+        working-directory: integration_tests
+        run: npm run test-dev
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
