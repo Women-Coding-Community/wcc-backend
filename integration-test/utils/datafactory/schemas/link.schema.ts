@@ -14,8 +14,6 @@ export const linkSchema = {
         },
         uri: {
           type: 'string',
-          format: 'uri',
-          pattern: '^https?://',
           minLength: 1,
         },
       },
