@@ -6,25 +6,22 @@ import static com.wcc.platform.factories.SetupProgrammeFactories.createProgramme
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Test class for {@link Programme}. */
 class ProgrammeTest {
 
-  private final UUID uuid = UUID.randomUUID();
-
   Programme testProgramme;
 
   @BeforeEach
   void setup() {
-    testProgramme = createProgramme(uuid);
+    testProgramme = createProgramme();
   }
 
   @Test
   void testEquals() {
-    assertEquals(testProgramme, createProgramme(uuid));
+    assertEquals(testProgramme, createProgramme());
   }
 
   @Test
@@ -34,7 +31,7 @@ class ProgrammeTest {
 
   @Test
   void testHashCode() {
-    assertEquals(testProgramme.hashCode(), createProgramme(uuid).hashCode());
+    assertEquals(testProgramme.hashCode(), createProgramme().hashCode());
   }
 
   @Test
