@@ -4,8 +4,8 @@ import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTe
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
+import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.domain.platform.ProgramType;
@@ -13,7 +13,6 @@ import com.wcc.platform.domain.platform.Programme;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 /** Test factories for Programme. */
 public class SetupProgrammeFactories {
@@ -42,9 +41,9 @@ public class SetupProgrammeFactories {
     return new ProgrammePage(
         "page:program",
         SetupFactories.createHeroSectionTest(),
-        SetupFactories.createPageTest(),
+        SetupFactories.createCommonSectionTest(),
         SetupFactories.createContactTest(),
-        Collections.singletonList(createProgramme(UUID.randomUUID())),
+        Collections.singletonList(createProgramme()),
         SetupEventFactories.createEventSection(),
         createCustomStyleTest());
   }
@@ -52,7 +51,7 @@ public class SetupProgrammeFactories {
   /** Create Factory. */
   public static Programme createProgrammeByType(final ProgramType type) {
     if (ProgramType.BOOK_CLUB.equals(type)) {
-      createProgramme(UUID.randomUUID());
+      createProgramme();
     } else {
       return createProgrammeWithoutCard();
     }
@@ -64,13 +63,12 @@ public class SetupProgrammeFactories {
    *
    * @return Programme object
    */
-  public static Programme createProgramme(final UUID uuid) {
+  public static Programme createProgramme() {
     return Programme.builder()
         .title("What We Are Reading")
         .description("Every month we vote we read a book this is current month book.")
         .card(
-            new Page(
-                uuid,
+            new CommonSection(
                 "Test book title",
                 "Author of the book",
                 "test book description",

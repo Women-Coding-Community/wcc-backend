@@ -9,22 +9,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.ObjectMapperConfig;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.attributes.MemberByType;
-import com.wcc.platform.domain.cms.attributes.PageSection;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterSection;
-import com.wcc.platform.domain.cms.pages.Page;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
-import com.wcc.platform.domain.cms.pages.Section;
 import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.platform.LeadershipMember;
 import com.wcc.platform.domain.platform.Member;
@@ -58,7 +57,7 @@ public class SetupFactories {
     return new TeamPage(
         pageId,
         createNoImageHeroSectionTest(),
-        createPageTest(),
+        createCommonSectionTest(),
         createContactTest(),
         createMemberByTypeTest());
   }
@@ -80,7 +79,7 @@ public class SetupFactories {
         pageId,
         createPaginationTest(),
         createNoImageHeroSectionTest(),
-        createPageTest(),
+        createCommonSectionTest(),
         createContactTest(),
         List.of(createCollaboratorsTest()));
   }
@@ -99,7 +98,10 @@ public class SetupFactories {
   public static CodeOfConductPage createCodeOfConductPageTest() {
     final String pageId = PageType.CODE_OF_CONDUCT.getId();
     return new CodeOfConductPage(
-        pageId, createNoImageHeroSectionTest(), createPageTest(), List.of(createSectionTest()));
+        pageId,
+        createNoImageHeroSectionTest(),
+        createCommonSectionTest(),
+        List.of(createListSectionTest()));
   }
 
   /** Code of conduct factory for testing. */
@@ -128,9 +130,9 @@ public class SetupFactories {
     return new PageMetadata(new Pagination(1, 1, DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
   }
 
-  /** Factory test for page. */
-  public static Page createPageTest(final String title) {
-    return Page.builder()
+  /** Factory test for CommonSection. */
+  public static CommonSection createCommonSectionTest(final String title) {
+    return CommonSection.builder()
         .title("title " + title)
         .subtitle("subtitle " + title)
         .description("desc " + title)
@@ -139,12 +141,23 @@ public class SetupFactories {
         .build();
   }
 
-  public static Page createPageTest() {
-    return createPageTest("defaultPage");
+  /** Factory test for CommonSection. */
+  public static CommonSection createCommonSectionTest() {
+    return createCommonSectionTest("defaultPage");
   }
 
-  public static Section<String> createSectionTest() {
-    return new Section<>("title", "description", null, List.of("item_1", "item_2", "item_3"));
+  /** Factory test for ListSection. */
+  public static ListSection<String> createListSectionTest() {
+    return new ListSection<>("title", "description", null, List.of("item_1", "item_2", "item_3"));
+  }
+
+  /** Factory test for ListSection. */
+  public static ListSection<String> createListSectionTest(final String title) {
+    return new ListSection<>(
+        title,
+        title + "description",
+        createLinkTest(),
+        List.of("topic1 " + title, "topic2 " + title));
   }
 
   /** Factory test. */
@@ -272,15 +285,6 @@ public class SetupFactories {
     return new LabelLink("link_title", "link_label", "link_uri");
   }
 
-  /** Factory test for page section. */
-  public static PageSection createPageSectionTest(final String title) {
-    return new PageSection(
-        title,
-        title + "description",
-        createLinkTest(),
-        List.of("topic1 " + title, "topic2 " + title));
-  }
-
   /**
    * Factory test for repository file section to delete the content of the file used for testing.
    */
@@ -305,7 +309,7 @@ public class SetupFactories {
   public static AboutUsPage createAboutUsPageTest() {
     final String pageId = PageType.ABOUT_US.getId();
     return new AboutUsPage(
-        pageId, createHeroSectionTest(), List.of(createSectionTest()), createContactTest());
+        pageId, createHeroSectionTest(), List.of(createListSectionTest()), createContactTest());
   }
 
   /** About Us factory for testing. */

@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
-import com.wcc.platform.domain.cms.pages.Section;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Event;
@@ -106,8 +106,8 @@ class DefaultControllerTest {
         LandingPage.builder()
             .heroSection(SetupFactories.createHeroSectionTest())
             .programmes(createSectionProgramme())
-            .events(createSection("Events", ProgramType.TECH_TALK))
-            .announcements(createSection("Announcements", ProgramType.OTHERS))
+            .events(createSectionEvent("Events", ProgramType.TECH_TALK))
+            .announcements(createSectionEvent("Announcements", ProgramType.OTHERS))
             .build();
 
     when(service.getLandingPage()).thenReturn(page);
@@ -120,16 +120,16 @@ class DefaultControllerTest {
         .andExpect(content().json(objectMapper.writeValueAsString(page)));
   }
 
-  private Section<Event> createSection(final String title, final ProgramType techTalk) {
-    return new Section<>(
+  private ListSection<Event> createSectionEvent(final String title, final ProgramType techTalk) {
+    return new ListSection<>(
         title,
         "check our latest " + techTalk,
         SetupFactories.createLinkTest(),
         List.of(SetupEventFactories.createEventTest(techTalk)));
   }
 
-  private Section<ProgrammeItem> createSectionProgramme() {
-    return new Section<>(
+  private ListSection<ProgrammeItem> createSectionProgramme() {
+    return new ListSection<>(
         "Programmes ",
         "Description Programme",
         null,

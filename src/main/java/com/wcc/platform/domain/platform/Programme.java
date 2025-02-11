@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.platform;
 
-import com.wcc.platform.domain.cms.pages.Page;
+import com.wcc.platform.domain.cms.attributes.CommonSection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,5 +20,5 @@ import lombok.ToString;
 public class Programme {
   @NotBlank private String title;
   @NotBlank private String description;
-  @NotNull private Page card;
+  @NotNull private CommonSection card;
 }

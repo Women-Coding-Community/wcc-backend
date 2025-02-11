@@ -31,8 +31,8 @@ class CmsServiceTest {
       LandingPage.builder()
           .id(PageType.LANDING_PAGE.getId())
           .heroSection(SetupFactories.createHeroSectionTest())
-          .fullBannerSection(SetupFactories.createPageTest("Page banner section"))
-          .volunteerSection(SetupFactories.createPageTest("Volunteer"))
+          .fullBannerSection(SetupFactories.createCommonSectionTest("Page banner section"))
+          .volunteerSection(SetupFactories.createCommonSectionTest("Volunteer"))
           .build();
   @Mock private PageRepository pageRepository;
   @Mock private ObjectMapper objectMapper;
