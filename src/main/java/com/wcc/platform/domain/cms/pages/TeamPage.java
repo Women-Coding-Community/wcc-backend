@@ -10,6 +10,6 @@ import jakarta.validation.constraints.NotNull;
 public record TeamPage(
     @NotNull String id,
     @NotNull HeroSection heroSection,
-    @NotNull CommonSection commonSection,
+    @NotNull CommonSection section,
     @NotNull Contact contact,
     @NotNull MemberByType membersByType) {}

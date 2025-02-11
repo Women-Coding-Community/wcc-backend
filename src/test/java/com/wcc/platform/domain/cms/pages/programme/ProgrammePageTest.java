@@ -20,7 +20,7 @@ class ProgrammePageTest {
 
   public static final String PROG_ID = "1";
   private final HeroSection heroSection = createHeroSectionTest();
-  private final CommonSection commonSection = new CommonSection();
+  private final CommonSection section = new CommonSection();
   private final Contact contact = createContactTest();
   private final List<Programme> programmeDetails = List.of(new Programme());
   private final EventSection eventSection = new EventSection();
@@ -31,7 +31,7 @@ class ProgrammePageTest {
   void noArgsConstructor() {
     ProgrammePage programmePage = new ProgrammePage();
     assertNull(programmePage.getHeroSection());
-    assertNull(programmePage.getCommonSection());
+    assertNull(programmePage.getSection());
     assertNull(programmePage.getContact());
     assertNull(programmePage.getProgrammeDetails());
     assertNull(programmePage.getEventSection());
@@ -43,10 +43,10 @@ class ProgrammePageTest {
   void allArgsConstructor() {
     ProgrammePage programmePage =
         new ProgrammePage(
-            "id", heroSection, commonSection, contact, programmeDetails, eventSection, customStyle);
+            "id", heroSection, section, contact, programmeDetails, eventSection, customStyle);
 
     assertEquals(heroSection, programmePage.getHeroSection());
-    assertEquals(commonSection, programmePage.getCommonSection());
+    assertEquals(section, programmePage.getSection());
     assertEquals(contact, programmePage.getContact());
     assertEquals(programmeDetails, programmePage.getProgrammeDetails());
     assertEquals(eventSection, programmePage.getEventSection());
@@ -58,14 +58,14 @@ class ProgrammePageTest {
     ProgrammePage programmePage =
         ProgrammePage.builder()
             .heroSection(heroSection)
-            .commonSection(commonSection)
+            .section(section)
             .contact(contact)
             .programmeDetails(programmeDetails)
             .eventSection(eventSection)
             .build();
 
     assertEquals(heroSection, programmePage.getHeroSection());
-    assertEquals(commonSection, programmePage.getCommonSection());
+    assertEquals(section, programmePage.getSection());
     assertEquals(contact, programmePage.getContact());
     assertEquals(programmeDetails, programmePage.getProgrammeDetails());
     assertEquals(eventSection, programmePage.getEventSection());
@@ -78,22 +78,10 @@ class ProgrammePageTest {
   void equalsAndHashCode() {
     ProgrammePage programmePage1 =
         new ProgrammePage(
-            PROG_ID,
-            heroSection,
-            commonSection,
-            contact,
-            programmeDetails,
-            eventSection,
-            customStyle);
+            PROG_ID, heroSection, section, contact, programmeDetails, eventSection, customStyle);
     ProgrammePage programmePage2 =
         new ProgrammePage(
-            PROG_ID,
-            heroSection,
-            commonSection,
-            contact,
-            programmeDetails,
-            eventSection,
-            customStyle);
+            PROG_ID, heroSection, section, contact, programmeDetails, eventSection, customStyle);
 
     assertEquals(programmePage1, programmePage2);
     assertEquals(programmePage1.hashCode(), programmePage2.hashCode());
@@ -106,20 +94,14 @@ class ProgrammePageTest {
   void testToString() {
     ProgrammePage programmePage =
         new ProgrammePage(
-            PROG_ID,
-            heroSection,
-            commonSection,
-            contact,
-            programmeDetails,
-            eventSection,
-            customStyle);
+            PROG_ID, heroSection, section, contact, programmeDetails, eventSection, customStyle);
     String expected =
         "ProgrammePage(id="
             + PROG_ID
             + ", heroSection="
             + heroSection
-            + ", commonSection="
-            + commonSection
+            + ", section="
+            + section
             + ", contact="
             + contact
             + ", programmeDetails="

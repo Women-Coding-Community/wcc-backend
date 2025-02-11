@@ -27,7 +27,7 @@ import lombok.ToString;
 public class ProgrammePage {
   @NotBlank private String id;
   @NotNull private HeroSection heroSection;
-  @NotNull private CommonSection commonSection;
+  @NotNull private CommonSection section;
   @NotNull private Contact contact;
   @NotEmpty private List<Programme> programmeDetails;
   @NotNull private EventSection eventSection;

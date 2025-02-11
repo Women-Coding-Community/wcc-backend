@@ -13,6 +13,6 @@ public record CollaboratorPage(
     @NotNull String id,
     @NotNull PageMetadata metadata,
     @NotNull HeroSection heroSection,
-    @NotNull CommonSection commonSection,
+    @NotNull CommonSection section,
     @NotNull Contact contact,
     @NotEmpty List<Member> collaborators) {}

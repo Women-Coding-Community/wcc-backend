@@ -13,6 +13,6 @@ public record EventsPage(
     @NotNull String id,
     @NotNull PageMetadata metadata,
     @NotNull HeroSection heroSection,
-    @NotNull CommonSection commonSection,
+    @NotNull CommonSection section,
     @NotNull Contact contact,
     @NotNull PageData<Event> data) {}

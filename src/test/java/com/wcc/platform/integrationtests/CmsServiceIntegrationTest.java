@@ -52,7 +52,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.create(objectMapper.convertValue(teamPage, Map.class));
     var result = service.getTeam();
 
-    assertEquals(teamPage.commonSection(), result.commonSection());
+    assertEquals(teamPage.section(), result.section());
     assertEquals(teamPage.contact(), result.contact());
 
     assertEquals(1, result.membersByType().directors().size());
@@ -86,7 +86,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.create(objectMapper.convertValue(collaboratorPage, Map.class));
     var result = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
-    assertEquals(collaboratorPage.commonSection(), result.commonSection());
+    assertEquals(collaboratorPage.section(), result.section());
     assertEquals(collaboratorPage.contact(), result.contact());
     assertEquals(collaboratorPage.metadata(), result.metadata());
 
@@ -103,7 +103,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
     var result = service.getCodeOfConduct();
 
-    assertEquals(codeOfConductPage.commonSection(), result.commonSection());
+    assertEquals(codeOfConductPage.section(), result.section());
     assertEquals(codeOfConductPage.items().size(), result.items().size());
   }
 

@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * CMS Code of conduct page.
  *
- * @param commonSection CommonSection details as title and description
+ * @param section CommonSection details as title and description
  * @param items all details
  */
 public record CodeOfConductPage(
     @NotNull String id,
     @NotNull HeroSection heroSection,
-    @NotNull CommonSection commonSection,
+    @NotNull CommonSection section,
     @NotEmpty List<ListSection<String>> items) {}

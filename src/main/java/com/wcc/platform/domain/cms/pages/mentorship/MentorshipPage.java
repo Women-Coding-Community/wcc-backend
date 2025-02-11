@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 /**
  * CMS Mentorship Page Overview details.
  *
- * @param commonSection basic page details
+ * @param section basic page details
  * @param mentorSection section to highlight why you apply to a become a mentor
  * @param menteeSection section to highlight why you apply to a become a mentee
  * @param feedbackSection section related to mentorship feedbacks
@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotNull;
 public record MentorshipPage(
     @NotNull String id,
     @NotNull HeroSection heroSection,
-    @NotNull CommonSection commonSection,
+    @NotNull CommonSection section,
     @NotNull ListSection<String> mentorSection,
     @NotNull ListSection<String> menteeSection,
     FeedbackSection feedbackSection) {}

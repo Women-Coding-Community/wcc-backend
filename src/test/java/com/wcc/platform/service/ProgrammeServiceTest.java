@@ -41,7 +41,7 @@ class ProgrammeServiceTest {
 
     var response = service.getProgramme(BOOK_CLUB);
 
-    assertEquals(programmePage.getCommonSection(), response.getCommonSection());
+    assertEquals(programmePage.getSection(), response.getSection());
     assertEquals(programmePage.getContact(), response.getContact());
     assertEquals(programmePage.getProgrammeDetails(), response.getProgrammeDetails());
   }

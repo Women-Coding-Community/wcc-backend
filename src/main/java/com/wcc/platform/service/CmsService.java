@@ -118,7 +118,7 @@ public class CmsService {
             PageType.COLLABORATOR.getId(),
             new PageMetadata(paginationRecord),
             page.heroSection(),
-            page.commonSection(),
+            page.section(),
             page.contact(),
             pagCollaborators);
 

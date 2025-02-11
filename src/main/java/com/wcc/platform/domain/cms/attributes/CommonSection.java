@@ -2,7 +2,6 @@ package com.wcc.platform.domain.cms.attributes;
 
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -19,7 +18,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Builder
 public class CommonSection {
-  private UUID id;
   private String title;
   private String subtitle;
   private String description;

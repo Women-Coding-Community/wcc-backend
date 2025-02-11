@@ -70,7 +70,6 @@ public class SetupProgrammeFactories {
         .description("Every month we vote we read a book this is current month book.")
         .card(
             new CommonSection(
-                uuid,
                 "Test book title",
                 "Author of the book",
                 "test book description",
