@@ -13,7 +13,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    environment: DEV
 
     env:
       API_HOST: "https://wcc-backend.fly.dev"
@@ -32,16 +31,11 @@ jobs:
         working-directory: ./integration-test
         run: npm ci
 
-      - name: Print API Key (Masked)
-        run: echo "API Key is set!"
-        env:
-          API_KEY: ${{ secrets.API_KEY_DEV }}
-
       - name: Run Playwright API Tests
         working-directory: ./integration-test
         env:
           API_HOST: "https://wcc-backend.fly.dev"
-          API_KEY: ${{ secrets.SECURITY_API_KEY }}  # Make sure it's available inside the test
+          API_KEY: ${{ secrets.API_KEY_DEV }}  
         run: npm run test-dev
         continue-on-error: true  # Ensures artifacts still get uploaded
 
