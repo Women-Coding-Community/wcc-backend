@@ -7,6 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 dotenv.config();
 
 export default defineConfig({
+  reporter: 'html',
   projects: [
     {
       name: 'api_dev',
