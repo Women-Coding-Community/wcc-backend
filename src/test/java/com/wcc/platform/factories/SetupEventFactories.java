@@ -1,8 +1,8 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createContactTest;
 import static com.wcc.platform.factories.SetupFactories.createHeroSectionTest;
-import static com.wcc.platform.factories.SetupFactories.createPageTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
@@ -64,7 +64,7 @@ public class SetupEventFactories {
         PageType.EVENTS.getId(),
         metadata,
         createHeroSectionTest(),
-        createPageTest(),
+        createCommonSectionTest(),
         createContactTest(),
         data);
   }

@@ -1,6 +1,8 @@
 package com.wcc.platform.domain.cms.pages;
 
+import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
 import jakarta.validation.constraints.NotNull;
@@ -21,9 +23,9 @@ import lombok.ToString;
 public class LandingPage {
   @NotNull private String id;
   @NotNull private HeroSection heroSection;
-  @NotNull private Page fullBannerSection;
-  @NotNull private Section<ProgrammeItem> programmes;
-  private Section<Event> announcements;
-  private Section<Event> events;
-  @NotNull private Page volunteerSection;
+  @NotNull private CommonSection fullBannerSection;
+  @NotNull private ListSection<ProgrammeItem> programmes;
+  private ListSection<Event> announcements;
+  private ListSection<Event> events;
+  @NotNull private CommonSection volunteerSection;
 }

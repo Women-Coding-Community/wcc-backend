@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.pages;
 
+import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.platform.Member;
@@ -12,6 +13,6 @@ public record CollaboratorPage(
     @NotNull String id,
     @NotNull PageMetadata metadata,
     @NotNull HeroSection heroSection,
-    @NotNull Page page,
+    @NotNull CommonSection section,
     @NotNull Contact contact,
     @NotEmpty List<Member> collaborators) {}

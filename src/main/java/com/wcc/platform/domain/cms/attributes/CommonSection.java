@@ -1,11 +1,7 @@
-package com.wcc.platform.domain.cms.pages;
+package com.wcc.platform.domain.cms.attributes;
 
-import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,9 +17,8 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class Page {
-  private UUID id;
-  @NotNull private String title;
+public class CommonSection {
+  private String title;
   private String subtitle;
   private String description;
   private LabelLink link;
