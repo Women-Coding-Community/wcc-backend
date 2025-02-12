@@ -1,13 +1,9 @@
 name: Scheduled Playwright API Tests against Dev Env
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
-
-permissions:
-  contents: read
-  actions: read
 
 # on:
 #   schedule:
@@ -21,7 +17,7 @@ jobs:
 
     env:
       API_HOST: "https://wcc-backend.fly.dev"
-      API_KEY: ${{ secrets.SECURITY_API_KEY }}
+      API_KEY: ${{ secrets.API_KEY_DEV }}
 
     steps:
       - name: Checkout Repository
