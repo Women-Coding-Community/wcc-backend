@@ -17,6 +17,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: DEV
 
     env:
       API_HOST: "https://wcc-backend.fly.dev"
@@ -34,6 +35,11 @@ jobs:
       - name: Install Dependencies
         working-directory: ./integration-test
         run: npm ci
+
+      - name: Print API Key (Masked)
+        run: echo "API Key is set!"
+        env:
+          API_KEY: ${{ secrets.API_KEY_DEV }}
 
       - name: Run Playwright API Tests
         working-directory: ./integration-test
