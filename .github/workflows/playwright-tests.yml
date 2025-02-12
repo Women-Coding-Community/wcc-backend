@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+
+env:
+  API_HOST: 'https://wcc-backend.fly.dev'
+  API_KEY: ${{ secrets.API_KEY_DEV }}
+
 # on:
 #   schedule:
 #     - cron: '0 0 * * *'  # Runs daily at midnight UTC
@@ -13,32 +18,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    env:
-      API_HOST: "https://wcc-backend.fly.dev"
-      API_KEY: ${{ secrets.API_KEY_DEV }}
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-
       - name: Install Dependencies
         working-directory: ./integration-test
         run: npm ci
-
       - name: Run Playwright API Tests
-        working-directory: ./integration-test
-        env:
-          API_HOST: "https://wcc-backend.fly.dev"
-          API_KEY: ${{ secrets.API_KEY_DEV }}  
+        working-directory: ./integration-test 
         run: npm run test-dev
         continue-on-error: true  # Ensures artifacts still get uploaded
-
       - name: Upload Playwright Report on Failure
         if: always()
         uses: actions/upload-artifact@v4
