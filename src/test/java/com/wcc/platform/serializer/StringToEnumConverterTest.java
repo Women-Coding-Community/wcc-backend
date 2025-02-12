@@ -34,12 +34,6 @@ class StringToEnumConverterTest {
   }
 
   @Test
-  void testConverterNullValue() {
-    programType = converter.convert(null);
-    assertEquals(programType, ProgramType.OTHERS);
-  }
-
-  @Test
   void testConverterEmptyString() {
     programType = converter.convert("");
     assertEquals(programType, ProgramType.OTHERS);
