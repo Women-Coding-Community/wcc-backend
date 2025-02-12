@@ -27,14 +27,14 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: integration_test/package-lock.json
+          cache-dependency-path: integration-test/package-lock.json
 
       - name: Install Dependencies
-        working-directory: ./integration_tests
+        working-directory: ./integration-test
         run: npm ci
 
       - name: Run Playwright API Tests
-        working-directory: ./integration_tests
+        working-directory: ./integration-test
         run: npm run test-dev
 
       - uses: actions/upload-artifact@v4
