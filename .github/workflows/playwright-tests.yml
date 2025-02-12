@@ -30,11 +30,11 @@ jobs:
           cache-dependency-path: integration_test/package-lock.json
 
       - name: Install Dependencies
-        working-directory: integration_tests
+        working-directory: ./integration_tests
         run: npm ci
 
       - name: Run Playwright API Tests
-        working-directory: integration_tests
+        working-directory: ./integration_tests
         run: npm run test-dev
 
       - uses: actions/upload-artifact@v4
