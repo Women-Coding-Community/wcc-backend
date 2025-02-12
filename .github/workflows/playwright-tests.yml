@@ -37,11 +37,14 @@ jobs:
 
       - name: Run Playwright API Tests
         working-directory: ./integration-test
+        env:
+          API_HOST: "https://wcc-backend.fly.dev"
+          API_KEY: ${{ secrets.API_KEY_DEV }}  # Make sure it's available inside the test
         run: npm run test-dev
         continue-on-error: true  # Ensures artifacts still get uploaded
 
       - name: Upload Playwright Report on Failure
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
