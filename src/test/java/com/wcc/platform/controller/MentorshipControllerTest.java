@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class MentorshipControllerTest {
 
   public static final String API_MENTORSHIP_OVERVIEW = "/api/cms/v1/mentorship/overview";
+  public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
   @Autowired private MockMvc mockMvc;
 
   @MockBean private MentorshipService service;
@@ -57,6 +59,19 @@ public class MentorshipControllerTest {
     mockMvc
         .perform(
             MockMvcRequestFactory.getRequest(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testFaqOkResponse() throws Exception {
+    var fileName = "mentorshipFaqPage.json";
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getFaq()).thenReturn(createMentorshipFaqPageTest(fileName));
+
+    mockMvc
+        .perform(MockMvcRequestFactory.getRequest(API_MENTORSHIP_FAQ).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
