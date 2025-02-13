@@ -27,7 +27,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/footer`, {
+      const response = await request.get(`/api/cms/v1/events`, {
         headers: headers
       });
       expect(response.status()).toBe(401);
