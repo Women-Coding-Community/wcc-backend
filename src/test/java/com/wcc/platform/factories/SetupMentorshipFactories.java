@@ -70,7 +70,7 @@ public class SetupMentorshipFactories {
         createListFaqSectionTest(new FaqItem("Mentee", "Mentee FAQ")));
   }
 
-  private static ListSection<FaqItem> createListFaqSectionTest(FaqItem faqItem) {
+  private static ListSection<FaqItem> createListFaqSectionTest(final FaqItem faqItem) {
     return new ListSection<>("FAQ", null, null, List.of(faqItem));
   }
 }
