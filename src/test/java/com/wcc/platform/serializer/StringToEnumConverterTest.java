@@ -24,18 +24,18 @@ class StringToEnumConverterTest {
   @Test
   void testConvertValidValue() {
     programType = converter.convert(ProgramType.BOOK_CLUB.toString());
-    assertEquals(programType, ProgramType.BOOK_CLUB);
+    assertEquals(ProgramType.BOOK_CLUB, programType);
   }
 
   @Test
   void testConverterInvalidValueReturnOthers() {
     programType = converter.convert("Invalid value");
-    assertEquals(programType, ProgramType.OTHERS);
+    assertEquals(ProgramType.OTHERS, programType);
   }
 
   @Test
   void testConverterEmptyString() {
     programType = converter.convert("");
-    assertEquals(programType, ProgramType.OTHERS);
+    assertEquals(ProgramType.OTHERS, programType);
   }
 }
