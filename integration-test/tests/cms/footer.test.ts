@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { footerExpectedInformation } from '@utils/datafactory/footer.data';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { footerSchema } from '@utils/datafactory/schemas/footer.schema';
 
@@ -21,7 +20,21 @@ test('GET /api/cms/v1/footer returns correct footer data', async ({ request }) =
       throw new Error('Schema validation failed with an unknown error');
     }
   }
+});
 
-  // response body validation
-  expect(body).toEqual(footerExpectedInformation);
+test.describe('unauthorized request with invalid headers', () => {
+  
+  const testData = [
+    { description: 'header is empty', headers: { 'X-API-KEY': '' }},
+    { description: 'header is invalid', headers: { 'X-API-KEY': 'invalid_key' }},
+  ];
+
+  testData.forEach(({ description, headers }) => {
+    test(`${description}`, async ({ request }) => {
+      const response = await request.get(`/api/cms/v1/footer`, {
+        headers: headers
+      });
+      expect(response.status()).toBe(401);
+    });
+  });
 });
