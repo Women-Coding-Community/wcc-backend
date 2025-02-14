@@ -7,8 +7,11 @@ import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSection
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.attributes.FaqItem;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Year;
@@ -46,5 +49,28 @@ public class SetupMentorshipFactories {
   public static FeedbackSection createFeedbackSectionTest() {
     return new FeedbackSection(
         "Feedback1", List.of(createFeedbackItemTest(true), createFeedbackItemTest(false)));
+  }
+
+  public static MentorshipFaqPage createMentorshipFaqPageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, MentorshipFaqPage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorshipFaqPageTest();
+    }
+  }
+
+  public static MentorshipFaqPage createMentorshipFaqPageTest() {
+    final String pageId = PageType.MENTORSHIP_FAQ.getId();
+    return new MentorshipFaqPage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        createListFaqSectionTest(new FaqItem("Common", "Common FAQ")),
+        createListFaqSectionTest(new FaqItem("Mentor", "Mentor FAQ")),
+        createListFaqSectionTest(new FaqItem("Mentee", "Mentee FAQ")));
+  }
+
+  private static ListSection<FaqItem> createListFaqSectionTest(final FaqItem faqItem) {
+    return new ListSection<>("FAQ", null, null, List.of(faqItem));
   }
 }

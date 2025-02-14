@@ -1,8 +1,10 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -37,5 +39,22 @@ public class MentorshipService {
       }
     }
     throw new ContentNotFoundException(MENTORSHIP);
+  }
+
+  /**
+   * API to retrieve information about mentorship faq.
+   *
+   * @return Mentorship faq page.
+   */
+  public MentorshipFaqPage getFaq() {
+    final var page = pageRepository.findById(MENTORSHIP_FAQ.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), MentorshipFaqPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    throw new ContentNotFoundException(MENTORSHIP_FAQ);
   }
 }
