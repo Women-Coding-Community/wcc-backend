@@ -1,9 +1,11 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
@@ -56,5 +58,22 @@ public class MentorshipService {
       }
     }
     throw new ContentNotFoundException(MENTORSHIP_FAQ);
+  }
+
+  /**
+   * API to retrieve information about mentorship code of conduct.
+   *
+   * @return Mentorship code of conduct page.
+   */
+  public MentorshipCodeOfConductPage getCodeOfConduct() {
+    final var page = pageRepository.findById(MENTORSHIP_CONDUCT.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), MentorshipCodeOfConductPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    throw new ContentNotFoundException(MENTORSHIP_CONDUCT);
   }
 }
