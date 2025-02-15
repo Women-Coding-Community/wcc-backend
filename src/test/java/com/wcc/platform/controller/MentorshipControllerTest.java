@@ -60,4 +60,18 @@ public class MentorshipControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
+
+  @Test
+  void testOkCodeOfConductResponse() throws Exception {
+    var fileName = MENTORSHIP.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getOverview()).thenReturn(createMentorshipPageTest(fileName));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
 }
