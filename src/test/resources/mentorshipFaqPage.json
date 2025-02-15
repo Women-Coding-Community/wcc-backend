@@ -7,16 +7,16 @@
     "title": "Mentors and Mentees FAQ",
     "items": [
       {
-        "title": "How do I join the mentorship program?",
-        "description": "You can access comprehensive information about the mentorship program's timelines and registration process by visiting our dedicated mentorship page."
+        "question": "How do I join the mentorship program?",
+        "answer": "You can access comprehensive information about the mentorship program's timelines and registration process by visiting our dedicated mentorship page."
       },
       {
-        "title": "How long does the mentorship program last?",
-        "description": "The Mentorship programme lasts from March till November of the same year."
+        "question": "How long does the mentorship program last?",
+        "answer": "The Mentorship programme lasts from March till November of the same year."
       },
       {
-        "title": "How often do mentors and mentees meet?",
-        "description": "The frequency of meetings between mentors and mentees can vary depending on the goals and the needs of the mentee and the availability of both parties. Some relationships require weekly meetings, while others may only require monthly or quarterly meetings."
+        "question": "How often do mentors and mentees meet?",
+        "answer": "The frequency of meetings between mentors and mentees can vary depending on the goals and the needs of the mentee and the availability of both parties. Some relationships require weekly meetings, while others may only require monthly or quarterly meetings."
       }
     ]
   },
@@ -24,16 +24,16 @@
     "title": "Mentors FAQ",
     "items": [
       {
-        "title": "What is expected of me as a mentor?",
-        "description": "As a mentor, you will be expected to provide guidance, advice, and support to your mentee as they navigate their professional and personal development. You will be expected to share your own experiences and knowledge, and provide constructive feedback. You will also be expected to help the mentee set and achieve goals, and to introduce them to new opportunities that can help them advance in their career."
+        "question": "What is expected of me as a mentor?",
+        "answer": "As a mentor, you will be expected to provide guidance, advice, and support to your mentee as they navigate their professional and personal development. You will be expected to share your own experiences and knowledge, and provide constructive feedback. You will also be expected to help the mentee set and achieve goals, and to introduce them to new opportunities that can help them advance in their career."
       },
       {
-        "title": "I haven't mentored before. Could I sign up?",
-        "description": "Of course, first-time mentors are welcome in the programme! Please take a look at our Mentor’s Pocketbook on Resources Page to help you get started!"
+        "question": "I haven't mentored before. Could I sign up?",
+        "answer": "Of course, first-time mentors are welcome in the programme! Please take a look at our Mentor’s Pocketbook on Resources Page to help you get started!"
       },
       {
-        "title": "I do not identify as a woman, can I participate as a mentor?",
-        "description": "Absolutely! We are happy to welcome every mentor who is interested in sharing their knowledge with our community."
+        "question": "I do not identify as a woman, can I participate as a mentor?",
+        "answer": "Absolutely! We are happy to welcome every mentor who is interested in sharing their knowledge with our community."
       }
     ]
   },
@@ -41,16 +41,16 @@
     "title": "Mentees FAQ",
     "items": [
       {
-        "title": "How can I choose my mentor?",
-        "description": "Feel free to browse through our Mentors page. Choose a mentor whose goals and aspirations align with yours."
+        "question": "How can I choose my mentor?",
+        "answer": "Feel free to browse through our Mentors page. Choose a mentor whose goals and aspirations align with yours."
       },
       {
-        "title": "What are the expectations for mentees in the mentorship programme?",
-        "description": "The expectations for mentees may include setting and achieving goals, being open to feedback and guidance, actively seeking out opportunities to learn, and being committed to their own personal and professional growth. Mentees are expected to actively participate in the mentorship relationship, be open to learning and be willing to share their own experiences and knowledge."
+        "question": "What are the expectations for mentees in the mentorship programme?",
+        "answer": "The expectations for mentees may include setting and achieving goals, being open to feedback and guidance, actively seeking out opportunities to learn, and being committed to their own personal and professional growth. Mentees are expected to actively participate in the mentorship relationship, be open to learning and be willing to share their own experiences and knowledge."
       },
       {
-        "title": "When do I need a mentor?",
-        "description": "A mentor can be a valuable resource at different points in your life and career. You may need a mentor when you are starting out in your career, when you are looking to make a career change, when you are facing a specific challenge or obstacle, or when you are looking to advance in your career. A mentor can provide guidance, support, and advice to help you navigate these challenges and achieve your goals."
+        "question": "When do I need a mentor?",
+        "answer": "A mentor can be a valuable resource at different points in your life and career. You may need a mentor when you are starting out in your career, when you are looking to make a career change, when you are facing a specific challenge or obstacle, or when you are looking to advance in your career. A mentor can provide guidance, support, and advice to help you navigate these challenges and achieve your goals."
       }
     ]
   }
