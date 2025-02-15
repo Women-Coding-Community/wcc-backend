@@ -11,6 +11,7 @@ public enum PageType {
   FOOTER("footerPage.json", "page:FOOTER"),
   LANDING_PAGE("landingPage.json", "page:LANDING_PAGE"),
   MENTORSHIP("mentorshipPage.json", "page:MENTORSHIP_OVERVIEW"),
+  MENTORSHIP_FAQ("mentorshipPage.json", "page:MENTORSHIP_FAQ"),
   PROG_BOOK_CLUB("bookClubPage.json", "page:BOOK_CLUB"),
   EVENT_FILTERS("eventsFiltersSection.json", "UNDEFINED"),
   ABOUT_US("aboutUsPage.json", "page:ABOUT_US"),
