@@ -62,15 +62,14 @@ public class MentorshipControllerTest {
   }
 
   @Test
-  void testOkCodeOfConductResponse() throws Exception {
-    var fileName = MENTORSHIP.getFileName();
+  void testFaqOkResponse() throws Exception {
+    var fileName = "mentorshipFaqPage.json";
     var expectedJson = FileUtil.readFileAsString(fileName);
 
-    when(service.getOverview()).thenReturn(createMentorshipPageTest(fileName));
+    when(service.getFaq()).thenReturn(createMentorshipFaqPageTest(fileName));
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
+        .perform(MockMvcRequestFactory.getRequest(API_MENTORSHIP_FAQ).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
