@@ -1,0 +1,29 @@
+{
+  "id": "page:CELEBRATE_HER",
+  "heroSection": {
+    "title": "Celebrate Her",
+    "images": [
+      {
+        "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+        "alt": "There is a group of women showing WCC logo",
+        "type": "desktop"
+      }
+    ]
+  },
+  "section": {
+    "description": "Women Coding Community highlights the achievements of our members by celebrating them with Celebrate Her"
+  },
+  "items": [
+    {
+      "listOfName": [
+        "Liliia Rafikova"
+      ],
+      "description": "Celebrate her for first commit to wcc backend.",
+      "link": {
+        "title": "",
+        "type": "linkedIn",
+        "link": "https://www.linkedin.com/company/womencodingcommunity"
+      }
+    }
+  ]
+}
