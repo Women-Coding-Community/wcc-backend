@@ -46,7 +46,7 @@ class CelebrateHerControllerIntegrationTest extends SurrealDbIntegrationTest {
         Objects.requireNonNull(response.getBody()).heroSection().title());
     assertEquals(
         celebrateHerPage.heroSection().subtitle(), response.getBody().heroSection().subtitle());
-    assertEquals(celebrateHerPage.data(), response.getBody().data());
+    assertEquals(celebrateHerPage.items(), response.getBody().items());
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
@@ -58,6 +58,6 @@ class CelebrateHerControllerIntegrationTest extends SurrealDbIntegrationTest {
     var result = service.getCelebrateHer();
     var expectedCelebrateHerPages = createCelebrateHerPageTest(CELEBRATE_HER.getFileName());
 
-    assertEquals(expectedCelebrateHerPages.data(), result.data());
+    assertEquals(expectedCelebrateHerPages.items(), result.items());
   }
 }

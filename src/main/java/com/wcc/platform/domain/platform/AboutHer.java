@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform;
 
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -20,5 +21,5 @@ public class AboutHer {
   @NotBlank private String hashtag;
   @NotBlank private List<String> listOfName;
   @NotBlank private String description;
-  private SocialNetwork postLink;
+  private LabelLink link;
 }

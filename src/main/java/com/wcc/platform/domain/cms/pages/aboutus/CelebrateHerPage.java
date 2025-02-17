@@ -7,4 +7,4 @@ import java.util.List;
 
 /** CMS Celebrate Her page. */
 public record CelebrateHerPage(
-    @NotNull String id, @NotNull HeroSection heroSection, @NotNull List<AboutHer> data) {}
+    @NotNull String id, @NotNull HeroSection heroSection, @NotNull List<AboutHer> items) {}

@@ -5,10 +5,9 @@ import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSection
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.platform.AboutHer;
-import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +37,7 @@ public class SetupCelebrateHerFactories {
         .hashtag("#celebrate_her")
         .listOfName(List.of("Liliia", "Anna"))
         .description("Description")
-        .postLink(new SocialNetwork(SocialNetworkType.LINKEDIN, "hello"))
+        .link(new LabelLink("linkedIn", "linkedIn", "https://linkedIn.com/lilrafil"))
         .build();
   }
 }
