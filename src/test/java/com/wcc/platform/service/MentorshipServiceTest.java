@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
@@ -81,9 +83,31 @@ class MentorshipServiceTest {
   @Test
   void whenGetFaqGivenRecordNotInDatabaseThenThrowException() throws IOException {
     when(pageRepository.findById(PageType.MENTORSHIP_FAQ.getId())).thenReturn(Optional.empty());
-
     var exception = assertThrows(ContentNotFoundException.class, service::getFaq);
 
     assertEquals("Content of Page MENTORSHIP_FAQ not found", exception.getMessage());
+  }
+
+  @Test
+  void whenGetCodeOfConductGivenRecordExistingInDatabaseThenReturnValidResponse() {
+    var page = createMentorshipConductPageTest();
+    var mapPage =
+        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+
+    when(pageRepository.findById(PageType.MENTORSHIP_CONDUCT.getId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(MentorshipCodeOfConductPage.class)))
+        .thenReturn(page);
+
+    var response = service.getCodeOfConduct();
+    assertEquals(page, response);
+  }
+
+  @Test
+  void whenGetCodeOfConductGivenRecordNotInDatabaseThenThrowException() {
+    when(pageRepository.findById(PageType.MENTORSHIP_CONDUCT.getId())).thenReturn(Optional.empty());
+    var exception = assertThrows(ContentNotFoundException.class, service::getCodeOfConduct);
+
+    assertEquals("Content of Page MENTORSHIP_CONDUCT not found", exception.getMessage());
   }
 }

@@ -1,0 +1,28 @@
+{
+  "id": "page:MENTORSHIP_CODE_OF_CONDUCT",
+  "heroSection": {
+    "title": "Mentorship Code of Conduct"
+  },
+  "menteeCodeSection": {
+    "title": "Code of conduct for mentees",
+    "items": [
+      "Women Coding Community is an inclusive community, dedicated to providing an empowering experience for everyone who participates in or supports our community, regardless of gender, gender identity and expression, sexual orientation, ability, physical appearance, body size, race, ethnicity, age, religion, socioeconomic status, caste, creed, political affiliation, or preferred programming language(s).",
+      "Cancel or reschedule appointments with a minimum of 24 hours prior notice by providing a reason using preferable channel (email, slack, or anything else you both chose as the channel of communication) to the mentor.",
+      "Whenever you see something is not going in the direction you want with the mentorship programme, provide feedback by email/slack or during your session with your mentor, so your mentor can adjust the sessions as necessary."
+    ]
+  },
+  "mentorCodeSection": {
+    "title": "Code of conduct for mentors",
+    "items": [
+      "Women Coding Community is an inclusive community, dedicated to providing an empowering experience for everyone who participates in or supports our community, regardless of gender, gender identity and expression, sexual orientation, ability, physical appearance, body size, race, ethnicity, age, religion, socioeconomic status, caste, creed, political affiliation, or preferred programming language(s).",
+      "Cancel or reschedule appointments with a minimum of 24 hours prior notice by providing a reason by preferable channel (email, slack or anything else you both choose as the channel of communication) to the mentee.",
+      "Please ensure that your profile on the mentorship page is kept up-to-date."
+    ]
+  },
+  "wccCodeSection": {
+    "link": {
+      "label": "WCC Code of Conduct",
+      "uri": "/code-of-conduct"
+    }
+  }
+}

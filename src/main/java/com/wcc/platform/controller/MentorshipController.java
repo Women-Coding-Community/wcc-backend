@@ -1,5 +1,6 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.service.MentorshipService;
@@ -40,5 +41,12 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipFaqPage> getMentorshipFaq() {
     return ResponseEntity.ok(service.getFaq());
+  }
+
+  @GetMapping("/code-of-conduct")
+  @Operation(summary = "API to retrieve mentorship code of conduct page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipCodeOfConductPage> getMentorshipCodeOfConduct() {
+    return ResponseEntity.ok(service.getCodeOfConduct());
   }
 }
