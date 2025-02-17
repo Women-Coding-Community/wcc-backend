@@ -34,7 +34,6 @@ public class SetupCelebrateHerFactories {
 
   public static AboutHer createEventTest() {
     return AboutHer.builder()
-        .hashtag("#celebrate_her")
         .listOfName(List.of("Liliia", "Anna"))
         .description("Description")
         .link(new LabelLink("linkedIn", "linkedIn", "https://linkedIn.com/lilrafil"))

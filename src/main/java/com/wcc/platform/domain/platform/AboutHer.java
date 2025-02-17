@@ -18,7 +18,6 @@ import lombok.ToString;
 @Data
 @Builder(toBuilder = true)
 public class AboutHer {
-  @NotBlank private String hashtag;
   @NotBlank private List<String> listOfName;
   @NotBlank private String description;
   private LabelLink link;
