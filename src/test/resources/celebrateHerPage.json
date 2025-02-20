@@ -1,29 +1,45 @@
 {
-  "id": "page:CELEBRATE_HER",
-  "heroSection": {
-    "title": "Celebrate Her",
-    "images": [
-      {
-        "path": "https://cloudprovider.com/image.png",
-        "alt": "There is a group of women showing WCC logo",
-        "type": "desktop"
-      }
-    ]
-  },
-  "section": {
-    "description": "Women Coding Community highlights the achievements of our members by celebrating them with Celebrate Her"
-  },
-  "items": [
-    {
-      "listOfName": [
-        "Liliia Rafikova"
-      ],
-      "description": "Celebrate her for first commit to wcc backend.",
-      "link": {
-        "title": "",
-        "type": "linkedIn",
-        "link": "https://www.linkedin.com/company/womencodingcommunity"
+  "id" : "page:CELEBRATE_HER",
+  "heroSection" : {
+    "title" : "Hero title",
+    "subtitle" : "Hero description",
+    "images" : [ {
+      "path" : "MOBILE.png",
+      "alt" : "alt imageMOBILE",
+      "type" : "mobile"
+    } ],
+    "customStyle" : {
+      "backgroundColour" : {
+        "color" : "secondary",
+        "shade" : {
+          "name" : "dark",
+          "value" : 10
+        }
       }
     }
-  ]
+  },
+  "section" : {
+    "title" : "title defaultPage",
+    "subtitle" : "subtitle defaultPage",
+    "description" : "desc defaultPage",
+    "link" : {
+      "title" : "link_title",
+      "label" : "link_label",
+      "uri" : "link_uri"
+    },
+    "images" : [ {
+      "path" : "MOBILE.png",
+      "alt" : "alt imageMOBILE",
+      "type" : "mobile"
+    } ]
+  },
+  "items" : [ {
+    "listOfName" : [ "Liliia", "Anna" ],
+    "description" : "Description",
+    "link" : {
+      "title" : "linkedIn",
+      "label" : "linkedIn",
+      "uri" : "https://linkedIn.com/lilrafil"
+    }
+  } ]
 }
