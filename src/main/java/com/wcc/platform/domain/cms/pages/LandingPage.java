@@ -3,6 +3,7 @@ package com.wcc.platform.domain.cms.pages;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.ListSection;
+import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
 import jakarta.validation.constraints.NotNull;
@@ -27,5 +28,6 @@ public class LandingPage {
   @NotNull private ListSection<ProgrammeItem> programmes;
   private ListSection<Event> announcements;
   private ListSection<Event> events;
+  private FeedbackSection feedbackSection;
   @NotNull private CommonSection volunteerSection;
 }

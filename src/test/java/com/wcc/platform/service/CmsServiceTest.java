@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
@@ -18,6 +19,7 @@ import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
+import com.wcc.platform.factories.SetupMentorshipFactories;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +34,7 @@ class CmsServiceTest {
           .id(PageType.LANDING_PAGE.getId())
           .heroSection(SetupFactories.createHeroSectionTest())
           .fullBannerSection(SetupFactories.createCommonSectionTest("Page banner section"))
+          .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
           .volunteerSection(SetupFactories.createCommonSectionTest("Volunteer"))
           .build();
   @Mock private PageRepository pageRepository;
@@ -123,7 +126,10 @@ class CmsServiceTest {
   @Test
   @SuppressWarnings("unchecked")
   void whenGetLandingPageGivenRecordExistOnDatabaseThenReturnPage() {
-    var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
+    var mapPage =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .convertValue(landingPage, Map.class);
 
     when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class))).thenReturn(landingPage);
@@ -136,7 +142,10 @@ class CmsServiceTest {
   @Test
   @SuppressWarnings("unchecked")
   void whenGetLandingPageGivenRecordExistOnDatabaseAndHasExceptionToConvertThenThrowsException() {
-    var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
+    var mapPage =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .convertValue(landingPage, Map.class);
 
     when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class)))

@@ -23,6 +23,7 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.factories.SetupEventFactories;
 import com.wcc.platform.factories.SetupFactories;
+import com.wcc.platform.factories.SetupMentorshipFactories;
 import com.wcc.platform.factories.SetupProgrammeFactories;
 import com.wcc.platform.service.CmsService;
 import java.util.List;
@@ -108,6 +109,7 @@ class DefaultControllerTest {
             .programmes(createSectionProgramme())
             .events(createSectionEvent("Events", ProgramType.TECH_TALK))
             .announcements(createSectionEvent("Announcements", ProgramType.OTHERS))
+            .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
             .build();
 
     when(service.getLandingPage()).thenReturn(page);
