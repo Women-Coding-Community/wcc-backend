@@ -1,4 +1,4 @@
-import { pageSchema } from './page.schema';
+import { sectionSchema } from './section.schema';
 import { linkSchema } from './link.schema';
 import { heroSectionSchema } from './hero.section.schema';
 
@@ -13,7 +13,7 @@ export const codeofconductSchema = {
           minLength: 1,
         },
         heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-        page: { ...pageSchema.definitions.pageSchema },
+        page: { ...sectionSchema.definitions.sectionSchema },
         items: {
           type: 'array',
           items: [
