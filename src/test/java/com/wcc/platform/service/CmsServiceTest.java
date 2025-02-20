@@ -10,11 +10,12 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.cms.pages.AboutUsPage;
-import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
@@ -164,5 +165,27 @@ class CmsServiceTest {
     var response = service.getAboutUs();
 
     assertEquals(aboutUsPage, response);
+  }
+
+  @Test
+  void whenGetCelebrateHerPageGivenNotStoredInDatabaseThenThrowsException() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getCelebrateHer);
+
+    assertEquals("Content of Page CELEBRATE_HER not found", exception.getMessage());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void whenGetCelebrateHerPageGivenExistOnDatabaseThenReturnValidResponse() {
+    var celebrateHerPage = SetupFactories.createCelebrateHerPageTest();
+    var mapPage = new ObjectMapper().convertValue(celebrateHerPage, Map.class);
+
+    when(pageRepository.findById(PageType.CELEBRATE_HER.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(CelebrateHerPage.class)))
+        .thenReturn(celebrateHerPage);
+
+    var response = service.getCelebrateHer();
+
+    assertEquals(celebrateHerPage, response);
   }
 }
