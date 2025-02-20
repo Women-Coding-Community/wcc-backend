@@ -15,7 +15,7 @@ export const pageSectionSchema = {
           minLength: 1,
         },
         link: { ...linkSchema.definitions.linkSchema },
-        topics: {
+        items: {
           type: 'array',
           items: [
             {
