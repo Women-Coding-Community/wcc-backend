@@ -1,5 +1,5 @@
 import { heroSectionSchema } from './hero.section.schema';
-import { sectionSchema } from './section.schema';
+import { commonsectionSchema } from './commonsection.schema';
 import { listsectionSchema } from './listsection.schema';
 
 export const mentorshipcodeofconductSchema = {
@@ -14,24 +14,9 @@ export const mentorshipcodeofconductSchema = {
           const: 'page:MENTORSHIP_CODE_OF_CONDUCT',
         },
         heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-        menteeCodeSection: {
-          type: 'object',
-          properties: {
-            listsection: { ...listsectionSchema.definitions.listsectionSchema },
-          },
-        },
-        mentorCodeSection: {
-          type: 'object',
-          properties: {
-            listsection: { ...listsectionSchema.definitions.listsectionSchema },
-          },
-        },
-        wccCodeSection: {
-          type: 'object',
-          properties: {
-            section: { ...sectionSchema.definitions.sectionSchema },
-          },
-        },
+        menteeCodeSection: { ...listsectionSchema.definitions.listsectionSchema },
+        mentorCodeSection: { ...listsectionSchema.definitions.listsectionSchema },
+        wccCodeSection: { ...commonsectionSchema.definitions.commonsectionSchema },
       },
       additionalProperties: false,
       required: ['id', 'heroSection'],
