@@ -1,5 +1,5 @@
 import { heroSectionSchema } from './hero.section.schema';
-import { pageSchema } from './page.schema';
+import { sectionSchema } from './section.schema';
 import { listsectionSchema } from './listsection.schema';
 
 export const mentorshipcodeofconductSchema = {
@@ -29,7 +29,7 @@ export const mentorshipcodeofconductSchema = {
         wccCodeSection: {
           type: 'object',
           properties: {
-            page: { ...pageSchema.definitions.pageSchema },
+            section: { ...sectionSchema.definitions.sectionSchema },
           },
         },
       },
