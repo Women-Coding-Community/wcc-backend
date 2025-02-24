@@ -1,5 +1,5 @@
 import { sectionSchema } from './section.schema';
-import { pageSectionSchema } from './pagesection.schema';
+import { listSectionStringSchema } from './listsectionstring.schema';
 import { feedbackSectionSchema } from './feedback.schema';
 import { heroSectionSchema } from './hero.section.schema';
 
@@ -16,8 +16,8 @@ export const mentorshipSchema = {
         },
         heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
         section: { ...sectionSchema.definitions.sectionSchema },
-        mentorSection: { ...pageSectionSchema.definitions.pageSectionSchema },
-        menteeSection: { ...pageSectionSchema.definitions.pageSectionSchema },
+        mentorSection: { ...listSectionStringSchema.definitions.listSectionStringSchema },
+        menteeSection: { ...listSectionStringSchema.definitions.listSectionStringSchema},
         feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
       },
 

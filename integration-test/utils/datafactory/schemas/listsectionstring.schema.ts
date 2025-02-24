@@ -1,8 +1,8 @@
 import { linkSchema } from './link.schema';
-export const listsectionSchema = {
-  $ref: '#/definitions/listsectionSchema',
+export const listSectionStringSchema = {
+  $ref: '#/definitions/listSectionStringSchema',
   definitions: {
-    listsectionSchema: {
+    listSectionStringSchema: {
       type: 'object',
       properties: {
         title: {

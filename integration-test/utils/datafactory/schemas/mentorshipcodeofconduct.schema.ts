@@ -1,6 +1,6 @@
 import { heroSectionSchema } from './hero.section.schema';
 import { commonsectionSchema } from './commonsection.schema';
-import { listsectionSchema } from './listsection.schema';
+import { listSectionStringSchema } from './listsectionstring.schema';
 
 export const mentorshipcodeofconductSchema = {
   $ref: '#/definitions/mentorshipcodeofconductSchema',
@@ -14,8 +14,8 @@ export const mentorshipcodeofconductSchema = {
           const: 'page:MENTORSHIP_CODE_OF_CONDUCT',
         },
         heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-        menteeCodeSection: { ...listsectionSchema.definitions.listsectionSchema },
-        mentorCodeSection: { ...listsectionSchema.definitions.listsectionSchema },
+        menteeCodeSection: { ...listSectionStringSchema.definitions.listSectionStringSchema },
+        mentorCodeSection: { ...listSectionStringSchema.definitions.listSectionStringSchema },
         wccCodeSection: { ...commonsectionSchema.definitions.commonsectionSchema },
       },
       additionalProperties: false,
