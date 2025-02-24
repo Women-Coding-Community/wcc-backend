@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+/** Test class for {@link CapitalizeEnumSerializer}. */
 public class CapitalizeEnumSerializerTest {
 
   private CapitalizeEnumSerializer serializer;

@@ -50,6 +50,11 @@ public class SetupMentorshipFactories {
     return new FeedbackItem("Person Name", "Nice feedback", memberType, Year.of(2023));
   }
 
+  /**
+   * Factory test for FeedbackSection class.
+   *
+   * @return FeedbackSection
+   */
   public static FeedbackSection createFeedbackSectionTest() {
     return new FeedbackSection(
         "Feedback1",

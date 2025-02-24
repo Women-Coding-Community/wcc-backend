@@ -166,7 +166,7 @@ public class SetupFactories {
         List.of("topic1 " + title, "topic2 " + title));
   }
 
-  /** Factory test for ListSection<Event>. */
+  /** Factory test for ListSection for Event type. */
   public static ListSection<Event> createListSectionEventTest() {
     return new ListSection<>(
         "Events",
@@ -179,7 +179,7 @@ public class SetupFactories {
             SetupEventFactories.createEventTest(ProgramType.MACHINE_LEARNING)));
   }
 
-  /** Factory test for ListSection<ProgrammeItem>. */
+  /** Factory test for ListSection for ProgrammeItem type. */
   public static ListSection<ProgrammeItem> createListSectionProgrammeItemTest() {
     return new ListSection<>(
         "Programmes ",
