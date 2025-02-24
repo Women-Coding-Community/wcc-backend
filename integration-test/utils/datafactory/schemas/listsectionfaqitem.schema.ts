@@ -18,8 +18,6 @@ export const listSectionFaqItemSchema = {
           type: 'array',
           items: [
             {
-              //  "type": "object",
-              //   "properties": {
               question: {
                 type: 'string',
               },
