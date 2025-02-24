@@ -3,14 +3,15 @@ package com.wcc.platform.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.cms.pages.AboutUsPage;
-import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -180,5 +181,24 @@ public class CmsService {
     }
 
     throw new ContentNotFoundException(PageType.ABOUT_US);
+  }
+
+  /**
+   * Find Celebrate Her page in DB and convert to Pojo CelebrateHer page.
+   *
+   * @return Pojo CelebrateHer page
+   */
+  public CelebrateHerPage getCelebrateHer() {
+    final var page = pageRepository.findById(PageType.CELEBRATE_HER.getId());
+
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), CelebrateHerPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+
+    throw new ContentNotFoundException(PageType.CELEBRATE_HER);
   }
 }
