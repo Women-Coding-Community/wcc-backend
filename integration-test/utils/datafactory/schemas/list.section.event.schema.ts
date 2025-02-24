@@ -1,10 +1,10 @@
 import { linkSchema } from './link.schema';
 import { eventSchema } from './event.schema';
 
-export const sectionEventSchema = {
-  $ref: '#/definitions/sectionEventSchema',
+export const listSectionEventSchema = {
+  $ref: '#/definitions/listSectionEventSchema',
   definitions: {
-    sectionEventSchema: {
+    listSectionEventSchema: {
       type: 'object',
       properties: {
         title: {

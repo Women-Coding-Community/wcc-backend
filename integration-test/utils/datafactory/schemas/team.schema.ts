@@ -11,7 +11,7 @@ export const teamSchema = {
       const: 'page:TEAM',
     },
     heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-    page: { ...commonsectionSchema.definitions.commonsectionSchema },
+    section: { ...commonsectionSchema.definitions.commonsectionSchema },
     contact: { ...contactSchema.definitions.contactSchema },
     membersByType: {
       type: 'object',
