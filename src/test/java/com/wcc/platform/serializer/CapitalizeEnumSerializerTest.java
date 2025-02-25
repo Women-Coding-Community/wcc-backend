@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /** Test class for {@link CapitalizeEnumSerializer}. */
-public class CapitalizeEnumSerializerTest {
+class CapitalizeEnumSerializerTest {
 
   private CapitalizeEnumSerializer serializer;
   private JsonGenerator jsonGenerator;
