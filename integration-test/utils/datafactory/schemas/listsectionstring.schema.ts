@@ -1,9 +1,8 @@
 import { linkSchema } from './link.schema';
-
-export const pageSectionSchema = {
-  $ref: '#/definitions/pageSectionSchema',
+export const listSectionStringSchema = {
+  $ref: '#/definitions/listSectionStringSchema',
   definitions: {
-    pageSectionSchema: {
+    listSectionStringSchema: {
       type: 'object',
       properties: {
         title: {
@@ -15,18 +14,17 @@ export const pageSectionSchema = {
           minLength: 1,
         },
         link: { ...linkSchema.definitions.linkSchema },
-        topics: {
+        items: {
           type: 'array',
           items: [
             {
               type: 'string',
-              minLength: 1,
             },
           ],
         },
       },
-      additionalProperties: false,
-      required: ['title'],
     },
+    additionalProperties: false,
+    required: ['title'],
   },
 };

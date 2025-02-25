@@ -2,7 +2,7 @@ import { paginationSchema } from './pagination.schema';
 import { contactSchema } from './contact.schema';
 import { heroSectionSchema } from './hero.section.schema';
 import { eventSchema } from './event.schema';
-import { sectionSchema } from './section.schema';
+import { commonsectionSchema } from './commonsection.schema';
 
 export const eventsSchema = {
   type: 'object',
@@ -16,7 +16,7 @@ export const eventsSchema = {
       required: ['pagination'],
     },
     heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-    page: { ...sectionSchema.definitions.sectionSchema },
+    page: { ...commonsectionSchema.definitions.commonsectionSchema },
     contact: { ...contactSchema.definitions.contactSchema },
     data: {
       type: 'object',
