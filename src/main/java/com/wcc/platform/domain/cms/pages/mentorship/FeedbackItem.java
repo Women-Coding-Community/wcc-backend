@@ -14,4 +14,7 @@ import java.time.Year;
  * @param year which year the feedback was given.
  */
 public record FeedbackItem(
-    @NotBlank String name, @NotBlank String feedback, MemberType memberType, @NotNull Year year) {}
+    @NotBlank String name,
+    @NotBlank String feedback,
+    @NotNull MemberType memberType,
+    @NotNull Year year) {}
