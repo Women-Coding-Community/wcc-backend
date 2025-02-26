@@ -10,5 +10,6 @@ public enum MemberType {
   MENTEE,
   MEMBER,
   SPEAKER,
-  COLLABORATOR
+  COLLABORATOR,
+  PARTNER
 }
