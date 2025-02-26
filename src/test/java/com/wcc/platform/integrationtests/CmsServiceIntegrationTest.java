@@ -132,13 +132,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
     var result = service.getLandingPage();
 
-    assertEquals(landingPage.getHeroSection(), result.getHeroSection());
-    assertEquals(landingPage.getFullBannerSection(), result.getFullBannerSection());
-    assertEquals(landingPage.getProgrammes(), result.getProgrammes());
-    assertEquals(landingPage.getAnnouncements(), result.getAnnouncements());
-    assertEquals(landingPage.getEvents(), result.getEvents());
-    assertEquals(landingPage.getFeedbackSection(), result.getFeedbackSection());
-    assertEquals(landingPage.getVolunteerSection(), result.getVolunteerSection());
+    assertEquals(landingPage, result);
 
     assertEquals(landingPage.getEvents().items().size(), result.getEvents().items().size());
     assertEquals(landingPage.getProgrammes().items().size(), result.getProgrammes().items().size());
