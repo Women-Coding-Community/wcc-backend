@@ -5,9 +5,9 @@
     "subtitle": "Hero description",
     "images": [
       {
-        "path": "MOBILE.png",
-        "alt": "alt imageMOBILE",
-        "type": "mobile"
+        "path": "https://cloudprovider.com/image.png",
+        "alt": "alt imageDesktop",
+        "type": "desktop"
       }
     ],
     "customStyle": {
