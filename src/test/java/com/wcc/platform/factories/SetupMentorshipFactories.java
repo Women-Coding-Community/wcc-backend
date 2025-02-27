@@ -16,6 +16,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Year;
 import java.util.List;
@@ -45,13 +46,20 @@ public class SetupMentorshipFactories {
         createFeedbackSectionTest());
   }
 
-  public static FeedbackItem createFeedbackItemTest(final boolean isMentor) {
-    return new FeedbackItem("Person Name", "Nice feedback", isMentor, Year.of(2023));
+  public static FeedbackItem createFeedbackItemTest(final MemberType memberType) {
+    return new FeedbackItem("Person Name", "Nice feedback", memberType, Year.of(2023));
   }
 
+  /**
+   * Factory test for FeedbackSection class.
+   *
+   * @return FeedbackSection
+   */
   public static FeedbackSection createFeedbackSectionTest() {
     return new FeedbackSection(
-        "Feedback1", List.of(createFeedbackItemTest(true), createFeedbackItemTest(false)));
+        "Feedback1",
+        List.of(
+            createFeedbackItemTest(MemberType.MENTOR), createFeedbackItemTest(MemberType.MENTEE)));
   }
 
   public static MentorshipFaqPage createMentorshipFaqPageTest(final String fileName) {

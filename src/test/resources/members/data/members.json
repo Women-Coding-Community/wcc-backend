@@ -11,7 +11,7 @@
     "city": "City",
     "companyName": "Company name",
     "memberTypes": [
-      "MEMBER"
+      "Member"
     ],
     "images": [
       {
@@ -39,7 +39,7 @@
     "city": "City",
     "companyName": "Company name",
     "memberTypes": [
-      "DIRECTOR"
+      "Director"
     ],
     "images": [
       {
