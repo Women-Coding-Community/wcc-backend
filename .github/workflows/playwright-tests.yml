@@ -31,7 +31,7 @@ jobs:
         env:
           API_HOST: "https://wcc-backend.fly.dev"
           API_KEY: ${{ secrets.API_KEY_DEV }}  
-        run: npm run test-dev
+        run: npm run test-dev || echo "Tests failed, see artifacts" && exit 1
         continue-on-error: true  # Ensures artifacts still get uploaded
 
       - name: Upload Playwright Report on Failure
