@@ -1,10 +1,8 @@
 import { linkSchema } from './link.schema';
-import { eventSchema } from './event.schema';
-
-export const listSectionEventSchema = {
-  $ref: '#/definitions/listSectionEventSchema',
+export const listSectionFaqItemSchema = {
+  $ref: '#/definitions/listSectionFaqItemSchema',
   definitions: {
-    listSectionEventSchema: {
+    listSectionFaqItemSchema: {
       type: 'object',
       properties: {
         title: {
@@ -18,9 +16,21 @@ export const listSectionEventSchema = {
         link: { ...linkSchema.definitions.linkSchema },
         items: {
           type: 'array',
-          items: [{ ...eventSchema.definitions.eventSchema }],
+          items: [
+            {
+              question: {
+                type: 'string',
+              },
+              answer: {
+                type: 'string',
+              },
+            },
+          ],
+          additionalProperties: false,
+          required: ['question', 'answer'],
         },
       },
+
       additionalProperties: false,
       required: ['title'],
     },

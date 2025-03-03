@@ -21,6 +21,7 @@ import com.wcc.platform.domain.cms.attributes.style.ColorType;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.domain.platform.SocialNetworkType;
+import com.wcc.platform.serializer.CapitalizeEnumSerializer;
 import com.wcc.platform.serializer.LowerCaseEnumSerializer;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -61,6 +62,7 @@ public class ObjectMapperConfig {
                 .addSerializer(ColorType.class, new LowerCaseEnumSerializer())
                 .addSerializer(ColorShadeType.class, new LowerCaseEnumSerializer())
                 .addSerializer(SocialNetworkType.class, new LowerCaseEnumSerializer())
+                .addSerializer(MemberType.class, new CapitalizeEnumSerializer())
                 .addDeserializer(ProgramType.class, new ProgramTypeDeserializer())
                 .addDeserializer(MemberType.class, new MemberTypeDeserializer())
                 .addDeserializer(ColorType.class, new ColorTypeDeserializer())
