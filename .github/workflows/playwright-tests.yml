@@ -30,12 +30,13 @@ jobs:
         working-directory: ./integration-test
         env:
           API_HOST: "https://wcc-backend.fly.dev"
-          API_KEY: ${{ secrets.API_KEY_DEV }}  
-        run: npm run test-dev || echo "Tests failed, see artifacts" && exit 1
-        continue-on-error: true  # Ensures artifacts still get uploaded
+          API_KEY: ${{ secrets.API_KEY_DEV }}
+        run: |
+          npm run test-dev
+        continue-on-error: false  
 
       - name: Upload Playwright Report on Failure
-        if: always()
+        if: failure()  # Upload only if tests fail
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
