@@ -17,7 +17,7 @@ export const mentorshipSchema = {
         heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
         section: { ...commonsectionSchema.definitions.commonsectionSchema },
         mentorSection: { ...listSectionStringSchema.definitions.listSectionStringSchema },
-        menteeSection: { ...listSectionStringSchema.definitions.listSectionStringSchema},
+        menteeSection: { ...listSectionStringSchema.definitions.listSectionStringSchema },
         feedbackSection: { ...feedbackSectionSchema.definitions.feedbackSectionSchema },
       },
 
