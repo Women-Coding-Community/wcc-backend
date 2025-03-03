@@ -1,10 +1,10 @@
 import { linkSchema } from './link.schema';
 import { programmeItemSchema } from './programme.item.schema';
 
-export const sectionProgrammeSchema = {
-  $ref: '#/definitions/sectionProgrammeSchema',
+export const listSectionProgrammeItemSchema = {
+  $ref: '#/definitions/listSectionProgrammeItemSchema',
   definitions: {
-    sectionProgrammeSchema: {
+    listSectionProgrammeItemSchema: {
       type: 'object',
       properties: {
         title: {

@@ -13,7 +13,7 @@ export const codeofconductSchema = {
           minLength: 1,
         },
         heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-        page: { ...commonsectionSchema.definitions.commonsectionSchema },
+        section: { ...commonsectionSchema.definitions.commonsectionSchema },
         items: {
           type: 'array',
           items: [
