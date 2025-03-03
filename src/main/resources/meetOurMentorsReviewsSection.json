@@ -1,0 +1,24 @@
+{
+    
+    "mentorshipFeedback":[
+                        {
+                        "mentorID":"xxxxx",
+                        "feedbackList":[
+                                        {
+                                            "feedbackItem":{
+                                            
+                                                "status": "Draft/Hidden/Approved",
+                                                "name":"firstname lastname of mentee/Anonymous",
+                                                "mentorshipType":"Ad-Hoc Format/Long-Term Format/Both",
+                                                "date": "Thu, May 30, 2024, 8:00 PM CEST",
+                                                "score":"1/2/3/4/5",
+                                                "title": "feedback title",
+                                                "feedback":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+                                            
+                                            }}
+                                        ]}
+
+                         ]
+            
+
+}
