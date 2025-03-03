@@ -9,11 +9,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    permissions:  
-      id-token: write
-      contents: read
-      pages: write  
-
     env:
       API_HOST: "https://wcc-backend.fly.dev"
       API_KEY: ${{ secrets.API_KEY_DEV }}
@@ -36,7 +31,8 @@ jobs:
         env:
           API_HOST: "https://wcc-backend.fly.dev"
           API_KEY: ${{ secrets.API_KEY_DEV }}
-        run: npm run test-dev
+        run: |
+          npm run test-dev
         continue-on-error: false  
 
       - name: Upload Playwright Report on Failure
@@ -46,18 +42,3 @@ jobs:
           name: playwright-report
           path: ./integration-test/playwright-report
           retention-days: 7
-
-      - name: Setup Pages
-        if: always()
-        uses: actions/configure-pages@v3
-
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        if: always()
-        with:
-          path: "./integration-test/playwright-report"
-
-      - name: Deploy to GitHub Pages
-        if: always()
-        id: deployment
-        uses: actions/deploy-pages@v4
