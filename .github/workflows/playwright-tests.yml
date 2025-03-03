@@ -52,7 +52,7 @@ jobs:
         if: always()
         with:
           name: report-artifact
-          path: playwright-report/
+          path: ./integration-test/playwright-report
           retention-days: 3
 
       - name: Upload Pages Artifact
@@ -60,7 +60,7 @@ jobs:
         if: always()
 
         with:
-          path: "playwright-report/"
+          path: "./integration-test/playwright-report"
 
       - name: Deploy to GitHub Pages
         if: always()
