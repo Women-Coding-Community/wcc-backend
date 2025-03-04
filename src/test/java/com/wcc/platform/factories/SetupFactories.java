@@ -28,12 +28,14 @@ import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.LeadershipMember;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.Partner;
 import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
@@ -58,6 +60,11 @@ public class SetupFactories {
         List.of(new SocialNetwork(SocialNetworkType.EMAIL, "test@test.com")));
   }
 
+  /**
+   * Factory test for TeamPage.
+   *
+   * @return TeamPage object.
+   */
   public static TeamPage createTeamPageTest() {
     final String pageId = PageType.TEAM.getId();
     return new TeamPage(
@@ -97,6 +104,37 @@ public class SetupFactories {
       return OBJECT_MAPPER.readValue(content, CollaboratorPage.class);
     } catch (JsonProcessingException e) {
       return createCollaboratorPageTest();
+    }
+  }
+
+  /**
+   * Factory test for PartnersPage.
+   *
+   * @return PartnersPage object.
+   */
+  public static PartnersPage createPartnersPageTest() {
+    final String pageId = PageType.PARTNERS.getId();
+
+    return new PartnersPage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        createListSectionTest(),
+        createContactTest(),
+        createListSectionPartnerTest());
+  }
+
+  /**
+   * Factory test for PartnersPage.
+   *
+   * @param fileName json resource file.
+   * @return PartnersPage object.
+   */
+  public static PartnersPage createPartnersPageTest(final String fileName) {
+    try {
+      String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, PartnersPage.class);
+    } catch (JsonProcessingException e) {
+      return createPartnersPageTest();
     }
   }
 
@@ -194,6 +232,16 @@ public class SetupFactories {
                 ProgramType.WRITING_CLUB, CmsIcon.CALENDAR)));
   }
 
+  /** Factory test for ListSection for Partner type. */
+  public static ListSection<Partner> createListSectionPartnerTest() {
+    return new ListSection<>(
+        "Meet our partners",
+        "Description of partners",
+        null,
+        List.of(
+            createPartnerTest(), createPartnerTest(), createPartnerTest(), createPartnerTest()));
+  }
+
   /** Factory test. */
   public static Member createMemberTest(final MemberType type) {
     return Member.builder()
@@ -279,6 +327,19 @@ public class SetupFactories {
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
         .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
         .build();
+  }
+
+  /**
+   * Factory test for Partner object.
+   *
+   * @return Partner object.
+   */
+  public static Partner createPartnerTest() {
+    return new Partner(
+        List.of(createImageTest(ImageType.DESKTOP)),
+        "Partner",
+        "Partner description",
+        createLinkTest());
   }
 
   public static Image createImageTest(final ImageType type) {
