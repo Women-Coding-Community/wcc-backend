@@ -1,10 +1,10 @@
 import { linkSchema } from './link.schema';
-import { eventSchema } from './event.schema';
+import { programmeItemSchema } from './programme.item.schema';
 
-export const sectionEventSchema = {
-  $ref: '#/definitions/sectionEventSchema',
+export const listSectionProgrammeItemSchema = {
+  $ref: '#/definitions/listSectionProgrammeItemSchema',
   definitions: {
-    sectionEventSchema: {
+    listSectionProgrammeItemSchema: {
       type: 'object',
       properties: {
         title: {
@@ -18,7 +18,7 @@ export const sectionEventSchema = {
         link: { ...linkSchema.definitions.linkSchema },
         items: {
           type: 'array',
-          items: [{ ...eventSchema.definitions.eventSchema }],
+          items: [{ ...programmeItemSchema.definitions.programmeItemSchema }],
         },
       },
       additionalProperties: false,

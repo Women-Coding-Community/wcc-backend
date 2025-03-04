@@ -1,9 +1,10 @@
 import { linkSchema } from './link.schema';
+import { eventSchema } from './event.schema';
 
-export const pageSectionSchema = {
-  $ref: '#/definitions/pageSectionSchema',
+export const listSectionEventSchema = {
+  $ref: '#/definitions/listSectionEventSchema',
   definitions: {
-    pageSectionSchema: {
+    listSectionEventSchema: {
       type: 'object',
       properties: {
         title: {
@@ -15,14 +16,9 @@ export const pageSectionSchema = {
           minLength: 1,
         },
         link: { ...linkSchema.definitions.linkSchema },
-        topics: {
+        items: {
           type: 'array',
-          items: [
-            {
-              type: 'string',
-              minLength: 1,
-            },
-          ],
+          items: [{ ...eventSchema.definitions.eventSchema }],
         },
       },
       additionalProperties: false,

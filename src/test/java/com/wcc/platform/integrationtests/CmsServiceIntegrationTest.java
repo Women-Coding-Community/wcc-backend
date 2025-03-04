@@ -5,6 +5,7 @@ import static com.wcc.platform.domain.cms.PageType.CELEBRATE_HER;
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.FOOTER;
+import static com.wcc.platform.domain.cms.PageType.LANDING_PAGE;
 import static com.wcc.platform.domain.cms.PageType.TEAM;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
@@ -13,6 +14,7 @@ import static com.wcc.platform.factories.SetupFactories.createCelebrateHerPageTe
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
 import static com.wcc.platform.factories.SetupFactories.createFooterTest;
+import static com.wcc.platform.factories.SetupFactories.createLandingPageTest;
 import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,6 +47,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.deleteById(FOOTER.getId());
     pageRepository.deleteById(ABOUT_US.getId());
     pageRepository.deleteById(COLLABORATOR.getId());
+    pageRepository.deleteById(LANDING_PAGE.getId());
   }
 
   @Test
@@ -83,6 +86,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testGetCollaboratorPage() {
     CollaboratorPage collaboratorPage = createCollaboratorPageTest(COLLABORATOR.getFileName());
     pageRepository.create(objectMapper.convertValue(collaboratorPage, Map.class));
@@ -98,6 +102,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testGetCodeOfConductPage() {
     CodeOfConductPage codeOfConductPage =
         createCodeOfConductPageTest(CODE_OF_CONDUCT.getFileName());
@@ -110,6 +115,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testGetAboutUsPage() {
     var aboutUsPage = createAboutUsPageTest(ABOUT_US.getFileName());
     pageRepository.create(objectMapper.convertValue(aboutUsPage, Map.class));
@@ -129,5 +135,21 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     //assertEquals(celebrateHerPage.heroSection(), result.heroSection());
     assertEquals(celebrateHerPage.section(), result.section());
     assertEquals(celebrateHerPage.items(), result.items());
+  }
+  
+  @SuppressWarnings("unchecked")
+  void testGetLandingPage() {
+    var landingPage = createLandingPageTest(LANDING_PAGE.getFileName());
+    pageRepository.create(objectMapper.convertValue(landingPage, Map.class));
+
+    var result = service.getLandingPage();
+
+    assertEquals(landingPage, result);
+
+    assertEquals(landingPage.getEvents().items().size(), result.getEvents().items().size());
+    assertEquals(landingPage.getProgrammes().items().size(), result.getProgrammes().items().size());
+    assertEquals(
+        landingPage.getFeedbackSection().feedbacks().size(),
+        result.getFeedbackSection().feedbacks().size());
   }
 }

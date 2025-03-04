@@ -1,6 +1,6 @@
 import { leadershipMemberSchema } from './leadershipmember.schema';
 import { heroSectionSchema } from './hero.section.schema';
-import { pageSchema } from './page.schema';
+import { commonsectionSchema } from './commonsection.schema';
 import { contactSchema } from './contact.schema';
 
 export const teamSchema = {
@@ -11,7 +11,7 @@ export const teamSchema = {
       const: 'page:TEAM',
     },
     heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-    page: { ...pageSchema.definitions.pageSchema },
+    section: { ...commonsectionSchema.definitions.commonsectionSchema },
     contact: { ...contactSchema.definitions.contactSchema },
     membersByType: {
       type: 'object',
@@ -34,5 +34,5 @@ export const teamSchema = {
     },
   },
   additionalProperties: false,
-  required: ['id', 'heroSection', 'page', 'contact', 'membersByType'],
+  required: ['id', 'heroSection', 'section', 'contact', 'membersByType'],
 };

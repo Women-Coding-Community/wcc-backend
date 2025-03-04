@@ -1,10 +1,8 @@
 import { linkSchema } from './link.schema';
-import { programmeItemSchema } from './programme.item.schema';
-
-export const sectionProgrammeSchema = {
-  $ref: '#/definitions/sectionProgrammeSchema',
+export const listSectionStringSchema = {
+  $ref: '#/definitions/listSectionStringSchema',
   definitions: {
-    sectionProgrammeSchema: {
+    listSectionStringSchema: {
       type: 'object',
       properties: {
         title: {
@@ -18,11 +16,15 @@ export const sectionProgrammeSchema = {
         link: { ...linkSchema.definitions.linkSchema },
         items: {
           type: 'array',
-          items: [{ ...programmeItemSchema.definitions.programmeItemSchema }],
+          items: [
+            {
+              type: 'string',
+            },
+          ],
         },
       },
-      additionalProperties: false,
-      required: ['title'],
     },
+    additionalProperties: false,
+    required: ['title'],
   },
 };

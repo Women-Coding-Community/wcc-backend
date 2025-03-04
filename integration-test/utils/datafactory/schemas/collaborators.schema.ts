@@ -1,4 +1,4 @@
-import { pageSchema } from './page.schema';
+import { commonsectionSchema } from './commonsection.schema';
 import { contactSchema } from './contact.schema';
 import { memberSchema } from './member.schema';
 import { paginationSchema } from './pagination.schema';
@@ -20,7 +20,7 @@ export const collaboratorsSchema = {
       required: ['pagination'],
     },
     heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-    page: { ...pageSchema.definitions.pageSchema },
+    page: { ...commonsectionSchema.definitions.commonsectionSchema },
     contact: { ...contactSchema.definitions.contactSchema },
     collaborators: {
       type: 'array',
@@ -28,5 +28,5 @@ export const collaboratorsSchema = {
     },
   },
   additionalProperties: false,
-  required: ['id', 'metadata', 'heroSection', 'page', 'contact', 'collaborators'],
+  required: ['id', 'metadata', 'heroSection', 'section', 'contact', 'collaborators'],
 };
