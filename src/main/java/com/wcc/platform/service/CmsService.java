@@ -11,6 +11,7 @@ import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -180,5 +181,24 @@ public class CmsService {
     }
 
     throw new ContentNotFoundException(PageType.ABOUT_US);
+  }
+
+  /**
+   * Find Partners page in DB and convert to Pojo PartnersPage.
+   *
+   * @return Pojo PartnersPage.
+   */
+  public PartnersPage getPartners() {
+    final var page = pageRepository.findById(PageType.PARTNERS.getId());
+
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), PartnersPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+
+    throw new ContentNotFoundException(PageType.PARTNERS);
   }
 }
