@@ -1,9 +1,10 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.pages.AboutUsPage;
-import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,6 +84,18 @@ public class AboutController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<AboutUsPage> getAboutUsPage() {
     return ResponseEntity.ok(cmsService.getAboutUs());
+  }
+
+  /**
+   * API to retrieve information about "CelebrateHer" page.
+   *
+   * @return CelebrateHer page
+   */
+  @GetMapping("/celebrateHer")
+  @Operation(summary = "API to retrieve information about About Us page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<CelebrateHerPage> getCelebrateHerPage() {
+    return ResponseEntity.ok(cmsService.getCelebrateHer());
   }
 
   /**

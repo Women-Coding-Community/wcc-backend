@@ -1,12 +1,14 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.ABOUT_US;
+import static com.wcc.platform.domain.cms.PageType.CELEBRATE_HER;
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.PARTNERS;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
 import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
+import static com.wcc.platform.factories.SetupFactories.createCelebrateHerPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
 import static com.wcc.platform.factories.SetupFactories.createPartnersPageTest;
@@ -41,6 +43,7 @@ class AboutControllerTest {
   private static final String API_CODE_OF_CONDUCT = "/api/cms/v1/code-of-conduct";
   private static final String API_ABOUT_US = "/api/cms/v1/about";
   private static final String API_COLLABORATORS = "/api/cms/v1/collaborators";
+  private static final String API_CELEBRATEHER = "/api/cms/v1/celebrateHer";
   private static final String API_PARTNERS = "/api/cms/v1/partners";
   private static final String PAGINATION_COLLABORATORS =
       "?currentPage=" + DEFAULT_CURRENT_PAGE + "&pageSize=" + DEFAULT_PAGE_SIZE;
@@ -196,6 +199,19 @@ class AboutControllerTest {
 
     mockMvc
         .perform(MockMvcRequestFactory.getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testCelebrateHerOkResponse() throws Exception {
+    var fileName = CELEBRATE_HER.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getCelebrateHer()).thenReturn(createCelebrateHerPageTest(fileName));
+
+    mockMvc
+        .perform(MockMvcRequestFactory.getRequest(API_CELEBRATEHER).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

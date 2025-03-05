@@ -20,14 +20,16 @@ import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.attributes.MemberByType;
-import com.wcc.platform.domain.cms.pages.AboutUsPage;
-import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
+import com.wcc.platform.domain.platform.AboutHer;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
@@ -41,6 +43,7 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.utils.FileUtil;
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 /** Setup Factory tests. */
@@ -417,6 +420,35 @@ public class SetupFactories {
     }
   }
 
+
+  /** CelebrateHer factory for testing. */
+  public static CelebrateHerPage createCelebrateHerPageTest() {
+    final String pageId = PageType.CELEBRATE_HER.getId();
+    return new CelebrateHerPage(
+        pageId,
+        createHeroSectionTest(),
+        createCommonSectionTest(),
+        Collections.singletonList(createAboutHer()));
+  }
+
+  /** CelebrateHer factory for testing. */
+  public static CelebrateHerPage createCelebrateHerPageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, CelebrateHerPage.class);
+    } catch (JsonProcessingException e) {
+      return createCelebrateHerPageTest();
+    }
+  }
+
+  public static AboutHer createAboutHer() {
+    return AboutHer.builder()
+        .listOfName(List.of("Liliia", "Anna"))
+        .description("Description")
+        .link(new LabelLink("linkedIn", "linkedIn", "https://linkedIn.com/lilrafil"))
+        .build();
+  }
+
   /** Landing Page factory for testing. */
   public static LandingPage createLandingPageTest() {
     final String pageId = PageType.LANDING_PAGE.getId();
@@ -444,4 +476,5 @@ public class SetupFactories {
       return createLandingPageTest();
     }
   }
+
 }

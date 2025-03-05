@@ -1,6 +1,6 @@
-package com.wcc.platform.domain.cms.pages;
+package com.wcc.platform.domain.cms.pages.aboutus;
 
-import com.wcc.platform.domain.cms.attributes.Contact;
+import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.ListSection;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,14 +8,13 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * CMS About Us page.
+ * CMS Code of conduct page.
  *
- * @param heroSection Page details as title and images
+ * @param section CommonSection details as title and description
  * @param items all details
- * @param contact all details
  */
-public record AboutUsPage(
+public record CodeOfConductPage(
     @NotNull String id,
     @NotNull HeroSection heroSection,
-    @NotEmpty List<ListSection<String>> items,
-    @NotEmpty Contact contact) {}
+    @NotNull CommonSection section,
+    @NotEmpty List<ListSection<String>> items) {}
