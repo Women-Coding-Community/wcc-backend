@@ -5,6 +5,7 @@ import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.FOOTER;
 import static com.wcc.platform.domain.cms.PageType.LANDING_PAGE;
+import static com.wcc.platform.domain.cms.PageType.PARTNERS;
 import static com.wcc.platform.domain.cms.PageType.TEAM;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
@@ -13,6 +14,7 @@ import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageT
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
 import static com.wcc.platform.factories.SetupFactories.createFooterTest;
 import static com.wcc.platform.factories.SetupFactories.createLandingPageTest;
+import static com.wcc.platform.factories.SetupFactories.createPartnersPageTest;
 import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,6 +48,8 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.deleteById(ABOUT_US.getId());
     pageRepository.deleteById(COLLABORATOR.getId());
     pageRepository.deleteById(LANDING_PAGE.getId());
+    pageRepository.deleteById(CODE_OF_CONDUCT.getId());
+    pageRepository.deleteById(PARTNERS.getId());
   }
 
   @Test
@@ -139,5 +143,19 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(
         landingPage.getFeedbackSection().feedbacks().size(),
         result.getFeedbackSection().feedbacks().size());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testGetPartnersPage() {
+    var partnersPage = createPartnersPageTest(PARTNERS.getFileName());
+    pageRepository.create(objectMapper.convertValue(partnersPage, Map.class));
+
+    var result = service.getPartners();
+
+    assertEquals(partnersPage, result);
+
+    assertEquals(4, result.introSection().items().size());
+    assertEquals(4, result.partners().items().size());
   }
 }
