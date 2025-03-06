@@ -131,18 +131,19 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testGetCelebrateHerPage() {
     var celebrateHerPage = createCelebrateHerPageTest(CELEBRATE_HER.getFileName());
     pageRepository.create(objectMapper.convertValue(celebrateHerPage, Map.class));
     var result = service.getCelebrateHer();
-    // TODO to investigate why heroSection test doesn't pass for CelebrateHerPage meanwhile pass for
-    // the other pages
-    // assertEquals(celebrateHerPage.heroSection(), result.heroSection());
+
+    assertEquals(celebrateHerPage.heroSection(), result.heroSection());
     assertEquals(celebrateHerPage.section(), result.section());
     assertEquals(celebrateHerPage.items(), result.items());
   }
 
   @SuppressWarnings("unchecked")
+  @Test
   void testGetLandingPage() {
     var landingPage = createLandingPageTest(LANDING_PAGE.getFileName());
     pageRepository.create(objectMapper.convertValue(landingPage, Map.class));
