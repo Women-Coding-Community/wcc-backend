@@ -6,6 +6,7 @@ import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.FOOTER;
 import static com.wcc.platform.domain.cms.PageType.LANDING_PAGE;
+import static com.wcc.platform.domain.cms.PageType.PARTNERS;
 import static com.wcc.platform.domain.cms.PageType.TEAM;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
@@ -15,6 +16,7 @@ import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageT
 import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
 import static com.wcc.platform.factories.SetupFactories.createFooterTest;
 import static com.wcc.platform.factories.SetupFactories.createLandingPageTest;
+import static com.wcc.platform.factories.SetupFactories.createPartnersPageTest;
 import static com.wcc.platform.factories.SetupFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,6 +50,8 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     pageRepository.deleteById(ABOUT_US.getId());
     pageRepository.deleteById(COLLABORATOR.getId());
     pageRepository.deleteById(LANDING_PAGE.getId());
+    pageRepository.deleteById(CODE_OF_CONDUCT.getId());
+    pageRepository.deleteById(PARTNERS.getId());
   }
 
   @Test
@@ -127,17 +131,19 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testGetCelebrateHerPage() {
     var celebrateHerPage = createCelebrateHerPageTest(CELEBRATE_HER.getFileName());
     pageRepository.create(objectMapper.convertValue(celebrateHerPage, Map.class));
     var result = service.getCelebrateHer();
-    // TODO to investigate why heroSection test doesn't pass for CelebrateHerPage meanwhile pass for the other pages
-    //assertEquals(celebrateHerPage.heroSection(), result.heroSection());
+
+    assertEquals(celebrateHerPage.heroSection(), result.heroSection());
     assertEquals(celebrateHerPage.section(), result.section());
     assertEquals(celebrateHerPage.items(), result.items());
   }
-  
+
   @SuppressWarnings("unchecked")
+  @Test
   void testGetLandingPage() {
     var landingPage = createLandingPageTest(LANDING_PAGE.getFileName());
     pageRepository.create(objectMapper.convertValue(landingPage, Map.class));
@@ -151,5 +157,42 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(
         landingPage.getFeedbackSection().feedbacks().size(),
         result.getFeedbackSection().feedbacks().size());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testGetPartnersPage() {
+    var partnersPage = createPartnersPageTest(PARTNERS.getFileName());
+    pageRepository.create(objectMapper.convertValue(partnersPage, Map.class));
+
+    var result = service.getPartners();
+
+    assertEquals(partnersPage, result);
+
+    // Assert hero section
+    assertEquals("WCC Partners", result.heroSection().title());
+
+    // Assert intro section
+    assertEquals(4, result.introSection().items().size());
+    assertEquals(
+        "Align with our mission to break barriers and advocate for gender equality in tech.",
+        result.introSection().items().getFirst());
+
+    // Assert contact
+    assertEquals("Become a WCC Partner", result.contact().title());
+    assertEquals("london@womencodingcommunity.com", result.contact().links().getFirst().link());
+    assertEquals("email", result.contact().links().getFirst().type().name().toLowerCase());
+
+    // Assert partner
+    assertEquals(4, result.partners().items().size());
+    assertEquals(
+        "https://drive.google.com/surrealdb-desktop-logo.png",
+        result.partners().items().getFirst().getImages().getFirst().path());
+    assertEquals("SurrealDB", result.partners().items().getFirst().getName());
+    assertEquals(
+        "SurrealDB is an innovative, multi-model, cloud-ready database, suitable"
+            + " for modern and traditional applications.",
+        result.partners().items().getFirst().getDescription());
+    assertEquals("https://surrealdb.com/", result.partners().items().getFirst().getLink().uri());
   }
 }

@@ -1,0 +1,114 @@
+{
+  "id": "page:PARTNERS",
+  "heroSection": {
+    "title": "WCC Partners"
+  },
+  "introSection": {
+    "title": "Why partner with us?",
+    "items": [
+      "Align with our mission to break barriers and advocate for gender equality in tech.",
+      "Engage in sponsorships, event collaborations, mentorship programs, and other programs.",
+      "Connect with and mentor talented women in tech.",
+      "Support initiatives that advocate for women’s rights, education, and professional development in technology."
+    ]
+  },
+  "contact": {
+    "title": "Become a WCC Partner",
+    "links": [
+      {
+        "type": "email",
+        "link": "london@womencodingcommunity.com"
+      },
+      {
+        "type": "slack",
+        "link": "https://shortlink_to_slack.com/"
+      }
+    ]
+  },
+  "partners": {
+    "title": "Meet Our Partners",
+    "description": "Our partners are committed to supporting our mission and empowering",
+    "items": [
+      {
+        "images": [
+          {
+            "path": "https://drive.google.com/surrealdb-desktop-logo.png",
+            "alt": "SurrealDB logo",
+            "type": "desktop"
+          },
+          {
+            "path": "https://drive.google.com/surrealdb-mobile-logo.png",
+            "alt": "SurrealDB logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "SurrealDB",
+        "description": "SurrealDB is an innovative, multi-model, cloud-ready database, suitable for modern and traditional applications.",
+        "link": {
+          "label": "Visit SurrealDB",
+          "uri": "https://surrealdb.com/"
+        }
+      },
+      {
+        "images": [
+          {
+            "path": "https://drive.google.com/amazon-desktop-logo.png",
+            "alt": "Amazon logo",
+            "type": "desktop"
+          },
+          {
+            "path": "https://drive.google.com/amazon-mobile-logo.png",
+            "alt": "Amazon logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "Amazon",
+        "description": "Amazon is a global leader in e-commerce, redefining online shopping with its vast product selection, seamless customer experience, and advanced logistics network.",
+        "link": {
+          "label": "Visit Amazon",
+          "uri": "https://www.amazon.com/"
+        }
+      },
+      {
+        "images": [
+          {
+            "path": "jetbrains-desktop-logo.png",
+            "alt": "JetBrains logo",
+            "type": "desktop"
+          },
+          {
+            "path": "jetbrains-mobile-logo.png",
+            "alt": "JetBrains logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "JetBrains",
+        "description": "JetBrains creates intelligent software development tools used by over 11.4 million professionals and 88 Fortune Global Top 100 companies.",
+        "link": {
+          "label": "Visit JetBrains",
+          "uri": "https://www.jetbrains.com/"
+        }
+      },
+      {
+        "images": [
+          {
+            "path": "https://drive.google.com/devoxx-uk-desktop-logo.png",
+            "alt": "Devoxx UK logo",
+            "type": "desktop"
+          },
+          {
+            "path": "https://drive.google.com/devoxx-uk-mobile-logo.png",
+            "alt": "Devoxx UK logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "Devoxx UK",
+        "description": "Provide a first class tech conference where passionate developers can network, hack, get inspired and learn throughout.",
+        "link": {
+          "label": "Visit Devoxx UK",
+          "uri": "https://www.devoxx.co.uk/"
+        }
+      }
+    ]
+  }
+}
