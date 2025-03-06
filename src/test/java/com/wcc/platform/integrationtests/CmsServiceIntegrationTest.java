@@ -135,12 +135,13 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     var celebrateHerPage = createCelebrateHerPageTest(CELEBRATE_HER.getFileName());
     pageRepository.create(objectMapper.convertValue(celebrateHerPage, Map.class));
     var result = service.getCelebrateHer();
-    // TODO to investigate why heroSection test doesn't pass for CelebrateHerPage meanwhile pass for the other pages
-    //assertEquals(celebrateHerPage.heroSection(), result.heroSection());
+    // TODO to investigate why heroSection test doesn't pass for CelebrateHerPage meanwhile pass for
+    // the other pages
+    // assertEquals(celebrateHerPage.heroSection(), result.heroSection());
     assertEquals(celebrateHerPage.section(), result.section());
     assertEquals(celebrateHerPage.items(), result.items());
   }
-  
+
   @SuppressWarnings("unchecked")
   void testGetLandingPage() {
     var landingPage = createLandingPageTest(LANDING_PAGE.getFileName());
@@ -167,7 +168,30 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
 
     assertEquals(partnersPage, result);
 
+    // Assert hero section
+    assertEquals("WCC Partners", result.heroSection().title());
+
+    // Assert intro section
     assertEquals(4, result.introSection().items().size());
+    assertEquals(
+        "Align with our mission to break barriers and advocate for gender equality in tech.",
+        result.introSection().items().getFirst());
+
+    // Assert contact
+    assertEquals("Become a WCC Partner", result.contact().title());
+    assertEquals("london@womencodingcommunity.com", result.contact().links().getFirst().link());
+    assertEquals("email", result.contact().links().getFirst().type().name().toLowerCase());
+
+    // Assert partner
     assertEquals(4, result.partners().items().size());
+    assertEquals(
+        "https://drive.google.com/surrealdb-desktop-logo.png",
+        result.partners().items().getFirst().getImages().getFirst().path());
+    assertEquals("SurrealDB", result.partners().items().getFirst().getName());
+    assertEquals(
+        "SurrealDB is an innovative, multi-model, cloud-ready database, suitable"
+            + " for modern and traditional applications.",
+        result.partners().items().getFirst().getDescription());
+    assertEquals("https://surrealdb.com/", result.partners().items().getFirst().getLink().uri());
   }
 }
