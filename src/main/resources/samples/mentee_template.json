@@ -1,0 +1,303 @@
+{
+  "mentees": [
+    {
+      "submitDate": "Thu, May 30, 2024, 8:00 PM CEST",
+      "mentors": [
+        "mentor1",
+        "mentor2"
+      ],
+      "fullName": "firstname lastname",
+      "email": "member@wcc.com",
+      "slackDisplayName": "slack name",
+      "country": {
+        "countryCode": "city",
+        "countryName": "Country name"
+      },
+      "city": "City",
+      "position": "job title or education status",
+      "companyName": "company or university name",
+      "images": [
+        {
+          "path": "google drive link",
+          "alt": "mentor profile image",
+          "type": "desktop/mobile"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/member"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/xyz"
+        },
+        {
+          "type": "website",
+          "link": "https://xyz.com/"
+        },
+        {
+          "type": "DEFAULT_LINK",
+          "link": "https://xyz.com/"
+        }
+      ],
+      "status": "published/review/disabled",
+      "hours": 5,
+      "mentorshipType": "Ad-Hoc Format/Long-Term Format/Both",
+      "previousMentorshipType": "Ad-Hoc Format/Long-Term Format/Both",
+      "bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "languages": [
+        "Language1",
+        "Language2",
+        "Language3"
+      ],
+      "skills": {
+        "years of experience": 4,
+        "areas": [
+          {
+            "1": [
+              "Quality Assurance",
+              "Backend Developer",
+              "Frontend Developer",
+              "Fullstack Developer",
+              "DevOps",
+              "Distributed Systems",
+              "Data Science",
+              "Data Engineering",
+              "Android",
+              "iOS",
+              "Business Analysis",
+              "Product Management",
+              "Project Management",
+              "Machine Learning",
+              "Engineering management",
+              "Network Engineering",
+              "Security",
+              "Site Reliability Engineering"
+            ]
+          },
+          {
+            "2": [
+              "Quality Assurance",
+              "Backend Developer",
+              "Frontend Developer",
+              "Fullstack Developer",
+              "DevOps",
+              "Distributed Systems",
+              "Data Science",
+              "Data Engineering",
+              "Android",
+              "iOS",
+              "Business Analysis",
+              "Product Management",
+              "Project Management",
+              "Machine Learning",
+              "Engineering management",
+              "Network Engineering",
+              "Security",
+              "Site Reliability Engineering"
+            ]
+          },
+          {
+            "3": [
+              "Quality Assurance",
+              "Backend Developer",
+              "Frontend Developer",
+              "Fullstack Developer",
+              "DevOps",
+              "Distributed Systems",
+              "Data Science",
+              "Data Engineering",
+              "Android",
+              "iOS",
+              "Business Analysis",
+              "Product Management",
+              "Project Management",
+              "Machine Learning",
+              "Engineering management",
+              "Network Engineering",
+              "Security",
+              "Site Reliability Engineering"
+            ]
+          },
+          {
+            "4": [
+              "Quality Assurance",
+              "Backend Developer",
+              "Frontend Developer",
+              "Fullstack Developer",
+              "DevOps",
+              "Distributed Systems",
+              "Data Science",
+              "Data Engineering",
+              "Android",
+              "iOS",
+              "Business Analysis",
+              "Product Management",
+              "Project Management",
+              "Machine Learning",
+              "Engineering management",
+              "Network Engineering",
+              "Security",
+              "Site Reliability Engineering"
+            ]
+          },
+          {
+            "5": [
+              "Quality Assurance",
+              "Backend Developer",
+              "Frontend Developer",
+              "Fullstack Developer",
+              "DevOps",
+              "Distributed Systems",
+              "Data Science",
+              "Data Engineering",
+              "Android",
+              "iOS",
+              "Business Analysis",
+              "Product Management",
+              "Project Management",
+              "Machine Learning",
+              "Engineering management",
+              "Network Engineering",
+              "Security",
+              "Site Reliability Engineering"
+            ]
+          }
+        ],
+        "languages": [
+          {
+            "1": [
+              "Java",
+              "C",
+              "C++",
+              "C#",
+              "Go",
+              "Python",
+              "Javascript",
+              "Kotlin",
+              "Scala"
+            ]
+          },
+          {
+            "2": [
+              "Java",
+              "C",
+              "C++",
+              "C#",
+              "Go",
+              "Python",
+              "Javascript",
+              "Kotlin",
+              "Scala"
+            ]
+          },
+          {
+            "3": [
+              "Java",
+              "C",
+              "C++",
+              "C#",
+              "Go",
+              "Python",
+              "Javascript",
+              "Kotlin",
+              "Scala"
+            ]
+          },
+          {
+            "4": [
+              "Java",
+              "C",
+              "C++",
+              "C#",
+              "Go",
+              "Python",
+              "Javascript",
+              "Kotlin",
+              "Scala"
+            ]
+          },
+          {
+            "5": [
+              "Java",
+              "C",
+              "C++",
+              "C#",
+              "Go",
+              "Python",
+              "Javascript",
+              "Kotlin",
+              "Scala"
+            ]
+          }
+        ],
+        "focus": [
+          {
+            "1": [
+              "Switch career to IT",
+              "Grow from beginner to mid-level",
+              "Grow from mid-level to senior-level",
+              "Grow beyond senior level",
+              "Switch from IC to management position",
+              "Change specialisation within IT"
+            ]
+          },
+          {
+            "2": [
+              "Switch career to IT",
+              "Grow from beginner to mid-level",
+              "Grow from mid-level to senior-level",
+              "Grow beyond senior level",
+              "Switch from IC to management position",
+              "Change specialisation within IT"
+            ]
+          },
+          {
+            "3": [
+              "Switch career to IT",
+              "Grow from beginner to mid-level",
+              "Grow from mid-level to senior-level",
+              "Grow beyond senior level",
+              "Switch from IC to management position",
+              "Change specialisation within IT"
+            ]
+          },
+          {
+            "4": [
+              "Switch career to IT",
+              "Grow from beginner to mid-level",
+              "Grow from mid-level to senior-level",
+              "Grow beyond senior level",
+              "Switch from IC to management position",
+              "Change specialisation within IT"
+            ]
+          },
+          {
+            "5": [
+              "Switch career to IT",
+              "Grow from beginner to mid-level",
+              "Grow from mid-level to senior-level",
+              "Grow beyond senior level",
+              "Switch from IC to management position",
+              "Change specialisation within IT"
+            ]
+          }
+        ],
+        "extra": "Starting career in IT, CV Review, Preparation for the Interview, Career Advice."
+      },
+      "womanOrNonBinary": "Yes/No/Prefer not to say",
+      "pronoun": "preferred pronoun",
+      "moreInfo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "consent": {
+        "maleMentor": true,
+        "useContactDetails": true,
+        "socialMediaPromotion": true
+      },
+      "studyGroupMember": true,
+      "volunteer": true,
+      "volunteerFor": "Events,Study groups, Social media marketing",
+      "extra": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    }
+  ]
+}
