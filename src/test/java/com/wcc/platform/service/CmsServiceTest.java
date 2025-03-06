@@ -17,6 +17,7 @@ import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
+import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
@@ -93,6 +94,26 @@ class CmsServiceTest {
     var response = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     assertEquals(collaboratorPage, response);
+  }
+
+  @Test
+  void whenGetPartnersNotInDatabase() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getPartners);
+
+    assertEquals("Content of Page PARTNERS not found", exception.getMessage());
+  }
+
+  @Test
+  void whenGetPartnersInDatabase() {
+    var partnersPage = SetupFactories.createPartnersPageTest();
+    var mapPage = new ObjectMapper().convertValue(partnersPage, Map.class);
+
+    when(pageRepository.findById(PageType.PARTNERS.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(PartnersPage.class))).thenReturn(partnersPage);
+
+    var response = service.getPartners();
+
+    assertEquals(partnersPage, response);
   }
 
   @Test
