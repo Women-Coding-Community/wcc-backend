@@ -10,7 +10,7 @@
       "email": "member@wcc.com",
       "slackDisplayName": "slack name",
       "country": {
-        "countryCode": "city",
+        "countryCode": "ES",
         "countryName": "Country name"
       },
       "city": "City",
