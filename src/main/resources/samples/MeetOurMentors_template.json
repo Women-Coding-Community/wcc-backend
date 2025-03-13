@@ -10,10 +10,10 @@
       "email": "member@wcc.com",
       "slackDisplayName": "slack name",
       "country": {
-        "countryCode": "city",
-        "countryName": "Country name"
+        "countryCode": "ES",
+        "countryName": "Spain"
       },
-      "city": "City",
+      "city": "Madrid",
       "companyName": "company name",
       "images": [
         {
@@ -116,44 +116,37 @@
           "studyGroupDesc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         }
       ],
+      "feedbackList": [
+        {
+          "status": "Draft/Hidden/Approved",
+          "name": "firstname lastname of mentee/Anonymous",
+          "mentorshipType": "Ad-Hoc Format/Long-Term Format/Both",
+          "date": "Thu, May 30, 2024, 8:00 PM CEST",
+          "score": "1/2/3/4/5",
+          "title": "feedback title",
+          "feedback": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        }
+      ],
       "resources": [
         {
-          "id": "res_001",
-          "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          "rawContent": "https://example.com/java-course",
-          "type": "IMAGE/DOCUMENT/SLIDES/ZIP/LINK/YOUTUBE",
-          "images": [
-            {
-              "path": "https://example.com/image1.jpg",
-              "alt": "image1",
-              "type": "desktop"
-            },
-            {
-              "path": "https://example.com/image2.jpg",
-              "alt": "image2",
-              "type": "desktop"
-            }
-          ]
+          "id": "1",
+          "name": "My Book Recommendations",
+          "description": "Books related to Java skills",
+          "rawContent": "Book 1, Book 2",
+          "type": "DESCRIPTION",
+          "images": null,
+          "link": null
         },
         {
-          "id": "res_002",
-          "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          "rawContent": "https://example.com/java-course",
-          "type": "IMAGE/DOCUMENT/SLIDES/ZIP/LINK/YOUTUBE",
-          "images": [
-            {
-              "path": "https://example.com/image1.jpg",
-              "alt": "image1",
-              "type": "desktop"
-            },
-            {
-              "path": "https://example.com/image2.jpg",
-              "alt": "image2",
-              "type": "desktop"
-            }
-          ]
+          "id": "2",
+          "name": "Recommendations of java course",
+          "description": "nice website to learn about java",
+          "type": "LINK",
+          "images": null,
+          "link": {
+            "label": "Java course 1",
+            "uri": "https://linkexample.com/"
+          }
         }
       ]
     }

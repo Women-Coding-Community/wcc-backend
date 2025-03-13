@@ -13,7 +13,7 @@
         "countryCode": "ES",
         "countryName": "Spain "
       },
-      "city": "City",
+      "city": "Madrid",
       "position": "job title or education status",
       "companyName": "company or university name",
       "images": [
@@ -54,235 +54,43 @@
       "skills": {
         "years of experience": 4,
         "areas": [
-          {
-            "1": [
-              "Quality Assurance",
-              "Backend Developer",
-              "Frontend Developer",
-              "Fullstack Developer",
-              "DevOps",
-              "Distributed Systems",
-              "Data Science",
-              "Data Engineering",
-              "Android",
-              "iOS",
-              "Business Analysis",
-              "Product Management",
-              "Project Management",
-              "Machine Learning",
-              "Engineering management",
-              "Network Engineering",
-              "Security",
-              "Site Reliability Engineering"
-            ]
-          },
-          {
-            "2": [
-              "Quality Assurance",
-              "Backend Developer",
-              "Frontend Developer",
-              "Fullstack Developer",
-              "DevOps",
-              "Distributed Systems",
-              "Data Science",
-              "Data Engineering",
-              "Android",
-              "iOS",
-              "Business Analysis",
-              "Product Management",
-              "Project Management",
-              "Machine Learning",
-              "Engineering management",
-              "Network Engineering",
-              "Security",
-              "Site Reliability Engineering"
-            ]
-          },
-          {
-            "3": [
-              "Quality Assurance",
-              "Backend Developer",
-              "Frontend Developer",
-              "Fullstack Developer",
-              "DevOps",
-              "Distributed Systems",
-              "Data Science",
-              "Data Engineering",
-              "Android",
-              "iOS",
-              "Business Analysis",
-              "Product Management",
-              "Project Management",
-              "Machine Learning",
-              "Engineering management",
-              "Network Engineering",
-              "Security",
-              "Site Reliability Engineering"
-            ]
-          },
-          {
-            "4": [
-              "Quality Assurance",
-              "Backend Developer",
-              "Frontend Developer",
-              "Fullstack Developer",
-              "DevOps",
-              "Distributed Systems",
-              "Data Science",
-              "Data Engineering",
-              "Android",
-              "iOS",
-              "Business Analysis",
-              "Product Management",
-              "Project Management",
-              "Machine Learning",
-              "Engineering management",
-              "Network Engineering",
-              "Security",
-              "Site Reliability Engineering"
-            ]
-          },
-          {
-            "5": [
-              "Quality Assurance",
-              "Backend Developer",
-              "Frontend Developer",
-              "Fullstack Developer",
-              "DevOps",
-              "Distributed Systems",
-              "Data Science",
-              "Data Engineering",
-              "Android",
-              "iOS",
-              "Business Analysis",
-              "Product Management",
-              "Project Management",
-              "Machine Learning",
-              "Engineering management",
-              "Network Engineering",
-              "Security",
-              "Site Reliability Engineering"
-            ]
-          }
+          "Quality Assurance",
+          "Backend Developer",
+          "Frontend Developer",
+          "Fullstack Developer",
+          "DevOps",
+          "Distributed Systems",
+          "Data Science",
+          "Data Engineering",
+          "Android",
+          "iOS",
+          "Business Analysis",
+          "Product Management",
+          "Project Management",
+          "Machine Learning",
+          "Engineering management",
+          "Network Engineering",
+          "Security",
+          "Site Reliability Engineering"
         ],
         "languages": [
-          {
-            "1": [
-              "Java",
-              "C",
-              "C++",
-              "C#",
-              "Go",
-              "Python",
-              "Javascript",
-              "Kotlin",
-              "Scala"
-            ]
-          },
-          {
-            "2": [
-              "Java",
-              "C",
-              "C++",
-              "C#",
-              "Go",
-              "Python",
-              "Javascript",
-              "Kotlin",
-              "Scala"
-            ]
-          },
-          {
-            "3": [
-              "Java",
-              "C",
-              "C++",
-              "C#",
-              "Go",
-              "Python",
-              "Javascript",
-              "Kotlin",
-              "Scala"
-            ]
-          },
-          {
-            "4": [
-              "Java",
-              "C",
-              "C++",
-              "C#",
-              "Go",
-              "Python",
-              "Javascript",
-              "Kotlin",
-              "Scala"
-            ]
-          },
-          {
-            "5": [
-              "Java",
-              "C",
-              "C++",
-              "C#",
-              "Go",
-              "Python",
-              "Javascript",
-              "Kotlin",
-              "Scala"
-            ]
-          }
+          "Java",
+          "C",
+          "C++",
+          "C#",
+          "Go",
+          "Python",
+          "Javascript",
+          "Kotlin",
+          "Scala"
         ],
         "focus": [
-          {
-            "1": [
-              "Switch career to IT",
-              "Grow from beginner to mid-level",
-              "Grow from mid-level to senior-level",
-              "Grow beyond senior level",
-              "Switch from IC to management position",
-              "Change specialisation within IT"
-            ]
-          },
-          {
-            "2": [
-              "Switch career to IT",
-              "Grow from beginner to mid-level",
-              "Grow from mid-level to senior-level",
-              "Grow beyond senior level",
-              "Switch from IC to management position",
-              "Change specialisation within IT"
-            ]
-          },
-          {
-            "3": [
-              "Switch career to IT",
-              "Grow from beginner to mid-level",
-              "Grow from mid-level to senior-level",
-              "Grow beyond senior level",
-              "Switch from IC to management position",
-              "Change specialisation within IT"
-            ]
-          },
-          {
-            "4": [
-              "Switch career to IT",
-              "Grow from beginner to mid-level",
-              "Grow from mid-level to senior-level",
-              "Grow beyond senior level",
-              "Switch from IC to management position",
-              "Change specialisation within IT"
-            ]
-          },
-          {
-            "5": [
-              "Switch career to IT",
-              "Grow from beginner to mid-level",
-              "Grow from mid-level to senior-level",
-              "Grow beyond senior level",
-              "Switch from IC to management position",
-              "Change specialisation within IT"
-            ]
-          }
+          "Switch career to IT",
+          "Grow from beginner to mid-level",
+          "Grow from mid-level to senior-level",
+          "Grow beyond senior level",
+          "Switch from IC to management position",
+          "Change specialisation within IT"
         ],
         "extra": "Starting career in IT, CV Review, Preparation for the Interview, Career Advice."
       },
