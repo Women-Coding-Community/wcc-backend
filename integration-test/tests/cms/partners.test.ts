@@ -6,9 +6,7 @@ test('GET /api/cms/v1/partners returns correct data', async ({ request }) => {
   const response = await request.get('/api/cms/v1/partners');
   expect(response.status()).toBe(200);
   // response status validation
-  expect(response.status()).toBe(200);
-
-  const body = await response.json();
+   const body = await response.json();
 
   // schema validation
   try {
