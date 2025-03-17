@@ -1,10 +1,10 @@
 import { imagesSchema } from './images.schema';
 import { linkSchema } from './link.schema';
 
-export const itemsSchema = {
-  $ref: '#/definitions/itemsSchema',
+export const partnerSchema = {
+  $ref: '#/definitions/partnerSchema',
   definitions: {
-    itemsSchema: {
+    partnerSchema: {
       type: 'array',
       properties: {
         partner: {

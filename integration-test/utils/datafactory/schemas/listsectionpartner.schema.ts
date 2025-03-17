@@ -1,5 +1,5 @@
 import { linkSchema } from './link.schema';
-import { itemsSchema } from './items.schema';
+import { partnerSchema } from './partner.schema';
 export const listSectionPartnerSchema = {
   $ref: '#/definitions/listSectionPartnerSchema',
   definitions: {
@@ -15,7 +15,7 @@ export const listSectionPartnerSchema = {
           minLength: 1,
         },
         link: { ...linkSchema.definitions.linkSchema },
-        items: { ...itemsSchema.definitions.itemsSchema },
+        items: { ...partnerSchema.definitions.partnerSchema },
       },
       additionalProperties: false,
       required: ['title'],
