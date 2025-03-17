@@ -153,5 +153,70 @@
         "type": "DESKTOP"
       }
     ]
+  },
+  "partners": {
+    "title": "Community Partners",
+    "items": [
+      {
+        "images": [
+          {
+            "path": "https://drive.google.com/surrealdb-desktop-logo.png",
+            "alt": "SurrealDB logo",
+            "type": "desktop"
+          },
+          {
+            "path": "https://drive.google.com/surrealdb-mobile-logo.png",
+            "alt": "SurrealDB logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "SurrealDB"
+      },
+      {
+        "images": [
+          {
+            "path": "https://drive.google.com/amazon-desktop-logo.png",
+            "alt": "Amazon logo",
+            "type": "desktop"
+          },
+          {
+            "path": "https://drive.google.com/amazon-mobile-logo.png",
+            "alt": "Amazon logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "Amazon"
+      },
+      {
+        "images": [
+          {
+            "path": "jetbrains-desktop-logo.png",
+            "alt": "JetBrains logo",
+            "type": "desktop"
+          },
+          {
+            "path": "jetbrains-mobile-logo.png",
+            "alt": "JetBrains logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "JetBrains"
+      },
+      {
+        "images": [
+          {
+            "path": "https://drive.google.com/devoxx-uk-desktop-logo.png",
+            "alt": "Devoxx UK logo",
+            "type": "desktop"
+          },
+          {
+            "path": "https://drive.google.com/devoxx-uk-mobile-logo.png",
+            "alt": "Devoxx UK logo",
+            "type": "mobile"
+          }
+        ],
+        "name": "Devoxx UK"
+      }
+    ]
   }
 }

@@ -142,8 +142,8 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(celebrateHerPage.items(), result.items());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
+  @SuppressWarnings("unchecked")
   void testGetLandingPage() {
     var landingPage = createLandingPageTest(LANDING_PAGE.getFileName());
     pageRepository.create(objectMapper.convertValue(landingPage, Map.class));
@@ -157,6 +157,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(
         landingPage.getFeedbackSection().feedbacks().size(),
         result.getFeedbackSection().feedbacks().size());
+    assertEquals(landingPage.getPartners().items().size(), result.getPartners().items().size());
   }
 
   @Test

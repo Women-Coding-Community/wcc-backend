@@ -22,6 +22,6 @@ import lombok.ToString;
 public class Partner {
   @NotEmpty private List<Image> images;
   @NotBlank private String name;
-  @NotBlank private String description;
-  @NotEmpty private LabelLink link;
+  private String description;
+  private LabelLink link;
 }
