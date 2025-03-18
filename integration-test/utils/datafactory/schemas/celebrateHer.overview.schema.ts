@@ -1,25 +1,27 @@
 import { heroSectionSchema } from "./hero.section.schema";
 import { aboutHerSchema } from "./about.her.schema";
+import { commonsectionSchema } from "./commonsection.schema";
 
-export const celebrateHerOverviewSchema = {
-  $ref: '#/definitions/celebrateHerOverviewSchema',
+export const celebrateHerPageSchema = {
+  $ref: '#/definitions/celebrateHerPageSchema',
   definitions: {
-    celebrateHerOverviewSchema: {
+    celebrateHerPageSchema: {
       type: 'object',
       properties: {
         id: {
           type: 'string',
           minLength: 1,
-          const: ""
+          const: "page:CELEBRATE_HER"
         },
         heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
+        section: { ...commonsectionSchema.definitions.commonsectionSchema },
         items: {
           type: 'array',
           items: [{ ...aboutHerSchema.definitions.aboutHerSchema }],
         },
       },
       additionalProperties: false,
-      required: ['id', 'heroSection', 'items'],
+      required: ['id', 'heroSection', 'section', 'items'],
     },
   },
 };

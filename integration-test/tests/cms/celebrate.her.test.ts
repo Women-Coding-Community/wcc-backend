@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
-import { celebrateHerOverviewSchema } from '@utils/datafactory/schemas/celebrateHer.overview.schema';
+import { celebrateHerPageSchema } from '@utils/datafactory/schemas/celebrateHer.overview.schema';
 
 test('GET /api/cms/v1/celebrateHer/overview returns correct about us data', async ({ request }) => {
   const response = await request.get(`/api/cms/v1/celebrateHer/overview`);
@@ -12,7 +12,7 @@ test('GET /api/cms/v1/celebrateHer/overview returns correct about us data', asyn
 
   // schema validation
   try {
-    validateSchema(celebrateHerOverviewSchema, body);
+    validateSchema(celebrateHerPageSchema, body);
   } catch (e: unknown) {
     if (e instanceof Error) {
       throw new Error(`Schema validation failed: ${e.message}`);
