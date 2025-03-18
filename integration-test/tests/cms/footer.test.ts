@@ -43,13 +43,6 @@ test.describe('Validate positive test cases for FOOTER Page API', () => {
       }
     }
   });
-
-  test.afterEach(async ({ request }) => {
-    console.log(`Deleting FOOTER Page`);
-    const deleteFooterPageResponse = await request.delete('/api/platform/v1/page?id=page%3AFOOTER');
-    console.log(`Sending PUT request to: ${deleteFooterPageResponse.url()}`);
-    console.log(`Response Status: ${deleteFooterPageResponse.status()}`);
-  });
 });
 
 test.describe('unauthorized request with invalid headers', () => {

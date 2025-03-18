@@ -2,7 +2,6 @@ export const celebrateHerData = {
     "id": "page:CELEBRATE_HER",
     "heroSection": {
         "title": "Celebrate Her",
-        "subtitle": "",
         "images": [
             {
                 "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
