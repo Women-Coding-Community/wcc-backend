@@ -180,6 +180,35 @@
       }
     ]
   },
+  "feedbackSection": {
+    "title": "What do our community members and supporters say about the WCC?",
+    "feedbacks": [
+      {
+        "name": "Lucy Mentor",
+        "feedback": "It is great to be able to share my experience as a newbie in Tech with someone that has more years and experience in the industry. It has definitely made me feel more comfortable with been a completely beginner again and confident that, if a put the hours in, one day it will be pay off.",
+        "memberType": "Mentor",
+        "year": "2024"
+      },
+      {
+        "name": "Ana Mentee",
+        "feedback": "I am exciting with this mentorship program. This is really help me to pursue my goals. I got encouragement, insights, knowledge from my mentor that makes me back on the track and focus to what I have now, upgrade it, then reach out my goals.",
+        "memberType": "Mentee",
+        "year": "2024"
+      },
+      {
+        "name": "Jane from SurrealDB",
+        "feedback": "Add text ...",
+        "memberType": "Partner",
+        "year": "2025"
+      },
+      {
+        "name": "JetBrains",
+        "feedback": "Add text ...",
+        "memberType": "Partner",
+        "year": "2025"
+      }
+    ]
+  },
   "volunteerSection": {
     "title": "Do you want to volunteer with us?",
     "description": "Empowering women in their tech careers through education, mentorship, community building, and career services is our mission. We provide workshops and events, connect members with industry mentors, foster a supportive community through meetups and conferences, and raise awareness for more inclusive industry practices.",

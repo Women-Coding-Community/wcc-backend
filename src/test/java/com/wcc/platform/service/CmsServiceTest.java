@@ -9,15 +9,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.cms.pages.AboutUsPage;
-import com.wcc.platform.domain.cms.pages.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.CollaboratorPage;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.TeamPage;
+import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
+import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
+import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
+import com.wcc.platform.factories.SetupMentorshipFactories;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +36,7 @@ class CmsServiceTest {
           .id(PageType.LANDING_PAGE.getId())
           .heroSection(SetupFactories.createHeroSectionTest())
           .fullBannerSection(SetupFactories.createCommonSectionTest("Page banner section"))
+          .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
           .volunteerSection(SetupFactories.createCommonSectionTest("Volunteer"))
           .build();
   @Mock private PageRepository pageRepository;
@@ -92,6 +97,26 @@ class CmsServiceTest {
   }
 
   @Test
+  void whenGetPartnersNotInDatabase() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getPartners);
+
+    assertEquals("Content of Page PARTNERS not found", exception.getMessage());
+  }
+
+  @Test
+  void whenGetPartnersInDatabase() {
+    var partnersPage = SetupFactories.createPartnersPageTest();
+    var mapPage = new ObjectMapper().convertValue(partnersPage, Map.class);
+
+    when(pageRepository.findById(PageType.PARTNERS.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(PartnersPage.class))).thenReturn(partnersPage);
+
+    var response = service.getPartners();
+
+    assertEquals(partnersPage, response);
+  }
+
+  @Test
   void whenGetCodeOfConductNotInDatabase() {
     var exception = assertThrows(ContentNotFoundException.class, service::getCodeOfConduct);
 
@@ -123,7 +148,10 @@ class CmsServiceTest {
   @Test
   @SuppressWarnings("unchecked")
   void whenGetLandingPageGivenRecordExistOnDatabaseThenReturnPage() {
-    var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
+    var mapPage =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .convertValue(landingPage, Map.class);
 
     when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class))).thenReturn(landingPage);
@@ -136,7 +164,10 @@ class CmsServiceTest {
   @Test
   @SuppressWarnings("unchecked")
   void whenGetLandingPageGivenRecordExistOnDatabaseAndHasExceptionToConvertThenThrowsException() {
-    var mapPage = new ObjectMapper().convertValue(landingPage, Map.class);
+    var mapPage =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .convertValue(landingPage, Map.class);
 
     when(pageRepository.findById(PageType.LANDING_PAGE.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LandingPage.class)))
@@ -164,5 +195,27 @@ class CmsServiceTest {
     var response = service.getAboutUs();
 
     assertEquals(aboutUsPage, response);
+  }
+
+  @Test
+  void whenGetCelebrateHerPageGivenNotStoredInDatabaseThenThrowsException() {
+    var exception = assertThrows(ContentNotFoundException.class, service::getCelebrateHer);
+
+    assertEquals("Content of Page CELEBRATE_HER not found", exception.getMessage());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void whenGetCelebrateHerPageGivenExistOnDatabaseThenReturnValidResponse() {
+    var celebrateHerPage = SetupFactories.createCelebrateHerPageTest();
+    var mapPage = new ObjectMapper().convertValue(celebrateHerPage, Map.class);
+
+    when(pageRepository.findById(PageType.CELEBRATE_HER.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(CelebrateHerPage.class)))
+        .thenReturn(celebrateHerPage);
+
+    var response = service.getCelebrateHer();
+
+    assertEquals(celebrateHerPage, response);
   }
 }

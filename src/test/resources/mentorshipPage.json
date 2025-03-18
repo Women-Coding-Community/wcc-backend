@@ -41,14 +41,14 @@
       {
         "name": "Lucy",
         "feedback": "It is great to be able to share my experience as a newbie in Tech with someone that has more years and experience in the industry. It has definitely made me feel more comfortable with been a completely beginner again and confident that, if a put the hours in, one day it will be pay off.",
-        "mentee": true,
+        "memberType": "Mentor",
         "year": "2024"
       },
       {
         "name": "Jane",
         "feedback": "My mentor has done an excellent job accommodating me and guiding me this year. This was my first experience as a mentee and it has taken time getting my footing. I entered this program because I felt isolated since I seemed to not have any clarity of my career and had a sense of general \"directionless\". Mentor has made me feel validated in my feeling and has helped me understand that my anxiety stems from not having a good understanding of the industry I hope to be a part of. Through our sessions and an exercise she gave me, I was gained a better perceptive on how exactly to direct my focus.",
-        "mentee": false,
-        "year": "2022"
+        "memberType": "Mentee",
+        "year": "2024"
       }
     ]
   }
