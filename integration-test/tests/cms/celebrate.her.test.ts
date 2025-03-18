@@ -43,7 +43,6 @@ test.describe('Validate positive test cases for Celebrate Her Page API', () => {
       }
     }
   });
-
 });
 
 test.describe('unauthorized request with invalid headers', () => {
