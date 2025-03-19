@@ -6,6 +6,7 @@ import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.platform.Event;
+import com.wcc.platform.domain.platform.Partner;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,4 +31,5 @@ public class LandingPage {
   private ListSection<Event> events;
   private FeedbackSection feedbackSection;
   @NotNull private CommonSection volunteerSection;
+  private ListSection<Partner> partners;
 }
