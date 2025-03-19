@@ -187,8 +187,8 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     // Assert partner
     assertEquals(4, result.partners().items().size());
     assertEquals(
-        "https://drive.google.com/surrealdb-desktop-logo.png",
-        result.partners().items().getFirst().getImages().getFirst().path());
+        "https://drive.google.com/surrealdb-mobile-logo.png",
+        result.partners().items().getFirst().getImage().path());
     assertEquals("SurrealDB", result.partners().items().getFirst().getName());
     assertEquals(
         "SurrealDB is an innovative, multi-model, cloud-ready database, suitable"

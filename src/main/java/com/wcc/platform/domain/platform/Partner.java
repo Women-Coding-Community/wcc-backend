@@ -4,7 +4,6 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -20,8 +19,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class Partner {
-  @NotEmpty private List<Image> images;
+  @NotEmpty private Image image;
   @NotBlank private String name;
   private String description;
-  private LabelLink link;
+  @NotEmpty private LabelLink link;
 }

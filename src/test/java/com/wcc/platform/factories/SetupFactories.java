@@ -339,10 +339,7 @@ public class SetupFactories {
    */
   public static Partner createPartnerTest() {
     return new Partner(
-        List.of(createImageTest(ImageType.DESKTOP)),
-        "Partner",
-        "Partner description",
-        createLinkTest());
+        createImageTest(ImageType.MOBILE), "Partner", "Partner description", createLinkTest());
   }
 
   public static Image createImageTest(final ImageType type) {
