@@ -24,7 +24,7 @@ test.describe('Validate positive test cases for LANDING Page API', () => {
     }
   });
 
-  test('GET /api/cms/v1/landingPage returns correct footer data', async ({ request }) => {
+  test('GET /api/cms/v1/landingPage returns correct data', async ({ request }) => {
     const response = await request.get(`/api/cms/v1/landingPage`);
 
     // response status validation
