@@ -61,124 +61,21 @@
       "skills": {
         "years of experience": 4,
         "areas": [
-          {
-            "name": "Quality Assurance",
-            "rating": 4
-          },
-          {
-            "name": "Backend Developer",
-            "rating": 5
-          },
-          {
-            "name": "Frontend Developer",
-            "rating": 3
-          },
-          {
-            "name": "Fullstack Developer",
-            "rating": 5
-          },
-          {
-            "name": "DevOps",
-            "rating": 2
-          },
-          {
-            "name": "Distributed Systems",
-            "rating": 4
-          },
-          {
-            "name": "Data Science",
-            "rating": 5
-          },
-          {
-            "name": "Data Engineering",
-            "rating": 4
-          },
-          {
-            "name": "Android",
-            "rating": null
-          },
-          {
-            "name": "iOS",
-            "rating": 2
-          },
-          {
-            "name": "Business Analysis",
-            "rating": 4
-          },
-          {
-            "name": "Product Management",
-            "rating": 3
-          },
-          {
-            "name": "Project Management",
-            "rating": 5
-          },
-          {
-            "name": "Machine Learning",
-            "rating": 4
-          },
-          {
-            "name": "Engineering management",
-            "rating": 5
-          },
-          {
-            "name": "Network Engineering",
-            "rating": 3
-          },
-          {
-            "name": "Security",
-            "rating": 4
-          },
-          {
-            "name": "Site Reliability Engineering",
-            "rating": null
-          }
+          "Backend Developer",
+          "Frontend Developer",
+          "Fullstack Developer",
+          "DevOps"
         ],
         "languages": [
-          {
-            "name": "Java",
-            "rating": 5
-          },
-          {
-            "name": "C",
-            "rating": 3
-          },
-          {
-            "name": "C++",
-            "rating": 4
-          },
-          {
-            "name": "C#",
-            "rating": 3
-          },
-          {
-            "name": "Go",
-            "rating": 4
-          },
-          {
-            "name": "Python",
-            "rating": 5
-          },
-          {
-            "name": "Javascript",
-            "rating": 4
-          },
-          {
-            "name": "Kotlin",
-            "rating": 3
-          },
-          {
-            "name": "Scala",
-            "rating": 4
-          }
+          "Java",
+          "C",
+          "C++",
+          "C#"
         ],
         "focus": [
           "Switch career to IT",
           "Grow from beginner to mid-level",
-          "Grow from mid-level to senior-level",
-          "Grow beyond senior level",
-          "Switch from IC to management position",
-          "Change specialisation within IT"
+          "Grow from mid-level to senior-level"
         ],
         "extra": "Test Automation, Code Review, Exploratory Testing, Web Testing (Manual & Automation), API Testing (Postman, PactumJS), ISTQB Certification Preparation guidelines (Foundation Level and Test Automation Engineer), Starting career in IT, CV Review, Preparation for the Interview, Career Advice.",
         "mentee": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
