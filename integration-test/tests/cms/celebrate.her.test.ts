@@ -14,7 +14,7 @@ test.describe('Validate positive test cases for Celebrate Her Page API', () => {
     console.log('Response Body:', JSON.stringify(createPageResponse.json()));
 
     if (createPageResponse.status() == 409) {
-      console.log(`Updating FOOTER Page`);
+      console.log(`Updating Celebrate Page`);
       const updateFooterPageResponse = await request.put('/api/platform/v1/page?pageType=CELEBRATE_HER', {
         data: celebrateHerData,
       });
@@ -53,7 +53,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/footer`, {
+      const response = await request.get(`/api/cms/v1/celebrateHer`, {
         headers: headers,
       });
       expect(response.status()).toBe(401);
