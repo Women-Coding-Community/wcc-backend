@@ -45,7 +45,7 @@ export const codeofconductSchema = {
         },
       },
       additionalProperties: false,
-      required: ['id', 'heroSection', 'page', 'items'],
+      required: ['id', 'heroSection', 'section', 'items'],
     },
   },
 };
