@@ -3,7 +3,7 @@ import { validateSchema } from '@utils/helpers/schema.validation';
 import { teamSchema } from '@utils/datafactory/schemas/team.schema';
 
 test.describe('Validate positive test cases for TEAM Page API', () => {
-  test.beforeEach(async ({ request }) => {
+  test.beforeAll(async ({ request }) => {
     console.log(`Creating TEAM Page`);
     const createPageResponse = await request.post('/api/platform/v1/page?pageType=TEAM', {
       
@@ -36,7 +36,7 @@ test('GET /api/cms/v1/team returns correct data', async ({ request }) => {
       throw new Error('Schema validation failed with an unknown error');
     }
   }
-});
+  });
 });
 test.describe('unauthorized request with invalid headers', () => {
   const testData = [
