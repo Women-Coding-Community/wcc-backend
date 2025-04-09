@@ -38,6 +38,7 @@ class CmsServiceTest {
           .fullBannerSection(SetupFactories.createCommonSectionTest("Page banner section"))
           .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
           .volunteerSection(SetupFactories.createCommonSectionTest("Volunteer"))
+          .partners(SetupFactories.createListSectionPartnerTest())
           .build();
   @Mock private PageRepository pageRepository;
   @Mock private ObjectMapper objectMapper;
