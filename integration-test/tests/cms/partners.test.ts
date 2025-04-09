@@ -4,7 +4,7 @@ import { partnersSchema } from '@utils/datafactory/schemas/partners.schema';
 
 
 test.describe('Validate positive test cases for MENTORSHIPCODEOFCONDUCT Page API', () => {
-  test.beforeEach(async ({ request }) => {
+  test.beforeAll(async ({ request }) => {
     console.log(`Creating PARTNERS Page`);
     const createPageResponse = await request.post('/api/platform/v1/page?pageType=PARTNERS', {
       
@@ -40,7 +40,7 @@ test('GET /api/cms/v1/partners returns correct data', async ({ request }) => {
     }
   }
 });
-test.afterEach(async ({ request }) => {
+test.afterAll(async ({ request }) => {
   console.log(`Deleting PARTNERS Page`);
   const deletePartnersPageResponse = await request.delete('/api/platform/v1/page?id=page%3APARTNERS');
   console.log(`Sending PUT request to: ${deletePartnersPageResponse.status()}`);
