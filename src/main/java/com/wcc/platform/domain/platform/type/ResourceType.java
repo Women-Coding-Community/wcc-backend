@@ -8,4 +8,5 @@ public enum ResourceType {
   ZIP,
   LINK,
   YOUTUBE,
+  DESCRIPTION
 }

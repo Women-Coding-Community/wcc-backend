@@ -3,7 +3,6 @@ package com.wcc.platform.configuration;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import com.surrealdb.connection.exception.SurrealRecordAlreadyExitsException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
@@ -49,8 +48,11 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
   }
 
-  /** Receive InvalidProgramTypeException and return {@link HttpStatus#BAD_REQUEST}. */
-  @ExceptionHandler({InvalidProgramTypeException.class})
+  /**
+   * Receive {@link InvalidProgramTypeException} or {@link IllegalArgumentException} then return
+   * {@link HttpStatus#BAD_REQUEST}.
+   */
+  @ExceptionHandler({InvalidProgramTypeException.class, IllegalArgumentException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ErrorDetails> handleProgramTypeError(
       final InvalidProgramTypeException ex, final WebRequest request) {
@@ -61,10 +63,10 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Receive {@link DuplicatedMemberException} or {@link SurrealRecordAlreadyExitsException} and
-   * return {@link HttpStatus#CONFLICT}.
+   * Receive {@link DuplicatedMemberException} and {@link
+   * org.springframework.dao.DuplicateKeyException} return {@link HttpStatus#CONFLICT}.
    */
-  @ExceptionHandler({DuplicatedMemberException.class, SurrealRecordAlreadyExitsException.class})
+  @ExceptionHandler({DuplicatedMemberException.class})
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorDetails> handleRecordAlreadyExitsException(
       final RuntimeException ex, final WebRequest request) {
@@ -76,7 +78,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
-  /** Receive ConstraintViolationException and return {@link HttpStatus#NOT_ACCEPTABLE}. */
+  /** Receive {@link ConstraintViolationException} and return {@link HttpStatus#NOT_ACCEPTABLE}. */
   @ExceptionHandler({ConstraintViolationException.class})
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   public ResponseEntity<ErrorDetails> handleNotAcceptableError(

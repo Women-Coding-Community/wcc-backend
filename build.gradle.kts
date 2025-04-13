@@ -37,16 +37,16 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.surrealdb:surrealdb-driver:0.1.0")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.postgresql:postgresql:42.7.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
 
-    testImplementation("com.surrealdb:surrealdb-driver:0.1.0")
     testImplementation("org.testcontainers:testcontainers:${testContainer}")
     testImplementation("org.testcontainers:junit-jupiter:$testContainer")
 
