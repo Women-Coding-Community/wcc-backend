@@ -142,21 +142,39 @@ configuration. To use the plugin, go to Help→Edit Custom VM Options... and pas
 
 Once you've done that, restart the IDE.
 
-## Run Locally
+Before starting the IDE:
 
-* Build and run tests
+Install Docker Desktop if you do not already have it.
+
+Check if Docker is installed
+
+Run:
 
 ```shell
-./gradlew clean build
+docker --version
 ```
 
+## Run Locally
+
+Verify if Docker is running.
+
 **Note**: Make sure you have docker daemon running locally to be able to run integration test, by
-execute ``docker ps``
+execute
+
+``docker ps``
 
 * Start database
 
 ```shell
 docker run --pull always --name surrealdb -p 8000:8000 -d surrealdb/surrealdb:latest start --user root --pass root --log debug
+```
+
+Start the Application from your IDE
+
+* Build and run tests
+
+```shell
+./gradlew clean build
 ```
 
 * Start Spring Boot Application (from your IDE):
