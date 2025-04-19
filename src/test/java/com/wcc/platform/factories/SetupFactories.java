@@ -29,9 +29,9 @@ import com.wcc.platform.domain.cms.pages.TeamPage;
 import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
-import com.wcc.platform.domain.platform.AboutHer;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
+import com.wcc.platform.domain.platform.AboutHer;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.LeadershipMember;
 import com.wcc.platform.domain.platform.Member;
@@ -339,10 +339,7 @@ public class SetupFactories {
    */
   public static Partner createPartnerTest() {
     return new Partner(
-        List.of(createImageTest(ImageType.DESKTOP)),
-        "Partner",
-        "Partner description",
-        createLinkTest());
+        createImageTest(ImageType.DESKTOP), "Partner", "Partner description", createLinkTest());
   }
 
   public static Image createImageTest(final ImageType type) {
@@ -420,7 +417,6 @@ public class SetupFactories {
     }
   }
 
-
   /** CelebrateHer factory for testing. */
   public static CelebrateHerPage createCelebrateHerPageTest() {
     final String pageId = PageType.CELEBRATE_HER.getId();
@@ -460,7 +456,8 @@ public class SetupFactories {
         createListSectionEventTest(),
         createListSectionEventTest(),
         createFeedbackSectionTest(),
-        createCommonSectionTest("Volunteer Section"));
+        createCommonSectionTest("Volunteer Section"),
+        createListSectionPartnerTest());
   }
 
   /**
@@ -476,5 +473,4 @@ public class SetupFactories {
       return createLandingPageTest();
     }
   }
-
 }

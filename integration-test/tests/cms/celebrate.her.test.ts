@@ -1,31 +1,31 @@
 import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
-import { footerSchema } from '@utils/datafactory/schemas/footer.schema';
-import { footerData } from '@utils/datafactory/test-data/footer.page';
+import { celebrateHerPageSchema } from '@utils/datafactory/schemas/celebrateHer.overview.schema';
+import { celebrateHerData } from '@utils/datafactory/test-data/celebrate.her.page.data';
 
-test.describe('Validate positive test cases for FOOTER Page API', () => {
+test.describe('Validate positive test cases for Celebrate Her Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating FOOTER Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=FOOTER', {
-      data: footerData,
+    console.log(`Creating Celebrate Her Page`);
+    const createPageResponse = await request.post('/api/platform/v1/page?pageType=CELEBRATE_HER', {
+      data: celebrateHerData,
     });
     console.log(`Sending POST request to: ${createPageResponse.url()}`);
     console.log(`Response Status: ${createPageResponse.status()}`);
     console.log('Response Body:', JSON.stringify(createPageResponse.json()));
 
     if (createPageResponse.status() == 409) {
-      console.log(`Updating FOOTER Page`);
-      const updatePageResponse = await request.put('/api/platform/v1/page?pageType=FOOTER', {
-        data: footerData,
+      console.log(`Updating Celebrate Page`);
+      const updateFooterPageResponse = await request.put('/api/platform/v1/page?pageType=CELEBRATE_HER', {
+        data: celebrateHerData,
       });
-      console.log(`Sending PUT request to: ${updatePageResponse.url()}`);
-      console.log(`Response Status: ${updatePageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updatePageResponse.json()));
+      console.log(`Sending PUT request to: ${updateFooterPageResponse.url()}`);
+      console.log(`Response Status: ${updateFooterPageResponse.status()}`);
+      console.log('Response Body:', JSON.stringify(updateFooterPageResponse.json()));
     }
   });
 
-  test('GET /api/cms/v1/footer returns correct footer data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/footer`);
+  test('GET /api/cms/v1/celebrateHer/overview returns correct about us data', async ({ request }) => {
+    const response = await request.get(`/api/cms/v1/celebrateHer`);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -34,7 +34,7 @@ test.describe('Validate positive test cases for FOOTER Page API', () => {
 
     // schema validation
     try {
-      validateSchema(footerSchema, body);
+      validateSchema(celebrateHerPageSchema, body);
     } catch (e: unknown) {
       if (e instanceof Error) {
         throw new Error(`Schema validation failed: ${e.message}`);
@@ -53,7 +53,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/footer`, {
+      const response = await request.get(`/api/cms/v1/celebrateHer`, {
         headers: headers,
       });
       expect(response.status()).toBe(401);
