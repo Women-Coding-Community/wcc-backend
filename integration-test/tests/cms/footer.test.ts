@@ -15,12 +15,12 @@ test.describe('Validate positive test cases for FOOTER Page API', () => {
 
     if (createPageResponse.status() == 409) {
       console.log(`Updating FOOTER Page`);
-      const updateFooterPageResponse = await request.put('/api/platform/v1/page?pageType=FOOTER', {
+      const updatePageResponse = await request.put('/api/platform/v1/page?pageType=FOOTER', {
         data: footerData,
       });
-      console.log(`Sending PUT request to: ${updateFooterPageResponse.url()}`);
-      console.log(`Response Status: ${updateFooterPageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updateFooterPageResponse.json()));
+      console.log(`Sending PUT request to: ${updatePageResponse.url()}`);
+      console.log(`Response Status: ${updatePageResponse.status()}`);
+      console.log('Response Body:', JSON.stringify(updatePageResponse.json()));
     }
   });
 
