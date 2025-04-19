@@ -231,7 +231,7 @@
         "image": {
           "path": "https://drive.google.com/uc?id=1sxYKgOSzql2sFX9FLnEHAQhmskOHwBzI&export=download",
           "alt": "SurrealDB logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "SurrealDB",
         "link": {
@@ -242,7 +242,7 @@
         "image": {
           "path": "https://drive.google.com/uc?id=1aR_a7gAA31YdlEST9gGgT9J8t1DHZr_y&export=download",
           "alt": "Amazon logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "Amazon",
         "link": {
@@ -253,7 +253,7 @@
         "image": {
           "path": "https://drive.google.com/uc?id=1t6N6QEB3KQVZLLlrk3G6MOalAfxIwk-8&export=download",
           "alt": "JetBrains logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "JetBrains",
         "link": {
@@ -264,7 +264,7 @@
         "image": {
           "path": "https://drive.google.com/uc?id=1YO0SUlMEvYsP0AdgVWT6X3HR1Lq5x6bZ&export=download",
           "alt": "Devoxx UK logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "Devoxx UK",
         "link": {
@@ -275,7 +275,7 @@
         "image": {
           "path": "https://drive.google.com/uc?id=1tNYfg0f5Hv78q89Q8tD15tmWyFNQ7fUZ&export=download",
           "alt": "WomenTech Network logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "WomenTech Network",
         "link": {

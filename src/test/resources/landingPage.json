@@ -159,9 +159,9 @@
     "items": [
       {
         "image": {
-          "path": "https://drive.google.com/surrealdb-mobile-logo.png",
+          "path": "https://drive.google.com/surrealdb-desktop-logo.png",
           "alt": "SurrealDB logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "SurrealDB",
         "link": {
@@ -170,9 +170,9 @@
       },
       {
         "image": {
-          "path": "https://drive.google.com/amazon-mobile-logo.png",
+          "path": "https://drive.google.com/amazon-desktop-logo.png",
           "alt": "Amazon logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "Amazon",
         "link": {
@@ -181,9 +181,9 @@
       },
       {
         "image": {
-          "path": "jetbrains-mobile-logo.png",
+          "path": "https://drive.google.com/jetbrains-desktop-logo.png",
           "alt": "JetBrains logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "JetBrains",
         "link": {
@@ -192,9 +192,9 @@
       },
       {
         "image": {
-          "path": "https://drive.google.com/devoxx-uk-mobile-logo.png",
+          "path": "https://drive.google.com/devoxx-uk-desktop-logo.png",
           "alt": "Devoxx UK logo",
-          "type": "mobile"
+          "type": "desktop"
         },
         "name": "Devoxx UK",
         "link": {
