@@ -7,8 +7,8 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for ABOUT Page API', () => {
   test.beforeEach(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=ABOUT_US';
-    await createOrUpdatePage(request, 'ABOUT Page', url, aboutUsPageData);
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=ABOUT_US`;
+    await createOrUpdatePage(request, 'ABOUT US Page', url, aboutUsPageData);
   });
 
   test('GET /api/cms/v1/about returns correct data', async ({ request }) => {

@@ -7,7 +7,7 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for FOOTER Page API', () => {
   test.beforeEach(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=FOOTER';
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=FOOTER`;
     await createOrUpdatePage(request, 'FOOTER Page', url, footerData);
   });
 

@@ -7,7 +7,7 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for Code Of Conduct Page API', () => {
   test.beforeEach(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=CODE_OF_CONDUCT';
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=CODE_OF_CONDUCT`;
     await createOrUpdatePage(request, 'CODE OF CONDUCT Page', url, codeOfConductPageData);
   });
 

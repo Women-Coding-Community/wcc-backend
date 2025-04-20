@@ -7,9 +7,10 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for TEAM Page API', () => {
   test.beforeAll(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=TEAM';
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=TEAM`;
     await createOrUpdatePage(request, 'TEAM Page', url, teamPageData);
   });
+
   test('GET /api/cms/v1/team returns correct data', async ({ request }) => {
     const response = await request.get(PATHS.TEAM_PAGE);
     expect(response.status()).toBe(200);

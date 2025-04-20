@@ -7,7 +7,7 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for LANDING Page API', () => {
   test.beforeEach(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=LANDING_PAGE';
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=LANDING_PAGE`;
     await createOrUpdatePage(request, 'LANDING Page', url, landingPageData);
   });
 

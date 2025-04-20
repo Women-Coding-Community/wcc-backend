@@ -12,4 +12,5 @@ export const PATHS = {
   MENTORSHIP_OVERVIEW: '/api/cms/v1/mentorship/overview',
   PARTNERS_PAGE: '/api/cms/v1/partners',
   TEAM_PAGE: '/api/cms/v1/team',
+  PLATFORM_PAGE: '/api/platform/v1/page',
 };

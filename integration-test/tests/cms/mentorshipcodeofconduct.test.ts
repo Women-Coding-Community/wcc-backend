@@ -7,7 +7,7 @@ import { mentorshipCodeOfConductData } from '@utils/datafactory/test-data/mentor
 
 test.describe('Validate positive test cases for MENTORSHIPCODEOFCONDUCT Page API', () => {
   test.beforeEach(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=MENTORSHIP_CONDUCT';
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=MENTORSHIP_CONDUCT`;
     await createOrUpdatePage(request, 'MENTORSHIP CODE OF CONDUCT Page', url, mentorshipCodeOfConductData);
   });
   test('GET /api/cms/v1/mentorship/code-of-conduct returns correct data', async ({ request }) => {

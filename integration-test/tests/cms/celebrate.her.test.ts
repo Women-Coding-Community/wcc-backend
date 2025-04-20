@@ -7,7 +7,7 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for Celebrate Her Page API', () => {
   test.beforeEach(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=CELEBRATE_HER';
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=CELEBRATE_HER`;
     await createOrUpdatePage(request, 'CELEBRATE HER Page', url, celebrateHerData);
   });
 

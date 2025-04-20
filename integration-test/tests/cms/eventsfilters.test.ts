@@ -7,7 +7,7 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for EVENTS FILTERS API', () => {
   test.beforeEach(async ({ request }) => {
-    const url = '/api/platform/v1/page?pageType=EVENT_FILTERS';
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=EVENT_FILTERS`;
     await createOrUpdatePage(request, 'EVENTS FILTERS Page', url, eventFiltersData);
   });
 
