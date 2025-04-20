@@ -34,5 +34,5 @@ export const eventsSchema = {
     },
   },
   additionalProperties: false,
-  required: ['id', 'metadata', 'heroSection', 'section', 'contact', 'data']
+  required: ['id', 'metadata', 'heroSection', 'section', 'contact', 'data'],
 };
