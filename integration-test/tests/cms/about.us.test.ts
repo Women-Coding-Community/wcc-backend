@@ -3,26 +3,12 @@ import { validateSchema } from '@utils/helpers/schema.validation';
 import { aboutSchema } from '@utils/datafactory/schemas/about.schema';
 import { aboutUsPageData } from '@utils/datafactory/test-data/about.us.page.data';
 import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for ABOUT Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating ABOUT Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=ABOUT_US', {
-      data: aboutUsPageData,
-    });
-    console.log(`Sending POST request to: ${createPageResponse.url()}`);
-    console.log(`Response Status: ${createPageResponse.status()}`);
-    console.log('Response Body:', JSON.stringify(createPageResponse.json()));
-
-    if (createPageResponse.status() == 409) {
-      console.log(`Updating ABOUT Page`);
-      const updatePageResponse = await request.put('/api/platform/v1/page?pageType=ABOUT_US', {
-        data: aboutUsPageData,
-      });
-      console.log(`Sending PUT request to: ${updatePageResponse.url()}`);
-      console.log(`Response Status: ${updatePageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updatePageResponse.json()));
-    }
+    const url = '/api/platform/v1/page?pageType=ABOUT_US';
+    await createOrUpdatePage(request, 'ABOUT Page', url, aboutUsPageData);
   });
 
   test('GET /api/cms/v1/about returns correct data', async ({ request }) => {

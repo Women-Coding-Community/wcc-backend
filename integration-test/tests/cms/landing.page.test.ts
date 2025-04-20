@@ -3,26 +3,12 @@ import { validateSchema } from '@utils/helpers/schema.validation';
 import { landingPageSchema } from '@utils/datafactory/schemas/landing.page.schema';
 import { landingPageData } from '@utils/datafactory/test-data/landing.page.data';
 import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for LANDING Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating LANDING Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=LANDING_PAGE', {
-      data: landingPageData,
-    });
-    console.log(`Sending POST request to: ${createPageResponse.url()}`);
-    console.log(`Response Status: ${createPageResponse.status()}`);
-    console.log('Response Body:', JSON.stringify(createPageResponse.json()));
-
-    if (createPageResponse.status() == 409) {
-      console.log(`Updating LANDING Page`);
-      const updatePageResponse = await request.put('/api/platform/v1/page?pageType=LANDING_PAGE', {
-        data: landingPageData,
-      });
-      console.log(`Sending PUT request to: ${updatePageResponse.url()}`);
-      console.log(`Response Status: ${updatePageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updatePageResponse.json()));
-    }
+    const url = '/api/platform/v1/page?pageType=LANDING_PAGE';
+    await createOrUpdatePage(request, 'LANDING Page', url, landingPageData);
   });
 
   test('GET /api/cms/v1/landingPage returns correct data', async ({ request }) => {
