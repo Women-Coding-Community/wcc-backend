@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { partnersSchema } from '@utils/datafactory/schemas/partners.schema';
+import { PATHS } from '@utils/datafactory/paths.data';
 
 test('GET /api/cms/v1/partners returns correct data', async ({ request }) => {
-  const response = await request.get('/api/cms/v1/partners');
+  const response = await request.get(PATHS.PARTNERS_PAGE);
   expect(response.status()).toBe(200);
   // response status validation
   const body = await response.json();
@@ -28,7 +29,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/partners`, {
+      const response = await request.get(PATHS.PARTNERS_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

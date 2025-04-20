@@ -2,30 +2,17 @@ import { expect, test } from '@playwright/test';
 import { eventsSchema } from '@utils/datafactory/schemas/events.schema';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { eventsPageData } from '@utils/datafactory/test-data/events.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for EVENTS Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating EVENTS Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=EVENTS', {
-      data: eventsPageData,
-    });
-    console.log(`Sending POST request to: ${createPageResponse.url()}`);
-    console.log(`Response Status: ${createPageResponse.status()}`);
-    console.log('Response Body:', JSON.stringify(createPageResponse.json()));
-
-    if (createPageResponse.status() == 409) {
-      console.log(`Updating EVENTS Page`);
-      const updatePageResponse = await request.put('/api/platform/v1/page?pageType=EVENTS', {
-        data: eventsPageData,
-      });
-      console.log(`Sending PUT request to: ${updatePageResponse.url()}`);
-      console.log(`Response Status: ${updatePageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updatePageResponse.json()));
-    }
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=EVENTS`;
+    await createOrUpdatePage(request, 'EVENTS Page', url, eventsPageData);
   });
 
   test('GET /api/cms/v1/events returns correct data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/events`);
+    const response = await request.get(PATHS.EVENTS_PAGE);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -53,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/events`, {
+      const response = await request.get(PATHS.EVENTS_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

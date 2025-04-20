@@ -2,30 +2,17 @@ import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { codeofconductSchema } from '@utils/datafactory/schemas/codeofconduct.schema';
 import { codeOfConductPageData } from '@utils/datafactory/test-data/codeofconduct.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for Code Of Conduct Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating Code Of Conduct Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=CODE_OF_CONDUCT', {
-      data: codeOfConductPageData,
-    });
-    console.log(`Sending POST request to: ${createPageResponse.url()}`);
-    console.log(`Response Status: ${createPageResponse.status()}`);
-    console.log('Response Body:', JSON.stringify(createPageResponse.json()));
-
-    if (createPageResponse.status() == 409) {
-      console.log(`Updating Code Of Conduct Page`);
-      const updatePageResponse = await request.put('/api/platform/v1/page?pageType=CODE_OF_CONDUCT', {
-        data: codeOfConductPageData,
-      });
-      console.log(`Sending PUT request to: ${updatePageResponse.url()}`);
-      console.log(`Response Status: ${updatePageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updatePageResponse.json()));
-    }
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=CODE_OF_CONDUCT`;
+    await createOrUpdatePage(request, 'CODE OF CONDUCT Page', url, codeOfConductPageData);
   });
 
   test('GET /api/cms/v1/code-of-conduct returns correct data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/code-of-conduct`);
+    const response = await request.get(PATHS.CODE_OF_CONDUCT);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -53,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/code-of-conduct`, {
+      const response = await request.get(PATHS.CODE_OF_CONDUCT, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

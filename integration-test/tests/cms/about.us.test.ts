@@ -2,30 +2,17 @@ import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { aboutSchema } from '@utils/datafactory/schemas/about.schema';
 import { aboutUsPageData } from '@utils/datafactory/test-data/about.us.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for ABOUT Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating ABOUT Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=ABOUT_US', {
-      data: aboutUsPageData,
-    });
-    console.log(`Sending POST request to: ${createPageResponse.url()}`);
-    console.log(`Response Status: ${createPageResponse.status()}`);
-    console.log('Response Body:', JSON.stringify(createPageResponse.json()));
-
-    if (createPageResponse.status() == 409) {
-      console.log(`Updating ABOUT Page`);
-      const updatePageResponse = await request.put('/api/platform/v1/page?pageType=ABOUT_US', {
-        data: aboutUsPageData,
-      });
-      console.log(`Sending PUT request to: ${updatePageResponse.url()}`);
-      console.log(`Response Status: ${updatePageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updatePageResponse.json()));
-    }
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=ABOUT_US`;
+    await createOrUpdatePage(request, 'ABOUT US Page', url, aboutUsPageData);
   });
 
   test('GET /api/cms/v1/about returns correct data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/about`);
+    const response = await request.get(PATHS.ABOUT_US_PAGE);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -53,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/about`, {
+      const response = await request.get(PATHS.ABOUT_US_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

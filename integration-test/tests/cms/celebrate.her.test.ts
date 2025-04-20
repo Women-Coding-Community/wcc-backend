@@ -2,30 +2,17 @@ import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { celebrateHerPageSchema } from '@utils/datafactory/schemas/celebrateHer.overview.schema';
 import { celebrateHerData } from '@utils/datafactory/test-data/celebrate.her.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for Celebrate Her Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating Celebrate Her Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=CELEBRATE_HER', {
-      data: celebrateHerData,
-    });
-    console.log(`Sending POST request to: ${createPageResponse.url()}`);
-    console.log(`Response Status: ${createPageResponse.status()}`);
-    console.log('Response Body:', JSON.stringify(createPageResponse.json()));
-
-    if (createPageResponse.status() == 409) {
-      console.log(`Updating Celebrate Page`);
-      const updateFooterPageResponse = await request.put('/api/platform/v1/page?pageType=CELEBRATE_HER', {
-        data: celebrateHerData,
-      });
-      console.log(`Sending PUT request to: ${updateFooterPageResponse.url()}`);
-      console.log(`Response Status: ${updateFooterPageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updateFooterPageResponse.json()));
-    }
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=CELEBRATE_HER`;
+    await createOrUpdatePage(request, 'CELEBRATE HER Page', url, celebrateHerData);
   });
 
   test('GET /api/cms/v1/celebrateHer/overview returns correct about us data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/celebrateHer`);
+    const response = await request.get(PATHS.CELEBRATE_HER_PAGE);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -53,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/celebrateHer`, {
+      const response = await request.get(PATHS.CELEBRATE_HER_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);
