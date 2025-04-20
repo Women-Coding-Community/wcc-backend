@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { mentorshipcodeofconductSchema } from '@utils/datafactory/schemas/mentorshipcodeofconduct.schema';
+import { PATHS } from '@utils/datafactory/paths.data';
 
 
 test.describe('Validate positive test cases for MENTORSHIPCODEOFCONDUCT Page API', () => {
@@ -24,7 +25,7 @@ test.describe('Validate positive test cases for MENTORSHIPCODEOFCONDUCT Page API
     }
   });
   test('GET /api/cms/v1/mentorship/code-of-conduct returns correct data', async ({ request }) => {
-  const response = await request.get('/api/cms/v1/mentorship/code-of-conduct');
+  const response = await request.get(PATHS.MENTORSHIP_CODE_OF_CONDUCT);
   expect(response.status()).toBe(200);
   // response status validation
   const body = await response.json();
@@ -55,7 +56,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/mentorship/code-of-conduct`, {
+      const response = await request.get(PATHS.MENTORSHIP_CODE_OF_CONDUCT, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

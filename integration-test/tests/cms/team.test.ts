@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { teamSchema } from '@utils/datafactory/schemas/team.schema';
 import { teamPageData } from '@utils/datafactory/test-data/team.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
 
 test.describe('Validate positive test cases for TEAM Page API', () => {
   test.beforeAll(async ({ request }) => {
@@ -24,7 +25,7 @@ test.describe('Validate positive test cases for TEAM Page API', () => {
     }
   });
   test('GET /api/cms/v1/team returns correct data', async ({ request }) => {
-    const response = await request.get('/api/cms/v1/team');
+    const response = await request.get(PATHS.TEAM_PAGE);
     expect(response.status()).toBe(200);
     const body = await response.json();
     // schema validation
@@ -47,7 +48,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/team`, {
+      const response = await request.get(PATHS.TEAM_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

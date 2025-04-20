@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { codeofconductSchema } from '@utils/datafactory/schemas/codeofconduct.schema';
 import { codeOfConductPageData } from '@utils/datafactory/test-data/codeofconduct.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
 
 test.describe('Validate positive test cases for Code Of Conduct Page API', () => {
   test.beforeEach(async ({ request }) => {
@@ -25,7 +26,7 @@ test.describe('Validate positive test cases for Code Of Conduct Page API', () =>
   });
 
   test('GET /api/cms/v1/code-of-conduct returns correct data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/code-of-conduct`);
+    const response = await request.get(PATHS.CODE_OF_CONDUCT);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -53,7 +54,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/code-of-conduct`, {
+      const response = await request.get(PATHS.CODE_OF_CONDUCT, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

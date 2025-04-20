@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { landingPageSchema } from '@utils/datafactory/schemas/landing.page.schema';
 import { landingPageData } from '@utils/datafactory/test-data/landing.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
 
 test.describe('Validate positive test cases for LANDING Page API', () => {
   test.beforeEach(async ({ request }) => {
@@ -25,7 +26,7 @@ test.describe('Validate positive test cases for LANDING Page API', () => {
   });
 
   test('GET /api/cms/v1/landingPage returns correct data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/landingPage`);
+    const response = await request.get(PATHS.LANDING_PAGE);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -53,7 +54,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/landingPage`, {
+      const response = await request.get(PATHS.LANDING_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

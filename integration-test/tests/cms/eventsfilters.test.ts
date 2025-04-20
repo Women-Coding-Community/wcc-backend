@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { eventsfiltersSchema } from '@utils/datafactory/schemas/eventsfilters.schema';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { eventFiltersData } from '@utils/datafactory/test-data/event.filters.data';
+import { PATHS } from '@utils/datafactory/paths.data';
 
 test.describe('Validate positive test cases for EVENTS FILTERS API', () => {
   test.beforeEach(async ({ request }) => {
@@ -25,7 +26,7 @@ test.describe('Validate positive test cases for EVENTS FILTERS API', () => {
   });
 
   test('GET /api/cms/v1/events/filters returns correct data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/events/filters`);
+    const response = await request.get(PATHS.EVENTS_FILTERS);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -53,7 +54,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/events/filters`, {
+      const response = await request.get(PATHS.EVENTS_FILTERS, {
         headers: headers,
       });
       expect(response.status()).toBe(401);
