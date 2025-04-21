@@ -25,11 +25,13 @@ public class PostgresPageRepository implements PageRepository {
   @Override
   public Map<String, Object> create(final Map<String, Object> entity) {
     final String sql =
-        "INSERT INTO " + TABLE + " (id, data) VALUES (?, to_jsonb(?::json)) RETURNING id, data";
+        "INSERT INTO " + TABLE + " (id, data) VALUES (?, to_jsonb(?::json)) RETURNING data";
     try {
       final String id = String.valueOf(entity.get("id"));
       final String data = objectMapper.writeValueAsString(entity);
-      return jdbcTemplate.queryForObject(sql, rowMapper(), id, data);
+      Map<String, Object> response = jdbcTemplate.queryForObject(sql, rowMapper(), id, data);
+      String dataResponse = (String) response.get("data");
+      return objectMapper.readValue(dataResponse, new TypeReference<>() {});
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException(e);
     }
@@ -38,12 +40,14 @@ public class PostgresPageRepository implements PageRepository {
   @Override
   public Map<String, Object> update(final String id, final Map<String, Object> entity) {
     final String sql =
-        "UPDATE " + TABLE + " SET data = to_jsonb(?::json) WHERE id = ? RETURNING id, data";
+        "UPDATE " + TABLE + " SET data = to_jsonb(?::json) WHERE id = ? RETURNING data";
 
     try {
       entity.put("id", id);
       final String data = objectMapper.writeValueAsString(entity);
-      return jdbcTemplate.queryForObject(sql, rowMapper(), id, data);
+      Map<String, Object> result = jdbcTemplate.queryForObject(sql, rowMapper(), id, data);
+
+      return result;
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException(e);
     }
@@ -75,9 +79,6 @@ public class PostgresPageRepository implements PageRepository {
   }
 
   private RowMapper<Map<String, Object>> rowMapper() {
-    return (rs, rowNum) ->
-        Map.of(
-            "id", rs.getString("id"),
-            "data", rs.getString("data"));
+    return (rs, rowNum) -> Map.of("id", rs.getString("id"), "data", rs.getString("data"));
   }
 }
