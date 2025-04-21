@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MentorshipService {
   private final ObjectMapper objectMapper;
-  private final PageRepository pageRepository;
+  private final PageRepository repository;
 
   @Autowired
-  public MentorshipService(final ObjectMapper objectMapper, final PageRepository pageRepository) {
+  public MentorshipService(final ObjectMapper objectMapper, final PageRepository repository) {
     this.objectMapper = objectMapper;
-    this.pageRepository = pageRepository;
+    this.repository = repository;
   }
 
   /**
@@ -32,7 +31,7 @@ public class MentorshipService {
    * @return Mentorship overview page.
    */
   public MentorshipPage getOverview() {
-    final var page = pageRepository.findById(MENTORSHIP.getId());
+    final var page = repository.findById(MENTORSHIP.getId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), MentorshipPage.class);
@@ -40,7 +39,7 @@ public class MentorshipService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-    throw new ContentNotFoundException(MENTORSHIP);
+    return repository.getFallback(MENTORSHIP, MentorshipPage.class, objectMapper);
   }
 
   /**
@@ -49,7 +48,7 @@ public class MentorshipService {
    * @return Mentorship faq page.
    */
   public MentorshipFaqPage getFaq() {
-    final var page = pageRepository.findById(MENTORSHIP_FAQ.getId());
+    final var page = repository.findById(MENTORSHIP_FAQ.getId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), MentorshipFaqPage.class);
@@ -57,7 +56,7 @@ public class MentorshipService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-    throw new ContentNotFoundException(MENTORSHIP_FAQ);
+    return repository.getFallback(MENTORSHIP_FAQ, MentorshipFaqPage.class, objectMapper);
   }
 
   /**
@@ -66,7 +65,7 @@ public class MentorshipService {
    * @return Mentorship code of conduct page.
    */
   public MentorshipCodeOfConductPage getCodeOfConduct() {
-    final var page = pageRepository.findById(MENTORSHIP_CONDUCT.getId());
+    final var page = repository.findById(MENTORSHIP_CONDUCT.getId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), MentorshipCodeOfConductPage.class);
@@ -74,6 +73,7 @@ public class MentorshipService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-    throw new ContentNotFoundException(MENTORSHIP_CONDUCT);
+    return repository.getFallback(
+        MENTORSHIP_CONDUCT, MentorshipCodeOfConductPage.class, objectMapper);
   }
 }
