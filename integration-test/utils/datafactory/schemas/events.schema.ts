@@ -7,6 +7,10 @@ import { commonsectionSchema } from './commonsection.schema';
 export const eventsSchema = {
   type: 'object',
   properties: {
+    id: {
+      type: 'string',
+      const: 'page:EVENTS',
+    },
     metadata: {
       type: 'object',
       properties: {
@@ -16,7 +20,7 @@ export const eventsSchema = {
       required: ['pagination'],
     },
     heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-    page: { ...commonsectionSchema.definitions.commonsectionSchema },
+    section: { ...commonsectionSchema.definitions.commonsectionSchema },
     contact: { ...contactSchema.definitions.contactSchema },
     data: {
       type: 'object',
@@ -30,4 +34,5 @@ export const eventsSchema = {
     },
   },
   additionalProperties: false,
+  required: ['id', 'metadata', 'heroSection', 'section', 'contact', 'data'],
 };

@@ -142,8 +142,8 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(celebrateHerPage.items(), result.items());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
+  @SuppressWarnings("unchecked")
   void testGetLandingPage() {
     var landingPage = createLandingPageTest(LANDING_PAGE.getFileName());
     pageRepository.create(objectMapper.convertValue(landingPage, Map.class));
@@ -157,6 +157,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(
         landingPage.getFeedbackSection().feedbacks().size(),
         result.getFeedbackSection().feedbacks().size());
+    assertEquals(landingPage.getPartners().items().size(), result.getPartners().items().size());
   }
 
   @Test
@@ -187,7 +188,7 @@ class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
     assertEquals(4, result.partners().items().size());
     assertEquals(
         "https://drive.google.com/surrealdb-desktop-logo.png",
-        result.partners().items().getFirst().getImages().getFirst().path());
+        result.partners().items().getFirst().getImage().path());
     assertEquals("SurrealDB", result.partners().items().getFirst().getName());
     assertEquals(
         "SurrealDB is an innovative, multi-model, cloud-ready database, suitable"

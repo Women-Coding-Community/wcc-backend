@@ -1,6 +1,9 @@
-export const codeofconductExepctedInformation = {
-  page: {
-    title: 'Code of Conduct',
+export const codeOfConductPageData = {
+  id: 'page:CODE_OF_CONDUCT',
+  heroSection: {
+    title: 'WCC Code of Conduct',
+  },
+  section: {
     description:
       'At Women Coding Community we are committed to a vibrant, supportive community where women can network, share experiences, and foster professional relationships, regardless of age, gender, visible or invisible disability, ethnicity, gender expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, sexual orientation or preferred programming language(s).',
   },
@@ -10,11 +13,11 @@ export const codeofconductExepctedInformation = {
       description:
         'To ensure a positive experience for all members, we expect participants to exhibit the following behaviors:',
       items: [
-        'Respect: Treat everyone with respect, dignity, and empathy. Listen and communicate thoughtfully.',
-        'Inclusivity: Actively seek to acknowledge and respect the diversity of our community.',
-        'Collaboration: Share knowledge generously and assist others when possible, fostering a collaborative atmosphere.',
+        'Respect:Treat',
+        'Inclusivity:Actively',
+        'Collaboration:Share',
         'Constructive Communication: Engage in constructive, positive communication. Provide and gracefully accept constructive criticism.',
-        'Professionalism: Be professional in all interactions within the community. Avoid behavior or language that may be considered inappropriate or offensive.',
+        'Professionalism:Be',
       ],
     },
     {
