@@ -1,21 +1,35 @@
 import { expect, test } from '@playwright/test';
 import { eventsSchema } from '@utils/datafactory/schemas/events.schema';
 import { validateSchema } from '@utils/helpers/schema.validation';
+import { eventsPageData } from '@utils/datafactory/test-data/events.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
-test('GET /api/cms/v1/events returns success response code', async ({ request }) => {
-  const response = await request.get(`/api/cms/v1/events`);
-  expect(response.status()).toBe(200);
-  const body = await response.json();
-  // schema validation
-  try {
-    validateSchema(eventsSchema, body);
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      throw new Error(`Schema validation failed: ${e.message}`);
-    } else {
-      throw new Error('Schema validation failed with an unknown error');
+test.describe('Validate positive test cases for EVENTS Page API', () => {
+  test.beforeEach(async ({ request }) => {
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=EVENTS`;
+    await createOrUpdatePage(request, 'EVENTS Page', url, eventsPageData);
+  });
+
+  test('GET /api/cms/v1/events returns correct data', async ({ request }) => {
+    const response = await request.get(PATHS.EVENTS_PAGE);
+
+    // response status validation
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    // schema validation
+    try {
+      validateSchema(eventsSchema, body);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(`Schema validation failed: ${e.message}`);
+      } else {
+        throw new Error('Schema validation failed with an unknown error');
+      }
     }
-  }
+  });
 });
 
 test.describe('unauthorized request with invalid headers', () => {
@@ -26,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/events`, {
+      const response = await request.get(PATHS.EVENTS_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

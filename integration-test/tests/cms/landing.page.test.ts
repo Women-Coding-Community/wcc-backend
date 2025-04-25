@@ -1,25 +1,35 @@
 import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { landingPageSchema } from '@utils/datafactory/schemas/landing.page.schema';
+import { landingPageData } from '@utils/datafactory/test-data/landing.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
-test('GET /api/cms/v1/landingPage returns correct landingPage data', async ({ request }) => {
-  const response = await request.get(`/api/cms/v1/landingPage`);
+test.describe('Validate positive test cases for LANDING Page API', () => {
+  test.beforeEach(async ({ request }) => {
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=LANDING_PAGE`;
+    await createOrUpdatePage(request, 'LANDING Page', url, landingPageData);
+  });
 
-  // response status validation
-  expect(response.status()).toBe(200);
+  test('GET /api/cms/v1/landingPage returns correct data', async ({ request }) => {
+    const response = await request.get(PATHS.LANDING_PAGE);
 
-  const body = await response.json();
+    // response status validation
+    expect(response.status()).toBe(200);
 
-  // schema validation
-  try {
-    validateSchema(landingPageSchema, body);
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      throw new Error(`Schema validation failed: ${e.message}`);
-    } else {
-      throw new Error('Schema validation failed with an unknown error');
+    const body = await response.json();
+
+    // schema validation
+    try {
+      validateSchema(landingPageSchema, body);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(`Schema validation failed: ${e.message}`);
+      } else {
+        throw new Error('Schema validation failed with an unknown error');
+      }
     }
-  }
+  });
 });
 
 test.describe('unauthorized request with invalid headers', () => {
@@ -30,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/landingPage`, {
+      const response = await request.get(PATHS.LANDING_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

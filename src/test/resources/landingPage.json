@@ -153,5 +153,54 @@
         "type": "DESKTOP"
       }
     ]
+  },
+  "partners": {
+    "title": "Community Partners",
+    "items": [
+      {
+        "image": {
+          "path": "https://drive.google.com/surrealdb-desktop-logo.png",
+          "alt": "SurrealDB logo",
+          "type": "desktop"
+        },
+        "name": "SurrealDB",
+        "link": {
+          "uri": "https://surrealdb.com/"
+        }
+      },
+      {
+        "image": {
+          "path": "https://drive.google.com/amazon-desktop-logo.png",
+          "alt": "Amazon logo",
+          "type": "desktop"
+        },
+        "name": "Amazon",
+        "link": {
+          "uri": "https://www.amazon.com/"
+        }
+      },
+      {
+        "image": {
+          "path": "https://drive.google.com/jetbrains-desktop-logo.png",
+          "alt": "JetBrains logo",
+          "type": "desktop"
+        },
+        "name": "JetBrains",
+        "link": {
+          "uri": "https://www.jetbrains.com/"
+        }
+      },
+      {
+        "image": {
+          "path": "https://drive.google.com/devoxx-uk-desktop-logo.png",
+          "alt": "Devoxx UK logo",
+          "type": "desktop"
+        },
+        "name": "Devoxx UK",
+        "link": {
+          "uri": "https://www.devoxx.co.uk/"
+        }
+      }
+    ]
   }
 }

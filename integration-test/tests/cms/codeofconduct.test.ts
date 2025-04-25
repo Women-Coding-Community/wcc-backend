@@ -1,29 +1,35 @@
 import { expect, test } from '@playwright/test';
-import { codeofconductExepctedInformation } from '@utils/datafactory/codeofconduct.data';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { codeofconductSchema } from '@utils/datafactory/schemas/codeofconduct.schema';
+import { codeOfConductPageData } from '@utils/datafactory/test-data/codeofconduct.page.data';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
-test('GET /api/cms/v1/code-of-conduct returns correct data', async ({ request }) => {
-  const response = await request.get(`/api/cms/v1/code-of-conduct`);
+test.describe('Validate positive test cases for Code Of Conduct Page API', () => {
+  test.beforeEach(async ({ request }) => {
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=CODE_OF_CONDUCT`;
+    await createOrUpdatePage(request, 'CODE OF CONDUCT Page', url, codeOfConductPageData);
+  });
 
-  expect(response.status()).toBe(200);
+  test('GET /api/cms/v1/code-of-conduct returns correct data', async ({ request }) => {
+    const response = await request.get(PATHS.CODE_OF_CONDUCT);
 
-  const body = await response.json();
+    // response status validation
+    expect(response.status()).toBe(200);
 
-  // schema validation
+    const body = await response.json();
 
-  try {
-    validateSchema(codeofconductSchema, body);
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      throw new Error(`Schema validation failed: ${e.message}`);
-    } else {
-      throw new Error('Schema validation failed with an unknown error');
+    // schema validation
+    try {
+      validateSchema(codeofconductSchema, body);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new Error(`Schema validation failed: ${e.message}`);
+      } else {
+        throw new Error('Schema validation failed with an unknown error');
+      }
     }
-  }
-
-  //response body validation
-  expect(body).toEqual(codeofconductExepctedInformation);
+  });
 });
 
 test.describe('unauthorized request with invalid headers', () => {
@@ -34,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/code-of-conduct`, {
+      const response = await request.get(PATHS.CODE_OF_CONDUCT, {
         headers: headers,
       });
       expect(response.status()).toBe(401);

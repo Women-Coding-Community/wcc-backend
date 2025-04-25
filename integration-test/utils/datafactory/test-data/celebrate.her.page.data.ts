@@ -1,0 +1,50 @@
+export const celebrateHerData = {
+  id: 'page:CELEBRATE_HER',
+  heroSection: {
+    title: 'Celebrate Her',
+    images: [
+      {
+        path: 'https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download',
+        alt: 'There is a group of women showing WCC logo',
+        type: 'desktop',
+      },
+    ],
+    customStyle: {
+      backgroundColour: {
+        color: 'secondary',
+        shade: {
+          name: 'dark',
+          value: 10,
+        },
+      },
+    },
+  },
+  section: {
+    title: 'title defaultPage',
+    subtitle: 'subtitle defaultPage',
+    description: 'desc defaultPage',
+    link: {
+      title: 'link_title',
+      label: 'link_label',
+      uri: 'link_uri',
+    },
+    images: [
+      {
+        path: 'MOBILE.png',
+        alt: 'alt imageMOBILE',
+        type: 'mobile',
+      },
+    ],
+  },
+  items: [
+    {
+      listOfName: ['Liliia', 'Anna'],
+      description: 'Celebrate her for first commit to wcc backend.',
+      link: {
+        title: 'linkedIn',
+        label: 'linkedIn',
+        uri: 'https://linkedIn.com/lilrafil',
+      },
+    },
+  ],
+};
