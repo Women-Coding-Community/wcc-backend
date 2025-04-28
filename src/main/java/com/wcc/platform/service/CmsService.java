@@ -14,7 +14,6 @@ import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.repository.PageRepository;
@@ -53,8 +52,7 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.TEAM);
+    return pageRepository.getFallback(PageType.TEAM, TeamPage.class, objectMapper);
   }
 
   /**
@@ -72,8 +70,7 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.FOOTER);
+    return pageRepository.getFallback(PageType.FOOTER, FooterSection.class, objectMapper);
   }
 
   /**
@@ -90,8 +87,7 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.LANDING_PAGE);
+    return pageRepository.getFallback(PageType.LANDING_PAGE, LandingPage.class, objectMapper);
   }
 
   /**
@@ -129,7 +125,7 @@ public class CmsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.COLLABORATOR);
+    return pageRepository.getFallback(PageType.COLLABORATOR, CollaboratorPage.class, objectMapper);
   }
 
   /**
@@ -147,8 +143,8 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.CODE_OF_CONDUCT);
+    return pageRepository.getFallback(
+        PageType.CODE_OF_CONDUCT, CodeOfConductPage.class, objectMapper);
   }
 
   /**
@@ -180,8 +176,7 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.ABOUT_US);
+    return pageRepository.getFallback(PageType.ABOUT_US, AboutUsPage.class, objectMapper);
   }
 
   /**
@@ -200,7 +195,7 @@ public class CmsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.CELEBRATE_HER);
+    return pageRepository.getFallback(PageType.CELEBRATE_HER, CelebrateHerPage.class, objectMapper);
   }
 
   /**
@@ -218,7 +213,6 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.PARTNERS);
+    return pageRepository.getFallback(PageType.PARTNERS, PartnersPage.class, objectMapper);
   }
 }

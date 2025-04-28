@@ -7,7 +7,6 @@ import com.wcc.platform.domain.cms.pages.PageData;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.repository.PageRepository;
@@ -64,6 +63,6 @@ public class EventService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-    throw new ContentNotFoundException(EVENTS);
+    return pageRepository.getFallback(EVENTS, EventsPage.class, objectMapper);
   }
 }
