@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
@@ -64,9 +65,9 @@ public class GlobalExceptionHandler {
 
   /**
    * Receive {@link DuplicatedMemberException} and {@link
-   * org.springframework.dao.DuplicateKeyException} return {@link HttpStatus#CONFLICT}.
+   * com.wcc.platform.domain.exceptions.DuplicatedItemException} return {@link HttpStatus#CONFLICT}.
    */
-  @ExceptionHandler({DuplicatedMemberException.class})
+  @ExceptionHandler({DuplicatedMemberException.class, DuplicatedItemException.class})
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorDetails> handleRecordAlreadyExitsException(
       final RuntimeException ex, final WebRequest request) {
