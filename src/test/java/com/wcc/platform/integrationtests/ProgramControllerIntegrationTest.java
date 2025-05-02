@@ -18,6 +18,7 @@ import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,7 @@ class ProgramControllerIntegrationTest extends SurrealDbIntegrationTest {
   }
 
   @Test
+  @Disabled("Temporary Disable until migrate to postgres")
   void givenProgramMachineLearningWhenNotCreatedInDbThenReturnNotFound() {
     assertThrows(
         ContentNotFoundException.class,

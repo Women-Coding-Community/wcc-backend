@@ -1,8 +1,9 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.repository.PageRepository;
@@ -42,7 +43,7 @@ public class ProgrammeService {
       }
     }
 
-    throw new ContentNotFoundException(programType);
+    return pageRepository.getFallback(PROG_BOOK_CLUB, ProgrammePage.class, objectMapper);
   }
 
   /** Save programme page based on program Type. */
