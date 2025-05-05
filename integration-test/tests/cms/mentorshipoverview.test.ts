@@ -8,7 +8,7 @@ import { mentorshipOverviewData } from '@utils/datafactory/test-data/mentorship.
 test.describe('Validate positive test cases for MENTORSHIP OVERVIEW Page API', () => {
   test.beforeEach(async ({ request }) => {
     const url = `${PATHS.PLATFORM_PAGE}?pageType=MENTORSHIP`;
-    await createOrUpdatePage(request, 'MENTORSHIP FAQ Page', url, mentorshipOverviewData);
+    await createOrUpdatePage(request, 'MENTORSHIP OVERVIEW Page', url, mentorshipOverviewData);
   });
   test('GET /api/cms/v1/mentorship/overview returns correct data', async ({ request }) => {
     const response = await request.get(PATHS.MENTORSHIP_OVERVIEW);
