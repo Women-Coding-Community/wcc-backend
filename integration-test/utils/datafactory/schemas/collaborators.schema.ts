@@ -20,7 +20,7 @@ export const collaboratorsSchema = {
       required: ['pagination'],
     },
     heroSection: { ...heroSectionSchema.definitions.heroSectionSchema },
-    page: { ...commonsectionSchema.definitions.commonsectionSchema },
+    section: { ...commonsectionSchema.definitions.commonsectionSchema },
     contact: { ...contactSchema.definitions.contactSchema },
     collaborators: {
       type: 'array',
