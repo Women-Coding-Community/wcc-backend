@@ -7,14 +7,12 @@
     {
       "fullName": "firstname lastname",
       "position": "job title",
-      "email": "member@wcc.com",
-      "slackDisplayName": "slack name",
+      "companyName": "company name",
+      "city": "Madrid",
       "country": {
         "countryCode": "ES",
         "countryName": "Spain"
       },
-      "city": "Madrid",
-      "companyName": "company name",
       "images": [
         {
           "path": "google drive link",
@@ -34,10 +32,6 @@
         {
           "type": "website",
           "link": "https://xyz.com/"
-        },
-        {
-          "type": "calendly",
-          "link": "https://calendly/xyz/"
         }
       ],
       "status": "published/review/disabled",
@@ -59,7 +53,7 @@
         "Language3"
       ],
       "skills": {
-        "years of experience": 4,
+        "experience": "10-15 years",
         "areas": [
           "Backend Developer",
           "Frontend Developer",
@@ -80,29 +74,15 @@
         "extra": "Test Automation, Code Review, Exploratory Testing, Web Testing (Manual & Automation), API Testing (Postman, PactumJS), ISTQB Certification Preparation guidelines (Foundation Level and Test Automation Engineer), Starting career in IT, CV Review, Preparation for the Interview, Career Advice.",
         "mentee": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
       },
-      "womanOrNonBinary": "Yes/No/Prefer not to say",
-      "pronoun": "preferred pronoun",
-      "moreInfo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "consent": {
-        "mentorNonWomen": true,
-        "shareCalendlyLink": true,
-        "socialMediaPromotion": true
-      },
-      "studyGroup": [
-        {
-          "studyGroupName": "wcc study group name",
-          "studyGroupDesc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        }
-      ],
       "feedbackList": [
         {
           "status": "Draft/Hidden/Approved",
-          "name": "firstname lastname of mentee/Anonymous",
-          "mentorshipType": "Ad-Hoc Format/Long-Term Format/Both",
-          "date": "Thu, May 30, 2024, 8:00 PM CEST",
           "score": "1/2/3/4/5",
+          "date": "Thu, May 30, 2024, 8:00 PM CEST",
           "title": "feedback title",
-          "feedback": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+          "feedback": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          "name": "firstname lastname of mentee/Anonymous",
+          "mentorshipType": "Ad-Hoc Format/Long-Term Format/Both"
         }
       ],
       "resources": [
