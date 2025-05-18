@@ -3,11 +3,13 @@ package com.wcc.platform.service;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
+import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +77,22 @@ public class MentorshipService {
     }
     return repository.getFallback(
         MENTORSHIP_CONDUCT, MentorshipCodeOfConductPage.class, objectMapper);
+  }
+
+  /**
+   * API to retrieve information about the study groups.
+   *
+   * @return Mentorship study groups page.
+   */
+  public MentorshipStudyGroupPage getStudyGroups() {
+    final var page = repository.findById(STUDY_GROUPS.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), MentorshipStudyGroupPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    return repository.getFallback(STUDY_GROUPS, MentorshipStudyGroupPage.class, objectMapper);
   }
 }

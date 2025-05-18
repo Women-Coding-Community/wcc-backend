@@ -3,6 +3,7 @@ package com.wcc.platform.controller;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupPage;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -48,5 +49,12 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCodeOfConductPage> getMentorshipCodeOfConduct() {
     return ResponseEntity.ok(service.getCodeOfConduct());
+  }
+
+  @GetMapping("/programme-study-group")
+  @Operation(summary = "API to retrieve mentorship study groups page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipStudyGroupPage> getMentorshipStudyGroup() {
+    return ResponseEntity.ok(service.getStudyGroups());
   }
 }
