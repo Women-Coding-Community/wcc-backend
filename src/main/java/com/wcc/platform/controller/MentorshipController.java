@@ -49,4 +49,11 @@ public class MentorshipController {
   public ResponseEntity<MentorshipCodeOfConductPage> getMentorshipCodeOfConduct() {
     return ResponseEntity.ok(service.getCodeOfConduct());
   }
+
+  @GetMapping("/mentors")
+  @Operation(summary = "API to retrieve mentors page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipCodeOfConductPage> getMentors() {
+    return ResponseEntity.ok(service.getCodeOfConduct());
+  }
 }
