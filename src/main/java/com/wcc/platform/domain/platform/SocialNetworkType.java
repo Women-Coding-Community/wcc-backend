@@ -13,5 +13,6 @@ public enum SocialNetworkType {
   MEETUP,
   EMAIL,
   UNKNOWN,
-  DEFAULT_LINK
+  DEFAULT_LINK,
+  WEBSITE
 }

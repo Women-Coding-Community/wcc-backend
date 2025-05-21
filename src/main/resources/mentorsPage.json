@@ -1,5 +1,5 @@
 {
-  "id": "page:MENTORS",
+  "id": "page:MENTORS_PAGE",
   "heroSection": {
     "title": "Meet Our Mentors!",
     "customStyle": {
@@ -31,16 +31,20 @@
       ],
       "network": [
         {
-          "type": "linkedin",
+          "type": "LINKEDIN",
           "link": "https://www.linkedin.com/in/sonali-goel-tech"
         },
         {
-          "type": "github",
+          "type": "GITHUB",
           "link": "https://github.com/goelsonali"
         },
         {
-          "type": "website",
+          "type": "WEBSITE",
           "link": "https://sonaligoel.carrd.co"
+        },
+        {
+          "type": "MEDIUM",
+          "link": "https://medium.com/@goelsonali"
         }
       ],
       "profileStatus": "DISABLED",
@@ -62,10 +66,10 @@
           "C#"
         ]
       },
-      "mentees": {
+      "menteeSection": {
         "mentorshipType": [
-          "Ad-hoc",
-          "Long-Term"
+          "AD_HOC",
+          "LONG_TERM"
         ],
         "availability": {
           "months": [
@@ -88,21 +92,20 @@
         ],
         "additional": "Test Automation, Code Review, Exploratory Testing, Web Testing (Manual & Automation), API Testing (Postman, PactumJS), ISTQB Certification Preparation guidelines (Foundation Level and Test Automation Engineer), Starting career in IT, CV Review, Preparation for the Interview, Career Advice."
       },
-      "feedbackList": [
+      "feedbackSection": [
         {
           "rating": "5",
           "date": "Thu, May 30, 2024",
-          "title": "feedback title",
           "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
           "name": "Anonymous",
-          "mentorshipType": "Ad-hoc"
+          "type": "Ad-hoc"
         },
         {
           "rating": "4",
           "date": "Thu, Jun 30, 2024",
           "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
           "name": "Rajashree Munoli",
-          "mentorshipType": "Long-Term"
+          "type": "Long-Term"
         }
       ],
       "resources": [

@@ -4,19 +4,33 @@ import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createLinkTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
+import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
+import com.wcc.platform.domain.cms.attributes.Experience;
 import com.wcc.platform.domain.cms.attributes.FaqItem;
+import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.ListSection;
+import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.pages.mentorship.Availability;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.Mentor;
+import com.wcc.platform.domain.platform.MentorshipType;
+import com.wcc.platform.domain.platform.ProfileStatus;
+import com.wcc.platform.domain.platform.ResourceContent;
+import com.wcc.platform.domain.platform.Skills;
+import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Year;
 import java.util.List;
@@ -46,8 +60,15 @@ public class SetupMentorshipFactories {
         createFeedbackSectionTest());
   }
 
+  /** Test factory. */
+  public static MentorsPage createMentorPageTest() {
+    final String pageId = PageType.MENTORS.getId();
+    return new MentorsPage(pageId, createNoImageHeroSectionTest(), List.of(createMentorTest()));
+  }
+
   public static FeedbackItem createFeedbackItemTest(final MemberType memberType) {
-    return new FeedbackItem("Person Name", "Nice feedback", memberType, Year.of(2023));
+    return new FeedbackItem(
+        "Person Name", "Nice feedback", memberType, Year.of(2023), null, null, null);
   }
 
   /**
@@ -106,5 +127,47 @@ public class SetupMentorshipFactories {
 
   private static CommonSection createCommonSectionOnlyLinkTest() {
     return new CommonSection(null, null, null, createLinkTest(), null, null);
+  }
+
+  /** Factory test. */
+  public static Mentor createMentorTest() {
+    final Member member = createMemberTest(MemberType.MENTOR);
+    return Mentor.mentorBuilder()
+        .fullName(member.getFullName())
+        .position(member.getPosition())
+        .email(member.getEmail())
+        .slackDisplayName(member.getSlackDisplayName())
+        .country(member.getCountry())
+        .city(member.getCity())
+        .companyName(member.getCompanyName())
+        .images(member.getImages())
+        .network(member.getNetwork())
+        .profileStatus(ProfileStatus.ACTIVE)
+        .bio("Mentor bio")
+        .skills(
+            new Skills(
+                Experience.YEARS_1_TO_5,
+                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
+                List.of(Languages.JAVASCRIPT)))
+        .menteeSection(
+            new MenteeSection(
+                List.of(MentorshipType.LONG_TERM),
+                new Availability(List.of(5, 6), 2),
+                "ideal mentee description",
+                List.of("focus"),
+                "additional"))
+        .spokenLanguages(List.of("English", "Spanish"))
+        .feedbackSection(createFeedbackSectionTest())
+        .resources(
+            List.of(
+                new ResourceContent(
+                    "id",
+                    "resource name",
+                    "description",
+                    "raw content",
+                    ResourceType.DOCUMENT,
+                    null,
+                    null)))
+        .build();
   }
 }

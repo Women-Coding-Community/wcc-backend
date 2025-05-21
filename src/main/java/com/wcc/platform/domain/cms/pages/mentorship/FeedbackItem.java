@@ -2,8 +2,8 @@ package com.wcc.platform.domain.cms.pages.mentorship;
 
 import com.wcc.platform.domain.platform.MemberType;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.Year;
+import java.util.Date;
 
 /**
  * Community members and partners Feedbacks.
@@ -16,5 +16,8 @@ import java.time.Year;
 public record FeedbackItem(
     @NotBlank String name,
     @NotBlank String feedback,
-    @NotNull MemberType memberType,
-    @NotNull Year year) {}
+    MemberType memberType,
+    Year year,
+    Date date,
+    String rating,
+    String type) {}
