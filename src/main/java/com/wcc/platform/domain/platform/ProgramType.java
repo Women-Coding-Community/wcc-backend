@@ -17,7 +17,9 @@ public enum ProgramType {
   WRITING_CLUB("Writing Club", false),
   CLOUD("Cloud and DevOps", false),
   MACHINE_LEARNING("Machine Learning", false),
-  INTERVIEW_PREP("Interview Preparation", false),
+  CV_CLINIC("CV Clinic", false),
+  MOCK_INTERVIEW("Mock Interview", false),
+  LEETCODE("Leetcode", false),
 
   /** It is not a program, but an event category. */
   OTHERS("Others", true),
