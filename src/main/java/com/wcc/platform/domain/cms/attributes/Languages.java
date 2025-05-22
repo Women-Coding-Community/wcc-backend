@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Languages {
-  C("C"),
+  C_LANGUAGE("C"),
   C_PLUS_PLUS("C++"),
   C_SHARP("C#"),
   GO("Go"),

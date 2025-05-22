@@ -22,34 +22,47 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Mentor extends Member {
 
+  @SuppressWarnings("PMD.ImmutableField")
   private @NotBlank ProfileStatus profileStatus;
+
+  @SuppressWarnings("PMD.ImmutableField")
   private @NotBlank Skills skills;
+
+  @SuppressWarnings("PMD.ImmutableField")
   private List<String> spokenLanguages;
+
+  @SuppressWarnings("PMD.ImmutableField")
   private @NotBlank String bio;
+
+  @SuppressWarnings("PMD.ImmutableField")
   private @NotBlank MenteeSection menteeSection;
+
+  @SuppressWarnings("PMD.ImmutableField")
   private FeedbackSection feedbackSection;
+
+  @SuppressWarnings("PMD.ImmutableField")
   private List<ResourceContent> resources;
 
   /** Mentor Builder. */
   @Builder(builderMethodName = "mentorBuilder")
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public Mentor(
-      @NotBlank String fullName,
-      @NotBlank String position,
-      @NotBlank @Email String email,
-      String slackDisplayName,
-      @NotBlank Country country,
-      @NotBlank String city,
-      String companyName,
-      @NotEmpty List<Image> images,
-      List<SocialNetwork> network,
-      @NotBlank ProfileStatus profileStatus,
-      List<String> spokenLanguages,
-      @NotBlank String bio,
-      @NotBlank Skills skills,
-      @NotBlank MenteeSection menteeSection,
-      FeedbackSection feedbackSection,
-      List<ResourceContent> resources) {
+      @NotBlank final String fullName,
+      @NotBlank final String position,
+      @NotBlank @Email final String email,
+      final String slackDisplayName,
+      @NotBlank final Country country,
+      @NotBlank final String city,
+      final String companyName,
+      @NotEmpty final List<Image> images,
+      final List<SocialNetwork> network,
+      @NotBlank final ProfileStatus profileStatus,
+      final List<String> spokenLanguages,
+      @NotBlank final String bio,
+      @NotBlank final Skills skills,
+      @NotBlank final MenteeSection menteeSection,
+      final FeedbackSection feedbackSection,
+      final List<ResourceContent> resources) {
     super(
         fullName,
         position,

@@ -181,7 +181,7 @@ public class SetupMentorshipFactories {
   }
 
   /** Mentor Builder. */
-  public static Mentor createMentorTest(String mentorName) {
+  public static Mentor createMentorTest(final String mentorName) {
     final Member member = createMemberTest(MemberType.MENTOR);
     return Mentor.mentorBuilder()
         .fullName(mentorName)
