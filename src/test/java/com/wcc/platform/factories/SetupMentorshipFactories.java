@@ -66,6 +66,15 @@ public class SetupMentorshipFactories {
     return new MentorsPage(pageId, createNoImageHeroSectionTest(), List.of(createMentorTest()));
   }
 
+  public static MentorsPage createMentorsPageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, MentorsPage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorPageTest();
+    }
+  }
+
   public static FeedbackItem createFeedbackItemTest(final MemberType memberType) {
     return new FeedbackItem(
         "Person Name", "Nice feedback", memberType, Year.of(2023), null, null, null);
@@ -129,7 +138,7 @@ public class SetupMentorshipFactories {
     return new CommonSection(null, null, null, createLinkTest(), null, null);
   }
 
-  /** Factory test. */
+  /** Mentor Builder. */
   public static Mentor createMentorTest() {
     final Member member = createMemberTest(MemberType.MENTOR);
     return Mentor.mentorBuilder()
@@ -168,6 +177,32 @@ public class SetupMentorshipFactories {
                     ResourceType.DOCUMENT,
                     null,
                     null)))
+        .build();
+  }
+
+  /** Mentor Builder. */
+  public static Mentor createMentorTest(String mentorName) {
+    final Member member = createMemberTest(MemberType.MENTOR);
+    return Mentor.mentorBuilder()
+        .fullName(mentorName)
+        .position(member.getPosition())
+        .email(member.getEmail())
+        .country(member.getCountry())
+        .images(member.getImages())
+        .profileStatus(ProfileStatus.ACTIVE)
+        .bio("Mentor bio")
+        .skills(
+            new Skills(
+                Experience.YEARS_1_TO_5,
+                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
+                List.of(Languages.JAVASCRIPT)))
+        .menteeSection(
+            new MenteeSection(
+                List.of(MentorshipType.LONG_TERM),
+                new Availability(List.of(5, 6), 2),
+                "ideal mentee description",
+                List.of("focus"),
+                "additional"))
         .build();
   }
 }

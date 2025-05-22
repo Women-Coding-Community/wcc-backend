@@ -5,4 +5,11 @@ import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import java.util.List;
 
+/**
+ * Skills of the mentor
+ *
+ * @param experience experience level
+ * @param areas technical areas
+ * @param languages programming languages
+ */
 public record Skills(Experience experience, List<TechnicalArea> areas, List<Languages> languages) {}

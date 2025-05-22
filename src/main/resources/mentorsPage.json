@@ -31,19 +31,19 @@
       ],
       "network": [
         {
-          "type": "LINKEDIN",
+          "type": "linkedin",
           "link": "https://www.linkedin.com/in/sonali-goel-tech"
         },
         {
-          "type": "GITHUB",
+          "type": "github",
           "link": "https://github.com/goelsonali"
         },
         {
-          "type": "WEBSITE",
+          "type": "website",
           "link": "https://sonaligoel.carrd.co"
         },
         {
-          "type": "MEDIUM",
+          "type": "medium",
           "link": "https://medium.com/@goelsonali"
         }
       ],
@@ -56,8 +56,9 @@
       "skills": {
         "experience": "10-15 years",
         "areas": [
-          "Backend Developer",
-          "DevOps"
+          "BACKEND",
+          "FRONTEND",
+          "DEVOPS"
         ],
         "languages": [
           "Java",
@@ -92,38 +93,37 @@
         ],
         "additional": "Test Automation, Code Review, Exploratory Testing, Web Testing (Manual & Automation), API Testing (Postman, PactumJS), ISTQB Certification Preparation guidelines (Foundation Level and Test Automation Engineer), Starting career in IT, CV Review, Preparation for the Interview, Career Advice."
       },
-      "feedbackSection": [
-        {
-          "rating": "5",
-          "date": "Thu, May 30, 2024",
-          "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
-          "name": "Anonymous",
-          "type": "Ad-hoc"
-        },
-        {
-          "rating": "4",
-          "date": "Thu, Jun 30, 2024",
-          "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
-          "name": "Rajashree Munoli",
-          "type": "Long-Term"
-        }
-      ],
+      "feedbackSection": {
+        "feedbacks": [
+          {
+            "rating": "5",
+            "date": "Thu, May 30, 2024",
+            "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
+            "name": "Anonymous",
+            "type": "Ad-hoc"
+          },
+          {
+            "rating": "4",
+            "date": "Thu, Jun 30, 2024",
+            "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
+            "name": "Rajashree Munoli",
+            "type": "Long-Term"
+          }
+        ]
+      },
       "resources": [
         {
           "id": "1",
           "name": "Book Recommendations",
           "description": "Books related to Java skills",
           "rawContent": "Book 1, Book 2",
-          "type": "DESCRIPTION",
-          "images": null,
-          "link": null
+          "type": "DESCRIPTION"
         },
         {
           "id": "2",
           "name": "Recommendations of java course",
           "description": "nice website to learn about java",
           "type": "LINK",
-          "images": null,
           "link": {
             "label": "Java course 1",
             "uri": "https://linkexample.com/"

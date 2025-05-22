@@ -1,12 +1,13 @@
 package com.wcc.platform.domain.cms.attributes;
 
+/* Technical Areas List */
 public enum TechnicalArea {
   BACKEND,
-  FRONTEND,
-  DEVOPS,
   DATA_SCIENCE,
+  DEVOPS,
+  FRONTEND,
   FULLSTACK,
   MOBILE,
-  QA,
-  OTHER
+  OTHER,
+  QA
 }

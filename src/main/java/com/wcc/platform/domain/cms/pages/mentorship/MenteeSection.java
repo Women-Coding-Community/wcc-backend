@@ -5,6 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
+/**
+ * Represents the Mentee Section of the Mentorship Page.
+ *
+ * @param mentorshipType AD_HOC or LONG_TERM
+ * @param availability mentor's availability data
+ * @param idealMentee ideal mentee description
+ * @param focus focus areas
+ * @param additional additional information
+ */
 public record MenteeSection(
     @NotBlank List<MentorshipType> mentorshipType,
     Availability availability,
