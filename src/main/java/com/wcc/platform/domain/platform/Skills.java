@@ -8,8 +8,12 @@ import java.util.List;
 /**
  * Skills of the mentor
  *
- * @param experience experience level
+ * @param experienceRange experience level
  * @param areas technical areas
  * @param languages programming languages
  */
-public record Skills(Experience experience, List<TechnicalArea> areas, List<Languages> languages) {}
+public record Skills(
+    Integer yearsExperience,
+    Experience experienceRange,
+    List<TechnicalArea> areas,
+    List<Languages> languages) {}

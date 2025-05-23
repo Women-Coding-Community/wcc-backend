@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
+import java.time.Month;
 import java.util.List;
 
 /**
@@ -8,4 +9,4 @@ import java.util.List;
  * @param months which months eg: 4-11
  * @param hours number of hours available eg: 2
  */
-public record Availability(List<Integer> months, Integer hours) {}
+public record Availability(List<Month> months, Integer hours) {}

@@ -54,7 +54,8 @@
         "Hindi"
       ],
       "skills": {
-        "experience": "10-15 years",
+        "yearsExperience": 15,
+        "experienceRange": "10-15 years",
         "areas": [
           "BACKEND",
           "FRONTEND",
@@ -74,13 +75,13 @@
         ],
         "availability": {
           "months": [
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11
+            "MAY",
+            "JUNE",
+            "JULY",
+            "AUGUST",
+            "SEPTEMBER",
+            "OCTOBER",
+            "NOVEMBER"
           ],
           "hours": 2
         },

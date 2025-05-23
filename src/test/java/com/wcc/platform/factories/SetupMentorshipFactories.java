@@ -32,6 +32,7 @@ import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.domain.platform.Skills;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.utils.FileUtil;
+import java.time.Month;
 import java.time.Year;
 import java.util.List;
 
@@ -155,13 +156,14 @@ public class SetupMentorshipFactories {
         .bio("Mentor bio")
         .skills(
             new Skills(
+                2,
                 Experience.YEARS_1_TO_5,
                 List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
                 List.of(Languages.JAVASCRIPT)))
         .menteeSection(
             new MenteeSection(
                 List.of(MentorshipType.LONG_TERM),
-                new Availability(List.of(5, 6), 2),
+                new Availability(List.of(Month.APRIL, Month.JUNE), 2),
                 "ideal mentee description",
                 List.of("focus"),
                 "additional"))
@@ -193,13 +195,14 @@ public class SetupMentorshipFactories {
         .bio("Mentor bio")
         .skills(
             new Skills(
+                2,
                 Experience.YEARS_1_TO_5,
                 List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
                 List.of(Languages.JAVASCRIPT)))
         .menteeSection(
             new MenteeSection(
                 List.of(MentorshipType.LONG_TERM),
-                new Availability(List.of(5, 6), 2),
+                new Availability(List.of(Month.APRIL, Month.JUNE), 2),
                 "ideal mentee description",
                 List.of("focus"),
                 "additional"))
