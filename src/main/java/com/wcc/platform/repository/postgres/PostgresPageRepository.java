@@ -52,7 +52,7 @@ public class PostgresPageRepository implements PageRepository {
 
       final String data = mapper.writeValueAsString(entity);
 
-      return jdbc.queryForObject(sql, rowMapper(), id, data);
+      return jdbc.queryForObject(sql, rowMapper(), data, id);
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException(e);
     }
