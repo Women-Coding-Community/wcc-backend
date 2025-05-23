@@ -28,7 +28,7 @@ public class PostgresPageRepository implements PageRepository {
   @Override
   public Map<String, Object> create(final Map<String, Object> entity) {
     final String sql =
-        "UPDATE " + TABLE + " SET data = to_jsonb(?::json) WHERE id = ? RETURNING id, data";
+        "INSERT INTO " + TABLE + " (id, data) VALUES (?, to_jsonb(?::json)) RETURNING id, data";
 
     final String id = String.valueOf(entity.get("id"));
 
