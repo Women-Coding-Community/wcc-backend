@@ -1,0 +1,136 @@
+{
+  "id": "page:MENTORS_PAGE",
+  "heroSection": {
+    "title": "Meet Our Mentors!",
+    "customStyle": {
+      "backgroundColour": {
+        "color": "primary",
+        "shade": {
+          "name": "light",
+          "value": 90
+        }
+      }
+    }
+  },
+  "mentors": [
+    {
+      "fullName": "Sonali Goel",
+      "position": "Senior Software Engineer",
+      "companyName": "Tesco Technology",
+      "city": "London",
+      "country": {
+        "countryCode": "GB",
+        "countryName": "United Kingdom"
+      },
+      "images": [
+        {
+          "path": "assets/images/mentors/sonali_goel.jpg",
+          "alt": "mentor profile image",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/sonali-goel-tech"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/goelsonali"
+        },
+        {
+          "type": "website",
+          "link": "https://sonaligoel.carrd.co"
+        },
+        {
+          "type": "medium",
+          "link": "https://medium.com/@goelsonali"
+        }
+      ],
+      "profileStatus": "DISABLED",
+      "bio": "As a Senior Software Engineer, I specialize in designing and implementing solutions that prioritize reliability, flexibility, and scalability.",
+      "spokenLanguages": [
+        "English",
+        "Hindi"
+      ],
+      "skills": {
+        "yearsExperience": 15,
+        "experienceRange": "10-15 years",
+        "areas": [
+          "BACKEND",
+          "FRONTEND",
+          "DEVOPS"
+        ],
+        "languages": [
+          "Java",
+          "C",
+          "C++",
+          "C#"
+        ]
+      },
+      "menteeSection": {
+        "mentorshipType": [
+          "AD_HOC",
+          "LONG_TERM"
+        ],
+        "availability": {
+          "months": [
+            "MAY",
+            "JUNE",
+            "JULY",
+            "AUGUST",
+            "SEPTEMBER",
+            "OCTOBER",
+            "NOVEMBER"
+          ],
+          "hours": 2
+        },
+        "idealMentee": "I am seeking mentees who are enthusiastic about learning and growing in the field of technology. Whether you're a beginner looking to enhance your programming skills or an experienced professional aiming to delve deeper into cloud architecture and e-commerce systems, I am here to support your journey.",
+        "focus": [
+          "Switch career to IT",
+          "Grow from beginner to mid-level",
+          "Grow from mid-level to senior-level",
+          "Engineering management"
+        ],
+        "additional": "Test Automation, Code Review, Exploratory Testing, Web Testing (Manual & Automation), API Testing (Postman, PactumJS), ISTQB Certification Preparation guidelines (Foundation Level and Test Automation Engineer), Starting career in IT, CV Review, Preparation for the Interview, Career Advice."
+      },
+      "feedbackSection": {
+        "feedbacks": [
+          {
+            "rating": "5",
+            "date": "Thu, May 30, 2024",
+            "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
+            "name": "Anonymous",
+            "type": "Ad-hoc"
+          },
+          {
+            "rating": "4",
+            "date": "Thu, Jun 30, 2024",
+            "feedback": "Sonali answered all my questions patiently and provided with a lot of valuable insights on how to prepare and approach for a job search. ",
+            "name": "Rajashree Munoli",
+            "type": "Long-Term"
+          }
+        ]
+      },
+      "resources": [
+        {
+          "id": "1",
+          "name": "Book Recommendations",
+          "description": "Books related to Java skills",
+          "rawContent": "Book 1, Book 2",
+          "type": "DESCRIPTION"
+        },
+        {
+          "id": "2",
+          "name": "Recommendations of java course",
+          "description": "nice website to learn about java",
+          "type": "LINK",
+          "link": {
+            "label": "Java course 1",
+            "uri": "https://linkexample.com/"
+          }
+        }
+      ]
+    }
+  ]
+}
