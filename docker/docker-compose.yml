@@ -13,15 +13,6 @@ services:
     networks:
       - app-network
 
-  #  surrealdb:
-  #    image: surrealdb/surrealdb:latest
-  #    container_name: surrealdb
-  #    ports:
-  #      - "8000:8000"
-  #    command: start --log debug --user root --pass root
-  #    networks:
-  #      - app-network
-
   springboot-app:
     build:
       context: ..
