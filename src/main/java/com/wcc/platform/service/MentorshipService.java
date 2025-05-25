@@ -1,10 +1,12 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.domain.cms.PageType.MENTORS;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
@@ -75,5 +77,22 @@ public class MentorshipService {
     }
     return repository.getFallback(
         MENTORSHIP_CONDUCT, MentorshipCodeOfConductPage.class, objectMapper);
+  }
+
+  /**
+   * API to retrieve information about mentors.
+   *
+   * @return Mentors page containing details about mentors.
+   */
+  public MentorsPage getMentors() {
+    final var page = repository.findById(MENTORS.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), MentorsPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    return repository.getFallback(MENTORS, MentorsPage.class, objectMapper);
   }
 }

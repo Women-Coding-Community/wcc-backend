@@ -2,16 +2,17 @@ package com.wcc.platform.domain.platform;
 
 /** Community available network types. */
 public enum SocialNetworkType {
-  YOUTUBE,
-  GITHUB,
-  LINKEDIN,
-  INSTAGRAM,
+  DEFAULT_LINK,
+  EMAIL,
   FACEBOOK,
-  TWITTER,
+  GITHUB,
+  INSTAGRAM,
+  LINKEDIN,
+  MEETUP,
   MEDIUM,
   SLACK,
-  MEETUP,
-  EMAIL,
+  TWITTER,
   UNKNOWN,
-  DEFAULT_LINK
+  WEBSITE,
+  YOUTUBE
 }
