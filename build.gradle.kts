@@ -37,7 +37,7 @@ repositories {
     mavenCentral()
 }
 
-val testContainer = "1.20.4"
+val testContainer = "1.21.0"
 
 dependencies {
 
@@ -59,6 +59,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:$testContainer")
 
     testImplementation("org.testcontainers:postgresql:${testContainer}")
+    testImplementation("org.apiguardian:apiguardian-api:1.1.2")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testCompileOnly("org.projectlombok:lombok")
@@ -138,6 +139,5 @@ tasks.register<Test>("testIntegration") {
     useJUnitPlatform()
     shouldRunAfter("test")
 }
-
 
 logging.captureStandardOutput(LogLevel.INFO)

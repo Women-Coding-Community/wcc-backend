@@ -7,10 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class PostgresPageRepositoryIntegrationTest extends AbstractDatabaseIntegrationTest {
 
   @Autowired private PostgresPageRepository repository;
