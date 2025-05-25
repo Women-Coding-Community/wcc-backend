@@ -39,7 +39,7 @@ public class PostgresPageRepository implements PageRepository {
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException(e);
     } catch (DuplicateKeyException e) {
-      throw new DuplicatedItemException("Duplicated item with id: " + id);
+      throw new DuplicatedItemException("Duplicated item with id: " + id, e);
     }
   }
 

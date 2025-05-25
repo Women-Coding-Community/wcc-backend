@@ -5,4 +5,8 @@ public class DuplicatedItemException extends RuntimeException {
   public DuplicatedItemException(final String message) {
     super(message);
   }
+
+  public DuplicatedItemException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }
