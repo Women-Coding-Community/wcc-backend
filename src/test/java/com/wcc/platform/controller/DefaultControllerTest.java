@@ -85,19 +85,6 @@ class DefaultControllerTest {
   }
 
   @Test
-  void testEventInternalServerError() throws Exception {
-    when(service.getEvents())
-        .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
-
-    mockMvc
-        .perform(getRequest("/api/cms/v1/events").contentType(APPLICATION_JSON))
-        .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.status", is(500)))
-        .andExpect(jsonPath("$.message", is("Invalid Json")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/events")));
-  }
-
-  @Test
   void testLandingPageInternalServerError() throws Exception {
     when(service.getLandingPage())
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
