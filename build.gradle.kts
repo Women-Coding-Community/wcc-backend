@@ -18,6 +18,15 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
+sourceSets {
+    create("testInt") {
+        java.srcDir("src/testInt/java")
+        resources.srcDir("src/testInt/resources")
+        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
@@ -46,9 +55,10 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
-
     testImplementation("org.testcontainers:testcontainers:${testContainer}")
     testImplementation("org.testcontainers:junit-jupiter:$testContainer")
+
+    testImplementation("org.testcontainers:postgresql:${testContainer}")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testCompileOnly("org.projectlombok:lombok")
@@ -92,8 +102,6 @@ pmd {
     ruleSetFiles = files("config/pmd/custom-ruleset.xml")
 }
 
-val baseDir = project.projectDir
-
 tasks.named<Pmd>("pmdMain") {
     exclude("**/FileUtil.java")
     exclude("**/PlatformApplication.java")
@@ -120,6 +128,15 @@ if (project.hasProperty("localProfile")) {
             property("sonar.token", "PLACE_YOUR_TOKEN_HERE")
         }
     }
+}
+
+tasks.register<Test>("testIntegration") {
+    description = "Runs integration tests."
+    group = "verification"
+    testClassesDirs = sourceSets["testInt"].output.classesDirs
+    classpath = sourceSets["testInt"].runtimeClasspath
+    useJUnitPlatform()
+    shouldRunAfter("test")
 }
 
 
