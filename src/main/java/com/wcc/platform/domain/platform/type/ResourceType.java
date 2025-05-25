@@ -7,6 +7,5 @@ public enum ResourceType {
   SLIDES,
   ZIP,
   LINK,
-  YOUTUBE,
-  DESCRIPTION
+  YOUTUBE
 }
