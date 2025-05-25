@@ -20,26 +20,26 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class AbstractDatabaseIntegrationTest {
+public class DefaultDatabaseSetup {
 
   @Container
-  private static final PostgreSQLContainer<?> postgresContainer =
+  private static final PostgreSQLContainer<?> CONTAINER =
       new PostgreSQLContainer<>("postgres:15")
           .withDatabaseName("testdb")
           .withUsername("testuser")
           .withPassword("testpass");
 
   @BeforeAll
-  static void createTable(@Autowired DataSource dataSource) {
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+  /* default */ static void createTable(@Autowired final DataSource dataSource) {
+    final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     jdbcTemplate.execute(
         "CREATE TABLE IF NOT EXISTS page(id TEXT PRIMARY KEY, data JSONB NOT NULL)");
   }
 
   @DynamicPropertySource
-  static void configureProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
-    registry.add("spring.datasource.username", postgresContainer::getUsername);
-    registry.add("spring.datasource.password", postgresContainer::getPassword);
+  /* default */ static void configureProperties(final DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", CONTAINER::getJdbcUrl);
+    registry.add("spring.datasource.username", CONTAINER::getUsername);
+    registry.add("spring.datasource.password", CONTAINER::getPassword);
   }
 }

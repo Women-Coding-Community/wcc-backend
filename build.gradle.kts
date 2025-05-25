@@ -112,6 +112,10 @@ tasks.named<Pmd>("pmdTest") {
     ruleSetFiles = files("config/pmd/custom-ruleset-test.xml")
 }
 
+tasks.named<Pmd>("pmdTestInt") {
+    ruleSetFiles = files("config/pmd/custom-ruleset-test.xml")
+}
+
 tasks.register("sonarQubeAnalysis") {
     group = "Code Quality"
     description = "Runs sonarQube analysis on the project."

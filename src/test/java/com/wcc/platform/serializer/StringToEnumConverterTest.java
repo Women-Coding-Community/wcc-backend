@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
  */
 class StringToEnumConverterTest {
   private StringToEnumConverter converter;
-  private ProgramType programType;
 
   @BeforeEach
   void setup() {
@@ -23,19 +22,19 @@ class StringToEnumConverterTest {
 
   @Test
   void testConvertValidValue() {
-    programType = converter.convert(ProgramType.BOOK_CLUB.toString());
+    final var programType = converter.convert(ProgramType.BOOK_CLUB.toString());
     assertEquals(ProgramType.BOOK_CLUB, programType);
   }
 
   @Test
   void testConverterInvalidValueReturnOthers() {
-    programType = converter.convert("Invalid value");
+    final var programType = converter.convert("Invalid value");
     assertEquals(ProgramType.OTHERS, programType);
   }
 
   @Test
   void testConverterEmptyString() {
-    programType = converter.convert("");
+    final var programType = converter.convert("");
     assertEquals(ProgramType.OTHERS, programType);
   }
 }

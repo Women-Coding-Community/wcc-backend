@@ -2,12 +2,12 @@ package com.wcc.platform; // package com.wcc.platform.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.wcc.platform.repository.postgres.AbstractDatabaseIntegrationTest;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-class PlatformApplicationTests extends AbstractDatabaseIntegrationTest {
+class PlatformApplicationTests extends DefaultDatabaseSetup {
 
   @Autowired private ApplicationContext context;
 

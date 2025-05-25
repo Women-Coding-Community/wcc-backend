@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.platform;
 
-import static com.wcc.platform.factories.SetupFactories.createImageTest;
+import static com.wcc.platform.domain.cms.attributes.ImageType.MOBILE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class ResourceContentTest {
 
-  private final List<Image> images = List.of(createImageTest());
+  private final List<Image> images = List.of(new Image(MOBILE + ".png", "alt image" + MOBILE, MOBILE));
 
   @Test
   @DisplayName("Given no-args constructor, when initialized, then fields should be null")

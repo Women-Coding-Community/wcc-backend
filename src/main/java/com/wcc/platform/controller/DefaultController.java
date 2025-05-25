@@ -2,6 +2,7 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
+import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.service.CmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -44,5 +45,13 @@ public class DefaultController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<LandingPage> getLandingPage() {
     return ResponseEntity.ok(cmsService.getLandingPage());
+  }
+
+  /** API to retrieve landing page. */
+  @GetMapping("/api/cms/v1/events")
+  @Operation(summary = "API to retrieve events")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<EventsPage> getEvents() {
+    return ResponseEntity.ok(cmsService.getEvents());
   }
 }
