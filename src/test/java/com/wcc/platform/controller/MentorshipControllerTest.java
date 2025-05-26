@@ -3,6 +3,8 @@ package com.wcc.platform.controller;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
+
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorsPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
@@ -37,7 +39,7 @@ public class MentorshipControllerTest {
   public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
   public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
   public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/programme-study-group";
-
+  public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
   @Autowired private MockMvc mockMvc;
 
   @MockBean private MentorshipService service;
@@ -104,6 +106,19 @@ public class MentorshipControllerTest {
     when(service.getStudyGroups()).thenReturn(createMentorshipStudyGroupPageTest(fileName));
     mockMvc
         .perform(MockMvcRequestFactory.getRequest(API_STUDY_GROUPS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+
+  @Test
+  void testMentorsOkResponse() throws Exception {
+    var fileName = "mentorsPage.json";
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getMentors()).thenReturn(createMentorsPageTest(fileName));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
