@@ -17,7 +17,7 @@
     "title": "Join us in our Study Group Slack Channel",
     "links": [
       {
-        "type": "SLACK",
+        "type": "slack",
         "link": "https://womencodingcommunity.slack.com/archives/C073W920RND"
       }
     ]

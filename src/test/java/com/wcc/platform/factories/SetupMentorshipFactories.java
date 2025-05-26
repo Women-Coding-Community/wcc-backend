@@ -1,7 +1,9 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
+import static com.wcc.platform.factories.SetupFactories.createContactTest;
 import static com.wcc.platform.factories.SetupFactories.createLinkTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
@@ -11,12 +13,17 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.FaqItem;
 import com.wcc.platform.domain.cms.attributes.ListSection;
+import com.wcc.platform.domain.cms.attributes.Mentor;
+import com.wcc.platform.domain.cms.attributes.Participants;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupPage;
+import com.wcc.platform.domain.cms.pages.mentorship.StudyGroupSection;
 import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.StudyGroup;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Year;
 import java.util.List;
@@ -106,5 +113,41 @@ public class SetupMentorshipFactories {
 
   private static CommonSection createCommonSectionOnlyLinkTest() {
     return new CommonSection(null, null, null, createLinkTest(), null, null);
+  }
+
+  /** Factory test for StudyGroupSection. */
+  private static StudyGroupSection createStudyGroupSectionTest(
+      String title, List<StudyGroup> studyGroups) {
+    return new StudyGroupSection(
+        title != null ? title : "Default Title", studyGroups != null ? studyGroups : List.of());
+  }
+
+  /** Test factory for Study Group Page */
+  public static MentorshipStudyGroupPage createMentorshipStudyGroupPageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, MentorshipStudyGroupPage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorshipStudyGroupPageTest();
+    }
+  }
+
+  /** Test factory for StudyGroupPage. */
+  public static MentorshipStudyGroupPage createMentorshipStudyGroupPageTest() {
+    final String pageId = PageType.STUDY_GROUPS.getId();
+    StudyGroup studyGroup =
+        new StudyGroup(
+            "group-1",
+            "Study Group 1",
+            new Mentor("mentor", "mentor name", "www.test-mentor-link.com"),
+            new Participants("participants", 1));
+
+    return new MentorshipStudyGroupPage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        createCommonSectionTest(),
+        createContactTest(),
+        createStudyGroupSectionTest("Study Group", List.of(studyGroup)),
+        createCustomStyleTest());
   }
 }

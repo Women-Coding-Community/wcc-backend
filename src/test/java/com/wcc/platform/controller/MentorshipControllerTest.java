@@ -2,9 +2,11 @@ package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
+import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -34,6 +36,8 @@ public class MentorshipControllerTest {
   public static final String API_MENTORSHIP_OVERVIEW = "/api/cms/v1/mentorship/overview";
   public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
   public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
+  public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/programme-study-group";
+
   @Autowired private MockMvc mockMvc;
 
   @MockBean private MentorshipService service;
@@ -88,6 +92,18 @@ public class MentorshipControllerTest {
     mockMvc
         .perform(
             MockMvcRequestFactory.getRequest(API_MENTORSHIP_CONDUCT).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testStudyGroupResponse() throws Exception {
+    var fileName = STUDY_GROUPS.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getStudyGroups()).thenReturn(createMentorshipStudyGroupPageTest(fileName));
+    mockMvc
+        .perform(MockMvcRequestFactory.getRequest(API_STUDY_GROUPS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
