@@ -20,7 +20,7 @@
     }
   },
   "section": {
-    "description": "Ready to supercharge your problem-solving skills and master algorithms and data structures?\n\nJoin our LeetCode community group and elevate your coding skills to new heights with collaborative support and expert guidance!\n\nWe offer a structured environment to learn, practice your coding skills and discuss strategies to tackle problems."
+    "description": "Ready to supercharge your problem-solving skills and master algorithms and data structures? Join our LeetCode community group and elevate your coding skills to new heights with collaborative support and expert guidance! We offer a structured environment to learn, practice your coding skills and discuss strategies to tackle problems."
   },
   "contact": {
     "title": "Join us in our Leetcode Slack channel",
@@ -41,7 +41,7 @@
         "Gain confidence: Build confidence to approach a problem in a structured manner.",
         "Different perspectives: Exchange different problem solving approaches."
       ],
-      "card": "not mandatory"
+      "card": null
     },
     {
       "title": "Resources for Coding Interviews",
