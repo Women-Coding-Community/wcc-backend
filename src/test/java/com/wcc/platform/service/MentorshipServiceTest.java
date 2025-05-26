@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
@@ -136,5 +138,28 @@ class MentorshipServiceTest {
     var exception = assertThrows(ContentNotFoundException.class, service::getStudyGroups);
 
     assertEquals("Content of Page STUDY_GROUPS not found", exception.getMessage());
+  }
+
+  @Test
+  void whenGetMentorsGivenRecordExistingInDatabaseThenReturnValidResponse() {
+    var page = createMentorPageTest();
+    var mapPage =
+        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+
+    when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(MentorsPage.class))).thenReturn(page);
+
+    var response = service.getMentors();
+
+    assertEquals(page, response);
+  }
+
+  @Test
+  @Disabled("Temporary Disable until migrate to postgres")
+  void whenGetMentorsGivenRecordNotInDatabaseThenThrowException() {
+    when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.empty());
+    var exception = assertThrows(ContentNotFoundException.class, service::getMentors);
+
+    assertEquals("Content of Page MENTORS not found", exception.getMessage());
   }
 }
