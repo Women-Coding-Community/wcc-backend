@@ -1,7 +1,7 @@
 {
-  "id": "page:INTERVIEW_PREP",
+  "id": "page:CV_CLINIC",
   "heroSection": {
-    "title": "Interview Preparation",
+    "title": "CV Clinic",
     "images": [
       {
         "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
@@ -31,6 +31,11 @@
     {
       "title": "Benefits of Joining",
       "description": "",
+      "items": [
+        "Expert Feedback: Receive personalized feedback and tips from peers who understand the nuances of your industry and role.",
+        "New Strategies: Sharpen your resume-writing skills and learn new techniques to make your resume stand out to potential employers.",
+        "Confidence Boost: Gain confidence in your professional profile and feel empowered to take the next step in your career journey."
+      ],
       "card": null
     },
     {
