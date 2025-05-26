@@ -117,7 +117,7 @@ public class SetupMentorshipFactories {
 
   /** Factory test for StudyGroupSection. */
   private static StudyGroupSection createStudyGroupSectionTest(
-      String title, List<StudyGroup> studyGroups) {
+      final String title, final List<StudyGroup> studyGroups) {
     return new StudyGroupSection(
         title != null ? title : "Default Title", studyGroups != null ? studyGroups : List.of());
   }
