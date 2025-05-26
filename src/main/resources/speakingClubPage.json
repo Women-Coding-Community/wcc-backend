@@ -1,13 +1,13 @@
 {
   "id": "page:SPEAKING_CLUB",
   "heroSection": {
-    "title": "WWC Speaking Club"
+    "title": "Speaking Club"
   },
   "images": [
     {
-      "path": "",
-      "alt": "",
-      "type": ""
+      "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+      "alt": "There is a group of women showing WCC logo",
+      "type": "desktop"
     }
   ],
   "section": {
@@ -18,15 +18,14 @@
     "links": [
       {
         "type": "SLACK",
-        "link": "http://shortlink_to_slack.com/#prog_speaking_club"
+        "link": "https://womencodingcommunity.slack.com/archives/C070NACTMCM"
       }
     ]
   },
   "programmeDetails": [
     {
       "title": "What we offer",
-      "description": "Practice Sessions: Join regular practice sessions where you can deliver your talks and presentations to a supportive audience. Get immediate feedback and constructive criticism to help you improve.\nSpeech Evaluations and Feedback: Receive detailed evaluations from peers and mentors to refine your delivery and content. Use personalised feedback to enhance your strengths and address areas for improvement.\nGuest Speaker Events: Gain insights from guest speakers who are experts in public speaking, presentation skills, and communication. Learn best practices and tips from successful orators and industry leaders.\nOnline Debates and Discussions: Engage in structured online debates to sharpen your argumentation and persuasive speaking skills. Participate in group discussions on a variety of topics to improve your ability to articulate ideas clearly.\nWebinars and Q&A Sessions: Attend webinars covering various aspects of public speaking and presentation techniques. Participate in Q&A sessions with experienced speakers to get your questions answered.\nNetworking and Community:Connect with like-minded individuals in our virtual networking events and slack channel Build a network of friends, mentors, and collaborators who share your passion for speaking.",
-      "card": null
+      "description": "Practice Sessions: Join regular practice sessions where you can deliver your talks and presentations to a supportive audience. Get immediate feedback and constructive criticism to help you improve.<br>Speech Evaluations and Feedback: Receive detailed evaluations from peers and mentors to refine your delivery and content. Use personalised feedback to enhance your strengths and address areas for improvement.<br>Guest Speaker Events: Gain insights from guest speakers who are experts in public speaking, presentation skills, and communication. Learn best practices and tips from successful orators and industry leaders.<br>Online Debates and Discussions: Engage in structured online debates to sharpen your argumentation and persuasive speaking skills. Participate in group discussions on a variety of topics to improve your ability to articulate ideas clearly.<br>Webinars and Q&A Sessions: Attend webinars covering various aspects of public speaking and presentation techniques. Participate in Q&A sessions with experienced speakers to get your questions answered.<br>Networking and Community:Connect with like-minded individuals in our virtual networking events and slack channel Build a network of friends, mentors, and collaborators who share your passion for speaking."
     }
   ],
   "customStyle": {

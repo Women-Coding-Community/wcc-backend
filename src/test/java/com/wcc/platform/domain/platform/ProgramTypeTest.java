@@ -9,9 +9,6 @@ class ProgramTypeTest {
 
   @Test
   void shouldReturnCorrectDescriptionForEnumValues() {
-    // Given: All enum values in ProgramType
-    ProgramType[] programTypes = ProgramType.values();
-
     // When & Then: Check that each enum value has the correct description
     assertEquals("Book Club", ProgramType.BOOK_CLUB.getDescription());
     assertEquals("Coding Club Python", ProgramType.CODING_CLUB.getDescription());
@@ -25,4 +22,3 @@ class ProgramTypeTest {
     assertEquals("Tech Talk", ProgramType.TECH_TALK.getDescription());
   }
 }
-
