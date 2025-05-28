@@ -52,11 +52,12 @@ public class MentorshipController {
     return ResponseEntity.ok(service.getCodeOfConduct());
   }
 
-  @GetMapping("/programme-study-group")
+  @GetMapping("/study-groups")
   @Operation(summary = "API to retrieve mentorship study groups page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipStudyGroupPage> getMentorshipStudyGroup() {
     return ResponseEntity.ok(service.getStudyGroups());
+  }
 
   @GetMapping("/mentors")
   @Operation(summary = "API to retrieve mentors page")

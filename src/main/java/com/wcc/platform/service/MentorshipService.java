@@ -82,7 +82,6 @@ public class MentorshipService {
   }
 
   /**
-
    * API to retrieve information about the study groups.
    *
    * @return Mentorship study groups page.
@@ -92,14 +91,14 @@ public class MentorshipService {
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), MentorshipStudyGroupPage.class);
-         } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-      return repository.getFallback(STUDY_GROUPS, MentorshipStudyGroupPage.class, objectMapper);
+    return repository.getFallback(STUDY_GROUPS, MentorshipStudyGroupPage.class, objectMapper);
   }
-}
-/**
+
+  /**
    * API to retrieve information about mentors.
    *
    * @return Mentors page containing details about mentors.
