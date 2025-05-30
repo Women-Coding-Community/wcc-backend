@@ -1,0 +1,40 @@
+{
+  "id": "page:SPEAKING_CLUB",
+  "heroSection": {
+    "title": "Speaking Club"
+  },
+  "images": [
+    {
+      "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+      "alt": "There is a group of women showing WCC logo",
+      "type": "desktop"
+    }
+  ],
+  "section": {
+    "description": "Are you looking to improve your public speaking skills, enhance your presentation abilities, and gain confidence in delivering talks? The Online Speaking Club is your ultimate platform to practise and refine your speaking skills in a supportive and interactive virtual environment. Whether you’re preparing for a professional presentation, a public talk, or simply want to improve your communication skills, our club offers the resources and community you need to succeed."
+  },
+  "contact": {
+    "title": "Join us in our Speaking Club Slack channel",
+    "links": [
+      {
+        "type": "SLACK",
+        "link": "https://womencodingcommunity.slack.com/archives/C070NACTMCM"
+      }
+    ]
+  },
+  "programmeDetails": [
+    {
+      "title": "What we offer",
+      "description": "Practice Sessions: Join regular practice sessions where you can deliver your talks and presentations to a supportive audience. Get immediate feedback and constructive criticism to help you improve.<br>Speech Evaluations and Feedback: Receive detailed evaluations from peers and mentors to refine your delivery and content. Use personalised feedback to enhance your strengths and address areas for improvement.<br>Guest Speaker Events: Gain insights from guest speakers who are experts in public speaking, presentation skills, and communication. Learn best practices and tips from successful orators and industry leaders.<br>Online Debates and Discussions: Engage in structured online debates to sharpen your argumentation and persuasive speaking skills. Participate in group discussions on a variety of topics to improve your ability to articulate ideas clearly.<br>Webinars and Q&A Sessions: Attend webinars covering various aspects of public speaking and presentation techniques. Participate in Q&A sessions with experienced speakers to get your questions answered.<br>Networking and Community:Connect with like-minded individuals in our virtual networking events and slack channel Build a network of friends, mentors, and collaborators who share your passion for speaking."
+    }
+  ],
+  "customStyle": {
+    "backgroundColour": {
+      "color": "PRIMARY",
+      "shade": {
+        "name": "LIGHT",
+        "value": 90
+      }
+    }
+  }
+}
