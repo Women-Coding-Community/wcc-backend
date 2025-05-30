@@ -37,7 +37,7 @@
 //
 // @ActiveProfiles("test")
 // @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-// class CmsServiceIntegrationTest extends SurrealDbIntegrationTest {
+// class CmsServiceIntegrationTest extends x {
 //
 //  @Autowired private CmsService service;
 //  @Autowired private PageRepository pageRepository;

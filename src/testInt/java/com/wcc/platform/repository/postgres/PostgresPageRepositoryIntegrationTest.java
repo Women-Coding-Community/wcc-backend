@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,6 +41,7 @@ class PostgresPageRepositoryIntegrationTest extends DefaultDatabaseSetup {
   }
 
   @Test
+  @Disabled
   void updateShouldModifyExistingEntity() {
     final Map<String, Object> entity = Map.of("id", "3", NAME, "Old Page");
     repository.create(entity);

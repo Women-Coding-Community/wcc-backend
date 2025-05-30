@@ -1,4 +1,4 @@
-package com.wcc.platform; // package com.wcc.platform.integrationtests;
+package com.wcc.platform;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
