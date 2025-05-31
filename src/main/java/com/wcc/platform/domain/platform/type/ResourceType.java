@@ -8,4 +8,6 @@ public enum ResourceType {
   ZIP,
   LINK,
   YOUTUBE,
+  /** Mentor resources descriptions, for example book recommendations. */
+  DESCRIPTION
 }
