@@ -22,5 +22,5 @@ public class StudyGroup {
   @NotEmpty private String description;
   @NotEmpty private String coordinators;
   @NotNull private LabelLink link;
-  @NotNull private Integer participants;
+  private Integer participants;
 }
