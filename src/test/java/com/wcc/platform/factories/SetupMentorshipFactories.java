@@ -144,7 +144,7 @@ public class SetupMentorshipFactories {
     return new CommonSection(null, null, null, createLinkTest(), null, null);
   }
 
-  /** Test factory for Study Group Page */
+  /** Test factory for Study Group Page. */
   public static MentorshipStudyGroupsPage createMentorshipStudyGroupPageTest(
       final String fileName) {
     try {
