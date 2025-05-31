@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -16,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class FileMemberRepositoryTest {
 
   private ObjectMapper objectMapper;
-  @InjectMocks private FileMemberRepository fileMemberRepository;
 
   @BeforeEach
   void setUp() {
@@ -25,7 +23,7 @@ class FileMemberRepositoryTest {
 
   @Test
   void whenGetAllFileDoesNotExist() {
-    fileMemberRepository = new FileMemberRepository(objectMapper, "invalid");
+    final var fileMemberRepository = new FileMemberRepository(objectMapper, "invalid");
     List<Member> result = fileMemberRepository.getAll();
     assertTrue(result.isEmpty());
   }
@@ -34,7 +32,7 @@ class FileMemberRepositoryTest {
   void whenGetAllFileEmpty() {
     final String tempPath =
         this.getClass().getClassLoader().getResource("members/empty/").getPath();
-    fileMemberRepository = new FileMemberRepository(objectMapper, tempPath);
+    final var fileMemberRepository = new FileMemberRepository(objectMapper, tempPath);
     List<Member> result = fileMemberRepository.getAll();
     assertTrue(result.isEmpty());
   }

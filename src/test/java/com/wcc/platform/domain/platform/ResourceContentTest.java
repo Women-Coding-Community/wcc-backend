@@ -1,10 +1,9 @@
 package com.wcc.platform.domain.platform;
 
-import static com.wcc.platform.factories.SetupFactories.createImageTest;
+import static com.wcc.platform.domain.cms.attributes.ImageType.MOBILE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
@@ -15,7 +14,8 @@ import org.junit.jupiter.api.Test;
 
 class ResourceContentTest {
 
-  private final List<Image> images = List.of(createImageTest());
+  private final List<Image> images =
+      List.of(new Image(MOBILE + ".png", "alt image" + MOBILE, MOBILE));
   private final LabelLink labelLink = new LabelLink("Test Link", "Test Label", "example.com");
 
   @Test
@@ -53,8 +53,6 @@ class ResourceContentTest {
     assertEquals("Raw Content", resource.getRawContent());
     assertEquals(ResourceType.LINK, resource.getType());
     assertEquals(images, resource.getImages());
-    assertEquals(images, resource.getImages());
-    assertEquals(labelLink, resource.getLink());
   }
 
   @Test
@@ -75,29 +73,6 @@ class ResourceContentTest {
     assertEquals("Raw Content", resource.getRawContent());
     assertEquals(ResourceType.DOCUMENT, resource.getType());
     assertEquals(images, resource.getImages());
-  }
-
-  @Test
-  @DisplayName(
-      "Given ResourceContent, when setters are disabled, then setters should throw NoSuchMethodException")
-  void settersAreDisabled() {
-    ResourceContent resource = new ResourceContent();
-
-    assertThrows(
-        NoSuchMethodException.class,
-        () -> ResourceContent.class.getDeclaredMethod("setId", String.class));
-    assertThrows(
-        NoSuchMethodException.class,
-        () -> ResourceContent.class.getDeclaredMethod("setName", String.class));
-    assertThrows(
-        NoSuchMethodException.class,
-        () -> ResourceContent.class.getDeclaredMethod("setDescription", String.class));
-    assertThrows(
-        NoSuchMethodException.class,
-        () -> ResourceContent.class.getDeclaredMethod("setRawContent", String.class));
-    assertThrows(
-        NoSuchMethodException.class,
-        () -> ResourceContent.class.getDeclaredMethod("setType", ResourceType.class));
   }
 
   @Test

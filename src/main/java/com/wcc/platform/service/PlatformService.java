@@ -1,60 +1,25 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberDto;
-import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.MemberRepository;
-import com.wcc.platform.repository.ResourceContentRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** Platform Service. */
 @Service
 public class PlatformService {
 
-  private final ResourceContentRepository resource;
   private final MemberRepository memberRepository;
 
   /** Constructor . */
   @Autowired
-  public PlatformService(
-      @Qualifier("getResourceRepository") final ResourceContentRepository resource,
-      final MemberRepository memberRepository) {
-    this.resource = resource;
+  public PlatformService(final MemberRepository memberRepository) {
     this.memberRepository = memberRepository;
-  }
-
-  public ResourceContent saveResourceContent(final ResourceContent resourceContent) {
-    return resource.create(resourceContent);
-  }
-
-  /**
-   * Find resource by id or throws {@link ContentNotFoundException} when does not exist.
-   *
-   * @param id id of resource
-   * @return Resource content or not found.
-   */
-  public ResourceContent getResourceById(final String id) {
-    return resource
-        .findById(id)
-        .orElseThrow(() -> new ContentNotFoundException("Resource not found for id: " + id));
-  }
-
-  /**
-   * Delete resource if exist otherwise throws {@link ContentNotFoundException}.
-   *
-   * @param id id of resource
-   */
-  public void deleteById(final String id) {
-    final var result = getResourceById(id);
-
-    resource.deleteById(result.getId());
   }
 
   /** Save Member into storage. */

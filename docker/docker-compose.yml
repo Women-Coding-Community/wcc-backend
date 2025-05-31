@@ -1,12 +1,15 @@
-version: '3.7'
-
 services:
-  surrealdb:
-    image: surrealdb/surrealdb:latest
-    container_name: surrealdb
+  postgres:
+    image: postgres:15
+    container_name: postgres
     ports:
-      - "8000:8000"
-    command: start --log debug --user root --pass root
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: MFpFnhhICniFNPA
+      POSTGRES_DB: wcc
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
 
@@ -19,13 +22,17 @@ services:
       - "8080:8080"
       - "5005:5005"
     depends_on:
-      - surrealdb
+      - postgres
     environment:
-      - SURREALDB_USER=root
-      - SURREALDB_PASS=root
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/wcc
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: MFpFnhhICniFNPA
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres-data:

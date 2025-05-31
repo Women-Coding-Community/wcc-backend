@@ -6,7 +6,7 @@ import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
-import com.wcc.platform.service.CmsService;
+import com.wcc.platform.service.CmsAboutUsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Pages: About Us", description = "All APIs under session About-Us")
 public class AboutController {
 
-  private final CmsService cmsService;
+  private final CmsAboutUsService cmsService;
 
   @Autowired
-  public AboutController(final CmsService service) {
+  public AboutController(final CmsAboutUsService service) {
     this.cmsService = service;
   }
 

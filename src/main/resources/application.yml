@@ -3,6 +3,11 @@ spring:
     name: wcc-backend
   profiles:
     active: default
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wcc
+    username: postgres
+    password: MFpFnhhICniFNPA
+    driver-class-name: org.postgresql.Driver
 
 security:
   api:
@@ -32,3 +37,5 @@ surrealdb:
   database: platform
   username: root
   password: root
+
+

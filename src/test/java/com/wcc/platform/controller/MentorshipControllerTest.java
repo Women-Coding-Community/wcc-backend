@@ -2,7 +2,7 @@ package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorsPageTest;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
@@ -13,7 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.MentorshipService;
@@ -37,6 +39,7 @@ public class MentorshipControllerTest {
   public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
   public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
   @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
   @MockBean private MentorshipService service;
 
@@ -96,15 +99,14 @@ public class MentorshipControllerTest {
 
   @Test
   void testMentorsOkResponse() throws Exception {
-    var fileName = "mentorsPage.json";
-    var expectedJson = FileUtil.readFileAsString(fileName);
+    MentorsPage mentorsPage = createMentorPageTest();
 
-    when(service.getMentors()).thenReturn(createMentorsPageTest(fileName));
+    when(service.getMentors()).thenReturn(mentorsPage);
 
     mockMvc
         .perform(
             MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
+        .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
   }
 }

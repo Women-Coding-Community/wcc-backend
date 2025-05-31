@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.platform.SocialNetworkType.SLACK;
+import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -20,7 +21,6 @@ import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.factories.SetupEventFactories;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.factories.SetupMentorshipFactories;
@@ -52,8 +52,7 @@ class DefaultControllerTest {
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/footer").contentType(APPLICATION_JSON))
+        .perform(getRequest("/api/cms/v1/footer").contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("Invalid Json")))
@@ -73,8 +72,7 @@ class DefaultControllerTest {
                 new LabelLink("label_title", "label", "label_uri")));
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/footer").contentType(APPLICATION_JSON))
+        .perform(getRequest("/api/cms/v1/footer").contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.title", is("footer_title")))
         .andExpect(jsonPath("$.subtitle", is("footer_subtitle")))
@@ -92,9 +90,7 @@ class DefaultControllerTest {
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/landingPage")
-                .contentType(APPLICATION_JSON))
+        .perform(getRequest("/api/cms/v1/landingPage").contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("Invalid Json")))
@@ -116,9 +112,7 @@ class DefaultControllerTest {
     when(service.getLandingPage()).thenReturn(page);
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/landingPage")
-                .contentType(APPLICATION_JSON))
+        .perform(getRequest("/api/cms/v1/landingPage").contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(page)));
   }

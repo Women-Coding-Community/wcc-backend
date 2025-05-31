@@ -1,19 +1,14 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.ABOUT_US;
-import static com.wcc.platform.domain.cms.PageType.CELEBRATE_HER;
 import static com.wcc.platform.domain.cms.PageType.CODE_OF_CONDUCT;
-import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
 import static com.wcc.platform.domain.cms.PageType.PARTNERS;
+import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
 import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
-import static com.wcc.platform.factories.SetupFactories.createAboutUsPageTest;
-import static com.wcc.platform.factories.SetupFactories.createCelebrateHerPageTest;
-import static com.wcc.platform.factories.SetupFactories.createCodeOfConductPageTest;
-import static com.wcc.platform.factories.SetupFactories.createCollaboratorPageTest;
-import static com.wcc.platform.factories.SetupFactories.createPartnersPageTest;
+import static com.wcc.platform.factories.SetupPagesFactories.createCodeOfConductPageTest;
+import static com.wcc.platform.factories.SetupPagesFactories.createPartnersPageTest;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -23,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.factories.MockMvcRequestFactory;
-import com.wcc.platform.service.CmsService;
+import com.wcc.platform.factories.SetupPagesFactories;
+import com.wcc.platform.service.CmsAboutUsService;
 import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,14 +44,52 @@ class AboutControllerTest {
       "?currentPage=" + DEFAULT_CURRENT_PAGE + "&pageSize=" + DEFAULT_PAGE_SIZE;
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private CmsService service;
+  @MockBean private CmsAboutUsService service;
 
   @Test
-  void testNotFound() throws Exception {
+  void testPartnersInternalError() throws Exception {
+    var internalError = new PlatformInternalException("internal Json", new RuntimeException());
+    when(service.getPartners()).thenThrow(internalError);
+
+    mockMvc
+        .perform(getRequest(API_PARTNERS).contentType(APPLICATION_JSON))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.status", is(500)))
+        .andExpect(jsonPath("$.message", is("internal Json")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/partners")));
+  }
+
+  @Test
+  void testPartnersNotFound() throws Exception {
+    when(service.getPartners()).thenThrow(new ContentNotFoundException("Not Found Exception"));
+
+    mockMvc
+        .perform(getRequest(API_PARTNERS).contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.status", is(404)))
+        .andExpect(jsonPath("$.message", is("Not Found Exception")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/partners")));
+  }
+
+  @Test
+  void testPartnersOkResponse() throws Exception {
+    var fileName = PARTNERS.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getPartners()).thenReturn(createPartnersPageTest(fileName));
+
+    mockMvc
+        .perform(getRequest(API_PARTNERS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testTeamNotFound() throws Exception {
     when(service.getTeam()).thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
-        .perform(MockMvcRequestFactory.getRequest("/api/cms/v1/team").contentType(APPLICATION_JSON))
+        .perform(getRequest("/api/cms/v1/team").contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
         .andExpect(jsonPath("$.message", is("Not Found Exception")))
@@ -64,12 +97,12 @@ class AboutControllerTest {
   }
 
   @Test
-  void testInternalError() throws Exception {
+  void testTeamInternalError() throws Exception {
     var internalError = new PlatformInternalException("internal error", new RuntimeException());
     when(service.getTeam()).thenThrow(internalError);
 
     mockMvc
-        .perform(MockMvcRequestFactory.getRequest("/api/cms/v1/team").contentType(APPLICATION_JSON))
+        .perform(getRequest("/api/cms/v1/team").contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("internal error")))
@@ -77,59 +110,11 @@ class AboutControllerTest {
   }
 
   @Test
-  void testCollaboratorNotFound() throws Exception {
-    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE))
-        .thenThrow(new ContentNotFoundException("Not Found Exception"));
-
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/collaborators")
-                .contentType(APPLICATION_JSON))
-        .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.status", is(404)))
-        .andExpect(jsonPath("$.message", is("Not Found Exception")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
-  }
-
-  @Test
-  void testCollaboratorInternalError() throws Exception {
-    var internalError = new PlatformInternalException("internal Json", new RuntimeException());
-    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE)).thenThrow(internalError);
-
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/collaborators")
-                .contentType(APPLICATION_JSON))
-        .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.status", is(500)))
-        .andExpect(jsonPath("$.message", is("internal Json")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
-  }
-
-  @Test
-  void testCollaboratorOkResponse() throws Exception {
-    var fileName = COLLABORATOR.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getCollaborator(anyInt(), anyInt()))
-        .thenReturn(createCollaboratorPageTest(fileName));
-
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(
-                    String.format("%s%s", API_COLLABORATORS, PAGINATION_COLLABORATORS))
-                .contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
   void testCodeOfConductNotFound() throws Exception {
     when(service.getCodeOfConduct()).thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+        .perform(getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
         .andExpect(jsonPath("$.message", is("Not Found Exception")))
@@ -142,8 +127,7 @@ class AboutControllerTest {
     when(service.getCodeOfConduct()).thenThrow(internalError);
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+        .perform(getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("internal Json")))
@@ -159,8 +143,7 @@ class AboutControllerTest {
     when(service.getCodeOfConduct()).thenReturn(createCodeOfConductPageTest(fileName));
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
+        .perform(getRequest(API_CODE_OF_CONDUCT).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
@@ -170,7 +153,7 @@ class AboutControllerTest {
     when(service.getAboutUs()).thenThrow(new ContentNotFoundException("Not Found Exception"));
 
     mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .perform(getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.status", is(404)))
         .andExpect(jsonPath("$.message", is("Not Found Exception")))
@@ -183,11 +166,11 @@ class AboutControllerTest {
     when(service.getAboutUs()).thenThrow(internalError);
 
     mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
+        .perform(getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.status", is(500)))
         .andExpect(jsonPath("$.message", is("internal Json")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/about")));
+        .andExpect(jsonPath("$.details", is("uri=" + API_ABOUT_US)));
   }
 
   @Test
@@ -195,61 +178,10 @@ class AboutControllerTest {
     var fileName = ABOUT_US.getFileName();
     var expectedJson = FileUtil.readFileAsString(fileName);
 
-    when(service.getAboutUs()).thenReturn(createAboutUsPageTest(fileName));
+    when(service.getAboutUs()).thenReturn(SetupPagesFactories.createAboutUsPageTest(fileName));
 
     mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  void testCelebrateHerOkResponse() throws Exception {
-    var fileName = CELEBRATE_HER.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getCelebrateHer()).thenReturn(createCelebrateHerPageTest(fileName));
-
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_CELEBRATEHER).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  void testPartnersInternalError() throws Exception {
-    var internalError = new PlatformInternalException("internal Json", new RuntimeException());
-    when(service.getPartners()).thenThrow(internalError);
-
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_PARTNERS).contentType(APPLICATION_JSON))
-        .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.status", is(500)))
-        .andExpect(jsonPath("$.message", is("internal Json")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/partners")));
-  }
-
-  @Test
-  void testPartnersNotFound() throws Exception {
-    when(service.getPartners()).thenThrow(new ContentNotFoundException("Not Found Exception"));
-
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_PARTNERS).contentType(APPLICATION_JSON))
-        .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.status", is(404)))
-        .andExpect(jsonPath("$.message", is("Not Found Exception")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/partners")));
-  }
-
-  @Test
-  void testPartnersOkResponse() throws Exception {
-    var fileName = PARTNERS.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getPartners()).thenReturn(createPartnersPageTest(fileName));
-
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_PARTNERS).contentType(APPLICATION_JSON))
+        .perform(getRequest(API_ABOUT_US).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

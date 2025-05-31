@@ -18,6 +18,15 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
+sourceSets {
+    create("testInt") {
+        java.srcDir("src/testInt/java")
+        resources.srcDir("src/testInt/resources")
+        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
@@ -28,7 +37,7 @@ repositories {
     mavenCentral()
 }
 
-val testContainer = "1.20.4"
+val testContainer = "1.21.0"
 
 dependencies {
 
@@ -37,18 +46,20 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.surrealdb:surrealdb-driver:0.1.0")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.postgresql:postgresql:42.7.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
-
-    testImplementation("com.surrealdb:surrealdb-driver:0.1.0")
     testImplementation("org.testcontainers:testcontainers:${testContainer}")
     testImplementation("org.testcontainers:junit-jupiter:$testContainer")
+
+    testImplementation("org.testcontainers:postgresql:${testContainer}")
+    testImplementation("org.apiguardian:apiguardian-api:1.1.2")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testCompileOnly("org.projectlombok:lombok")
@@ -92,14 +103,16 @@ pmd {
     ruleSetFiles = files("config/pmd/custom-ruleset.xml")
 }
 
-val baseDir = project.projectDir
-
 tasks.named<Pmd>("pmdMain") {
     exclude("**/FileUtil.java")
     exclude("**/PlatformApplication.java")
 }
 
 tasks.named<Pmd>("pmdTest") {
+    ruleSetFiles = files("config/pmd/custom-ruleset-test.xml")
+}
+
+tasks.named<Pmd>("pmdTestInt") {
     ruleSetFiles = files("config/pmd/custom-ruleset-test.xml")
 }
 
@@ -122,5 +135,13 @@ if (project.hasProperty("localProfile")) {
     }
 }
 
+tasks.register<Test>("testIntegration") {
+    description = "Runs integration tests."
+    group = "verification"
+    testClassesDirs = sourceSets["testInt"].output.classesDirs
+    classpath = sourceSets["testInt"].runtimeClasspath
+    useJUnitPlatform()
+    shouldRunAfter("test")
+}
 
 logging.captureStandardOutput(LogLevel.INFO)
