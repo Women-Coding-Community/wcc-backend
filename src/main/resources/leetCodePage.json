@@ -1,0 +1,60 @@
+{
+  "id": "page:LEETCODE",
+  "heroSection": {
+    "title": "Leetcode Programme",
+    "images": [
+      {
+        "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+        "alt": "There is a group of women showing WCC logo",
+        "type": "desktop"
+      }
+    ],
+    "customStyle": {
+      "backgroundColour": {
+        "color": "PRIMARY",
+        "shade": {
+          "name": "LIGHT",
+          "value": 90
+        }
+      }
+    }
+  },
+  "section": {
+    "description": "Ready to supercharge your problem-solving skills and master algorithms and data structures? Join our LeetCode community group and elevate your coding skills to new heights with collaborative support and expert guidance! We offer a structured environment to learn, practice your coding skills and discuss strategies to tackle problems."
+  },
+  "contact": {
+    "title": "Join us in our Leetcode Slack channel",
+    "links": [
+      {
+        "type": "SLACK",
+        "link": "http://shortlink_to_slack.com/#prog_leetcode"
+      }
+    ]
+  },
+  "programmeDetails": [
+    {
+      "title": "Benefits of Joining",
+      "description": "",
+      "items": [
+        "Collaborative learning: Practice problems, share solutions and strategies.",
+        "Accountability and motivation: Set goals, track progress and engage with peers.",
+        "Gain confidence: Build confidence to approach a problem in a structured manner.",
+        "Different perspectives: Exchange different problem solving approaches."
+      ],
+      "card": null
+    },
+    {
+      "title": "Resources for Coding Interviews",
+      "description": "",
+      "card": {
+        "items": [
+          "CS50 2020 - Lecture 3 - Algorithms: is a comprehensive lecture from Harvard's CS50 course that covers fundamental algorithms, essential for coding interview preparation."
+        ],
+        "link": {
+          "label": "CS50",
+          "uri": "https://www.youtube.com/watch?v=gR6nycuZKlM"
+        }
+      }
+    }
+  ]
+}

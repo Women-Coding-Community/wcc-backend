@@ -6,6 +6,3 @@ spring:
 file:
   storage:
     directory: /app/data
-
-surrealdb:
-  host: surrealdb # use the service name from docker-compose.yml

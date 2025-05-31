@@ -72,6 +72,7 @@ public class SetupMentorshipFactories {
     return new MentorsPage(pageId, createNoImageHeroSectionTest(), List.of(createMentorTest()));
   }
 
+  /** Test factory. */
   public static MentorsPage createMentorsPageTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
