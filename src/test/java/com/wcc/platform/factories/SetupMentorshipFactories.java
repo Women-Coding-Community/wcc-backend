@@ -14,10 +14,9 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Experience;
 import com.wcc.platform.domain.cms.attributes.FaqItem;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.ListSection;
-import com.wcc.platform.domain.cms.attributes.Mentor;
-import com.wcc.platform.domain.cms.attributes.Participants;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.Availability;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
@@ -27,10 +26,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupPage;
-import com.wcc.platform.domain.cms.pages.mentorship.StudyGroupSection;
-import com.wcc.platform.domain.platform.MemberType;
-import com.wcc.platform.domain.platform.StudyGroup;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.Mentor;
@@ -38,6 +34,7 @@ import com.wcc.platform.domain.platform.MentorshipType;
 import com.wcc.platform.domain.platform.ProfileStatus;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.domain.platform.Skills;
+import com.wcc.platform.domain.platform.StudyGroup;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Month;
@@ -147,42 +144,37 @@ public class SetupMentorshipFactories {
     return new CommonSection(null, null, null, createLinkTest(), null, null);
   }
 
-  /** Factory test for StudyGroupSection. */
-  private static StudyGroupSection createStudyGroupSectionTest(
-      final String title, final List<StudyGroup> studyGroups) {
-    return new StudyGroupSection(
-        title != null ? title : "Default Title", studyGroups != null ? studyGroups : List.of());
-  }
-
   /** Test factory for Study Group Page */
-  public static MentorshipStudyGroupPage createMentorshipStudyGroupPageTest(final String fileName) {
+  public static MentorshipStudyGroupsPage createMentorshipStudyGroupPageTest(
+      final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, MentorshipStudyGroupPage.class);
+      return OBJECT_MAPPER.readValue(content, MentorshipStudyGroupsPage.class);
     } catch (JsonProcessingException e) {
       return createMentorshipStudyGroupPageTest();
     }
   }
 
   /** Test factory for StudyGroupPage. */
-  public static MentorshipStudyGroupPage createMentorshipStudyGroupPageTest() {
+  public static MentorshipStudyGroupsPage createMentorshipStudyGroupPageTest() {
     final String pageId = PageType.STUDY_GROUPS.getId();
     StudyGroup studyGroup =
         new StudyGroup(
             "group-1",
-            "Study Group 1",
-            new Mentor("mentor", "mentor name", "www.test-mentor-link.com"),
-            new Participants("participants", 1));
+            "Study Group 1 description",
+            "Coordinator Name",
+            new LabelLink("test link", "test label", "http://link-1"),
+            3);
 
-    return new MentorshipStudyGroupPage(
+    return new MentorshipStudyGroupsPage(
         pageId,
         createNoImageHeroSectionTest(),
         createCommonSectionTest(),
         createContactTest(),
-        createStudyGroupSectionTest("Study Group", List.of(studyGroup)),
+        new ListSection<>("Study Groups", null, null, List.of(studyGroup)),
         createCustomStyleTest());
   }
-  
+
   /** Mentor Builder. */
   public static Mentor createMentorTest() {
     final Member member = createMemberTest(MemberType.MENTOR);

@@ -18,7 +18,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
@@ -116,7 +116,7 @@ class MentorshipServiceTest {
         new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
 
     when(pageRepository.findById(PageType.STUDY_GROUPS.getId())).thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(MentorshipStudyGroupPage.class))).thenReturn(page);
+    when(objectMapper.convertValue(anyMap(), eq(MentorshipStudyGroupsPage.class))).thenReturn(page);
 
     var response = service.getStudyGroups();
     assertEquals(page, response);

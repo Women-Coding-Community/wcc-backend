@@ -1,8 +1,8 @@
 package com.wcc.platform.domain.platform;
 
-import com.wcc.platform.domain.cms.attributes.Mentor;
-import com.wcc.platform.domain.cms.attributes.Participants;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -20,6 +20,7 @@ import lombok.ToString;
 public class StudyGroup {
   @NotEmpty private String title;
   @NotEmpty private String description;
-  @NotEmpty private Mentor mentor;
-  @NotEmpty private Participants participants;
+  @NotEmpty private String coordinators;
+  @NotNull private LabelLink link;
+  @NotNull private Integer participants;
 }

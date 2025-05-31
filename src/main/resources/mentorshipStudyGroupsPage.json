@@ -23,84 +23,65 @@
     ]
   },
   "studyGroupSection": {
-    "title": "Active Study Groups",
-    "studyGroups": [
+    "items": [
       {
         "title": "Data Analytics and Generative AI concepts",
         "description": "The study group focuses more on the Data Analytics and Generative AI concepts and guiding on the insights across the span of industries upskilling on relevant knowledge and practical work.",
-        "mentor": {
-          "title": "Mentor",
-          "name": "Kirthikka Devi Venkataram",
-          "uri": "https://womencodingcommunity.com/mentors?keywords=Kirthikka%20Devi"
-        },
-        "participants": {
-          "title": "Participants",
-          "number": 3
+        "coordinators": "Kirthikka Devi Venkataram",
+        "participants": 3,
+        "link": {
+          "label": "Kirthikka's profile",
+          "uri": "/mentors?keywords=Kirthikka%20Devi"
         }
       },
       {
         "title": "Frontend React",
         "description": "Project-based study group, working towards a shared application (including SDLC introduction, gaining more experience in reviewing PR, git etc), with guidance on different aspects like testing, CI/CD.",
-        "mentor": {
-          "title": "Mentor",
-          "name": "Stephanie Senoner",
-          "uri": "https://womencodingcommunity.com/mentors?keywords=Stephanie%20Senoner"
-        },
-        "participants": {
-          "title": "Participants",
-          "number": 10
+        "coordinators": "Stephanie Senoner",
+        "participants": 10,
+        "link": {
+          "label": "Stephanie's profile",
+          "uri": "/mentors?keywords=Stephanie%20Senoner"
         }
       },
       {
         "title": "Backend with Java and Rust",
         "description": "Focus on Java including the whole developing process with creating projects and push them to git doing pairing review.",
-        "mentor": {
-          "title": "Mentor",
-          "name": "Liliia Rafikova",
-          "uri": "https://womencodingcommunity.com/mentors?keywords=liliia%20Rafikova"
-        },
-        "participants": {
-          "title": "Participants",
-          "number": 5
+        "coordinators": "Liliia Rafikova",
+        "participants": 5,
+        "link": {
+          "label": "Liliia's profile",
+          "uri": "/mentors?keywords=liliia%20Rafikova"
         }
       },
       {
         "title": "Full Stack- ReactJs and Java (Spring Boot)",
-        "description": "Group study on project-based learning, including pair programming. \nGain deep knowledge of web-based microservice architecture, system design, and CI/CD best practices. Integrate backend services with ReactJS frontend to craft full-stack projects.",
-        "mentor": {
-          "title": "Mentor",
-          "name": "Hersi Kopani",
-          "uri": "https://womencodingcommunity.com/mentors?keywords=Hersi%20Kopani"
-        },
-        "participants": {
-          "title": "Participants",
-          "number": 7
+        "description": "Group study on project-based learning, including pair programming. Gain deep knowledge of web-based microservice architecture, system design, and CI/CD best practices. Integrate backend services with ReactJS frontend to craft full-stack projects.",
+        "coordinators": "Hersi Kopani",
+        "participants": 7,
+        "link": {
+          "label": "Hersi's profile",
+          "uri": "/mentors?keywords=Hersi%20Kopani"
         }
       },
       {
         "title": "API Test Automation",
         "description": "The study group focuses on mastering API testing using Postman, a popular API development and testing tool. Sessions feature hands-on exercises and real-world scenarios to deepen understanding of testing techniques and gain practical knowledge on API automation.",
-        "mentor": {
-          "title": "Mentor",
-          "name": "Eleonora Belova",
-          "uri": "https://womencodingcommunity.com/mentors?keywords=Hersi%20Kopani"
-        },
-        "participants": {
-          "title": "Participants",
-          "number": 3
+        "coordinators": "Eleonora Belova",
+        "participants": 3,
+        "link": {
+          "label": "Eleonora's profile",
+          "uri": "/mentors?keywords=Eleonora%20Belova"
         }
       },
       {
         "title": "WCC Platform - Java Backend",
         "description": "Group study to learn about Backend based on Java and SpringBoot. Actively work in our new community platform backend opensource and work with a real life project, allow mentees to have real experience to include on your CV.",
-        "mentor": {
-          "title": "Mentor",
-          "name": "Adriana Z. and Sonali Goel",
-          "uri": "https://womencodingcommunity.com/mentors?keywords=Spring%20Boot"
-        },
-        "participants": {
-          "title": "Participants",
-          "number": 5
+        "coordinators": "Adriana Z. and Sonali Goel",
+        "participants": 5,
+        "link": {
+          "label": "Adriana and Sonali's profile",
+          "uri": "/mentors?keywords=Spring%20Boot"
         }
       }
     ]
