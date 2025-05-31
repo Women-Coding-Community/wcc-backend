@@ -4,18 +4,21 @@ import static com.wcc.platform.domain.cms.PageType.MENTORS;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
+import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** Mentorship service. */
+@SuppressWarnings("PMD.TooManyStaticImports")
 @Service
 public class MentorshipService {
   private final ObjectMapper objectMapper;
@@ -77,6 +80,23 @@ public class MentorshipService {
     }
     return repository.getFallback(
         MENTORSHIP_CONDUCT, MentorshipCodeOfConductPage.class, objectMapper);
+  }
+
+  /**
+   * API to retrieve information about the study groups.
+   *
+   * @return Mentorship study groups page.
+   */
+  public MentorshipStudyGroupsPage getStudyGroups() {
+    final var page = repository.findById(STUDY_GROUPS.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), MentorshipStudyGroupsPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    return repository.getFallback(STUDY_GROUPS, MentorshipStudyGroupsPage.class, objectMapper);
   }
 
   /**

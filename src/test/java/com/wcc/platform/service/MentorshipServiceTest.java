@@ -4,6 +4,7 @@ import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPa
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -17,6 +18,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
@@ -108,12 +110,34 @@ class MentorshipServiceTest {
   }
 
   @Test
+  void whenGetStudyGroupsGivenRecordExistingInDatabaseThenReturnValidResponse() {
+    var page = createMentorshipStudyGroupPageTest();
+    var mapPage =
+        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+
+    when(pageRepository.findById(PageType.STUDY_GROUPS.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(MentorshipStudyGroupsPage.class))).thenReturn(page);
+
+    var response = service.getStudyGroups();
+    assertEquals(page, response);
+  }
+
+  @Test
   @Disabled("Temporary Disable until migrate to postgres")
   void whenGetCodeOfConductGivenRecordNotInDatabaseThenThrowException() {
     when(pageRepository.findById(PageType.MENTORSHIP_CONDUCT.getId())).thenReturn(Optional.empty());
     var exception = assertThrows(ContentNotFoundException.class, service::getCodeOfConduct);
 
     assertEquals("Content of Page MENTORSHIP_CONDUCT not found", exception.getMessage());
+  }
+
+  @Test
+  @Disabled("Temporary Disable until migrate to postgres")
+  void whenGetStudyGroupsGivenRecordNotInDatabaseThenThrowException() {
+    when(pageRepository.findById(PageType.STUDY_GROUPS.getId())).thenReturn(Optional.empty());
+    var exception = assertThrows(ContentNotFoundException.class, service::getStudyGroups);
+
+    assertEquals("Content of Page STUDY_GROUPS not found", exception.getMessage());
   }
 
   @Test
