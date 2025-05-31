@@ -4,19 +4,16 @@ import static com.wcc.platform.factories.SetupFactories.createMemberDtoTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.repository.MemberRepository;
-import com.wcc.platform.repository.ResourceContentRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +25,6 @@ import org.mockito.MockitoAnnotations;
 
 class PlatformServiceTest {
 
-  @Mock private ResourceContentRepository resourceContentRepository;
   @Mock private MemberRepository memberRepository;
 
   @InjectMocks private PlatformService service;
@@ -45,56 +41,6 @@ class PlatformServiceTest {
     member = createMemberTest(MemberType.DIRECTOR);
     memberDto = createMemberDtoTest(MemberType.COLLABORATOR);
     updatedMember = createUpdatedMemberTest(member, memberDto);
-  }
-
-  @Test
-  @DisplayName("Given ResourceContent, when saved, then should return saved resource content")
-  void testSaveResourceContent() {
-    when(resourceContentRepository.create(any(ResourceContent.class))).thenReturn(resourceContent);
-
-    ResourceContent result = service.saveResourceContent(resourceContent);
-
-    assertEquals(resourceContent, result);
-    verify(resourceContentRepository).create(resourceContent);
-  }
-
-  @Test
-  @DisplayName("Given valid id, when getting resource by id, then should return resource content")
-  void testGetResourceById() {
-    when(resourceContentRepository.findById("1")).thenReturn(Optional.of(resourceContent));
-
-    ResourceContent result = service.getResourceById("1");
-
-    assertEquals(resourceContent, result);
-    verify(resourceContentRepository).findById("1");
-  }
-
-  @Test
-  @DisplayName(
-      "Given invalid id, when getting resource by id, then should throw ContentNotFoundException")
-  void testGetResourceByIdNotFound() {
-    when(resourceContentRepository.findById("1")).thenReturn(Optional.empty());
-
-    assertThrows(ContentNotFoundException.class, () -> service.getResourceById("1"));
-  }
-
-  @Test
-  @DisplayName("Given valid id, when deleting resource by id, then should delete the resource")
-  void testDeleteById() {
-    when(resourceContentRepository.findById("1")).thenReturn(Optional.of(resourceContent));
-
-    service.deleteById("1");
-
-    verify(resourceContentRepository).deleteById(resourceContent.getId());
-  }
-
-  @Test
-  @DisplayName(
-      "Given invalid id, when deleting resource by id, then should throw ContentNotFoundException")
-  void testDeleteByIdNotFound() {
-    when(resourceContentRepository.findById("1")).thenReturn(Optional.empty());
-
-    assertThrows(ContentNotFoundException.class, () -> service.deleteById("1"));
   }
 
   @Test

@@ -2,11 +2,12 @@ package com.wcc.platform.domain.platform.type;
 
 /** Accepted types of resources in the platform. */
 public enum ResourceType {
-  DOCUMENT,
-  DESCRIPTION,
   IMAGE,
-  LINK,
+  DOCUMENT,
   SLIDES,
+  ZIP,
+  LINK,
   YOUTUBE,
-  ZIP
+  /** Mentor resources descriptions, for example book recommendations. */
+  DESCRIPTION
 }

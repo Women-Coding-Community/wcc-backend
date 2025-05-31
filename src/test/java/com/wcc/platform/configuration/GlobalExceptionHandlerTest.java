@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
-import com.surrealdb.connection.exception.SurrealRecordAlreadyExitsException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,17 +32,6 @@ class GlobalExceptionHandlerTest {
 
     var expectation = new ErrorDetails(CONFLICT.value(), "Record already exists: Error", DETAILS);
     assertEquals(CONFLICT, response.getStatusCode());
-    assertEquals(expectation, response.getBody());
-  }
-
-  @Test
-  void givenSurrealRecordAlreadyExitsExceptionWhenHandleDuplicatedRecordThenConsiderConflict() {
-    var exception = new SurrealRecordAlreadyExitsException("page", "id1");
-
-    var response = globalExceptionHandler.handleRecordAlreadyExitsException(exception, webRequest);
-
-    assertEquals(CONFLICT, response.getStatusCode());
-    var expectation = new ErrorDetails(CONFLICT.value(), "Record already exists: null", DETAILS);
     assertEquals(expectation, response.getBody());
   }
 }

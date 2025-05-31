@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param title title of section
  * @param subtitle section description not mandatory
- * @param images mandatory image
+ * @param images not mandatory images
  * @param customStyle custom style
  */
 public record HeroSection(
