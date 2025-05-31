@@ -1,7 +1,9 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
+import static com.wcc.platform.factories.SetupFactories.createContactTest;
 import static com.wcc.platform.factories.SetupFactories.createLinkTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
@@ -12,6 +14,7 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Experience;
 import com.wcc.platform.domain.cms.attributes.FaqItem;
+import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
@@ -23,6 +26,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.Mentor;
@@ -30,6 +34,7 @@ import com.wcc.platform.domain.platform.MentorshipType;
 import com.wcc.platform.domain.platform.ProfileStatus;
 import com.wcc.platform.domain.platform.ResourceContent;
 import com.wcc.platform.domain.platform.Skills;
+import com.wcc.platform.domain.platform.StudyGroup;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Month;
@@ -138,6 +143,37 @@ public class SetupMentorshipFactories {
 
   private static CommonSection createCommonSectionOnlyLinkTest() {
     return new CommonSection(null, null, null, createLinkTest(), null, null);
+  }
+
+  /** Test factory for Study Group Page. */
+  public static MentorshipStudyGroupsPage createMentorshipStudyGroupPageTest(
+      final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, MentorshipStudyGroupsPage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorshipStudyGroupPageTest();
+    }
+  }
+
+  /** Test factory for StudyGroupPage. */
+  public static MentorshipStudyGroupsPage createMentorshipStudyGroupPageTest() {
+    final String pageId = PageType.STUDY_GROUPS.getId();
+    StudyGroup studyGroup =
+        new StudyGroup(
+            "group-1",
+            "Study Group 1 description",
+            "Coordinator Name",
+            new LabelLink("test link", "test label", "http://link-1"),
+            3);
+
+    return new MentorshipStudyGroupsPage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        createCommonSectionTest(),
+        createContactTest(),
+        new ListSection<>("Study Groups", null, null, List.of(studyGroup)),
+        createCustomStyleTest());
   }
 
   /** Mentor Builder. */

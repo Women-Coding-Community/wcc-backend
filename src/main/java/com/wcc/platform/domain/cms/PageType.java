@@ -22,7 +22,8 @@ public enum PageType {
   COLLABORATOR("collaboratorPage.json", "page:COLLABORATORS"),
   CODE_OF_CONDUCT("codeOfConductPage.json", "page:CODE_OF_CONDUCT"),
   CELEBRATE_HER("celebrateHerPage.json", "page:CELEBRATE_HER"),
-  PARTNERS("partnersPage.json", "page:PARTNERS");
+  PARTNERS("partnersPage.json", "page:PARTNERS"),
+  STUDY_GROUPS("mentorshipStudyGroupsPage.json", "page:STUDY_GROUPS");
 
   public static final String ID_PREFIX = "page:";
 

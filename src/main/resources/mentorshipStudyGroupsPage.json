@@ -1,0 +1,89 @@
+{
+  "id": "page:STUDY_GROUPS",
+  "heroSection": {
+    "title": "Technical Study Groups",
+    "images": [
+      {
+        "path": "",
+        "alt": "Image of code on a screen",
+        "type": "desktop"
+      }
+    ]
+  },
+  "section": {
+    "description": "Explore our technical study groups, created in collaboration with available mentors, to deepen your knowledge and skills in specific areas of interest.\n Our study groups cover a variety of topics and are designed to accommodate different schedules and experience levels. Whether you're a beginner looking to dive into a new technology or an experienced professional seeking to expand your expertise, there's a study group for you.\n These study groups typically last anywhere from 1-2 months to longer durations, allowing participants to delve deeply into the subject matter and benefit from the guidance of experienced mentors."
+  },
+  "contact": {
+    "title": "Join us in our Study Group Slack Channel",
+    "links": [
+      {
+        "type": "slack",
+        "link": "https://womencodingcommunity.slack.com/archives/C073W920RND"
+      }
+    ]
+  },
+  "studyGroupSection": {
+    "items": [
+      {
+        "title": "Data Analytics and Generative AI concepts",
+        "description": "The study group focuses more on the Data Analytics and Generative AI concepts and guiding on the insights across the span of industries upskilling on relevant knowledge and practical work.",
+        "coordinators": "Kirthikka Devi Venkataram",
+        "participants": 3,
+        "link": {
+          "label": "Kirthikka's profile",
+          "uri": "/mentors?keywords=Kirthikka%20Devi"
+        }
+      },
+      {
+        "title": "Frontend React",
+        "description": "Project-based study group, working towards a shared application (including SDLC introduction, gaining more experience in reviewing PR, git etc), with guidance on different aspects like testing, CI/CD.",
+        "coordinators": "Stephanie Senoner",
+        "participants": 10,
+        "link": {
+          "label": "Stephanie's profile",
+          "uri": "/mentors?keywords=Stephanie%20Senoner"
+        }
+      },
+      {
+        "title": "Backend with Java and Rust",
+        "description": "Focus on Java including the whole developing process with creating projects and push them to git doing pairing review.",
+        "coordinators": "Liliia Rafikova",
+        "participants": 5,
+        "link": {
+          "label": "Liliia's profile",
+          "uri": "/mentors?keywords=liliia%20Rafikova"
+        }
+      },
+      {
+        "title": "Full Stack- ReactJs and Java (Spring Boot)",
+        "description": "Group study on project-based learning, including pair programming. Gain deep knowledge of web-based microservice architecture, system design, and CI/CD best practices. Integrate backend services with ReactJS frontend to craft full-stack projects.",
+        "coordinators": "Hersi Kopani",
+        "participants": 7,
+        "link": {
+          "label": "Hersi's profile",
+          "uri": "/mentors?keywords=Hersi%20Kopani"
+        }
+      },
+      {
+        "title": "API Test Automation",
+        "description": "The study group focuses on mastering API testing using Postman, a popular API development and testing tool. Sessions feature hands-on exercises and real-world scenarios to deepen understanding of testing techniques and gain practical knowledge on API automation.",
+        "coordinators": "Eleonora Belova",
+        "participants": 3,
+        "link": {
+          "label": "Eleonora's profile",
+          "uri": "/mentors?keywords=Eleonora%20Belova"
+        }
+      },
+      {
+        "title": "WCC Platform - Java Backend",
+        "description": "Group study to learn about Backend based on Java and SpringBoot. Actively work in our new community platform backend opensource and work with a real life project, allow mentees to have real experience to include on your CV.",
+        "coordinators": "Adriana Z. and Sonali Goel",
+        "participants": 5,
+        "link": {
+          "label": "Adriana and Sonali's profile",
+          "uri": "/mentors?keywords=Spring%20Boot"
+        }
+      }
+    ]
+  }
+}
