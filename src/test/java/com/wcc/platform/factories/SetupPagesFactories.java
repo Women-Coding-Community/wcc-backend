@@ -6,6 +6,7 @@ import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createHeroSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionEventTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionPartnerTest;
+import static com.wcc.platform.factories.SetupFactories.createListSectionProgrammeItemTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createFeedbackSectionTest;
@@ -213,11 +214,12 @@ public class SetupPagesFactories {
         pageId,
         createHeroSectionTest(),
         createCommonSectionTest("Full Banner Section"),
-        SetupFactories.createListSectionProgrammeItemTest(),
+        createListSectionProgrammeItemTest(),
         createListSectionEventTest(),
         createListSectionEventTest(),
         createFeedbackSectionTest(),
-        createCommonSectionTest("Volunteer Section"));
+        createCommonSectionTest("Volunteer Section"),
+        createListSectionPartnerTest());
   }
 
   /**

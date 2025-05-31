@@ -106,6 +106,7 @@ class DefaultControllerTest {
             .events(createSectionEvent("Events", ProgramType.TECH_TALK))
             .announcements(createSectionEvent("Announcements", ProgramType.OTHERS))
             .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
+            .partners(SetupFactories.createListSectionPartnerTest())
             .build();
 
     when(service.getLandingPage()).thenReturn(page);

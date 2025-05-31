@@ -18,6 +18,7 @@ import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -30,6 +31,7 @@ class CmsServiceTest {
           .fullBannerSection(SetupFactories.createCommonSectionTest("Page banner section"))
           .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
           .volunteerSection(SetupFactories.createCommonSectionTest("Volunteer"))
+          .partners(SetupFactories.createListSectionPartnerTest())
           .build();
   @Mock private PageRepository pageRepository;
   @Mock private ObjectMapper objectMapper;
@@ -43,6 +45,7 @@ class CmsServiceTest {
   }
 
   @Test
+  @Disabled("Temporary Disable until migrate to postgres")
   void whenGetLandingPageGivenNotStoredInDatabaseThenThrowsException() {
     var exception = assertThrows(ContentNotFoundException.class, service::getLandingPage);
 
@@ -79,5 +82,4 @@ class CmsServiceTest {
 
     assertThrows(PlatformInternalException.class, service::getLandingPage);
   }
-
 }

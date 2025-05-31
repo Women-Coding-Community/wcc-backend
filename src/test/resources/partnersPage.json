@@ -30,18 +30,11 @@
     "description": "Our partners are committed to supporting our mission and empowering",
     "items": [
       {
-        "images": [
-          {
-            "path": "https://drive.google.com/surrealdb-desktop-logo.png",
-            "alt": "SurrealDB logo",
-            "type": "desktop"
-          },
-          {
-            "path": "https://drive.google.com/surrealdb-mobile-logo.png",
-            "alt": "SurrealDB logo",
-            "type": "mobile"
-          }
-        ],
+        "image": {
+          "path": "https://drive.google.com/surrealdb-desktop-logo.png",
+          "alt": "SurrealDB logo",
+          "type": "desktop"
+        },
         "name": "SurrealDB",
         "description": "SurrealDB is an innovative, multi-model, cloud-ready database, suitable for modern and traditional applications.",
         "link": {
@@ -50,18 +43,11 @@
         }
       },
       {
-        "images": [
-          {
-            "path": "https://drive.google.com/amazon-desktop-logo.png",
-            "alt": "Amazon logo",
-            "type": "desktop"
-          },
-          {
-            "path": "https://drive.google.com/amazon-mobile-logo.png",
-            "alt": "Amazon logo",
-            "type": "mobile"
-          }
-        ],
+        "image": {
+          "path": "https://drive.google.com/amazon-desktop-logo.png",
+          "alt": "Amazon logo",
+          "type": "desktop"
+        },
         "name": "Amazon",
         "description": "Amazon is a global leader in e-commerce, redefining online shopping with its vast product selection, seamless customer experience, and advanced logistics network.",
         "link": {
@@ -70,18 +56,11 @@
         }
       },
       {
-        "images": [
-          {
-            "path": "jetbrains-desktop-logo.png",
-            "alt": "JetBrains logo",
-            "type": "desktop"
-          },
-          {
-            "path": "jetbrains-mobile-logo.png",
-            "alt": "JetBrains logo",
-            "type": "mobile"
-          }
-        ],
+        "image": {
+          "path": "https://drive.google.com/jetbrains-desktop-logo.png",
+          "alt": "JetBrains logo",
+          "type": "desktop"
+        },
         "name": "JetBrains",
         "description": "JetBrains creates intelligent software development tools used by over 11.4 million professionals and 88 Fortune Global Top 100 companies.",
         "link": {
@@ -90,18 +69,11 @@
         }
       },
       {
-        "images": [
-          {
-            "path": "https://drive.google.com/devoxx-uk-desktop-logo.png",
-            "alt": "Devoxx UK logo",
-            "type": "desktop"
-          },
-          {
-            "path": "https://drive.google.com/devoxx-uk-mobile-logo.png",
-            "alt": "Devoxx UK logo",
-            "type": "mobile"
-          }
-        ],
+        "image": {
+          "path": "https://drive.google.com/devoxx-uk-desktop-logo.png",
+          "alt": "Devoxx UK logo",
+          "type": "desktop"
+        },
         "name": "Devoxx UK",
         "description": "Provide a first class tech conference where passionate developers can network, hack, get inspired and learn throughout.",
         "link": {

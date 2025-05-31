@@ -6,7 +6,6 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
@@ -36,12 +35,11 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.FOOTER);
+    return pageRepository.getFallback(PageType.FOOTER, FooterSection.class, objectMapper);
   }
 
   /**
-   * Find the Landing page in DB and convert to Pojo FooterPage.
+   * Find Landing page in DB and convert to Pojo FooterPage.
    *
    * @return Landing page of the community.
    */
@@ -54,8 +52,7 @@ public class CmsService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-
-    throw new ContentNotFoundException(PageType.LANDING_PAGE);
+    return pageRepository.getFallback(PageType.LANDING_PAGE, LandingPage.class, objectMapper);
   }
 
   /**

@@ -22,23 +22,26 @@ export const feedbackSectionSchema = {
                   type: 'string',
                   minLength: 1,
                 },
-                mentee: {
-                  type: 'boolean',
+                memberType: {
+                  type: 'string',
+                  enum: [
+                    'Director',
+                    'Leader',
+                    'Evangelist',
+                    'Volunteer',
+                    'Mentor',
+                    'Mentee',
+                    'Member',
+                    'Speaker',
+                    'Collaborator',
+                  ],
                 },
                 year: {
-                  type: 'object',
-                  properties: {
-                    value: {
-                      type: 'integer',
-                    },
-                    leap: {
-                      type: 'boolean',
-                    },
-                  },
-                  additionalProperties: false,
-                  required: ['name', 'feedback', 'year'],
+                  type: 'string'
                 },
               },
+              additionalProperties: false,
+              required: ['name', 'feedback', 'year'],
             },
           ],
         },

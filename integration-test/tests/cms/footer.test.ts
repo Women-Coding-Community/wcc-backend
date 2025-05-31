@@ -2,30 +2,17 @@ import { expect, test } from '@playwright/test';
 import { validateSchema } from '@utils/helpers/schema.validation';
 import { footerSchema } from '@utils/datafactory/schemas/footer.schema';
 import { footerData } from '@utils/datafactory/test-data/footer.page';
+import { PATHS } from '@utils/datafactory/paths.data';
+import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
 test.describe('Validate positive test cases for FOOTER Page API', () => {
   test.beforeEach(async ({ request }) => {
-    console.log(`Creating FOOTER Page`);
-    const createPageResponse = await request.post('/api/platform/v1/page?pageType=FOOTER', {
-      data: footerData,
-    });
-    console.log(`Sending POST request to: ${createPageResponse.url()}`);
-    console.log(`Response Status: ${createPageResponse.status()}`);
-    console.log('Response Body:', JSON.stringify(createPageResponse.json()));
-
-    if (createPageResponse.status() == 409) {
-      console.log(`Updating FOOTER Page`);
-      const updateFooterPageResponse = await request.put('/api/platform/v1/page?pageType=FOOTER', {
-        data: footerData,
-      });
-      console.log(`Sending PUT request to: ${updateFooterPageResponse.url()}`);
-      console.log(`Response Status: ${updateFooterPageResponse.status()}`);
-      console.log('Response Body:', JSON.stringify(updateFooterPageResponse.json()));
-    }
+    const url = `${PATHS.PLATFORM_PAGE}?pageType=FOOTER`;
+    await createOrUpdatePage(request, 'FOOTER Page', url, footerData);
   });
 
   test('GET /api/cms/v1/footer returns correct footer data', async ({ request }) => {
-    const response = await request.get(`/api/cms/v1/footer`);
+    const response = await request.get(PATHS.FOOTER_PAGE);
 
     // response status validation
     expect(response.status()).toBe(200);
@@ -43,13 +30,6 @@ test.describe('Validate positive test cases for FOOTER Page API', () => {
       }
     }
   });
-
-  test.afterEach(async ({ request }) => {
-    console.log(`Deleting FOOTER Page`);
-    const deleteFooterPageResponse = await request.delete('/api/platform/v1/page?id=page%3AFOOTER');
-    console.log(`Sending PUT request to: ${deleteFooterPageResponse.url()}`);
-    console.log(`Response Status: ${deleteFooterPageResponse.status()}`);
-  });
 });
 
 test.describe('unauthorized request with invalid headers', () => {
@@ -60,7 +40,7 @@ test.describe('unauthorized request with invalid headers', () => {
 
   testData.forEach(({ description, headers }) => {
     test(`${description}`, async ({ request }) => {
-      const response = await request.get(`/api/cms/v1/footer`, {
+      const response = await request.get(PATHS.FOOTER_PAGE, {
         headers: headers,
       });
       expect(response.status()).toBe(401);
