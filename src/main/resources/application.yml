@@ -38,15 +38,3 @@ springdoc:
     operations-sorter: alpha
   paths-to-match: /api/**, /actuator/**
 
-#  to deploy to DEV env update application-docker.yml
-surrealdb:
-  host: localhost
-  port: 8000
-  tls: false
-  timeout-seconds: 60
-  namespace: wcc
-  database: platform
-  username: root
-  password: root
-
-

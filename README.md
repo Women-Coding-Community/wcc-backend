@@ -15,18 +15,7 @@
     * [Run Locally](#run-locally)
     * [Open API Documentation](#open-api-documentation)
     * [Quality Checks](#quality-checks)
-        * [Jacoco](#jacoco)
-        * [PMD](#pmd)
-        * [SONAR](#sonar)
-            * [Install sonarqube docker image locally](#install-sonarqube-docker-image-locally)
-            * [Set-up wcc-backend project on local sonarQube instance](#set-up-wcc-backend-project-on-local-sonarqube-instance)
-            * [Perform SONAR ANALYSIS](#perform-sonar-analysis)
-    * [Deploy application](#deploy-application)
-        * [Deploy with docker compose](#deploy-with-docker-compose)
-            * [Helpful commands with docker](#helpful-commands-with-docker)
-        * [Deploy with Fly.io](#deploy-with-flyio)
-            * [Setup Fly.io locally](#setup-flyio-locally)
-            * [Deploying to Fly.io](#deploying-to-flyio)
+    * [Deploy](#deploy)
 
 <!-- TOC -->
 
@@ -34,7 +23,7 @@
 
 **1.** Start by making a Fork
 of [wcc-backend](https://github.com/Women-Coding-Community/wcc-backend) repository.
-Click on the <a href="https://github.com/Women-Coding-Community/wcc-backend/fork">
+Click on <a href="https://github.com/Women-Coding-Community/wcc-backend/fork">
 <img src="https://i.imgur.com/G4z1kEe.png" height="21" width="21"></a>
 Fork symbol in the top right corner.
 
@@ -163,177 +152,54 @@ execute
 
 ``docker ps``
 
-* Start database
+* Build containers
 
 ```shell
-docker run --pull always --name surrealdb -p 8000:8000 -d surrealdb/surrealdb:latest start --user root --pass root --log debug
+./gradlew clean bootJar
+docker compose -f docker/docker-compose.yml up --build
 ```
 
-Start the Application from your IDE
+Now you have the application running connected to the postgres database.
+Test the application via: http://localhost:8080/swagger-ui/index.html
 
-* Build and run tests
+* Start the Application from your IDE
+
+Stop the docker container of the application, springboot-app. Do not stop
+the container of the postgres. Start the application from your IDE.
+
+* Run tests
 
 ```shell
-./gradlew clean build
+./gradlew test
 ```
 
-* Start Spring Boot Application (from your IDE):
+* Start the Spring Boot Application using Gradle:
 
 ```shell
 ./gradlew bootRun
 ```
 
-**Note**: You can start application in a debug mode through your IDE.
+* Start Spring Boot Application via IntelliJ IDEA:
 
-IntelliJ IDEA:
-Select \src\main\java\com\wcc\platform\PlatformApplication.java and mouse right-click to
-select debugging option.
+Open `PlatformApplication.java` right click and select `Run or Debub`.
 
-* Access application on http://localhost:8080/api/cms/v1/team
+* Check if the application is running:
+
+```shell
+curl -X 'GET' \
+'http://localhost:8080/api/cms/v1/footer' \
+-H 'accept: */*' \
+-H 'X-API-KEY: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4'
+```
 
 ## Open API Documentation
 
-* [Access swagger api](http://localhost:8080/swagger-ui/index.html) and
-  corresponding [openAPI docs here](http://localhost:8080/api-docs)
+* [Access swagger api](http://localhost:8080/swagger-ui/index.html)
 
 ## Quality Checks
 
-### Jacoco
+* [Setup Quality Checks](docs/quality_checks.md)
 
-* Generate Test reports and open [coverage report](build/reports/jacoco/test/html/index.html)
+## Deploy
 
-```shell
-./gradlew test jacocoTestReport
-```
-
-* Check coverage minimum of 70%
-
-```shell
-./gradlew clean test jacocoTestCoverageVerification
-```
-
-### PMD
-
-* Run [pmd](https://pmd.github.io/) checks in src folder
-
-```shell
-./gradlew pmdMain
-```
-
-* Run pmd for test
-
-```shell
-./gradlew pmdTest
-```
-
-### SONAR
-
-#### Install sonarqube docker image locally
-
-- Make sure you have docker installed on your machine -
-  Download the installer using the url https://docs.docker.com/get-docker/. ( Prefer Docker Desktop
-  Application )
-- Start the docker application. Double-click Docker.app to start Docker.
-
-Get the “SonarQube” image using the command
-
-```shell
-docker pull sonarqube
-```
-
-Start the "SonarQube" instance
-
-```shell
-docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
-```
-
-* Access SonarQube dashboard - http://localhost:9000</br>
-  (default credentials )
-  login: admin
-  password: admin
-
-Ref: https://docs.sonarsource.com/sonarqube/latest/try-out-sonarqube/
-
-#### Set-up wcc-backend project on local sonarQube instance
-
-* Step 1
-
-1. Select create a local project
-2. "Project display name" = wcc-backend
-3. "Project key" = wcc-backend
-4. "Main branch name" = *
-
-* Step 2
-
-1. Choose the baseline for new code for this project</br>
-   select "Use the global setting"
-2. Click "Create Project" at the bottom
-
-* Step 3
-
-Generate token to replace in the project.
-
-1. Click "Locally" on the main dashboard
-2. Generate a token on the next screen ( choose Expires in - No expiration) [ Click Generate]
-3. Copy the token = "sqp_XXXXXXX" and replace in the file <b> build.gradle.kts </b><br>
-   <b>property("sonar.token", "PLACE_YOUR_TOKEN_HERE")</b>
-
-#### Perform SONAR ANALYSIS
-
-```shell
-./gradlew sonarQubeAnalysis -PlocalProfile
-```
-
-## Deploy application
-
-### Deploy with docker compose
-
-* Build and create jar
-
-```shell
- ./gradlew clean bootJar
- ```
-
-* Start docker compose
-
-```shell
-docker compose -f docker/docker-compose.yml up --build
-```
-
-**Note**: This will create two Docker instances in your Docker desktop:
-
-1. surrealdb
-2. springboot-app
-
-* Debug application
-
-To debug application STOP the docker container of the application, springboot-app. Do not stop the
-container of the SurrealDB. Start the application from your IDE.
-
-* Stop docker compose
-
-```shell
-cd docker
-docker compose down
-```
-
-#### Helpful commands with docker
-
-* List resources in docker container
-  docker exec -it wcc-backend ls -al /app/resources
-
-### Deploy with Fly.io
-
-#### Setup Fly.io locally
-
-1. Install [fly.io](https://fly.io/docs/flyctl/install)
-2. Login `fly auth login` or create account `fly auth signup`
-3. build create jar: `./gradlew clean bootJar`
-4. First deploy `fly launch`
-
-#### Deploying to Fly.io
-
-1. build create jar: `./gradlew clean bootJar`
-2. Update deploy `fly deploy`
-3. Access the application [here](https://wcc-backend.fly.dev/swagger-ui/index.html) and the api
-   for [landing page here](https://wcc-backend.fly.dev/api/cms/v1/landingPage)
+* [Deployment Guideline](docs/deployment.md)
