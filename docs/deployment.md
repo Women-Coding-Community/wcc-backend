@@ -36,7 +36,9 @@ docker compose down
 * List resources in docker container
   docker exec -it wcc-backend ls -al /app/resources
 
-## Setup Fly.io
+## Deploy remotely or in cloud
+
+### Setup Fly.io
 
 1. Install [fly.io](https://fly.io/docs/flyctl/install)
 2. Login `fly auth login` or create account `fly auth signup`
