@@ -15,18 +15,7 @@
     * [Run Locally](#run-locally)
     * [Open API Documentation](#open-api-documentation)
     * [Quality Checks](#quality-checks)
-        * [Jacoco](#jacoco)
-        * [PMD](#pmd)
-        * [SONAR](#sonar)
-            * [Install sonarqube docker image locally](#install-sonarqube-docker-image-locally)
-            * [Set-up wcc-backend project on local sonarQube instance](#set-up-wcc-backend-project-on-local-sonarqube-instance)
-            * [Perform SONAR ANALYSIS](#perform-sonar-analysis)
-    * [Deploy application](#deploy-application)
-        * [Deploy with docker compose](#deploy-with-docker-compose)
-            * [Helpful commands with docker](#helpful-commands-with-docker)
-        * [Deploy with Fly.io](#deploy-with-flyio)
-            * [Setup Fly.io locally](#setup-flyio-locally)
-            * [Deploying to Fly.io](#deploying-to-flyio)
+    * [Deploy](#deploy)
 
 <!-- TOC -->
 
@@ -34,7 +23,7 @@
 
 **1.** Start by making a Fork
 of [wcc-backend](https://github.com/Women-Coding-Community/wcc-backend) repository.
-Click on the <a href="https://github.com/Women-Coding-Community/wcc-backend/fork">
+Click on <a href="https://github.com/Women-Coding-Community/wcc-backend/fork">
 <img src="https://i.imgur.com/G4z1kEe.png" height="21" width="21"></a>
 Fork symbol in the top right corner.
 
@@ -207,57 +196,10 @@ curl -X 'GET' \
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html)
 
-## Deploy application
+## Quality Checks
 
-### Deploy with docker compose
+* [Setup Quality Checks](docs/quality_checks.md)
 
-* Build and create jar
+## Deploy
 
-```shell
- ./gradlew clean bootJar
- ```
-
-* Start docker compose
-
-```shell
-docker compose -f docker/docker-compose.yml up --build
-```
-
-**Note**: This will create two Docker instances in your Docker desktop:
-
-1. postgres
-2. springboot-app
-
-* Debug application
-
-To debug the application, STOP the docker container of the application, springboot-app. Do not stop
-the container of the postgres. Start the application from your IDE.
-
-* Stop docker compose
-
-```shell
-cd docker
-docker compose down
-```
-
-#### Helpful commands with Fly.io deployment
-
-* List resources in docker container
-  docker exec -it wcc-backend ls -al /app/resources
-
-### Deploy with Fly.io
-
-#### Setup Fly.io locally
-
-1. Install [fly.io](https://fly.io/docs/flyctl/install)
-2. Login `fly auth login` or create account `fly auth signup`
-3. build create jar: `./gradlew clean bootJar`
-4. First deploy `fly launch`
-
-#### Deploying to Fly.io
-
-1. build create jar: `./gradlew clean bootJar`
-2. Update deploy `fly deploy`
-3. Check application log during deployment: ```fly logs -a wcc-backend```
-4. Access the application [here](https://wcc-backend.fly.dev/swagger-ui/index.html)
-5. Check application status: ``fly status -a wcc-backend``
+* [Deployment Guideline](docs/deployment.md)
