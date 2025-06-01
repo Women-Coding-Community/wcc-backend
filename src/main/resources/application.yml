@@ -17,6 +17,16 @@ file:
   storage:
     directory: data
 
+management:
+  endpoint:
+    health:
+      show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,env,loggers"
+
 springdoc:
   show-actuator: true
   api-docs:
