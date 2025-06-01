@@ -25,12 +25,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class OpenApiConfig implements WebMvcConfigurer {
 
   private static final String ACTUATOR = "actuator";
-  private static final String SPRING_BOOT_ACTUATOR = "Spring Boot Actuator";
+  private static final String ACTUATOR_SPRING = "Spring Boot Actuator";
 
   private static Consumer<Tag> renameActuator() {
     return tag -> {
       if (ACTUATOR.equalsIgnoreCase(tag.getName())) {
-        tag.setName(SPRING_BOOT_ACTUATOR);
+        tag.setName(ACTUATOR_SPRING);
       }
     };
   }
@@ -40,7 +40,7 @@ public class OpenApiConfig implements WebMvcConfigurer {
       if (operation.getTags() != null) {
         IntStream.range(0, operation.getTags().size())
             .filter(i -> ACTUATOR.equalsIgnoreCase(operation.getTags().get(i)))
-            .forEach(i -> operation.getTags().set(i, SPRING_BOOT_ACTUATOR));
+            .forEach(i -> operation.getTags().set(i, ACTUATOR_SPRING));
       }
     };
   }
