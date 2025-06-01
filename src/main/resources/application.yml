@@ -18,6 +18,7 @@ file:
     directory: data
 
 springdoc:
+  show-actuator: true
   api-docs:
     enabled: true
     path: /api-docs
@@ -25,7 +26,7 @@ springdoc:
     enabled: true
     tagsSorter: alpha
     operations-sorter: alpha
-  paths-to-match: /api/**
+  paths-to-match: /api/**, /actuator/**
 
 #  to deploy to DEV env update application-docker.yml
 surrealdb:
