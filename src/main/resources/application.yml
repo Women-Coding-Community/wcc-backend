@@ -17,7 +17,18 @@ file:
   storage:
     directory: data
 
+management:
+  endpoint:
+    health:
+      show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,env,loggers"
+
 springdoc:
+  show-actuator: true
   api-docs:
     enabled: true
     path: /api-docs
@@ -25,7 +36,7 @@ springdoc:
     enabled: true
     tagsSorter: alpha
     operations-sorter: alpha
-  paths-to-match: /api/**
+  paths-to-match: /api/**, /actuator/**
 
 #  to deploy to DEV env update application-docker.yml
 surrealdb:
