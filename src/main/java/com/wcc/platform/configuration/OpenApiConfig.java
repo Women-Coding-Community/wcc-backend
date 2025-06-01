@@ -4,8 +4,11 @@ import com.wcc.platform.domain.platform.config.PlatformServers;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +24,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
     in = io.swagger.v3.oas.annotations.enums.SecuritySchemeIn.HEADER)
 public class OpenApiConfig implements WebMvcConfigurer {
 
-  private static void accept(Tag tag) {
-    if ("actuator".equals(tag.getName())) {
-      tag.setName("Spring Boot Actuator");
-    }
+  private static final String ACTUATOR = "actuator";
+  private static final String SPRING_BOOT_ACTUATOR = "Spring Boot Actuator";
+
+  private static Consumer<Tag> renameActuator() {
+    return tag -> {
+      if (ACTUATOR.equalsIgnoreCase(tag.getName())) {
+        tag.setName(SPRING_BOOT_ACTUATOR);
+      }
+    };
+  }
+
+  private static Consumer<Operation> updateOperationTag() {
+    return operation -> {
+      if (operation.getTags() != null) {
+        IntStream.range(0, operation.getTags().size())
+            .filter(i -> ACTUATOR.equalsIgnoreCase(operation.getTags().get(i)))
+            .forEach(i -> operation.getTags().set(i, SPRING_BOOT_ACTUATOR));
+      }
+    };
   }
 
   /** Group OpenAPI for public APIs. */
@@ -49,34 +67,14 @@ public class OpenApiConfig implements WebMvcConfigurer {
   private OpenApiCustomizer renameActuatorTagCustomizer() {
     return openApi -> {
       if (openApi.getTags() != null) {
-        openApi
-            .getTags()
-            .forEach(
-                tag -> {
-                  if ("actuator".equalsIgnoreCase(tag.getName())) {
-                    tag.setName("Spring Boot Actuator");
-                  }
-                });
+        openApi.getTags().forEach(renameActuator());
       }
-      // Update all operations that use the "actuator" tag
+
       if (openApi.getPaths() != null) {
         openApi
             .getPaths()
             .values()
-            .forEach(
-                pathItem ->
-                    pathItem
-                        .readOperations()
-                        .forEach(
-                            operation -> {
-                              if (operation.getTags() != null) {
-                                for (int i = 0; i < operation.getTags().size(); i++) {
-                                  if ("actuator".equalsIgnoreCase(operation.getTags().get(i))) {
-                                    operation.getTags().set(i, "Spring Boot Actuator");
-                                  }
-                                }
-                              }
-                            }));
+            .forEach(pathItem -> pathItem.readOperations().forEach(updateOperationTag()));
       }
     };
   }
