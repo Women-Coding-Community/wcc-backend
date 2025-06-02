@@ -6,3 +6,10 @@ spring:
 file:
   storage:
     directory: /app/data
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc: WARN
+      flywaydb: WARN
