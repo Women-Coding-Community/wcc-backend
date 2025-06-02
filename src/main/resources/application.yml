@@ -8,6 +8,9 @@ spring:
     username: postgres
     password: MFpFnhhICniFNPA
     driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always   # Tells Spring to run schema.sql at startup
 
 security:
   api:
