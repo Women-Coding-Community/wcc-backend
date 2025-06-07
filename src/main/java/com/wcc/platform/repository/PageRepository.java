@@ -11,7 +11,7 @@ import java.util.Map;
 public interface PageRepository extends CrudRepository<Map<String, Object>, String> {
 
   /**
-   * Default fallback page based on the the resources and page type in case the data is not in the
+   * Default fallback page based on the resources and page type in case the data is not in the
    * database.
    */
   default <T> T getFallback(

@@ -1,0 +1,126 @@
+package com.wcc.platform.service;
+
+import com.google.api.services.drive.model.File;
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
+import com.wcc.platform.domain.resource.MentorProfilePicture;
+import com.wcc.platform.domain.resource.Resource;
+import com.wcc.platform.domain.resource.ResourceType;
+import com.wcc.platform.repository.MentorProfilePictureRepository;
+import com.wcc.platform.repository.ResourceRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+/** Service for managing resources and profile pictures. */
+@Service
+@AllArgsConstructor
+public class ResourceService {
+
+  private final ResourceRepository resourceRepo;
+  private final MentorProfilePictureRepository profilePicRepo;
+  private final GoogleDriveService driveService;
+
+  /** Uploads a resource to Google Drive and stores its metadata in the database. */
+  @Transactional
+  public Resource uploadResource(
+      final MultipartFile file,
+      final String name,
+      final String description,
+      final ResourceType resourceType) {
+    try {
+      final File driveFile = driveService.uploadFile(file);
+
+      final Resource resource =
+          Resource.builder()
+              .name(name)
+              .description(description)
+              .fileName(file.getOriginalFilename())
+              .contentType(file.getContentType())
+              .size(file.getSize())
+              .driveFileId(driveFile.getId())
+              .driveFileLink(driveFile.getWebViewLink())
+              .resourceType(resourceType)
+              .build();
+
+      return resourceRepo.create(resource);
+    } catch (RuntimeException e) {
+      throw new PlatformInternalException("Failed to upload resource", e);
+    }
+  }
+
+  /** Gets a resource by ID. */
+  public Resource getResource(final UUID id) {
+    return resourceRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+  }
+
+  /** Gets resources by type. */
+  public List<Resource> getResourcesByType(final ResourceType resourceType) {
+    return resourceRepo.findByType(resourceType);
+  }
+
+  /** Searches for resources by name. */
+  public List<Resource> searchResourcesByName(final String name) {
+    return resourceRepo.findByNameContaining(name);
+  }
+
+  /** Deletes a resource. */
+  @Transactional
+  public void deleteResource(final UUID id) {
+    final Resource resource = getResource(id);
+    driveService.deleteFile(resource.getDriveFileId());
+    resourceRepo.deleteById(id);
+  }
+
+  /** Uploads a mentor's profile picture. */
+  @Transactional
+  public MentorProfilePicture uploadMentorProfilePicture(
+      final String mentorEmail, final MultipartFile file) {
+
+    final Optional<MentorProfilePicture> existingPicture =
+        profilePicRepo.findByMentorEmail(mentorEmail);
+
+    if (existingPicture.isPresent()) {
+      deleteResource(existingPicture.get().getResourceId());
+      profilePicRepo.deleteByMentorEmail(mentorEmail);
+    }
+
+    final Resource resource =
+        uploadResource(
+            file,
+            "Profile picture for " + mentorEmail,
+            "Profile picture for mentor with email " + mentorEmail,
+            ResourceType.PROFILE_PICTURE);
+
+    final MentorProfilePicture profilePicture =
+        MentorProfilePicture.builder()
+            .mentorEmail(mentorEmail)
+            .resourceId(resource.getId())
+            .resource(resource)
+            .build();
+
+    return profilePicRepo.create(profilePicture);
+  }
+
+  /** Gets a mentor's profile picture. */
+  public MentorProfilePicture getMentorProfilePicture(final String mentorEmail) {
+    return profilePicRepo
+        .findByMentorEmail(mentorEmail)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    "Profile picture not found for mentor: " + mentorEmail));
+  }
+
+  /** Deletes a mentor's profile picture. */
+  @Transactional
+  public void deleteMentorProfilePicture(final String mentorEmail) {
+    final MentorProfilePicture profilePicture = getMentorProfilePicture(mentorEmail);
+    deleteResource(profilePicture.getResourceId());
+    profilePicRepo.deleteByMentorEmail(mentorEmail);
+  }
+}

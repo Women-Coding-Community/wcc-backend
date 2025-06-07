@@ -196,6 +196,10 @@ curl -X 'GET' \
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html)
 
+## API Documentation
+
+* [Resource API Documentation](docs/resource_api.md) - API for uploading, retrieving, and managing resources and mentor profile pictures
+
 ## Quality Checks
 
 * [Setup Quality Checks](docs/quality_checks.md)
