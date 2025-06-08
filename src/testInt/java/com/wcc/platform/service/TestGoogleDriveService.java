@@ -4,6 +4,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Test implementation of GoogleDriveService for integration testing.
- * This implementation stores files in memory instead of connecting to Google Drive.
+ * Test implementation of GoogleDriveService for integration testing. This implementation stores
+ * files in memory instead of connecting to Google Drive.
  */
 @Service
 @Primary
@@ -29,7 +30,7 @@ public class TestGoogleDriveService extends GoogleDriveService {
 
   /** Constructor for the test service. */
   @Autowired
-  public TestGoogleDriveService(Drive drive) {
+  public TestGoogleDriveService(final Drive drive) {
     super(drive, "test-folder-id");
     this.folderIdRoot = "test-folder-id";
   }
@@ -58,8 +59,8 @@ public class TestGoogleDriveService extends GoogleDriveService {
   public File uploadFile(final MultipartFile file) {
     try {
       return uploadFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
-    } catch (Exception e) {
-      throw new PlatformInternalException("Failed to read file data", e);
+    } catch (IOException e) {
+      throw new PlatformInternalException("Failed to upload file to Google Drive", e);
     }
   }
 

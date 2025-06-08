@@ -30,8 +30,7 @@ class GoogleDriveServiceIntTest {
 
   private String testFileId;
 
-  @Mock
-  private Drive mockDrive;
+  @Mock private Drive mockDrive;
 
   @BeforeEach
   void setUp() {
@@ -48,7 +47,7 @@ class GoogleDriveServiceIntTest {
     if (testFileId != null) {
       try {
         googleDriveService.deleteFile(testFileId);
-      } catch (Exception e) {
+      } catch (PlatformInternalException e) {
         // Ignore exceptions during cleanup
       }
     }

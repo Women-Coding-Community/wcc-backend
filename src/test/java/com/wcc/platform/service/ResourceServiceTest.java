@@ -35,7 +35,7 @@ class ResourceServiceTest {
 
   @Mock private ResourceRepository resourceRepository;
 
-  @Mock private MentorProfilePictureRepository mentorProfilePictureRepository;
+  @Mock private MentorProfilePictureRepository repository;
 
   @Mock private GoogleDriveService googleDriveService;
 
@@ -82,7 +82,7 @@ class ResourceServiceTest {
   }
 
   @Test
-  void uploadResource_shouldReturnCreatedResource() {
+  void uploadResourceShouldReturnCreatedResource() {
     // Arrange
     when(googleDriveService.uploadFile(any(MultipartFile.class))).thenReturn(driveFile);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
@@ -109,7 +109,7 @@ class ResourceServiceTest {
   }
 
   @Test
-  void getResource_shouldReturnResource_whenResourceExists() {
+  void testGetResourceShouldReturnResourceWhenResourceExists() {
     // Arrange
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
 
@@ -125,7 +125,7 @@ class ResourceServiceTest {
   }
 
   @Test
-  void getResource_shouldThrowResourceNotFoundException_whenResourceDoesNotExist() {
+  void testGetResourceShouldThrowResourceNotFoundExceptionWhenResourceDoesNotExist() {
     // Arrange
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.empty());
 
@@ -136,7 +136,7 @@ class ResourceServiceTest {
   }
 
   @Test
-  void getResourcesByType_shouldReturnResourceList() {
+  void testGetResourcesByTypeShouldReturnResourceList() {
     // Arrange
     List<Resource> resources = Collections.singletonList(resource);
     when(resourceRepository.findByType(ResourceType.IMAGE)).thenReturn(resources);
@@ -147,13 +147,13 @@ class ResourceServiceTest {
     // Assert
     assertNotNull(result);
     assertEquals(1, result.size());
-    assertEquals(resourceId, result.get(0).getId());
+    assertEquals(resourceId, result.getFirst().getId());
 
     verify(resourceRepository, times(1)).findByType(ResourceType.IMAGE);
   }
 
   @Test
-  void searchResourcesByName_shouldReturnResourceList() {
+  void searchResourcesByNameShouldReturnResourceList() {
     // Arrange
     List<Resource> resources = Collections.singletonList(resource);
     when(resourceRepository.findByNameContaining("Test")).thenReturn(resources);
@@ -164,13 +164,13 @@ class ResourceServiceTest {
     // Assert
     assertNotNull(result);
     assertEquals(1, result.size());
-    assertEquals(resourceId, result.get(0).getId());
+    assertEquals(resourceId, result.getFirst().getId());
 
     verify(resourceRepository, times(1)).findByNameContaining("Test");
   }
 
   @Test
-  void deleteResource_shouldDeleteResource() {
+  void deleteResourceShouldDeleteResource() {
     // Arrange
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
     doNothing().when(googleDriveService).deleteFile(anyString());
@@ -186,36 +186,31 @@ class ResourceServiceTest {
   }
 
   @Test
-  void
-      uploadMentorProfilePicture_shouldReturnCreatedProfilePicture_whenMentorDoesNotHaveProfilePicture() {
+  void uploadProfilePictureShouldReturnCreatedProfilePictureWhenMentorDoesNotHaveProfilePicture() {
     // Arrange
-    when(mentorProfilePictureRepository.findByMentorEmail("test@example.com"))
-        .thenReturn(Optional.empty());
+    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.empty());
     when(googleDriveService.uploadFile(any(MultipartFile.class))).thenReturn(driveFile);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
-    when(mentorProfilePictureRepository.create(any(MentorProfilePicture.class)))
-        .thenReturn(profilePicture);
+    when(repository.create(any(MentorProfilePicture.class))).thenReturn(profilePicture);
 
     // Act
-    MentorProfilePicture result =
-        resourceService.uploadMentorProfilePicture("test@example.com", multipartFile);
+    var result = resourceService.uploadMentorProfilePicture("test@example.com", multipartFile);
 
     // Assert
     assertNotNull(result);
     assertEquals("test@example.com", result.getMentorEmail());
     assertEquals(resourceId, result.getResourceId());
 
-    verify(mentorProfilePictureRepository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMentorEmail("test@example.com");
     verify(googleDriveService, times(1)).uploadFile(any(MultipartFile.class));
     verify(resourceRepository, times(1)).create(any(Resource.class));
-    verify(mentorProfilePictureRepository, times(1)).create(any(MentorProfilePicture.class));
+    verify(repository, times(1)).create(any(MentorProfilePicture.class));
   }
 
   @Test
-  void getMentorProfilePicture_shouldReturnProfilePicture_whenProfilePictureExists() {
+  void testGetMentorProfileShouldReturnProfilePictureWhenProfilePictureExists() {
     // Arrange
-    when(mentorProfilePictureRepository.findByMentorEmail("test@example.com"))
-        .thenReturn(Optional.of(profilePicture));
+    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
 
     // Act
     MentorProfilePicture result = resourceService.getMentorProfilePicture("test@example.com");
@@ -225,42 +220,39 @@ class ResourceServiceTest {
     assertEquals("test@example.com", result.getMentorEmail());
     assertEquals(resourceId, result.getResourceId());
 
-    verify(mentorProfilePictureRepository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMentorEmail("test@example.com");
   }
 
   @Test
-  void
-      getMentorProfilePicture_shouldThrowResourceNotFoundException_whenProfilePictureDoesNotExist() {
+  void testGetMentorProfileShouldThrowExceptionWhenProfilePictureDoesNotExist() {
     // Arrange
-    when(mentorProfilePictureRepository.findByMentorEmail("test@example.com"))
-        .thenReturn(Optional.empty());
+    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.empty());
 
     // Act & Assert
     assertThrows(
         ResourceNotFoundException.class,
         () -> resourceService.getMentorProfilePicture("test@example.com"));
 
-    verify(mentorProfilePictureRepository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMentorEmail("test@example.com");
   }
 
   @Test
-  void deleteMentorProfilePicture_shouldDeleteProfilePicture() {
+  void testDeleteMentorProfilePictureShouldDeleteProfilePicture() {
     // Arrange
-    when(mentorProfilePictureRepository.findByMentorEmail("test@example.com"))
-        .thenReturn(Optional.of(profilePicture));
+    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
     doNothing().when(googleDriveService).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
-    doNothing().when(mentorProfilePictureRepository).deleteByMentorEmail(anyString());
+    doNothing().when(repository).deleteByMentorEmail(anyString());
 
     // Act
     resourceService.deleteMentorProfilePicture("test@example.com");
 
     // Assert
-    verify(mentorProfilePictureRepository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMentorEmail("test@example.com");
     verify(resourceRepository, times(1)).findById(resourceId);
     verify(googleDriveService, times(1)).deleteFile("drive-file-id");
     verify(resourceRepository, times(1)).deleteById(resourceId);
-    verify(mentorProfilePictureRepository, times(1)).deleteByMentorEmail("test@example.com");
+    verify(repository, times(1)).deleteByMentorEmail("test@example.com");
   }
 }

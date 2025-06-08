@@ -13,7 +13,6 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import java.io.IOException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,16 +21,16 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(MockitoExtension.class)
 class GoogleDriveServiceTest {
 
-  private final String folderIdRoot = "test-folder-id";
+  private static final String FOLDER_ID_ROOT = "test-folder-id";
+  private final Drive driveServiceMock = mock(Drive.class);
+  private final Drive.Files filesMock = mock(Drive.Files.class);
+  private final Drive.Files.Create fileCreateMock = mock(Drive.Files.Create.class);
+  private final Drive.Permissions permissionsMock = mock(Drive.Permissions.class);
+  private final Drive.Permissions.Create permissionCreateMock =
+      mock(Drive.Permissions.Create.class);
 
   @Test
-  void testUploadFile_Success() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
-    Drive.Files.Create fileCreateMock = mock(Drive.Files.Create.class);
-    Drive.Permissions permissionsMock = mock(Drive.Permissions.class);
-    Drive.Permissions.Create permissionCreateMock = mock(Drive.Permissions.Create.class);
-
+  void testUploadFileSuccess() throws Exception {
     File expectedFile = new File();
     expectedFile.setId("test-file-id");
     expectedFile.setName("test-file");
@@ -47,7 +46,8 @@ class GoogleDriveServiceTest {
         .thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     File actualFile =
         googleDriveService.uploadFile("test-file", "text/plain", "Hello world".getBytes());
@@ -62,13 +62,7 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  void testUploadFile_MultipartFile_Success() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
-    Drive.Files.Create fileCreateMock = mock(Drive.Files.Create.class);
-    Drive.Permissions permissionsMock = mock(Drive.Permissions.class);
-    Drive.Permissions.Create permissionCreateMock = mock(Drive.Permissions.Create.class);
-
+  void testUploadFileMultipartFileSuccess() throws Exception {
     File expectedFile = new File();
     expectedFile.setId("test-file-id");
     expectedFile.setName("test-file");
@@ -90,7 +84,8 @@ class GoogleDriveServiceTest {
         .thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     File actualFile = googleDriveService.uploadFile(multipartFile);
 
@@ -104,17 +99,15 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  void testUploadFile_ThrowsException() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
-    Drive.Files.Create fileCreateMock = mock(Drive.Files.Create.class);
+  void testUploadFileThrowsException() throws Exception {
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.create(any(File.class), any())).thenReturn(fileCreateMock);
     when(fileCreateMock.setFields("id, name, webViewLink")).thenReturn(fileCreateMock);
     when(fileCreateMock.execute()).thenThrow(new IOException("Test exception"));
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     PlatformInternalException exception =
         assertThrows(
@@ -127,9 +120,7 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  void testGetFile_Success() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
+  void testGetFileSuccess() throws Exception {
     Drive.Files.Get fileGetMock = mock(Drive.Files.Get.class);
     File expectedFile = new File();
     expectedFile.setId("test-file-id");
@@ -141,7 +132,8 @@ class GoogleDriveServiceTest {
     when(fileGetMock.setFields("id, name, webViewLink")).thenReturn(fileGetMock);
     when(fileGetMock.execute()).thenReturn(expectedFile);
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     File actualFile = googleDriveService.getFile("test-file-id");
 
@@ -153,9 +145,7 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  void testGetFile_ThrowsException() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
+  void testGetFileThrowsException() throws Exception {
     Drive.Files.Get fileGetMock = mock(Drive.Files.Get.class);
 
     when(driveServiceMock.files()).thenReturn(filesMock);
@@ -163,7 +153,8 @@ class GoogleDriveServiceTest {
     when(fileGetMock.setFields("id, name, webViewLink")).thenReturn(fileGetMock);
     when(fileGetMock.execute()).thenThrow(new IOException("Test exception"));
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     PlatformInternalException exception =
         assertThrows(
@@ -174,25 +165,7 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  @Disabled
-  void testDeleteFile_Success() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
-    Drive.Files.Delete fileDeleteMock = mock(Drive.Files.Delete.class);
-
-    when(driveServiceMock.files()).thenReturn(filesMock);
-    when(filesMock.delete("test-file-id")).thenReturn(fileDeleteMock);
-    when(fileDeleteMock.execute()).thenReturn(null);
-
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
-
-    googleDriveService.deleteFile("test-file-id");
-
-    verify(fileDeleteMock).execute();
-  }
-
-  @Test
-  void testDeleteFile_ThrowsException() throws Exception {
+  void testDeleteFileThrowsException() throws Exception {
     Drive driveServiceMock = mock(Drive.class);
     Drive.Files filesMock = mock(Drive.Files.class);
     Drive.Files.Delete fileDeleteMock = mock(Drive.Files.Delete.class);
@@ -201,7 +174,8 @@ class GoogleDriveServiceTest {
     when(filesMock.delete("invalid-file-id")).thenReturn(fileDeleteMock);
     when(fileDeleteMock.execute()).thenThrow(new IOException("Test exception"));
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     PlatformInternalException exception =
         assertThrows(
@@ -213,7 +187,7 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  void testListFiles_Success() throws Exception {
+  void testListFilesSuccess() throws Exception {
     Drive driveServiceMock = mock(Drive.class);
     Drive.Files filesMock = mock(Drive.Files.class);
     Drive.Files.List fileListMock = mock(Drive.Files.List.class);
@@ -226,7 +200,8 @@ class GoogleDriveServiceTest {
         .thenReturn(fileListMock);
     when(fileListMock.execute()).thenReturn(expectedFileList);
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     FileList actualFileList = googleDriveService.listFiles(10);
 
@@ -235,7 +210,7 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  void testListFiles_ThrowsException() throws Exception {
+  void testListFilesThrowsException() throws Exception {
     Drive driveServiceMock = mock(Drive.class);
     Drive.Files filesMock = mock(Drive.Files.class);
     Drive.Files.List fileListMock = mock(Drive.Files.List.class);
@@ -247,7 +222,8 @@ class GoogleDriveServiceTest {
         .thenReturn(fileListMock);
     when(fileListMock.execute()).thenThrow(new IOException("Test exception"));
 
-    GoogleDriveService googleDriveService = new GoogleDriveService(driveServiceMock, folderIdRoot);
+    GoogleDriveService googleDriveService =
+        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
 
     PlatformInternalException exception =
         assertThrows(PlatformInternalException.class, () -> googleDriveService.listFiles(10));

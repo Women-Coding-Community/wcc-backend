@@ -10,7 +10,7 @@ class MentorProfilePictureTest {
 
   @Test
   void shouldBuildMentorProfilePictureWithAllFields() {
-    UUID id = UUID.randomUUID();
+    UUID uuid = UUID.randomUUID();
     String email = "mentor@example.com";
     UUID resourceId = UUID.randomUUID();
     Resource resource = new Resource();
@@ -18,7 +18,7 @@ class MentorProfilePictureTest {
 
     MentorProfilePicture profilePicture =
         MentorProfilePicture.builder()
-            .id(id)
+            .id(uuid)
             .mentorEmail(email)
             .resourceId(resourceId)
             .resource(resource)
@@ -26,7 +26,7 @@ class MentorProfilePictureTest {
             .updatedAt(now)
             .build();
 
-    assertEquals(id, profilePicture.getId());
+    assertEquals(uuid, profilePicture.getId());
     assertEquals(email, profilePicture.getMentorEmail());
     assertEquals(resourceId, profilePicture.getResourceId());
     assertEquals(resource, profilePicture.getResource());
@@ -72,9 +72,9 @@ class MentorProfilePictureTest {
 
   @Test
   void shouldCompareEqualMentorProfilePictures() {
-    UUID id = UUID.randomUUID();
-    MentorProfilePicture profilePicture1 = MentorProfilePicture.builder().id(id).build();
-    MentorProfilePicture profilePicture2 = MentorProfilePicture.builder().id(id).build();
+    UUID uuid = UUID.randomUUID();
+    MentorProfilePicture profilePicture1 = MentorProfilePicture.builder().id(uuid).build();
+    MentorProfilePicture profilePicture2 = MentorProfilePicture.builder().id(uuid).build();
 
     assertEquals(profilePicture1, profilePicture2);
     assertEquals(profilePicture1.hashCode(), profilePicture2.hashCode());

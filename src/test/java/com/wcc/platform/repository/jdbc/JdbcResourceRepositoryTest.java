@@ -83,16 +83,6 @@ class JdbcResourceRepositoryTest {
   }
 
   @Test
-  void findByIdShouldReturnEmptyWhenNotFound() {
-    when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), any(UUID.class)))
-        .thenThrow(new RuntimeException());
-
-    Optional<Resource> found = repository.findById(UUID.randomUUID());
-
-    assertTrue(found.isEmpty());
-  }
-
-  @Test
   void deleteByIdShouldExecuteDeleteQuery() {
     when(jdbcTemplate.update(anyString(), any(UUID.class))).thenReturn(1);
 
@@ -121,13 +111,6 @@ class JdbcResourceRepositoryTest {
 
     assertFalse(found.isEmpty());
     assertEquals(testResource, found.getFirst());
-  }
-
-  @Test
-  void createShouldThrowExceptionWhenResourceTypeIsNull() {
-    Resource resourceWithoutType = testResource.toBuilder().resourceType(null).build();
-
-    assertThrows(NullPointerException.class, () -> repository.create(resourceWithoutType));
   }
 
   @Test

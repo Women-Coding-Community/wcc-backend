@@ -13,7 +13,7 @@ class ResourceTest {
 
   @Test
   void shouldBuildResourceWithAllFields() {
-    UUID id = UUID.randomUUID();
+    UUID uuid = UUID.randomUUID();
     String name = "Resource Name";
     String description = "Resource Description";
     String fileName = "file.txt";
@@ -26,7 +26,7 @@ class ResourceTest {
 
     Resource resource =
         Resource.builder()
-            .id(id)
+            .id(uuid)
             .name(name)
             .description(description)
             .fileName(fileName)
@@ -39,7 +39,7 @@ class ResourceTest {
             .updatedAt(now)
             .build();
 
-    assertEquals(id, resource.getId());
+    assertEquals(uuid, resource.getId());
     assertEquals(name, resource.getName());
     assertEquals(description, resource.getDescription());
     assertEquals(fileName, resource.getFileName());
@@ -112,9 +112,9 @@ class ResourceTest {
 
   @Test
   void shouldCompareEqualResources() {
-    UUID id = UUID.randomUUID();
-    Resource resource1 = Resource.builder().id(id).build();
-    Resource resource2 = Resource.builder().id(id).build();
+    UUID uuid = UUID.randomUUID();
+    Resource resource1 = Resource.builder().id(uuid).build();
+    Resource resource2 = Resource.builder().id(uuid).build();
 
     assertEquals(resource1, resource2);
     assertEquals(resource1.hashCode(), resource2.hashCode());
@@ -145,10 +145,10 @@ class ResourceTest {
 
   @Test
   void shouldReturnProperToString() {
-    UUID id = UUID.randomUUID();
+    UUID uuid = UUID.randomUUID();
     Resource resource =
         Resource.builder()
-            .id(id)
+            .id(uuid)
             .name("Test Name")
             .description("Test Description")
             .fileName("test.txt")

@@ -37,181 +37,198 @@ import org.springframework.web.multipart.MultipartFile;
 @WebMvcTest(ResourceController.class)
 class ResourceControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockBean
-    private ResourceService resourceService;
+  @MockBean private ResourceService resourceService;
 
-    private UUID resourceId;
-    private Resource resource;
-    private MentorProfilePicture profilePicture;
-    private MockMultipartFile multipartFile;
+  private UUID resourceId;
+  private Resource resource;
+  private MentorProfilePicture profilePicture;
+  private MockMultipartFile multipartFile;
 
-    @BeforeEach
-    void setUp() {
-        resourceId = UUID.randomUUID();
+  @BeforeEach
+  void setUp() {
+    resourceId = UUID.randomUUID();
 
-        resource = Resource.builder()
-                .id(resourceId)
-                .name("Test Resource")
-                .description("Test Description")
-                .fileName("test.jpg")
-                .contentType("image/jpeg")
-                .size(1024L)
-                .driveFileId("drive-file-id")
-                .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
-                .resourceType(ResourceType.IMAGE)
-                .createdAt(OffsetDateTime.now())
-                .updatedAt(OffsetDateTime.now())
-                .build();
+    resource =
+        Resource.builder()
+            .id(resourceId)
+            .name("Test Resource")
+            .description("Test Description")
+            .fileName("test.jpg")
+            .contentType("image/jpeg")
+            .size(1024L)
+            .driveFileId("drive-file-id")
+            .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
+            .resourceType(ResourceType.IMAGE)
+            .createdAt(OffsetDateTime.now())
+            .updatedAt(OffsetDateTime.now())
+            .build();
 
-        profilePicture = MentorProfilePicture.builder()
-                .id(UUID.randomUUID())
-                .mentorEmail("test@example.com")
-                .resourceId(resourceId)
-                .resource(resource)
-                .createdAt(OffsetDateTime.now())
-                .updatedAt(OffsetDateTime.now())
-                .build();
+    profilePicture =
+        MentorProfilePicture.builder()
+            .id(UUID.randomUUID())
+            .mentorEmail("test@example.com")
+            .resourceId(resourceId)
+            .resource(resource)
+            .createdAt(OffsetDateTime.now())
+            .updatedAt(OffsetDateTime.now())
+            .build();
 
-        multipartFile = new MockMultipartFile(
-                "file",
-                "test.jpg",
-                "image/jpeg",
-                "test image content".getBytes());
-    }
+    multipartFile =
+        new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image content".getBytes());
+  }
 
-    @Test
-    void uploadResource_shouldReturnCreatedResource() throws Exception {
-        // Arrange
-        when(resourceService.uploadResource(
-                any(MultipartFile.class),
-                eq("Test Resource"),
-                eq("Test Description"),
-                eq(ResourceType.IMAGE)))
-                .thenReturn(resource);
+  @Test
+  void uploadResourceShouldReturnCreatedResource() throws Exception {
+    // Arrange
+    when(resourceService.uploadResource(
+            any(MultipartFile.class),
+            eq("Test Resource"),
+            eq("Test Description"),
+            eq(ResourceType.IMAGE)))
+        .thenReturn(resource);
 
-        // Act & Assert
-        mockMvc.perform(multipart("/api/platform/v1/resources")
+    // Act & Assert
+    mockMvc
+        .perform(
+            multipart("/api/platform/v1/resources")
                 .file(multipartFile)
                 .param("name", "Test Resource")
                 .param("description", "Test Description")
                 .param("resourceType", "IMAGE")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(resourceId.toString()))
-                .andExpect(jsonPath("$.name").value("Test Resource"))
-                .andExpect(jsonPath("$.description").value("Test Description"))
-                .andExpect(jsonPath("$.fileName").value("test.jpg"))
-                .andExpect(jsonPath("$.contentType").value("image/jpeg"))
-                .andExpect(jsonPath("$.size").value(1024))
-                .andExpect(jsonPath("$.driveFileId").value("drive-file-id"))
-                .andExpect(jsonPath("$.driveFileLink").value("https://drive.google.com/file/d/drive-file-id/view"))
-                .andExpect(jsonPath("$.resourceType").value("IMAGE"));
-    }
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(resourceId.toString()))
+        .andExpect(jsonPath("$.name").value("Test Resource"))
+        .andExpect(jsonPath("$.description").value("Test Description"))
+        .andExpect(jsonPath("$.fileName").value("test.jpg"))
+        .andExpect(jsonPath("$.contentType").value("image/jpeg"))
+        .andExpect(jsonPath("$.size").value(1024))
+        .andExpect(jsonPath("$.driveFileId").value("drive-file-id"))
+        .andExpect(
+            jsonPath("$.driveFileLink").value("https://drive.google.com/file/d/drive-file-id/view"))
+        .andExpect(jsonPath("$.resourceType").value("IMAGE"));
+  }
 
-    @Test
-    void getResource_shouldReturnResource() throws Exception {
-        // Arrange
-        when(resourceService.getResource(resourceId)).thenReturn(resource);
+  @Test
+  void testResourceShouldReturnResource() throws Exception {
+    // Arrange
+    when(resourceService.getResource(resourceId)).thenReturn(resource);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/platform/v1/resources/{id}", resourceId)
+    // Act & Assert
+    mockMvc
+        .perform(
+            get("/api/platform/v1/resources/{id}", resourceId)
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(resourceId.toString()))
-                .andExpect(jsonPath("$.name").value("Test Resource"));
-    }
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(resourceId.toString()))
+        .andExpect(jsonPath("$.name").value("Test Resource"));
+  }
 
-    @Test
-    void getResourcesByType_shouldReturnResourceList() throws Exception {
-        // Arrange
-        List<Resource> resources = Collections.singletonList(resource);
-        when(resourceService.getResourcesByType(ResourceType.IMAGE)).thenReturn(resources);
+  @Test
+  void testResourcesByTypeShouldReturnResourceList() throws Exception {
+    // Arrange
+    List<Resource> resources = Collections.singletonList(resource);
+    when(resourceService.getResourcesByType(ResourceType.IMAGE)).thenReturn(resources);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/platform/v1/resources")
+    // Act & Assert
+    mockMvc
+        .perform(
+            get("/api/platform/v1/resources")
                 .param("resourceType", "IMAGE")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(resourceId.toString()))
-                .andExpect(jsonPath("$[0].name").value("Test Resource"));
-    }
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(resourceId.toString()))
+        .andExpect(jsonPath("$[0].name").value("Test Resource"));
+  }
 
-    @Test
-    void searchResourcesByName_shouldReturnResourceList() throws Exception {
-        // Arrange
-        List<Resource> resources = Collections.singletonList(resource);
-        when(resourceService.searchResourcesByName("Test")).thenReturn(resources);
+  @Test
+  void searchResourcesByNameShouldReturnResourceList() throws Exception {
+    // Arrange
+    List<Resource> resources = Collections.singletonList(resource);
+    when(resourceService.searchResourcesByName("Test")).thenReturn(resources);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/platform/v1/resources/search")
+    // Act & Assert
+    mockMvc
+        .perform(
+            get("/api/platform/v1/resources/search")
                 .param("name", "Test")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(resourceId.toString()))
-                .andExpect(jsonPath("$[0].name").value("Test Resource"));
-    }
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(resourceId.toString()))
+        .andExpect(jsonPath("$[0].name").value("Test Resource"));
+  }
 
-    @Test
-    void deleteResource_shouldReturnNoContent() throws Exception {
-        // Arrange
-        doNothing().when(resourceService).deleteResource(resourceId);
+  @Test
+  void deleteResourceShouldReturnNoContent() throws Exception {
+    // Arrange
+    doNothing().when(resourceService).deleteResource(resourceId);
 
-        // Act & Assert
-        mockMvc.perform(delete("/api/platform/v1/resources/{id}", resourceId)
+    // Act & Assert
+    mockMvc
+        .perform(
+            delete("/api/platform/v1/resources/{id}", resourceId)
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-    }
+        .andExpect(status().isNoContent());
+  }
 
-    @Test
-    void uploadMentorProfilePicture_shouldReturnCreatedProfilePicture() throws Exception {
-        // Arrange
-        when(resourceService.uploadMentorProfilePicture(
-                eq("test@example.com"),
-                any(MultipartFile.class)))
-                .thenReturn(profilePicture);
+  @Test
+  void uploadMentorProfilePictureShouldReturnCreatedProfilePicture() throws Exception {
+    // Arrange
+    when(resourceService.uploadMentorProfilePicture(
+            eq("test@example.com"), any(MultipartFile.class)))
+        .thenReturn(profilePicture);
 
-        // Act & Assert
-        mockMvc.perform(multipart("/api/platform/v1/resources/mentor-profile-pictures")
+    // Act & Assert
+    mockMvc
+        .perform(
+            multipart("/api/platform/v1/resources/mentor-profile-pictures")
                 .file(multipartFile)
                 .param("mentorEmail", "test@example.com")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.mentorEmail").value("test@example.com"))
-                .andExpect(jsonPath("$.resourceId").value(resourceId.toString()));
-    }
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.mentorEmail").value("test@example.com"))
+        .andExpect(jsonPath("$.resourceId").value(resourceId.toString()));
+  }
 
-    @Test
-    void getMentorProfilePicture_shouldReturnProfilePicture() throws Exception {
-        // Arrange
-        when(resourceService.getMentorProfilePicture("test@example.com")).thenReturn(profilePicture);
+  @Test
+  void testGetMentorProfilePictureShouldReturnProfilePicture() throws Exception {
+    // Arrange
+    when(resourceService.getMentorProfilePicture("test@example.com")).thenReturn(profilePicture);
 
-        // Act & Assert
-        mockMvc.perform(get("/api/platform/v1/resources/mentor-profile-pictures/{mentorEmail}", "test@example.com")
+    // Act & Assert
+    mockMvc
+        .perform(
+            get(
+                    "/api/platform/v1/resources/mentor-profile-pictures/{mentorEmail}",
+                    "test@example.com")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.mentorEmail").value("test@example.com"))
-                .andExpect(jsonPath("$.resourceId").value(resourceId.toString()));
-    }
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.mentorEmail").value("test@example.com"))
+        .andExpect(jsonPath("$.resourceId").value(resourceId.toString()));
+  }
 
-    @Test
-    void deleteMentorProfilePicture_shouldReturnNoContent() throws Exception {
-        // Arrange
-        doNothing().when(resourceService).deleteMentorProfilePicture(anyString());
+  @Test
+  void deleteMentorProfilePictureShouldReturnNoContent() throws Exception {
+    // Arrange
+    doNothing().when(resourceService).deleteMentorProfilePicture(anyString());
 
-        // Act & Assert
-        mockMvc.perform(delete("/api/platform/v1/resources/mentor-profile-pictures/{mentorEmail}", "test@example.com")
+    // Act & Assert
+    mockMvc
+        .perform(
+            delete(
+                    "/api/platform/v1/resources/mentor-profile-pictures/{mentorEmail}",
+                    "test@example.com")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-    }
+        .andExpect(status().isNoContent());
+  }
 }
