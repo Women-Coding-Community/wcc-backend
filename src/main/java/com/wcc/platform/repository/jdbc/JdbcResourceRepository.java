@@ -9,12 +9,15 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 /** JDBC implementation of the ResourceRepository interface. */
 @Repository
+@AllArgsConstructor
 public class JdbcResourceRepository implements ResourceRepository {
   private static final String INSERT_SQL =
       "INSERT INTO resource (id, name, description, file_name, content_type, size, "
@@ -26,15 +29,15 @@ public class JdbcResourceRepository implements ResourceRepository {
           + "size = ?, drive_file_id = ?, drive_file_link = ?, "
           + "resource_type_id = (SELECT id FROM resource_type WHERE name = ?), "
           + "updated_at = ? WHERE id = ?";
-  private static final String SELECT_BY_ID_SQL =
+  private static final String SELECT_BY_ID =
       "SELECT r.*, rt.name as resource_type_name FROM resource r "
           + "JOIN resource_type rt ON r.resource_type_id = rt.id "
           + "WHERE r.id = ?";
-  private static final String SELECT_BY_TYPE_SQL =
+  private static final String SELECT_BY_TYPE =
       "SELECT r.*, rt.name as resource_type_name FROM resource r "
           + "JOIN resource_type rt ON r.resource_type_id = rt.id "
           + "WHERE rt.name = ?";
-  private static final String SELECT_BY_NAME_SQL =
+  private static final String SELECT_BY_NAME =
       "SELECT r.*, rt.name as resource_type_name FROM resource r "
           + "JOIN resource_type rt ON r.resource_type_id = rt.id "
           + "WHERE r.name ILIKE ?";
@@ -42,22 +45,18 @@ public class JdbcResourceRepository implements ResourceRepository {
   private final JdbcTemplate jdbcTemplate;
   private final ResourceRowMapper rowMapper = new ResourceRowMapper();
 
-  public JdbcResourceRepository(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
-  }
-
   @Override
-  public Resource create(Resource resource) {
-    var builder = resource.toBuilder();
+  public Resource create(final Resource resource) {
+    final var builder = resource.toBuilder();
     if (resource.getId() == null) {
       builder.id(UUID.randomUUID());
     }
 
-    OffsetDateTime now = OffsetDateTime.now();
+    final OffsetDateTime now = OffsetDateTime.now();
     builder.createdAt(now);
     builder.updatedAt(now);
 
-    var resourceCreated = builder.build();
+    final var resourceCreated = builder.build();
 
     jdbcTemplate.update(
         INSERT_SQL,
@@ -69,7 +68,7 @@ public class JdbcResourceRepository implements ResourceRepository {
         resourceCreated.getSize(),
         resourceCreated.getDriveFileId(),
         resourceCreated.getDriveFileLink(),
-        resourceCreated.getResourceType().name(),
+        resourceCreated.getResourceType(),
         resourceCreated.getCreatedAt(),
         resourceCreated.getUpdatedAt());
 
@@ -77,11 +76,8 @@ public class JdbcResourceRepository implements ResourceRepository {
   }
 
   @Override
-  public Resource update(UUID id, Resource resourceToUpdate) {
-    var builder = resourceToUpdate.toBuilder();
-    builder.id(id);
-    builder.updatedAt(OffsetDateTime.now());
-    var resource = builder.build();
+  public Resource update(final UUID id, final Resource update) {
+    final var resource = update.toBuilder().id(id).updatedAt(OffsetDateTime.now()).build();
 
     jdbcTemplate.update(
         UPDATE_SQL,
@@ -92,7 +88,7 @@ public class JdbcResourceRepository implements ResourceRepository {
         resource.getSize(),
         resource.getDriveFileId(),
         resource.getDriveFileLink(),
-        resource.getResourceType().name(),
+        resource.getResourceType(),
         resource.getUpdatedAt(),
         id);
 
@@ -100,34 +96,34 @@ public class JdbcResourceRepository implements ResourceRepository {
   }
 
   @Override
-  public Optional<Resource> findById(UUID id) {
+  public Optional<Resource> findById(final UUID id) {
     try {
-      Resource resource = jdbcTemplate.queryForObject(SELECT_BY_ID_SQL, rowMapper, id);
+      final var resource = jdbcTemplate.queryForObject(SELECT_BY_ID, rowMapper, id);
       return Optional.ofNullable(resource);
-    } catch (Exception e) {
+    } catch (DataAccessException e) {
       return Optional.empty();
     }
   }
 
   @Override
-  public void deleteById(UUID id) {
+  public void deleteById(final UUID id) {
     jdbcTemplate.update(DELETE_SQL, id);
   }
 
   @Override
-  public List<Resource> findByType(ResourceType resourceType) {
-    return jdbcTemplate.query(SELECT_BY_TYPE_SQL, rowMapper, resourceType.name());
+  public List<Resource> findByType(final ResourceType resourceType) {
+    return jdbcTemplate.query(SELECT_BY_TYPE, rowMapper, resourceType.name());
   }
 
   @Override
-  public List<Resource> findByNameContaining(String name) {
-    return jdbcTemplate.query(SELECT_BY_NAME_SQL, rowMapper, "%" + name + "%");
+  public List<Resource> findByNameContaining(final String name) {
+    return jdbcTemplate.query(SELECT_BY_NAME, rowMapper, "%" + name + "%");
   }
 
   /** RowMapper for mapping database rows to Resource objects. */
-  private static class ResourceRowMapper implements RowMapper<Resource> {
+  private static final class ResourceRowMapper implements RowMapper<Resource> {
     @Override
-    public Resource mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Resource mapRow(final ResultSet rs, final int rowNum) throws SQLException {
       return Resource.builder()
           .id(UUID.fromString(rs.getString("id")))
           .name(rs.getString("name"))

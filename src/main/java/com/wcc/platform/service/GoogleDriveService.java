@@ -25,12 +25,14 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /** Service for interacting with Google Drive API. */
 @Service
+@SuppressWarnings("PMD.LooseCoupling")
 public class GoogleDriveService {
 
   private static final String APPLICATION_NAME = "WCC Backend";
@@ -56,7 +58,7 @@ public class GoogleDriveService {
         new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
             .setApplicationName(APPLICATION_NAME)
             .build();
-    this.folderIdRoot = "";
+    this.folderIdRoot = StringUtils.EMPTY;
   }
 
   /**
@@ -67,16 +69,13 @@ public class GoogleDriveService {
    * @throws IOException If the credentials.json file cannot be found.
    */
   private Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
-    // Load client secrets.
     try (InputStream in = GoogleDriveService.class.getResourceAsStream(CREDS_FILE_PATH)) {
       if (in == null) {
         throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
       }
-      final GoogleClientSecrets clientSecrets =
-          GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+      final var clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-      // Build flow and trigger the user authorization request.
-      final GoogleAuthorizationCodeFlow flow =
+      final var flow =
           new GoogleAuthorizationCodeFlow.Builder(
                   httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
               .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIR_PATH)))
@@ -95,24 +94,24 @@ public class GoogleDriveService {
    * @param fileData File data as byte array
    * @return Google Drive file information
    */
+  // NOPMD
   public File uploadFile(final String fileName, final String contentType, final byte[] fileData) {
     try {
-      final File fileMetadata = new File();
+      final var fileMetadata = new File();
       fileMetadata.setName(fileName);
       fileMetadata.setParents(Collections.singletonList(folderIdRoot));
 
-      final InputStreamContent mediaContent =
+      final var mediaContent =
           new InputStreamContent(contentType, new ByteArrayInputStream(fileData));
 
-      final File file =
+      final var file =
           driveService
               .files()
               .create(fileMetadata, mediaContent)
               .setFields("id, name, webViewLink")
               .execute();
 
-      // Set file permission to be publicly accessible
-      final Permission permission = new Permission().setType("anyone").setRole("reader");
+      final var permission = new Permission().setType("anyone").setRole("reader");
 
       driveService.permissions().create(file.getId(), permission).execute();
 

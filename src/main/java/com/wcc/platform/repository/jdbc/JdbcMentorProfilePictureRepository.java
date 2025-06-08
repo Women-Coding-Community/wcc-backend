@@ -10,12 +10,15 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 /** JDBC implementation of the MentorProfilePictureRepository interface. */
 @Repository
+@AllArgsConstructor
 public class JdbcMentorProfilePictureRepository implements MentorProfilePictureRepository {
   private static final String INSERT_SQL =
       "INSERT INTO mentor_profile_picture (id, mentor_email, resource_id, created_at, updated_at) "
@@ -23,38 +26,32 @@ public class JdbcMentorProfilePictureRepository implements MentorProfilePictureR
   private static final String UPDATE_SQL =
       "UPDATE mentor_profile_picture SET mentor_email = ?, resource_id = ?, updated_at = ? "
           + "WHERE id = ?";
-  private static final String SELECT_BY_ID_SQL =
+  private static final String SELECT_BY_ID =
       "SELECT mpp.*, r.*, rt.name as resource_type_name "
           + "FROM mentor_profile_picture mpp "
           + "JOIN resource r ON mpp.resource_id = r.id "
           + "JOIN resource_type rt ON r.resource_type_id = rt.id "
           + "WHERE mpp.id = ?";
-  private static final String SELECT_BY_EMAIL_SQL =
+  private static final String SELECT_BY_EMAIL =
       "SELECT mpp.*, r.*, rt.name as resource_type_name "
           + "FROM mentor_profile_picture mpp "
           + "JOIN resource r ON mpp.resource_id = r.id "
           + "JOIN resource_type rt ON r.resource_type_id = rt.id "
           + "WHERE mpp.mentor_email = ?";
   private static final String DELETE_SQL = "DELETE FROM mentor_profile_picture WHERE id = ?";
-  private static final String DELETE_BY_EMAIL_SQL =
+  private static final String DELETE_BY_EMAIL =
       "DELETE FROM mentor_profile_picture WHERE mentor_email = ?";
   private final JdbcTemplate jdbcTemplate;
-  private final ResourceRepository resourceRepository;
+  private final ResourceRepository repository;
   private final MentorProfilePictureRowMapper rowMapper = new MentorProfilePictureRowMapper();
 
-  public JdbcMentorProfilePictureRepository(
-      JdbcTemplate jdbcTemplate, ResourceRepository resourceRepository) {
-    this.jdbcTemplate = jdbcTemplate;
-    this.resourceRepository = resourceRepository;
-  }
-
   @Override
-  public MentorProfilePicture create(MentorProfilePicture profilePicture) {
+  public MentorProfilePicture create(final MentorProfilePicture profilePicture) {
     if (profilePicture.getId() == null) {
       profilePicture.setId(UUID.randomUUID());
     }
 
-    OffsetDateTime now = OffsetDateTime.now();
+    final OffsetDateTime now = OffsetDateTime.now();
     profilePicture.setCreatedAt(now);
     profilePicture.setUpdatedAt(now);
 
@@ -70,7 +67,7 @@ public class JdbcMentorProfilePictureRepository implements MentorProfilePictureR
   }
 
   @Override
-  public MentorProfilePicture update(UUID id, MentorProfilePicture profilePicture) {
+  public MentorProfilePicture update(final UUID id, final MentorProfilePicture profilePicture) {
     profilePicture.setId(id);
     profilePicture.setUpdatedAt(OffsetDateTime.now());
 
@@ -85,42 +82,43 @@ public class JdbcMentorProfilePictureRepository implements MentorProfilePictureR
   }
 
   @Override
-  public Optional<MentorProfilePicture> findById(UUID id) {
+  public Optional<MentorProfilePicture> findById(final UUID id) {
     try {
-      MentorProfilePicture profilePicture =
-          jdbcTemplate.queryForObject(SELECT_BY_ID_SQL, rowMapper, id);
+      final MentorProfilePicture profilePicture =
+          jdbcTemplate.queryForObject(SELECT_BY_ID, rowMapper, id);
       return Optional.ofNullable(profilePicture);
-    } catch (Exception e) {
+    } catch (DataAccessException e) {
       return Optional.empty();
     }
   }
 
   @Override
-  public void deleteById(UUID id) {
+  public void deleteById(final UUID id) {
     jdbcTemplate.update(DELETE_SQL, id);
   }
 
   @Override
-  public Optional<MentorProfilePicture> findByMentorEmail(String email) {
+  public Optional<MentorProfilePicture> findByMentorEmail(final String email) {
     try {
-      MentorProfilePicture profilePicture =
-          jdbcTemplate.queryForObject(SELECT_BY_EMAIL_SQL, rowMapper, email);
+      final MentorProfilePicture profilePicture =
+          jdbcTemplate.queryForObject(SELECT_BY_EMAIL, rowMapper, email);
       return Optional.ofNullable(profilePicture);
-    } catch (Exception e) {
+    } catch (DataAccessException e) {
       return Optional.empty();
     }
   }
 
   @Override
-  public void deleteByMentorEmail(String email) {
-    jdbcTemplate.update(DELETE_BY_EMAIL_SQL, email);
+  public void deleteByMentorEmail(final String email) {
+    jdbcTemplate.update(DELETE_BY_EMAIL, email);
   }
 
   /** RowMapper for mapping database rows to MentorProfilePicture objects. */
-  private class MentorProfilePictureRowMapper implements RowMapper<MentorProfilePicture> {
+  private static final class MentorProfilePictureRowMapper
+      implements RowMapper<MentorProfilePicture> {
     @Override
-    public MentorProfilePicture mapRow(ResultSet rs, int rowNum) throws SQLException {
-      Resource resource =
+    public MentorProfilePicture mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+      final Resource resource =
           Resource.builder()
               .id(UUID.fromString(rs.getString("resource_id")))
               .name(rs.getString("name"))

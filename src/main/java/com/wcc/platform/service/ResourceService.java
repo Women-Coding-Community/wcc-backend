@@ -1,7 +1,5 @@
 package com.wcc.platform.service;
 
-import com.google.api.services.drive.model.File;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -32,25 +30,22 @@ public class ResourceService {
       final String name,
       final String description,
       final ResourceType resourceType) {
-    try {
-      final File driveFile = driveService.uploadFile(file);
 
-      final Resource resource =
-          Resource.builder()
-              .name(name)
-              .description(description)
-              .fileName(file.getOriginalFilename())
-              .contentType(file.getContentType())
-              .size(file.getSize())
-              .driveFileId(driveFile.getId())
-              .driveFileLink(driveFile.getWebViewLink())
-              .resourceType(resourceType)
-              .build();
+    final var driveFile = driveService.uploadFile(file);
 
-      return resourceRepo.create(resource);
-    } catch (RuntimeException e) {
-      throw new PlatformInternalException("Failed to upload resource", e);
-    }
+    final Resource resource =
+        Resource.builder()
+            .name(name)
+            .description(description)
+            .fileName(file.getOriginalFilename())
+            .contentType(file.getContentType())
+            .size(file.getSize())
+            .driveFileId(driveFile.getId())
+            .driveFileLink(driveFile.getWebViewLink())
+            .resourceType(resourceType)
+            .build();
+
+    return resourceRepo.create(resource);
   }
 
   /** Gets a resource by ID. */
