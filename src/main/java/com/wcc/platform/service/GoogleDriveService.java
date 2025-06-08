@@ -68,8 +68,7 @@ public class GoogleDriveService {
    */
   private Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
     // Load client secrets.
-    try (final InputStream in =
-        GoogleDriveService.class.getResourceAsStream(CREDS_FILE_PATH)) {
+    try (InputStream in = GoogleDriveService.class.getResourceAsStream(CREDS_FILE_PATH)) {
       if (in == null) {
         throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
       }
@@ -80,8 +79,7 @@ public class GoogleDriveService {
       final GoogleAuthorizationCodeFlow flow =
           new GoogleAuthorizationCodeFlow.Builder(
                   httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-              .setDataStoreFactory(
-                  new FileDataStoreFactory(new java.io.File(TOKENS_DIR_PATH)))
+              .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIR_PATH)))
               .setAccessType("offline")
               .build();
       final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();

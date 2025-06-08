@@ -80,11 +80,41 @@ tasks.withType<Test> {
 }
 
 tasks {
+    val testIntegration by creating(Test::class) {
+        description = "Runs integration tests."
+        group = "verification"
+        testClassesDirs = sourceSets["testInt"].output.classesDirs
+        classpath = sourceSets["testInt"].runtimeClasspath
+        useJUnitPlatform()
+        shouldRunAfter("test")
+        timeout.set(Duration.ofMinutes(10))
+
+        jacoco {
+            isEnabled = true
+        }
+    }
+
+    val jacocoIntegrationReport by creating(JacocoReport::class) {
+        description = "Generates code coverage report for integration tests."
+        group = "verification"
+        dependsOn(testIntegration)
+
+        executionData(testIntegration)
+        sourceSets(sourceSets.main.get())
+
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+            html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/integration"))
+        }
+    }
+
     jacocoTestCoverageVerification {
         violationRules {
             rule { limit { minimum = BigDecimal.valueOf(0.7) } }
         }
     }
+
     check {
         dependsOn(jacocoTestCoverageVerification)
     }
@@ -142,14 +172,6 @@ if (project.hasProperty("localProfile")) {
     }
 }
 
-tasks.register<Test>("testIntegration") {
-    description = "Runs integration tests."
-    group = "verification"
-    testClassesDirs = sourceSets["testInt"].output.classesDirs
-    classpath = sourceSets["testInt"].runtimeClasspath
-    useJUnitPlatform()
-    shouldRunAfter("test")
-}
 
 tasks.named<ProcessResources>("processTestIntResources") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE

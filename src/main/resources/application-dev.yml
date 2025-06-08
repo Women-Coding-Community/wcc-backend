@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://wcc-postgres.internal:5433/wcc
+    username: postgres
+    password: teD4vJ3z1fzwMAM
+    driver-class-name: org.postgresql.Driver
+
+security:
+  api:
+    key: 0194c069-60c7-7e97-8b50-31b158e47d3e

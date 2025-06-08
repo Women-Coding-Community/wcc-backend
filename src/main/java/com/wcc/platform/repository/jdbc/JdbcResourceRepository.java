@@ -48,35 +48,40 @@ public class JdbcResourceRepository implements ResourceRepository {
 
   @Override
   public Resource create(Resource resource) {
+    var builder = resource.toBuilder();
     if (resource.getId() == null) {
-      resource.setId(UUID.randomUUID());
+      builder.id(UUID.randomUUID());
     }
 
     OffsetDateTime now = OffsetDateTime.now();
-    resource.setCreatedAt(now);
-    resource.setUpdatedAt(now);
+    builder.createdAt(now);
+    builder.updatedAt(now);
+
+    var resourceCreated = builder.build();
 
     jdbcTemplate.update(
         INSERT_SQL,
-        resource.getId(),
-        resource.getName(),
-        resource.getDescription(),
-        resource.getFileName(),
-        resource.getContentType(),
-        resource.getSize(),
-        resource.getDriveFileId(),
-        resource.getDriveFileLink(),
-        resource.getResourceType().name(),
-        resource.getCreatedAt(),
-        resource.getUpdatedAt());
+        resourceCreated.getId(),
+        resourceCreated.getName(),
+        resourceCreated.getDescription(),
+        resourceCreated.getFileName(),
+        resourceCreated.getContentType(),
+        resourceCreated.getSize(),
+        resourceCreated.getDriveFileId(),
+        resourceCreated.getDriveFileLink(),
+        resourceCreated.getResourceType().name(),
+        resourceCreated.getCreatedAt(),
+        resourceCreated.getUpdatedAt());
 
-    return resource;
+    return resourceCreated;
   }
 
   @Override
-  public Resource update(UUID id, Resource resource) {
-    resource.setId(id);
-    resource.setUpdatedAt(OffsetDateTime.now());
+  public Resource update(UUID id, Resource resourceToUpdate) {
+    var builder = resourceToUpdate.toBuilder();
+    builder.id(id);
+    builder.updatedAt(OffsetDateTime.now());
+    var resource = builder.build();
 
     jdbcTemplate.update(
         UPDATE_SQL,

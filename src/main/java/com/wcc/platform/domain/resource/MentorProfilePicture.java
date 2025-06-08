@@ -9,9 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * Entity representing a mentor's profile picture.
- */
+/** Entity representing a mentor's profile picture. */
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -19,10 +17,10 @@ import lombok.ToString;
 @Data
 @Builder(toBuilder = true)
 public class MentorProfilePicture {
-    private UUID id;
-    private String mentorEmail;
-    private UUID resourceId;
-    private Resource resource;
-    private OffsetDateTime createdAt;
-    private OffsetDateTime updatedAt;
+  private UUID id;
+  private String mentorEmail;
+  private UUID resourceId;
+  private Resource resource;
+  private OffsetDateTime createdAt;
+  private OffsetDateTime updatedAt;
 }
