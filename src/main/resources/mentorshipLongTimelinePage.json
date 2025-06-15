@@ -1,0 +1,68 @@
+{
+  "id": "page:MENTORSHIP_LONG_TIMELINE",
+  "heroSection": {
+    "title": "Long-Term Timeline"
+  },
+  "section": {
+    "title": "Timeline Section",
+    "description": ""
+  },
+  "items": [
+    {
+      "title": "Registration for mentors",
+      "description": "March, 2025 - November, 2025",
+      "link": null,
+      "items": [
+        "Mentors can apply for Mentorship throughout the year. Once a profile has been approved and published on the website, the mentor will receive a confirmation email."
+      ]
+    },
+    {
+      "title": "Registration for mentees is open",
+      "description": "8th of March - 31st of March, 2025",
+      "link": null,
+      "items": [
+        "Mentees will have the opportunity to choose a mentor and apply for a long-term mentorship relationship until the end of March."
+      ]
+    },
+    {
+      "title": "WCC annual mentorship program launch",
+      "description": "8th of April, 2025",
+      "link": null,
+      "items": [
+        "This discussion will cover topics such as the specific challenges that women in technology often encounter and how mentorship can provide support and guidance."
+      ]
+    },
+    {
+      "title": "Introduction emails",
+      "description": "April, 2025",
+      "link": null,
+      "items": [
+        "Once the list of matched mentors and mentees is complete, all participants will receive an introduction email containing the next steps."
+      ]
+    },
+    {
+      "title": "Regular meetings",
+      "description": "April - November, 2025",
+      "link": null,
+      "items": [
+        "Throughout the programme, mentors and mentees will schedule regular meetings to discuss progress and share advice and feedback. The frequency of these meetings will depend on the preferences of the mentor and mentee, however, they will typically occur every 1-2 weeks."
+      ]
+    },
+    {
+      "title": "Programme check-ins",
+      "description": "July and October, 2025",
+      "link": null,
+      "items": [
+        "Mentors and mentees will be invited to a mentorship check-in meeting twice during the cycle to assess progress and collect feedback."
+      ]
+    },
+    {
+      "title": "End of the Programme",
+      "description": "November, 2025",
+      "link": null,
+      "items": [
+        "The mentor and mentee will agree on their final meeting to conclude their sessions. The Mentorship Programme Team will then hold a meeting for all mentors and mentees to wrap up the mentorship programme and discuss wins, progress, and outcomes of the programme."
+      ]
+    }
+  ]
+}
