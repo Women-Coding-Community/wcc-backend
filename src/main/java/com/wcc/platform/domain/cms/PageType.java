@@ -14,6 +14,7 @@ public enum PageType {
   MENTORSHIP("mentorshipPage.json", "page:MENTORSHIP_OVERVIEW"),
   MENTORS("mentorsPage.json", "page:MENTORS_PAGE"),
   MENTORSHIP_FAQ("mentorshipFaqPage.json", "page:MENTORSHIP_FAQ"),
+  MENTORSHIP_LONG_TIMELINE("mentorshipLongTimelinePage.json", "page:MENTORSHIP_LONG_TIMELINE"),
   MENTORSHIP_CONDUCT("mentorshipConductPage.json", "page:MENTORSHIP_CODE_OF_CONDUCT"),
   PROG_BOOK_CLUB("bookClubPage.json", "page:BOOK_CLUB"),
   EVENT_FILTERS("eventsFiltersSection.json", "UNDEFINED"),
