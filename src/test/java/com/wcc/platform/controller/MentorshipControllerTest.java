@@ -1,9 +1,11 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipAdHocTimelinePageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
@@ -41,6 +43,8 @@ public class MentorshipControllerTest {
   public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
   public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/study-groups";
   public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
+  public static final String API_AD_HOC_TIMELINE = "/api/cms/v1/mentorship/ad-hoc-timeline";
+
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
@@ -123,5 +127,19 @@ public class MentorshipControllerTest {
             MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
+  }
+
+  @Test
+  void testAdHocTimelineOkResponse() throws Exception {
+    var fileName = AD_HOC_TIMELINE.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getAdHocTimeline()).thenReturn(createMentorshipAdHocTimelinePageTest(fileName));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_AD_HOC_TIMELINE).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
   }
 }
