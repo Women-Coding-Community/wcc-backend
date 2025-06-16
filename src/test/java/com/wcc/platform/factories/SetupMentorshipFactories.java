@@ -23,6 +23,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
@@ -174,6 +175,27 @@ public class SetupMentorshipFactories {
         createContactTest(),
         new ListSection<>("Study Groups", null, null, List.of(studyGroup)),
         createCustomStyleTest());
+  }
+
+  /** Test factory for Ad Hoc Timeline Page. */
+  public static MentorshipAdHocTimelinePage createMentorshipAdHocTimelinePageTest(
+      final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, MentorshipAdHocTimelinePage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorshipAdHocTimelinePageTest();
+    }
+  }
+
+  /** Test factory for Ad Hoc Timeline Page. */
+  public static MentorshipAdHocTimelinePage createMentorshipAdHocTimelinePageTest() {
+    final String pageId = PageType.AD_HOC_TIMELINE.getId();
+    
+    return new MentorshipAdHocTimelinePage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        new ListSection<>("Milestones", "description", null, null));
   }
 
   /** Mentor Builder. */

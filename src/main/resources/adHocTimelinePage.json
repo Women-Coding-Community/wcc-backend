@@ -3,7 +3,7 @@
   "heroSection": {
     "title": "Ad Hoc Timeline"
   },
-  "adHocTimelineMilestones": {
+  "adHocTimelineEvents": {
     "items": [
       {
         "title": "Application period",

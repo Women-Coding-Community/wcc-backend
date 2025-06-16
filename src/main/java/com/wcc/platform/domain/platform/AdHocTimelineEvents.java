@@ -15,7 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdHocTimelineMilestone {
+public class AdHocTimelineEvents {
   @NotEmpty private String title;
   @NotEmpty private String description;
 }
