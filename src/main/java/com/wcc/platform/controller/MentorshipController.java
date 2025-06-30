@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
@@ -64,5 +65,12 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorsPage> getMentors() {
     return ResponseEntity.ok(service.getMentors());
+  }
+
+  @GetMapping("/ad-hoc-timeline")
+  @Operation(summary = "API to retrieve ad hoc timeline page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipAdHocTimelinePage> getAdHocTimeline() {
+    return ResponseEntity.ok(service.getAdHocTimeline());
   }
 }
