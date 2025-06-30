@@ -1,5 +1,6 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
 import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
@@ -178,24 +179,13 @@ public class SetupMentorshipFactories {
   }
 
   /** Test factory for Ad Hoc Timeline Page. */
-  public static MentorshipAdHocTimelinePage createMentorshipAdHocTimelinePageTest(
-      final String fileName) {
-    try {
-      final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, MentorshipAdHocTimelinePage.class);
-    } catch (JsonProcessingException e) {
-      return createMentorshipAdHocTimelinePageTest();
-    }
-  }
-
-  /** Test factory for Ad Hoc Timeline Page. */
   public static MentorshipAdHocTimelinePage createMentorshipAdHocTimelinePageTest() {
-    final String pageId = PageType.AD_HOC_TIMELINE.getId();
-    
+    final String pageId = AD_HOC_TIMELINE.getId();
+
     return new MentorshipAdHocTimelinePage(
         pageId,
         createNoImageHeroSectionTest(),
-        new ListSection<>("Milestones", "description", null, null));
+        new ListSection<>("Events", "description", null, null));
   }
 
   /** Mentor Builder. */

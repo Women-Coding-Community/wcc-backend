@@ -9,9 +9,9 @@ import jakarta.validation.constraints.NotNull;
  * CMS Ad Hoc Timeline Page details.
  *
  * @param heroSection hero section to be shown on the ad hoc timeline page
- * @param adHocTimelineEvents section to explain the timeline for applying for an ad hoc mentor
+ * @param events section to explain the timeline for applying for an ad hoc mentor
  */
 public record MentorshipAdHocTimelinePage(
     @NotNull String id,
     @NotNull HeroSection heroSection,
-    @NotNull ListSection<AdHocTimelineEvents> adHocTimelineEvents) {}
+    @NotNull ListSection<AdHocTimelineEvents> events) {}

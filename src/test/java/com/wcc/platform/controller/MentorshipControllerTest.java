@@ -1,6 +1,5 @@
 package com.wcc.platform.controller;
 
-import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
@@ -20,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.MentorshipService;
@@ -131,15 +131,14 @@ public class MentorshipControllerTest {
 
   @Test
   void testAdHocTimelineOkResponse() throws Exception {
-    var fileName = AD_HOC_TIMELINE.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
+    MentorshipAdHocTimelinePage adHocTimelinePage = createMentorshipAdHocTimelinePageTest();
 
-    when(service.getAdHocTimeline()).thenReturn(createMentorshipAdHocTimelinePageTest(fileName));
+    when(service.getAdHocTimeline()).thenReturn(adHocTimelinePage);
 
     mockMvc
         .perform(
             MockMvcRequestFactory.getRequest(API_AD_HOC_TIMELINE).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
+        .andExpect(content().json(objectMapper.writeValueAsString(adHocTimelinePage)));
   }
 }
