@@ -8,7 +8,7 @@ import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.mentorship.LongTermPage;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
@@ -69,18 +69,19 @@ public class MentorshipService {
   /**
    * API to retrieve information about mentorship TimeLine.
    *
-   * @return Mentorship Long-Term page.
+   * @return Mentorship Long-Term TimeLine page.
    */
-  public LongTermPage getLongTermTimeLine() {
+  public LongTermTimeLinePage getLongTermTimeLine() {
     final var page = repository.findById(MENTORSHIP_LONG_TIMELINE.getId());
     if (page.isPresent()) {
       try {
-        return objectMapper.convertValue(page.get(), LongTermPage.class);
+        return objectMapper.convertValue(page.get(), LongTermTimeLinePage.class);
       } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-    return repository.getFallback(MENTORSHIP_LONG_TIMELINE, LongTermPage.class, objectMapper);
+    return repository.getFallback(
+        MENTORSHIP_LONG_TIMELINE, LongTermTimeLinePage.class, objectMapper);
   }
 
   /**

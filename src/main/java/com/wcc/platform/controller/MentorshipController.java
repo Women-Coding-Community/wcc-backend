@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.pages.mentorship.LongTermPage;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
@@ -49,7 +49,7 @@ public class MentorshipController {
   @GetMapping("/long-term-timeline")
   @Operation(summary = "API to retrieve timeline for long-term mentorship")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<LongTermPage> getMentorshipLongTermTimeLine() {
+  public ResponseEntity<LongTermTimeLinePage> getMentorshipLongTermTimeLine() {
     return ResponseEntity.ok(service.getLongTermTimeLine());
   }
 
