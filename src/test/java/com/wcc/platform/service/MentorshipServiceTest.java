@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupMentorshipFactories.createLongTermTimeLinePageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
@@ -161,5 +163,30 @@ class MentorshipServiceTest {
     var exception = assertThrows(ContentNotFoundException.class, service::getMentors);
 
     assertEquals("Content of Page MENTORS not found", exception.getMessage());
+  }
+
+  @Test
+  void whenGetLongTermTimelineGivenRecordExistingInDatabaseThenReturnValidResponse() {
+    var page = createLongTermTimeLinePageTest();
+    var mapPage =
+        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+
+    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(LongTermTimeLinePage.class))).thenReturn(page);
+
+    var response = service.getLongTermTimeLine();
+
+    assertEquals(page, response);
+  }
+
+  @Test
+  @Disabled("Temporary Disable until migrate to postgres")
+  void whenGetLongTermTimeLineGivenRecordNotInDatabaseThenThrowException() {
+    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
+        .thenReturn(Optional.empty());
+    var exception = assertThrows(ContentNotFoundException.class, service::getLongTermTimeLine);
+
+    assertEquals("Content of Page MENTORSHIP_LONG_TIMELINE not found", exception.getMessage());
   }
 }

@@ -21,6 +21,7 @@ import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.Availability;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
@@ -139,6 +140,24 @@ public class SetupMentorshipFactories {
         createListSectionTest("Mentee Code of Conduct"),
         createListSectionTest("Mentor Code of Conduct"),
         createCommonSectionOnlyLinkTest());
+  }
+
+  /** Test factory for LongTerm Timeline Page. * */
+  public static LongTermTimeLinePage createLongTermTimeLinePageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, LongTermTimeLinePage.class);
+    } catch (JsonProcessingException e) {
+      return createLongTermTimeLinePageTest();
+    }
+  }
+
+  public static LongTermTimeLinePage createLongTermTimeLinePageTest() {
+    final String pageId = PageType.MENTORSHIP_LONG_TIMELINE.getId();
+    return new LongTermTimeLinePage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        new ListSection<>("Timeline Events", "description", null, List.of()));
   }
 
   private static CommonSection createCommonSectionOnlyLinkTest() {
