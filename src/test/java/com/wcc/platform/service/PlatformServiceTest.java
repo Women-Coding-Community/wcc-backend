@@ -60,7 +60,7 @@ class PlatformServiceTest {
     List<Member> members = List.of(member);
     when(memberRepository.getAll()).thenReturn(members);
 
-    List<Member> result = service.getAll();
+    List<Member> result = service.getAllMembers();
 
     assertEquals(members, result);
     verify(memberRepository).getAll();
@@ -71,7 +71,7 @@ class PlatformServiceTest {
   void testGetAllMembersEmpty() {
     when(memberRepository.getAll()).thenReturn(null);
 
-    List<Member> result = service.getAll();
+    List<Member> result = service.getAllMembers();
 
     assertTrue(result.isEmpty());
     verify(memberRepository).getAll();

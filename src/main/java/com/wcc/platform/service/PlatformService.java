@@ -38,7 +38,7 @@ public class PlatformService {
    *
    * @return List of members.
    */
-  public List<Member> getAll() {
+  public List<Member> getAllMembers() {
     final var allMembers = memberRepository.getAll();
     if (allMembers == null) {
       return List.of();
