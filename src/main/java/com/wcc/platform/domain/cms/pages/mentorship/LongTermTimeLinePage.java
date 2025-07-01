@@ -9,4 +9,4 @@ import jakarta.validation.constraints.NotNull;
 public record LongTermTimeLinePage(
     @NotNull String id,
     @NotNull HeroSection heroSection,
-    @NotNull ListSection<LongTermTimelineEvent> longTermTimelineEvents) {}
+    @NotNull ListSection<LongTermTimelineEvent> events) {}
