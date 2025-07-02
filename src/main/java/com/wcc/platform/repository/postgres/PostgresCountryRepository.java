@@ -15,12 +15,16 @@ public class PostgresCountryRepository implements CrudRepository<Country, String
 
   @Override
   public Country create(Country entity) {
-    return null;
+    String sql = "INSERT INTO countries (country_code, country_name) VALUES (?, ?)";
+    jdbc.update(sql, entity.countryCode(), entity.countryName());
+    return entity;
   }
 
   @Override
-  public Country update(String id, Country entity) {
-    return null;
+  public Country update(String country_code, Country entity) {
+    String sql = "UPDATE countries SET country_name = ? WHERE country_code = ?";
+    jdbc.update(sql, entity.countryName(), country_code);
+    return entity;
   }
 
   @Override
