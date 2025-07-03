@@ -6,12 +6,14 @@ import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.repository.MembersRepository;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/* Member data repository */
 @Repository
 @RequiredArgsConstructor
 public class PostgresMemberRepository implements MembersRepository {
@@ -23,7 +25,7 @@ public class PostgresMemberRepository implements MembersRepository {
   private final PostgresSocialNetworkRepository socialNetworkRepository;
 
   @Override
-  public Optional<Member> findByEmail(String email) {
+  public Optional<Member> findByEmail(final String email) {
     String sql = "SELECT * FROM members WHERE email = ?";
     return jdbc.query(
         sql,
@@ -37,24 +39,24 @@ public class PostgresMemberRepository implements MembersRepository {
   }
 
   @Override
-  public Member create(Member entity) {
+  public Member create(final Member entity) {
     return null;
   }
 
   @Override
-  public Member update(Long id, Member entity) {
+  public Member update(final Long id, final Member entity) {
     return null;
   }
 
   @Override
-  public Optional<Member> findById(Long id) {
+  public Optional<Member> findById(final Long id) {
     return Optional.empty();
   }
 
   @Override
-  public void deleteById(Long id) {}
+  public void deleteById(final Long id) {}
 
-  private Member mapRowToMember(java.sql.ResultSet rs) throws java.sql.SQLException {
+  private Member mapRowToMember(final ResultSet rs) throws java.sql.SQLException {
     Long memberId = rs.getLong("id");
     Country country = countryRepository.findById(rs.getString("country_code")).orElse(null);
     List<MemberType> memberTypes = memberTypeRepository.findByMemberId(memberId);
