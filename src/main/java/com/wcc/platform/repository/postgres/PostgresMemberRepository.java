@@ -1,7 +1,12 @@
 package com.wcc.platform.repository.postgres;
 
+import com.wcc.platform.domain.cms.attributes.Country;
+import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.repository.MembersRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,10 +19,12 @@ public class PostgresMemberRepository implements MembersRepository {
   private final JdbcTemplate jdbc;
   private final PostgresCountryRepository countryRepository;
   private final PostgresMemberMemberTypeRepository memberTypeRepository;
+  private final PostgresImageRepository imageRepository;
+  private final PostgresSocialNetworkRepository socialNetworkRepository;
 
   @Override
   public Optional<Member> findByEmail(String email) {
-    /*String sql = "SELECT * FROM members WHERE email = ?";
+    String sql = "SELECT * FROM members WHERE email = ?";
     return jdbc.query(
         sql,
         rs -> {
@@ -26,8 +33,7 @@ public class PostgresMemberRepository implements MembersRepository {
           }
           return Optional.empty();
         },
-        email);*/
-    return null;
+        email);
   }
 
   @Override
@@ -48,7 +54,7 @@ public class PostgresMemberRepository implements MembersRepository {
   @Override
   public void deleteById(Long id) {}
 
-  /*private Member mapRowToMember(java.sql.ResultSet rs) throws java.sql.SQLException {
+  private Member mapRowToMember(java.sql.ResultSet rs) throws java.sql.SQLException {
     Long memberId = rs.getLong("id");
     Country country = countryRepository.findById(rs.getString("country_code")).orElse(null);
     List<MemberType> memberTypes = memberTypeRepository.findByMemberId(memberId);
@@ -67,5 +73,5 @@ public class PostgresMemberRepository implements MembersRepository {
         .images(images)
         .network(networks)
         .build();
-  }*/
+  }
 }
