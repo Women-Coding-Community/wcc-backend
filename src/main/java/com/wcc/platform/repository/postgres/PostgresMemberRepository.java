@@ -13,20 +13,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/* Member data repository */
+/** Member data repository */
 @Repository
 @RequiredArgsConstructor
 public class PostgresMemberRepository implements MembersRepository {
 
   private final JdbcTemplate jdbc;
   private final PostgresCountryRepository countryRepository;
-  private final PostgresMemberMemberTypeRepository memberTypeRepository;
+  private final PostgresMemberMemberTypeRepository memberTypeRepo;
   private final PostgresImageRepository imageRepository;
-  private final PostgresSocialNetworkRepository socialNetworkRepository;
+  private final PostgresSocialNetworkRepository socialNetworkRepo;
 
   @Override
   public Optional<Member> findByEmail(final String email) {
-    String sql = "SELECT * FROM members WHERE email = ?";
+    final String sql = "SELECT * FROM members WHERE email = ?";
     return jdbc.query(
         sql,
         rs -> {
@@ -40,7 +40,45 @@ public class PostgresMemberRepository implements MembersRepository {
 
   @Override
   public Member create(final Member entity) {
-    return null;
+    final String sql =
+        "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
+            + "country_id, status_id, bio, years_experience, spoken_language) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL) RETURNING id";
+    final Long countryId =
+        countryRepository.findCountryIdByCode(getCountryCode(entity.getCountry()));
+    final int defaultStatusId = 1;
+    final Long memberId =
+        jdbc.queryForObject(
+            sql,
+            Long.class,
+            entity.getFullName(),
+            entity.getSlackDisplayName(),
+            entity.getPosition(),
+            entity.getCompanyName(),
+            entity.getEmail(),
+            entity.getCity(),
+            countryId,
+            defaultStatusId);
+
+    // Insert member types
+    for (final MemberType type : entity.getMemberTypes()) {
+      final Long typeId = memberTypeRepo.findIdByType(type);
+      memberTypeRepo.addMemberType(memberId, typeId);
+    }
+
+    // Insert images
+    for (final Image image : entity.getImages()) {
+      imageRepository.addImage(memberId, image);
+    }
+
+    // Insert social networks
+    if (entity.getNetwork() != null) {
+      for (final SocialNetwork network : entity.getNetwork()) {
+        socialNetworkRepo.addSocialNetwork(memberId, network);
+      }
+    }
+
+    return findById(memberId).orElseThrow();
   }
 
   @Override
@@ -50,18 +88,30 @@ public class PostgresMemberRepository implements MembersRepository {
 
   @Override
   public Optional<Member> findById(final Long id) {
-    return Optional.empty();
+    final String sql = "SELECT * FROM members WHERE id = ?";
+    return jdbc.query(
+        sql,
+        rs -> {
+          if (rs.next()) {
+            return Optional.of(mapRowToMember(rs));
+          }
+          return Optional.empty();
+        },
+        id);
   }
 
   @Override
-  public void deleteById(final Long id) {}
+  public void deleteById(final Long id) {
+    // To-do: Implement deletion logic
+  }
 
+  /** Mapper method to convert ResultSet to Member object */
   private Member mapRowToMember(final ResultSet rs) throws java.sql.SQLException {
-    Long memberId = rs.getLong("id");
-    Country country = countryRepository.findById(rs.getString("country_code")).orElse(null);
-    List<MemberType> memberTypes = memberTypeRepository.findByMemberId(memberId);
-    List<Image> images = imageRepository.findByMemberId(memberId);
-    List<SocialNetwork> networks = socialNetworkRepository.findByMemberId(memberId);
+    final Long memberId = rs.getLong("id");
+    final Country country = countryRepository.findById(rs.getString("country_code")).orElse(null);
+    final List<MemberType> memberTypes = memberTypeRepo.findByMemberId(memberId);
+    final List<Image> images = imageRepository.findByMemberId(memberId);
+    final List<SocialNetwork> networks = socialNetworkRepo.findByMemberId(memberId);
 
     return Member.builder()
         .fullName(rs.getString("full_name"))
@@ -75,5 +125,9 @@ public class PostgresMemberRepository implements MembersRepository {
         .images(images)
         .network(networks)
         .build();
+  }
+
+  private String getCountryCode(final Country country) {
+    return country != null ? country.countryCode() : null;
   }
 }

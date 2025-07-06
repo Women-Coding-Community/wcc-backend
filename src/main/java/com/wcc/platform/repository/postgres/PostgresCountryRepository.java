@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/* Country data repository */
+/** Country data repository */
 @Repository
 @RequiredArgsConstructor
 public class PostgresCountryRepository implements CrudRepository<Country, String> {
@@ -16,21 +16,21 @@ public class PostgresCountryRepository implements CrudRepository<Country, String
 
   @Override
   public Country create(final Country entity) {
-    String sql = "INSERT INTO countries (country_code, country_name) VALUES (?, ?)";
+    final String sql = "INSERT INTO countries (country_code, country_name) VALUES (?, ?)";
     jdbc.update(sql, entity.countryCode(), entity.countryName());
     return entity;
   }
 
   @Override
-  public Country update(final String country_code, final Country entity) {
-    String sql = "UPDATE countries SET country_name = ? WHERE country_code = ?";
-    jdbc.update(sql, entity.countryName(), country_code);
+  public Country update(final String countryCode, final Country entity) {
+    final String sql = "UPDATE countries SET country_name = ? WHERE country_code = ?";
+    jdbc.update(sql, entity.countryName(), countryCode);
     return entity;
   }
 
   @Override
   public Optional<Country> findById(final String countryCode) {
-    String sql = "SELECT * FROM countries WHERE country_code = ?";
+    final String sql = "SELECT * FROM countries WHERE country_code = ?";
     return jdbc.query(
         sql,
         rs -> {
@@ -46,5 +46,11 @@ public class PostgresCountryRepository implements CrudRepository<Country, String
   @Override
   public void deleteById(final String countryCode) {
     jdbc.update("DELETE FROM countries WHERE country_code = ?", countryCode);
+  }
+
+  /** Retrieves the country ID associated with the specified country code. */
+  public Long findCountryIdByCode(final String countryCode) {
+    final String sql = "SELECT id FROM countries WHERE country_code = ?";
+    return jdbc.queryForObject(sql, Long.class, countryCode);
   }
 }
