@@ -41,4 +41,10 @@ public class PostgresSocialNetworkRepository {
         """;
     jdbc.update(sql, memberId, network.link(), network.type().name().toUpperCase(Locale.ENGLISH));
   }
+
+  /** Deletes all social network links associated with a specific member. */
+  public void deleteByMemberId(final Long memberId) {
+    final String sql = "DELETE FROM member_social_networks WHERE member_id = ?";
+    jdbc.update(sql, memberId);
+  }
 }

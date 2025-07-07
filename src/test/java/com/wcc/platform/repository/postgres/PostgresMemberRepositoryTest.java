@@ -8,12 +8,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.repository.postgres.component.MemberMapper;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,26 +25,14 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 class PostgresMemberRepositoryTest {
 
   private JdbcTemplate jdbc;
-  private PostgresCountryRepository countryRepository;
-  private PostgresMemberMemberTypeRepository memberTypeRepository;
   private PostgresMemberRepository repository;
+  private MemberMapper memberMapper;
 
   @BeforeEach
   void setUp() {
-    PostgresImageRepository mockImageRepo = mock(PostgresImageRepository.class);
-    PostgresSocialNetworkRepository mockSocialNetworkRepo =
-        mock(PostgresSocialNetworkRepository.class);
     jdbc = mock(JdbcTemplate.class);
-    countryRepository = mock(PostgresCountryRepository.class);
-    memberTypeRepository = mock(PostgresMemberMemberTypeRepository.class);
-    repository =
-        spy(
-            new PostgresMemberRepository(
-                jdbc,
-                countryRepository,
-                memberTypeRepository,
-                mockImageRepo,
-                mockSocialNetworkRepo));
+    memberMapper = mock(MemberMapper.class);
+    repository = spy(new PostgresMemberRepository(jdbc, memberMapper));
   }
 
   @Test
@@ -76,14 +64,11 @@ class PostgresMemberRepositoryTest {
             .network(List.of())
             .build();
 
-    when(countryRepository.findCountryIdByCode("UK")).thenReturn(1L);
-    when(jdbc.queryForObject(anyString(), eq(Long.class), any(Object[].class))).thenReturn(1L);
-    when(memberTypeRepository.findIdByType(MemberType.LEADER)).thenReturn(2L);
+    when(memberMapper.addMember(any(), anyString())).thenReturn(1L);
     doReturn(Optional.of(member)).when(repository).findById(1L);
 
-    Member created = repository.create(member);
+    Member result = repository.create(member);
 
-    assertEquals("Test User", created.getFullName());
-    verify(memberTypeRepository).addMemberType(1L, 2L);
+    assertEquals("Test User", result.getFullName());
   }
 }

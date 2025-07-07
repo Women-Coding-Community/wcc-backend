@@ -37,4 +37,10 @@ public class PostgresMemberMemberTypeRepository {
     final String sql = "DELETE FROM member_member_types WHERE member_id = ? AND member_type_id = ?";
     jdbc.update(sql, memberId, memberTypeId);
   }
+
+  /** Deletes all member types associated with a specific member. */
+  public void deleteByMemberId(final Long memberId) {
+    final String sql = "DELETE FROM member_member_types WHERE member_id = ?";
+    jdbc.update(sql, memberId);
+  }
 }

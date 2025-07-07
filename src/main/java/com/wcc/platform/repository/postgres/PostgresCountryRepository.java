@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 /** Country data repository */
 @Repository
 @RequiredArgsConstructor
-public class PostgresCountryRepository implements CrudRepository<Country, String> {
+public class PostgresCountryRepository implements CrudRepository<Country, Long> {
 
   private final JdbcTemplate jdbc;
 
@@ -22,15 +22,15 @@ public class PostgresCountryRepository implements CrudRepository<Country, String
   }
 
   @Override
-  public Country update(final String countryCode, final Country entity) {
-    final String sql = "UPDATE countries SET country_name = ? WHERE country_code = ?";
-    jdbc.update(sql, entity.countryName(), countryCode);
+  public Country update(final Long id, final Country entity) {
+    final String sql = "UPDATE countries SET country_name = ? AND country_code = ? WHERE id = ?";
+    jdbc.update(sql, entity.countryName(), entity.countryCode(), id);
     return entity;
   }
 
   @Override
-  public Optional<Country> findById(final String countryCode) {
-    final String sql = "SELECT * FROM countries WHERE country_code = ?";
+  public Optional<Country> findById(final Long id) {
+    final String sql = "SELECT * FROM countries WHERE id = ?";
     return jdbc.query(
         sql,
         rs -> {
@@ -40,12 +40,12 @@ public class PostgresCountryRepository implements CrudRepository<Country, String
           }
           return Optional.empty();
         },
-        countryCode);
+        id);
   }
 
   @Override
-  public void deleteById(final String countryCode) {
-    jdbc.update("DELETE FROM countries WHERE country_code = ?", countryCode);
+  public void deleteById(final Long id) {
+    jdbc.update("DELETE FROM countries WHERE id = ?", id);
   }
 
   /** Retrieves the country ID associated with the specified country code. */

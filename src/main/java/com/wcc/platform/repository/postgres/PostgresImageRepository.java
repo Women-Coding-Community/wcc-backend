@@ -39,4 +39,10 @@ public class PostgresImageRepository {
     jdbc.update(
         sql, memberId, image.path(), image.alt(), image.type().name().toUpperCase(Locale.ENGLISH));
   }
+
+  /** Deletes an image associated with a specific member. */
+  public void deleteByMemberId(final Long memberId) {
+    final String sql = "DELETE FROM member_images WHERE member_id = ?";
+    jdbc.update(sql, memberId);
+  }
 }

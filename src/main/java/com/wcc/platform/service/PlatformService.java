@@ -4,7 +4,7 @@ import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberDto;
-import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.MembersRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlatformService {
 
-  private final MemberRepository memberRepository;
+  private final MembersRepository membersRepository;
 
   /** Constructor . */
   @Autowired
-  public PlatformService(final MemberRepository memberRepository) {
-    this.memberRepository = memberRepository;
+  public PlatformService(final MembersRepository membersRepository) {
+    this.membersRepository = membersRepository;
   }
 
   /** Save Member into storage. */
@@ -30,7 +30,7 @@ public class PlatformService {
       throw new DuplicatedMemberException(member.getEmail());
     }
 
-    return memberRepository.save(member);
+    return membersRepository.create(member);
   }
 
   /**
@@ -39,7 +39,7 @@ public class PlatformService {
    * @return List of members.
    */
   public List<Member> getAllMembers() {
-    final var allMembers = memberRepository.getAll();
+    final var allMembers = membersRepository.getAll();
     if (allMembers == null) {
       return List.of();
     }
@@ -55,11 +55,10 @@ public class PlatformService {
    */
   public Member updateMember(final String email, final MemberDto memberDto) {
     final Optional<Member> memberOptional = emailExists(email);
-
     final Member existingMember =
         memberOptional.orElseThrow(() -> new MemberNotFoundException(email));
     final Member updatedMember = mergeToMember(existingMember, memberDto);
-    return memberRepository.update(updatedMember);
+    return membersRepository.update(membersRepository.findIdByEmail(email), updatedMember);
   }
 
   /**
@@ -69,7 +68,7 @@ public class PlatformService {
    * @return Optional with Member object or empty Optional
    */
   private Optional<Member> emailExists(final String email) {
-    return memberRepository.findByEmail(email);
+    return membersRepository.findByEmail(email);
   }
 
   /**
