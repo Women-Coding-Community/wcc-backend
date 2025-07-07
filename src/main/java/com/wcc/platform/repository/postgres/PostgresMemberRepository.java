@@ -43,7 +43,7 @@ public class PostgresMemberRepository implements MembersRepository {
   }
 
   @Override
-  public Long findIdByEmail(String email) {
+  public Long findIdByEmail(final String email) {
     final String sql = "SELECT id FROM members WHERE email = ?";
     return jdbc.queryForObject(sql, Long.class, email);
   }
@@ -69,7 +69,7 @@ public class PostgresMemberRepository implements MembersRepository {
   }
 
   @Override
-  public Member update(Long id, Member entity) {
+  public Member update(final Long id, final Member entity) {
     final String sql =
         "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
             + "company_name = ?, email = ?, city = ?, country_id = ? WHERE id = ?";
