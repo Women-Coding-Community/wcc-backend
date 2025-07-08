@@ -37,7 +37,7 @@ public class PostgresImageRepository {
         "INSERT INTO member_images (member_id, image_url, image_alt, image_type_id) "
             + "VALUES (?, ?, ?, (SELECT id FROM image_types WHERE type = ?))";
     jdbc.update(
-        sql, memberId, image.path(), image.alt(), image.type().name().toUpperCase(Locale.ENGLISH));
+        sql, memberId, image.path(), image.alt(), image.type().name().toLowerCase(Locale.ENGLISH));
   }
 
   /** Deletes an image associated with a specific member. */
