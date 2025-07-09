@@ -22,7 +22,6 @@ import lombok.ToString;
 @Data
 @Builder(toBuilder = true)
 public class Member {
-
   @NotBlank private String fullName;
   @NotBlank private String position;
   @NotBlank @Email private String email;

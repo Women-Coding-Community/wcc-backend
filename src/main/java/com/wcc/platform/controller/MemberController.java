@@ -42,7 +42,7 @@ public class MemberController {
   @Operation(summary = "API to retrieve a list of all members")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Member>> getAllMembers() {
-    final List<Member> members = platformService.getAll();
+    final List<Member> members = platformService.getAllMembers();
     return ResponseEntity.ok(members);
   }
 
