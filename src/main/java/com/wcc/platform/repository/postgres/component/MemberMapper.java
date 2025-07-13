@@ -6,7 +6,7 @@ import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
-import com.wcc.platform.repository.postgres.PostgresImageRepository;
+import com.wcc.platform.repository.postgres.PostgresMemberImageRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberMemberTypeRepository;
 import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
@@ -23,7 +23,7 @@ public class MemberMapper {
   private final JdbcTemplate jdbc;
   private final PostgresCountryRepository countryRepository;
   private final PostgresMemberMemberTypeRepository memberTypeRepo;
-  private final PostgresImageRepository imageRepository;
+  private final PostgresMemberImageRepository imageRepository;
   private final PostgresSocialNetworkRepository socialNetworkRepo;
 
   /** Mapper method to convert ResultSet to Member object */
@@ -88,7 +88,7 @@ public class MemberMapper {
     addMemberTypes(memberId, member);
 
     // Update images
-    imageRepository.deleteByMemberId(memberId);
+    imageRepository.deleteMemberImage(memberId);
     addMemberImages(memberId, member);
 
     // Update social networks
@@ -99,7 +99,7 @@ public class MemberMapper {
   /** Adds images to the member */
   private void addMemberImages(final Long memberId, final Member member) {
     if (member.getImages() != null) {
-      member.getImages().forEach(image -> imageRepository.addImage(memberId, image));
+      member.getImages().forEach(image -> imageRepository.addMemberImage(memberId, image));
     }
   }
 
@@ -110,7 +110,7 @@ public class MemberMapper {
           .getMemberTypes()
           .forEach(
               type -> {
-                final Long typeId = memberTypeRepo.findIdByType(type);
+                final Long typeId = memberTypeRepo.findMemberTypeId(type);
                 memberTypeRepo.addMemberType(memberId, typeId);
               });
     }

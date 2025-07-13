@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 /** Image data repository */
 @Repository
 @RequiredArgsConstructor
-public class PostgresImageRepository {
+public class PostgresMemberImageRepository {
   private final JdbcTemplate jdbc;
 
   /** Retrieves a list of images associated with the specified member ID. */
@@ -32,7 +32,7 @@ public class PostgresImageRepository {
   }
 
   /** Add the image for a specific member */
-  public void addImage(final Long memberId, final Image image) {
+  public void addMemberImage(final Long memberId, final Image image) {
     final String sql =
         "INSERT INTO member_images (member_id, image_url, image_alt, image_type_id) "
             + "VALUES (?, ?, ?, (SELECT id FROM image_types WHERE type = ?))";
@@ -41,7 +41,7 @@ public class PostgresImageRepository {
   }
 
   /** Deletes an image associated with a specific member. */
-  public void deleteByMemberId(final Long memberId) {
+  public void deleteMemberImage(final Long memberId) {
     final String sql = "DELETE FROM member_images WHERE member_id = ?";
     jdbc.update(sql, memberId);
   }

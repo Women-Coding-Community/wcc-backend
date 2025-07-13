@@ -21,7 +21,7 @@ public class PostgresMemberMemberTypeRepository {
   }
 
   /** Retrieves member type id associated with the specified member type. */
-  public Long findIdByType(final MemberType type) {
+  public Long findMemberTypeId(final MemberType type) {
     final String sql = "SELECT id FROM member_types WHERE name = ?";
     return jdbc.queryForObject(sql, Long.class, type.name());
   }
