@@ -1,0 +1,15 @@
+export const SCHEMAS = {
+    ABOUT_US: 'AboutUsPage',
+    CELEBRATE_HER_: 'CelebrateHerPage',
+    CODE_OF_CONDUCT: 'CodeOfConductPage',
+    COLLABORATORS_: 'CollaboratorPage',
+    EVENTS_PAGE: 'EventsPage',
+    EVENTS_FILTERS: 'Filters',
+    FOOTER_PAGE: 'FooterSection',
+    LANDING_PAGE: 'LandingPage',
+    MENTORSHIP_CODE_OF_CONDUCT: 'MentorshipCodeOfConductPage',
+    MENTORSHIP_FAQ: 'MentorshipFaqPage',
+    MENTORSHIP_OVERVIEW: 'MentorshipPage',
+    PARTNERS_PAGE: 'PartnersPage',
+    TEAM_PAGE: 'TeamPage',
+};
