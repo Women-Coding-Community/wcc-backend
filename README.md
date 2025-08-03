@@ -12,6 +12,7 @@
             * [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
             * [Google Format](#google-format)
                 * [IntelliJ JRE Config](#intellij-jre-config)
+        * [Setup PostgreSQL database](#setup-postgresql-database)
     * [Run Locally](#run-locally)
     * [Open API Documentation](#open-api-documentation)
     * [Quality Checks](#quality-checks)
@@ -142,6 +143,22 @@ Run:
 ```shell
 docker --version
 ```
+
+### Setup PostgreSQL database
+
+PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running
+the docker compose -f docker/docker-compose.yml up --build as explained
+in [Run Locally](#run-locally) section.
+
+Setup Data source in the IntelliJ.
+
+![image](docs/images/intelliJ-data-sources.png)
+
+![image](docs/images/postgres-wcc-db.png)
+
+**Note**: In case of problems with the database during the development phase,
+when changes to the db tables are frequent, from the DB source connection in IntelliJ drop the
+tables and refresh the DB. Start the application.
 
 ## Run Locally
 
