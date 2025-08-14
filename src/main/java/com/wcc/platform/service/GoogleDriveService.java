@@ -94,7 +94,6 @@ public class GoogleDriveService {
    * @param fileData File data as byte array
    * @return Google Drive file information
    */
-  // NOPMD
   public File uploadFile(final String fileName, final String contentType, final byte[] fileData) {
     try {
       final var fileMetadata = new File();

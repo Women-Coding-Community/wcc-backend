@@ -32,7 +32,7 @@ file:
 
 google:
   drive:
-    folder-id: ${GOOGLE_DRIVE_FOLDER_ID:}
+    folder-id: 1Qm3KKpqrKU0dEnUzDCwdraHGpxCja2tF
 
 management:
   endpoint:

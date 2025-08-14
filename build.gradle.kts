@@ -87,7 +87,7 @@ tasks {
         classpath = sourceSets["testInt"].runtimeClasspath
         useJUnitPlatform()
         shouldRunAfter("test")
-        timeout.set(Duration.ofMinutes(10))
+        timeout.set(Duration.ofMinutes(2))
 
         jacoco {
             isEnabled = true

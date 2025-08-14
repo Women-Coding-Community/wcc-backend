@@ -10,3 +10,5 @@ security:
 file:
   storage:
     directory: data-test
+
+GOOGLE_DRIVE_FOLDER_ID: ${GOOGLE_DRIVE_FOLDER_ID:1Qm3KKpqrKU0dEnUzDCwdraHGpxCja2tF}
