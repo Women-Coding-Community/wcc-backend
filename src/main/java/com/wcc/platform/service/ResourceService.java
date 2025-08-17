@@ -1,20 +1,24 @@
 package com.wcc.platform.service;
 
+import com.google.api.services.drive.model.FileList;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /** Service for managing resources and profile pictures. */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ResourceService {
@@ -35,6 +39,7 @@ public class ResourceService {
 
     final Resource resource =
         Resource.builder()
+            .id(UUID.randomUUID())
             .name(name)
             .description(description)
             .fileName(file.getOriginalFilename())
@@ -61,6 +66,15 @@ public class ResourceService {
   /** Searches for resources by name. */
   public List<Resource> searchResourcesByName(final String name) {
     return resourceRepo.findByNameContaining(name);
+  }
+
+  /** Searches for resources by name. */
+  public List<Resource> listAll() {
+    FileList fileList = driveService.listFiles(200);
+
+    log.info("Found file: {}", fileList);
+
+    return new ArrayList<>();
   }
 
   /** Deletes a resource. */

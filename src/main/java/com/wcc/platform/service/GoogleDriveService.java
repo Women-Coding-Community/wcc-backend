@@ -25,12 +25,14 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /** Service for interacting with Google Drive API. */
+@Slf4j
 @Service
 @SuppressWarnings("PMD.LooseCoupling")
 public class GoogleDriveService {
@@ -51,7 +53,19 @@ public class GoogleDriveService {
     this.folderIdRoot = folderIdRoot;
   }
 
-  /** Constructor that initializes the Google Drive service. */
+  /** Spring constructor: builds Drive client and reads folder id from properties. */
+  @org.springframework.beans.factory.annotation.Autowired
+  public GoogleDriveService(@Value("${google.drive.folder-id:}") final String folderIdRoot)
+      throws GeneralSecurityException, IOException {
+    final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    this.driveService =
+        new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
+            .setApplicationName(APPLICATION_NAME)
+            .build();
+    this.folderIdRoot = StringUtils.trimToEmpty(folderIdRoot);
+  }
+
+  /** Constructor that initializes the Google Drive service (no Spring). */
   public GoogleDriveService() throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
@@ -74,6 +88,8 @@ public class GoogleDriveService {
         throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
       }
       final var clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+      final String clientId = clientSecrets.getDetails().getClientId();
+      final String userKey = "user-" + (clientId == null ? "unknown" : clientId);
 
       final var flow =
           new GoogleAuthorizationCodeFlow.Builder(
@@ -81,8 +97,17 @@ public class GoogleDriveService {
               .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIR_PATH)))
               .setAccessType("offline")
               .build();
+
+      // Try to load existing credentials for this client-specific user key
+      Credential credential = flow.loadCredential(userKey);
+      if (credential != null) {
+        log.info("Using existing Google Drive credentials from '{}' for clientId '{}'. No browser authorization needed.", TOKENS_DIR_PATH, clientId);
+        return credential;
+      }
+
+      log.info("No existing credentials found for clientId '{}'. Opening browser for authorization...", clientId);
       final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-      return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+      return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userKey);
     }
   }
 
@@ -98,7 +123,11 @@ public class GoogleDriveService {
     try {
       final var fileMetadata = new File();
       fileMetadata.setName(fileName);
-      fileMetadata.setParents(Collections.singletonList(folderIdRoot));
+      if (StringUtils.isNotBlank(folderIdRoot)) {
+        fileMetadata.setParents(Collections.singletonList(folderIdRoot));
+      } else {
+        log.warn("google.drive.folder-id is blank; uploading to My Drive root without specifying parents.");
+      }
 
       final var mediaContent =
           new InputStreamContent(contentType, new ByteArrayInputStream(fileData));
@@ -116,6 +145,7 @@ public class GoogleDriveService {
 
       return file;
     } catch (IOException e) {
+      log.error("Failed to upload file to Google Drive", e);
       throw new PlatformInternalException("Failed to upload file to Google Drive", e);
     }
   }
@@ -125,6 +155,7 @@ public class GoogleDriveService {
     try {
       return uploadFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
     } catch (IOException e) {
+      log.error("Failed to upload file to Google Drive", e);
       throw new PlatformInternalException("Failed to read file data", e);
     }
   }
@@ -134,6 +165,7 @@ public class GoogleDriveService {
     try {
       driveService.files().delete(fileId).execute();
     } catch (IOException e) {
+      log.error("Failed to delete file from Google Drive", e);
       throw new PlatformInternalException("Failed to delete file from Google Drive", e);
     }
   }
@@ -143,6 +175,7 @@ public class GoogleDriveService {
     try {
       return driveService.files().get(fileId).setFields("id, name, webViewLink").execute();
     } catch (IOException e) {
+      log.error("Failed to get file from Google Drive", e);
       throw new PlatformInternalException("Failed to get file from Google Drive", e);
     }
   }
@@ -157,6 +190,7 @@ public class GoogleDriveService {
           .setFields("nextPageToken, files(id, name, webViewLink)")
           .execute();
     } catch (IOException e) {
+      log.error("Failed to list files from Google Drive", e);
       throw new PlatformInternalException("Failed to list files from Google Drive", e);
     }
   }

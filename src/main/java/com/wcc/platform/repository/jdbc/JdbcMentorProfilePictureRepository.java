@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor
 public class JdbcMentorProfilePictureRepository implements MentorProfilePictureRepository {
   private static final String INSERT_SQL =
-      "INSERT INTO mentor_profile_picture (id, mentor_email, resource_id, created_at, updated_at) "
+      "INSERT INTO mentor_profile_picture (id, mentor_email, resource_id, resource_type_id, created_at, updated_at) "
           + "VALUES (?, ?, ?, ?, ?)";
   private static final String UPDATE_SQL =
       "UPDATE mentor_profile_picture SET mentor_email = ?, resource_id = ?, updated_at = ? "
@@ -60,6 +60,7 @@ public class JdbcMentorProfilePictureRepository implements MentorProfilePictureR
         profilePicture.getId(),
         profilePicture.getMentorEmail(),
         profilePicture.getResourceId(),
+        ResourceType.PROFILE_PICTURE.getResourceTypeId(),
         profilePicture.getCreatedAt(),
         profilePicture.getUpdatedAt());
 
