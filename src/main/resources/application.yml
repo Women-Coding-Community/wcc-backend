@@ -32,7 +32,12 @@ file:
 
 google:
   drive:
-    folder-id: 1Qm3KKpqrKU0dEnUzDCwdraHGpxCja2tF
+    folder-id: folder-id
+    folders:
+      resources: folder-id
+      mentors-resources: folder-id
+      mentor-profile-pictures: folder-id
+      events: folder-id
 
 management:
   endpoint:

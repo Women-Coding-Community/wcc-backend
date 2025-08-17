@@ -17,6 +17,7 @@ import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
+import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

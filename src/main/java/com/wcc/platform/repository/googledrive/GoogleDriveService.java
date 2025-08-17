@@ -1,4 +1,4 @@
-package com.wcc.platform.service;
+package com.wcc.platform.repository.googledrive;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -124,15 +124,20 @@ public class GoogleDriveService {
    * @param fileData File data as byte array
    * @return Google Drive file information
    */
-  public File uploadFile(final String fileName, final String contentType, final byte[] fileData) {
+  public File uploadFile(
+      final String fileName,
+      final String contentType,
+      final byte[] fileData,
+      final String folderId) {
     try {
       final var fileMetadata = new File();
       fileMetadata.setName(fileName);
-      if (StringUtils.isNotBlank(folderIdRoot)) {
-        fileMetadata.setParents(Collections.singletonList(folderIdRoot));
+      if (StringUtils.isNotBlank(folderId)) {
+        fileMetadata.setParents(Collections.singletonList(folderId));
       } else {
         log.warn(
-            "google.drive.folder-id is blank; uploading to My Drive root without specifying parents.");
+            "google.drive.folder-id is blank; "
+                + "uploading to My Drive root without specifying parents.");
       }
 
       final var mediaContent =
@@ -154,6 +159,18 @@ public class GoogleDriveService {
       log.error("Failed to upload file to Google Drive", e);
       throw new PlatformInternalException("Failed to upload file to Google Drive", e);
     }
+  }
+
+  /**
+   * Uploads a file to Google Drive in the root folder.
+   *
+   * @param fileName Name of the file
+   * @param contentType MIME type of the file
+   * @param fileData File data as byte array
+   * @return Google Drive file information
+   */
+  public File uploadFile(final String fileName, final String contentType, final byte[] fileData) {
+    return uploadFile(fileName, contentType, fileData, folderIdRoot);
   }
 
   /** Uploads a file to Google Drive. */

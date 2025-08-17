@@ -14,6 +14,7 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.io.IOException;
 import java.util.List;

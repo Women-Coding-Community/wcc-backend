@@ -6,7 +6,7 @@ import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
-import java.util.ArrayList;
+import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -67,23 +67,14 @@ public class ResourceService {
     return resourceRepo.findByNameContaining(name);
   }
 
-  /** Searches for resources by name. */
-  public List<Resource> listAll() {
-    final var fileList = driveService.listFiles(10);
-    log.info("Found file: {}", fileList);
-    return new ArrayList<>();
-  }
-
   /** Deletes a resource. */
   @Transactional
   public void deleteResource(final UUID id) {
     final Resource resource = getResource(id);
-    // Delete the file from Google Drive first
-    driveService.deleteFile(resource.getDriveFileId());
-    // Remove any mentor profile picture that references this resource to satisfy FK constraints
     profilePicRepo.deleteByResourceId(id);
-    // Now delete the resource record itself
     resourceRepo.deleteById(id);
+
+    driveService.deleteFile(resource.getDriveFileId());
   }
 
   /** Uploads a mentor's profile picture. */

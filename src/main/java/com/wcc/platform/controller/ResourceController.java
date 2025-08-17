@@ -75,15 +75,6 @@ public class ResourceController {
   }
 
   /** Searches for resources by name. */
-  @GetMapping("/listAll")
-  @Operation(summary = "Search for resources by name")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<Resource>> listAllResources() {
-    final List<Resource> resources = resourceService.listAll();
-    return ResponseEntity.ok(resources);
-  }
-
-  /** Searches for resources by name. */
   @GetMapping("/search")
   @Operation(summary = "Search for resources by name")
   @ResponseStatus(HttpStatus.OK)
