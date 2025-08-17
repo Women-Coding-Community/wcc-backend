@@ -70,11 +70,7 @@ public class ResourceService {
   /** Deletes a resource. */
   @Transactional
   public void deleteResource(final UUID id) {
-    final Resource resource = getResource(id);
-    profilePicRepo.deleteByResourceId(id);
-    resourceRepo.deleteById(id);
-
-    driveService.deleteFile(resource.getDriveFileId());
+    deleteResourceAndDependencies(id);
   }
 
   /** Uploads a mentor's profile picture. */
@@ -86,12 +82,12 @@ public class ResourceService {
         profilePicRepo.findByMentorEmail(mentorEmail);
 
     if (existingPicture.isPresent()) {
-      deleteResource(existingPicture.get().getResourceId());
+      this.deleteResource(existingPicture.get().getResourceId());
       profilePicRepo.deleteByMentorEmail(mentorEmail);
     }
 
     final Resource resource =
-        uploadResource(
+        this.uploadResource(
             file,
             "Profile picture for " + mentorEmail,
             "Profile picture for mentor with email " + mentorEmail,
@@ -120,8 +116,19 @@ public class ResourceService {
   /** Deletes a mentor's profile picture. */
   @Transactional
   public void deleteMentorProfilePicture(final String mentorEmail) {
-    final MentorProfilePicture profilePicture = getMentorProfilePicture(mentorEmail);
-    deleteResource(profilePicture.getResourceId());
+    deleteProfileResources(mentorEmail);
+  }
+
+  private void deleteProfileResources(String mentorEmail) {
+    final var profilePicture = getMentorProfilePicture(mentorEmail);
+    deleteResourceAndDependencies(profilePicture.getResourceId());
     profilePicRepo.deleteByMentorEmail(mentorEmail);
+  }
+
+  private void deleteResourceAndDependencies(UUID id) {
+    final Resource resource = getResource(id);
+    profilePicRepo.deleteByResourceId(id);
+    resourceRepo.deleteById(id);
+    driveService.deleteFile(resource.getDriveFileId());
   }
 }
