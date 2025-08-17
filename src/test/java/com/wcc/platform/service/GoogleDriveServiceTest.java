@@ -113,8 +113,7 @@ class GoogleDriveServiceTest {
     PlatformInternalException exception =
         assertThrows(
             PlatformInternalException.class,
-            () ->
-                googleDriveService.uploadFile("test-file", "text/plain", "Hello world".getBytes()));
+            () -> googleDriveService.uploadFile("test-file", "text/plain", new byte[] {}));
 
     assertEquals("Failed to upload file to Google Drive", exception.getMessage());
     verify(fileCreateMock).execute();
@@ -167,20 +166,19 @@ class GoogleDriveServiceTest {
 
   @Test
   void testListFilesSuccess() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
+    Drive driveService = mock(Drive.class);
+    Drive.Files files = mock(Drive.Files.class);
     Drive.Files.List fileListMock = mock(Drive.Files.List.class);
     FileList expectedFileList = new FileList();
 
-    when(driveServiceMock.files()).thenReturn(filesMock);
-    when(filesMock.list()).thenReturn(fileListMock);
+    when(driveService.files()).thenReturn(files);
+    when(files.list()).thenReturn(fileListMock);
     when(fileListMock.setPageSize(10)).thenReturn(fileListMock);
     when(fileListMock.setFields("nextPageToken, files(id, name, webViewLink)"))
         .thenReturn(fileListMock);
     when(fileListMock.execute()).thenReturn(expectedFileList);
 
-    GoogleDriveService googleDriveService =
-        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
+    GoogleDriveService googleDriveService = new GoogleDriveService(driveService, FOLDER_ID_ROOT);
 
     FileList actualFileList = googleDriveService.listFiles(10);
 
@@ -190,24 +188,22 @@ class GoogleDriveServiceTest {
 
   @Test
   void testListFilesThrowsException() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
-    Drive.Files.List fileListMock = mock(Drive.Files.List.class);
+    Drive driveService = mock(Drive.class);
+    Drive.Files files = mock(Drive.Files.class);
+    Drive.Files.List fileList = mock(Drive.Files.List.class);
 
-    when(driveServiceMock.files()).thenReturn(filesMock);
-    when(filesMock.list()).thenReturn(fileListMock);
-    when(fileListMock.setPageSize(10)).thenReturn(fileListMock);
-    when(fileListMock.setFields("nextPageToken, files(id, name, webViewLink)"))
-        .thenReturn(fileListMock);
-    when(fileListMock.execute()).thenThrow(new IOException("Test exception"));
+    when(driveService.files()).thenReturn(files);
+    when(files.list()).thenReturn(fileList);
+    when(fileList.setPageSize(10)).thenReturn(fileList);
+    when(fileList.setFields("nextPageToken, files(id, name, webViewLink)")).thenReturn(fileList);
+    when(fileList.execute()).thenThrow(new IOException("Test exception"));
 
-    GoogleDriveService googleDriveService =
-        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
+    GoogleDriveService googleDriveService = new GoogleDriveService(driveService, FOLDER_ID_ROOT);
 
     PlatformInternalException exception =
         assertThrows(PlatformInternalException.class, () -> googleDriveService.listFiles(10));
 
     assertEquals("Failed to list files from Google Drive", exception.getMessage());
-    verify(fileListMock).execute();
+    verify(fileList).execute();
   }
 }
