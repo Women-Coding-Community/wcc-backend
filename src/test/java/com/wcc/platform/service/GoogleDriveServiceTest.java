@@ -115,7 +115,7 @@ class GoogleDriveServiceTest {
             PlatformInternalException.class,
             () -> googleDriveService.uploadFile("test-file", "text/plain", new byte[] {}));
 
-    assertEquals("Failed to upload file to Google Drive", exception.getMessage());
+    assertEquals("Failure to create permission to file in google drive", exception.getMessage());
     verify(fileCreateMock).execute();
   }
 

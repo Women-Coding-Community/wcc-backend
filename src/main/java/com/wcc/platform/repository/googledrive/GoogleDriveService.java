@@ -37,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @SuppressWarnings({"PMD.LooseCoupling", "PMD.ExcessiveImports"})
 public class GoogleDriveService {
-
   private static final String APPLICATION_NAME = "WCC Backend";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
@@ -116,8 +115,8 @@ public class GoogleDriveService {
 
       return file;
     } catch (IOException e) {
-      log.error("Failed to upload file to Google Drive", e);
-      throw new PlatformInternalException("Failed to upload file to Google Drive", e);
+      throw new PlatformInternalException(
+          "Failure to create permission to file in google drive", e);
     }
   }
 
@@ -138,8 +137,7 @@ public class GoogleDriveService {
     try {
       return uploadFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
     } catch (IOException e) {
-      log.error("Failed to upload file to Google Drive", e);
-      throw new PlatformInternalException("Failed to read file data", e);
+      throw new PlatformInternalException("Failure to upload resources to google drive.", e);
     }
   }
 
@@ -149,8 +147,8 @@ public class GoogleDriveService {
       return uploadFile(
           file.getOriginalFilename(), file.getContentType(), file.getBytes(), folderId);
     } catch (IOException e) {
-      log.error("Failed to upload file to Google Drive", e);
-      throw new PlatformInternalException("Failed to read file data", e);
+      throw new PlatformInternalException(
+          "Failure to upload resources to google drive in respective folder id.", e);
     }
   }
 
@@ -159,7 +157,8 @@ public class GoogleDriveService {
     try {
       driveService.files().delete(fileId).execute();
     } catch (IOException e) {
-      log.error("Failed to delete file from Google Drive, no problem. Continue from here...", e);
+      log.error(
+          "Failed to delete file from Google Drive, probably the file was removed manually.", e);
     }
   }
 
@@ -168,7 +167,6 @@ public class GoogleDriveService {
     try {
       return driveService.files().get(fileId).setFields("id, name, webViewLink").execute();
     } catch (IOException e) {
-      log.error("Failed to get file from Google Drive", e);
       throw new PlatformInternalException("Failed to get file from Google Drive", e);
     }
   }
@@ -214,7 +212,8 @@ public class GoogleDriveService {
       final Credential credential = flow.loadCredential(userKey);
       if (credential != null) {
         log.info(
-            "Using existing Google Drive credentials from '{}' for clientId '{}'. No browser authorization needed.",
+            "Using existing Google Drive credentials from '{}' for clientId '{}'. "
+                + "No browser authorization needed.",
             TOKENS_DIR_PATH,
             clientId);
         return credential;
