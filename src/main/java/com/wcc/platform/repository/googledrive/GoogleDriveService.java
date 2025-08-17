@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,7 +55,7 @@ public class GoogleDriveService {
   }
 
   /** Spring constructor: builds Drive client and reads folder id from properties. */
-  @org.springframework.beans.factory.annotation.Autowired
+  @Autowired
   public GoogleDriveService(@Value("${google.drive.folder-id:}") final String folderIdRoot)
       throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -73,46 +74,6 @@ public class GoogleDriveService {
             .setApplicationName(APPLICATION_NAME)
             .build();
     this.folderIdRoot = StringUtils.EMPTY;
-  }
-
-  /**
-   * Creates an authorized Credential object.
-   *
-   * @param httpTransport The network HTTP Transport.
-   * @return An authorized Credential object.
-   * @throws IOException If the credentials.json file cannot be found.
-   */
-  private Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
-    try (InputStream in = GoogleDriveService.class.getResourceAsStream(CREDS_FILE_PATH)) {
-      if (in == null) {
-        throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
-      }
-      final var clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-      final String clientId = clientSecrets.getDetails().getClientId();
-      final String userKey = "user-" + (clientId == null ? "unknown" : clientId);
-
-      final var flow =
-          new GoogleAuthorizationCodeFlow.Builder(
-                  httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-              .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIR_PATH)))
-              .setAccessType("offline")
-              .build();
-
-      final Credential credential = flow.loadCredential(userKey);
-      if (credential != null) {
-        log.info(
-            "Using existing Google Drive credentials from '{}' for clientId '{}'. No browser authorization needed.",
-            TOKENS_DIR_PATH,
-            clientId);
-        return credential;
-      }
-
-      log.info(
-          "No existing credentials found for clientId '{}'. Opening browser for authorization...",
-          clientId);
-      final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-      return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userKey);
-    }
   }
 
   /**
@@ -182,6 +143,17 @@ public class GoogleDriveService {
     }
   }
 
+  /** Uploads a file to a specific Google Drive folder. */
+  public File uploadFile(final MultipartFile file, final String folderId) {
+    try {
+      return uploadFile(
+          file.getOriginalFilename(), file.getContentType(), file.getBytes(), folderId);
+    } catch (IOException e) {
+      log.error("Failed to upload file to Google Drive", e);
+      throw new PlatformInternalException("Failed to read file data", e);
+    }
+  }
+
   /** Deletes a file from Google Drive. */
   public void deleteFile(final String fileId) {
     try {
@@ -213,6 +185,46 @@ public class GoogleDriveService {
     } catch (IOException e) {
       log.error("Failed to list files from Google Drive", e);
       throw new PlatformInternalException("Failed to list files from Google Drive", e);
+    }
+  }
+
+  /**
+   * Creates an authorized Credential object.
+   *
+   * @param httpTransport The network HTTP Transport.
+   * @return An authorized Credential object.
+   * @throws IOException If the credentials.json file cannot be found.
+   */
+  private Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
+    try (InputStream in = GoogleDriveService.class.getResourceAsStream(CREDS_FILE_PATH)) {
+      if (in == null) {
+        throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
+      }
+      final var clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+      final String clientId = clientSecrets.getDetails().getClientId();
+      final String userKey = "user-" + (clientId == null ? "unknown" : clientId);
+
+      final var flow =
+          new GoogleAuthorizationCodeFlow.Builder(
+                  httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+              .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIR_PATH)))
+              .setAccessType("offline")
+              .build();
+
+      final Credential credential = flow.loadCredential(userKey);
+      if (credential != null) {
+        log.info(
+            "Using existing Google Drive credentials from '{}' for clientId '{}'. No browser authorization needed.",
+            TOKENS_DIR_PATH,
+            clientId);
+        return credential;
+      }
+
+      log.info(
+          "No existing credentials found for clientId '{}'. Opening browser for authorization...",
+          clientId);
+      final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+      return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userKey);
     }
   }
 }

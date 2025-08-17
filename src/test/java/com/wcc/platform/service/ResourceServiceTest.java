@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.api.services.drive.model.File;
+import com.wcc.platform.configuration.GoogleDriveFoldersProperties;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -40,6 +41,8 @@ class ResourceServiceTest {
 
   @Mock private GoogleDriveService googleDriveService;
 
+  @Mock private GoogleDriveFoldersProperties driveFolders;
+
   @InjectMocks private ResourceService resourceService;
 
   private UUID resourceId;
@@ -50,6 +53,9 @@ class ResourceServiceTest {
 
   @BeforeEach
   void setUp() {
+    // Default to blank folders so the service uses the root upload overload (backward compatible)
+    org.mockito.Mockito.lenient().when(driveFolders.getResources()).thenReturn("");
+    org.mockito.Mockito.lenient().when(driveFolders.getMentorPhoto()).thenReturn("");
     resourceId = UUID.randomUUID();
 
     resource =

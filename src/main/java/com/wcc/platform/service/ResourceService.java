@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.configuration.GoogleDriveFoldersProperties;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -26,6 +27,7 @@ public class ResourceService {
   private final ResourceRepository resourceRepo;
   private final MentorProfilePictureRepository profilePicRepo;
   private final GoogleDriveService driveService;
+  private final GoogleDriveFoldersProperties driveFolders;
 
   /** Uploads a resource to Google Drive and stores its metadata in the database. */
   @Transactional
@@ -122,7 +124,11 @@ public class ResourceService {
       final String name,
       final String description,
       final ResourceType resourceType) {
-    final var driveFile = driveService.uploadFile(file);
+    final String targetFolderId = resolveFolderId(resourceType);
+    final var driveFile =
+        StringUtils.isBlank(targetFolderId)
+            ? driveService.uploadFile(file)
+            : driveService.uploadFile(file, targetFolderId);
 
     final Resource resource =
         Resource.builder()
@@ -138,5 +144,13 @@ public class ResourceService {
             .build();
 
     return resourceRepo.create(resource);
+  }
+
+  private String resolveFolderId(final ResourceType resourceType) {
+    if (resourceType == ResourceType.PROFILE_PICTURE) {
+      return StringUtils.trimToEmpty(driveFolders.getMentorPhoto());
+    }
+    // Default to general resources folder for other types (can be extended later)
+    return StringUtils.trimToEmpty(driveFolders.getResources());
   }
 }

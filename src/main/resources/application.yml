@@ -37,7 +37,7 @@ google:
     folders:
       resources: folder-id
       mentors-resources: folder-id
-      mentor-profile-pictures: folder-id
+      mentor-photo: folder-id
       events: folder-id
 
 management:
