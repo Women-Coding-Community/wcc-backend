@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,23 +34,26 @@ public class ResourceService {
       final String name,
       final String description,
       final ResourceType resourceType) {
+    return saveAndUploadResource(file, name, description, resourceType);
+  }
 
-    final var driveFile = driveService.uploadFile(file);
+  /** Deletes a mentor's profile picture. */
+  @Transactional
+  public void deleteMentorProfilePicture(final String mentorEmail) {
+    deleteProfile(mentorEmail);
+  }
 
-    final Resource resource =
-        Resource.builder()
-            .id(UUID.randomUUID())
-            .name(name)
-            .description(description)
-            .fileName(file.getOriginalFilename())
-            .contentType(file.getContentType())
-            .size(file.getSize())
-            .driveFileId(driveFile.getId())
-            .driveFileLink(driveFile.getWebViewLink())
-            .resourceType(resourceType)
-            .build();
+  /** Deletes a resource. */
+  @Transactional
+  public void deleteResource(final UUID id) {
+    deleteResourceById(id);
+  }
 
-    return resourceRepo.create(resource);
+  /** Uploads a mentor's profile picture. */
+  @Transactional
+  public MentorProfilePicture uploadMentorProfilePicture(
+      final String mentorEmail, final MultipartFile file) {
+    return uploadProfile(mentorEmail, file);
   }
 
   /** Gets a resource by ID. */
@@ -67,31 +71,28 @@ public class ResourceService {
     return resourceRepo.findByNameContaining(name);
   }
 
-  /** Deletes a resource. */
-  @Transactional
-  public void deleteResource(final UUID id) {
-    deleteResourceAndDependencies(id);
+  /** Gets a mentor's profile picture. */
+  public MentorProfilePicture getMentorProfilePicture(final String mentorEmail) {
+    return profilePicRepo
+        .findByMentorEmail(mentorEmail)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    "Profile picture not found for mentor: " + mentorEmail));
   }
 
-  /** Uploads a mentor's profile picture. */
-  @Transactional
-  public MentorProfilePicture uploadMentorProfilePicture(
-      final String mentorEmail, final MultipartFile file) {
-
+  private MentorProfilePicture uploadProfile(final String mentorEmail, final MultipartFile file) {
     final Optional<MentorProfilePicture> existingPicture =
         profilePicRepo.findByMentorEmail(mentorEmail);
 
     if (existingPicture.isPresent()) {
-      this.deleteResource(existingPicture.get().getResourceId());
+      deleteResourceById(existingPicture.get().getResourceId());
       profilePicRepo.deleteByMentorEmail(mentorEmail);
     }
 
     final Resource resource =
-        this.uploadResource(
-            file,
-            "Profile picture for " + mentorEmail,
-            "Profile picture for mentor with email " + mentorEmail,
-            ResourceType.PROFILE_PICTURE);
+        saveAndUploadResource(
+            file, StringUtils.EMPTY, StringUtils.EMPTY, ResourceType.PROFILE_PICTURE);
 
     final MentorProfilePicture profilePicture =
         MentorProfilePicture.builder()
@@ -103,32 +104,39 @@ public class ResourceService {
     return profilePicRepo.create(profilePicture);
   }
 
-  /** Gets a mentor's profile picture. */
-  public MentorProfilePicture getMentorProfilePicture(final String mentorEmail) {
-    return profilePicRepo
-        .findByMentorEmail(mentorEmail)
-        .orElseThrow(
-            () ->
-                new ResourceNotFoundException(
-                    "Profile picture not found for mentor: " + mentorEmail));
-  }
-
-  /** Deletes a mentor's profile picture. */
-  @Transactional
-  public void deleteMentorProfilePicture(final String mentorEmail) {
-    deleteProfileResources(mentorEmail);
-  }
-
-  private void deleteProfileResources(String mentorEmail) {
-    final var profilePicture = getMentorProfilePicture(mentorEmail);
-    deleteResourceAndDependencies(profilePicture.getResourceId());
-    profilePicRepo.deleteByMentorEmail(mentorEmail);
-  }
-
-  private void deleteResourceAndDependencies(UUID id) {
+  private void deleteResourceById(final UUID id) {
     final Resource resource = getResource(id);
     profilePicRepo.deleteByResourceId(id);
     resourceRepo.deleteById(id);
     driveService.deleteFile(resource.getDriveFileId());
+  }
+
+  private void deleteProfile(final String mentorEmail) {
+    final MentorProfilePicture profilePicture = getMentorProfilePicture(mentorEmail);
+    deleteResourceById(profilePicture.getResourceId());
+    profilePicRepo.deleteByMentorEmail(mentorEmail);
+  }
+
+  private Resource saveAndUploadResource(
+      final MultipartFile file,
+      final String name,
+      final String description,
+      final ResourceType resourceType) {
+    final var driveFile = driveService.uploadFile(file);
+
+    final Resource resource =
+        Resource.builder()
+            .id(UUID.randomUUID())
+            .name(name)
+            .description(description)
+            .fileName(file.getOriginalFilename())
+            .contentType(file.getContentType())
+            .size(file.getSize())
+            .driveFileId(driveFile.getId())
+            .driveFileLink(driveFile.getWebViewLink())
+            .resourceType(resourceType)
+            .build();
+
+    return resourceRepo.create(resource);
   }
 }
