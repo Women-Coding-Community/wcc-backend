@@ -1,5 +1,6 @@
 package com.wcc.platform.factories;
 
+import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
 import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
 import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
@@ -23,6 +24,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
@@ -174,6 +176,16 @@ public class SetupMentorshipFactories {
         createContactTest(),
         new ListSection<>("Study Groups", null, null, List.of(studyGroup)),
         createCustomStyleTest());
+  }
+
+  /** Test factory for Ad Hoc Timeline Page. */
+  public static MentorshipAdHocTimelinePage createMentorshipAdHocTimelinePageTest() {
+    final String pageId = AD_HOC_TIMELINE.getId();
+
+    return new MentorshipAdHocTimelinePage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        new ListSection<>("Events", "description", null, null));
   }
 
   /** Mentor Builder. */
