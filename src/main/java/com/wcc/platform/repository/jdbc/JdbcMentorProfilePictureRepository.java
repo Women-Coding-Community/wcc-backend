@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor
 public class JdbcMentorProfilePictureRepository implements MentorProfilePictureRepository {
   private static final String INSERT_SQL =
-      "INSERT INTO mentor_profile_picture (id, mentor_email, resource_id, resource_type_id, created_at, updated_at) "
+      "INSERT INTO mentor_profile_picture (id, mentor_email, resource_id, created_at, updated_at) "
           + "VALUES (?, ?, ?, ?, ?)";
   private static final String UPDATE_SQL =
       "UPDATE mentor_profile_picture SET mentor_email = ?, resource_id = ?, updated_at = ? "
@@ -38,9 +38,17 @@ public class JdbcMentorProfilePictureRepository implements MentorProfilePictureR
           + "JOIN resource r ON mpp.resource_id = r.id "
           + "JOIN resource_type rt ON r.resource_type_id = rt.id "
           + "WHERE mpp.mentor_email = ?";
+  private static final String SEL_BY_ID =
+      "SELECT mpp.*, r.*, rt.name as resource_type_name "
+          + "FROM mentor_profile_picture mpp "
+          + "JOIN resource r ON mpp.resource_id = r.id "
+          + "JOIN resource_type rt ON r.resource_type_id = rt.id "
+          + "WHERE mpp.resource_id = ?";
   private static final String DELETE_SQL = "DELETE FROM mentor_profile_picture WHERE id = ?";
   private static final String DELETE_BY_EMAIL =
       "DELETE FROM mentor_profile_picture WHERE mentor_email = ?";
+  private static final String DEL_BY_ID =
+      "DELETE FROM mentor_profile_picture WHERE resource_id = ?";
   private final JdbcTemplate jdbcTemplate;
   private final ResourceRepository repository;
   private final MentorProfilePictureRowMapper rowMapper = new MentorProfilePictureRowMapper();
@@ -60,7 +68,6 @@ public class JdbcMentorProfilePictureRepository implements MentorProfilePictureR
         profilePicture.getId(),
         profilePicture.getMentorEmail(),
         profilePicture.getResourceId(),
-        ResourceType.PROFILE_PICTURE.getResourceTypeId(),
         profilePicture.getCreatedAt(),
         profilePicture.getUpdatedAt());
 
@@ -112,6 +119,22 @@ public class JdbcMentorProfilePictureRepository implements MentorProfilePictureR
   @Override
   public void deleteByMentorEmail(final String email) {
     jdbcTemplate.update(DELETE_BY_EMAIL, email);
+  }
+
+  @Override
+  public Optional<MentorProfilePicture> findByResourceId(final UUID resourceId) {
+    try {
+      final MentorProfilePicture profilePicture =
+          jdbcTemplate.queryForObject(SEL_BY_ID, rowMapper, resourceId);
+      return Optional.ofNullable(profilePicture);
+    } catch (DataAccessException e) {
+      return Optional.empty();
+    }
+  }
+
+  @Override
+  public void deleteByResourceId(final UUID resourceId) {
+    jdbcTemplate.update(DEL_BY_ID, resourceId);
   }
 
   /** RowMapper for mapping database rows to MentorProfilePicture objects. */

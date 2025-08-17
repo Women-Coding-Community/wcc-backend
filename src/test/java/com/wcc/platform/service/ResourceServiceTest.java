@@ -182,6 +182,8 @@ class ResourceServiceTest {
     // Assert
     verify(resourceRepository, times(1)).findById(resourceId);
     verify(googleDriveService, times(1)).deleteFile("drive-file-id");
+    // Ensure dependent mentor_profile_picture entries are deleted first
+    verify(repository, times(1)).deleteByResourceId(resourceId);
     verify(resourceRepository, times(1)).deleteById(resourceId);
   }
 
@@ -252,7 +254,42 @@ class ResourceServiceTest {
     verify(repository, times(1)).findByMentorEmail("test@example.com");
     verify(resourceRepository, times(1)).findById(resourceId);
     verify(googleDriveService, times(1)).deleteFile("drive-file-id");
+    // Ensure dependent mentor_profile_picture entries are deleted via deleteResource path
+    verify(repository, times(1)).deleteByResourceId(resourceId);
     verify(resourceRepository, times(1)).deleteById(resourceId);
     verify(repository, times(1)).deleteByMentorEmail("test@example.com");
+  }
+
+  @Test
+  void uploadMentorProfilePictureShouldReplaceExistingPicture() {
+    // Arrange: existing picture present
+    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
+    when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
+    doNothing().when(googleDriveService).deleteFile(anyString());
+    doNothing().when(resourceRepository).deleteById(any(UUID.class));
+    // After deleting old, proceed to upload new
+    when(googleDriveService.uploadFile(any(MultipartFile.class))).thenReturn(driveFile);
+    when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
+    when(repository.create(any(MentorProfilePicture.class))).thenReturn(profilePicture);
+
+    // Act
+    var result = resourceService.uploadMentorProfilePicture("test@example.com", multipartFile);
+
+    // Assert
+    assertNotNull(result);
+    assertEquals("test@example.com", result.getMentorEmail());
+    assertEquals(resourceId, result.getResourceId());
+
+    // Ensure old resource and linkage are removed
+    verify(repository, times(1)).findByMentorEmail("test@example.com");
+    verify(resourceRepository, times(1)).findById(resourceId);
+    verify(googleDriveService, times(1)).deleteFile("drive-file-id");
+    verify(repository, times(1)).deleteByResourceId(resourceId);
+    verify(repository, times(1)).deleteByMentorEmail("test@example.com");
+
+    // Ensure new resource and profile picture are created
+    verify(googleDriveService, times(1)).uploadFile(any(MultipartFile.class));
+    verify(resourceRepository, times(1)).create(any(Resource.class));
+    verify(repository, times(1)).create(any(MentorProfilePicture.class));
   }
 }

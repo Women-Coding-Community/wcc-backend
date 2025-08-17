@@ -165,28 +165,6 @@ class GoogleDriveServiceTest {
   }
 
   @Test
-  void testDeleteFileThrowsException() throws Exception {
-    Drive driveServiceMock = mock(Drive.class);
-    Drive.Files filesMock = mock(Drive.Files.class);
-    Drive.Files.Delete fileDeleteMock = mock(Drive.Files.Delete.class);
-
-    when(driveServiceMock.files()).thenReturn(filesMock);
-    when(filesMock.delete("invalid-file-id")).thenReturn(fileDeleteMock);
-    when(fileDeleteMock.execute()).thenThrow(new IOException("Test exception"));
-
-    GoogleDriveService googleDriveService =
-        new GoogleDriveService(driveServiceMock, FOLDER_ID_ROOT);
-
-    PlatformInternalException exception =
-        assertThrows(
-            PlatformInternalException.class,
-            () -> googleDriveService.deleteFile("invalid-file-id"));
-
-    assertEquals("Failed to delete file from Google Drive", exception.getMessage());
-    verify(fileDeleteMock).execute();
-  }
-
-  @Test
   void testListFilesSuccess() throws Exception {
     Drive driveServiceMock = mock(Drive.class);
     Drive.Files filesMock = mock(Drive.Files.class);

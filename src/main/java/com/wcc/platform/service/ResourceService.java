@@ -1,6 +1,5 @@
 package com.wcc.platform.service;
 
-import com.google.api.services.drive.model.FileList;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -70,10 +69,8 @@ public class ResourceService {
 
   /** Searches for resources by name. */
   public List<Resource> listAll() {
-    FileList fileList = driveService.listFiles(200);
-
+    final var fileList = driveService.listFiles(10);
     log.info("Found file: {}", fileList);
-
     return new ArrayList<>();
   }
 
@@ -81,7 +78,11 @@ public class ResourceService {
   @Transactional
   public void deleteResource(final UUID id) {
     final Resource resource = getResource(id);
+    // Delete the file from Google Drive first
     driveService.deleteFile(resource.getDriveFileId());
+    // Remove any mentor profile picture that references this resource to satisfy FK constraints
+    profilePicRepo.deleteByResourceId(id);
+    // Now delete the resource record itself
     resourceRepo.deleteById(id);
   }
 

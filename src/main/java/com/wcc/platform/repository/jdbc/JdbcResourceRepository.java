@@ -45,6 +45,7 @@ public class JdbcResourceRepository implements ResourceRepository {
   private final JdbcTemplate jdbcTemplate;
   private final ResourceRowMapper rowMapper = new ResourceRowMapper();
 
+  @SuppressWarnings("PMD.LawOfDemeter")
   @Override
   public Resource create(final Resource resource) {
     final var builder = resource.toBuilder();
@@ -68,16 +69,18 @@ public class JdbcResourceRepository implements ResourceRepository {
         resourceCreated.getSize(),
         resourceCreated.getDriveFileId(),
         resourceCreated.getDriveFileLink(),
-        resourceCreated.getResourceType(),
+        resourceCreated.getResourceType().name(),
         resourceCreated.getCreatedAt(),
         resourceCreated.getUpdatedAt());
 
     return resourceCreated;
   }
 
+  @SuppressWarnings("PMD.LawOfDemeter")
   @Override
   public Resource update(final UUID id, final Resource update) {
     final var resource = update.toBuilder().id(id).updatedAt(OffsetDateTime.now()).build();
+    final var resourceType = resource.getResourceType();
 
     jdbcTemplate.update(
         UPDATE_SQL,
@@ -88,7 +91,7 @@ public class JdbcResourceRepository implements ResourceRepository {
         resource.getSize(),
         resource.getDriveFileId(),
         resource.getDriveFileLink(),
-        resource.getResourceType(),
+        resourceType.name(),
         resource.getUpdatedAt(),
         id);
 

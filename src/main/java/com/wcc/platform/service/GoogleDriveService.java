@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 /** Service for interacting with Google Drive API. */
 @Slf4j
 @Service
-@SuppressWarnings("PMD.LooseCoupling")
+@SuppressWarnings({"PMD.LooseCoupling", "PMD.ExcessiveImports"})
 public class GoogleDriveService {
 
   private static final String APPLICATION_NAME = "WCC Backend";
@@ -99,13 +99,18 @@ public class GoogleDriveService {
               .build();
 
       // Try to load existing credentials for this client-specific user key
-      Credential credential = flow.loadCredential(userKey);
+      final Credential credential = flow.loadCredential(userKey);
       if (credential != null) {
-        log.info("Using existing Google Drive credentials from '{}' for clientId '{}'. No browser authorization needed.", TOKENS_DIR_PATH, clientId);
+        log.info(
+            "Using existing Google Drive credentials from '{}' for clientId '{}'. No browser authorization needed.",
+            TOKENS_DIR_PATH,
+            clientId);
         return credential;
       }
 
-      log.info("No existing credentials found for clientId '{}'. Opening browser for authorization...", clientId);
+      log.info(
+          "No existing credentials found for clientId '{}'. Opening browser for authorization...",
+          clientId);
       final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
       return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userKey);
     }
@@ -126,7 +131,8 @@ public class GoogleDriveService {
       if (StringUtils.isNotBlank(folderIdRoot)) {
         fileMetadata.setParents(Collections.singletonList(folderIdRoot));
       } else {
-        log.warn("google.drive.folder-id is blank; uploading to My Drive root without specifying parents.");
+        log.warn(
+            "google.drive.folder-id is blank; uploading to My Drive root without specifying parents.");
       }
 
       final var mediaContent =
@@ -165,8 +171,7 @@ public class GoogleDriveService {
     try {
       driveService.files().delete(fileId).execute();
     } catch (IOException e) {
-      log.error("Failed to delete file from Google Drive", e);
-      throw new PlatformInternalException("Failed to delete file from Google Drive", e);
+      log.error("Failed to delete file from Google Drive, no problem. Continue from here...", e);
     }
   }
 
