@@ -25,4 +25,4 @@ integration-test/playwright-report
 # Google Drive Files
 StoredCredential
 src/main/resources/credentials.json
-/src/main/resources/application-local.yml
+src/main/resources/application-local.yml

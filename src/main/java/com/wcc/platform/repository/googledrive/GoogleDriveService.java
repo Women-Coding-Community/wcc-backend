@@ -98,7 +98,6 @@ public class GoogleDriveService {
               .setAccessType("offline")
               .build();
 
-      // Try to load existing credentials for this client-specific user key
       final Credential credential = flow.loadCredential(userKey);
       if (credential != null) {
         log.info(
