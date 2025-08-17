@@ -3,6 +3,7 @@ spring:
     name: wcc-backend
   profiles:
     active: default
+
   datasource:
     url: jdbc:postgresql://localhost:5432/wcc
     username: postgres
@@ -24,7 +25,7 @@ logging:
 
 security:
   api:
-    key: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4
+    key: local
 
 file:
   storage:
