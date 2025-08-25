@@ -213,6 +213,11 @@ curl -X 'GET' \
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html)
 
+## API Documentation
+
+* [Resource API Documentation](docs/resource_api.md) - API for uploading, retrieving, and managing resources and mentor profile pictures
+* [Google Drive API Setup](docs/google_drive_setup.md) - Instructions for setting up Google Drive API credentials
+
 ## Quality Checks
 
 * [Setup Quality Checks](docs/quality_checks.md)

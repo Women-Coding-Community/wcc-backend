@@ -55,6 +55,11 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("org.flywaydb:flyway-core")
 
+    // Google Drive API
+    implementation("com.google.api-client:google-api-client:2.2.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+    implementation("com.google.apis:google-api-services-drive:v3-rev20230822-2.0.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
     testImplementation("org.testcontainers:testcontainers:${testContainer}")
@@ -75,11 +80,41 @@ tasks.withType<Test> {
 }
 
 tasks {
+    val testIntegration by creating(Test::class) {
+        description = "Runs integration tests."
+        group = "verification"
+        testClassesDirs = sourceSets["testInt"].output.classesDirs
+        classpath = sourceSets["testInt"].runtimeClasspath
+        useJUnitPlatform()
+        shouldRunAfter("test")
+        timeout.set(Duration.ofMinutes(2))
+
+        jacoco {
+            isEnabled = true
+        }
+    }
+
+    val jacocoIntegrationReport by creating(JacocoReport::class) {
+        description = "Generates code coverage report for integration tests."
+        group = "verification"
+        dependsOn(testIntegration)
+
+        executionData(testIntegration)
+        sourceSets(sourceSets.main.get())
+
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+            html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/integration"))
+        }
+    }
+
     jacocoTestCoverageVerification {
         violationRules {
             rule { limit { minimum = BigDecimal.valueOf(0.7) } }
         }
     }
+
     check {
         dependsOn(jacocoTestCoverageVerification)
     }
@@ -137,13 +172,9 @@ if (project.hasProperty("localProfile")) {
     }
 }
 
-tasks.register<Test>("testIntegration") {
-    description = "Runs integration tests."
-    group = "verification"
-    testClassesDirs = sourceSets["testInt"].output.classesDirs
-    classpath = sourceSets["testInt"].runtimeClasspath
-    useJUnitPlatform()
-    shouldRunAfter("test")
+
+tasks.named<ProcessResources>("processTestIntResources") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 logging.captureStandardOutput(LogLevel.INFO)
