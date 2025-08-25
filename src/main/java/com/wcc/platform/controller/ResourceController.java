@@ -97,7 +97,7 @@ public class ResourceController {
   }
 
   /** Uploads a mentor's profile picture. */
-  @PostMapping(value = "/mentor-profile-pictures", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/mentor-profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Upload a mentor's profile picture")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MentorProfilePicture> uploadMentorProfilePicture(
@@ -111,7 +111,7 @@ public class ResourceController {
   }
 
   /** Gets a mentor's profile picture. */
-  @GetMapping("/mentor-profile-pictures/{mentorEmail}")
+  @GetMapping("/mentor-profile-picture/{mentorEmail}")
   @Operation(summary = "Get a mentor's profile picture")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorProfilePicture> getMentorProfilePicture(
@@ -123,7 +123,7 @@ public class ResourceController {
   }
 
   /** Deletes a mentor's profile picture. */
-  @DeleteMapping("/mentor-profile-pictures/{mentorEmail}")
+  @DeleteMapping("/mentor-profile-picture/{mentorEmail}")
   @Operation(summary = "Delete a mentor's profile picture")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteMentorProfilePicture(

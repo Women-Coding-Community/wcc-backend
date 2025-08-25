@@ -11,13 +11,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.api.services.drive.model.File;
-import com.wcc.platform.configuration.GoogleDriveFoldersProperties;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
+import com.wcc.platform.repository.googledrive.GoogleDriveFoldersProperties;
 import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +55,7 @@ class ResourceServiceTest {
   void setUp() {
     // Default to blank folders so the service uses the root upload overload (backward compatible)
     org.mockito.Mockito.lenient().when(driveFolders.getResources()).thenReturn("");
-    org.mockito.Mockito.lenient().when(driveFolders.getMentorPhoto()).thenReturn("");
+    org.mockito.Mockito.lenient().when(driveFolders.getMentorProfilePicture()).thenReturn("");
     resourceId = UUID.randomUUID();
 
     resource =

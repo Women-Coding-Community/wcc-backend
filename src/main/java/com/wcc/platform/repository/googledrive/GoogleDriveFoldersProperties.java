@@ -1,4 +1,4 @@
-package com.wcc.platform.configuration;
+package com.wcc.platform.repository.googledrive;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,10 +15,10 @@ public class GoogleDriveFoldersProperties {
   private String resources;
 
   /** Folder for mentors resources. */
-  private String mentorsResources;
+  private String mentorResources;
 
   /** Folder for mentor profile pictures. */
-  private String mentorPhoto;
+  private String mentorProfilePicture;
 
   /** Folder for events. */
   private String events;

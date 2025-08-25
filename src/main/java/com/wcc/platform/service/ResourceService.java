@@ -1,12 +1,12 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.configuration.GoogleDriveFoldersProperties;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
+import com.wcc.platform.repository.googledrive.GoogleDriveFoldersProperties;
 import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.util.List;
 import java.util.Optional;
@@ -148,7 +148,7 @@ public class ResourceService {
 
   private String resolveFolderId(final ResourceType resourceType) {
     if (resourceType == ResourceType.PROFILE_PICTURE) {
-      return StringUtils.trimToEmpty(driveFolders.getMentorPhoto());
+      return StringUtils.trimToEmpty(driveFolders.getMentorProfilePicture());
     }
     // Default to general resources folder for other types (can be extended later)
     return StringUtils.trimToEmpty(driveFolders.getResources());

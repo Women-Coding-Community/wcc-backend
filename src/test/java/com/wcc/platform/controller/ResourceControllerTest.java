@@ -188,7 +188,7 @@ class ResourceControllerTest {
     // Act & Assert
     mockMvc
         .perform(
-            multipart("/api/platform/v1/resources/mentor-profile-pictures")
+            multipart("/api/platform/v1/resources/mentor-profile-picture")
                 .file(multipartFile)
                 .param("mentorEmail", "test@example.com")
                 .header("X-API-KEY", "test-api-key")
@@ -207,7 +207,7 @@ class ResourceControllerTest {
     mockMvc
         .perform(
             get(
-                    "/api/platform/v1/resources/mentor-profile-pictures/{mentorEmail}",
+                    "/api/platform/v1/resources/mentor-profile-picture/{mentorEmail}",
                     "test@example.com")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -225,7 +225,7 @@ class ResourceControllerTest {
     mockMvc
         .perform(
             delete(
-                    "/api/platform/v1/resources/mentor-profile-pictures/{mentorEmail}",
+                    "/api/platform/v1/resources/mentor-profile-picture/{mentorEmail}",
                     "test@example.com")
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
