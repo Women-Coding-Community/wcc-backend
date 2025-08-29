@@ -35,6 +35,11 @@
       <property name="minimum" value="2"/>
     </properties>
   </rule>
+  <rule ref="category/java/codestyle.xml/LongVariable">
+    <properties>
+      <property name="minimum" value="21"/>
+    </properties>
+  </rule>
   <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
     <properties>
       <property name="maxDuplicateLiterals" value="10"/>

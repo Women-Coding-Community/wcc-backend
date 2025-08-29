@@ -3,6 +3,7 @@ spring:
     name: wcc-backend
   profiles:
     active: default
+
   datasource:
     url: jdbc:postgresql://localhost:5432/wcc
     username: postgres
@@ -25,11 +26,19 @@ logging:
 security:
   enabled: true
   api:
-    key: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4
+    key: local
 
 file:
   storage:
     directory: data
+
+google-drive:
+  folder-id: folder-id
+  folders:
+    resources: folder-id
+    events: folder-id
+    mentor-resources: folder-id
+    mentor-profile-picture: folder-id
 
 management:
   endpoint:
@@ -51,4 +60,3 @@ springdoc:
     tagsSorter: alpha
     operations-sorter: alpha
   paths-to-match: /api/**, /actuator/**
-

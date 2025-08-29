@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+security:
+  api:
+    key: test-api-key
+
+file:
+  storage:
+    directory: data-test
+
+google:
+  drive:
+    folder-id: test-folder-id
+
+GOOGLE_DRIVE_FOLDER_ID: ${GOOGLE_DRIVE_FOLDER_ID:1Qm3KKpqrKU0dEnUzDCwdraHGpxCja2tF}
