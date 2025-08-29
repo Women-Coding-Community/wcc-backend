@@ -55,24 +55,16 @@ public class GoogleDriveService implements FileStorageRepository {
     this.folders = folders;
   }
 
-  /** Spring constructor: prefers injected Drive bean; falls back to building a client. */
+  /** Spring constructor: builds Drive client and reads folders from properties. */
   @Autowired
-  public GoogleDriveService(
-      final org.springframework.beans.factory.ObjectProvider<Drive> driveProvider,
-      final FolderStorageProperties folders)
+  public GoogleDriveService(final FolderStorageProperties folders)
       throws GeneralSecurityException, IOException {
-    final Drive injected = driveProvider.getIfAvailable();
-    if (injected == null) {
-      final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-      this.driveService =
-          new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
-              .setApplicationName(APPLICATION_NAME)
-              .build();
-      this.folders = folders;
-    } else {
-      this.driveService = injected;
-      this.folders = folders;
-    }
+    final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    this.driveService =
+        new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
+            .setApplicationName(APPLICATION_NAME)
+            .build();
+    this.folders = folders;
   }
 
   /** Constructor that initializes the Google Drive service (no Spring). */
@@ -85,102 +77,6 @@ public class GoogleDriveService implements FileStorageRepository {
     this.folders = new FolderStorageProperties();
   }
 
-  @Override
-  public FolderStorageProperties getFolders() {
-    return folders;
-  }
-
-  /**
-   * Uploads a file to Google Drive.
-   *
-   * @param fileName Name of the file
-   * @param contentType MIME type of the file
-   * @param fileData File data as byte array
-   * @param folder folder-id from google drive.
-   * @return Google Drive file information
-   */
-  @Override
-  public FileStored uploadFile(
-      final String fileName, final String contentType, final byte[] fileData, final String folder) {
-    try {
-      final var fileMetadata = new File();
-      fileMetadata.setName(fileName);
-      if (StringUtils.isBlank(folder)) {
-        fileMetadata.setParents(Collections.singletonList(folders.getMainFolder()));
-      } else {
-        fileMetadata.setParents(Collections.singletonList(folder));
-        log.warn(
-            "google.drive.folder-id is blank; "
-                + "uploading to My Drive root without specifying parents.");
-      }
-
-      final var mediaContent =
-          new InputStreamContent(contentType, new ByteArrayInputStream(fileData));
-
-      final var file =
-          driveService
-              .files()
-              .create(fileMetadata, mediaContent)
-              .setFields("id, name, webViewLink")
-              .execute();
-
-      final var permission = new Permission().setType("anyone").setRole("reader");
-
-      driveService.permissions().create(file.getId(), permission).execute();
-
-      return new FileStored(file.getId(), file.getWebViewLink());
-    } catch (IOException e) {
-      throw new PlatformInternalException(
-          "Failure to upload resources to google drive in respective folder id.", e);
-    }
-  }
-
-  /** Uploads a file to a specific Google Drive folder. */
-  @Override
-  public FileStored uploadFile(final MultipartFile file, final String folderId) {
-    try {
-      return uploadFile(
-          file.getOriginalFilename(), file.getContentType(), file.getBytes(), folderId);
-    } catch (IOException e) {
-      throw new PlatformInternalException(
-          "Failure to upload resources to google drive in respective folder id.", e);
-    }
-  }
-
-  /** Deletes a file from Google Drive. */
-  @Override
-  public void deleteFile(final String fileId) {
-    try {
-      driveService.files().delete(fileId).execute();
-    } catch (IOException e) {
-      throw new PlatformInternalException("Failed to delete file from Google Drive", e);
-    }
-  }
-
-  /** Gets a file from Google Drive. */
-  public File getFile(final String fileId) {
-    try {
-      return driveService.files().get(fileId).setFields("id, name, webViewLink").execute();
-    } catch (IOException e) {
-      throw new PlatformInternalException("Failed to get file from Google Drive", e);
-    }
-  }
-
-  /** Lists files in Google Drive. */
-  public FileList listFiles(final int pageSize) {
-    try {
-      return driveService
-          .files()
-          .list()
-          .setPageSize(pageSize)
-          .setFields("nextPageToken, files(id, name, webViewLink)")
-          .execute();
-    } catch (IOException e) {
-      log.error("Failed to list files from Google Drive", e);
-      throw new PlatformInternalException("Failed to list files from Google Drive", e);
-    }
-  }
-
   /**
    * Creates an authorized Credential object.
    *
@@ -188,7 +84,8 @@ public class GoogleDriveService implements FileStorageRepository {
    * @return An authorized Credential object.
    * @throws IOException If the credentials.json file cannot be found.
    */
-  private Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
+  private static Credential getCredentials(final NetHttpTransport httpTransport)
+      throws IOException {
     try (InputStream in = GoogleDriveService.class.getResourceAsStream(CREDS_FILE_PATH)) {
       if (in == null) {
         throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
@@ -220,5 +117,102 @@ public class GoogleDriveService implements FileStorageRepository {
       final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
       return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userKey);
     }
+  }
+
+  @Override
+  public FolderStorageProperties getFolders() {
+    return folders;
+  }
+
+  /**
+   * Uploads a file to Google Drive.
+   *
+   * @param fileName Name of the file
+   * @param contentType MIME type of the file
+   * @param fileData File data as byte array
+   * @param folder folder-id from google drive.
+   * @return Google Drive file information
+   */
+  @Override
+  public FileStored uploadFile(
+      final String fileName, final String contentType, final byte[] fileData, final String folder) {
+    try {
+      final var fileMetadata = new File();
+      fileMetadata.setName(fileName);
+      if (StringUtils.isBlank(folder)) {
+        fileMetadata.setParents(Collections.singletonList(folders.getMainFolder()));
+        log.warn("folder-id is blank; " + "uploading to My Drive root without specifying parents.");
+      } else {
+        fileMetadata.setParents(Collections.singletonList(folder));
+      }
+
+      final var mediaContent =
+          new InputStreamContent(contentType, new ByteArrayInputStream(fileData));
+
+      final var file =
+          files().create(fileMetadata, mediaContent).setFields("id, name, webViewLink").execute();
+
+      final var permission = new Permission().setType("anyone").setRole("reader");
+
+      permissions().create(file.getId(), permission).execute();
+
+      return new FileStored(file.getId(), file.getWebViewLink());
+    } catch (IOException e) {
+      throw new PlatformInternalException(
+          "Failure to upload resources to google drive in respective folder id.", e);
+    }
+  }
+
+  /** Uploads a file to a specific Google Drive folder. */
+  @Override
+  public FileStored uploadFile(final MultipartFile file, final String folderId) {
+    try {
+      return uploadFile(
+          file.getOriginalFilename(), file.getContentType(), file.getBytes(), folderId);
+    } catch (IOException e) {
+      throw new PlatformInternalException(
+          "Failure to upload resources to google drive in respective folder id.", e);
+    }
+  }
+
+  /** Deletes a file from Google Drive. */
+  @Override
+  public void deleteFile(final String fileId) {
+    try {
+      files().delete(fileId).execute();
+    } catch (IOException e) {
+      throw new PlatformInternalException("Failed to delete file from Google Drive", e);
+    }
+  }
+
+  /** Gets a file from Google Drive. */
+  public File getFile(final String fileId) {
+    try {
+      return files().get(fileId).setFields("id, name, webViewLink").execute();
+    } catch (IOException e) {
+      throw new PlatformInternalException("Failed to get file from Google Drive", e);
+    }
+  }
+
+  /** Lists files in Google Drive. */
+  public FileList listFiles(final int pageSize) {
+    try {
+      return files()
+          .list()
+          .setPageSize(pageSize)
+          .setFields("nextPageToken, files(id, name, webViewLink)")
+          .execute();
+    } catch (IOException e) {
+      log.error("Failed to list files from Google Drive", e);
+      throw new PlatformInternalException("Failed to list files from Google Drive", e);
+    }
+  }
+
+  private Drive.Files files() {
+    return driveService.files();
+  }
+
+  private Drive.Permissions permissions() {
+    return driveService.permissions();
   }
 }

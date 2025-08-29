@@ -9,13 +9,14 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @AllArgsConstructor
 public enum ResourceType {
-  OTHER(0),
   PROFILE_PICTURE(1),
   EVENT_IMAGE(2),
   EVENT_PDF(3),
   EVENT_PRESENTATION(4),
-  MENTOR_RESOURCES(5),
-  IMAGES(6);
+  OTHER(5),
+  MENTOR_RESOURCE(6),
+  IMAGE(7),
+  RESOURCE(8);
 
   private final int resourceTypeId;
 
@@ -32,9 +33,10 @@ public enum ResourceType {
   public String toFolderId(final FolderStorageProperties properties) {
     return switch (this) {
       case PROFILE_PICTURE -> StringUtils.trimToEmpty(properties.getMentorsProfileFolder());
-      case EVENT_PDF, EVENT_PRESENTATION -> StringUtils.trimToEmpty(properties.getEventsFolder());
-      case MENTOR_RESOURCES -> StringUtils.trimToEmpty(properties.getMentorsFolder());
-      case IMAGES -> StringUtils.trimToEmpty(properties.getImagesFolder());
+      case EVENT_PDF, EVENT_IMAGE, EVENT_PRESENTATION ->
+          StringUtils.trimToEmpty(properties.getEventsFolder());
+      case MENTOR_RESOURCE -> StringUtils.trimToEmpty(properties.getMentorsFolder());
+      case IMAGE -> StringUtils.trimToEmpty(properties.getImagesFolder());
       default -> StringUtils.trimToEmpty(properties.getResourcesFolder());
     };
   }
