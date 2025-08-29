@@ -19,7 +19,7 @@ class ApiKeyFilterTest {
   @MockBean private FilterChain filterChain;
 
   @Test
-  public void shouldAllowRequestWhenSecurityDisabled() throws Exception {
+  void shouldAllowRequestWhenSecurityDisabled() throws Exception {
     ApiKeyFilter apiKeyFilter = new ApiKeyFilter(false, "test-api-key");
 
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -34,7 +34,7 @@ class ApiKeyFilterTest {
   }
 
   @Test
-  public void shouldAllowRequestWhenApiKeyMatches() throws Exception {
+  void shouldAllowRequestWhenApiKeyMatches() throws Exception {
     ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
 
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -50,9 +50,7 @@ class ApiKeyFilterTest {
   }
 
   @Test
-  public void shouldRejectRequestWhenApiKeyDoesNotMatch() throws Exception {
-    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
-
+  void shouldRejectRequestWhenApiKeyDoesNotMatch() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     PrintWriter writer = mock(PrintWriter.class);
@@ -61,6 +59,7 @@ class ApiKeyFilterTest {
     when(request.getHeader("X-API-KEY")).thenReturn("invalid-api-key");
     when(response.getWriter()).thenReturn(writer);
 
+    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
     verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -69,9 +68,7 @@ class ApiKeyFilterTest {
   }
 
   @Test
-  public void shouldRejectRequestWhenApiKeyIsMissing() throws Exception {
-    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
-
+  void shouldRejectRequestWhenApiKeyIsMissing() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     PrintWriter writer = mock(PrintWriter.class);
@@ -80,6 +77,7 @@ class ApiKeyFilterTest {
     when(request.getHeader("X-API-KEY")).thenReturn(null);
     when(response.getWriter()).thenReturn(writer);
 
+    var apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
     verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -88,7 +86,7 @@ class ApiKeyFilterTest {
   }
 
   @Test
-  public void shouldAllowRequestForNonProtectedUri() throws Exception {
+  void shouldAllowRequestForNonProtectedUri() throws Exception {
     ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
 
     HttpServletRequest request = mock(HttpServletRequest.class);
