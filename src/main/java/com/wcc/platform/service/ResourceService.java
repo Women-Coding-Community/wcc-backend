@@ -4,10 +4,9 @@ import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
+import com.wcc.platform.repository.FileStorageRepository;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
-import com.wcc.platform.repository.googledrive.GoogleDriveFoldersProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,8 +25,7 @@ public class ResourceService {
 
   private final ResourceRepository resourceRepo;
   private final MentorProfilePictureRepository profilePicRepo;
-  private final GoogleDriveService driveService;
-  private final GoogleDriveFoldersProperties driveFolders;
+  private final FileStorageRepository fileStorageRepo;
 
   /** Uploads a resource to Google Drive and stores its metadata in the database. */
   @Transactional
@@ -110,7 +108,7 @@ public class ResourceService {
     final Resource resource = getResource(id);
     profilePicRepo.deleteByResourceId(id);
     resourceRepo.deleteById(id);
-    driveService.deleteFile(resource.getDriveFileId());
+    fileStorageRepo.deleteFile(resource.getDriveFileId());
   }
 
   private void deleteProfile(final String mentorEmail) {
@@ -124,11 +122,9 @@ public class ResourceService {
       final String name,
       final String description,
       final ResourceType resourceType) {
-    final String targetFolderId = resolveFolderId(resourceType);
-    final var driveFile =
-        StringUtils.isBlank(targetFolderId)
-            ? driveService.uploadFile(file)
-            : driveService.uploadFile(file, targetFolderId);
+
+    final var folder = resourceType.toFolderId(fileStorageRepo.getFolders());
+    final var driveFile = fileStorageRepo.uploadFile(file, folder);
 
     final Resource resource =
         Resource.builder()
@@ -138,19 +134,11 @@ public class ResourceService {
             .fileName(file.getOriginalFilename())
             .contentType(file.getContentType())
             .size(file.getSize())
-            .driveFileId(driveFile.getId())
-            .driveFileLink(driveFile.getWebViewLink())
+            .driveFileId(driveFile.id())
+            .driveFileLink(driveFile.webLink())
             .resourceType(resourceType)
             .build();
 
     return resourceRepo.create(resource);
-  }
-
-  private String resolveFolderId(final ResourceType resourceType) {
-    if (resourceType == ResourceType.PROFILE_PICTURE) {
-      return StringUtils.trimToEmpty(driveFolders.getMentorProfilePicture());
-    }
-    // Default to general resources folder for other types (can be extended later)
-    return StringUtils.trimToEmpty(driveFolders.getResources());
   }
 }

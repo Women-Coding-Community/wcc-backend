@@ -60,7 +60,7 @@ class ResourceControllerTest {
             .size(1024L)
             .driveFileId("drive-file-id")
             .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
-            .resourceType(ResourceType.IMAGE)
+            .resourceType(ResourceType.EVENT_IMAGE)
             .createdAt(OffsetDateTime.now())
             .updatedAt(OffsetDateTime.now())
             .build();
@@ -86,7 +86,7 @@ class ResourceControllerTest {
             any(MultipartFile.class),
             eq("Test Resource"),
             eq("Test Description"),
-            eq(ResourceType.IMAGE)))
+            eq(ResourceType.EVENT_IMAGE)))
         .thenReturn(resource);
 
     // Act & Assert
@@ -132,7 +132,7 @@ class ResourceControllerTest {
   void testResourcesByTypeShouldReturnResourceList() throws Exception {
     // Arrange
     List<Resource> resources = Collections.singletonList(resource);
-    when(resourceService.getResourcesByType(ResourceType.IMAGE)).thenReturn(resources);
+    when(resourceService.getResourcesByType(ResourceType.EVENT_IMAGE)).thenReturn(resources);
 
     // Act & Assert
     mockMvc

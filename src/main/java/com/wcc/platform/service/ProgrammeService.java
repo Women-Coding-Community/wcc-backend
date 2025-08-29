@@ -5,7 +5,7 @@ import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;

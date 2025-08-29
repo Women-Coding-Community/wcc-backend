@@ -17,6 +17,9 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.filestorage.FileStored;
+import com.wcc.platform.properties.FolderStorageProperties;
+import com.wcc.platform.repository.FileStorageRepository;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,7 +31,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,33 +38,33 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @SuppressWarnings({"PMD.LooseCoupling", "PMD.ExcessiveImports"})
-public class GoogleDriveService {
+public class GoogleDriveService implements FileStorageRepository {
   private static final String APPLICATION_NAME = "WCC Backend";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
   private static final String CREDS_FILE_PATH = "/credentials.json";
   private static final String TOKENS_DIR_PATH = "tokens";
+
   private final Drive driveService;
 
-  private final String folderIdRoot;
+  private final FolderStorageProperties folders;
 
   /** Constructor with dependencies. */
-  public GoogleDriveService(
-      final Drive driveService, @Value("${google.drive.folder-id}") final String folderIdRoot) {
+  public GoogleDriveService(final Drive driveService, final FolderStorageProperties folders) {
     this.driveService = driveService;
-    this.folderIdRoot = folderIdRoot;
+    this.folders = folders;
   }
 
-  /** Spring constructor: builds Drive client and reads folder id from properties. */
+  /** Spring constructor: builds Drive client and reads folder from properties. */
   @Autowired
-  public GoogleDriveService(@Value("${google.drive.folder-id:}") final String folderIdRoot)
+  public GoogleDriveService(final FolderStorageProperties folders)
       throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
         new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
             .setApplicationName(APPLICATION_NAME)
             .build();
-    this.folderIdRoot = StringUtils.trimToEmpty(folderIdRoot);
+    this.folders = folders;
   }
 
   /** Constructor that initializes the Google Drive service (no Spring). */
@@ -72,7 +74,12 @@ public class GoogleDriveService {
         new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
             .setApplicationName(APPLICATION_NAME)
             .build();
-    this.folderIdRoot = StringUtils.EMPTY;
+    this.folders = new FolderStorageProperties();
+  }
+
+  @Override
+  public FolderStorageProperties getFolders() {
+    return folders;
   }
 
   /**
@@ -81,18 +88,17 @@ public class GoogleDriveService {
    * @param fileName Name of the file
    * @param contentType MIME type of the file
    * @param fileData File data as byte array
+   * @param folder folder-id from google drive.
    * @return Google Drive file information
    */
-  public File uploadFile(
-      final String fileName,
-      final String contentType,
-      final byte[] fileData,
-      final String folderId) {
+  @Override
+  public FileStored uploadFile(
+      final String fileName, final String contentType, final byte[] fileData, final String folder) {
     try {
       final var fileMetadata = new File();
       fileMetadata.setName(fileName);
-      if (StringUtils.isNotBlank(folderId)) {
-        fileMetadata.setParents(Collections.singletonList(folderId));
+      if (StringUtils.isNotBlank(folder)) {
+        fileMetadata.setParents(Collections.singletonList(folders.getMainFolder()));
       } else {
         log.warn(
             "google.drive.folder-id is blank; "
@@ -113,36 +119,16 @@ public class GoogleDriveService {
 
       driveService.permissions().create(file.getId(), permission).execute();
 
-      return file;
+      return new FileStored(file.getId(), file.getWebViewLink());
     } catch (IOException e) {
       throw new PlatformInternalException(
           "Failure to create permission to file in google drive", e);
     }
   }
 
-  /**
-   * Uploads a file to Google Drive in the root folder.
-   *
-   * @param fileName Name of the file
-   * @param contentType MIME type of the file
-   * @param fileData File data as byte array
-   * @return Google Drive file information
-   */
-  public File uploadFile(final String fileName, final String contentType, final byte[] fileData) {
-    return uploadFile(fileName, contentType, fileData, folderIdRoot);
-  }
-
-  /** Uploads a file to Google Drive. */
-  public File uploadFile(final MultipartFile file) {
-    try {
-      return uploadFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
-    } catch (IOException e) {
-      throw new PlatformInternalException("Failure to upload resources to google drive.", e);
-    }
-  }
-
   /** Uploads a file to a specific Google Drive folder. */
-  public File uploadFile(final MultipartFile file, final String folderId) {
+  @Override
+  public FileStored uploadFile(final MultipartFile file, final String folderId) {
     try {
       return uploadFile(
           file.getOriginalFilename(), file.getContentType(), file.getBytes(), folderId);

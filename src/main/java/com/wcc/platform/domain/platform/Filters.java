@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform;
 
 import com.wcc.platform.domain.cms.attributes.EventDays;
 import com.wcc.platform.domain.cms.attributes.EventType;
+import com.wcc.platform.domain.platform.type.ProgramType;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

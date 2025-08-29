@@ -4,6 +4,7 @@ import com.wcc.platform.domain.cms.attributes.EventResource;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
+import com.wcc.platform.domain.platform.type.ProgramType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

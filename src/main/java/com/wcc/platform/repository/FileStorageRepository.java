@@ -1,0 +1,44 @@
+package com.wcc.platform.repository;
+
+import com.wcc.platform.domain.platform.filestorage.FileStored;
+import com.wcc.platform.properties.FolderStorageProperties;
+import org.springframework.web.multipart.MultipartFile;
+
+/**
+ * Interface to upload files to a file storage service.
+ *
+ * <p>Currently implemented by {@link com.wcc.platform.repository.googledrive.GoogleDriveService}.
+ */
+public interface FileStorageRepository {
+
+  FolderStorageProperties getFolders();
+
+  /**
+   * Uploads a file to File Storage Service.
+   *
+   * @param fileName Name of the file
+   * @param contentType MIME type of the file
+   * @param fileData File data as byte-array
+   * @param folder Can be the folder name or folder ID
+   * @return file information
+   */
+  FileStored uploadFile(
+      final String fileName, final String contentType, final byte[] fileData, final String folder);
+
+  /**
+   * Uploads a file to a file storage service into a specified folder.
+   *
+   * @param file the file to be uploaded, represented as a {@code MultipartFile}
+   * @param folderId the identifier of the folder where the file should be uploaded
+   * @return a {@code FileStored} object containing information about the uploaded file, such as its
+   *     ID and web link
+   */
+  FileStored uploadFile(final MultipartFile file, final String folderId);
+
+  /**
+   * Deletes a file from the file storage service.
+   *
+   * @param fileId the unique identifier of the file to be deleted
+   */
+  void deleteFile(final String fileId);
+}

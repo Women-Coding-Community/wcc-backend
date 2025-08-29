@@ -21,7 +21,7 @@ class ResourceTest {
     long size = 1024L;
     String driveFileId = "driveFileId123";
     String driveFileLink = "http://drive.google.com/file/driveFileId123";
-    ResourceType resourceType = ResourceType.IMAGE;
+    ResourceType resourceType = ResourceType.EVENT_IMAGE;
     OffsetDateTime now = OffsetDateTime.now();
 
     Resource resource =
@@ -62,7 +62,7 @@ class ResourceTest {
     long newSize = 2048L;
     String newDriveFileId = "newDriveFileId456";
     String newDriveFileLink = "http://drive.google.com/file/newDriveFileId456";
-    ResourceType newResourceType = ResourceType.IMAGE;
+    ResourceType newResourceType = ResourceType.EVENT_IMAGE;
     OffsetDateTime newTime = OffsetDateTime.now();
 
     Resource resource =
@@ -156,7 +156,7 @@ class ResourceTest {
             .size(123L)
             .driveFileId("fileId")
             .driveFileLink("http://link")
-            .resourceType(ResourceType.IMAGE)
+            .resourceType(ResourceType.EVENT_IMAGE)
             .createdAt(OffsetDateTime.now())
             .updatedAt(OffsetDateTime.now())
             .build();

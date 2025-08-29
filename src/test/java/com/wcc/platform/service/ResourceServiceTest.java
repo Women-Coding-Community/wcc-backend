@@ -15,9 +15,9 @@ import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
+import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
-import com.wcc.platform.repository.googledrive.GoogleDriveFoldersProperties;
 import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ class ResourceServiceTest {
 
   @Mock private GoogleDriveService googleDriveService;
 
-  @Mock private GoogleDriveFoldersProperties driveFolders;
+  @Mock private FolderStorageProperties driveFolders;
 
   @InjectMocks private ResourceService resourceService;
 
@@ -68,7 +68,7 @@ class ResourceServiceTest {
             .size(1024L)
             .driveFileId("drive-file-id")
             .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
-            .resourceType(ResourceType.IMAGE)
+            .resourceType(ResourceType.EVENT_IMAGE)
             .build();
 
     profilePicture =
@@ -97,7 +97,7 @@ class ResourceServiceTest {
     // Act
     Resource result =
         resourceService.uploadResource(
-            multipartFile, "Test Resource", "Test Description", ResourceType.IMAGE);
+            multipartFile, "Test Resource", "Test Description", ResourceType.EVENT_IMAGE);
 
     // Assert
     assertNotNull(result);
@@ -109,7 +109,7 @@ class ResourceServiceTest {
     assertEquals(1024L, result.getSize());
     assertEquals("drive-file-id", result.getDriveFileId());
     assertEquals("https://drive.google.com/file/d/drive-file-id/view", result.getDriveFileLink());
-    assertEquals(ResourceType.IMAGE, result.getResourceType());
+    assertEquals(ResourceType.EVENT_IMAGE, result.getResourceType());
 
     verify(googleDriveService, times(1)).uploadFile(any(MultipartFile.class));
     verify(resourceRepository, times(1)).create(any(Resource.class));
@@ -146,17 +146,17 @@ class ResourceServiceTest {
   void testGetResourcesByTypeShouldReturnResourceList() {
     // Arrange
     List<Resource> resources = Collections.singletonList(resource);
-    when(resourceRepository.findByType(ResourceType.IMAGE)).thenReturn(resources);
+    when(resourceRepository.findByType(ResourceType.EVENT_IMAGE)).thenReturn(resources);
 
     // Act
-    List<Resource> result = resourceService.getResourcesByType(ResourceType.IMAGE);
+    List<Resource> result = resourceService.getResourcesByType(ResourceType.EVENT_IMAGE);
 
     // Assert
     assertNotNull(result);
     assertEquals(1, result.size());
     assertEquals(resourceId, result.getFirst().getId());
 
-    verify(resourceRepository, times(1)).findByType(ResourceType.IMAGE);
+    verify(resourceRepository, times(1)).findByType(ResourceType.EVENT_IMAGE);
   }
 
   @Test

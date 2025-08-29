@@ -1,6 +1,6 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.platform.ProgramType.BOOK_CLUB;
+import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
 import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
