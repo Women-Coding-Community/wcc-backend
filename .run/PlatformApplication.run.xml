@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PlatformApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="ACTIVE_PROFILES" value="local" />
     <module name="wcc-backend.main" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.wcc.platform.PlatformApplication" />
     <method v="2">

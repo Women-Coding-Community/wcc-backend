@@ -1,11 +1,13 @@
 package com.wcc.platform.repository.postgres;
 
+import com.wcc.platform.config.TestGoogleDriveConfig;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -20,6 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestGoogleDriveConfig.class)
 public class DefaultDatabaseSetup {
 
   @Container
@@ -27,7 +30,9 @@ public class DefaultDatabaseSetup {
       new PostgreSQLContainer<>("postgres:15")
           .withDatabaseName("testdb")
           .withUsername("testuser")
-          .withPassword("testpass");
+          .withPassword("testpass")
+          .withStartupTimeout(java.time.Duration.ofSeconds(60))
+          .withEnv("POSTGRES_HOST_AUTH_METHOD", "trust");
 
   @BeforeAll
   /* default */ static void createTable(@Autowired final DataSource dataSource) {

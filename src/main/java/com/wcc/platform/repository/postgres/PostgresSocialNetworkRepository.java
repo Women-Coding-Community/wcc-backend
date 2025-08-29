@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/** SocialNetwork and member mapping data repository */
+/** SocialNetwork and member mapping data repository. */
 @Repository
 @RequiredArgsConstructor
 public class PostgresSocialNetworkRepository {
   private final JdbcTemplate jdbc;
 
-  /** Retrieves list of social network links for a member */
+  /** Retrieves list of social network links for a member. */
   public List<SocialNetwork> findByMemberId(final Long memberId) {
     final String sql =
         """
