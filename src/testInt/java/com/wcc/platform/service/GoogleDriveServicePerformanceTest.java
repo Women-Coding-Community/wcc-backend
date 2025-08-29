@@ -8,6 +8,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
+import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.io.IOException;
@@ -32,6 +33,8 @@ class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
 
   @Autowired private Drive mockDriveService;
 
+  @Autowired private FolderStorageProperties properties;
+
   @Mock private Drive.Files mockFiles;
 
   @Mock private Drive.Files.Create mockCreate;
@@ -51,9 +54,6 @@ class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
   void shouldUploadFileWithinTimeLimit() throws IOException {
     // Given
     String fileName = "large-test-file.pdf";
-    String contentType = "application/pdf";
-    byte[] largeFileData = new byte[1024 * 1024]; // 1MB file
-
     File mockFile = new File();
     mockFile.setId("test-file-id");
     mockFile.setName(fileName);
@@ -67,7 +67,9 @@ class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
 
     // When
     Instant start = Instant.now();
-    File result = googleDriveService.uploadFile(fileName, contentType, largeFileData);
+    byte[] largeFileData = new byte[1024 * 1024]; // 1MB file
+    var result =
+        googleDriveService.uploadFile(fileName, "application/pdf", largeFileData, "folder-id");
     Instant end = Instant.now();
     Duration duration = Duration.between(start, end);
 
