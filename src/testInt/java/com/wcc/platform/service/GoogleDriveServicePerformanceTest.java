@@ -10,7 +10,6 @@ import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.googledrive.GoogleDriveService;
-import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -27,7 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 @Import(TestGoogleDriveConfig.class)
 @DisplayName("GoogleDriveService Performance Tests")
-class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
+class GoogleDriveServicePerformanceTest {
 
   @Autowired private GoogleDriveService googleDriveService;
 
@@ -45,6 +45,7 @@ class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
 
   @BeforeEach
   void setUp() throws IOException {
+    MockitoAnnotations.openMocks(this);
     when(mockDriveService.files()).thenReturn(mockFiles);
     when(mockDriveService.permissions()).thenReturn(mockPermissions);
   }

@@ -22,8 +22,7 @@ public interface FileStorageRepository {
    * @param folder Can be the folder name or folder ID
    * @return file information
    */
-  FileStored uploadFile(
-      final String fileName, final String contentType, final byte[] fileData, final String folder);
+  FileStored uploadFile(String fileName, String contentType, byte[] fileData, String folder);
 
   /**
    * Uploads a file to a file storage service into a specified folder.
@@ -33,12 +32,12 @@ public interface FileStorageRepository {
    * @return a {@code FileStored} object containing information about the uploaded file, such as its
    *     ID and web link
    */
-  FileStored uploadFile(final MultipartFile file, final String folderId);
+  FileStored uploadFile(MultipartFile file, String folderId);
 
   /**
    * Deletes a file from the file storage service.
    *
    * @param fileId the unique identifier of the file to be deleted
    */
-  void deleteFile(final String fileId);
+  void deleteFile(String fileId);
 }

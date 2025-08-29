@@ -124,7 +124,7 @@ public class ResourceService {
       final ResourceType resourceType) {
 
     final var folder = resourceType.toFolderId(fileStorageRepo.getFolders());
-    final var driveFile = fileStorageRepo.uploadFile(file, folder);
+    final var fileStored = fileStorageRepo.uploadFile(file, folder);
 
     final Resource resource =
         Resource.builder()
@@ -134,8 +134,8 @@ public class ResourceService {
             .fileName(file.getOriginalFilename())
             .contentType(file.getContentType())
             .size(file.getSize())
-            .driveFileId(driveFile.id())
-            .driveFileLink(driveFile.webLink())
+            .driveFileId(fileStored.id())
+            .driveFileLink(fileStored.webLink())
             .resourceType(resourceType)
             .build();
 

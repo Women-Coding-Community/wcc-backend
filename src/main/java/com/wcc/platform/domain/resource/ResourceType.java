@@ -29,7 +29,7 @@ public enum ResourceType {
    * @return the folder ID corresponding to the resource type, or an empty string if the mapping is
    *     undefined
    */
-  public String toFolderId(FolderStorageProperties properties) {
+  public String toFolderId(final FolderStorageProperties properties) {
     return switch (this) {
       case PROFILE_PICTURE -> StringUtils.trimToEmpty(properties.getMentorsProfileFolder());
       case EVENT_PDF, EVENT_PRESENTATION -> StringUtils.trimToEmpty(properties.getEventsFolder());

@@ -55,16 +55,24 @@ public class GoogleDriveService implements FileStorageRepository {
     this.folders = folders;
   }
 
-  /** Spring constructor: builds Drive client and reads folder from properties. */
+  /** Spring constructor: prefers injected Drive bean; falls back to building a client. */
   @Autowired
-  public GoogleDriveService(final FolderStorageProperties folders)
+  public GoogleDriveService(
+      final org.springframework.beans.factory.ObjectProvider<Drive> driveProvider,
+      final FolderStorageProperties folders)
       throws GeneralSecurityException, IOException {
-    final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    this.driveService =
-        new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
-            .setApplicationName(APPLICATION_NAME)
-            .build();
-    this.folders = folders;
+    final Drive injected = driveProvider.getIfAvailable();
+    if (injected == null) {
+      final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+      this.driveService =
+          new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
+              .setApplicationName(APPLICATION_NAME)
+              .build();
+      this.folders = folders;
+    } else {
+      this.driveService = injected;
+      this.folders = folders;
+    }
   }
 
   /** Constructor that initializes the Google Drive service (no Spring). */
@@ -97,9 +105,10 @@ public class GoogleDriveService implements FileStorageRepository {
     try {
       final var fileMetadata = new File();
       fileMetadata.setName(fileName);
-      if (StringUtils.isNotBlank(folder)) {
+      if (StringUtils.isBlank(folder)) {
         fileMetadata.setParents(Collections.singletonList(folders.getMainFolder()));
       } else {
+        fileMetadata.setParents(Collections.singletonList(folder));
         log.warn(
             "google.drive.folder-id is blank; "
                 + "uploading to My Drive root without specifying parents.");
@@ -139,6 +148,7 @@ public class GoogleDriveService implements FileStorageRepository {
   }
 
   /** Deletes a file from Google Drive. */
+  @Override
   public void deleteFile(final String fileId) {
     try {
       driveService.files().delete(fileId).execute();

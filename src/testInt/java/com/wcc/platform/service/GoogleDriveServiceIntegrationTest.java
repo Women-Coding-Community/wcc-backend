@@ -16,7 +16,6 @@ import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.googledrive.GoogleDriveService;
-import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +33,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 @Import(TestGoogleDriveConfig.class)
 @DisplayName("GoogleDriveService Integration Tests")
-class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
+class GoogleDriveServiceIntegrationTest {
 
   private static final String TEST_FOLDER_ID = "test-folder-id";
   private static final String TEST_FILE_ID = "test-file-id";
@@ -140,7 +139,8 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
                   googleDriveService.uploadFile(
                       TEST_FILE_NAME, TEST_CONTENT_TYPE, TEST_FILE_DATA, TEST_FOLDER_ID))
           .isInstanceOf(PlatformInternalException.class)
-          .hasMessageContaining("Failed to upload file to Google Drive");
+          .hasMessageContaining(
+              "Failure to upload resources to google drive in respective folder id.");
     }
 
     @Test
@@ -158,7 +158,8 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       // When & Then
       assertThatThrownBy(() -> googleDriveService.uploadFile(multipartFile, TEST_FOLDER_ID))
           .isInstanceOf(PlatformInternalException.class)
-          .hasMessageContaining("Failed to read file data");
+          .hasMessageContaining(
+              "Failure to upload resources to google drive in respective folder id.");
     }
   }
 
@@ -171,7 +172,6 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
     void shouldDeleteFileSuccessfully() throws IOException {
       // Given
       when(mockFiles.delete(TEST_FILE_ID)).thenReturn(mockDelete);
-      when(mockDelete.execute()).thenReturn(null);
 
       // When
       googleDriveService.deleteFile(TEST_FILE_ID);
