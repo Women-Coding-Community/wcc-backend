@@ -23,6 +23,7 @@ logging:
       flywaydb: DEBUG
 
 security:
+  enabled: true
   api:
     key: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4
 
