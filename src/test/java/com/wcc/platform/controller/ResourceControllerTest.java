@@ -96,7 +96,7 @@ class ResourceControllerTest {
                 .file(multipartFile)
                 .param("name", "Test Resource")
                 .param("description", "Test Description")
-                .param("resourceType", "IMAGE")
+                .param("resourceType", ResourceType.EVENT_IMAGE.name())
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
         .andExpect(status().isCreated())
@@ -109,7 +109,7 @@ class ResourceControllerTest {
         .andExpect(jsonPath("$.driveFileId").value("drive-file-id"))
         .andExpect(
             jsonPath("$.driveFileLink").value("https://drive.google.com/file/d/drive-file-id/view"))
-        .andExpect(jsonPath("$.resourceType").value("IMAGE"));
+        .andExpect(jsonPath("$.resourceType").value(ResourceType.EVENT_IMAGE.name()));
   }
 
   @Test
@@ -138,7 +138,7 @@ class ResourceControllerTest {
     mockMvc
         .perform(
             get("/api/platform/v1/resources")
-                .param("resourceType", "IMAGE")
+                .param("resourceType", ResourceType.EVENT_IMAGE.name())
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
