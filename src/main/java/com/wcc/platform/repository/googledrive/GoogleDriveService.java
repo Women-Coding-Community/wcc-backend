@@ -122,7 +122,7 @@ public class GoogleDriveService implements FileStorageRepository {
       return new FileStored(file.getId(), file.getWebViewLink());
     } catch (IOException e) {
       throw new PlatformInternalException(
-          "Failure to create permission to file in google drive", e);
+          "Failure to upload resources to google drive in respective folder id.", e);
     }
   }
 
@@ -143,8 +143,7 @@ public class GoogleDriveService implements FileStorageRepository {
     try {
       driveService.files().delete(fileId).execute();
     } catch (IOException e) {
-      log.error(
-          "Failed to delete file from Google Drive, probably the file was removed manually.", e);
+      throw new PlatformInternalException("Failed to delete file from Google Drive", e);
     }
   }
 
