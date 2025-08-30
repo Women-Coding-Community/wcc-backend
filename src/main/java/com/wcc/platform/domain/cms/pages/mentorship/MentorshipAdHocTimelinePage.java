@@ -2,7 +2,6 @@ package com.wcc.platform.domain.cms.pages.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.ListSection;
-import com.wcc.platform.domain.platform.AdHocTimelineEvents;
 import jakarta.validation.constraints.NotNull;
 
 /**

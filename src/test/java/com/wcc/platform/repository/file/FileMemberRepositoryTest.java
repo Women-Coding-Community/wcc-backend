@@ -3,7 +3,7 @@ package com.wcc.platform.repository.file;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.member.Member;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

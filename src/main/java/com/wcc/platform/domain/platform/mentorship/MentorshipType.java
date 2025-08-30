@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.platform.mentorship;
 
 /* Type of mentorship cycle */
 public enum MentorshipType {

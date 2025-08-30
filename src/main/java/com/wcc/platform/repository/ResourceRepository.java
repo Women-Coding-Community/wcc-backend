@@ -1,7 +1,7 @@
 package com.wcc.platform.repository;
 
+import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.Resource;
-import com.wcc.platform.domain.resource.ResourceType;
 import java.util.List;
 import java.util.UUID;
 

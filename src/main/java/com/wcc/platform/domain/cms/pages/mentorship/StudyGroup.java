@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.cms.pages.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import jakarta.validation.constraints.NotEmpty;

@@ -1,7 +1,7 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.platform.Mentor;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 

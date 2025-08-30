@@ -1,9 +1,14 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.platform.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.resource.ResourceContent;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

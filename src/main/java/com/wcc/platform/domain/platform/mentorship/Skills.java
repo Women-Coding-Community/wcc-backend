@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.platform.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.Experience;
 import com.wcc.platform.domain.cms.attributes.Languages;

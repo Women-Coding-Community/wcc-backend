@@ -1,6 +1,6 @@
 package com.wcc.platform.repository.postgres;
 
-import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.type.MemberType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;

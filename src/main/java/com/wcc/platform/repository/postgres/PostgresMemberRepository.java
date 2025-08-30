@@ -1,6 +1,6 @@
 package com.wcc.platform.repository.postgres;
 
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.MembersRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import java.util.List;

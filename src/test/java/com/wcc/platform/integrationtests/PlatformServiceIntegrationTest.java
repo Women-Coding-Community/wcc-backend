@@ -4,7 +4,7 @@
 // import static com.wcc.platform.factories.SetupFactories.deleteFile;
 // import static org.junit.jupiter.api.Assertions.assertEquals;
 //
-// import com.wcc.platform.domain.platform.MemberType;
+// import com.wcc.platform.domain.platform.type.MemberType;
 // import com.wcc.platform.service.PlatformService;
 // import java.io.File;
 // import org.junit.jupiter.api.BeforeEach;

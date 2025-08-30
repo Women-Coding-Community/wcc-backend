@@ -10,7 +10,7 @@ import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
-import com.wcc.platform.domain.platform.EventSection;
+import com.wcc.platform.domain.cms.pages.events.EventSection;
 import com.wcc.platform.domain.platform.Programme;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

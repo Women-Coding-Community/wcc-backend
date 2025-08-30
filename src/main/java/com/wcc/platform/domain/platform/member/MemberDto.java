@@ -1,7 +1,8 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.platform.member;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.platform.SocialNetwork;
 import java.util.List;
 
 /** MemberDto class with common attributes for all community members. */

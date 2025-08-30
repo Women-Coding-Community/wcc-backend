@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.cms.pages.events;
 
 import com.wcc.platform.domain.cms.attributes.EventDays;
 import com.wcc.platform.domain.cms.attributes.EventType;

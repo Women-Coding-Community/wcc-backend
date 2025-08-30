@@ -1,7 +1,7 @@
 package com.wcc.platform.repository.jdbc;
 
+import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.Resource;
-import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.repository.ResourceRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;

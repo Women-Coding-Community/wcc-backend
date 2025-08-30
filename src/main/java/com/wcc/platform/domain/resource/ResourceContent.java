@@ -1,8 +1,8 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.resource;
 
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.domain.platform.type.ResourceType;
+import com.wcc.platform.domain.platform.type.ContentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -24,7 +24,7 @@ public class ResourceContent {
   @NotBlank private String name;
   private String description;
   @NotBlank private String rawContent;
-  @NotNull private ResourceType type;
+  @NotNull private ContentType type;
   private List<Image> images;
   private LabelLink link;
 }

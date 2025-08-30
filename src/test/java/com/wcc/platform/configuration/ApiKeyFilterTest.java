@@ -104,8 +104,8 @@ class ApiKeyFilterTest {
   static class TestConfig {
     @Bean
     public ApiKeyFilter apiKeyFilter(
-        @Value("${security.enabled:false}") boolean securityEnabled,
-        @Value("${security.api.key:test-api-key}") String apiKey) {
+        final @Value("${security.enabled:false}") boolean securityEnabled,
+        final @Value("${security.api.key:test-api-key}") String apiKey) {
       return new ApiKeyFilter(securityEnabled, apiKey);
     }
   }

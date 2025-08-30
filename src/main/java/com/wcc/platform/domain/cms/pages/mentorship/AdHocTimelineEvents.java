@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.cms.pages.mentorship;
 
 import jakarta.validation.constraints.NotEmpty;
 

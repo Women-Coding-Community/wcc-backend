@@ -2,7 +2,6 @@ package com.wcc.platform.domain.cms.pages.aboutus;
 
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.platform.AboutHer;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 

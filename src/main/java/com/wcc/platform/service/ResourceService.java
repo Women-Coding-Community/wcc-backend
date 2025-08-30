@@ -1,9 +1,9 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
+import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
-import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.repository.FileStorageRepository;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;

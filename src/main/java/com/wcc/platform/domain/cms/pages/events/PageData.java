@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.cms.pages;
+package com.wcc.platform.domain.cms.pages.events;
 
 import java.util.List;
 
