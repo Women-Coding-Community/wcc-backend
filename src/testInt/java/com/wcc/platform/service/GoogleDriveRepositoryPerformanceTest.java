@@ -9,7 +9,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.properties.FolderStorageProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveService;
+import com.wcc.platform.repository.googledrive.GoogleDriveRepository;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -27,9 +27,9 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 @Import(TestGoogleDriveConfig.class)
 @DisplayName("GoogleDriveService Performance Tests")
-class GoogleDriveServicePerformanceTest {
+class GoogleDriveRepositoryPerformanceTest {
 
-  @Autowired private GoogleDriveService googleDriveService;
+  @Autowired private GoogleDriveRepository googleDriveRepository;
 
   @Autowired private Drive mockDriveService;
 
@@ -70,7 +70,7 @@ class GoogleDriveServicePerformanceTest {
     Instant start = Instant.now();
     byte[] largeFileData = new byte[1024 * 1024]; // 1MB file
     var result =
-        googleDriveService.uploadFile(fileName, "application/pdf", largeFileData, "folder-id");
+        googleDriveRepository.uploadFile(fileName, "application/pdf", largeFileData, "folder-id");
     Instant end = Instant.now();
     Duration duration = Duration.between(start, end);
 

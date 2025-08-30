@@ -38,7 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @SuppressWarnings({"PMD.LooseCoupling", "PMD.ExcessiveImports"})
-public class GoogleDriveService implements FileStorageRepository {
+public class GoogleDriveRepository implements FileStorageRepository {
+
   private static final String APPLICATION_NAME = "WCC Backend";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
@@ -50,14 +51,14 @@ public class GoogleDriveService implements FileStorageRepository {
   private final FolderStorageProperties folders;
 
   /** Constructor with dependencies. */
-  public GoogleDriveService(final Drive driveService, final FolderStorageProperties folders) {
+  public GoogleDriveRepository(final Drive driveService, final FolderStorageProperties folders) {
     this.driveService = driveService;
     this.folders = folders;
   }
 
   /** Spring constructor: builds Drive client and reads folders from properties. */
   @Autowired
-  public GoogleDriveService(final FolderStorageProperties folders)
+  public GoogleDriveRepository(final FolderStorageProperties folders)
       throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
@@ -68,7 +69,7 @@ public class GoogleDriveService implements FileStorageRepository {
   }
 
   /** Constructor that initializes the Google Drive service (no Spring). */
-  public GoogleDriveService() throws GeneralSecurityException, IOException {
+  public GoogleDriveRepository() throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
         new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
@@ -86,7 +87,7 @@ public class GoogleDriveService implements FileStorageRepository {
    */
   private static Credential getCredentials(final NetHttpTransport httpTransport)
       throws IOException {
-    try (InputStream in = GoogleDriveService.class.getResourceAsStream(CREDS_FILE_PATH)) {
+    try (InputStream in = GoogleDriveRepository.class.getResourceAsStream(CREDS_FILE_PATH)) {
       if (in == null) {
         throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
       }

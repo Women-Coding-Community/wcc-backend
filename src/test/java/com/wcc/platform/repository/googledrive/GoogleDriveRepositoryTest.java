@@ -1,4 +1,4 @@
-package com.wcc.platform.service;
+package com.wcc.platform.repository.googledrive;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,7 +13,6 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.properties.FolderStorageProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class GoogleDriveServiceTest {
+class GoogleDriveRepositoryTest {
 
   private static final String FOLDER_ID_ROOT = "test-folder-id";
   private final Drive driveServiceMock = mock(Drive.class);
@@ -33,14 +32,14 @@ class GoogleDriveServiceTest {
       mock(Drive.Permissions.Create.class);
 
   private FolderStorageProperties properties;
-  private GoogleDriveService service;
+  private GoogleDriveRepository service;
 
   @BeforeEach
   void setUp() {
     properties = new FolderStorageProperties();
     properties.setMainFolder(FOLDER_ID_ROOT);
 
-    service = new GoogleDriveService(driveServiceMock, properties);
+    service = new GoogleDriveRepository(driveServiceMock, properties);
   }
 
   @Test
@@ -94,7 +93,7 @@ class GoogleDriveServiceTest {
         .thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
-    var googleDriveService = new GoogleDriveService(driveServiceMock, properties);
+    var googleDriveService = new GoogleDriveRepository(driveServiceMock, properties);
 
     var actualFile = googleDriveService.uploadFile(multipartFile, FOLDER_ID_ROOT);
 
