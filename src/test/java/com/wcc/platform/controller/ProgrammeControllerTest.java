@@ -1,7 +1,7 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
-import static com.wcc.platform.domain.platform.ProgramType.BOOK_CLUB;
+import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
 import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;

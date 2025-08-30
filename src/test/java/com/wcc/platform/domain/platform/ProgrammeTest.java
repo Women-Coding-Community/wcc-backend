@@ -6,6 +6,7 @@ import static com.wcc.platform.factories.SetupProgrammeFactories.createProgramme
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.wcc.platform.domain.platform.type.ProgramType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

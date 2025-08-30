@@ -1,12 +1,20 @@
 # Google Drive API Setup Instructions
 
-## Issue: OAuth Client Deleted
+<!-- TOC -->
 
-The error message "The OAuth client was deleted" indicates that the Google Cloud OAuth client used
-for Google Drive API authentication has been deleted. To fix this issue, you need to create a new
-OAuth client and update the credentials.
+* [Google Drive API Setup Instructions](#google-drive-api-setup-instructions)
+    * [Setup Google Drive API](#setup-google-drive-api)
+        * [Steps](#steps)
+        * [Troubleshooting](#troubleshooting)
+    * [Google Drive Project's folders Setup](#google-drive-projects-folders-setup)
 
-## Steps to Fix
+<!-- TOC -->
+
+## Setup Google Drive API
+
+Enable the Google Drive API for your project in the Google Cloud Console.
+
+### Steps
 
 1. **Create a New OAuth Client in Google Cloud Console**
 
@@ -26,9 +34,9 @@ OAuth client and update the credentials.
 
    h. Note down the Client ID and Client Secret that are displayed.
 
-2. **Update the credentials.json File**
+2. **Update the `credentials.json.sample`  File**
 
-   a. Open the file `src/main/resources/credentials.json`.
+   a. Open the file and rename to `src/main/resources/credentials.json`.
 
    b. Replace the placeholder values with your actual credentials:
 
@@ -53,6 +61,8 @@ OAuth client and update the credentials.
     - `YOUR_PROJECT_ID` with your Google Cloud project ID
     - `YOUR_NEW_CLIENT_SECRET` with your actual Client Secret
 
+<b>Note:</b> Check the sample file `credentials.json.sample` for more details.
+
 3. **Enable Google Drive API**
 
    a. In the Google Cloud Console, navigate to "APIs & Services" > "Library".
@@ -73,7 +83,7 @@ OAuth client and update the credentials.
 
    d. The application will then store the authentication tokens in the `tokens` directory.
 
-## Troubleshooting
+### Troubleshooting
 
 - If you encounter any issues during authentication, check the application logs for detailed error
   messages.
@@ -81,10 +91,36 @@ OAuth client and update the credentials.
 - Ensure that the Google account you're using has the necessary permissions for the Google Drive
   folder specified in the application configuration.
 
-### Google Drive Project's folders structure
+## Google Drive Project's folders Setup
+
+### Proposed Folder Structure
 
 1. The main folder is called 'Platform'
 2. Inside the 'Platform' folder, there are subfolders:
     - `DEV`: For storing development resources from fly.io.
     - `LOCAL`: For storing local tests resources for developers.
     - `TEST`: For storing automation tests resources.
+3. Internal Sub-folder per environment
+    - EVENTS
+    - IMAGES
+    - MENTOR_PICTURES
+    - MENTOR_RESOURCES
+    - RESOURCES
+
+### Get Folder ID
+
+1. Go inside in each folder and copy the folder ID from the URL.
+2. Example: https://drive.google.com/drive/u/0/folders/12345678901234567890 the folder ID is
+   `12345678901234567890`
+3. Save the respective folder ID in the application.yml file for the respective environment.
+4. Example: for the local profile, create application-local.yml and add the following:
+   ```yaml
+   storage:
+     folders:
+       main-folder: folder_id_local_env
+       resources-folder: folder_id_local_env_and_sub_folder_resources
+       events-folder: folder_id_local_env_and_sub_folder_events
+       images-folder: folder_id_local_env_and_sub_folder_images
+       mentor-pictures-folder: folder_id_local_env_and_sub_folder_mentor_pictures
+       mentor-resources-folder: folder_id_local_env_and_sub_folder_mentor_resources
+   ```

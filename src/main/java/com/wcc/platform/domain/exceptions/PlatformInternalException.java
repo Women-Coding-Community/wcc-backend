@@ -1,7 +1,7 @@
 package com.wcc.platform.domain.exceptions;
 
 import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.domain.platform.type.ProgramType;
 
 /** Platform generic exception. */
 public class PlatformInternalException extends RuntimeException {

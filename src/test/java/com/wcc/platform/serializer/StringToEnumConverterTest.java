@@ -2,7 +2,7 @@ package com.wcc.platform.serializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.domain.platform.type.ProgramType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

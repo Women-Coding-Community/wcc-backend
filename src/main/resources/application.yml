@@ -32,13 +32,14 @@ file:
   storage:
     directory: data
 
-google-drive:
-  folder-id: folder-id
+storage:
   folders:
-    resources: folder-id
-    events: folder-id
-    mentor-resources: folder-id
-    mentor-profile-picture: folder-id
+    main-folder: folder-id
+    resources-folder: folder-id
+    events-folder: folder-id
+    mentors-folder: folder-id
+    mentors-profile-folder: folder-id
+    images-folder: folder-id
 
 management:
   endpoint:

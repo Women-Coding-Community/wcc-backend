@@ -10,15 +10,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.api.services.drive.model.File;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
+import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.domain.resource.ResourceType;
+import com.wcc.platform.properties.FolderStorageProperties;
+import com.wcc.platform.repository.FileStorageRepository;
 import com.wcc.platform.repository.MentorProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
-import com.wcc.platform.repository.googledrive.GoogleDriveFoldersProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,9 +39,7 @@ class ResourceServiceTest {
 
   @Mock private MentorProfilePictureRepository repository;
 
-  @Mock private GoogleDriveService googleDriveService;
-
-  @Mock private GoogleDriveFoldersProperties driveFolders;
+  @Mock private FileStorageRepository fileStorageRepository;
 
   @InjectMocks private ResourceService resourceService;
 
@@ -49,13 +47,20 @@ class ResourceServiceTest {
   private Resource resource;
   private MentorProfilePicture profilePicture;
   private MultipartFile multipartFile;
-  private File driveFile;
+  private FileStored fileStored;
 
   @BeforeEach
   void setUp() {
-    // Default to blank folders so the service uses the root upload overload (backward compatible)
-    org.mockito.Mockito.lenient().when(driveFolders.getResources()).thenReturn("");
-    org.mockito.Mockito.lenient().when(driveFolders.getMentorProfilePicture()).thenReturn("");
+    // Setup folders mapping
+    var folders = new FolderStorageProperties();
+    folders.setImagesFolder("images-folder-id");
+    folders.setMentorsProfileFolder("mentors-profile-folder-id");
+    folders.setResourcesFolder("resources-folder-id");
+    folders.setEventsFolder("events-folder-id");
+    folders.setMentorsFolder("mentors-folder-id");
+
+    org.mockito.Mockito.lenient().when(fileStorageRepository.getFolders()).thenReturn(folders);
+
     resourceId = UUID.randomUUID();
 
     resource =
@@ -68,7 +73,7 @@ class ResourceServiceTest {
             .size(1024L)
             .driveFileId("drive-file-id")
             .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
-            .resourceType(ResourceType.IMAGE)
+            .resourceType(ResourceType.EVENT_IMAGE)
             .build();
 
     profilePicture =
@@ -82,22 +87,21 @@ class ResourceServiceTest {
     multipartFile =
         new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image content".getBytes());
 
-    driveFile = new File();
-    driveFile.setId("drive-file-id");
-    driveFile.setName("test.jpg");
-    driveFile.setWebViewLink("https://drive.google.com/file/d/drive-file-id/view");
+    fileStored =
+        new FileStored("drive-file-id", "https://drive.google.com/file/d/drive-file-id/view");
   }
 
   @Test
   void uploadResourceShouldReturnCreatedResource() {
     // Arrange
-    when(googleDriveService.uploadFile(any(MultipartFile.class))).thenReturn(driveFile);
+    when(fileStorageRepository.uploadFile(any(MultipartFile.class), anyString()))
+        .thenReturn(fileStored);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
 
     // Act
     Resource result =
         resourceService.uploadResource(
-            multipartFile, "Test Resource", "Test Description", ResourceType.IMAGE);
+            multipartFile, "Test Resource", "Test Description", ResourceType.EVENT_IMAGE);
 
     // Assert
     assertNotNull(result);
@@ -109,9 +113,9 @@ class ResourceServiceTest {
     assertEquals(1024L, result.getSize());
     assertEquals("drive-file-id", result.getDriveFileId());
     assertEquals("https://drive.google.com/file/d/drive-file-id/view", result.getDriveFileLink());
-    assertEquals(ResourceType.IMAGE, result.getResourceType());
+    assertEquals(ResourceType.EVENT_IMAGE, result.getResourceType());
 
-    verify(googleDriveService, times(1)).uploadFile(any(MultipartFile.class));
+    verify(fileStorageRepository, times(1)).uploadFile(any(MultipartFile.class), anyString());
     verify(resourceRepository, times(1)).create(any(Resource.class));
   }
 
@@ -146,17 +150,17 @@ class ResourceServiceTest {
   void testGetResourcesByTypeShouldReturnResourceList() {
     // Arrange
     List<Resource> resources = Collections.singletonList(resource);
-    when(resourceRepository.findByType(ResourceType.IMAGE)).thenReturn(resources);
+    when(resourceRepository.findByType(ResourceType.EVENT_IMAGE)).thenReturn(resources);
 
     // Act
-    List<Resource> result = resourceService.getResourcesByType(ResourceType.IMAGE);
+    List<Resource> result = resourceService.getResourcesByType(ResourceType.EVENT_IMAGE);
 
     // Assert
     assertNotNull(result);
     assertEquals(1, result.size());
     assertEquals(resourceId, result.getFirst().getId());
 
-    verify(resourceRepository, times(1)).findByType(ResourceType.IMAGE);
+    verify(resourceRepository, times(1)).findByType(ResourceType.EVENT_IMAGE);
   }
 
   @Test
@@ -180,7 +184,7 @@ class ResourceServiceTest {
   void deleteResourceShouldDeleteResource() {
     // Arrange
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
-    doNothing().when(googleDriveService).deleteFile(anyString());
+    doNothing().when(fileStorageRepository).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
 
     // Act
@@ -188,7 +192,7 @@ class ResourceServiceTest {
 
     // Assert
     verify(resourceRepository, times(1)).findById(resourceId);
-    verify(googleDriveService, times(1)).deleteFile("drive-file-id");
+    verify(fileStorageRepository, times(1)).deleteFile("drive-file-id");
     // Ensure dependent mentor_profile_picture entries are deleted first
     verify(repository, times(1)).deleteByResourceId(resourceId);
     verify(resourceRepository, times(1)).deleteById(resourceId);
@@ -198,7 +202,8 @@ class ResourceServiceTest {
   void uploadProfilePictureShouldReturnCreatedProfilePictureWhenMentorDoesNotHaveProfilePicture() {
     // Arrange
     when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.empty());
-    when(googleDriveService.uploadFile(any(MultipartFile.class))).thenReturn(driveFile);
+    when(fileStorageRepository.uploadFile(any(MultipartFile.class), anyString()))
+        .thenReturn(fileStored);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
     when(repository.create(any(MentorProfilePicture.class))).thenReturn(profilePicture);
 
@@ -211,7 +216,7 @@ class ResourceServiceTest {
     assertEquals(resourceId, result.getResourceId());
 
     verify(repository, times(1)).findByMentorEmail("test@example.com");
-    verify(googleDriveService, times(1)).uploadFile(any(MultipartFile.class));
+    verify(fileStorageRepository, times(1)).uploadFile(any(MultipartFile.class), anyString());
     verify(resourceRepository, times(1)).create(any(Resource.class));
     verify(repository, times(1)).create(any(MentorProfilePicture.class));
   }
@@ -250,7 +255,7 @@ class ResourceServiceTest {
     // Arrange
     when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
-    doNothing().when(googleDriveService).deleteFile(anyString());
+    doNothing().when(fileStorageRepository).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
     doNothing().when(repository).deleteByMentorEmail(anyString());
 
@@ -260,7 +265,7 @@ class ResourceServiceTest {
     // Assert
     verify(repository, times(1)).findByMentorEmail("test@example.com");
     verify(resourceRepository, times(1)).findById(resourceId);
-    verify(googleDriveService, times(1)).deleteFile("drive-file-id");
+    verify(fileStorageRepository, times(1)).deleteFile("drive-file-id");
     // Ensure dependent mentor_profile_picture entries are deleted via deleteResource path
     verify(repository, times(1)).deleteByResourceId(resourceId);
     verify(resourceRepository, times(1)).deleteById(resourceId);
@@ -272,10 +277,11 @@ class ResourceServiceTest {
     // Arrange: existing picture present
     when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
-    doNothing().when(googleDriveService).deleteFile(anyString());
+    doNothing().when(fileStorageRepository).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
     // After deleting old, proceed to upload new
-    when(googleDriveService.uploadFile(any(MultipartFile.class))).thenReturn(driveFile);
+    when(fileStorageRepository.uploadFile(any(MultipartFile.class), anyString()))
+        .thenReturn(fileStored);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
     when(repository.create(any(MentorProfilePicture.class))).thenReturn(profilePicture);
 
@@ -290,12 +296,12 @@ class ResourceServiceTest {
     // Ensure old resource and linkage are removed
     verify(repository, times(1)).findByMentorEmail("test@example.com");
     verify(resourceRepository, times(1)).findById(resourceId);
-    verify(googleDriveService, times(1)).deleteFile("drive-file-id");
+    verify(fileStorageRepository, times(1)).deleteFile("drive-file-id");
     verify(repository, times(1)).deleteByResourceId(resourceId);
     verify(repository, times(1)).deleteByMentorEmail("test@example.com");
 
     // Ensure new resource and profile picture are created
-    verify(googleDriveService, times(1)).uploadFile(any(MultipartFile.class));
+    verify(fileStorageRepository, times(1)).uploadFile(any(MultipartFile.class), anyString());
     verify(resourceRepository, times(1)).create(any(Resource.class));
     verify(repository, times(1)).create(any(MentorProfilePicture.class));
   }

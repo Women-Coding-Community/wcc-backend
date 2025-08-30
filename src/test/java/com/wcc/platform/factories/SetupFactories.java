@@ -23,9 +23,9 @@ import com.wcc.platform.domain.platform.Member;
 import com.wcc.platform.domain.platform.MemberDto;
 import com.wcc.platform.domain.platform.MemberType;
 import com.wcc.platform.domain.platform.Partner;
-import com.wcc.platform.domain.platform.ProgramType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
+import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.utils.FileUtil;
 import java.util.List;
 

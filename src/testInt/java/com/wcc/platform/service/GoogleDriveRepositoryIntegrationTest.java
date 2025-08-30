@@ -14,8 +14,8 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.repository.googledrive.GoogleDriveService;
-import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
+import com.wcc.platform.properties.FolderStorageProperties;
+import com.wcc.platform.repository.googledrive.GoogleDriveRepository;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,18 +31,21 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import(TestGoogleDriveConfig.class)
+@Import({TestGoogleDriveConfig.class, com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class})
 @DisplayName("GoogleDriveService Integration Tests")
-class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
+class GoogleDriveRepositoryIntegrationTest {
 
   private static final String TEST_FOLDER_ID = "test-folder-id";
   private static final String TEST_FILE_ID = "test-file-id";
+  private static final String WEB_VIEW_LINK =
+      "https://drive.google.com/file/d/" + TEST_FILE_ID + "/view";
   private static final String TEST_FILE_NAME = "test-file.pdf";
   private static final String TEST_CONTENT_TYPE = "application/pdf";
   private static final byte[] TEST_FILE_DATA = "test file content".getBytes();
 
-  @Autowired private GoogleDriveService googleDriveService;
+  @Autowired private GoogleDriveRepository googleDriveRepository;
   @Autowired private Drive mockDriveService;
+  @Autowired private FolderStorageProperties properties;
 
   @Mock private Drive.Files mockFiles;
   @Mock private Drive.Files.Create mockCreate;
@@ -53,18 +56,14 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
   @Mock private Drive.Permissions.Create mockPermissionCreate;
 
   @BeforeEach
-  void setUp() throws IOException {
-    // Setup common mock behavior
-    when(mockDriveService.files()).thenReturn(mockFiles);
-    when(mockDriveService.permissions()).thenReturn(mockPermissions);
-  }
+  void setUp() {
+      org.mockito.MockitoAnnotations.openMocks(this);
+      when(mockDriveService.files()).thenReturn(mockFiles);
+      when(mockDriveService.permissions()).thenReturn(mockPermissions);
+    }
 
   private File createTestFile() {
-    File file = new File();
-    file.setId(TEST_FILE_ID);
-    file.setName(TEST_FILE_NAME);
-    file.setWebViewLink("https://drive.google.com/file/d/" + TEST_FILE_ID + "/view");
-    return file;
+    return GoogleDriveTestUtils.createMockFile(TEST_FILE_ID, TEST_FILE_NAME, WEB_VIEW_LINK);
   }
 
   private FileList createTestFileList() {
@@ -91,13 +90,14 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       when(mockPermissionCreate.execute()).thenReturn(new Permission());
 
       // When
-      File result =
-          googleDriveService.uploadFile(TEST_FILE_NAME, TEST_CONTENT_TYPE, TEST_FILE_DATA);
+      var result =
+          googleDriveRepository.uploadFile(
+              TEST_FILE_NAME, TEST_CONTENT_TYPE, TEST_FILE_DATA, TEST_FOLDER_ID);
 
       // Then
       assertThat(result).isNotNull();
-      assertThat(result.getId()).isEqualTo(TEST_FILE_ID);
-      assertThat(result.getName()).isEqualTo(TEST_FILE_NAME);
+      assertThat(result.id()).isEqualTo(TEST_FILE_ID);
+      assertThat(result.webLink()).isEqualTo(WEB_VIEW_LINK);
       verify(mockCreate).execute();
       verify(mockPermissionCreate).execute();
     }
@@ -118,12 +118,12 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       when(mockPermissionCreate.execute()).thenReturn(new Permission());
 
       // When
-      File result = googleDriveService.uploadFile(multipartFile);
+      var result = googleDriveRepository.uploadFile(multipartFile, TEST_FOLDER_ID);
 
       // Then
       assertThat(result).isNotNull();
-      assertThat(result.getId()).isEqualTo(TEST_FILE_ID);
-      assertThat(result.getName()).isEqualTo(TEST_FILE_NAME);
+      assertThat(result.id()).isEqualTo(TEST_FILE_ID);
+      assertThat(result.webLink()).isEqualTo(WEB_VIEW_LINK);
     }
 
     @Test
@@ -137,9 +137,11 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       // When & Then
       assertThatThrownBy(
               () ->
-                  googleDriveService.uploadFile(TEST_FILE_NAME, TEST_CONTENT_TYPE, TEST_FILE_DATA))
+                  googleDriveRepository.uploadFile(
+                      TEST_FILE_NAME, TEST_CONTENT_TYPE, TEST_FILE_DATA, TEST_FOLDER_ID))
           .isInstanceOf(PlatformInternalException.class)
-          .hasMessageContaining("Failed to upload file to Google Drive");
+          .hasMessageContaining(
+              "Failure to upload resources to google drive in respective folder id.");
     }
 
     @Test
@@ -155,9 +157,10 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
           };
 
       // When & Then
-      assertThatThrownBy(() -> googleDriveService.uploadFile(multipartFile))
+      assertThatThrownBy(() -> googleDriveRepository.uploadFile(multipartFile, TEST_FOLDER_ID))
           .isInstanceOf(PlatformInternalException.class)
-          .hasMessageContaining("Failed to read file data");
+          .hasMessageContaining(
+              "Failure to upload resources to google drive in respective folder id.");
     }
   }
 
@@ -170,10 +173,9 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
     void shouldDeleteFileSuccessfully() throws IOException {
       // Given
       when(mockFiles.delete(TEST_FILE_ID)).thenReturn(mockDelete);
-      when(mockDelete.execute()).thenReturn(null);
 
       // When
-      googleDriveService.deleteFile(TEST_FILE_ID);
+      googleDriveRepository.deleteFile(TEST_FILE_ID);
 
       // Then
       verify(mockFiles).delete(TEST_FILE_ID);
@@ -188,7 +190,7 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       doThrow(new IOException("Deletion failed")).when(mockDelete).execute();
 
       // When & Then
-      assertThatThrownBy(() -> googleDriveService.deleteFile(TEST_FILE_ID))
+      assertThatThrownBy(() -> googleDriveRepository.deleteFile(TEST_FILE_ID))
           .isInstanceOf(PlatformInternalException.class)
           .hasMessageContaining("Failed to delete file from Google Drive");
     }
@@ -208,7 +210,7 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       when(mockGet.execute()).thenReturn(expectedFile);
 
       // When
-      File result = googleDriveService.getFile(TEST_FILE_ID);
+      File result = googleDriveRepository.getFile(TEST_FILE_ID);
 
       // Then
       assertThat(result).isNotNull();
@@ -226,7 +228,7 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       when(mockGet.execute()).thenThrow(new IOException("Get file failed"));
 
       // When & Then
-      assertThatThrownBy(() -> googleDriveService.getFile(TEST_FILE_ID))
+      assertThatThrownBy(() -> googleDriveRepository.getFile(TEST_FILE_ID))
           .isInstanceOf(PlatformInternalException.class)
           .hasMessageContaining("Failed to get file from Google Drive");
     }
@@ -248,7 +250,7 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       when(mockList.execute()).thenReturn(expectedFileList);
 
       // When
-      FileList result = googleDriveService.listFiles(pageSize);
+      FileList result = googleDriveRepository.listFiles(pageSize);
 
       // Then
       assertThat(result).isNotNull();
@@ -268,7 +270,7 @@ class GoogleDriveServiceIntegrationTest extends DefaultDatabaseSetup {
       when(mockList.execute()).thenThrow(new IOException("List files failed"));
 
       // When & Then
-      assertThatThrownBy(() -> googleDriveService.listFiles(pageSize))
+      assertThatThrownBy(() -> googleDriveRepository.listFiles(pageSize))
           .isInstanceOf(PlatformInternalException.class)
           .hasMessageContaining("Failed to list files from Google Drive");
     }

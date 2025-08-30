@@ -40,7 +40,7 @@ class JdbcResourceRepositoryTest {
             .size(1000L)
             .driveFileId("drive123")
             .driveFileLink("http://drive.google.com/test")
-            .resourceType(ResourceType.IMAGE)
+            .resourceType(ResourceType.EVENT_IMAGE)
             .createdAt(OffsetDateTime.now())
             .updatedAt(OffsetDateTime.now())
             .build();
@@ -129,7 +129,7 @@ class JdbcResourceRepositoryTest {
   void findByTypeShouldReturnEmptyListWhenNoResourcesMatch() {
     when(jdbcTemplate.query(anyString(), any(RowMapper.class), anyString())).thenReturn(List.of());
 
-    List<Resource> found = repository.findByType(ResourceType.PDF);
+    List<Resource> found = repository.findByType(ResourceType.EVENT_PDF);
 
     assertTrue(found.isEmpty());
   }

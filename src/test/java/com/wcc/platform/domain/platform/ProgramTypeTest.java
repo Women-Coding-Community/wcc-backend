@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.wcc.platform.domain.platform.type.ProgramType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 

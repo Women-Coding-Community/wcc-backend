@@ -60,7 +60,7 @@ class ResourceControllerTest {
             .size(1024L)
             .driveFileId("drive-file-id")
             .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
-            .resourceType(ResourceType.IMAGE)
+            .resourceType(ResourceType.EVENT_IMAGE)
             .createdAt(OffsetDateTime.now())
             .updatedAt(OffsetDateTime.now())
             .build();
@@ -86,7 +86,7 @@ class ResourceControllerTest {
             any(MultipartFile.class),
             eq("Test Resource"),
             eq("Test Description"),
-            eq(ResourceType.IMAGE)))
+            eq(ResourceType.EVENT_IMAGE)))
         .thenReturn(resource);
 
     // Act & Assert
@@ -96,7 +96,7 @@ class ResourceControllerTest {
                 .file(multipartFile)
                 .param("name", "Test Resource")
                 .param("description", "Test Description")
-                .param("resourceType", "IMAGE")
+                .param("resourceType", ResourceType.EVENT_IMAGE.name())
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
         .andExpect(status().isCreated())
@@ -109,7 +109,7 @@ class ResourceControllerTest {
         .andExpect(jsonPath("$.driveFileId").value("drive-file-id"))
         .andExpect(
             jsonPath("$.driveFileLink").value("https://drive.google.com/file/d/drive-file-id/view"))
-        .andExpect(jsonPath("$.resourceType").value("IMAGE"));
+        .andExpect(jsonPath("$.resourceType").value(ResourceType.EVENT_IMAGE.name()));
   }
 
   @Test
@@ -132,13 +132,13 @@ class ResourceControllerTest {
   void testResourcesByTypeShouldReturnResourceList() throws Exception {
     // Arrange
     List<Resource> resources = Collections.singletonList(resource);
-    when(resourceService.getResourcesByType(ResourceType.IMAGE)).thenReturn(resources);
+    when(resourceService.getResourcesByType(ResourceType.EVENT_IMAGE)).thenReturn(resources);
 
     // Act & Assert
     mockMvc
         .perform(
             get("/api/platform/v1/resources")
-                .param("resourceType", "IMAGE")
+                .param("resourceType", ResourceType.EVENT_IMAGE.name())
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())

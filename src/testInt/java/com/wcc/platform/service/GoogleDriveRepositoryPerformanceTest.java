@@ -8,8 +8,8 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
-import com.wcc.platform.repository.googledrive.GoogleDriveService;
-import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
+import com.wcc.platform.properties.FolderStorageProperties;
+import com.wcc.platform.repository.googledrive.GoogleDriveRepository;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -24,13 +25,15 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import(TestGoogleDriveConfig.class)
+@Import({TestGoogleDriveConfig.class, com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class})
 @DisplayName("GoogleDriveService Performance Tests")
-class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
+class GoogleDriveRepositoryPerformanceTest {
 
-  @Autowired private GoogleDriveService googleDriveService;
+  @Autowired private GoogleDriveRepository googleDriveRepository;
 
   @Autowired private Drive mockDriveService;
+
+  @Autowired private FolderStorageProperties properties;
 
   @Mock private Drive.Files mockFiles;
 
@@ -42,6 +45,7 @@ class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
 
   @BeforeEach
   void setUp() throws IOException {
+    MockitoAnnotations.openMocks(this);
     when(mockDriveService.files()).thenReturn(mockFiles);
     when(mockDriveService.permissions()).thenReturn(mockPermissions);
   }
@@ -51,9 +55,6 @@ class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
   void shouldUploadFileWithinTimeLimit() throws IOException {
     // Given
     String fileName = "large-test-file.pdf";
-    String contentType = "application/pdf";
-    byte[] largeFileData = new byte[1024 * 1024]; // 1MB file
-
     File mockFile = new File();
     mockFile.setId("test-file-id");
     mockFile.setName(fileName);
@@ -67,7 +68,9 @@ class GoogleDriveServicePerformanceTest extends DefaultDatabaseSetup {
 
     // When
     Instant start = Instant.now();
-    File result = googleDriveService.uploadFile(fileName, contentType, largeFileData);
+    byte[] largeFileData = new byte[1024 * 1024]; // 1MB file
+    var result =
+        googleDriveRepository.uploadFile(fileName, "application/pdf", largeFileData, "folder-id");
     Instant end = Instant.now();
     Duration duration = Duration.between(start, end);
 

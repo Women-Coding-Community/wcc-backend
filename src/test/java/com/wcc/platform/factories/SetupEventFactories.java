@@ -13,7 +13,7 @@ import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.domain.platform.EventSection;
-import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.utils.FileUtil;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
