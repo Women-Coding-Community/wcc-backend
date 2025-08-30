@@ -25,7 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import(TestGoogleDriveConfig.class)
+@Import({TestGoogleDriveConfig.class, com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class})
 @DisplayName("GoogleDriveService Performance Tests")
 class GoogleDriveRepositoryPerformanceTest {
 
