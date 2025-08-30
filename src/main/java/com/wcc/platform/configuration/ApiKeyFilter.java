@@ -9,13 +9,30 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * Filter for handling API key-based authentication. This filter is executed once per request and
+ * checks for the presence and validity of an API key in the request headers.
+ *
+ * <p>The filter operates with the following behavior: - Skips authentication if enabled false.
+ * Header Details: The API key is expected in the "X-API-KEY" request header.
+ */
 @Component
 public class ApiKeyFilter extends OncePerRequestFilter {
 
   private static final String API_KEY_HEADER = "X-API-KEY";
 
-  @Value("${security.api.key}")
-  private String apiKey;
+  private final String apiKey;
+
+  private final boolean securityEnabled;
+
+  /** Constructor. */
+  public ApiKeyFilter(
+      @Value("${security.enabled}") final boolean securityEnabled,
+      @Value("${security.api.key}") final String apiKey) {
+    super();
+    this.apiKey = apiKey;
+    this.securityEnabled = securityEnabled;
+  }
 
   @SuppressWarnings("PMD.LawOfDemeter")
   @Override
@@ -27,7 +44,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
     final String requestUri = request.getRequestURI();
 
-    // Apply the API key check only to the /api/cms/v1/ endpoint
+    if (!securityEnabled) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     if (requestUri.startsWith("/api/cms/v1/") || requestUri.startsWith("/api/platform/v1/")) {
       final String requestApiKey = request.getHeader(API_KEY_HEADER);
       if (requestApiKey == null || !requestApiKey.equals(apiKey)) {

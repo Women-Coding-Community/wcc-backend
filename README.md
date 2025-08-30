@@ -209,6 +209,19 @@ curl -X 'GET' \
 -H 'X-API-KEY: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4'
 ```
 
+### Run Locally without Authentication
+
+- Check if the database is running in docker
+- Change the application.properties file to disable authentication
+
+> wcc.security.authentication.enabled=false
+
+- Build the application
+- Run the application
+
+After this you can tests execute this curl and you will get the response.
+> curl 'http://localhost:8080/api/cms/v1/footer'
+
 ## Open API Documentation
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html)
