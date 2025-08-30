@@ -8,23 +8,23 @@ import lombok.Getter;
 @AllArgsConstructor
 @SuppressWarnings("PMD.LongVariable")
 public enum PageType {
-  EVENTS("eventsPage.json", "page:EVENTS"),
-  FOOTER("footerPage.json", "page:FOOTER"),
-  LANDING_PAGE("landingPage.json", "page:LANDING_PAGE"),
-  MENTORSHIP("mentorshipPage.json", "page:MENTORSHIP_OVERVIEW"),
-  MENTORS("mentorsPage.json", "page:MENTORS_PAGE"),
-  MENTORSHIP_FAQ("mentorshipFaqPage.json", "page:MENTORSHIP_FAQ"),
-  MENTORSHIP_CONDUCT("mentorshipConductPage.json", "page:MENTORSHIP_CODE_OF_CONDUCT"),
-  PROG_BOOK_CLUB("bookClubPage.json", "page:BOOK_CLUB"),
-  EVENT_FILTERS("eventsFiltersSection.json", "UNDEFINED"),
-  ABOUT_US("aboutUsPage.json", "page:ABOUT_US"),
-  TEAM("teamPage.json", "page:TEAM"),
-  COLLABORATOR("collaboratorPage.json", "page:COLLABORATORS"),
-  CODE_OF_CONDUCT("codeOfConductPage.json", "page:CODE_OF_CONDUCT"),
-  CELEBRATE_HER("celebrateHerPage.json", "page:CELEBRATE_HER"),
-  PARTNERS("partnersPage.json", "page:PARTNERS"),
-  STUDY_GROUPS("mentorshipStudyGroupsPage.json", "page:STUDY_GROUPS"),
-  AD_HOC_TIMELINE("adHocTimelinePage.json", "page:AD_HOC_TIMELINE");
+  EVENTS("init-data/eventsPage.json", "page:EVENTS"),
+  FOOTER("init-data/footerPage.json", "page:FOOTER"),
+  LANDING_PAGE("init-data/landingPage.json", "page:LANDING_PAGE"),
+  MENTORSHIP("init-data/mentorshipPage.json", "page:MENTORSHIP_OVERVIEW"),
+  MENTORS("init-data/mentorsPage.json", "page:MENTORS_PAGE"),
+  MENTORSHIP_FAQ("init-data/mentorshipFaqPage.json", "page:MENTORSHIP_FAQ"),
+  MENTORSHIP_CONDUCT("init-data/mentorshipConductPage.json", "page:MENTORSHIP_CODE_OF_CONDUCT"),
+  PROG_BOOK_CLUB("init-data/bookClubPage.json", "page:BOOK_CLUB"),
+  EVENT_FILTERS("init-data/eventsFiltersSection.json", "UNDEFINED"),
+  ABOUT_US("init-data/aboutUsPage.json", "page:ABOUT_US"),
+  TEAM("init-data/teamPage.json", "page:TEAM"),
+  COLLABORATOR("init-data/collaboratorPage.json", "page:COLLABORATORS"),
+  CODE_OF_CONDUCT("init-data/codeOfConductPage.json", "page:CODE_OF_CONDUCT"),
+  CELEBRATE_HER("init-data/celebrateHerPage.json", "page:CELEBRATE_HER"),
+  PARTNERS("init-data/partnersPage.json", "page:PARTNERS"),
+  STUDY_GROUPS("init-data/mentorshipStudyGroupsPage.json", "page:STUDY_GROUPS"),
+  AD_HOC_TIMELINE("init-data/adHocTimelinePage.json", "page:AD_HOC_TIMELINE");
 
   public static final String ID_PREFIX = "page:";
 

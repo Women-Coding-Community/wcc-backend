@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("test")
 @Import(SecurityConfig.class)
 @WebMvcTest(ProgrammeController.class)
-public class ProgrammeControllerTest {
+class ProgrammeControllerTest {
   public static final String API_PROGRAMME = "/api/cms/v1/program";
   public static final String PROG_TYPE_BOOK_CLUB = "?type=BOOK_CLUB";
 
