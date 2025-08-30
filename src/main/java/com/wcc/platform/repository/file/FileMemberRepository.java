@@ -2,7 +2,7 @@ package com.wcc.platform.repository.file;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.MemberRepository;
 import java.io.File;
 import java.io.IOException;

@@ -1,7 +1,9 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.platform.member;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.domain.platform.type.MemberType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

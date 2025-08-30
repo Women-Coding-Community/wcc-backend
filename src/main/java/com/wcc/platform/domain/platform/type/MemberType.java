@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.platform.type;
 
 /** All available member types in the community. */
 public enum MemberType {

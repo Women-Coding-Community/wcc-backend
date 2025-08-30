@@ -12,7 +12,7 @@ import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.PaginationUtil;
 import java.util.List;

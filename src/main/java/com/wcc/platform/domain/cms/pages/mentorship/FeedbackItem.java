@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
-import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.type.MemberType;
 import jakarta.validation.constraints.NotBlank;
 import java.time.Year;
 

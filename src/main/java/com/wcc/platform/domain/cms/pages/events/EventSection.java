@@ -1,8 +1,9 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.cms.pages.events;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
+import com.wcc.platform.domain.platform.Event;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.AllArgsConstructor;

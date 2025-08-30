@@ -1,8 +1,8 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
-import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.service.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

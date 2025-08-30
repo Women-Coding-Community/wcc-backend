@@ -3,7 +3,7 @@ package com.wcc.platform.factories;
 import com.wcc.platform.domain.cms.attributes.EventDays;
 import com.wcc.platform.domain.cms.attributes.EventType;
 import com.wcc.platform.domain.cms.pages.FiltersSection;
-import com.wcc.platform.domain.platform.Filters;
+import com.wcc.platform.domain.cms.pages.events.Filters;
 import com.wcc.platform.domain.platform.type.ProgramType;
 import java.util.List;
 

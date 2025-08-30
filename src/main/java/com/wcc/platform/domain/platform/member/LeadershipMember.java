@@ -1,8 +1,10 @@
-package com.wcc.platform.domain.platform;
+package com.wcc.platform.domain.platform.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.domain.platform.type.MemberType;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;

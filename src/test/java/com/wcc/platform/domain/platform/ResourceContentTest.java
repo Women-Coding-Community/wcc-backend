@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.domain.platform.type.ResourceType;
+import com.wcc.platform.domain.platform.type.ContentType;
+import com.wcc.platform.domain.resource.ResourceContent;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class ResourceContentTest {
             "Test Resource",
             "Test Description",
             "Raw Content",
-            ResourceType.LINK,
+            ContentType.LINK,
             images,
             labelLink);
 
@@ -51,7 +52,7 @@ class ResourceContentTest {
     assertEquals("Test Resource", resource.getName());
     assertEquals("Test Description", resource.getDescription());
     assertEquals("Raw Content", resource.getRawContent());
-    assertEquals(ResourceType.LINK, resource.getType());
+    assertEquals(ContentType.LINK, resource.getType());
     assertEquals(images, resource.getImages());
   }
 
@@ -64,14 +65,14 @@ class ResourceContentTest {
             .name("Test Resource")
             .description("Test Description")
             .rawContent("Raw Content")
-            .type(ResourceType.DOCUMENT)
+            .type(ContentType.DOCUMENT)
             .images(images)
             .build();
 
     assertEquals("Test Resource", resource.getName());
     assertEquals("Test Description", resource.getDescription());
     assertEquals("Raw Content", resource.getRawContent());
-    assertEquals(ResourceType.DOCUMENT, resource.getType());
+    assertEquals(ContentType.DOCUMENT, resource.getType());
     assertEquals(images, resource.getImages());
   }
 
@@ -85,7 +86,7 @@ class ResourceContentTest {
             "Test Resource",
             "Test Description",
             "Raw Content",
-            ResourceType.LINK,
+            ContentType.LINK,
             images,
             labelLink);
     ResourceContent resource2 =
@@ -94,7 +95,7 @@ class ResourceContentTest {
             "Test Resource",
             "Test Description",
             "Raw Content",
-            ResourceType.LINK,
+            ContentType.LINK,
             images,
             labelLink);
 
@@ -112,7 +113,7 @@ class ResourceContentTest {
             "Test Resource",
             "Test Description",
             "Raw Content",
-            ResourceType.IMAGE,
+            ContentType.IMAGE,
             images,
             labelLink);
 

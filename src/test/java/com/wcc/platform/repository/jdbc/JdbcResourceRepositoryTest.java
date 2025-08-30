@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.Resource;
-import com.wcc.platform.domain.resource.ResourceType;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;

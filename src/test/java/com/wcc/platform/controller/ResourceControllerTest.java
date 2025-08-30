@@ -12,9 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
-import com.wcc.platform.domain.resource.ResourceType;
 import com.wcc.platform.service.ResourceService;
 import java.time.OffsetDateTime;
 import java.util.Collections;

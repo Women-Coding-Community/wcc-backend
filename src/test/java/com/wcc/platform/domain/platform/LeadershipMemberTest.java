@@ -3,6 +3,8 @@ package com.wcc.platform.domain.platform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.wcc.platform.domain.platform.member.LeadershipMember;
+import com.wcc.platform.domain.platform.type.MemberType;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 

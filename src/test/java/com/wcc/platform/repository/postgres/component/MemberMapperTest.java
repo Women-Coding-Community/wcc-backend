@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.attributes.Country;
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberImageRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberMemberTypeRepository;

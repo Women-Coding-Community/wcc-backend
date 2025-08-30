@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.wcc.platform.domain.platform.member.LeadershipMember;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.type.MemberType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

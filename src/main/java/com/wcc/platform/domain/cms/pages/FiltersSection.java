@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.cms.pages;
 
-import com.wcc.platform.domain.platform.Filters;
+import com.wcc.platform.domain.cms.pages.events.Filters;
 
 /**
  * Filters section for any page.

@@ -29,15 +29,15 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
-import com.wcc.platform.domain.platform.Member;
-import com.wcc.platform.domain.platform.MemberType;
-import com.wcc.platform.domain.platform.Mentor;
-import com.wcc.platform.domain.platform.MentorshipType;
-import com.wcc.platform.domain.platform.ProfileStatus;
-import com.wcc.platform.domain.platform.ResourceContent;
-import com.wcc.platform.domain.platform.Skills;
-import com.wcc.platform.domain.platform.StudyGroup;
-import com.wcc.platform.domain.platform.type.ResourceType;
+import com.wcc.platform.domain.cms.pages.mentorship.StudyGroup;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.type.ContentType;
+import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.resource.ResourceContent;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Month;
 import java.time.Year;
@@ -225,7 +225,7 @@ public class SetupMentorshipFactories {
                     "resource name",
                     "description",
                     "raw content",
-                    ResourceType.DOCUMENT,
+                    ContentType.DOCUMENT,
                     null,
                     null)))
         .build();

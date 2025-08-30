@@ -1,6 +1,6 @@
 package com.wcc.platform.repository;
 
-import com.wcc.platform.domain.platform.Member;
+import com.wcc.platform.domain.platform.member.Member;
 import java.util.List;
 import java.util.Optional;
 
