@@ -169,9 +169,9 @@ tasks.named<Pmd>("pmdTestInt") {
 
 tasks.register("sonarQubeAnalysis") {
     group = "Code Quality"
-    description = "Runs sonarQube analysis on the project."
+    description = "Runs sonar analysis on the project."
     dependsOn("test")
-    finalizedBy("sonarqube")
+    finalizedBy("sonar")
 }
 
 if (project.hasProperty("localProfile")) {
