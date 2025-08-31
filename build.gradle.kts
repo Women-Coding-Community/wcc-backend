@@ -83,6 +83,17 @@ tasks.withType<Test> {
 }
 
 tasks {
+    // Configure the standard jacocoTestReport task for unit tests
+    jacocoTestReport {
+        dependsOn(test) // tests are required to run before generating the report
+        reports {
+            xml.required.set(true)  // Enable XML report for SonarQube
+            html.required.set(true) // Keep HTML for local viewing
+            csv.required.set(false) // Disable CSV to reduce clutter
+            html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/integration"))
+        }
+    }
+
     val testIntegration by creating(Test::class) {
         description = "Runs integration tests."
         group = "verification"
@@ -172,26 +183,25 @@ if (project.hasProperty("localProfile")) {
             property("sonar.host.url", "http://localhost:9000")
             property("sonar.token", "PLACE_YOUR_TOKEN_HERE")
             property("sonar.exclusions", "**/src/main/resources/**")
+            property(
+                "sonar.coverage.jacoco.xmlReportPaths",
+                "build/reports/jacoco/test/jacocoTestReport.xml"
+            )
         }
     }
 } else {
     apply(plugin = "org.sonarqube")
     sonarqube {
         properties {
-            property(
-                "sonar.projectKey",
-                "Women-Coding-Community_wcc-backend"
-            )
-            property(
-                "sonar.organization",
-                "women-coding-community"
-            )
+            property("sonar.projectKey", "Women-Coding-Community_wcc-backend")
+            property("sonar.organization", "women-coding-community")
             property("sonar.host.url", "https://sonarcloud.io")
-            property(
-                "sonar.token",
-                System.getenv("SONAR_TOKEN") ?: "your-token"
-            )
+            property("sonar.token", System.getenv("SONAR_TOKEN") ?: "your-token")
             property("sonar.exclusions", "**/src/main/resources/**")
+            property(
+                "sonar.coverage.jacoco.xmlReportPaths",
+                "build/reports/jacoco/test/jacocoTestReport.xml"
+            )
         }
     }
 }
