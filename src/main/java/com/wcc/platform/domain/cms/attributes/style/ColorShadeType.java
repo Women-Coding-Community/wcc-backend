@@ -18,8 +18,4 @@ public enum ColorShadeType {
   public String toString() {
     return description;
   }
-
-  public ColorShade toColorShade() {
-    return new ColorShade(this, this.shade);
-  }
 }

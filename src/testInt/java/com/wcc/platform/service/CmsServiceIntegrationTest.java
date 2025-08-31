@@ -33,7 +33,7 @@ class CmsServiceIntegrationTest {
   }
 
   @Test
-  @SuppressWarnings("PMD.LawOfDemeter")
+  @SuppressWarnings({"PMD.LawOfDemeter", "PMD.unchecked"})
   void testGetFooterPage() throws JsonProcessingException {
     var footerPage = createFooterTest(FOOTER.getFileName());
     pageRepository.create(objectMapper.convertValue(footerPage, Map.class));
