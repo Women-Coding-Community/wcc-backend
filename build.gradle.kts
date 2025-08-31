@@ -8,7 +8,7 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
-    id("org.sonarqube") version "5.0.0.4638"
+    id("org.sonarqube") version "6.3.1.5724"
 }
 
 group = "com.wcc.cms"
@@ -174,8 +174,7 @@ tasks.register("sonarQubeAnalysis") {
     finalizedBy("sonar")
 }
 
-apply(plugin = "org.sonarqube")
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "Women-Coding-Community_wcc-backend")
         property("sonar.organization", "women-coding-community")
