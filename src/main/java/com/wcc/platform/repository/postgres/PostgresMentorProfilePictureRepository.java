@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.jdbc;
+package com.wcc.platform.repository.postgres;
 
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 /** JDBC implementation of the MentorProfilePictureRepository interface. */
 @Repository
 @AllArgsConstructor
-public class JdbcMentorProfilePictureRepository implements MentorProfilePictureRepository {
+public class PostgresMentorProfilePictureRepository implements MentorProfilePictureRepository {
   private static final String INSERT_SQL =
       "INSERT INTO mentor_profile_picture (id, mentor_email, resource_id, created_at, updated_at) "
           + "VALUES (?, ?, ?, ?, ?)";

@@ -11,6 +11,7 @@ import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.ResourceRepository;
+import com.wcc.platform.repository.postgres.PostgresMentorProfilePictureRepository;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,19 +24,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 @ExtendWith(MockitoExtension.class)
-class JdbcMentorProfilePictureRepositoryTest {
+class PostgresMentorProfilePictureRepositoryTest {
 
   @Mock private JdbcTemplate jdbcTemplate;
   @Mock private ResourceRepository resourceRepository;
 
-  private JdbcMentorProfilePictureRepository repository;
+  private PostgresMentorProfilePictureRepository repository;
 
   private UUID resourceId;
   private UUID mppId;
 
   @BeforeEach
   void setUp() {
-    repository = new JdbcMentorProfilePictureRepository(jdbcTemplate, resourceRepository);
+    repository = new PostgresMentorProfilePictureRepository(jdbcTemplate, resourceRepository);
     resourceId = UUID.randomUUID();
     mppId = UUID.randomUUID();
   }
