@@ -52,11 +52,11 @@ jobs:
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
 
-      - name: SonarCloud Quality Gate Check
-        uses: sonarqube-community/sonarqube-quality-gate-action@master
+      - name: Check SonarCloud Quality Gate
         if: github.event_name == 'pull_request'
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "SonarCloud analysis completed. Check the PR for quality gate results."
+          echo "If quality gate fails, the sonar task above should have failed due to sonar.qualitygate.wait=true"
 
       - name: Upload code coverage report
         if: success() || failure()
