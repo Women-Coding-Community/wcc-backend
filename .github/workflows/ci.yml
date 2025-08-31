@@ -11,10 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      checks: write
-      contents: read
 
     strategy:
       matrix:
@@ -51,12 +47,6 @@ jobs:
 
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
-
-      - name: Check SonarCloud Quality Gate
-        if: github.event_name == 'pull_request'
-        run: |
-          echo "SonarCloud analysis completed. Check the PR for quality gate results."
-          echo "If quality gate fails, the sonar task above should have failed due to sonar.qualitygate.wait=true"
 
       - name: Upload code coverage report
         if: success() || failure()
