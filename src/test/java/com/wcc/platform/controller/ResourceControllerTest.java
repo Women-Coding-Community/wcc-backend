@@ -57,7 +57,7 @@ class ResourceControllerTest {
             .name("Test Resource")
             .description("Test Description")
             .fileName("test.jpg")
-            .contentType(ContentType.IMAGE)
+            .contentType("image/jpeg")
             .size(1024L)
             .driveFileId("drive-file-id")
             .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
@@ -77,8 +77,7 @@ class ResourceControllerTest {
             .build();
 
     multipartFile =
-        new MockMultipartFile(
-            "file", "test.jpg", ContentType.IMAGE.name(), "test image content".getBytes());
+        new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image content".getBytes());
   }
 
   @Test

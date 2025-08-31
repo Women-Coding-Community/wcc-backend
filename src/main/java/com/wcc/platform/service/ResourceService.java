@@ -1,7 +1,6 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -133,7 +132,7 @@ public class ResourceService {
             .name(name)
             .description(description)
             .fileName(file.getOriginalFilename())
-            .contentType(ContentType.fromString(file.getContentType()))
+            .contentType(file.getContentType())
             .size(file.getSize())
             .driveFileId(fileStored.id())
             .driveFileLink(fileStored.webLink())

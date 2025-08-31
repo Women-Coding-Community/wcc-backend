@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.Resource;
 import java.time.OffsetDateTime;
@@ -37,7 +36,7 @@ class JdbcResourceRepositoryTest {
             .name("Test Resource")
             .description("Test Description")
             .fileName("test.txt")
-            .contentType(ContentType.DOCUMENT)
+            .contentType("image/jpeg")
             .size(1000L)
             .driveFileId("drive123")
             .driveFileLink("http://drive.google.com/test")

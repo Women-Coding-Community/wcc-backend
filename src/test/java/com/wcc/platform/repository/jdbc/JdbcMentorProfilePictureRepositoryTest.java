@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -62,7 +61,7 @@ class JdbcMentorProfilePictureRepositoryTest {
                     .id(resourceId)
                     .name("Profile picture")
                     .fileName("pic.jpg")
-                    .contentType(ContentType.IMAGE)
+                    .contentType("image/jpeg")
                     .size(123L)
                     .driveFileId("driveId")
                     .driveFileLink("http://link")

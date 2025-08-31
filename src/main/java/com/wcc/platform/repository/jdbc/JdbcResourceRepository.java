@@ -1,6 +1,5 @@
 package com.wcc.platform.repository.jdbc;
 
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.ResourceRepository;
@@ -132,7 +131,7 @@ public class JdbcResourceRepository implements ResourceRepository {
           .name(rs.getString("name"))
           .description(rs.getString("description"))
           .fileName(rs.getString("file_name"))
-          .contentType(ContentType.valueOf(rs.getString("content_type")))
+          .contentType(rs.getString("content_type"))
           .size(rs.getLong("size"))
           .driveFileId(rs.getString("drive_file_id"))
           .driveFileLink(rs.getString("drive_file_link"))

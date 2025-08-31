@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorResource;
 import com.wcc.platform.domain.resource.Resource;
@@ -22,7 +21,7 @@ class ResourceContentTest {
   private final List<Resource> resources =
       List.of(
           Resource.builder()
-              .contentType(ContentType.IMAGE)
+              .contentType("image/jpeg")
               .resourceType(ResourceType.MENTOR_RESOURCE)
               .build());
 

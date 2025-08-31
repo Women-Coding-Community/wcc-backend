@@ -1,6 +1,5 @@
 package com.wcc.platform.domain.resource;
 
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class Resource {
   private String name;
   private String description;
   private String fileName;
-  private ContentType contentType;
+  private String contentType;
   private long size;
   private String driveFileId;
   private String driveFileLink;

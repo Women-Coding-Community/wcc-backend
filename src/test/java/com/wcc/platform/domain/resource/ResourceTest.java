@@ -5,13 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class ResourceTest {
+
+  private final String contentType = "text/plain";
 
   @Test
   void shouldBuildResourceWithAllFields() {
@@ -31,7 +32,7 @@ class ResourceTest {
             .name(name)
             .description(description)
             .fileName(fileName)
-            .contentType(ContentType.DOCUMENT)
+            .contentType(contentType)
             .size(size)
             .driveFileId(driveFileId)
             .driveFileLink(driveFileLink)
@@ -44,7 +45,7 @@ class ResourceTest {
     assertEquals(name, resource.getName());
     assertEquals(description, resource.getDescription());
     assertEquals(fileName, resource.getFileName());
-    assertEquals(ContentType.DOCUMENT, resource.getContentType());
+    assertEquals(contentType, resource.getContentType());
     assertEquals(size, resource.getSize());
     assertEquals(driveFileId, resource.getDriveFileId());
     assertEquals(driveFileLink, resource.getDriveFileLink());
@@ -64,6 +65,7 @@ class ResourceTest {
     String newDriveFileLink = "http://drive.google.com/file/newDriveFileId456";
     ResourceType newResourceType = ResourceType.EVENT_IMAGE;
     OffsetDateTime newTime = OffsetDateTime.now();
+    String newContentType = "application/json";
 
     Resource resource =
         Resource.builder()
@@ -71,7 +73,7 @@ class ResourceTest {
             .name(newName)
             .description(newDescription)
             .fileName(newFileName)
-            .contentType(ContentType.DOCUMENT)
+            .contentType(newContentType)
             .size(newSize)
             .driveFileId(newDriveFileId)
             .driveFileLink(newDriveFileLink)
@@ -84,7 +86,7 @@ class ResourceTest {
     assertEquals(newName, resource.getName());
     assertEquals(newDescription, resource.getDescription());
     assertEquals(newFileName, resource.getFileName());
-    assertEquals(ContentType.DOCUMENT, resource.getContentType());
+    assertEquals(newContentType, resource.getContentType());
     assertEquals(newSize, resource.getSize());
     assertEquals(newDriveFileId, resource.getDriveFileId());
     assertEquals(newDriveFileLink, resource.getDriveFileLink());
@@ -152,7 +154,7 @@ class ResourceTest {
             .name("Test Name")
             .description("Test Description")
             .fileName("test.txt")
-            .contentType(ContentType.DOCUMENT)
+            .contentType("text/plain")
             .size(123L)
             .driveFileId("fileId")
             .driveFileLink("http://link")
