@@ -174,26 +174,57 @@ tasks.register("sonarQubeAnalysis") {
     finalizedBy("sonar")
 }
 
-sonar {
-    properties {
-        property("sonar.projectKey", "Women-Coding-Community_wcc-backend")
-        property("sonar.organization", "women-coding-community")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.token", System.getenv("SONAR_TOKEN") ?: "your-token")
-        property("sonar.exclusions", "**/src/main/resources/**")
-        property("sonar.java.binaries", "build/classes")
-        property(
-            "sonar.java.test.binaries",
-            "build/classes/java/test,build/classes/java/testInt"
-        )
-        property(
-            "sonar.junit.reportPaths",
-            "build/test-results/test,build/test-results/testIntegration"
-        )
-        property(
-            "sonar.coverage.jacoco.xmlReportPaths",
-            "build/reports/jacoco/test/jacocoTestReport.xml"
-        )
+if (project.hasProperty("localProfile")) {
+    apply(plugin = "org.sonarqube")
+    sonarqube {
+        properties {
+            property("sonar.projectKey", "wcc-backend")
+            property("sonar.projectName", "wcc-backend")
+            property("sonar.host.url", "http://localhost:9000")
+            property("sonar.token", "PLACE_YOUR_TOKEN_HERE")
+            property(
+                "sonar.exclusions",
+                "**/src/main/resources/**,build.gradle.kts,gradle.properties,settings.gradle.kts"
+            )
+            property("sonar.sources", "src/main/java")
+            property("sonar.tests", "src/test/java,src/testInt/java")
+            property("sonar.java.binaries", "build/classes/java/main")
+            property(
+                "sonar.java.test.binaries",
+                "build/classes/java/test,build/classes/java/testInt"
+            )
+            property("sonar.junit.reportPaths", "build/test-results/test")
+            property(
+                "sonar.coverage.jacoco.xmlReportPaths",
+                "build/reports/jacoco/test/jacocoTestReport.xml"
+            )
+        }
+    }
+} else {
+    apply(plugin = "org.sonarqube")
+    sonarqube {
+        properties {
+            property("sonar.projectKey", "Women-Coding-Community_wcc-backend")
+            property("sonar.organization", "women-coding-community")
+            property("sonar.host.url", "https://sonarcloud.io")
+            property("sonar.token", System.getenv("SONAR_TOKEN") ?: "your-token")
+            property(
+                "sonar.exclusions",
+                "**/src/main/resources/**,build.gradle.kts,gradle.properties,settings.gradle.kts"
+            )
+            property("sonar.sources", "src/main/java")
+            property("sonar.tests", "src/test/java,src/testInt/java")
+            property("sonar.java.binaries", "build/classes/java/main")
+            property(
+                "sonar.java.test.binaries",
+                "build/classes/java/test,build/classes/java/testInt"
+            )
+            property("sonar.junit.reportPaths", "build/test-results/test")
+            property(
+                "sonar.coverage.jacoco.xmlReportPaths",
+                "build/reports/jacoco/test/jacocoTestReport.xml,build/reports/jacoco/jacocoIntegrationReport/jacocoIntegrationReport.xml"
+            )
+        }
     }
 }
 
