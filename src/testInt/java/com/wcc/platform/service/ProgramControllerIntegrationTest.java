@@ -37,6 +37,7 @@ class ProgramControllerIntegrationTest {
   }
 
   @BeforeEach
+  @SuppressWarnings("unchecked")
   void setupDatabase() throws JsonProcessingException {
     var page = createProgrammePageTest(PROG_BOOK_CLUB.getFileName());
     pageRepository.create(objectMapper.convertValue(page, Map.class));

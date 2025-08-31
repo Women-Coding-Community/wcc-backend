@@ -22,7 +22,10 @@ sourceSets {
     val testInt by creating {
         java.srcDir("src/testInt/java")
         resources.srcDir("src/testInt/resources")
-        compileClasspath += sourceSets.getByName("main").output + sourceSets.getByName("test").output + configurations.getByName("testRuntimeClasspath")
+        compileClasspath += sourceSets.getByName("main").output +
+                sourceSets.getByName("test").output +
+                configurations.getByName("testRuntimeClasspath")
+
         runtimeClasspath += output + compileClasspath
     }
 }
@@ -37,7 +40,7 @@ repositories {
     mavenCentral()
 }
 
-val testContainer = "1.21.0"
+val testContainer = "1.21.3"
 
 dependencies {
 
@@ -47,7 +50,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -56,7 +59,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
 
     // Google Drive API
-    implementation("com.google.api-client:google-api-client:2.2.0")
+    implementation("com.google.api-client:google-api-client:2.8.1")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-drive:v3-rev20230822-2.0.0")
 
@@ -168,9 +171,31 @@ if (project.hasProperty("localProfile")) {
             property("sonar.projectName", "wcc-backend")
             property("sonar.host.url", "http://localhost:9000")
             property("sonar.token", "PLACE_YOUR_TOKEN_HERE")
+            property("sonar.exclusions", "**/src/main/resources/**")
+        }
+    }
+} else {
+    apply(plugin = "org.sonarqube")
+    sonarqube {
+        properties {
+            property(
+                "sonar.projectKey",
+                "Women-Coding-Community_wcc-backend"
+            )
+            property(
+                "sonar.organization",
+                "women-coding-community"
+            )
+            property("sonar.host.url", "https://sonarcloud.io")
+            property(
+                "sonar.token",
+                System.getenv("SONAR_TOKEN") ?: "your-token"
+            )
+            property("sonar.exclusions", "**/src/main/resources/**")
         }
     }
 }
+
 
 
 tasks.named<ProcessResources>("processTestIntResources") {
