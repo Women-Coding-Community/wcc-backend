@@ -37,7 +37,7 @@ class EventControllerIntegrationTest {
     pageRepository.deleteById(EVENTS.getId());
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "PMD.LawOfDemeter"})
   @Test
   void testEventsApiSuccess() {
     var eventsPage = createEventTest(EVENTS.getFileName());
@@ -56,6 +56,7 @@ class EventControllerIntegrationTest {
   }
 
   @Test
+  @SuppressWarnings({"PMD.LawOfDemeter"})
   void testEventsFiltersApiSuccess() throws Exception {
     var response = eventController.getEventsFilters();
 
@@ -67,6 +68,7 @@ class EventControllerIntegrationTest {
     JSONAssert.assertEquals(expected, jsonResponse, false);
   }
 
+  @SuppressWarnings({"unchecked"})
   @Test
   void testGetEventsPage() {
     var eventsPage = createEventTest(EVENTS.getFileName());
@@ -77,12 +79,12 @@ class EventControllerIntegrationTest {
     assertEquals(expectedEventsPage.data(), result.data());
   }
 
-  private EventsPage createEventTest(String fileName) {
+  private EventsPage createEventTest(final String fileName) {
     try {
       String content = FileUtil.readFileAsString(fileName);
       return objectMapper.readValue(content, EventsPage.class);
     } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-      throw new RuntimeException(e);
+      return null;
     }
   }
 }

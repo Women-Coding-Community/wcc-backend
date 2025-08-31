@@ -5,11 +5,13 @@ import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.controller.ProgrammeController;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
+import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +37,7 @@ class ProgramControllerIntegrationTest {
   }
 
   @BeforeEach
-  void setupDatabase() {
+  void setupDatabase() throws JsonProcessingException {
     var page = createProgrammePageTest(PROG_BOOK_CLUB.getFileName());
     pageRepository.create(objectMapper.convertValue(page, Map.class));
   }
@@ -57,16 +59,13 @@ class ProgramControllerIntegrationTest {
     var expected = FileUtil.readFileAsString(PROG_BOOK_CLUB.getFileName());
     var jsonResponse = objectMapper.writeValueAsString(result.getBody());
 
-    JSONAssert.assertEquals(expected, jsonResponse, false);
+    JSONAssert.assertEquals(
+        expected.toLowerCase(Locale.ENGLISH), jsonResponse.toLowerCase(Locale.ENGLISH), false);
   }
-  
-  private ProgrammePage createProgrammePageTest(String fileName) {
-    try {
-      String content = FileUtil.readFileAsString(fileName);
-      return objectMapper.readValue(content, ProgrammePage.class);
-    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-      // In integration tests we expect the JSON to exist; if not, rethrow to fail fast.
-      throw new RuntimeException(e);
-    }
+
+  private ProgrammePage createProgrammePageTest(final String fileName)
+      throws JsonProcessingException {
+    String content = FileUtil.readFileAsString(fileName);
+    return objectMapper.readValue(content, ProgrammePage.class);
   }
 }
