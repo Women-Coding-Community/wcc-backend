@@ -1,4 +1,4 @@
-package com.wcc.platform.service;
+package com.wcc.platform.repository.postgres.googledrive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,7 +31,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import({TestGoogleDriveConfig.class, com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class})
+@Import({
+  TestGoogleDriveConfig.class,
+  com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class
+})
 @DisplayName("GoogleDriveService Integration Tests")
 class GoogleDriveRepositoryIntegrationTest {
 
@@ -57,10 +60,10 @@ class GoogleDriveRepositoryIntegrationTest {
 
   @BeforeEach
   void setUp() {
-      org.mockito.MockitoAnnotations.openMocks(this);
-      when(mockDriveService.files()).thenReturn(mockFiles);
-      when(mockDriveService.permissions()).thenReturn(mockPermissions);
-    }
+    org.mockito.MockitoAnnotations.openMocks(this);
+    when(mockDriveService.files()).thenReturn(mockFiles);
+    when(mockDriveService.permissions()).thenReturn(mockPermissions);
+  }
 
   private File createTestFile() {
     return GoogleDriveTestUtils.createMockFile(TEST_FILE_ID, TEST_FILE_NAME, WEB_VIEW_LINK);

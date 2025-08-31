@@ -1,4 +1,4 @@
-package com.wcc.platform.service;
+package com.wcc.platform.repository.postgres.googledrive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,7 +25,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import({TestGoogleDriveConfig.class, com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class})
+@Import({
+  TestGoogleDriveConfig.class,
+  com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class
+})
 @DisplayName("GoogleDriveService Performance Tests")
 class GoogleDriveRepositoryPerformanceTest {
 
