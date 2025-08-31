@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class ResourceTest {
 
-  private final String contentType = "text/plain";
+  private static final String CONTENT_TYPE = "text/plain";
 
   @Test
   void shouldBuildResourceWithAllFields() {
@@ -32,7 +32,7 @@ class ResourceTest {
             .name(name)
             .description(description)
             .fileName(fileName)
-            .contentType(contentType)
+            .contentType(CONTENT_TYPE)
             .size(size)
             .driveFileId(driveFileId)
             .driveFileLink(driveFileLink)
@@ -45,7 +45,7 @@ class ResourceTest {
     assertEquals(name, resource.getName());
     assertEquals(description, resource.getDescription());
     assertEquals(fileName, resource.getFileName());
-    assertEquals(contentType, resource.getContentType());
+    assertEquals(CONTENT_TYPE, resource.getContentType());
     assertEquals(size, resource.getSize());
     assertEquals(driveFileId, resource.getDriveFileId());
     assertEquals(driveFileLink, resource.getDriveFileLink());

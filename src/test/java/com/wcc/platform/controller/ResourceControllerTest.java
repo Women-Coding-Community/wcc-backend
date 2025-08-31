@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.wcc.platform.configuration.SecurityConfig;
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -38,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 @WebMvcTest(ResourceController.class)
 class ResourceControllerTest {
 
+  private static final String CONTENT_TYPE = "image/jpeg";
+
   @Autowired private MockMvc mockMvc;
 
   @MockBean private ResourceService resourceService;
@@ -57,7 +58,7 @@ class ResourceControllerTest {
             .name("Test Resource")
             .description("Test Description")
             .fileName("test.jpg")
-            .contentType("image/jpeg")
+            .contentType(CONTENT_TYPE)
             .size(1024L)
             .driveFileId("drive-file-id")
             .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
@@ -77,7 +78,7 @@ class ResourceControllerTest {
             .build();
 
     multipartFile =
-        new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image content".getBytes());
+        new MockMultipartFile("file", "test.jpg", CONTENT_TYPE, "test image content".getBytes());
   }
 
   @Test
@@ -105,7 +106,7 @@ class ResourceControllerTest {
         .andExpect(jsonPath("$.name").value("Test Resource"))
         .andExpect(jsonPath("$.description").value("Test Description"))
         .andExpect(jsonPath("$.fileName").value("test.jpg"))
-        .andExpect(jsonPath("$.contentType").value(ContentType.IMAGE.name()))
+        .andExpect(jsonPath("$.contentType").value(CONTENT_TYPE))
         .andExpect(jsonPath("$.size").value(1024))
         .andExpect(jsonPath("$.driveFileId").value("drive-file-id"))
         .andExpect(
