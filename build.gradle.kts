@@ -19,10 +19,10 @@ java {
 }
 
 sourceSets {
-    create("testInt") {
+    val testInt by creating {
         java.srcDir("src/testInt/java")
         resources.srcDir("src/testInt/resources")
-        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+        compileClasspath += sourceSets.getByName("main").output + sourceSets.getByName("test").output + configurations.getByName("testRuntimeClasspath")
         runtimeClasspath += output + compileClasspath
     }
 }
