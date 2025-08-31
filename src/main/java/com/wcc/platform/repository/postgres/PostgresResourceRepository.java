@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @AllArgsConstructor
 public class PostgresResourceRepository implements ResourceRepository {
+
   private static final String INSERT_SQL =
       "INSERT INTO resource (id, name, description, file_name, content_type, size, "
           + "drive_file_id, drive_file_link, resource_type_id, created_at, updated_at) "
