@@ -198,6 +198,8 @@ if (project.hasProperty("localProfile")) {
                 "sonar.coverage.jacoco.xmlReportPaths",
                 "build/reports/jacoco/test/jacocoTestReport.xml"
             )
+                        property("sonar.qualitygate.wait", "true")
+            property("sonar.qualitygate.wait", "true")
         }
     }
 } else {
