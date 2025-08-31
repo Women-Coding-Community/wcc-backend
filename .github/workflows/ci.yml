@@ -57,12 +57,6 @@ jobs:
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
 
-      - name: SonarCloud Scan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar
-
       - name: Upload code coverage report
         if: success() || failure()
         uses: actions/upload-artifact@v4

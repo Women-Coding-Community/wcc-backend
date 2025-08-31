@@ -174,39 +174,29 @@ tasks.register("sonarQubeAnalysis") {
     finalizedBy("sonar")
 }
 
-if (project.hasProperty("localProfile")) {
-    apply(plugin = "org.sonarqube")
-    sonarqube {
-        properties {
-            property("sonar.projectKey", "wcc-backend")
-            property("sonar.projectName", "wcc-backend")
-            property("sonar.host.url", "http://localhost:9000")
-            property("sonar.token", "PLACE_YOUR_TOKEN_HERE")
-            property("sonar.exclusions", "**/src/main/resources/**")
-            property(
-                "sonar.coverage.jacoco.xmlReportPaths",
-                "build/reports/jacoco/test/jacocoTestReport.xml"
-            )
-        }
-    }
-} else {
-    apply(plugin = "org.sonarqube")
-    sonarqube {
-        properties {
-            property("sonar.projectKey", "Women-Coding-Community_wcc-backend")
-            property("sonar.organization", "women-coding-community")
-            property("sonar.host.url", "https://sonarcloud.io")
-            property("sonar.token", System.getenv("SONAR_TOKEN") ?: "your-token")
-            property("sonar.exclusions", "**/src/main/resources/**")
-            property(
-                "sonar.coverage.jacoco.xmlReportPaths",
-                "build/reports/jacoco/test/jacocoTestReport.xml"
-            )
-        }
+apply(plugin = "org.sonarqube")
+sonarqube {
+    properties {
+        property("sonar.projectKey", "Women-Coding-Community_wcc-backend")
+        property("sonar.organization", "women-coding-community")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.token", System.getenv("SONAR_TOKEN") ?: "your-token")
+        property("sonar.exclusions", "**/src/main/resources/**")
+        property("sonar.java.binaries", "build/classes")
+        property(
+            "sonar.java.test.binaries",
+            "build/classes/java/test,build/classes/java/testInt"
+        )
+        property(
+            "sonar.junit.reportPaths",
+            "build/test-results/test,build/test-results/testIntegration"
+        )
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "build/reports/jacoco/test/jacocoTestReport.xml"
+        )
     }
 }
-
-
 
 tasks.named<ProcessResources>("processTestIntResources") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
