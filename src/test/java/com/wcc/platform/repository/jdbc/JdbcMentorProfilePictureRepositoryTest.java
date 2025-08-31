@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -51,25 +52,27 @@ class JdbcMentorProfilePictureRepositoryTest {
 
   @Test
   void findByResourceIdShouldReturnProfilePictureWhenFound() {
-    MentorProfilePicture expected = MentorProfilePicture.builder()
-        .id(mppId)
-        .mentorEmail("mentor@example.com")
-        .resourceId(resourceId)
-        .resource(Resource.builder()
-            .id(resourceId)
-            .name("Profile picture")
-            .fileName("pic.jpg")
-            .contentType("image/jpeg")
-            .size(123L)
-            .driveFileId("driveId")
-            .driveFileLink("http://link")
-            .resourceType(ResourceType.PROFILE_PICTURE)
+    MentorProfilePicture expected =
+        MentorProfilePicture.builder()
+            .id(mppId)
+            .mentorEmail("mentor@example.com")
+            .resourceId(resourceId)
+            .resource(
+                Resource.builder()
+                    .id(resourceId)
+                    .name("Profile picture")
+                    .fileName("pic.jpg")
+                    .contentType(ContentType.IMAGE)
+                    .size(123L)
+                    .driveFileId("driveId")
+                    .driveFileLink("http://link")
+                    .resourceType(ResourceType.PROFILE_PICTURE)
+                    .createdAt(OffsetDateTime.now())
+                    .updatedAt(OffsetDateTime.now())
+                    .build())
             .createdAt(OffsetDateTime.now())
             .updatedAt(OffsetDateTime.now())
-            .build())
-        .createdAt(OffsetDateTime.now())
-        .updatedAt(OffsetDateTime.now())
-        .build();
+            .build();
 
     when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), any(UUID.class)))
         .thenReturn(expected);

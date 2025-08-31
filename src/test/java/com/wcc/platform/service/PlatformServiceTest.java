@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.domain.resource.ResourceContent;
+import com.wcc.platform.domain.resource.MentorResource;
 import com.wcc.platform.repository.MembersRepository;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,7 @@ class PlatformServiceTest {
 
   @InjectMocks private PlatformService service;
 
-  private ResourceContent resourceContent;
+  private MentorResource mentorResource;
   private Member member;
   private Member updatedMember;
   private MemberDto memberDto;
@@ -37,7 +37,7 @@ class PlatformServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    resourceContent = new ResourceContent();
+    mentorResource = new MentorResource();
     member = createMemberTest(MemberType.DIRECTOR);
     memberDto = createMemberDtoTest(MemberType.COLLABORATOR);
     updatedMember = createUpdatedMemberTest(member, memberDto);

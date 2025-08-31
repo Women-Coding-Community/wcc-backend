@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.platform.filestorage.FileStored;
+import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MentorProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -69,7 +70,7 @@ class ResourceServiceTest {
             .name("Test Resource")
             .description("Test Description")
             .fileName("test.jpg")
-            .contentType("image/jpeg")
+            .contentType(ContentType.IMAGE)
             .size(1024L)
             .driveFileId("drive-file-id")
             .driveFileLink("https://drive.google.com/file/d/drive-file-id/view")
@@ -84,8 +85,7 @@ class ResourceServiceTest {
             .resource(resource)
             .build();
 
-    multipartFile =
-        new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image content".getBytes());
+    multipartFile = new MockMultipartFile("file", "test.jpg", "", "test image content".getBytes());
 
     fileStored =
         new FileStored("drive-file-id", "https://drive.google.com/file/d/drive-file-id/view");
@@ -109,7 +109,7 @@ class ResourceServiceTest {
     assertEquals("Test Resource", result.getName());
     assertEquals("Test Description", result.getDescription());
     assertEquals("test.jpg", result.getFileName());
-    assertEquals("image/jpeg", result.getContentType());
+    assertEquals(ContentType.IMAGE, result.getContentType());
     assertEquals(1024L, result.getSize());
     assertEquals("drive-file-id", result.getDriveFileId());
     assertEquals("https://drive.google.com/file/d/drive-file-id/view", result.getDriveFileLink());
