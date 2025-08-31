@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.postgres.googledrive;
+package com.wcc.platform.repository.googledrive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,7 +15,6 @@ import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.properties.FolderStorageProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveRepository;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

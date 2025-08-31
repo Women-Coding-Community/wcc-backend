@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.postgres.googledrive;
+package com.wcc.platform.repository.googledrive;
 
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
