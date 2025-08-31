@@ -52,8 +52,8 @@ jobs:
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
 
-      - name: SonarQube Quality Gate Check
-        uses: sonarqube-quality-gate-action@master
+      - name: SonarCloud Quality Gate Check
+        uses: sonarqube-community/sonarqube-quality-gate-action@master
         if: github.event_name == 'pull_request'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
