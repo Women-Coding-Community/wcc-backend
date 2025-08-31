@@ -46,7 +46,7 @@ class GoogleDriveRepositoryPerformanceTest {
   @Mock private Drive.Permissions.Create mockPermissionCreate;
 
   @BeforeEach
-  void setUp() throws IOException {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
     when(mockDriveService.files()).thenReturn(mockFiles);
     when(mockDriveService.permissions()).thenReturn(mockPermissions);

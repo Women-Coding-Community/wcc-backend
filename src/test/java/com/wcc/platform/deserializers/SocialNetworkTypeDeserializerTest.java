@@ -24,7 +24,7 @@ class SocialNetworkTypeDeserializerTest {
   @InjectMocks private SocialNetworkTypeDeserializer deserializer;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
   }
 

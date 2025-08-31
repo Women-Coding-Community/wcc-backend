@@ -148,7 +148,7 @@ class GoogleDriveRepositoryIntegrationTest {
 
     @Test
     @DisplayName("Should throw PlatformInternalException when MultipartFile read fails")
-    void shouldThrowExceptionWhenMultipartFileReadFails() throws IOException {
+    void shouldThrowExceptionWhenMultipartFileReadFails() {
       // Given
       MockMultipartFile multipartFile =
           new MockMultipartFile("file", TEST_FILE_NAME, TEST_CONTENT_TYPE, TEST_FILE_DATA) {
