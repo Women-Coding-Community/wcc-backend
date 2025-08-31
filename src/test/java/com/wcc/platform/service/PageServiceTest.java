@@ -84,7 +84,7 @@ class PageServiceTest {
     Object result = pageService.create(pageType, expectedEntity);
     assertEquals(expectedEntity, result);
 
-    verify(pageRepository).create(eq(expectedEntity));
+    verify(pageRepository).create(expectedEntity);
   }
 
   @Test
@@ -99,7 +99,7 @@ class PageServiceTest {
     Object result = pageService.create(pageType, pageEntity);
     assertEquals(expectedEntity, result);
 
-    verify(pageRepository).create(eq(expectedEntity));
+    verify(pageRepository).create(expectedEntity);
   }
 
   @Test

@@ -1,4 +1,4 @@
-package com.wcc.platform.service;
+package com.wcc.platform.repository.googledrive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,7 +9,6 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.properties.FolderStorageProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveRepository;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -25,7 +24,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import({TestGoogleDriveConfig.class, com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class})
+@Import({
+  TestGoogleDriveConfig.class,
+  com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class
+})
 @DisplayName("GoogleDriveService Performance Tests")
 class GoogleDriveRepositoryPerformanceTest {
 
@@ -44,7 +46,7 @@ class GoogleDriveRepositoryPerformanceTest {
   @Mock private Drive.Permissions.Create mockPermissionCreate;
 
   @BeforeEach
-  void setUp() throws IOException {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
     when(mockDriveService.files()).thenReturn(mockFiles);
     when(mockDriveService.permissions()).thenReturn(mockPermissions);

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.Resource;
+import com.wcc.platform.repository.postgres.PostgresResourceRepository;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,24 +20,24 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 @ExtendWith(MockitoExtension.class)
-class JdbcResourceRepositoryTest {
+class PostgresResourceRepositoryTest {
 
   @Mock private JdbcTemplate jdbcTemplate;
 
-  private JdbcResourceRepository repository;
+  private PostgresResourceRepository repository;
 
   private Resource testResource;
 
   @BeforeEach
   void setUp() {
-    repository = new JdbcResourceRepository(jdbcTemplate);
+    repository = new PostgresResourceRepository(jdbcTemplate);
     testResource =
         Resource.builder()
             .id(UUID.randomUUID())
             .name("Test Resource")
             .description("Test Description")
             .fileName("test.txt")
-            .contentType("text/plain")
+            .contentType("image/jpeg")
             .size(1000L)
             .driveFileId("drive123")
             .driveFileLink("http://drive.google.com/test")

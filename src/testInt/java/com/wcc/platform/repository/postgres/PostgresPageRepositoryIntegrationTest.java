@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +40,6 @@ class PostgresPageRepositoryIntegrationTest extends DefaultDatabaseSetup {
   }
 
   @Test
-  @Disabled
   void updateShouldModifyExistingEntity() {
     final Map<String, Object> entity = Map.of("id", "3", NAME, "Old Page");
     repository.create(entity);
@@ -49,9 +47,9 @@ class PostgresPageRepositoryIntegrationTest extends DefaultDatabaseSetup {
     final Map<String, Object> result = repository.update("3", Map.of(NAME, "Updated Page"));
 
     assertEquals(
-        "{\"id\": \"3\", \"name\": \"Updated Page\"}",
-        result.get("data"),
-        "Should update entity data");
+        Map.of("id", "3", NAME, "Updated Page"),
+        result,
+        "Should update entity and return updated data");
   }
 
   @Test
