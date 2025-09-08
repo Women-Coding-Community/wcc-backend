@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.cms.attributes;
 
-import com.wcc.platform.domain.platform.LeadershipMember;
+import com.wcc.platform.domain.platform.member.LeadershipMember;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 

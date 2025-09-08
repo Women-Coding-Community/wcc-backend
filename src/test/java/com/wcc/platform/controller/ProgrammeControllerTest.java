@@ -1,7 +1,7 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
-import static com.wcc.platform.domain.platform.ProgramType.BOOK_CLUB;
+import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
 import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("test")
 @Import(SecurityConfig.class)
 @WebMvcTest(ProgrammeController.class)
-public class ProgrammeControllerTest {
+class ProgrammeControllerTest {
   public static final String API_PROGRAMME = "/api/cms/v1/program";
   public static final String PROG_TYPE_BOOK_CLUB = "?type=BOOK_CLUB";
 

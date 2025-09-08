@@ -20,3 +20,8 @@ integration-test/node_modules/*
 integration-test/test-results/*
 integration-test/.env
 integration-test/playwright-report
+
+# Google Drive Files
+/tokens/StoredCredential
+src/main/resources/credentials.json
+src/main/resources/application-local.yml

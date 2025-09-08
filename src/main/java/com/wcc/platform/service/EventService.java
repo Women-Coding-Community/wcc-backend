@@ -3,10 +3,10 @@ package com.wcc.platform.service;
 import static com.wcc.platform.domain.cms.PageType.EVENTS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.PageData;
 import com.wcc.platform.domain.cms.pages.PageMetadata;
 import com.wcc.platform.domain.cms.pages.Pagination;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
+import com.wcc.platform.domain.cms.pages.events.PageData;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.Event;
 import com.wcc.platform.repository.PageRepository;

@@ -1,7 +1,7 @@
 // package com.wcc.platform.integrationtests;
 //
 // import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
-// import static com.wcc.platform.domain.platform.ProgramType.BOOK_CLUB;
+// import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
 // import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
 // import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 // import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,7 +11,7 @@
 // import com.fasterxml.jackson.databind.ObjectMapper;
 // import com.wcc.platform.controller.ProgrammeController;
 // import com.wcc.platform.domain.exceptions.ContentNotFoundException;
-// import com.wcc.platform.domain.platform.ProgramType;
+// import com.wcc.platform.domain.platform.type.ProgramType;
 // import com.wcc.platform.repository.PageRepository;
 // import com.wcc.platform.utils.FileUtil;
 // import java.util.Map;

@@ -1,6 +1,6 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.platform.ProgramType.BOOK_CLUB;
+import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
 import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -35,7 +35,7 @@ class ProgrammeServiceTest {
   @Test
   @SuppressWarnings("unchecked")
   void whenGetTeamGivenRecordExistOnDatabaseThenReturnValidResponse() {
-    var programmePage = createProgrammePageTest("bookClubPage.json");
+    var programmePage = createProgrammePageTest("init-data/bookClubPage.json");
     var mapPage = objectMapper.convertValue(programmePage, Map.class);
     when(pageRepository.findById(BOOK_CLUB.toPageId())).thenReturn(Optional.of(mapPage));
 
@@ -52,7 +52,7 @@ class ProgrammeServiceTest {
       "This test is disabled because the equals "
           + "method is different for a record object which is strange.")
   void whenGetTeamGivenRecordExistThenReturnInTheResponse() {
-    var programmePage = createProgrammePageTest("bookClubPage.json");
+    var programmePage = createProgrammePageTest("init-data/bookClubPage.json");
     var mapPage = objectMapper.convertValue(programmePage, Map.class);
 
     when(pageRepository.findById(BOOK_CLUB.toPageId())).thenReturn(Optional.of(mapPage));

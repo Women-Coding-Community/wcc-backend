@@ -5,7 +5,6 @@ import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
 import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
-import com.wcc.platform.domain.platform.StudyGroup;
 import jakarta.validation.constraints.NotNull;
 
 /** Represents the Study Group page. */

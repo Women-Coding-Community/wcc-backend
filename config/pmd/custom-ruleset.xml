@@ -35,6 +35,11 @@
       <property name="minimum" value="2"/>
     </properties>
   </rule>
+  <rule ref="category/java/codestyle.xml/LongVariable">
+    <properties>
+      <property name="minimum" value="21"/>
+    </properties>
+  </rule>
   <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
     <properties>
       <property name="maxDuplicateLiterals" value="10"/>
@@ -48,7 +53,7 @@
   </rule>
   <rule ref="category/java/documentation.xml/CommentSize">
     <properties>
-      <property name="maxLines" value="6"/>
+      <property name="maxLines" value="10"/>
       <property name="maxLineLength" value="97"/>
     </properties>
   </rule>

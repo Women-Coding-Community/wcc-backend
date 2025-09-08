@@ -13,8 +13,8 @@ import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
-import com.wcc.platform.domain.platform.Member;
-import com.wcc.platform.domain.platform.MemberType;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import java.util.List;
 import java.util.NoSuchElementException;

@@ -3,6 +3,7 @@ spring:
     name: wcc-backend
   profiles:
     active: default
+
   datasource:
     url: jdbc:postgresql://localhost:5432/wcc
     username: postgres
@@ -23,12 +24,22 @@ logging:
       flywaydb: DEBUG
 
 security:
+  enabled: true
   api:
-    key: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4
+    key: local
 
 file:
   storage:
     directory: data
+
+storage:
+  folders:
+    main-folder: folder-id
+    resources-folder: folder-id
+    events-folder: folder-id
+    mentors-folder: folder-id
+    mentors-profile-folder: folder-id
+    images-folder: folder-id
 
 management:
   endpoint:
@@ -50,4 +61,3 @@ springdoc:
     tagsSorter: alpha
     operations-sorter: alpha
   paths-to-match: /api/**, /actuator/**
-

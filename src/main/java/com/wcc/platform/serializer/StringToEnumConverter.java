@@ -1,6 +1,6 @@
 package com.wcc.platform.serializer;
 
-import com.wcc.platform.domain.platform.ProgramType;
+import com.wcc.platform.domain.platform.type.ProgramType;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 

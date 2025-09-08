@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +25,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
@@ -214,5 +216,39 @@ class MentorshipServiceTest {
     var exception = assertThrows(ContentNotFoundException.class, service::getLongTermTimeLine);
 
     assertEquals("Content of Page MENTORSHIP_LONG_TIMELINE not found", exception.getMessage());
+  }
+
+  @Test
+  void whenGetLongTermTimeLineGivenIllegalArgumentExceptionThenThrowPlatformInternalException() {
+    var page = createLongTermTimeLinePageTest();
+    var mapPage =
+        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+
+    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
+        .thenReturn(Optional.of(mapPage));
+
+    // Mock the objectMapper to throw IllegalArgumentException
+    when(objectMapper.convertValue(anyMap(), eq(LongTermTimeLinePage.class)))
+        .thenThrow(new IllegalArgumentException("Conversion failed"));
+
+    var exception =
+        assertThrows(PlatformInternalException.class, () -> service.getLongTermTimeLine());
+
+    assertEquals("Conversion failed", exception.getMessage());
+  }
+
+  @Test
+  void whenGetLongTermTimeLineGivenRepositoryFindByIdThrowsExceptionThenPropagateException() {
+    // Test that exceptions from repository.findById are propagated
+    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
+        .thenThrow(new RuntimeException("Database connection failed"));
+
+    // The exception should be propagated
+    var exception = assertThrows(RuntimeException.class, () -> service.getLongTermTimeLine());
+
+    assertEquals("Database connection failed", exception.getMessage());
+
+    // Verify that getFallback is never called since the exception occurs before that
+    verify(pageRepository, never()).getFallback(any(), any(), any());
   }
 }

@@ -2,8 +2,8 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
-import com.wcc.platform.domain.platform.Member;
-import com.wcc.platform.domain.platform.MemberDto;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.repository.MembersRepository;
 import java.util.List;
 import java.util.Optional;

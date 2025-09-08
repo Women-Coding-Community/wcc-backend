@@ -1,7 +1,7 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.platform.Member;
-import com.wcc.platform.domain.platform.MemberDto;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

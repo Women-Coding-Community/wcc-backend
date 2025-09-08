@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.wcc.platform.domain.platform.type.ProgramType;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -21,7 +22,9 @@ class EventTest {
   Validator validator;
 
   @BeforeEach
-  void setup() {testEvent = createEventTest();}
+  void setup() {
+    testEvent = createEventTest();
+  }
 
   @Test
   void testEqual() {
@@ -53,7 +56,7 @@ class EventTest {
   }
 
   @Test
-  void testForFieldValidation(){
+  void testForFieldValidation() {
     try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
       validator = factory.getValidator();
     }

@@ -12,6 +12,7 @@
             * [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
             * [Google Format](#google-format)
                 * [IntelliJ JRE Config](#intellij-jre-config)
+        * [Setup PostgreSQL database](#setup-postgresql-database)
     * [Run Locally](#run-locally)
     * [Open API Documentation](#open-api-documentation)
     * [Quality Checks](#quality-checks)
@@ -143,6 +144,22 @@ Run:
 docker --version
 ```
 
+### Setup PostgreSQL database
+
+PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running
+the docker compose -f docker/docker-compose.yml up --build as explained
+in [Run Locally](#run-locally) section.
+
+Setup Data source in the IntelliJ.
+
+![image](docs/images/intelliJ-data-sources.png)
+
+![image](docs/images/postgres-wcc-db.png)
+
+**Note**: In case of problems with the database during the development phase,
+when changes to the db tables are frequent, from the DB source connection in IntelliJ drop the
+tables and refresh the DB. Start the application.
+
 ## Run Locally
 
 Verify if Docker is running.
@@ -192,9 +209,27 @@ curl -X 'GET' \
 -H 'X-API-KEY: e8-Mm0ybormRil7k_DZO9jYtRAYW5VX5MCQiQG2CLD4'
 ```
 
+### Run Locally without Authentication
+
+- Check if the database is running in docker
+- Change the application.properties file to disable authentication
+
+> wcc.security.authentication.enabled=false
+
+- Build the application
+- Run the application
+
+After this you can tests execute this curl and you will get the response.
+> curl 'http://localhost:8080/api/cms/v1/footer'
+
 ## Open API Documentation
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html)
+
+## API Documentation
+
+* [Resource API Documentation](docs/resource_api.md) - API for uploading, retrieving, and managing resources and mentor profile pictures
+* [Google Drive API Setup](docs/google_drive_setup.md) - Instructions for setting up Google Drive API credentials
 
 ## Quality Checks
 

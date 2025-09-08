@@ -84,7 +84,7 @@ public class MentorshipControllerTest {
 
   @Test
   void testFaqOkResponse() throws Exception {
-    var fileName = "mentorshipFaqPage.json";
+    var fileName = "init-data/mentorshipFaqPage.json";
     var expectedJson = FileUtil.readFileAsString(fileName);
 
     when(service.getFaq()).thenReturn(createMentorshipFaqPageTest(fileName));
