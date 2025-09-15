@@ -2,7 +2,9 @@ package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createLongTermTimeLinePageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipAdHocTimelinePageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
@@ -41,6 +43,8 @@ public class MentorshipControllerTest {
   public static final String API_MENTORSHIP_OVERVIEW = "/api/cms/v1/mentorship/overview";
   public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
   public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
+  public static final String API_MENTORSHIP_LONG_TIMELINE =
+      "/api/cms/v1/mentorship/long-term-timeline";
   public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/study-groups";
   public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
   public static final String API_AD_HOC_TIMELINE = "/api/cms/v1/mentorship/ad-hoc-timeline";
@@ -100,6 +104,20 @@ public class MentorshipControllerTest {
     mockMvc
         .perform(
             MockMvcRequestFactory.getRequest(API_MENTORSHIP_CONDUCT).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testLongTermTimelineOkResponse() throws Exception {
+    var fileName = MENTORSHIP_LONG_TIMELINE.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getLongTermTimeLine()).thenReturn(createLongTermTimeLinePageTest(fileName));
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_LONG_TIMELINE)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }
