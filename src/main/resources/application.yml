@@ -33,6 +33,7 @@ file:
     directory: data
 
 storage:
+  type: google
   folders:
     main-folder: folder-id
     resources-folder: folder-id
