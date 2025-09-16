@@ -24,7 +24,7 @@ class MemberTypeDeserializerTest {
   @InjectMocks private MemberTypeDeserializer deserializer;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     MockitoAnnotations.openMocks(this);
   }
 
