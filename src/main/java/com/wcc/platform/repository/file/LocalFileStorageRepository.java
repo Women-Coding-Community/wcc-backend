@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.local;
+package com.wcc.platform.repository.file;
 
 import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.properties.FolderStorageProperties;
@@ -24,11 +24,46 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class LocalFileStorageRepository implements FileStorageRepository {
 
+  private static final String FILE_PATH = "file://";
   private final FolderStorageProperties folders;
 
   /** Base directory where files are stored locally. */
-  @Value("${file.storage.directory:data}")
+  @Value("${file.storage.directory}")
   private String baseDirectory;
+
+  private static Path uniquePath(Path desired) throws IOException {
+    if (!Files.exists(desired)) {
+      return desired;
+    }
+    final String fileName = desired.getFileName().toString();
+    final String name;
+    final String ext;
+    final int dot = fileName.lastIndexOf('.');
+    if (dot > 0) {
+      name = fileName.substring(0, dot);
+      ext = fileName.substring(dot);
+    } else {
+      name = fileName;
+      ext = "";
+    }
+    Path parent = desired.getParent();
+    int i = 1;
+    while (true) {
+      Path candidate = parent.resolve(name + " (" + i + ")" + ext);
+      if (!Files.exists(candidate)) {
+        return candidate;
+      }
+      i++;
+    }
+  }
+
+  /**
+   * For local storage, expose as file:// URL or simple encoded path; adjust if app serves static
+   * files.
+   */
+  private static String toWebLink(Path path) {
+    return FILE_PATH + URLEncoder.encode(path.toAbsolutePath().toString(), StandardCharsets.UTF_8);
+  }
 
   @Override
   public FolderStorageProperties getFolders() {
@@ -83,36 +118,5 @@ public class LocalFileStorageRepository implements FileStorageRepository {
       return base;
     }
     return base.resolve(folder);
-  }
-
-  private static Path uniquePath(Path desired) throws IOException {
-    if (!Files.exists(desired)) {
-      return desired;
-    }
-    final String fileName = desired.getFileName().toString();
-    final String name;
-    final String ext;
-    final int dot = fileName.lastIndexOf('.');
-    if (dot > 0) {
-      name = fileName.substring(0, dot);
-      ext = fileName.substring(dot);
-    } else {
-      name = fileName;
-      ext = "";
-    }
-    Path parent = desired.getParent();
-    int i = 1;
-    while (true) {
-      Path candidate = parent.resolve(name + " (" + i + ")" + ext);
-      if (!Files.exists(candidate)) {
-        return candidate;
-      }
-      i++;
-    }
-  }
-
-  private static String toWebLink(Path path) {
-    // For local storage, expose as file:// URL or simple encoded path; adjust if app serves static files
-    return "file://" + URLEncoder.encode(path.toAbsolutePath().toString(), StandardCharsets.UTF_8);
   }
 }

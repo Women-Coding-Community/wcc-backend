@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.properties.FolderStorageProperties;
+import com.wcc.platform.repository.file.LocalFileStorageRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,16 @@ class LocalFileStorageRepositoryTest {
   private Path tempDir;
   private FolderStorageProperties folders;
   private LocalFileStorageRepository repo;
+
+  private static void injectBaseDirectory(LocalFileStorageRepository r, String baseDir) {
+    try {
+      var f = LocalFileStorageRepository.class.getDeclaredField("baseDirectory");
+      f.setAccessible(true);
+      f.set(r, baseDir);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   @BeforeEach
   void setUp() throws IOException {
@@ -109,15 +120,5 @@ class LocalFileStorageRepositoryTest {
   @Test
   void getFolders_returnsInjectedProperties() {
     assertSame(folders, repo.getFolders());
-  }
-
-  private static void injectBaseDirectory(LocalFileStorageRepository r, String baseDir) {
-    try {
-      var f = LocalFileStorageRepository.class.getDeclaredField("baseDirectory");
-      f.setAccessible(true);
-      f.set(r, baseDir);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
   }
 }
