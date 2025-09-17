@@ -17,6 +17,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.repository.MentorsRepository;
 import com.wcc.platform.repository.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,16 @@ import org.springframework.stereotype.Service;
 public class MentorshipService {
   private final ObjectMapper objectMapper;
   private final PageRepository repository;
+  private final MentorsRepository mentorsRepository;
 
   @Autowired
-  public MentorshipService(final ObjectMapper objectMapper, final PageRepository repository) {
+  public MentorshipService(
+      final ObjectMapper objectMapper,
+      final PageRepository repository,
+      final MentorsRepository mentorsRepository) {
     this.objectMapper = objectMapper;
     this.repository = repository;
+    this.mentorsRepository = mentorsRepository;
   }
 
   /**
