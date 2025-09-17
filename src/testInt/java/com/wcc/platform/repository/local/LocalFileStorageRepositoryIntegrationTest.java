@@ -49,6 +49,7 @@ class LocalFileStorageRepositoryIntegrationTest {
               try {
                 Files.deleteIfExists(p);
               } catch (IOException ignored) {
+                // ignore
               }
             });
   }
@@ -63,7 +64,8 @@ class LocalFileStorageRepositoryIntegrationTest {
 
     byte[] content = "integration hello".getBytes();
 
-    var stored = repository.uploadFile("int.txt", "text/plain", content, folders.getImagesFolder());
+    var stored =
+        repository.uploadFile("int.txt", "text/plain", content, folders.getResourcesFolder());
 
     assertThat(stored).isNotNull();
     assertThat(stored.id()).isNotBlank();
@@ -76,7 +78,7 @@ class LocalFileStorageRepositoryIntegrationTest {
     var file =
         new MockMultipartFile(
             "file", "second.bin", "application/octet-stream", new byte[] {1, 2, 3});
-    var stored2 = repository.uploadFile(file, folders.getImagesFolder());
+    var stored2 = repository.uploadFile(file, folders.getResourcesFolder());
     assertThat(stored2).isNotNull();
     assertThat(Files.exists(Path.of(stored2.id()))).isTrue();
 
