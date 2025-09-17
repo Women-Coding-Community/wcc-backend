@@ -43,8 +43,7 @@ public class MentorshipControllerTest {
   public static final String API_MENTORSHIP_OVERVIEW = "/api/cms/v1/mentorship/overview";
   public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
   public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
-  public static final String API_MENTORSHIP_LONG_TIMELINE =
-      "/api/cms/v1/mentorship/long-term-timeline";
+  public static final String API_MENTORSHIP_TIMELINE = "/api/cms/v1/mentorship/long-term-timeline";
   public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/study-groups";
   public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
   public static final String API_AD_HOC_TIMELINE = "/api/cms/v1/mentorship/ad-hoc-timeline";
@@ -116,8 +115,7 @@ public class MentorshipControllerTest {
     when(service.getLongTermTimeLine()).thenReturn(createLongTermTimeLinePageTest(fileName));
     mockMvc
         .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_LONG_TIMELINE)
-                .contentType(APPLICATION_JSON))
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_TIMELINE).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

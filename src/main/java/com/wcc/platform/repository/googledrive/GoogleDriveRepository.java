@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 /** Service for interacting with Google Drive API. */
 @Slf4j
 @Service
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(prefix = "storage", name = "type", havingValue = "google", matchIfMissing = true)
 @SuppressWarnings({"PMD.LooseCoupling", "PMD.ExcessiveImports"})
 public class GoogleDriveRepository implements FileStorageRepository {
 

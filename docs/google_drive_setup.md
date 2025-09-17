@@ -116,6 +116,7 @@ Enable the Google Drive API for your project in the Google Cloud Console.
 4. Example: for the local profile, create application-local.yml and add the following:
    ```yaml
    storage:
+     type: google
      folders:
        main-folder: folder_id_local_env
        resources-folder: folder_id_local_env_and_sub_folder_resources
