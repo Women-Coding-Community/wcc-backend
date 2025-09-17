@@ -1,5 +1,6 @@
 package com.wcc.platform.repository.file;
 
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.FileStorageRepository;
@@ -31,7 +32,7 @@ public class LocalFileStorageRepository implements FileStorageRepository {
   @Value("${file.storage.directory}")
   private String baseDirectory;
 
-  private static Path uniquePath(Path desired) throws IOException {
+  private static Path uniquePath(final Path desired) throws IOException {
     if (!Files.exists(desired)) {
       return desired;
     }
@@ -46,14 +47,14 @@ public class LocalFileStorageRepository implements FileStorageRepository {
       name = fileName;
       ext = "";
     }
-    Path parent = desired.getParent();
-    int i = 1;
+    final Path parent = desired.getParent();
+    int counter = 1;
     while (true) {
-      Path candidate = parent.resolve(name + " (" + i + ")" + ext);
+      final var candidate = parent.resolve(name + " (" + counter + ")" + ext);
       if (!Files.exists(candidate)) {
         return candidate;
       }
-      i++;
+      counter++;
     }
   }
 
@@ -61,7 +62,7 @@ public class LocalFileStorageRepository implements FileStorageRepository {
    * For local storage, expose as file:// URL or simple encoded path; adjust if app serves static
    * files.
    */
-  private static String toWebLink(Path path) {
+  private static String toWebLink(final Path path) {
     return FILE_PATH + URLEncoder.encode(path.toAbsolutePath().toString(), StandardCharsets.UTF_8);
   }
 
@@ -84,7 +85,8 @@ public class LocalFileStorageRepository implements FileStorageRepository {
       log.info("Stored local file '{}' ({} bytes) at {}", safeName, fileData.length, target);
       return new FileStored(id, link);
     } catch (IOException e) {
-      throw new RuntimeException("Failed to store local file", e);
+      log.error("Failed to store local file", e);
+      throw new PlatformInternalException("Failed to store local file", e);
     }
   }
 
@@ -94,7 +96,7 @@ public class LocalFileStorageRepository implements FileStorageRepository {
       return uploadFile(
           file.getOriginalFilename(), file.getContentType(), file.getBytes(), folderId);
     } catch (IOException e) {
-      throw new RuntimeException("Failed to read multipart file", e);
+      throw new PlatformInternalException("Failed to read multipart file", e);
     }
   }
 
@@ -107,7 +109,7 @@ public class LocalFileStorageRepository implements FileStorageRepository {
       final Path path = Path.of(fileId);
       Files.deleteIfExists(path);
       log.info("Deleted local file {}", path);
-    } catch (Exception e) {
+    } catch (IOException e) {
       log.warn("Could not delete local file {}: {}", fileId, e.getMessage());
     }
   }

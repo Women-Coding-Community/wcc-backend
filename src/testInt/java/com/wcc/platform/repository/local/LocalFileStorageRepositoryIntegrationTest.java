@@ -73,10 +73,10 @@ class LocalFileStorageRepositoryIntegrationTest {
     assertThat(Files.exists(written)).isTrue();
     assertThat(Files.readString(written)).isEqualTo("integration hello");
 
-    var mf =
+    var file =
         new MockMultipartFile(
             "file", "second.bin", "application/octet-stream", new byte[] {1, 2, 3});
-    var stored2 = repository.uploadFile(mf, folders.getImagesFolder());
+    var stored2 = repository.uploadFile(file, folders.getImagesFolder());
     assertThat(stored2).isNotNull();
     assertThat(Files.exists(Path.of(stored2.id()))).isTrue();
 
