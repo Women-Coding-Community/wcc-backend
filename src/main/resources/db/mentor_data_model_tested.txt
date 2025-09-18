@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS technical_areas (
+                                             id SERIAL PRIMARY KEY,
+                                             name TEXT NOT NULL UNIQUE,
+                                             description TEXT
+);
+INSERT INTO technical_areas (id, name, description) VALUES
+(1, 'BACKEND', 'Backend development'),
+(2, 'DATA_SCIENCE', 'Data science and analytics'),
+(3, 'DEVOPS', 'DevOps practices and tools'),
+(4, 'FRONTEND', 'Frontend development'),
+(5, 'FULLSTACK', 'Fullstack development'),
+(6, 'MOBILE', 'Mobile development'),
+(7, 'OTHER', 'Other technical areas'),
+(8, 'QA', 'Quality assurance and testing');
+
+ BACKEND,
+  DATA_SCIENCE,
+  DEVOPS,
+  FRONTEND,
+  FULLSTACK,
+  MOBILE,
+  OTHER,
+  QA

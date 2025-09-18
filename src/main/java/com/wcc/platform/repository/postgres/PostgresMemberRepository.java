@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PostgresMemberRepository implements MembersRepository {
 
+  private static final String SQL_DELETE_BY_ID = "DELETE FROM members WHERE id = ?";
+
   private final JdbcTemplate jdbc;
   private final MemberMapper memberMapper;
 
@@ -80,6 +82,6 @@ public class PostgresMemberRepository implements MembersRepository {
 
   @Override
   public void deleteById(final Long id) {
-    // To-do: Implement deletion logic
+    jdbc.update(SQL_DELETE_BY_ID, id);
   }
 }
