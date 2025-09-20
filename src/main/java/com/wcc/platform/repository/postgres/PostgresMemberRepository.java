@@ -1,11 +1,12 @@
 package com.wcc.platform.repository.postgres;
 
 import com.wcc.platform.domain.platform.member.Member;
-import com.wcc.platform.repository.MembersRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Repository;
  * sets to Member objects with the help of MemberMapper.
  */
 @Repository
+@Primary
 @RequiredArgsConstructor
-public class PostgresMemberRepository implements MembersRepository {
+public class PostgresMemberRepository implements MemberRepository {
 
   private static final String INSERT_SQL =
       "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "

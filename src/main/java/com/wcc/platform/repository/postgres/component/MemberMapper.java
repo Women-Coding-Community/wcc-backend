@@ -26,7 +26,7 @@ public class MemberMapper {
   private final PostgresMemberImageRepository imageRepository;
   private final PostgresSocialNetworkRepository socialNetworkRepo;
 
-  /** Mapper method to convert ResultSet to Member object */
+  /** Mapper method to convert ResultSet to Member object. */
   public Member mapRowToMember(final ResultSet rs) throws SQLException {
     final Long memberId = rs.getLong("id");
     final Country country = countryRepository.findById(rs.getLong("country_id")).orElse(null);
@@ -35,6 +35,7 @@ public class MemberMapper {
     final List<SocialNetwork> networks = socialNetworkRepo.findByMemberId(memberId);
 
     return Member.builder()
+        .id(rs.getLong("id"))
         .fullName(rs.getString("full_name"))
         .position(rs.getString("position"))
         .email(rs.getString("email"))

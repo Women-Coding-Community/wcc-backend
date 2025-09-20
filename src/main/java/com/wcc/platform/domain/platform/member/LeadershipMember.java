@@ -32,6 +32,7 @@ public class LeadershipMember extends Member {
   @Builder(builderMethodName = "leadershipMemberBuilder")
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public LeadershipMember(
+      final Long id,
       final String fullName,
       final String position,
       final String email,
@@ -43,6 +44,7 @@ public class LeadershipMember extends Member {
       final List<Image> images,
       final List<SocialNetwork> network) {
     super(
+        id,
         fullName,
         position,
         email,
