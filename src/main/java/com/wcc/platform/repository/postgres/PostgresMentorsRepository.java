@@ -13,14 +13,15 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PostgresMentorsRepository implements MentorsRepository {
 
-  private static final String SQL_GET_BY_ID = "SELECT * FROM mentors WHERE id = ?";
-  private static final String SQL_DELETE_BY_ID = "SELECT * FROM mentors WHERE id = ?";
+  private static final String SQL_GET_BY_ID = "SELECT * FROM mentors WHERE mentor_id = ?";
+  private static final String SQL_DELETE_BY_ID = "SELECT * FROM mentors WHERE mentor_id = ?";
   private static final String SQL_GET_BY_EMAIL =
-      "SELECT mentors.* FROM mentors JOIN members ON mentors.id = members.id WHERE members.email = ?";
+      "SELECT mentors.* FROM mentors JOIN members ON mentors.mentor_id = members.id WHERE members.email = ?";
   private static final String SQL_GET_ALL = "SELECT * FROM mentors";
   private static final String SQL_FIND_ID_BY_EMAIL =
-      "SELECT mentors.id FROM mentors JOIN members ON mentors.id = members.id WHERE members.email = ?";
+      "SELECT mentors.mentor_id FROM mentors JOIN members ON mentors.mentor_id = members.id WHERE members.email = ?";
 
+  private static final String MENTOR_ID_COLUMN = "mentor_id";
   private final JdbcTemplate jdbc;
   private final MentorMapper mentorMapper;
 
@@ -48,7 +49,7 @@ public class PostgresMentorsRepository implements MentorsRepository {
         SQL_FIND_ID_BY_EMAIL,
         rs -> {
           if (rs.next()) {
-            long id = rs.getLong("id");
+            long id = rs.getLong(MENTOR_ID_COLUMN);
             return Long.valueOf(id);
           }
           return null;

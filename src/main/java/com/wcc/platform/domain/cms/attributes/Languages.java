@@ -1,6 +1,5 @@
 package com.wcc.platform.domain.cms.attributes;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,23 +7,17 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Languages {
-  C_LANGUAGE("C"),
-  C_PLUS_PLUS("C++"),
-  C_SHARP("C#"),
-  GO("Go"),
-  JAVA("Java"),
-  JAVASCRIPT("Javascript"),
-  KOTLIN("Kotlin"),
-  PHP("Php"),
-  PYTHON("Python"),
-  RUBY("Ruby"),
-  RUST("Rust");
+  C_LANGUAGE(1),
+  C_PLUS_PLUS(2),
+  C_SHARP(3),
+  GO(4),
+  JAVA(5),
+  JAVASCRIPT(6),
+  KOTLIN(7),
+  PHP(8),
+  PYTHON(9),
+  RUBY(10),
+  RUST(11);
 
-  private final String languageName;
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return languageName;
-  }
+  private final int id;
 }

@@ -1,3 +1,11 @@
+CREATE TABLE IF NOT EXISTS mentors (
+    mentor_id  INTEGER PRIMARY KEY REFERENCES members (id) ON DELETE CASCADE,
+    bio        TEXT NOT NULL,
+    is_available BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS technical_areas (
                                              id SERIAL PRIMARY KEY,
                                              name TEXT NOT NULL UNIQUE,
@@ -13,11 +21,22 @@ INSERT INTO technical_areas (id, name, description) VALUES
 (7, 'OTHER', 'Other technical areas'),
 (8, 'QA', 'Quality assurance and testing');
 
- BACKEND,
-  DATA_SCIENCE,
-  DEVOPS,
-  FRONTEND,
-  FULLSTACK,
-  MOBILE,
-  OTHER,
-  QA
+CREATE TABLE IF NOT EXISTS languages (
+                                             id SERIAL PRIMARY KEY,
+                                             name TEXT NOT NULL UNIQUE,
+                                             description TEXT
+);
+INSERT INTO languages (id, name, description) VALUES
+  (1,  'C',          'C language'),
+  (2,  'C++',        'C++'),
+  (3,  'C#',         'C#'),
+  (4,  'Go',         'Go'),
+  (5,  'Java',       'Java'),
+  (6,  'Javascript', 'Javascript'),
+  (7,  'Kotlin',     'Kotlin'),
+  (8,  'Php',        'PHP'),
+  (9,  'Python',     'Python'),
+  (10, 'Ruby',       'Ruby'),
+  (11, 'Rust',       'Rust')
+ON CONFLICT (id) DO NOTHING;
+
