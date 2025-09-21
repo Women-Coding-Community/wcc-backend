@@ -35,7 +35,7 @@ import org.springframework.test.context.ActiveProfiles;
   com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class
 })
 @DisplayName("GoogleDriveService Integration Tests")
-class GoogleDriveRepositoryIntegrationTest {
+class GoogleDriveFileStorageRepositoryIntegrationTest {
 
   private static final String TEST_FOLDER_ID = "test-folder-id";
   private static final String TEST_FILE_ID = "test-file-id";
@@ -45,7 +45,7 @@ class GoogleDriveRepositoryIntegrationTest {
   private static final String TEST_CONTENT_TYPE = "application/pdf";
   private static final byte[] TEST_FILE_DATA = "test file content".getBytes();
 
-  @Autowired private GoogleDriveRepository googleDriveRepository;
+  @Autowired private GoogleDriveFileStorageRepository googleDriveRepository;
   @Autowired private Drive mockDriveService;
   @Autowired private FolderStorageProperties properties;
 
