@@ -31,15 +31,20 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /** Service for interacting with Google Drive API. */
 @Slf4j
 @Service
-@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(prefix = "storage", name = "type", havingValue = "google", matchIfMissing = true)
+@ConditionalOnProperty(
+    prefix = "storage",
+    name = "type",
+    havingValue = "google",
+    matchIfMissing = true)
 @SuppressWarnings({"PMD.LooseCoupling", "PMD.ExcessiveImports"})
-public class GoogleDriveRepository implements FileStorageRepository {
+public class GoogleDriveFileStorageRepository implements FileStorageRepository {
 
   private static final String APPLICATION_NAME = "WCC Backend";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
@@ -52,14 +57,15 @@ public class GoogleDriveRepository implements FileStorageRepository {
   private final FolderStorageProperties folders;
 
   /** Constructor with dependencies. */
-  public GoogleDriveRepository(final Drive driveService, final FolderStorageProperties folders) {
+  public GoogleDriveFileStorageRepository(
+      final Drive driveService, final FolderStorageProperties folders) {
     this.driveService = driveService;
     this.folders = folders;
   }
 
   /** Spring constructor: builds Drive client and reads folders from properties. */
   @Autowired
-  public GoogleDriveRepository(final FolderStorageProperties folders)
+  public GoogleDriveFileStorageRepository(final FolderStorageProperties folders)
       throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
@@ -70,7 +76,7 @@ public class GoogleDriveRepository implements FileStorageRepository {
   }
 
   /** Constructor that initializes the Google Drive service (no Spring). */
-  public GoogleDriveRepository() throws GeneralSecurityException, IOException {
+  public GoogleDriveFileStorageRepository() throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
         new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
@@ -88,7 +94,8 @@ public class GoogleDriveRepository implements FileStorageRepository {
    */
   private static Credential getCredentials(final NetHttpTransport httpTransport)
       throws IOException {
-    try (InputStream in = GoogleDriveRepository.class.getResourceAsStream(CREDS_FILE_PATH)) {
+    try (InputStream in =
+        GoogleDriveFileStorageRepository.class.getResourceAsStream(CREDS_FILE_PATH)) {
       if (in == null) {
         throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
       }

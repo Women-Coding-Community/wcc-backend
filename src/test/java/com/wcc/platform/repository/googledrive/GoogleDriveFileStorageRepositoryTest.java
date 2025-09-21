@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class GoogleDriveRepositoryTest {
+class GoogleDriveFileStorageRepositoryTest {
 
   private static final String FOLDER_ID_ROOT = "test-folder-id";
   private final Drive driveServiceMock = mock(Drive.class);
@@ -32,14 +32,14 @@ class GoogleDriveRepositoryTest {
       mock(Drive.Permissions.Create.class);
 
   private FolderStorageProperties properties;
-  private GoogleDriveRepository service;
+  private GoogleDriveFileStorageRepository service;
 
   @BeforeEach
   void setUp() {
     properties = new FolderStorageProperties();
     properties.setMainFolder(FOLDER_ID_ROOT);
 
-    service = new GoogleDriveRepository(driveServiceMock, properties);
+    service = new GoogleDriveFileStorageRepository(driveServiceMock, properties);
   }
 
   @Test
@@ -93,7 +93,7 @@ class GoogleDriveRepositoryTest {
         .thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
-    var googleDriveService = new GoogleDriveRepository(driveServiceMock, properties);
+    var googleDriveService = new GoogleDriveFileStorageRepository(driveServiceMock, properties);
 
     var actualFile = googleDriveService.uploadFile(multipartFile, FOLDER_ID_ROOT);
 

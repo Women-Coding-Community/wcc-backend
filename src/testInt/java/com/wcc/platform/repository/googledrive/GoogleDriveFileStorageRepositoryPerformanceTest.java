@@ -29,9 +29,9 @@ import org.springframework.test.context.ActiveProfiles;
   com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class
 })
 @DisplayName("GoogleDriveService Performance Tests")
-class GoogleDriveRepositoryPerformanceTest {
+class GoogleDriveFileStorageRepositoryPerformanceTest {
 
-  @Autowired private GoogleDriveRepository googleDriveRepository;
+  @Autowired private GoogleDriveFileStorageRepository googleDriveRepository;
 
   @Autowired private Drive mockDriveService;
 
