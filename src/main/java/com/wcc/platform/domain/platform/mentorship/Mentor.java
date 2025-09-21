@@ -46,7 +46,7 @@ public class Mentor extends Member {
   private FeedbackSection feedbackSection;
 
   @SuppressWarnings("PMD.ImmutableField")
-  private MentorResource resource;
+  private MentorResource resources;
 
   /** Mentor Builder. */
   @Builder(builderMethodName = "mentorBuilder")
@@ -68,7 +68,7 @@ public class Mentor extends Member {
       @NotBlank final Skills skills,
       @NotBlank final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resource) {
+      final MentorResource resources) {
     super(
         id,
         fullName,
@@ -88,6 +88,6 @@ public class Mentor extends Member {
     this.bio = bio;
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
-    this.resource = resource;
+    this.resources = resources;
   }
 }

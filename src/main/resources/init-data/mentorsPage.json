@@ -112,25 +112,31 @@
           }
         ]
       },
-      "resources": [
-        {
-          "id": "1",
-          "name": "Book Recommendations",
-          "description": "Books related to Java skills",
-          "rawContent": "Book 1, Book 2",
-          "type": "DESCRIPTION"
-        },
-        {
-          "id": "2",
-          "name": "Recommendations of java course",
-          "description": "nice website to learn about java",
-          "type": "LINK",
-          "link": {
+      "resources": {
+        "books": [
+          "Book to learn Java",
+          "Book to learn how to test code"
+        ],
+        "links": [
+          {
             "label": "Java course 1",
             "uri": "https://linkexample.com/"
+          },
+          {
+            "label": "Java course 2",
+            "uri": "https://linkexample2.com/"
           }
-        }
-      ]
+        ],
+        "resources": [
+          {
+            "name": "Book to learn Java",
+            "description": "Book to learn Java",
+            "fileName": "book1.pdf",
+            "contentType": "application/pdf",
+            "driveFileLink": "https://drive.google.com/file/d/1234567890/view?usp=sharing"
+          }
+        ]
+      }
     }
   ]
 }
