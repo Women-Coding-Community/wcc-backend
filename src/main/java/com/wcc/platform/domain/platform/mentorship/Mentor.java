@@ -52,6 +52,7 @@ public class Mentor extends Member {
   @Builder(builderMethodName = "mentorBuilder")
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public Mentor(
+      final Long id,
       @NotBlank final String fullName,
       @NotBlank final String position,
       @NotBlank @Email final String email,
@@ -69,6 +70,7 @@ public class Mentor extends Member {
       final FeedbackSection feedbackSection,
       final MentorResource resource) {
     super(
+        id,
         fullName,
         position,
         email,
