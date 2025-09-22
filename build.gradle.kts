@@ -8,6 +8,7 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
+    id("org.openapi.generator") version "7.4.0"
     id("org.sonarqube") version "6.3.1.5724"
 }
 
@@ -228,6 +229,17 @@ if (project.hasProperty("localProfile")) {
             property("sonar.qualitygate.wait", "true")
         }
     }
+}
+
+tasks.register("postmanGenerate", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class.java) {
+    group = "openapi"
+    description = "Generate Postman collection from OpenAPI spec"
+
+    generatorName.set("postman-collection")
+    inputSpec.set("$rootDir/postman-collection/openapi.yaml")
+    outputDir.set("$rootDir/postman-collection/generated-collection")
+
+    validateSpec.set(false)
 }
 
 tasks.named<ProcessResources>("processTestIntResources") {

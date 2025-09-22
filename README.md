@@ -222,6 +222,27 @@ curl -X 'GET' \
 After this you can tests execute this curl and you will get the response.
 > curl 'http://localhost:8080/api/cms/v1/footer'
 
+## Generate Postman Collection
+
+You can generate a Postman collection from the running application’s OpenAPI spec.
+
+1. Start the application (e.g. via Docker Compose):
+```shell
+   docker compose -f docker/docker-compose.yml up --build
+```
+2. In the root directory of the repository, create a folder for the spec and collection:
+```shell
+    mkdir -p postman-collection
+```
+3. Download the OpenAPI spec directly from the running app:
+```shell
+   curl http://localhost:8080/api-docs -o postman-collection/openapi.yaml
+```
+4. Generate the Postman collection:
+```shell
+    ./gradlew postmanGenerate
+```
+
 ## Open API Documentation
 
 * [Access swagger api](http://localhost:8080/swagger-ui/index.html)
