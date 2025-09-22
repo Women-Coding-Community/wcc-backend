@@ -9,12 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 /** Postgres repository implementation for page. */
+@Primary
 @Repository
 @AllArgsConstructor
 public class PostgresPageRepository implements PageRepository {
