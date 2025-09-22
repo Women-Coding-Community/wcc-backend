@@ -2,13 +2,13 @@ package com.wcc.platform.repository;
 
 import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.properties.FolderStorageProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveRepository;
+import com.wcc.platform.repository.googledrive.GoogleDriveFileStorageRepository;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Interface to upload files to a file storage service.
  *
- * <p>Currently implemented by {@link GoogleDriveRepository}.
+ * <p>Currently implemented by {@link GoogleDriveFileStorageRepository}.
  */
 public interface FileStorageRepository {
 

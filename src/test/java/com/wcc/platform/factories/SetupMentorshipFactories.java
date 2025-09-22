@@ -236,7 +236,7 @@ public class SetupMentorshipFactories {
                 "additional"))
         .spokenLanguages(List.of("English", "Spanish"))
         .feedbackSection(createFeedbackSectionTest())
-        .resource(MentorResource.builder().id("1").build())
+        .resources(MentorResource.builder().id("1").build())
         .build();
   }
 

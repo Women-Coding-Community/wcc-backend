@@ -28,3 +28,4 @@ integration-test/playwright-report
 /tokens/StoredCredential
 src/main/resources/credentials.json
 src/main/resources/application-local.yml
+/data/members.json

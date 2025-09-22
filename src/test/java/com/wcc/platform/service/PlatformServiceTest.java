@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.repository.MembersRepository;
+import com.wcc.platform.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ import org.mockito.MockitoAnnotations;
 
 class PlatformServiceTest {
 
-  @Mock private MembersRepository membersRepository;
+  @Mock private MemberRepository memberRepository;
 
   @InjectMocks private PlatformService service;
 
@@ -43,35 +43,35 @@ class PlatformServiceTest {
   @Test
   @DisplayName("Given Member, when created, then should return created member")
   void testCreateMember() {
-    when(membersRepository.create(any(Member.class))).thenReturn(member);
+    when(memberRepository.create(any(Member.class))).thenReturn(member);
 
     Member result = service.createMember(member);
 
     assertEquals(member, result);
-    verify(membersRepository).create(member);
+    verify(memberRepository).create(member);
   }
 
   @Test
   @DisplayName("When getting all members, then should return list of members")
   void testGetAllMembers() {
     List<Member> members = List.of(member);
-    when(membersRepository.getAll()).thenReturn(members);
+    when(memberRepository.getAll()).thenReturn(members);
 
     List<Member> result = service.getAllMembers();
 
     assertEquals(members, result);
-    verify(membersRepository).getAll();
+    verify(memberRepository).getAll();
   }
 
   @Test
   @DisplayName("When getting all members and none exist, then should return empty list")
   void testGetAllMembersEmpty() {
-    when(membersRepository.getAll()).thenReturn(null);
+    when(memberRepository.getAll()).thenReturn(null);
 
     List<Member> result = service.getAllMembers();
 
     assertTrue(result.isEmpty());
-    verify(membersRepository).getAll();
+    verify(memberRepository).getAll();
   }
 
   @Test
@@ -79,12 +79,12 @@ class PlatformServiceTest {
       "When updating the member with memberDto, then should return the member with "
           + "updated data from memberDto")
   void testUpdateMember() {
-    when(membersRepository.update(1L, updatedMember)).thenReturn(updatedMember);
-    when(membersRepository.findByEmail(member.getEmail())).thenReturn(Optional.ofNullable(member));
-    when(membersRepository.findIdByEmail(member.getEmail())).thenReturn(1L);
+    when(memberRepository.update(1L, updatedMember)).thenReturn(updatedMember);
+    when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.ofNullable(member));
+    when(memberRepository.findIdByEmail(member.getEmail())).thenReturn(1L);
     Member result = service.updateMember(member.getEmail(), memberDto);
 
     assertEquals(updatedMember, result);
-    verify(membersRepository).update(1L, updatedMember);
+    verify(memberRepository).update(1L, updatedMember);
   }
 }

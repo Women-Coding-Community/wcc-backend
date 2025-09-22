@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 /** FileMemberRepository class to write/read member's data to/from file repository. */
+@Repository
 public class FileMemberRepository implements MemberRepository {
 
   private static final String FILE_NAME = "members.json";
@@ -29,47 +31,6 @@ public class FileMemberRepository implements MemberRepository {
       @Value("${file.storage.directory}") final String directoryPath) {
     this.objectMapper = objectMapper;
     file = new File(directoryPath + File.separator + FILE_NAME);
-  }
-
-  /**
-   * Save new member.
-   *
-   * @param member member to be saved to file
-   * @return Member pojo
-   */
-  @Override
-  public Member save(final Member member) {
-    final var members = getAll();
-    members.add(member);
-
-    writeFile(members);
-
-    return member;
-  }
-
-  /**
-   * Update an existing member.
-   *
-   * @param updatedMember member with updated fields
-   * @return updated member
-   */
-  @Override
-  public Member update(final Member updatedMember) {
-    final List<Member> members = getAll();
-
-    final var updatedMembers =
-        members.stream()
-            .map(
-                member -> {
-                  if (member.getEmail().equals(updatedMember.getEmail())) {
-                    return updatedMember;
-                  }
-                  return member;
-                })
-            .toList();
-
-    writeFile(updatedMembers);
-    return updatedMember;
   }
 
   /**
@@ -109,6 +70,64 @@ public class FileMemberRepository implements MemberRepository {
       return Optional.ofNullable(existingMember);
     }
     return Optional.empty();
+  }
+
+  @Override
+  public Member create(final Member member) {
+    final var members = getAll();
+    members.add(member);
+
+    writeFile(members);
+
+    return member;
+  }
+
+  @Override
+  public Member update(final Long id, final Member updatedMember) {
+    final List<Member> members = getAll();
+
+    final var updatedMembers =
+        members.stream()
+            .map(
+                member -> {
+                  if (member.getEmail().equals(updatedMember.getEmail())) {
+                    return updatedMember;
+                  }
+                  return member;
+                })
+            .toList();
+
+    writeFile(updatedMembers);
+    return updatedMember;
+  }
+
+  @Override
+  public Optional<Member> findById(final Long id) {
+    final var members = getAll();
+
+    if (!members.isEmpty()) {
+      final Member existingMember =
+          members.stream().filter(member -> member.getId().equals(id)).findFirst().orElse(null);
+
+      return Optional.ofNullable(existingMember);
+    }
+    return Optional.empty();
+  }
+
+  @Override
+  public Long findIdByEmail(final String email) {
+    final var member = findByEmail(email);
+    return member.map(Member::getId).orElse(0L);
+  }
+
+  @Override
+  public void deleteByEmail(String email) {
+    // not implemented
+  }
+
+  @Override
+  public void deleteById(final Long id) {
+    // not implemented
   }
 
   /**

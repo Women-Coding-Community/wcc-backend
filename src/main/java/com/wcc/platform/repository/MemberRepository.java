@@ -4,24 +4,18 @@ import com.wcc.platform.domain.platform.member.Member;
 import java.util.List;
 import java.util.Optional;
 
-/** Interface to save and retrieve member's data to and from a file repository. */
-public interface MemberRepository {
-
+/**
+ * Repository interface for managing member entities. Provides methods to perform CRUD operations
+ * and additional member-related queries on the data source.
+ */
+public interface MemberRepository extends CrudRepository<Member, Long> {
   /**
-   * Save a new member.
+   * Find member by email.
    *
-   * @param member member to be saved to file
-   * @return member
+   * @param email member's email
+   * @return Optional with Member object or empty Optional
    */
-  Member save(Member member);
-
-  /**
-   * Update an existing member.
-   *
-   * @param updatedMember member with updated fields
-   * @return updated member
-   */
-  Member update(Member updatedMember);
+  Optional<Member> findByEmail(String email);
 
   /**
    * Return all saved members.
@@ -31,10 +25,16 @@ public interface MemberRepository {
   List<Member> getAll();
 
   /**
-   * Find member by email.
+   * Return member's Id.
+   *
+   * @return member's Id in database
+   */
+  Long findIdByEmail(String email);
+
+  /**
+   * Delete member by email.
    *
    * @param email member's email
-   * @return Optional with Member object or empty Optional
    */
-  Optional<Member> findByEmail(String email);
+  void deleteByEmail(String email);
 }
