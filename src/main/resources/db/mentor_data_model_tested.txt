@@ -40,3 +40,37 @@ INSERT INTO languages (id, name, description) VALUES
   (11, 'Rust',       'Rust')
 ON CONFLICT (id) DO NOTHING;
 
+CREATE TABLE IF NOT EXISTS mentorship_types (
+                                             id SERIAL PRIMARY KEY,
+                                             name TEXT NOT NULL UNIQUE,
+                                             description TEXT
+);
+
+INSERT INTO mentorship_types (id, name, description) VALUES
+  (1,  'AD_HOC',          'Ad-hoc mentorship sessions'),
+  (2,  'LONG_TERM',       'Long-term mentorship relationships'),
+  (3,  'STUDY_GROUP',     'Study mentorship')
+ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS mentor_skills (
+    mentor_id        INTEGER PRIMARY KEY REFERENCES mentors (mentor_id) ON DELETE CASCADE,
+    technical_areas  INTEGER NOT NULL REFERENCES technical_areas (id) ON DELETE CASCADE,
+    languages        INTEGER NOT NULL REFERENCES languages (id) ON DELETE CASCADE,
+    created_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5) Mentorship types offered (AD_HOC, LONG_TERM, etc.)
+CREATE TABLE IF NOT EXISTS mentor_mentorship_types (
+    mentor_id       INTEGER NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
+    mentorship_type INTEGER NOT NULL REFERENCES mentorship_types (id) ON DELETE CASCADE,
+    PRIMARY KEY (mentor_id, mentorship_type)
+);
+
+-- 6) Availability months / hours (matches init JSON "availability")
+CREATE TABLE IF NOT EXISTS mentor_availability (
+    mentor_id      INTEGER NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
+    month          VARCHAR(20) NOT NULL, -- e.g. "MAY"
+    hours          INTEGER,
+    PRIMARY KEY (mentor_id, month)
+);
