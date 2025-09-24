@@ -1,4 +1,4 @@
-package com.wcc.platform.service;
+package com.wcc.platform.repository.googledrive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,7 +15,6 @@ import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.properties.FolderStorageProperties;
-import com.wcc.platform.repository.googledrive.GoogleDriveRepository;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,9 +30,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import({TestGoogleDriveConfig.class, com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class})
+@Import({
+  TestGoogleDriveConfig.class,
+  com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class
+})
 @DisplayName("GoogleDriveService Integration Tests")
-class GoogleDriveRepositoryIntegrationTest {
+class GoogleDriveFileStorageRepositoryIntegrationTest {
 
   private static final String TEST_FOLDER_ID = "test-folder-id";
   private static final String TEST_FILE_ID = "test-file-id";
@@ -43,7 +45,7 @@ class GoogleDriveRepositoryIntegrationTest {
   private static final String TEST_CONTENT_TYPE = "application/pdf";
   private static final byte[] TEST_FILE_DATA = "test file content".getBytes();
 
-  @Autowired private GoogleDriveRepository googleDriveRepository;
+  @Autowired private GoogleDriveFileStorageRepository googleDriveRepository;
   @Autowired private Drive mockDriveService;
   @Autowired private FolderStorageProperties properties;
 
@@ -57,10 +59,10 @@ class GoogleDriveRepositoryIntegrationTest {
 
   @BeforeEach
   void setUp() {
-      org.mockito.MockitoAnnotations.openMocks(this);
-      when(mockDriveService.files()).thenReturn(mockFiles);
-      when(mockDriveService.permissions()).thenReturn(mockPermissions);
-    }
+    org.mockito.MockitoAnnotations.openMocks(this);
+    when(mockDriveService.files()).thenReturn(mockFiles);
+    when(mockDriveService.permissions()).thenReturn(mockPermissions);
+  }
 
   private File createTestFile() {
     return GoogleDriveTestUtils.createMockFile(TEST_FILE_ID, TEST_FILE_NAME, WEB_VIEW_LINK);
@@ -146,7 +148,7 @@ class GoogleDriveRepositoryIntegrationTest {
 
     @Test
     @DisplayName("Should throw PlatformInternalException when MultipartFile read fails")
-    void shouldThrowExceptionWhenMultipartFileReadFails() throws IOException {
+    void shouldThrowExceptionWhenMultipartFileReadFails() {
       // Given
       MockMultipartFile multipartFile =
           new MockMultipartFile("file", TEST_FILE_NAME, TEST_CONTENT_TYPE, TEST_FILE_DATA) {

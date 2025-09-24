@@ -8,7 +8,7 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.domain.resource.ResourceContent;
+import com.wcc.platform.domain.resource.MentorResource;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -46,12 +46,13 @@ public class Mentor extends Member {
   private FeedbackSection feedbackSection;
 
   @SuppressWarnings("PMD.ImmutableField")
-  private List<ResourceContent> resources;
+  private MentorResource resources;
 
   /** Mentor Builder. */
   @Builder(builderMethodName = "mentorBuilder")
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public Mentor(
+      final Long id,
       @NotBlank final String fullName,
       @NotBlank final String position,
       @NotBlank @Email final String email,
@@ -67,8 +68,9 @@ public class Mentor extends Member {
       @NotBlank final Skills skills,
       @NotBlank final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final List<ResourceContent> resources) {
+      final MentorResource resources) {
     super(
+        id,
         fullName,
         position,
         email,

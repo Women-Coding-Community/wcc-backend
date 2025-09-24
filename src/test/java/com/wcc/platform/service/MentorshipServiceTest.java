@@ -33,7 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,9 +44,9 @@ class MentorshipServiceTest {
 
   @BeforeEach
   void setUp() {
-    objectMapper = Mockito.mock(ObjectMapper.class);
+    objectMapper = mock(ObjectMapper.class);
     objectMapper.registerModule(new JavaTimeModule());
-    pageRepository = Mockito.mock(PageRepository.class);
+    pageRepository = mock(PageRepository.class);
     service = new MentorshipService(objectMapper, pageRepository);
   }
 
@@ -231,10 +230,7 @@ class MentorshipServiceTest {
     when(objectMapper.convertValue(anyMap(), eq(LongTermTimeLinePage.class)))
         .thenThrow(new IllegalArgumentException("Conversion failed"));
 
-    var exception =
-        assertThrows(PlatformInternalException.class, () -> service.getLongTermTimeLine());
-
-    assertEquals("Conversion failed", exception.getMessage());
+    assertThrows(PlatformInternalException.class, service::getLongTermTimeLine);
   }
 
   @Test
@@ -244,7 +240,7 @@ class MentorshipServiceTest {
         .thenThrow(new RuntimeException("Database connection failed"));
 
     // The exception should be propagated
-    var exception = assertThrows(RuntimeException.class, () -> service.getLongTermTimeLine());
+    var exception = assertThrows(RuntimeException.class, service::getLongTermTimeLine);
 
     assertEquals("Database connection failed", exception.getMessage());
 

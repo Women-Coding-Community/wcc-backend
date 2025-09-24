@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.jdbc;
+package com.wcc.platform.repository.postgres;
 
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.Resource;
@@ -18,16 +18,16 @@ import org.springframework.stereotype.Repository;
 /** JDBC implementation of the ResourceRepository interface. */
 @Repository
 @AllArgsConstructor
-public class JdbcResourceRepository implements ResourceRepository {
+public class PostgresResourceRepository implements ResourceRepository {
+
   private static final String INSERT_SQL =
       "INSERT INTO resource (id, name, description, file_name, content_type, size, "
           + "drive_file_id, drive_file_link, resource_type_id, created_at, updated_at) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
-          + "(SELECT id FROM resource_type WHERE name = ?), ?, ?)";
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   private static final String UPDATE_SQL =
       "UPDATE resource SET name = ?, description = ?, file_name = ?, content_type = ?, "
           + "size = ?, drive_file_id = ?, drive_file_link = ?, "
-          + "resource_type_id = (SELECT id FROM resource_type WHERE name = ?), "
+          + "resource_type_id = ? , "
           + "updated_at = ? WHERE id = ?";
   private static final String SELECT_BY_ID =
       "SELECT r.*, rt.name as resource_type_name FROM resource r "
@@ -69,7 +69,7 @@ public class JdbcResourceRepository implements ResourceRepository {
         resourceCreated.getSize(),
         resourceCreated.getDriveFileId(),
         resourceCreated.getDriveFileLink(),
-        resourceCreated.getResourceType().name(),
+        resourceCreated.getResourceType().getResourceTypeId(),
         resourceCreated.getCreatedAt(),
         resourceCreated.getUpdatedAt());
 
@@ -91,7 +91,7 @@ public class JdbcResourceRepository implements ResourceRepository {
         resource.getSize(),
         resource.getDriveFileId(),
         resource.getDriveFileLink(),
-        resourceType.name(),
+        resourceType.getResourceTypeId(),
         resource.getUpdatedAt(),
         id);
 

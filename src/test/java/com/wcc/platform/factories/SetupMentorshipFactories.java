@@ -36,9 +36,8 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
-import com.wcc.platform.domain.platform.type.ContentType;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.domain.resource.ResourceContent;
+import com.wcc.platform.domain.resource.MentorResource;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Month;
 import java.time.Year;
@@ -237,16 +236,7 @@ public class SetupMentorshipFactories {
                 "additional"))
         .spokenLanguages(List.of("English", "Spanish"))
         .feedbackSection(createFeedbackSectionTest())
-        .resources(
-            List.of(
-                new ResourceContent(
-                    "id",
-                    "resource name",
-                    "description",
-                    "raw content",
-                    ContentType.DOCUMENT,
-                    null,
-                    null)))
+        .resources(MentorResource.builder().id("1").build())
         .build();
   }
 

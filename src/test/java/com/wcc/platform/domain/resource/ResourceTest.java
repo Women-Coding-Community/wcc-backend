@@ -12,13 +12,14 @@ import org.junit.jupiter.api.Test;
 
 class ResourceTest {
 
+  private static final String CONTENT_TYPE = "text/plain";
+
   @Test
   void shouldBuildResourceWithAllFields() {
     UUID uuid = UUID.randomUUID();
     String name = "Resource Name";
     String description = "Resource Description";
     String fileName = "file.txt";
-    String contentType = "text/plain";
     long size = 1024L;
     String driveFileId = "driveFileId123";
     String driveFileLink = "http://drive.google.com/file/driveFileId123";
@@ -31,7 +32,7 @@ class ResourceTest {
             .name(name)
             .description(description)
             .fileName(fileName)
-            .contentType(contentType)
+            .contentType(CONTENT_TYPE)
             .size(size)
             .driveFileId(driveFileId)
             .driveFileLink(driveFileLink)
@@ -44,7 +45,7 @@ class ResourceTest {
     assertEquals(name, resource.getName());
     assertEquals(description, resource.getDescription());
     assertEquals(fileName, resource.getFileName());
-    assertEquals(contentType, resource.getContentType());
+    assertEquals(CONTENT_TYPE, resource.getContentType());
     assertEquals(size, resource.getSize());
     assertEquals(driveFileId, resource.getDriveFileId());
     assertEquals(driveFileLink, resource.getDriveFileLink());
@@ -59,12 +60,12 @@ class ResourceTest {
     String newName = "Updated Resource Name";
     String newDescription = "Updated Description";
     String newFileName = "updated_file.txt";
-    String newContentType = "application/json";
     long newSize = 2048L;
     String newDriveFileId = "newDriveFileId456";
     String newDriveFileLink = "http://drive.google.com/file/newDriveFileId456";
     ResourceType newResourceType = ResourceType.EVENT_IMAGE;
     OffsetDateTime newTime = OffsetDateTime.now();
+    String newContentType = "application/json";
 
     Resource resource =
         Resource.builder()

@@ -84,8 +84,7 @@ class ResourceServiceTest {
             .resource(resource)
             .build();
 
-    multipartFile =
-        new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image content".getBytes());
+    multipartFile = new MockMultipartFile("file", "test.jpg", "", "test image content".getBytes());
 
     fileStored =
         new FileStored("drive-file-id", "https://drive.google.com/file/d/drive-file-id/view");

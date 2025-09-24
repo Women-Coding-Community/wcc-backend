@@ -5,15 +5,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.repository.PageRepository;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 /** Postgres repository implementation for page. */
+@Primary
 @Repository
 @AllArgsConstructor
 public class PostgresPageRepository implements PageRepository {
@@ -45,14 +48,18 @@ public class PostgresPageRepository implements PageRepository {
 
   @Override
   public Map<String, Object> update(final String id, final Map<String, Object> entity) {
-    final String sql = "UPDATE page SET data = to_jsonb(?::json) WHERE id = ? RETURNING id, data";
+    final String sql =
+        "UPDATE " + TABLE + " SET data = to_jsonb(?::json) WHERE id = ? RETURNING id, data";
 
     try {
-      entity.put("id", id);
+      final var toStore = new HashMap<>(entity);
+      toStore.put("id", id);
 
-      final String data = mapper.writeValueAsString(entity);
+      final String data = mapper.writeValueAsString(toStore);
 
-      return jdbc.queryForObject(sql, rowMapper(), data, id);
+      final var row = jdbc.queryForObject(sql, rowMapper(), data, id);
+      final var dataResponse = (String) row.get(COLUMN);
+      return mapper.readValue(dataResponse, new TypeReference<>() {});
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException(e);
     }

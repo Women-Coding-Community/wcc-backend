@@ -36,26 +36,6 @@ class LongTermTimelineEventTest {
 
   @Test
   void equalsAndHashCode() {
-    var a =
-        LongTermTimelineEvent.builder()
-            .duration("2020-2025")
-            .title("Milestone")
-            .description("Important description")
-            .build();
-
-    var b =
-        LongTermTimelineEvent.builder()
-            .duration("2020-2025")
-            .title("Milestone")
-            .description("Important description")
-            .build();
-
-    assertEquals(a, b);
-    assertEquals(a.hashCode(), b.hashCode());
-  }
-
-  @Test
-  void toStringContainsFields() {
     var event =
         LongTermTimelineEvent.builder()
             .duration("2020-2025")
@@ -63,10 +43,30 @@ class LongTermTimelineEventTest {
             .description("Important description")
             .build();
 
-    var s = event.toString();
-    assertTrue(s.contains("2020-2025"));
-    assertTrue(s.contains("Milestone"));
-    assertTrue(s.contains("Important description"));
+    var event2 =
+        LongTermTimelineEvent.builder()
+            .duration("2020-2025")
+            .title("Milestone")
+            .description("Important description")
+            .build();
+
+    assertEquals(event, event2);
+    assertEquals(event.hashCode(), event2.hashCode());
+  }
+
+  @Test
+  void testToStringContainsFields() {
+    var event =
+        LongTermTimelineEvent.builder()
+            .duration("2020-2025")
+            .title("Milestone")
+            .description("Important description")
+            .build();
+
+    var eventString = event.toString();
+    assertTrue(eventString.contains("2020-2025"));
+    assertTrue(eventString.contains("Milestone"));
+    assertTrue(eventString.contains("Important description"));
   }
 
   @Test

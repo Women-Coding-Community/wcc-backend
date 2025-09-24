@@ -1,40 +1,53 @@
 package com.wcc.platform.repository.postgres;
 
 import com.wcc.platform.domain.platform.member.Member;
-import com.wcc.platform.repository.MembersRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/** Member data repository */
+/**
+ * Implementation of the MembersRepository interface for managing Member entities using PostgreSQL
+ * as the data source. This class interacts with the database using SQL queries and maps the result
+ * sets to Member objects with the help of MemberMapper.
+ */
 @Repository
+@Primary
 @RequiredArgsConstructor
-public class PostgresMemberRepository implements MembersRepository {
+public class PostgresMemberRepository implements MemberRepository {
 
-  private static final String SQL_DELETE_BY_ID = "DELETE FROM members WHERE id = ?";
+  private static final String INSERT_SQL =
+      "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
+          + "country_id, status_id, bio, years_experience, spoken_language) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL) RETURNING id";
+  private static final String UPDATE_SQL =
+      "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
+          + "company_name = ?, email = ?, city = ?, country_id = ? WHERE id = ?";
+  private static final String DELETE_SQL = "DELETE FROM members WHERE id = ?";
+  private static final String DELETE_BY_SQL = "DELETE FROM members WHERE email = ?";
+  private static final String SELECT_BY_EMAIL = "SELECT * FROM members WHERE email = ?";
+  private static final String SELECT_BY_ID = "SELECT * FROM members WHERE id = ?";
+  private static final String SELECT_ALL_MEMBERS = "SELECT * FROM members";
 
   private final JdbcTemplate jdbc;
   private final MemberMapper memberMapper;
 
   @Override
   public Member create(final Member entity) {
-    final String sql =
-        "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
-            + "country_id, status_id, bio, years_experience, spoken_language) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL) RETURNING id";
-    final Long memberId = memberMapper.addMember(entity, sql);
+
+    final Long memberId = memberMapper.addMember(entity, INSERT_SQL);
 
     return findById(memberId).orElseThrow();
   }
 
   @Override
   public Optional<Member> findByEmail(final String email) {
-    final String sql = "SELECT * FROM members WHERE email = ?";
     return jdbc.query(
-        sql,
+        SELECT_BY_EMAIL,
         rs -> {
           if (rs.next()) {
             return Optional.of(memberMapper.mapRowToMember(rs));
@@ -46,15 +59,13 @@ public class PostgresMemberRepository implements MembersRepository {
 
   @Override
   public Long findIdByEmail(final String email) {
-    final String sql = "SELECT id FROM members WHERE email = ?";
-    return jdbc.queryForObject(sql, Long.class, email);
+    return jdbc.queryForObject(SELECT_BY_EMAIL, Long.class, email);
   }
 
   @Override
   public Optional<Member> findById(final Long id) {
-    final String sql = "SELECT * FROM members WHERE id = ?";
     return jdbc.query(
-        sql,
+        SELECT_BY_ID,
         rs -> {
           if (rs.next()) {
             return Optional.of(memberMapper.mapRowToMember(rs));
@@ -66,22 +77,23 @@ public class PostgresMemberRepository implements MembersRepository {
 
   @Override
   public List<Member> getAll() {
-    final String sql = "SELECT * FROM members";
-    return jdbc.query(sql, (rs, rowNum) -> memberMapper.mapRowToMember(rs));
+    return jdbc.query(SELECT_ALL_MEMBERS, (rs, rowNum) -> memberMapper.mapRowToMember(rs));
   }
 
   @Override
   public Member update(final Long id, final Member entity) {
-    final String sql =
-        "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
-            + "company_name = ?, email = ?, city = ?, country_id = ? WHERE id = ?";
-    memberMapper.updateMember(entity, sql, id);
+    memberMapper.updateMember(entity, UPDATE_SQL, id);
 
     return findById(id).orElseThrow();
   }
 
   @Override
-  public void deleteById(final Long id) {
-    jdbc.update(SQL_DELETE_BY_ID, id);
+  public void deleteById(final Long memberId) {
+    jdbc.update(DELETE_SQL, memberId);
+  }
+
+  @Override
+  public void deleteByEmail(final String email) {
+    jdbc.update(DELETE_BY_SQL, email);
   }
 }
