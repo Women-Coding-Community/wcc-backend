@@ -74,3 +74,13 @@ CREATE TABLE IF NOT EXISTS mentor_availability (
     hours          INTEGER,
     PRIMARY KEY (mentor_id, month)
 );
+
+-- 7) Mentee section / focus information
+CREATE TABLE IF NOT EXISTS mentor_mentee_section (
+    mentor_id    INTEGER PRIMARY KEY REFERENCES mentors (mentor_id) ON DELETE CASCADE,
+    ideal_mentee TEXT,
+    focus        TEXT,
+    additional   TEXT,
+    created_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
