@@ -1,6 +1,8 @@
 CREATE TABLE IF NOT EXISTS mentors (
     mentor_id  INTEGER PRIMARY KEY REFERENCES members (id) ON DELETE CASCADE,
+    profile_status INTEGER REFERENCES member_statuses (id)  NOT NULL,
     bio        TEXT NOT NULL,
+    years_experience INTEGER,
     is_available BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -52,13 +54,42 @@ INSERT INTO mentorship_types (id, name, description) VALUES
   (3,  'STUDY_GROUP',     'Study mentorship')
 ON CONFLICT (id) DO NOTHING;
 
-CREATE TABLE IF NOT EXISTS mentor_skills (
-    mentor_id        INTEGER PRIMARY KEY REFERENCES mentors (mentor_id) ON DELETE CASCADE,
-    technical_areas  INTEGER NOT NULL REFERENCES technical_areas (id) ON DELETE CASCADE,
-    languages        INTEGER NOT NULL REFERENCES languages (id) ON DELETE CASCADE,
-    created_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS spoken_languages (
+                                             id SERIAL PRIMARY KEY,
+                                             name TEXT NOT NULL UNIQUE,
+                                             description TEXT
 );
+INSERT INTO spoken_languages (id, name, description) VALUES
+  (1,  'English',          'English language'),
+  (2,  'Spanish',        'Spanish language'),
+  (3,  'French',         'French language'),
+  (4,  'German',         'German language'),
+  (5,  'Chinese',       'Chinese language'),
+  (6,  'Japanese', 'Japanese language'),
+  (7,  'Russian',     'Russian language'),
+  (8,  'Portuguese',        'Portuguese language'),
+  (9,  'Arabic',     'Arabic language'),
+  (10, 'Hindi',       'Hindi language')
+ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE mentor_spoken_languages (
+    mentor_id INTEGER REFERENCES mentors(mentor_id) ON DELETE CASCADE,
+    spoken_language_id INTEGER REFERENCES spoken_languages(id) ON DELETE CASCADE,
+    PRIMARY KEY (mentor_id, spoken_language_id)
+);
+
+CREATE TABLE mentor_technical_areas (
+    mentor_id INTEGER REFERENCES mentors(mentor_id) ON DELETE CASCADE,
+    technical_area_id INTEGER REFERENCES technical_areas(id) ON DELETE CASCADE,
+    PRIMARY KEY (mentor_id, technical_area_id)
+);
+
+CREATE TABLE mentor_languages (
+    mentor_id INTEGER REFERENCES mentors(mentor_id) ON DELETE CASCADE,
+    language_id INTEGER REFERENCES languages(id) ON DELETE CASCADE,
+    PRIMARY KEY (mentor_id, language_id)
+);
+
 
 -- 5) Mentorship types offered (AD_HOC, LONG_TERM, etc.)
 CREATE TABLE IF NOT EXISTS mentor_mentorship_types (
