@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,4 +13,12 @@ public enum MentorshipType {
   STUDY_GROUP(3);
 
   private final int mentorshipTypeId;
+
+  public static MentorshipType fromId(int id) {
+    Arrays.stream(MentorshipType.values())
+        .filter(type -> type.mentorshipTypeId == id)
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Unknown MentorshipType id: " + id));
+    return null;
+  }
 }

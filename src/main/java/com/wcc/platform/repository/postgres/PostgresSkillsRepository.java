@@ -7,9 +7,11 @@ import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.SkillsRepository;
 import java.sql.Array;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,8 +23,10 @@ public class PostgresSkillsRepository implements SkillsRepository {
 
   private static final String SELECT_MENTOR_SKILLS =
       "SELECT m.years_experience, "
-          + "  COALESCE(array_agg(DISTINCT ta.name) FILTER (WHERE ta.name IS NOT NULL), ARRAY[]::text[]) AS technical_areas, "
-          + "  COALESCE(array_agg(DISTINCT l.name) FILTER (WHERE l.name IS NOT NULL), ARRAY[]::text[]) AS languages "
+          + "  COALESCE(array_agg(DISTINCT ta.name) FILTER (WHERE ta.name IS NOT NULL)"
+          + ", ARRAY[]::text[]) AS technical_areas, "
+          + "  COALESCE(array_agg(DISTINCT l.name) FILTER (WHERE l.name IS NOT NULL)"
+          + ", ARRAY[]::text[]) AS languages "
           + "FROM mentors m "
           + "LEFT JOIN mentor_technical_areas mta ON m.mentor_id = mta.mentor_id "
           + "LEFT JOIN technical_areas ta ON mta.technical_area_id = ta.id "
@@ -34,62 +38,74 @@ public class PostgresSkillsRepository implements SkillsRepository {
   private final JdbcTemplate jdbcTemplate;
 
   @Override
-  public Skills findByMentorId(Long mentorId) {
+  public Optional<Skills> findByMentorId(final Long mentorId) {
     try {
-      return jdbcTemplate.queryForObject(
-          SELECT_MENTOR_SKILLS,
-          (rs, rowNum) -> {
-            Integer years =
-                rs.getObject("years_experience") == null ? null : rs.getInt("years_experience");
+      Skills skills =
+          jdbcTemplate.queryForObject(
+              SELECT_MENTOR_SKILLS,
+              (rs, rowNum) -> {
+                Integer years =
+                    rs.getObject("years_experience") == null ? null : rs.getInt("years_experience");
 
-            List<TechnicalArea> areas = extractTechnicalAreas(rs);
-            List<Languages> languages = extractLanguages(rs);
+                List<TechnicalArea> areas = extractTechnicalAreas(rs);
+                List<Languages> languages = extractLanguages(rs);
 
-            return new Skills(years, Experience.fromYears(years), areas, languages);
-          },
-          mentorId);
+                return new Skills(years, Experience.fromYears(years), areas, languages);
+              },
+              mentorId);
+      return Optional.ofNullable(skills);
     } catch (EmptyResultDataAccessException ex) {
-      return new Skills(null, null, Collections.emptyList(), Collections.emptyList());
+      return Optional.empty();
     }
   }
 
-  private List<TechnicalArea> extractTechnicalAreas(ResultSet rs) {
+  private List<TechnicalArea> extractTechnicalAreas(final ResultSet rs) {
     try {
-      Array arr = rs.getArray("technical_areas");
-      if (arr == null) return Collections.emptyList();
-      Object[] values = (Object[]) arr.getArray();
-      List<TechnicalArea> out = new ArrayList<>(values.length);
-      for (Object v : values) {
-        if (v == null) continue;
-        try {
-          out.add(TechnicalArea.valueOf(v.toString()));
-        } catch (IllegalArgumentException ignored) {
-          // unknown value — skip
-        }
+      Array sqlArray = rs.getArray("technical_areas");
+      if (sqlArray == null) {
+        return List.of();
       }
-      return out;
-    } catch (Exception e) {
-      return Collections.emptyList();
+      Object[] values = (Object[]) sqlArray.getArray();
+      return Arrays.stream(values)
+          .filter(Objects::nonNull)
+          .map(Object::toString)
+          .map(
+              value -> {
+                try {
+                  return TechnicalArea.valueOf(value.trim());
+                } catch (IllegalArgumentException ex) {
+                  return null; // skip unknown values
+                }
+              })
+          .filter(Objects::nonNull)
+          .toList();
+    } catch (SQLException e) {
+      return List.of();
     }
   }
 
-  private List<Languages> extractLanguages(ResultSet rs) {
+  private List<Languages> extractLanguages(final ResultSet rs) {
     try {
       Array arr = rs.getArray("languages");
-      if (arr == null) return Collections.emptyList();
-      Object[] values = (Object[]) arr.getArray();
-      List<Languages> out = new ArrayList<>(values.length);
-      for (Object v : values) {
-        if (v == null) continue;
-        try {
-          out.add(Languages.valueOf(v.toString()));
-        } catch (IllegalArgumentException ignored) {
-          // unknown value — skip
-        }
+      if (arr == null) {
+        return List.of();
       }
-      return out;
-    } catch (Exception e) {
-      return Collections.emptyList();
+      Object[] values = (Object[]) arr.getArray();
+      return Arrays.stream(values)
+          .filter(Objects::nonNull)
+          .map(Object::toString)
+          .map(
+              value -> {
+                try {
+                  return Languages.valueOf(value.trim());
+                } catch (IllegalArgumentException ex) {
+                  return null; // skip unknown values
+                }
+              })
+          .filter(Objects::nonNull)
+          .toList();
+    } catch (SQLException e) {
+      return List.of();
     }
   }
 }

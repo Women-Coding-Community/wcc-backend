@@ -4,22 +4,23 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
+import com.wcc.platform.repository.postgres.PostgresMenteeSectionRepository;
 import com.wcc.platform.repository.postgres.PostgresSkillsRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+/** Maps database rows to Mentor domain objects. */
 @Component
 @RequiredArgsConstructor
 public class MentorMapper {
 
-  private final JdbcTemplate jdbc;
   private final PostgresMemberRepository memberRepository;
   private final PostgresSkillsRepository skillsRepository;
+  private final PostgresMenteeSectionRepository menteeSectionRepository;
 
   public Mentor mapRowToMentor(final ResultSet rs) throws SQLException {
     final long mentorId = rs.getLong("mentor_id");
@@ -36,30 +37,20 @@ public class MentorMapper {
 
     return Mentor.mentorBuilder()
         .id(mentorId)
-        .profileStatus(ProfileStatus.fromId(rs.getInt("profile_status_id")))
-        .skills(skillsRepository.findByMentorId(mentorId))
-        .images(member.getImages())
-        .city(member.getCity())
-        .email(member.getEmail())
-        .country(member.getCountry())
         .fullName(member.getFullName())
-        .companyName(member.getCompanyName())
-        .network(member.getNetwork())
         .position(member.getPosition())
+        .email(member.getEmail())
         .slackDisplayName(member.getSlackDisplayName())
+        .country(member.getCountry())
+        .city(member.getCity())
+        .companyName(member.getCompanyName())
+        .images(member.getImages())
+        .network(member.getNetwork())
+        .profileStatus(ProfileStatus.fromId(rs.getInt("profile_status_id")))
+        .skills(skillsRepository.findByMentorId(mentorId).get())
+        .spokenLanguages(List.of(rs.getString("spoken_language").split(",")))
         .bio(rs.getString("bio"))
+        .menteeSection(menteeSectionRepository.findByMentorId(mentorId).get())
         .build();
-  }
-
-  List<String> getSpokenLanguages(long mentorId) {
-    /*final String sql = "Select COALESCE(array_agg(DISTINCT ta.name) "
-        + "FILTER (WHERE ta.name IS NOT NULL), ARRAY[]::text[]) AS spoken_languages FROM mentor_languages ml "
-        + "JOIN spo ta ON ml.language_id = ta.id WHERE ml.mentor_id = ?";
-    return jdbc.query(
-        sql,
-        rs -> {
-          if (rs.next()) {
-            return extractLanguages(rs);*/
-    return null;
   }
 }
