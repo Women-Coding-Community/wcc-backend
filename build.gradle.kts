@@ -57,6 +57,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("org.flywaydb:flyway-core")
+    runtimeOnly("com.h2database:h2:2.2.224")
 
     // Google Drive API
     implementation("com.google.api-client:google-api-client:2.8.1")
