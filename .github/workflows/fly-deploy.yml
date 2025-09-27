@@ -1,6 +1,4 @@
-# See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
-
-name: Fly Deploy
+name: Deploy to Dev
 
 on:
   push:
@@ -39,12 +37,14 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle (skip tests)
-        run: ./gradlew build -x test -x pmd -x
+        run: ./gradlew build -x test -x pmdMain -x pmdTest -x pmdTestInt
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
+
       - name: Deploy to Dev env
         uses: superfly/flyctl-actions/setup-flyctl@master
+
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
