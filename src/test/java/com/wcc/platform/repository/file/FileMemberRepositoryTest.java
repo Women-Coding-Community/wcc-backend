@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,7 +25,7 @@ class FileMemberRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    objectMapper = Mockito.mock(ObjectMapper.class);
+    objectMapper = mock(ObjectMapper.class);
   }
 
   @Test
@@ -53,13 +52,13 @@ class FileMemberRepositoryTest {
 
     // Ensure the repository attempts to read by creating a non-empty members.json
     File membersFile = new File(tempDir, "members.json");
-    try (java.io.FileWriter fw = new java.io.FileWriter(membersFile)) {
-      fw.write("[{}]"); // make file length > 0
+    try (var fileWriter = new java.io.FileWriter(membersFile)) {
+      fileWriter.write("[{}]"); // make file length > 0
     } catch (IOException e) {
       fail("Failed to prepare test file: " + e.getMessage());
     }
 
-    FileMemberRepository repo = spy(new FileMemberRepository(mockMapper, tempDir.getPath()));
+    var repo = spy(new FileMemberRepository(mockMapper, tempDir.getPath()));
 
     assertThrows(FileRepositoryException.class, repo::getAll);
   }
@@ -138,7 +137,7 @@ class FileMemberRepositoryTest {
 
     ObjectMapper mockMapper = mock(ObjectMapper.class);
     FileMemberRepository repo = spy(new FileMemberRepository(mockMapper, "."));
-    doReturn(new ArrayList<Member>()).when(repo).getAll();
+    doReturn(new ArrayList<>()).when(repo).getAll();
 
     Member created = repo.create(member);
 
@@ -151,7 +150,7 @@ class FileMemberRepositoryTest {
   void createWithNullMemberShouldStillCallWriteFile() throws Exception {
     ObjectMapper mockMapper = mock(ObjectMapper.class);
     FileMemberRepository repo = spy(new FileMemberRepository(mockMapper, "."));
-    doReturn(new ArrayList<Member>()).when(repo).getAll();
+    doReturn(new ArrayList<>()).when(repo).getAll();
 
     Member created = repo.create(null);
 
@@ -180,7 +179,7 @@ class FileMemberRepositoryTest {
   }
 
   @Test
-  void updateWithNonExistingMember_shouldStillWriteFile() {
+  void updateWithNonExistingMemberShouldStillWriteFile() {
     Member updatedMember = new Member();
     updatedMember.setEmail("nonexisting@example.com");
     updatedMember.setId(999L);
@@ -202,8 +201,7 @@ class FileMemberRepositoryTest {
     FileMemberRepository repo = spy(new FileMemberRepository(objectMapper, "."));
     doReturn(Optional.of(member)).when(repo).findByEmail("id@example.com");
 
-    Long id = repo.findIdByEmail("id@example.com");
-    assertEquals(123L, id);
+    assertEquals(123L, repo.findIdByEmail("id@example.com"));
   }
 
   @Test
@@ -211,19 +209,19 @@ class FileMemberRepositoryTest {
     FileMemberRepository repo = spy(new FileMemberRepository(objectMapper, "."));
     doReturn(Optional.empty()).when(repo).findByEmail("notfound@example.com");
 
-    Long id = repo.findIdByEmail("notfound@example.com");
-    assertEquals(0L, id);
+    Long memberId = repo.findIdByEmail("notfound@example.com");
+    assertEquals(0L, memberId);
   }
 
   @Test
-  void deleteByEmail_shouldDoNothing() {
+  void deleteByEmailShouldDoNothing() {
     FileMemberRepository repo = new FileMemberRepository(objectMapper, tempDir.getPath());
 
     assertDoesNotThrow(() -> repo.deleteByEmail("test@example.com"));
   }
 
   @Test
-  void deleteById_shouldDoNothing() {
+  void deleteByIdShouldDoNothing() {
     FileMemberRepository repo = new FileMemberRepository(objectMapper, tempDir.getPath());
 
     assertDoesNotThrow(() -> repo.deleteById(1L));
@@ -241,7 +239,7 @@ class FileMemberRepositoryTest {
   }
 
   @Test
-  void constructor_shouldCreateFileInCorrectDirectory() {
+  void constructorShouldCreateFileInCorrectDirectory() {
     String testPath = tempDir.getPath();
     FileMemberRepository repo = new FileMemberRepository(objectMapper, testPath);
 
