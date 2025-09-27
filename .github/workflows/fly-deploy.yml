@@ -1,6 +1,4 @@
-# See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
-
-name: Fly Deploy
+name: Deploy to Dev
 
 on:
   push:
@@ -11,7 +9,7 @@ on:
 concurrency:
   group: fly-deploy
   cancel-in-progress: false
-
+  Does
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -39,7 +37,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle (skip tests)
-        run: ./gradlew build -x test -x pmd -x
+        run: ./gradlew build -x test -x pmdMain -x pmdTest -x pmdTestInt
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
