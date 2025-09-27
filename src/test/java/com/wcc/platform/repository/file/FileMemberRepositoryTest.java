@@ -233,8 +233,9 @@ class FileMemberRepositoryTest {
     doThrow(new IOException("Write error")).when(mockMapper).writeValue(any(File.class), anyList());
 
     FileMemberRepository repo = new FileMemberRepository(mockMapper, tempDir.getPath());
+    final Member member = new Member();
 
-    assertThrows(FileRepositoryException.class, () -> repo.create(new Member()));
+    assertThrows(FileRepositoryException.class, () -> repo.create(member));
   }
 
   @Test
