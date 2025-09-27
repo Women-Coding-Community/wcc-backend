@@ -15,6 +15,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -50,6 +51,7 @@ public class MemberMapper {
   }
 
   /** Adds a new member to the database and returns the member ID */
+  @Transactional
   public Long addMember(final Member member, final String sql) {
     final int defaultStatusId = 1;
     final Long memberId =
@@ -72,6 +74,7 @@ public class MemberMapper {
   }
 
   /** Updates an existing member in the database */
+  @Transactional
   public void updateMember(final Member member, final String sql, final Long memberId) {
     jdbc.update(
         sql,

@@ -7,6 +7,8 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +77,13 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorsPage> getMentors() {
     return ResponseEntity.ok(service.getMentors());
+  }
+
+  @PostMapping("/mentors")
+  @Operation(summary = "API to submit mentor registration")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<Member> createMentor(@RequestBody final Mentor mentor) {
+    return new ResponseEntity<>(service.create(mentor), HttpStatus.CREATED);
   }
 
   @GetMapping("/ad-hoc-timeline")
