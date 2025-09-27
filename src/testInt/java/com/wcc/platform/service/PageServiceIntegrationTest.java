@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.repository.PageRepository;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class PageServiceIntegrationTest {
+class PageServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private PageService service;
   @Autowired private PageRepository pageRepository;

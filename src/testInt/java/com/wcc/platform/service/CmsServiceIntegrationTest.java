@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.FooterSection;
 import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.repository.PageRepository;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class CmsServiceIntegrationTest {
+class CmsServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private CmsService service;
   @Autowired private PageRepository pageRepository;

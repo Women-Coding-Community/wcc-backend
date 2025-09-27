@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/** Member to member type mapping repository */
+/** Member to member type mapping repository. */
 @Repository
 @RequiredArgsConstructor
 public class PostgresMemberMemberTypeRepository {

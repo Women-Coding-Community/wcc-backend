@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.controller.ProgrammeController;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.repository.PageRepository;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Locale;
 import java.util.Map;
@@ -25,7 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class ProgramControllerIntegrationTest {
+class ProgramControllerIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private ProgrammeController controller;
   @Autowired private PageRepository pageRepository;
