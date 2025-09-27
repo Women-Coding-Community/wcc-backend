@@ -13,20 +13,22 @@ import org.springframework.stereotype.Repository;
 public class FilePageRepository implements PageRepository {
 
   @Override
-  public Map<String, Object> create(Map<String, Object> entity) {
+  public Map<String, Object> create(final Map<String, Object> entity) {
     return Map.of();
   }
 
   @Override
-  public Map<String, Object> update(String id, Map<String, Object> entity) {
+  public Map<String, Object> update(final String id, final Map<String, Object> entity) {
     return Map.of();
   }
 
   @Override
-  public Optional<Map<String, Object>> findById(String id) {
+  public Optional<Map<String, Object>> findById(final String id) {
     return Optional.empty();
   }
 
   @Override
-  public void deleteById(String id) {}
+  public void deleteById(final String id) {
+    // not implemented
+  }
 }
