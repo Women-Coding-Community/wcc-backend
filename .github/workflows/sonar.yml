@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  sonar:
+  sonar-check:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -39,20 +39,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build and run unit tests
-        run: ./gradlew test jacocoTestReport
+      - name: Build Run all tests and execute sonar
+        run: ./gradlew build jacocoTestReport testIntegration sonar -x pmdMain -x pmdTest -x pmdTestInt
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
-
-      - name: Run Integration tests
-        run: ./gradlew testIntegration jacocoIntegrationReport
-        env:
-          DOCKER_HOST: "unix:///var/run/docker.sock"
-          TESTCONTAINERS_RYUK_DISABLED: "true"
-
-      - name: Sonar Scan
-        if: ${{ success() }}
-        run: ./gradlew sonar
-        env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
