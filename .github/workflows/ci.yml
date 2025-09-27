@@ -33,8 +33,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build and test
+      - name: Build and run unit tests
         run: ./gradlew test jacocoTestReport
+        env:
+          DOCKER_HOST: "unix:///var/run/docker.sock"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+
+      - name: Run Integration tests
+        run: ./gradlew testIntegration jacocoIntegrationReport
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
