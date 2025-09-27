@@ -39,6 +39,9 @@ jobs:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
+      - name: Build and test
+        run: ./gradlew sonar
+
       - name: Pmd Check
         run: ./gradlew pmdMain
 
