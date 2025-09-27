@@ -39,17 +39,14 @@ jobs:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
+      - name: Build and test
+        run: ./gradlew sonar
+
       - name: Pmd Check
         run: ./gradlew pmdMain
 
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
-
-      #      - name: Check SonarCloud Quality Gate
-      #        uses: sonarsource/sonarcloud-github-action@master
-      #        with:
-      #          projectBaseDir: .
-      #          token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload code coverage report
         if: success() || failure()
