@@ -64,7 +64,7 @@ class FileMemberRepositoryTest {
   }
 
   @Test
-  void findByEmailReturnsMemberIfExists() throws Exception {
+  void findByEmailReturnsMemberIfExists() {
     Member member = new Member();
     member.setEmail("test@example.com");
     member.setId(1L);
@@ -79,7 +79,7 @@ class FileMemberRepositoryTest {
   }
 
   @Test
-  void findByEmailReturnsEmptyIfNotExists() throws Exception {
+  void findByEmailReturnsEmptyIfNotExists() {
     FileMemberRepository repo = spy(new FileMemberRepository(objectMapper, "."));
     doReturn(new ArrayList<>()).when(repo).getAll();
 
@@ -137,7 +137,7 @@ class FileMemberRepositoryTest {
 
     ObjectMapper mockMapper = mock(ObjectMapper.class);
     FileMemberRepository repo = spy(new FileMemberRepository(mockMapper, "."));
-    doReturn(new ArrayList<>()).when(repo).getAll();
+    doReturn(new ArrayList<Member>()).when(repo).getAll();
 
     Member created = repo.create(member);
 
@@ -150,7 +150,7 @@ class FileMemberRepositoryTest {
   void createWithNullMemberShouldStillCallWriteFile() throws Exception {
     ObjectMapper mockMapper = mock(ObjectMapper.class);
     FileMemberRepository repo = spy(new FileMemberRepository(mockMapper, "."));
-    doReturn(new ArrayList<>()).when(repo).getAll();
+    doReturn(new ArrayList<Member>()).when(repo).getAll();
 
     Member created = repo.create(null);
 
@@ -159,7 +159,7 @@ class FileMemberRepositoryTest {
   }
 
   @Test
-  void updateUpdatesMemberAndWritesFile() throws Exception {
+  void updateUpdatesMemberAndWritesFile() {
     Member oldMember = new Member();
     oldMember.setEmail("update@example.com");
     oldMember.setId(10L);
@@ -233,7 +233,6 @@ class FileMemberRepositoryTest {
     doThrow(new IOException("Write error")).when(mockMapper).writeValue(any(File.class), anyList());
 
     FileMemberRepository repo = new FileMemberRepository(mockMapper, tempDir.getPath());
-    List<Member> members = List.of(new Member());
 
     assertThrows(FileRepositoryException.class, () -> repo.create(new Member()));
   }
