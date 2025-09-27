@@ -1,16 +1,20 @@
-name: Deploy to Dev
+name: SonarQube Scan
 
 on:
+  #  Run on pull request to main
   pull_request:
     branches:
       - main
+  # Run on push to main
   push:
     branches:
       - main
+
+  # Allows manual triggering of the workflow
   workflow_dispatch:
 
 jobs:
-  deploy:
+  sonar:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -42,6 +46,7 @@ jobs:
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Sonar Scan
+        if: ${{ success() }}
         run: ./gradlew sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
