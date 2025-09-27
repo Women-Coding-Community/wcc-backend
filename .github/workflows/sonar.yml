@@ -1,0 +1,47 @@
+name: SonarQube Scan
+
+on:
+  #  Run on pull request to main
+  pull_request:
+    branches:
+      - main
+  # Run on push to main
+  push:
+    branches:
+      - main
+
+  # Allows manual triggering of the workflow
+  workflow_dispatch:
+
+jobs:
+  sonar-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ '21' ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java-version }}
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build Run all tests and execute sonar
+        run: ./gradlew build jacocoTestReport testIntegration sonar -x pmdMain -x pmdTest -x pmdTestInt
+        env:
+          DOCKER_HOST: "unix:///var/run/docker.sock"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
