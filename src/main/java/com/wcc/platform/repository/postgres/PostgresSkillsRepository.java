@@ -5,7 +5,6 @@ import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.SkillsRepository;
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -61,23 +60,17 @@ public class PostgresSkillsRepository implements SkillsRepository {
 
   private List<TechnicalArea> extractTechnicalAreas(final ResultSet rs) {
     try {
-      Array sqlArray = rs.getArray("technical_areas");
-      if (sqlArray == null) {
-        return List.of();
-      }
-      Object[] values = (Object[]) sqlArray.getArray();
+      Object[] values = (Object[]) rs.getArray("technical_areas").getArray();
       return Arrays.stream(values)
-          .filter(Objects::nonNull)
           .map(Object::toString)
           .map(
               value -> {
                 try {
                   return TechnicalArea.valueOf(value.trim());
                 } catch (IllegalArgumentException ex) {
-                  return null; // skip unknown values
+                  return null;
                 }
               })
-          .filter(Objects::nonNull)
           .toList();
     } catch (SQLException e) {
       return List.of();
@@ -86,20 +79,16 @@ public class PostgresSkillsRepository implements SkillsRepository {
 
   private List<Languages> extractLanguages(final ResultSet rs) {
     try {
-      Array arr = rs.getArray("languages");
-      if (arr == null) {
-        return List.of();
-      }
-      Object[] values = (Object[]) arr.getArray();
+      Object[] values = (Object[]) rs.getArray("languages").getArray();
       return Arrays.stream(values)
-          .filter(Objects::nonNull)
           .map(Object::toString)
+          .map(String::trim)
           .map(
-              value -> {
+              name -> {
                 try {
-                  return Languages.valueOf(value.trim());
+                  return Languages.fromName(name);
                 } catch (IllegalArgumentException ex) {
-                  return null; // skip unknown values
+                  return null;
                 }
               })
           .filter(Objects::nonNull)

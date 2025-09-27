@@ -46,9 +46,9 @@ public class MentorMapper {
         .companyName(member.getCompanyName())
         .images(member.getImages())
         .network(member.getNetwork())
-        .profileStatus(ProfileStatus.fromId(rs.getInt("profile_status_id")))
+        .profileStatus(ProfileStatus.fromId(rs.getInt("profile_status")))
         .skills(skillsRepository.findByMentorId(mentorId).get())
-        .spokenLanguages(List.of(rs.getString("spoken_language").split(",")))
+        .spokenLanguages(List.of(rs.getString("spoken_languages").split(",")))
         .bio(rs.getString("bio"))
         .menteeSection(menteeSectionRepository.findByMentorId(mentorId).get())
         .build();

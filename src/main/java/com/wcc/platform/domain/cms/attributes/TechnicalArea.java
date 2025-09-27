@@ -16,5 +16,5 @@ public enum TechnicalArea {
   OTHER(7),
   QA(8);
 
-  private final int resourceTypeId;
+  private final int technicalAreaId;
 }

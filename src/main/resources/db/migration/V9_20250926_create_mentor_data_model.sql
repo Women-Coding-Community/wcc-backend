@@ -26,13 +26,14 @@ CREATE TABLE IF NOT EXISTS mentorship_types
 CREATE TABLE IF NOT EXISTS mentors
 (
     mentor_id        INTEGER PRIMARY KEY REFERENCES members (id) ON DELETE CASCADE,
-    profile_status   INTEGER REFERENCES member_statuses (id) NOT NULL,
-    bio              TEXT                                    NOT NULL,
+    profile_status   INTEGER REFERENCES member_statuses (id) NOT NULL DEFAULT 1,
+    bio              TEXT                                    NOT NULL DEFAULT '',
     years_experience INTEGER,
+    experience_range TEXT,
     spoken_languages TEXT,
-    is_available     BOOLEAN                  DEFAULT TRUE,
-    created_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    is_available     BOOLEAN                                          DEFAULT TRUE,
+    created_at       TIMESTAMP WITH TIME ZONE                         DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP WITH TIME ZONE                         DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 5) Mentor technical areas (join table)
@@ -83,11 +84,11 @@ CREATE TABLE IF NOT EXISTS mentor_mentee_section
 CREATE TABLE hero_sections
 (
     id           SERIAL PRIMARY KEY,
-    page_name    TEXT  NOT NULL UNIQUE, -- e.g. "mentors", "about_us"
-    title        TEXT  NOT NULL,
+    page_id      TEXT NOT NULL UNIQUE, -- e.g. "mentors", "about_us"
+    title        TEXT NOT NULL,
     subtitle     TEXT,
     images       JSONB,
-    custom_style JSONB NOT NULL
+    custom_style JSONB
 );
 
 -- 🔹 Seed data inserts (moved to the end)
@@ -113,7 +114,8 @@ VALUES (1, 'C', 'C language'),
        (8, 'Php', 'PHP'),
        (9, 'Python', 'Python'),
        (10, 'Ruby', 'Ruby'),
-       (11, 'Rust', 'Rust')
+       (11, 'Rust', 'Rust'),
+       (12, 'Other', 'Other programming languages')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO mentorship_types (id, name, description)
@@ -121,3 +123,50 @@ VALUES (1, 'AD_HOC', 'Ad-hoc mentorship sessions'),
        (2, 'LONG_TERM', 'Long-term mentorship relationships'),
        (3, 'STUDY_GROUP', 'Study mentorship')
 ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO hero_sections (page_id, title, subtitle, images, custom_style)
+VALUES ('page:MENTORS_PAGE',
+        'Meet Our Mentors!',
+        NULL,
+        NULL,
+        '{
+          "backgroundColour": {
+            "color": "SECONDARY",
+            "shade": {
+              "name": "DARK",
+              "value": 10
+            }
+          }
+        }'::jsonb)
+ON CONFLICT (page_id) DO UPDATE
+    SET title        = EXCLUDED.title,
+        subtitle     = EXCLUDED.subtitle,
+        images       = EXCLUDED.images,
+        custom_style = EXCLUDED.custom_style;
+
+-- Concrete: celebrate her (from `src/main/resources/init-data/celebrateHerPage.json`)
+INSERT INTO hero_sections (page_id, title, subtitle, images, custom_style)
+VALUES ('page:CELEBRATE_HER',
+        'Celebrate Her',
+        '',
+        '[
+          {
+            "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+            "alt": "There is a group of women showing WCC logo",
+            "type": "desktop"
+          }
+        ]'::jsonb,
+        '{
+          "backgroundColour": {
+            "color": "PRIMARY",
+            "shade": {
+              "name": "LIGHT",
+              "value": 90
+            }
+          }
+        }'::jsonb)
+ON CONFLICT (page_id) DO UPDATE
+    SET title        = EXCLUDED.title,
+        subtitle     = EXCLUDED.subtitle,
+        images       = EXCLUDED.images,
+        custom_style = EXCLUDED.custom_style;

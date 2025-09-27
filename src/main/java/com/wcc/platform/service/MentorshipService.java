@@ -16,9 +16,13 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
+import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.repository.HeroSectionRepository;
 import com.wcc.platform.repository.MentorsRepository;
 import com.wcc.platform.repository.PageRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +33,18 @@ public class MentorshipService {
   private final ObjectMapper objectMapper;
   private final PageRepository repository;
   private final MentorsRepository mentorsRepository;
+  private final HeroSectionRepository heroSectionRepository;
 
   @Autowired
   public MentorshipService(
       final ObjectMapper objectMapper,
       final PageRepository repository,
-      final MentorsRepository mentorsRepository) {
+      final MentorsRepository mentorsRepository,
+      final HeroSectionRepository heroSectionRepository) {
     this.objectMapper = objectMapper;
     this.repository = repository;
     this.mentorsRepository = mentorsRepository;
+    this.heroSectionRepository = heroSectionRepository;
   }
 
   /**
@@ -133,15 +140,34 @@ public class MentorshipService {
    * @return Mentors page containing details about mentors.
    */
   public MentorsPage getMentors() {
-    final var page = repository.findById(MENTORS.getId());
-    if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), MentorsPage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
+    try {
+      var mentors = mentorsRepository.getAll();
+      var heroOpt = heroSectionRepository.findByPage(MENTORS.getId());
+
+      if (heroOpt.isPresent() && mentors != null) {
+        return new MentorsPage(MENTORS.getId(), heroOpt.get(), mentors);
       }
+      return repository.getFallback(MENTORS, MentorsPage.class, objectMapper);
+    } catch (IllegalArgumentException e) {
+      throw new PlatformInternalException(e.getMessage(), e);
+    } catch (Exception e) {
+      return repository.getFallback(MENTORS, MentorsPage.class, objectMapper);
     }
-    return repository.getFallback(MENTORS, MentorsPage.class, objectMapper);
+  }
+
+  /**
+   * API to retrieve information about mentors.
+   *
+   * @return Mentors page containing details about mentors.
+   */
+  public Mentor create(final Mentor mentor) {
+    final Optional<Mentor> mentorExists = mentorsRepository.findById(mentor.getId());
+
+    if (mentorExists.isPresent()) {
+      throw new DuplicatedMemberException(mentorExists.get().getEmail());
+    }
+
+    return mentorsRepository.create(mentor);
   }
 
   /**

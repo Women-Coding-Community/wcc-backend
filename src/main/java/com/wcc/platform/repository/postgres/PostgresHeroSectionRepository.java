@@ -19,26 +19,26 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor
 public class PostgresHeroSectionRepository implements HeroSectionRepository {
   private static final String SQL_GET_RECORD_BY_NAME =
-      "SELECT title, subtitle, images, custom_style FROM hero_sections WHERE page_name = ?";
+      "SELECT title, subtitle, images, custom_style FROM hero_sections WHERE page_id = ?";
   private static final String SQL_INSERT_RECORD =
       "INSERT INTO hero_sections "
-          + "(page_name, title, subtitle, images, custom_style) VALUES (?, ?, ?, ?, ?)";
+          + "(page_id, title, subtitle, images, custom_style) VALUES (?, ?, ?, ?, ?)";
   private static final String SQL_UPDATE_RECORD =
       "UPDATE hero_sections SET title = ?, subtitle = ?, images = ?, custom_style = ?";
   private final JdbcTemplate jdbc;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
-  public Optional<HeroSection> findByPage(final String pageName) {
-    return jdbc.query(SQL_GET_RECORD_BY_NAME, (rs, rowNum) -> mapRow(rs), pageName).stream()
+  public Optional<HeroSection> findByPage(final String pageId) {
+    return jdbc.query(SQL_GET_RECORD_BY_NAME, (rs, rowNum) -> mapRow(rs), pageId).stream()
         .findFirst();
   }
 
   @Override
-  public void save(final String pageName, final HeroSection heroSection) {
+  public void save(final String pageId, final HeroSection heroSection) {
     jdbc.update(
         SQL_INSERT_RECORD,
-        pageName,
+        pageId,
         heroSection.title(),
         heroSection.subtitle(),
         toJson(heroSection.images()),
@@ -46,14 +46,14 @@ public class PostgresHeroSectionRepository implements HeroSectionRepository {
   }
 
   @Override
-  public void update(String pageName, HeroSection heroSection) {
+  public void update(String pageId, HeroSection heroSection) {
     jdbc.update(
         SQL_UPDATE_RECORD,
         heroSection.title(),
         heroSection.subtitle(),
         toJson(heroSection.images()),
         toJson(heroSection.customStyle()),
-        pageName);
+        pageId);
   }
 
   private HeroSection mapRow(ResultSet rs) throws SQLException {

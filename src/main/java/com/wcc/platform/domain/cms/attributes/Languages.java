@@ -7,17 +7,28 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Languages {
-  C_LANGUAGE(1),
-  C_PLUS_PLUS(2),
-  C_SHARP(3),
-  GO(4),
-  JAVA(5),
-  JAVASCRIPT(6),
-  KOTLIN(7),
-  PHP(8),
-  PYTHON(9),
-  RUBY(10),
-  RUST(11);
+  C_LANGUAGE("C", 1),
+  C_PLUS_PLUS("C++", 2),
+  C_SHARP("C#", 3),
+  GO("Go", 4),
+  JAVA("Java", 5),
+  JAVASCRIPT("Javascript", 6),
+  KOTLIN("Kotlin", 7),
+  PHP("Php", 8),
+  PYTHON("Python", 9),
+  RUBY("Ruby", 10),
+  RUST("Rust", 11),
+  OTHER("Other", 12);
 
+  private final String name;
   private final int id;
+
+  public static Languages fromName(final String name) {
+    for (Languages lang : Languages.values()) {
+      if (lang.name.equalsIgnoreCase(name)) {
+        return lang;
+      }
+    }
+    throw new IllegalArgumentException("Unknown Language: " + name);
+  }
 }

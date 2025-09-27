@@ -27,8 +27,8 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
       "SELECT ideal_mentee, focus, additional, created_at, updated_at "
           + "FROM mentor_mentee_section WHERE mentor_id = ?";
   private static final String SQL_MENTORSHIP_TYPE =
-      "SELECT t.id as mentorship_type_id FROM mentor_mentorship_types mmt "
-          + "LEFT JOIN mentorship_types t ON mmt.mentorship_type = t.id WHERE mmt.mentor_id = ?";
+      "SELECT t.id as mentorship_type_id FROM mentorship_types t LEFT JOIN mentor_mentorship_types mmt "
+          + "ON mmt.mentorship_type = t.id WHERE mmt.mentor_id = ?";
   private static final String SQL_AVAILABILITY =
       "SELECT month, hours FROM mentor_availability WHERE mentor_id = ?";
   private final JdbcTemplate jdbc;
