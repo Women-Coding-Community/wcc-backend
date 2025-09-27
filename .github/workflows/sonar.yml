@@ -39,9 +39,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build Run all tests and execute sonar
-        run: ./gradlew build jacocoTestReport testIntegration sonar -x pmdMain -x pmdTest -x pmdTestInt
+      - name: Build Run unit tests
+        run: ./gradlew build -x pmdMain -x pmdTest -x pmdTestInt
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
+
+      - name: Run Integration tests
+        run: ./gradlew testIntegration
+        env:
+          DOCKER_HOST: "unix:///var/run/docker.sock"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+
+      - name: Run Jacoco Reports
+        run: ./gradlew testIntegration jacocoIntegrationReport
+
+      - name: Sonar Scan
+        if: ${{ success() }}
+        run: ./gradlew sonar
+        env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
