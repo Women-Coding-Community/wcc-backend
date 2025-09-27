@@ -9,6 +9,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.properties.FolderStorageProperties;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -29,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
   com.wcc.platform.config.TestGoogleDriveRepositoryConfig.class
 })
 @DisplayName("GoogleDriveService Performance Tests")
-class GoogleDriveFileStorageRepositoryPerformanceTest {
+class GoogleDriveFileStorageRepositoryPerformanceTest extends DefaultDatabaseSetup {
 
   @Autowired private GoogleDriveFileStorageRepository googleDriveRepository;
 

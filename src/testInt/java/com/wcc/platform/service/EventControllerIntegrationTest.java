@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.controller.EventController;
 import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.repository.PageRepository;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class EventControllerIntegrationTest {
+class EventControllerIntegrationTest extends DefaultDatabaseSetup {
 
   private static final int DEFAULT_CURRENT_PAGE = 1;
   private static final int DEFAULT_PAGE_SIZE = 10;

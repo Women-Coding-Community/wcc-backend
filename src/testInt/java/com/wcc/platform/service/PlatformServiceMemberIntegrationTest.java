@@ -9,6 +9,7 @@ import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class PlatformServiceMemberIntegrationTest {
+class PlatformServiceMemberIntegrationTest extends DefaultDatabaseSetup {
 
   public static final String MEMBER_EMAIL = "member@wcc.com";
   @Autowired private PlatformService service;
