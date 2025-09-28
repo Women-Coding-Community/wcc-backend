@@ -38,4 +38,9 @@
       <property name="maxmethods" value="20"/>
     </properties>
   </rule>
+  <rule ref="category/java/design.xml/LawOfDemeter">
+    <properties>
+      <property name="trustRadius" value="2"/>
+    </properties>
+  </rule>
 </ruleset>

@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.resource;
 
-import java.time.OffsetDateTime;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,11 +16,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Data
 @Builder(toBuilder = true)
-public class MentorProfilePicture {
-  private UUID id;
-  private String mentorEmail;
-  private UUID resourceId;
+public class MemberProfilePicture {
+  @NotNull private Long memberId;
+  @NotNull private UUID resourceId;
   private Resource resource;
-  private OffsetDateTime createdAt;
-  private OffsetDateTime updatedAt;
 }

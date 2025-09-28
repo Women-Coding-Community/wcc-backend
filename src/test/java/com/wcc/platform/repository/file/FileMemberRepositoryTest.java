@@ -137,7 +137,7 @@ class FileMemberRepositoryTest {
 
     ObjectMapper mockMapper = mock(ObjectMapper.class);
     FileMemberRepository repo = spy(new FileMemberRepository(mockMapper, "."));
-    doReturn(new ArrayList<Member>()).when(repo).getAll();
+    doReturn(new ArrayList<>()).when(repo).getAll();
 
     Member created = repo.create(member);
 
@@ -150,7 +150,7 @@ class FileMemberRepositoryTest {
   void createWithNullMemberShouldStillCallWriteFile() throws Exception {
     ObjectMapper mockMapper = mock(ObjectMapper.class);
     FileMemberRepository repo = spy(new FileMemberRepository(mockMapper, "."));
-    doReturn(new ArrayList<Member>()).when(repo).getAll();
+    doReturn(new ArrayList<>()).when(repo).getAll();
 
     Member created = repo.create(null);
 

@@ -1,7 +1,6 @@
 package com.wcc.platform.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -13,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.platform.type.ResourceType;
-import com.wcc.platform.domain.resource.MentorProfilePicture;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.service.ResourceService;
 import java.time.OffsetDateTime;
@@ -38,19 +37,18 @@ import org.springframework.web.multipart.MultipartFile;
 class ResourceControllerTest {
 
   private static final String CONTENT_TYPE = "image/jpeg";
-
+  private Long memberId;
   @Autowired private MockMvc mockMvc;
-
   @MockBean private ResourceService resourceService;
-
   private UUID resourceId;
   private Resource resource;
-  private MentorProfilePicture profilePicture;
+  private MemberProfilePicture profilePicture;
   private MockMultipartFile multipartFile;
 
   @BeforeEach
   void setUp() {
     resourceId = UUID.randomUUID();
+    memberId = 42L;
 
     resource =
         Resource.builder()
@@ -68,13 +66,10 @@ class ResourceControllerTest {
             .build();
 
     profilePicture =
-        MentorProfilePicture.builder()
-            .id(UUID.randomUUID())
-            .mentorEmail("test@example.com")
+        MemberProfilePicture.builder()
+            .memberId(memberId)
             .resourceId(resourceId)
             .resource(resource)
-            .createdAt(OffsetDateTime.now())
-            .updatedAt(OffsetDateTime.now())
             .build();
 
     multipartFile =
@@ -83,7 +78,6 @@ class ResourceControllerTest {
 
   @Test
   void uploadResourceShouldReturnCreatedResource() throws Exception {
-    // Arrange
     when(resourceService.uploadResource(
             any(MultipartFile.class),
             eq("Test Resource"),
@@ -91,7 +85,6 @@ class ResourceControllerTest {
             eq(ResourceType.EVENT_IMAGE)))
         .thenReturn(resource);
 
-    // Act & Assert
     mockMvc
         .perform(
             multipart("/api/platform/v1/resources")
@@ -116,10 +109,8 @@ class ResourceControllerTest {
 
   @Test
   void testResourceShouldReturnResource() throws Exception {
-    // Arrange
     when(resourceService.getResource(resourceId)).thenReturn(resource);
 
-    // Act & Assert
     mockMvc
         .perform(
             get("/api/platform/v1/resources/{id}", resourceId)
@@ -132,11 +123,9 @@ class ResourceControllerTest {
 
   @Test
   void testResourcesByTypeShouldReturnResourceList() throws Exception {
-    // Arrange
     List<Resource> resources = Collections.singletonList(resource);
     when(resourceService.getResourcesByType(ResourceType.EVENT_IMAGE)).thenReturn(resources);
 
-    // Act & Assert
     mockMvc
         .perform(
             get("/api/platform/v1/resources")
@@ -150,11 +139,9 @@ class ResourceControllerTest {
 
   @Test
   void searchResourcesByNameShouldReturnResourceList() throws Exception {
-    // Arrange
     List<Resource> resources = Collections.singletonList(resource);
     when(resourceService.searchResourcesByName("Test")).thenReturn(resources);
 
-    // Act & Assert
     mockMvc
         .perform(
             get("/api/platform/v1/resources/search")
@@ -168,10 +155,8 @@ class ResourceControllerTest {
 
   @Test
   void deleteResourceShouldReturnNoContent() throws Exception {
-    // Arrange
     doNothing().when(resourceService).deleteResource(resourceId);
 
-    // Act & Assert
     mockMvc
         .perform(
             delete("/api/platform/v1/resources/{id}", resourceId)
@@ -181,54 +166,43 @@ class ResourceControllerTest {
   }
 
   @Test
-  void uploadMentorProfilePictureShouldReturnCreatedProfilePicture() throws Exception {
-    // Arrange
-    when(resourceService.uploadMentorProfilePicture(
-            eq("test@example.com"), any(MultipartFile.class)))
+  void uploadMemberProfilePictureShouldReturnCreatedProfilePicture() throws Exception {
+    when(resourceService.uploadMentorProfilePicture(eq(memberId), any(MultipartFile.class)))
         .thenReturn(profilePicture);
 
-    // Act & Assert
     mockMvc
         .perform(
-            multipart("/api/platform/v1/resources/mentor-profile-picture")
+            multipart("/api/platform/v1/resources/member-profile-picture")
                 .file(multipartFile)
-                .param("mentorEmail", "test@example.com")
+                .param("memberId", memberId.toString())
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.mentorEmail").value("test@example.com"))
+        .andExpect(jsonPath("$.memberId").value(memberId))
         .andExpect(jsonPath("$.resourceId").value(resourceId.toString()));
   }
 
   @Test
   void testGetMentorProfilePictureShouldReturnProfilePicture() throws Exception {
-    // Arrange
-    when(resourceService.getMentorProfilePicture("test@example.com")).thenReturn(profilePicture);
+    when(resourceService.getMemberProfilePicture(memberId)).thenReturn(profilePicture);
 
-    // Act & Assert
     mockMvc
         .perform(
-            get(
-                    "/api/platform/v1/resources/mentor-profile-picture/{mentorEmail}",
-                    "test@example.com")
+            get("/api/platform/v1/resources/member-profile-picture/{memberId}", memberId)
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.mentorEmail").value("test@example.com"))
+        .andExpect(jsonPath("$.memberId").value(memberId))
         .andExpect(jsonPath("$.resourceId").value(resourceId.toString()));
   }
 
   @Test
   void deleteMentorProfilePictureShouldReturnNoContent() throws Exception {
-    // Arrange
-    doNothing().when(resourceService).deleteMentorProfilePicture(anyString());
+    doNothing().when(resourceService).deleteMemberProfilePicture(memberId);
 
-    // Act & Assert
     mockMvc
         .perform(
-            delete(
-                    "/api/platform/v1/resources/mentor-profile-picture/{mentorEmail}",
-                    "test@example.com")
+            delete("/api/platform/v1/resources/member-profile-picture/{memberId}", memberId)
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());

@@ -5,4 +5,8 @@ public class MemberNotFoundException extends RuntimeException {
   public MemberNotFoundException(final String email) {
     super("Member not found: " + email);
   }
+
+  public MemberNotFoundException(final Long memberId) {
+    super("Member not found: " + memberId);
+  }
 }

@@ -1,11 +1,13 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.platform.type.ResourceType;
-import com.wcc.platform.domain.resource.MentorProfilePicture;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.FileStorageRepository;
-import com.wcc.platform.repository.MentorProfilePictureRepository;
+import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.ResourceRepository;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class ResourceService {
 
   private final ResourceRepository resourceRepo;
-  private final MentorProfilePictureRepository profilePicRepo;
+  private final MemberProfilePictureRepository profilePicRepo;
   private final FileStorageRepository fileStorageRepo;
+  private final MemberRepository memberRepository;
 
   /** Uploads a resource to Google Drive and stores its metadata in the database. */
   @Transactional
@@ -39,21 +42,23 @@ public class ResourceService {
 
   /** Deletes a mentor's profile picture. */
   @Transactional
-  public void deleteMentorProfilePicture(final String mentorEmail) {
-    deleteProfile(mentorEmail);
+  public void deleteMemberProfilePicture(final Long memberId) {
+    memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException(memberId));
+    deleteProfileBy(memberId);
   }
 
   /** Deletes a resource. */
   @Transactional
   public void deleteResource(final UUID id) {
-    deleteResourceById(id);
+    deleteResourceBy(id);
   }
 
   /** Uploads a mentor's profile picture. */
   @Transactional
-  public MentorProfilePicture uploadMentorProfilePicture(
-      final String mentorEmail, final MultipartFile file) {
-    return uploadProfile(mentorEmail, file);
+  public MemberProfilePicture uploadMentorProfilePicture(
+      final Long memberId, final MultipartFile file) {
+    memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException(memberId));
+    return uploadProfile(memberId, file);
   }
 
   /** Gets a resource by ID. */
@@ -72,31 +77,30 @@ public class ResourceService {
   }
 
   /** Gets a mentor's profile picture. */
-  public MentorProfilePicture getMentorProfilePicture(final String mentorEmail) {
+  public MemberProfilePicture getMemberProfilePicture(final Long memberId) {
     return profilePicRepo
-        .findByMentorEmail(mentorEmail)
+        .findByMemberId(memberId)
         .orElseThrow(
             () ->
                 new ResourceNotFoundException(
-                    "Profile picture not found for mentor: " + mentorEmail));
+                    "Profile picture not found for the member: " + memberId));
   }
 
-  private MentorProfilePicture uploadProfile(final String mentorEmail, final MultipartFile file) {
-    final Optional<MentorProfilePicture> existingPicture =
-        profilePicRepo.findByMentorEmail(mentorEmail);
+  private MemberProfilePicture uploadProfile(final Long memberId, final MultipartFile file) {
+    final Optional<MemberProfilePicture> existingPicture = profilePicRepo.findByMemberId(memberId);
 
     if (existingPicture.isPresent()) {
-      deleteResourceById(existingPicture.get().getResourceId());
-      profilePicRepo.deleteByMentorEmail(mentorEmail);
+      deleteResourceBy(existingPicture.get().getResourceId());
+      profilePicRepo.deleteByMemberId(memberId);
     }
 
     final Resource resource =
         saveAndUploadResource(
             file, StringUtils.EMPTY, StringUtils.EMPTY, ResourceType.PROFILE_PICTURE);
 
-    final MentorProfilePicture profilePicture =
-        MentorProfilePicture.builder()
-            .mentorEmail(mentorEmail)
+    final MemberProfilePicture profilePicture =
+        MemberProfilePicture.builder()
+            .memberId(memberId)
             .resourceId(resource.getId())
             .resource(resource)
             .build();
@@ -104,17 +108,16 @@ public class ResourceService {
     return profilePicRepo.create(profilePicture);
   }
 
-  private void deleteResourceById(final UUID id) {
-    final Resource resource = getResource(id);
-    profilePicRepo.deleteByResourceId(id);
-    resourceRepo.deleteById(id);
+  private void deleteResourceBy(final UUID resourceId) {
+    final var resource = getResource(resourceId);
+    profilePicRepo.deleteById(resourceId);
+    resourceRepo.deleteById(resourceId);
     fileStorageRepo.deleteFile(resource.getDriveFileId());
   }
 
-  private void deleteProfile(final String mentorEmail) {
-    final MentorProfilePicture profilePicture = getMentorProfilePicture(mentorEmail);
-    deleteResourceById(profilePicture.getResourceId());
-    profilePicRepo.deleteByMentorEmail(mentorEmail);
+  private void deleteProfileBy(final Long memberId) {
+    final var profilePicture = getMemberProfilePicture(memberId);
+    deleteResourceBy(profilePicture.getResourceId());
   }
 
   private Resource saveAndUploadResource(
