@@ -1,9 +1,12 @@
 package com.wcc.platform.repository.postgres;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static com.wcc.platform.domain.platform.type.ResourceType.IMAGE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import java.sql.ResultSet;
@@ -27,7 +30,6 @@ class MemberProfilePictureRowMapperTest {
     long size = 1024L;
     String driveFileId = "1234drive";
     String driveFileLink = "http://drive.com/file/1234drive";
-    String resourceTypeName = "IMAGE";
     OffsetDateTime createdAt = OffsetDateTime.now();
     OffsetDateTime updatedAt = OffsetDateTime.now();
 
@@ -40,7 +42,7 @@ class MemberProfilePictureRowMapperTest {
     when(resultSet.getLong("size")).thenReturn(size);
     when(resultSet.getString("drive_file_id")).thenReturn(driveFileId);
     when(resultSet.getString("drive_file_link")).thenReturn(driveFileLink);
-    when(resultSet.getString("resource_type_name")).thenReturn(resourceTypeName);
+    when(resultSet.getInt("resource_type_id")).thenReturn(IMAGE.getResourceTypeId());
     when(resultSet.getObject("created_at", OffsetDateTime.class)).thenReturn(createdAt);
     when(resultSet.getObject("updated_at", OffsetDateTime.class)).thenReturn(updatedAt);
 
@@ -60,7 +62,7 @@ class MemberProfilePictureRowMapperTest {
     assertEquals(size, resource.getSize());
     assertEquals(driveFileId, resource.getDriveFileId());
     assertEquals(driveFileLink, resource.getDriveFileLink());
-    assertEquals(ResourceType.IMAGE, resource.getResourceType());
+    assertEquals(IMAGE, resource.getResourceType());
     assertEquals(createdAt, resource.getCreatedAt());
     assertEquals(updatedAt, resource.getUpdatedAt());
   }

@@ -29,7 +29,7 @@ public enum ResourceType {
    *     found
    */
   public static ResourceType fromId(final int resourceTypeId) {
-    for (ResourceType type : ResourceType.values()) {
+    for (final ResourceType type : values()) {
       if (type.getResourceTypeId() == resourceTypeId) {
         return type;
       }
