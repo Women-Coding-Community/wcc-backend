@@ -21,6 +21,23 @@ public enum ResourceType {
   private final int resourceTypeId;
 
   /**
+   * Retrieves the corresponding {@code ResourceType} enum value based on a given resource type ID.
+   * If no match is found, the default {@code RESOURCE} type is returned.
+   *
+   * @param resourceTypeId the integer ID representing a specific {@code ResourceType}
+   * @return the {@code ResourceType} that matches the given ID, or {@code RESOURCE} if no match is
+   *     found
+   */
+  public static ResourceType fromId(final int resourceTypeId) {
+    for (ResourceType type : ResourceType.values()) {
+      if (type.getResourceTypeId() == resourceTypeId) {
+        return type;
+      }
+    }
+    return RESOURCE;
+  }
+
+  /**
    * Converts the current resource type to its corresponding folder ID based on the given folder
    * storage properties. The folder ID returned is determined by the resource type and its mapping
    * within the FolderStorageProperties.

@@ -36,7 +36,7 @@ public class MemberProfilePictureRowMapper implements RowMapper<MemberProfilePic
             .size(result.getLong("size"))
             .driveFileId(result.getString("drive_file_id"))
             .driveFileLink(result.getString("drive_file_link"))
-            .resourceType(ResourceType.valueOf(result.getString("resource_type_name")))
+            .resourceType(ResourceType.fromId(result.getInt("resource_type_id")))
             .createdAt(result.getObject("created_at", OffsetDateTime.class))
             .updatedAt(result.getObject("updated_at", OffsetDateTime.class))
             .build();
