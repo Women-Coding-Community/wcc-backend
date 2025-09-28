@@ -64,7 +64,7 @@ public class PostgresMemberProfilePictureRepository implements MemberProfilePict
   }
 
   @Override
-  public Optional<MemberProfilePicture> findByMemberId(final Integer memberId) {
+  public Optional<MemberProfilePicture> findByMemberId(final Long memberId) {
     try {
       final var profilePicture =
           jdbcTemplate.queryForObject(SELECT_BY_MEMBER_ID, rowMapper, memberId);
@@ -80,7 +80,7 @@ public class PostgresMemberProfilePictureRepository implements MemberProfilePict
   }
 
   @Override
-  public void deleteByMemberId(final Integer memberId) {
+  public void deleteByMemberId(final Long memberId) {
     jdbcTemplate.update(DEL_BY_MEMBER_ID, memberId);
   }
 
@@ -108,7 +108,7 @@ public class PostgresMemberProfilePictureRepository implements MemberProfilePict
               .build();
 
       return MemberProfilePicture.builder()
-          .memberId(rs.getInt(MEMBER_ID_COLUMN))
+          .memberId(rs.getLong(MEMBER_ID_COLUMN))
           .resourceId(UUID.fromString(resourceId))
           .resource(resource)
           .build();

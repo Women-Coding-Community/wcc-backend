@@ -10,14 +10,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.platform.filestorage.FileStored;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.FileStorageRepository;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.ResourceRepository;
 import java.util.Collections;
 import java.util.List;
@@ -38,11 +41,13 @@ class ResourceServiceTest {
   @Mock private ResourceRepository resourceRepository;
   @Mock private MemberProfilePictureRepository repository;
   @Mock private FileStorageRepository fileStorageRepository;
+  @Mock private MemberRepository memberRepository;
   @InjectMocks private ResourceService resourceService;
 
   private UUID resourceId;
-  private Integer memberId;
+  private Long memberId;
   private Resource resource;
+  private Member member;
   private MemberProfilePicture profilePicture;
   private MultipartFile multipartFile;
   private FileStored fileStored;
@@ -59,7 +64,8 @@ class ResourceServiceTest {
     org.mockito.Mockito.lenient().when(fileStorageRepository.getFolders()).thenReturn(folders);
 
     resourceId = UUID.randomUUID();
-    memberId = 42;
+    memberId = 42L;
+    member = Member.builder().id(memberId).build();
 
     resource =
         Resource.builder()
@@ -179,6 +185,7 @@ class ResourceServiceTest {
 
   @Test
   void uploadProfilePictureShouldReturnCreatedProfilePictureWhenMentorDoesNotHaveProfilePicture() {
+    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
     when(repository.findByMemberId(memberId)).thenReturn(Optional.empty());
     when(fileStorageRepository.uploadFile(any(MultipartFile.class), anyString()))
         .thenReturn(fileStored);
@@ -222,8 +229,9 @@ class ResourceServiceTest {
 
   @Test
   void testDeleteMentorProfilePictureShouldDeleteProfileByPicture() {
-    when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
+    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
     doNothing().when(fileStorageRepository).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
 
@@ -236,7 +244,16 @@ class ResourceServiceTest {
   }
 
   @Test
+  void giveMemberDoesNotExistWhenDeletePhotoThenThrowsNotFoundException() {
+    when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+    Class<MemberNotFoundException> expected = MemberNotFoundException.class;
+    assertThrows(expected, () -> resourceService.deleteMemberProfilePicture(memberId));
+  }
+
+  @Test
   void uploadMentorProfilePictureShouldReplaceExistingPicture() {
+    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
     when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
     doNothing().when(fileStorageRepository).deleteFile(anyString());

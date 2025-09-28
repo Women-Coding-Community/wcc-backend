@@ -37,7 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 class ResourceControllerTest {
 
   private static final String CONTENT_TYPE = "image/jpeg";
-  private Integer memberId;
+  private Long memberId;
   @Autowired private MockMvc mockMvc;
   @MockBean private ResourceService resourceService;
   private UUID resourceId;
@@ -48,7 +48,7 @@ class ResourceControllerTest {
   @BeforeEach
   void setUp() {
     resourceId = UUID.randomUUID();
-    memberId = 42;
+    memberId = 42L;
 
     resource =
         Resource.builder()
@@ -166,13 +166,13 @@ class ResourceControllerTest {
   }
 
   @Test
-  void uploadMentorProfilePictureShouldReturnCreatedProfilePicture() throws Exception {
+  void uploadMemberProfilePictureShouldReturnCreatedProfilePicture() throws Exception {
     when(resourceService.uploadMentorProfilePicture(eq(memberId), any(MultipartFile.class)))
         .thenReturn(profilePicture);
 
     mockMvc
         .perform(
-            multipart("/api/platform/v1/resources/mentor-profile-picture")
+            multipart("/api/platform/v1/resources/member-profile-picture")
                 .file(multipartFile)
                 .param("memberId", memberId.toString())
                 .header("X-API-KEY", "test-api-key")
@@ -188,7 +188,7 @@ class ResourceControllerTest {
 
     mockMvc
         .perform(
-            get("/api/platform/v1/resources/mentor-profile-picture/{memberId}", memberId)
+            get("/api/platform/v1/resources/member-profile-picture/{memberId}", memberId)
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -202,7 +202,7 @@ class ResourceControllerTest {
 
     mockMvc
         .perform(
-            delete("/api/platform/v1/resources/mentor-profile-picture/{memberId}", memberId)
+            delete("/api/platform/v1/resources/member-profile-picture/{memberId}", memberId)
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());

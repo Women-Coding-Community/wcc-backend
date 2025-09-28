@@ -13,12 +13,12 @@ public interface MemberProfilePictureRepository extends CrudRepository<MemberPro
    * @param memberId the mentor's email
    * @return an Optional containing the mentor's profile picture, or empty if not found
    */
-  Optional<MemberProfilePicture> findByMemberId(Integer memberId);
+  Optional<MemberProfilePicture> findByMemberId(Long memberId);
 
   /**
    * Delete Member profile picture by the associated member ID.
    *
    * @param memberId the ID of the resource
    */
-  void deleteByMemberId(Integer memberId);
+  void deleteByMemberId(Long memberId);
 }

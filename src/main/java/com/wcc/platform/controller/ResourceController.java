@@ -97,11 +97,11 @@ public class ResourceController {
   }
 
   /** Uploads a member's profile picture. */
-  @PostMapping(value = "/mentor-profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/member-profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Upload a member's profile picture")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<MemberProfilePicture> uploadMentorProfilePicture(
-      @Parameter(description = "Id of the member") @RequestParam final Integer memberId,
+  public ResponseEntity<MemberProfilePicture> uploadMemberProfilePicture(
+      @Parameter(description = "Id of the member") @RequestParam final Long memberId,
       @Parameter(description = "Profile picture file") @RequestParam("file")
           final MultipartFile file) {
 
@@ -110,22 +110,22 @@ public class ResourceController {
   }
 
   /** Gets a mentor's profile picture. */
-  @GetMapping("/mentor-profile-picture/{memberId}")
+  @GetMapping("/member-profile-picture/{memberId}")
   @Operation(summary = "Get a member's profile picture")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MemberProfilePicture> getMentorProfilePicture(
-      @Parameter(description = "Id of the member") @PathVariable final Integer memberId) {
+      @Parameter(description = "Id of the member") @PathVariable final Long memberId) {
 
     final var profilePicture = resourceService.getMemberProfilePicture(memberId);
     return ResponseEntity.ok(profilePicture);
   }
 
   /** Deletes a mentor's profile picture. */
-  @DeleteMapping("/mentor-profile-picture/{memberId}")
+  @DeleteMapping("/member-profile-picture/{memberId}")
   @Operation(summary = "Delete a member's profile picture")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteMemberProfilePicture(
-      @Parameter(description = "Id of the member") @PathVariable final Integer memberId) {
+      @Parameter(description = "Id of the member") @PathVariable final Long memberId) {
 
     resourceService.deleteMemberProfilePicture(memberId);
     return ResponseEntity.noContent().build();

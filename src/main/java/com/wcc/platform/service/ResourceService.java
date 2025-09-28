@@ -1,11 +1,13 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.FileStorageRepository;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.ResourceRepository;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,7 @@ public class ResourceService {
   private final ResourceRepository resourceRepo;
   private final MemberProfilePictureRepository profilePicRepo;
   private final FileStorageRepository fileStorageRepo;
+  private final MemberRepository memberRepository;
 
   /** Uploads a resource to Google Drive and stores its metadata in the database. */
   @Transactional
@@ -39,7 +42,8 @@ public class ResourceService {
 
   /** Deletes a mentor's profile picture. */
   @Transactional
-  public void deleteMemberProfilePicture(final Integer memberId) {
+  public void deleteMemberProfilePicture(final Long memberId) {
+    memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException(memberId));
     deleteProfileBy(memberId);
   }
 
@@ -52,7 +56,8 @@ public class ResourceService {
   /** Uploads a mentor's profile picture. */
   @Transactional
   public MemberProfilePicture uploadMentorProfilePicture(
-      final Integer memberId, final MultipartFile file) {
+      final Long memberId, final MultipartFile file) {
+    memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException(memberId));
     return uploadProfile(memberId, file);
   }
 
@@ -72,7 +77,7 @@ public class ResourceService {
   }
 
   /** Gets a mentor's profile picture. */
-  public MemberProfilePicture getMemberProfilePicture(final Integer memberId) {
+  public MemberProfilePicture getMemberProfilePicture(final Long memberId) {
     return profilePicRepo
         .findByMemberId(memberId)
         .orElseThrow(
@@ -81,7 +86,7 @@ public class ResourceService {
                     "Profile picture not found for the member: " + memberId));
   }
 
-  private MemberProfilePicture uploadProfile(final Integer memberId, final MultipartFile file) {
+  private MemberProfilePicture uploadProfile(final Long memberId, final MultipartFile file) {
     final Optional<MemberProfilePicture> existingPicture = profilePicRepo.findByMemberId(memberId);
 
     if (existingPicture.isPresent()) {
@@ -110,7 +115,7 @@ public class ResourceService {
     fileStorageRepo.deleteFile(resource.getDriveFileId());
   }
 
-  private void deleteProfileBy(final Integer memberId) {
+  private void deleteProfileBy(final Long memberId) {
     final var profilePicture = getMemberProfilePicture(memberId);
     deleteResourceBy(profilePicture.getResourceId());
   }

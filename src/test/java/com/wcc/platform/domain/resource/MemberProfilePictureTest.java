@@ -8,21 +8,22 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class MemberProfilePictureTest {
+  private static final Long MEMBER_ID = 10L;
 
   @Test
   void shouldBuildMentorProfilePictureWithAllFields() {
-    var memberId = 10;
+
     UUID resourceId = UUID.randomUUID();
     Resource resource = new Resource();
 
     MemberProfilePicture profilePicture =
         MemberProfilePicture.builder()
-            .memberId(memberId)
+            .memberId(MEMBER_ID)
             .resourceId(resourceId)
             .resource(resource)
             .build();
 
-    assertEquals(memberId, profilePicture.getMemberId());
+    assertEquals(MEMBER_ID, profilePicture.getMemberId());
     assertEquals(resourceId, profilePicture.getResourceId());
     assertEquals(resource, profilePicture.getResource());
   }
@@ -30,7 +31,7 @@ class MemberProfilePictureTest {
   @Test
   void shouldUpdateMentorProfilePictureFields() {
     MemberProfilePicture profilePicture = new MemberProfilePicture();
-    var newId = 14;
+    var newId = 14L;
     UUID newResourceId = UUID.randomUUID();
     Resource newResource = new Resource();
 
@@ -54,7 +55,7 @@ class MemberProfilePictureTest {
 
   @Test
   void shouldCompareEqualMentorProfilePictures() {
-    var memberId = 20;
+    var memberId = 20L;
     var profilePicture1 = MemberProfilePicture.builder().memberId(memberId).build();
     var profilePicture2 = MemberProfilePicture.builder().memberId(memberId).build();
 
@@ -64,8 +65,8 @@ class MemberProfilePictureTest {
 
   @Test
   void shouldGenerateDifferentHashCodesForDifferentMentorProfilePictures() {
-    var profilePicture1 = MemberProfilePicture.builder().memberId(10).build();
-    var profilePicture2 = MemberProfilePicture.builder().memberId(20).build();
+    var profilePicture1 = MemberProfilePicture.builder().memberId(10L).build();
+    var profilePicture2 = MemberProfilePicture.builder().memberId(20L).build();
 
     assertNotEquals(profilePicture1.hashCode(), profilePicture2.hashCode());
   }

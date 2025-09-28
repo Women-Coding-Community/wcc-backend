@@ -17,7 +17,7 @@ import lombok.ToString;
 @Data
 @Builder(toBuilder = true)
 public class MemberProfilePicture {
-  @NotNull private Integer memberId;
+  @NotNull private Long memberId;
   @NotNull private UUID resourceId;
   private Resource resource;
 }

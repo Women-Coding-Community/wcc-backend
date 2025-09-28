@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.RowMapper;
 @ExtendWith(MockitoExtension.class)
 class PostgresMemberProfilePictureRepositoryTest {
 
-  private static final Integer MEMBER_ID = 42;
+  private static final Long MEMBER_ID = 42L;
   @Mock private JdbcTemplate jdbcTemplate;
   private PostgresMemberProfilePictureRepository repository;
   private UUID resourceId;
@@ -61,7 +61,7 @@ class PostgresMemberProfilePictureRepositoryTest {
 
   @Test
   void deleteByMemberIdShouldExecuteDeleteQuery() {
-    when(jdbcTemplate.update(anyString(), any(Integer.class))).thenReturn(1);
+    when(jdbcTemplate.update(anyString(), any(Long.class))).thenReturn(1);
 
     repository.deleteByMemberId(MEMBER_ID);
 
@@ -95,7 +95,7 @@ class PostgresMemberProfilePictureRepositoryTest {
             .resource(resource)
             .build();
 
-    when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), any(Integer.class)))
+    when(jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), any(Long.class)))
         .thenReturn(expected);
 
     Optional<MemberProfilePicture> found = repository.findByMemberId(MEMBER_ID);
