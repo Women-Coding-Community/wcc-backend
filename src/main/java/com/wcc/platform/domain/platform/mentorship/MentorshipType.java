@@ -9,16 +9,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum MentorshipType {
   AD_HOC(1),
-  LONG_TERM(2),
-  STUDY_GROUP(3);
+  LONG_TERM(2);
 
   private final int mentorshipTypeId;
 
-  public static MentorshipType fromId(int id) {
-    Arrays.stream(MentorshipType.values())
-        .filter(type -> type.mentorshipTypeId == id)
+  /** Get MentorshipType from its ID. */
+  public static MentorshipType fromId(int typeId) {
+    return Arrays.stream(MentorshipType.values())
+        .filter(type -> type.mentorshipTypeId == typeId)
         .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("Unknown MentorshipType id: " + id));
-    return null;
+        .orElseThrow(() -> new IllegalArgumentException("Unknown MentorshipType id: " + typeId));
   }
 }

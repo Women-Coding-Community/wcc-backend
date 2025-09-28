@@ -1,11 +1,17 @@
 package com.wcc.platform.repository.postgres.component;
 
+import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_BIO;
+import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_MENTOR_ID;
+import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_PROFILE_STATUS;
+import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_SPOKEN_LANG;
+import static io.swagger.v3.core.util.Constants.COMMA;
+
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
 import com.wcc.platform.repository.postgres.PostgresMenteeSectionRepository;
-import com.wcc.platform.repository.postgres.PostgresSkillsRepository;
+import com.wcc.platform.repository.postgres.PostgresSkillRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -19,11 +25,11 @@ import org.springframework.stereotype.Component;
 public class MentorMapper {
 
   private final PostgresMemberRepository memberRepository;
-  private final PostgresSkillsRepository skillsRepository;
+  private final PostgresSkillRepository skillsRepository;
   private final PostgresMenteeSectionRepository menteeSectionRepository;
 
   public Mentor mapRowToMentor(final ResultSet rs) throws SQLException {
-    final long mentorId = rs.getLong("mentor_id");
+    final long mentorId = rs.getLong(COLUMN_MENTOR_ID);
 
     // Prefer to reuse existing Member mapping
     Optional<Member> memberOpt;
@@ -46,10 +52,10 @@ public class MentorMapper {
         .companyName(member.getCompanyName())
         .images(member.getImages())
         .network(member.getNetwork())
-        .profileStatus(ProfileStatus.fromId(rs.getInt("profile_status")))
+        .profileStatus(ProfileStatus.fromId(rs.getInt(COLUMN_PROFILE_STATUS)))
         .skills(skillsRepository.findByMentorId(mentorId).get())
-        .spokenLanguages(List.of(rs.getString("spoken_languages").split(",")))
-        .bio(rs.getString("bio"))
+        .spokenLanguages(List.of(rs.getString(COLUMN_SPOKEN_LANG).split(COMMA)))
+        .bio(rs.getString(COLUMN_BIO))
         .menteeSection(menteeSectionRepository.findByMentorId(mentorId).get())
         .build();
   }

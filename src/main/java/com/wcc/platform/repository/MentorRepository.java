@@ -4,17 +4,17 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import java.util.List;
 import java.util.Optional;
 
-public interface MentorsRepository extends CrudRepository<Mentor, Long> {
+public interface MentorRepository extends CrudRepository<Mentor, Long> {
   /**
    * Find mentor by email.
    *
    * @param email mentor's email
    * @return Optional with Mentor object or empty Optional
    */
-  Optional<Mentor> findByEmail(String email);
+  Optional<Mentor> findByEmail(final String email);
 
   /**
-   * Return all saved mentors.
+   * Return all mentors.
    *
    * @return list of mentors
    */
@@ -23,7 +23,7 @@ public interface MentorsRepository extends CrudRepository<Mentor, Long> {
   /**
    * Return mentor's Id.
    *
-   * @return mentor's Id in database
+   * @return mentor's Id
    */
-  Long findIdByEmail(String email);
+  Long findIdByEmail(final String email);
 }

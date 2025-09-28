@@ -18,11 +18,13 @@ public enum Languages {
   PYTHON("Python", 9),
   RUBY("Ruby", 10),
   RUST("Rust", 11),
-  OTHER("Other", 12);
+  TYPESCRIPT("Typescript", 12),
+  OTHER("Other", 13);
 
   private final String name;
   private final int id;
 
+  /** Find Language by name. */
   public static Languages fromName(final String name) {
     for (Languages lang : Languages.values()) {
       if (lang.name.equalsIgnoreCase(name)) {

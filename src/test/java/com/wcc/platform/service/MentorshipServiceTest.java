@@ -26,8 +26,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.repository.HeroSectionRepository;
-import com.wcc.platform.repository.MentorsRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
@@ -41,8 +40,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MentorshipServiceTest {
   private ObjectMapper objectMapper;
   private PageRepository pageRepository;
-  private MentorsRepository mentorsRepository;
-  private HeroSectionRepository heroSectionRepository;
+  private MentorRepository mentorRepository;
 
   private MentorshipService service;
 
@@ -51,9 +49,7 @@ class MentorshipServiceTest {
     objectMapper = mock(ObjectMapper.class);
     objectMapper.registerModule(new JavaTimeModule());
     pageRepository = mock(PageRepository.class);
-    service =
-        new MentorshipService(
-            objectMapper, pageRepository, mentorsRepository, heroSectionRepository);
+    service = new MentorshipService(objectMapper, pageRepository, mentorRepository);
   }
 
   @Test
@@ -152,7 +148,7 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenGetMentorsGivenRecordExistingInDatabaseThenReturnValidResponse() {
+  void whenGetMentorsPageGivenRecordExistingInDatabaseThenReturnValidResponse() {
     var page = createMentorPageTest();
     var mapPage =
         new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
@@ -160,16 +156,16 @@ class MentorshipServiceTest {
     when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(MentorsPage.class))).thenReturn(page);
 
-    var response = service.getMentors();
+    var response = service.getMentorsPage();
 
     assertEquals(page, response);
   }
 
   @Test
   @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetMentorsGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetMentorsPageGivenRecordNotInDatabaseThenThrowException() {
     when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getMentors);
+    var exception = assertThrows(ContentNotFoundException.class, service::getMentorsPage);
 
     assertEquals("Content of Page MENTORS not found", exception.getMessage());
   }

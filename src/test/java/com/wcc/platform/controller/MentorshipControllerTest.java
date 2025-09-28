@@ -136,7 +136,7 @@ public class MentorshipControllerTest {
   void testMentorsOkResponse() throws Exception {
     MentorsPage mentorsPage = createMentorPageTest();
 
-    when(service.getMentors()).thenReturn(mentorsPage);
+    when(service.getMentorsPage()).thenReturn(mentorsPage);
 
     mockMvc
         .perform(

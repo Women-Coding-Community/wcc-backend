@@ -1,4 +1,4 @@
--- 1) Technical areas
+-- TABLE Technical areas
 CREATE TABLE IF NOT EXISTS technical_areas
 (
     id          SERIAL PRIMARY KEY,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS technical_areas
     description TEXT
 );
 
--- 2) Languages
+-- TABLE Languages
 CREATE TABLE IF NOT EXISTS languages
 (
     id          SERIAL PRIMARY KEY,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS languages
     description TEXT
 );
 
--- 3) Mentorship types
+-- TABLE Mentorship types
 CREATE TABLE IF NOT EXISTS mentorship_types
 (
     id          SERIAL PRIMARY KEY,
@@ -22,21 +22,20 @@ CREATE TABLE IF NOT EXISTS mentorship_types
     description TEXT
 );
 
--- 4) Mentors (depends on members + member_statuses)
+-- TABLE Mentors (depends on members + member_statuses) default PENDING
 CREATE TABLE IF NOT EXISTS mentors
 (
     mentor_id        INTEGER PRIMARY KEY REFERENCES members (id) ON DELETE CASCADE,
-    profile_status   INTEGER REFERENCES member_statuses (id) NOT NULL DEFAULT 1,
-    bio              TEXT                                    NOT NULL DEFAULT '',
-    years_experience INTEGER,
-    experience_range TEXT,
-    spoken_languages TEXT,
+    profile_status   INTEGER REFERENCES member_statuses (id) NOT NULL DEFAULT 4,
+    bio              TEXT                                    NOT NULL,
+    years_experience INTEGER                                          DEFAULT 0,
+    spoken_languages VARCHAR(200),
     is_available     BOOLEAN                                          DEFAULT TRUE,
     created_at       TIMESTAMP WITH TIME ZONE                         DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP WITH TIME ZONE                         DEFAULT CURRENT_TIMESTAMP
 );
 
--- 5) Mentor technical areas (join table)
+-- TABLE Mentor technical areas (join table)
 CREATE TABLE mentor_technical_areas
 (
     mentor_id         INTEGER REFERENCES mentors (mentor_id) ON DELETE CASCADE,
@@ -44,7 +43,7 @@ CREATE TABLE mentor_technical_areas
     PRIMARY KEY (mentor_id, technical_area_id)
 );
 
--- 6) Mentor languages (join table)
+-- TABLE Mentor languages (join table)
 CREATE TABLE mentor_languages
 (
     mentor_id   INTEGER REFERENCES mentors (mentor_id) ON DELETE CASCADE,
@@ -52,7 +51,7 @@ CREATE TABLE mentor_languages
     PRIMARY KEY (mentor_id, language_id)
 );
 
--- 7) Mentor mentorship types (join table)
+-- TABLE Mentor mentorship types (join table)
 CREATE TABLE IF NOT EXISTS mentor_mentorship_types
 (
     mentor_id       INTEGER NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
@@ -60,7 +59,7 @@ CREATE TABLE IF NOT EXISTS mentor_mentorship_types
     PRIMARY KEY (mentor_id, mentorship_type)
 );
 
--- 8) Mentor availability
+-- TABLE Mentor availability
 CREATE TABLE IF NOT EXISTS mentor_availability
 (
     mentor_id INTEGER     NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
@@ -69,30 +68,19 @@ CREATE TABLE IF NOT EXISTS mentor_availability
     PRIMARY KEY (mentor_id, month)
 );
 
--- 9) Mentor mentee section
+-- TABLE Mentor mentee section
 CREATE TABLE IF NOT EXISTS mentor_mentee_section
 (
     mentor_id    INTEGER PRIMARY KEY REFERENCES mentors (mentor_id) ON DELETE CASCADE,
-    ideal_mentee TEXT,
+    ideal_mentee TEXT NOT NULL,
     focus        TEXT,
     additional   TEXT,
     created_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 10) Hero section
-CREATE TABLE hero_sections
-(
-    id           SERIAL PRIMARY KEY,
-    page_id      TEXT NOT NULL UNIQUE, -- e.g. "mentors", "about_us"
-    title        TEXT NOT NULL,
-    subtitle     TEXT,
-    images       JSONB,
-    custom_style JSONB
-);
-
--- 🔹 Seed data inserts (moved to the end)
-
+-- 🔹 Seed data inserts
+-- Insert available technical areas
 INSERT INTO technical_areas (id, name, description)
 VALUES (1, 'BACKEND', 'Backend development'),
        (2, 'DATA_SCIENCE', 'Data science and analytics'),
@@ -103,6 +91,7 @@ VALUES (1, 'BACKEND', 'Backend development'),
        (7, 'OTHER', 'Other technical areas'),
        (8, 'QA', 'Quality assurance and testing');
 
+-- Insert available programming languages
 INSERT INTO languages (id, name, description)
 VALUES (1, 'C', 'C language'),
        (2, 'C++', 'C++'),
@@ -115,58 +104,16 @@ VALUES (1, 'C', 'C language'),
        (9, 'Python', 'Python'),
        (10, 'Ruby', 'Ruby'),
        (11, 'Rust', 'Rust'),
-       (12, 'Other', 'Other programming languages')
+       (12, 'Typescript', 'Typescript'),
+       (13, 'Other', 'Other programming languages')
 ON CONFLICT (id) DO NOTHING;
 
+-- Insert type of mentorship
 INSERT INTO mentorship_types (id, name, description)
 VALUES (1, 'AD_HOC', 'Ad-hoc mentorship sessions'),
-       (2, 'LONG_TERM', 'Long-term mentorship relationships'),
-       (3, 'STUDY_GROUP', 'Study mentorship')
+       (2, 'LONG_TERM', 'Long-term mentorship relationships')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO hero_sections (page_id, title, subtitle, images, custom_style)
-VALUES ('page:MENTORS_PAGE',
-        'Meet Our Mentors!',
-        NULL,
-        NULL,
-        '{
-          "backgroundColour": {
-            "color": "SECONDARY",
-            "shade": {
-              "name": "DARK",
-              "value": 10
-            }
-          }
-        }'::jsonb)
-ON CONFLICT (page_id) DO UPDATE
-    SET title        = EXCLUDED.title,
-        subtitle     = EXCLUDED.subtitle,
-        images       = EXCLUDED.images,
-        custom_style = EXCLUDED.custom_style;
-
--- Concrete: celebrate her (from `src/main/resources/init-data/celebrateHerPage.json`)
-INSERT INTO hero_sections (page_id, title, subtitle, images, custom_style)
-VALUES ('page:CELEBRATE_HER',
-        'Celebrate Her',
-        '',
-        '[
-          {
-            "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
-            "alt": "There is a group of women showing WCC logo",
-            "type": "desktop"
-          }
-        ]'::jsonb,
-        '{
-          "backgroundColour": {
-            "color": "PRIMARY",
-            "shade": {
-              "name": "LIGHT",
-              "value": 90
-            }
-          }
-        }'::jsonb)
-ON CONFLICT (page_id) DO UPDATE
-    SET title        = EXCLUDED.title,
-        subtitle     = EXCLUDED.subtitle,
-        images       = EXCLUDED.images,
-        custom_style = EXCLUDED.custom_style;
+-- Insert new member status PENDING
+INSERT INTO member_statuses (id, status)
+VALUES (4, 'PENDING');

@@ -1,5 +1,7 @@
 package com.wcc.platform.repository.postgres.component;
 
+import static com.wcc.platform.domain.platform.constants.MemberConstants.COLUMN_MEMBER_ID;
+
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.platform.SocialNetwork;
@@ -29,14 +31,14 @@ public class MemberMapper {
 
   /** Mapper method to convert ResultSet to Member object. */
   public Member mapRowToMember(final ResultSet rs) throws SQLException {
-    final Long memberId = rs.getLong("id");
+    final Long memberId = rs.getLong(COLUMN_MEMBER_ID);
     final Country country = countryRepository.findById(rs.getLong("country_id")).orElse(null);
     final List<MemberType> memberTypes = memberTypeRepo.findByMemberId(memberId);
     final List<Image> images = imageRepository.findByMemberId(memberId);
     final List<SocialNetwork> networks = socialNetworkRepo.findByMemberId(memberId);
 
     return Member.builder()
-        .id(rs.getLong("id"))
+        .id(rs.getLong(COLUMN_MEMBER_ID))
         .fullName(rs.getString("full_name"))
         .position(rs.getString("position"))
         .email(rs.getString("email"))

@@ -2,6 +2,7 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Rest controller for members pages apis. */
 @RestController
-@RequestMapping("/api/platform/v1/members")
+@RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
 @Tag(name = "Platform", description = "All platform Internal APIs")
 public class MemberController {
@@ -38,7 +39,7 @@ public class MemberController {
    *
    * @return List of all members.
    */
-  @GetMapping
+  @GetMapping("/members")
   @Operation(summary = "API to retrieve a list of all members")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Member>> getAllMembers() {
@@ -47,15 +48,40 @@ public class MemberController {
   }
 
   /**
+   * API to retrieve information about mentors.
+   *
+   * @return List of all mentors.
+   */
+  @GetMapping("/mentors")
+  @Operation(summary = "API to retrieve a list of all members")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<Mentor>> getAllMentors() {
+    final List<Mentor> mentors = platformService.getAllMentors();
+    return ResponseEntity.ok(mentors);
+  }
+
+  /**
    * API to create member.
    *
    * @return Create a new member.
    */
-  @PostMapping
+  @PostMapping("/members")
   @Operation(summary = "API to submit member registration")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Member> createMember(@RequestBody final Member member) {
     return new ResponseEntity<>(platformService.createMember(member), HttpStatus.CREATED);
+  }
+
+  /**
+   * API to create mentor.
+   *
+   * @return Create a new mentor.
+   */
+  @PostMapping("/mentors")
+  @Operation(summary = "API to submit mentor registration")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<Mentor> createMentor(@RequestBody final Mentor mentor) {
+    return new ResponseEntity<>(platformService.create(mentor), HttpStatus.CREATED);
   }
 
   /**

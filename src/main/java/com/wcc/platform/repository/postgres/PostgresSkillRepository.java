@@ -1,10 +1,13 @@
 package com.wcc.platform.repository.postgres;
 
-import com.wcc.platform.domain.cms.attributes.Experience;
+import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_LANGUAGES;
+import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_TECHNICAL_AREAS;
+import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_YEARS_EXP;
+
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.mentorship.Skills;
-import com.wcc.platform.repository.SkillsRepository;
+import com.wcc.platform.repository.SkillRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -16,12 +19,17 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository implementation for managing and retrieving skills data from a PostgreSQL database.
+ * This class interacts with the database to fetch mentor skills, including years of experience,
+ * technical areas, and programming languages. Implements the `SkillRepository` interface.
+ */
 @Repository
 @AllArgsConstructor
-public class PostgresSkillsRepository implements SkillsRepository {
+public class PostgresSkillRepository implements SkillRepository {
 
   private static final String SELECT_MENTOR_SKILLS =
-      "SELECT m.years_experience, "
+      "SELECT m.years_experience AS years_experience, "
           + "  COALESCE(array_agg(DISTINCT ta.name) FILTER (WHERE ta.name IS NOT NULL)"
           + ", ARRAY[]::text[]) AS technical_areas, "
           + "  COALESCE(array_agg(DISTINCT l.name) FILTER (WHERE l.name IS NOT NULL)"
@@ -43,13 +51,11 @@ public class PostgresSkillsRepository implements SkillsRepository {
           jdbcTemplate.queryForObject(
               SELECT_MENTOR_SKILLS,
               (rs, rowNum) -> {
-                Integer years =
-                    rs.getObject("years_experience") == null ? null : rs.getInt("years_experience");
-
+                Integer years = rs.getInt(COLUMN_YEARS_EXP);
                 List<TechnicalArea> areas = extractTechnicalAreas(rs);
                 List<Languages> languages = extractLanguages(rs);
 
-                return new Skills(years, Experience.fromYears(years), areas, languages);
+                return new Skills(years, areas, languages);
               },
               mentorId);
       return Optional.ofNullable(skills);
@@ -60,7 +66,7 @@ public class PostgresSkillsRepository implements SkillsRepository {
 
   private List<TechnicalArea> extractTechnicalAreas(final ResultSet rs) {
     try {
-      Object[] values = (Object[]) rs.getArray("technical_areas").getArray();
+      Object[] values = (Object[]) rs.getArray(COLUMN_TECHNICAL_AREAS).getArray();
       return Arrays.stream(values)
           .map(Object::toString)
           .map(
@@ -79,7 +85,7 @@ public class PostgresSkillsRepository implements SkillsRepository {
 
   private List<Languages> extractLanguages(final ResultSet rs) {
     try {
-      Object[] values = (Object[]) rs.getArray("languages").getArray();
+      Object[] values = (Object[]) rs.getArray(COLUMN_LANGUAGES).getArray();
       return Arrays.stream(values)
           .map(Object::toString)
           .map(String::trim)
