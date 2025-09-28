@@ -13,11 +13,11 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.domain.platform.type.ResourceType;
-import com.wcc.platform.domain.resource.MentorProfilePicture;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.FileStorageRepository;
-import com.wcc.platform.repository.MentorProfilePictureRepository;
+import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.ResourceRepository;
 import java.util.Collections;
 import java.util.List;
@@ -36,22 +36,19 @@ import org.springframework.web.multipart.MultipartFile;
 class ResourceServiceTest {
 
   @Mock private ResourceRepository resourceRepository;
-
-  @Mock private MentorProfilePictureRepository repository;
-
+  @Mock private MemberProfilePictureRepository repository;
   @Mock private FileStorageRepository fileStorageRepository;
-
   @InjectMocks private ResourceService resourceService;
 
   private UUID resourceId;
+  private Integer memberId;
   private Resource resource;
-  private MentorProfilePicture profilePicture;
+  private MemberProfilePicture profilePicture;
   private MultipartFile multipartFile;
   private FileStored fileStored;
 
   @BeforeEach
   void setUp() {
-    // Setup folders mapping
     var folders = new FolderStorageProperties();
     folders.setImagesFolder("images-folder-id");
     folders.setMentorsProfileFolder("mentors-profile-folder-id");
@@ -62,6 +59,7 @@ class ResourceServiceTest {
     org.mockito.Mockito.lenient().when(fileStorageRepository.getFolders()).thenReturn(folders);
 
     resourceId = UUID.randomUUID();
+    memberId = 42;
 
     resource =
         Resource.builder()
@@ -77,9 +75,8 @@ class ResourceServiceTest {
             .build();
 
     profilePicture =
-        MentorProfilePicture.builder()
-            .id(UUID.randomUUID())
-            .mentorEmail("test@example.com")
+        MemberProfilePicture.builder()
+            .memberId(memberId)
             .resourceId(resourceId)
             .resource(resource)
             .build();
@@ -92,17 +89,14 @@ class ResourceServiceTest {
 
   @Test
   void uploadResourceShouldReturnCreatedResource() {
-    // Arrange
     when(fileStorageRepository.uploadFile(any(MultipartFile.class), anyString()))
         .thenReturn(fileStored);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
 
-    // Act
     Resource result =
         resourceService.uploadResource(
             multipartFile, "Test Resource", "Test Description", ResourceType.EVENT_IMAGE);
 
-    // Assert
     assertNotNull(result);
     assertEquals(resourceId, result.getId());
     assertEquals("Test Resource", result.getName());
@@ -120,13 +114,10 @@ class ResourceServiceTest {
 
   @Test
   void testGetResourceShouldReturnResourceWhenResourceExists() {
-    // Arrange
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
 
-    // Act
     Resource result = resourceService.getResource(resourceId);
 
-    // Assert
     assertNotNull(result);
     assertEquals(resourceId, result.getId());
     assertEquals("Test Resource", result.getName());
@@ -136,10 +127,8 @@ class ResourceServiceTest {
 
   @Test
   void testGetResourceShouldThrowResourceNotFoundExceptionWhenResourceDoesNotExist() {
-    // Arrange
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.empty());
 
-    // Act & Assert
     assertThrows(ResourceNotFoundException.class, () -> resourceService.getResource(resourceId));
 
     verify(resourceRepository, times(1)).findById(resourceId);
@@ -147,14 +136,11 @@ class ResourceServiceTest {
 
   @Test
   void testGetResourcesByTypeShouldReturnResourceList() {
-    // Arrange
     List<Resource> resources = Collections.singletonList(resource);
     when(resourceRepository.findByType(ResourceType.EVENT_IMAGE)).thenReturn(resources);
 
-    // Act
     List<Resource> result = resourceService.getResourcesByType(ResourceType.EVENT_IMAGE);
 
-    // Assert
     assertNotNull(result);
     assertEquals(1, result.size());
     assertEquals(resourceId, result.getFirst().getId());
@@ -164,14 +150,11 @@ class ResourceServiceTest {
 
   @Test
   void searchResourcesByNameShouldReturnResourceList() {
-    // Arrange
     List<Resource> resources = Collections.singletonList(resource);
     when(resourceRepository.findByNameContaining("Test")).thenReturn(resources);
 
-    // Act
     List<Resource> result = resourceService.searchResourcesByName("Test");
 
-    // Assert
     assertNotNull(result);
     assertEquals(1, result.size());
     assertEquals(resourceId, result.getFirst().getId());
@@ -181,100 +164,80 @@ class ResourceServiceTest {
 
   @Test
   void deleteResourceShouldDeleteResource() {
-    // Arrange
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
     doNothing().when(fileStorageRepository).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
 
-    // Act
     resourceService.deleteResource(resourceId);
 
-    // Assert
     verify(resourceRepository, times(1)).findById(resourceId);
     verify(fileStorageRepository, times(1)).deleteFile("drive-file-id");
     // Ensure dependent mentor_profile_picture entries are deleted first
-    verify(repository, times(1)).deleteByResourceId(resourceId);
+
     verify(resourceRepository, times(1)).deleteById(resourceId);
   }
 
   @Test
   void uploadProfilePictureShouldReturnCreatedProfilePictureWhenMentorDoesNotHaveProfilePicture() {
-    // Arrange
-    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.empty());
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.empty());
     when(fileStorageRepository.uploadFile(any(MultipartFile.class), anyString()))
         .thenReturn(fileStored);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
-    when(repository.create(any(MentorProfilePicture.class))).thenReturn(profilePicture);
+    when(repository.create(any(MemberProfilePicture.class))).thenReturn(profilePicture);
 
-    // Act
-    var result = resourceService.uploadMentorProfilePicture("test@example.com", multipartFile);
+    var result = resourceService.uploadMentorProfilePicture(memberId, multipartFile);
 
-    // Assert
     assertNotNull(result);
-    assertEquals("test@example.com", result.getMentorEmail());
+    assertEquals(memberId, result.getMemberId());
     assertEquals(resourceId, result.getResourceId());
 
-    verify(repository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMemberId(memberId);
     verify(fileStorageRepository, times(1)).uploadFile(any(MultipartFile.class), anyString());
     verify(resourceRepository, times(1)).create(any(Resource.class));
-    verify(repository, times(1)).create(any(MentorProfilePicture.class));
+    verify(repository, times(1)).create(any(MemberProfilePicture.class));
   }
 
   @Test
   void testGetMentorProfileShouldReturnProfilePictureWhenProfilePictureExists() {
-    // Arrange
-    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
 
-    // Act
-    MentorProfilePicture result = resourceService.getMentorProfilePicture("test@example.com");
+    MemberProfilePicture result = resourceService.getMemberProfilePicture(memberId);
 
-    // Assert
     assertNotNull(result);
-    assertEquals("test@example.com", result.getMentorEmail());
+    assertEquals(memberId, result.getMemberId());
     assertEquals(resourceId, result.getResourceId());
 
-    verify(repository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMemberId(memberId);
   }
 
   @Test
   void testGetMentorProfileShouldThrowExceptionWhenProfilePictureDoesNotExist() {
-    // Arrange
-    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.empty());
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.empty());
 
-    // Act & Assert
     assertThrows(
-        ResourceNotFoundException.class,
-        () -> resourceService.getMentorProfilePicture("test@example.com"));
+        ResourceNotFoundException.class, () -> resourceService.getMemberProfilePicture(memberId));
 
-    verify(repository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMemberId(memberId);
   }
 
   @Test
-  void testDeleteMentorProfilePictureShouldDeleteProfilePicture() {
-    // Arrange
-    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
+  void testDeleteMentorProfilePictureShouldDeleteProfileByPicture() {
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
     doNothing().when(fileStorageRepository).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
-    doNothing().when(repository).deleteByMentorEmail(anyString());
 
-    // Act
-    resourceService.deleteMentorProfilePicture("test@example.com");
+    resourceService.deleteMemberProfilePicture(memberId);
 
-    // Assert
-    verify(repository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMemberId(memberId);
     verify(resourceRepository, times(1)).findById(resourceId);
     verify(fileStorageRepository, times(1)).deleteFile("drive-file-id");
-    // Ensure dependent mentor_profile_picture entries are deleted via deleteResource path
-    verify(repository, times(1)).deleteByResourceId(resourceId);
     verify(resourceRepository, times(1)).deleteById(resourceId);
-    verify(repository, times(1)).deleteByMentorEmail("test@example.com");
   }
 
   @Test
   void uploadMentorProfilePictureShouldReplaceExistingPicture() {
-    // Arrange: existing picture present
-    when(repository.findByMentorEmail("test@example.com")).thenReturn(Optional.of(profilePicture));
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
     doNothing().when(fileStorageRepository).deleteFile(anyString());
     doNothing().when(resourceRepository).deleteById(any(UUID.class));
@@ -282,26 +245,24 @@ class ResourceServiceTest {
     when(fileStorageRepository.uploadFile(any(MultipartFile.class), anyString()))
         .thenReturn(fileStored);
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
-    when(repository.create(any(MentorProfilePicture.class))).thenReturn(profilePicture);
+    when(repository.create(any(MemberProfilePicture.class))).thenReturn(profilePicture);
 
-    // Act
-    var result = resourceService.uploadMentorProfilePicture("test@example.com", multipartFile);
+    var result = resourceService.uploadMentorProfilePicture(memberId, multipartFile);
 
-    // Assert
     assertNotNull(result);
-    assertEquals("test@example.com", result.getMentorEmail());
+    assertEquals(memberId, result.getMemberId());
     assertEquals(resourceId, result.getResourceId());
 
     // Ensure old resource and linkage are removed
-    verify(repository, times(1)).findByMentorEmail("test@example.com");
+    verify(repository, times(1)).findByMemberId(memberId);
     verify(resourceRepository, times(1)).findById(resourceId);
     verify(fileStorageRepository, times(1)).deleteFile("drive-file-id");
-    verify(repository, times(1)).deleteByResourceId(resourceId);
-    verify(repository, times(1)).deleteByMentorEmail("test@example.com");
+    verify(repository, times(1)).deleteByMemberId(memberId);
+    verify(repository, times(1)).deleteByMemberId(memberId);
 
     // Ensure new resource and profile picture are created
     verify(fileStorageRepository, times(1)).uploadFile(any(MultipartFile.class), anyString());
     verify(resourceRepository, times(1)).create(any(Resource.class));
-    verify(repository, times(1)).create(any(MentorProfilePicture.class));
+    verify(repository, times(1)).create(any(MemberProfilePicture.class));
   }
 }

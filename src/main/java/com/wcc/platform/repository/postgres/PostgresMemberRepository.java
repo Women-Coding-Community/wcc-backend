@@ -20,6 +20,8 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PostgresMemberRepository implements MemberRepository {
 
+  public static final String MEMBER_ID_COLUMN = "member_id";
+
   private static final String INSERT_SQL =
       "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
           + "country_id, status_id, bio, years_experience, spoken_language) "
