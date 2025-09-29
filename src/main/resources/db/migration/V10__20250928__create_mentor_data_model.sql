@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS mentor_mentorship_types
 CREATE TABLE IF NOT EXISTS mentor_availability
 (
     mentor_id INTEGER     NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
-    month     VARCHAR(20) NOT NULL, -- e.g. "MAY"
+    month     VARCHAR(20) NOT NULL,
     hours     INTEGER,
     PRIMARY KEY (mentor_id, month)
 );

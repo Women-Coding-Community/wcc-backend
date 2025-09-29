@@ -1,12 +1,12 @@
 package com.wcc.platform.repository.postgres;
 
 import static ch.qos.logback.core.CoreConstants.EMPTY_STRING;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_ADDITIONAL;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_FOCUS;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_HOURS;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_IDEAL_MENTEE;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_MENTORSHIP_TYPE_ID;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_MONTH;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_ADDITIONAL;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_FOCUS;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_HOURS;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_IDEAL_MENTEE;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTORSHIP_TYPE_ID;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MONTH;
 import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.pages.mentorship.Availability;

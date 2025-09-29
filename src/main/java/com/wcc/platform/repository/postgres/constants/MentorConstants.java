@@ -1,4 +1,4 @@
-package com.wcc.platform.domain.platform.constants;
+package com.wcc.platform.repository.postgres.constants;
 
 /** Constants related to Mentor entity. */
 public class MentorConstants {

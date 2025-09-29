@@ -1,6 +1,6 @@
 package com.wcc.platform.repository.postgres.component;
 
-import static com.wcc.platform.domain.platform.constants.MemberConstants.COLUMN_MEMBER_ID;
+import static com.wcc.platform.repository.postgres.constants.MemberConstants.COLUMN_MEMBER_ID;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;

@@ -1,6 +1,6 @@
 package com.wcc.platform.repository.postgres;
 
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_MENTOR_ID;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
@@ -53,7 +53,6 @@ public class PostgresMentorRepository implements MentorRepository {
 
   private final JdbcTemplate jdbc;
   private final MentorMapper mentorMapper;
-  private final PostgresCountryRepository countryRepository;
   private final MemberMapper memberMapper;
 
   @Override
@@ -91,10 +90,6 @@ public class PostgresMentorRepository implements MentorRepository {
   @Override
   @Transactional
   public Mentor create(final Mentor mentor) {
-    if (mentor == null) {
-      throw new IllegalArgumentException("Mentor mentor must not be null");
-    }
-
     final Long memberId = memberMapper.addMember(mentor, SQL_INSERT_MEMBER);
 
     Skills mentorSkills = mentor.getSkills();

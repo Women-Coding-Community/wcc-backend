@@ -1,8 +1,8 @@
 package com.wcc.platform.repository.postgres;
 
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_LANGUAGES;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_TECHNICAL_AREAS;
-import static com.wcc.platform.domain.platform.constants.MentorConstants.COLUMN_YEARS_EXP;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_LANGUAGES;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_TECHNICAL_AREAS;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_YEARS_EXP;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
