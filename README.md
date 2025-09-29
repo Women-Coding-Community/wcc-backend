@@ -224,21 +224,20 @@ After this you can tests execute this curl and you will get the response.
 
 ## Generate Postman Collection
 
-You can generate a Postman collection from the running application’s OpenAPI spec.
+You can generate a Postman collection from the application’s OpenAPI specification.
 
 1. Start the application (e.g. via Docker Compose):
 ```shell
    docker compose -f docker/docker-compose.yml up --build
 ```
-2. In the root directory of the repository, create a folder for the spec and collection:
-```shell
-    mkdir -p postman-collection
-```
-3. Download the OpenAPI spec directly from the running app:
+2. In the root directory of the repository, there is a folder called `postman-collection` which contains the OpenAPI specification and the generated Postman collection.
+
+
+3. You can download the OpenAPI specification directly from the running app. This will overwrite the existing OpenAPI specification file in the `postman-collection` folder:
 ```shell
    curl http://localhost:8080/api-docs -o postman-collection/openapi.yaml
 ```
-4. Generate the Postman collection:
+4. You can generate a new .json file of the Postman collection. This will overwrite the existing Postman collection file in the `postman-collection` folder:
 ```shell
     ./gradlew postmanGenerate
 ```
