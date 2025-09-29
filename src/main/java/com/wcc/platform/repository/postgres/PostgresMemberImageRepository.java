@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/** Image data repository */
+/** Image data repository. */
 @Repository
 @RequiredArgsConstructor
 public class PostgresMemberImageRepository {

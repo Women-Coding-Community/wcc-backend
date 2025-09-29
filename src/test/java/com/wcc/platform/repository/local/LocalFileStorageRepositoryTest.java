@@ -108,7 +108,7 @@ class LocalFileStorageRepositoryTest {
   }
 
   @Test
-  void deleteFileRemovesExistingAndNoOpForBlank() throws IOException {
+  void deleteFileRemovesExistingAndNoOpForBlank() {
     // Create a file
     var fileStored =
         repo.uploadFile("del.txt", "text/plain", "x".getBytes(), folders.getEventsFolder());

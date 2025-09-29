@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.file.LocalFileStorageRepository;
+import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +23,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(
     properties = {"storage.type=local", "file.storage.directory=${user.dir}/data-test-int"})
 @DisplayName("LocalFileStorageRepository Integration Tests")
-class LocalFileStorageRepositoryIntegrationTest {
+class LocalFileStorageRepositoryIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private LocalFileStorageRepository repository;
   @Autowired private FolderStorageProperties folders;

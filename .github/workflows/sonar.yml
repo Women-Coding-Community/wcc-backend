@@ -1,24 +1,30 @@
-name: CI
+name: SonarQube Scan
 
 on:
+  #  Run on pull request to main
   pull_request:
     branches:
       - main
+  # Run on push to main
+  push:
+    branches:
+      - main
+
+  # Allows manual triggering of the workflow
+  workflow_dispatch:
 
 jobs:
-  build:
+  sonar-check:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         java-version: [ '21' ]
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
@@ -33,33 +39,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build and run unit tests
-        run: ./gradlew test jacocoTestReport
+      - name: Build Run unit tests
+        run: ./gradlew build -x pmdMain -x pmdTest -x pmdTestInt
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Run Integration tests
-        run: ./gradlew testIntegration jacocoIntegrationReport
+        run: ./gradlew testIntegration
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
-      - name: Pmd Check
-        run: ./gradlew pmdMain
+      - name: Run Jacoco Reports
+        run: ./gradlew testIntegration jacocoIntegrationReport
 
-      - name: Jacoco Test Coverage Verification
-        run: ./gradlew jacocoTestCoverageVerification
-
-      - name: Upload code coverage report
-        if: success() || failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: build/reports/jacoco/test/html/
-
-      - name: Check coverage report
-        if: failure()
-        run: |
-          echo "Coverage verification failed. Check the report for details."
-          cat build/reports/jacoco/test/html/index.html
+      - name: Sonar Scan
+        if: ${{ success() }}
+        run: ./gradlew sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

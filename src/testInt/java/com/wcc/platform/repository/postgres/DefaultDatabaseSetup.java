@@ -1,50 +1,28 @@
 package com.wcc.platform.repository.postgres;
 
 import com.wcc.platform.config.TestGoogleDriveConfig;
-import javax.sql.DataSource;
-import org.junit.jupiter.api.BeforeAll;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
- * Abstract class for Postgres integration tests that sets up the necessary database table before
- * each test.
+ * Base configuration for Postgres-backed integration tests.
+ * Uses a singleton Testcontainers PostgreSQL instance shared across the JVM
+ * to avoid restarting the DB between test classes (prevents stale HikariCP connections).
  */
-@Testcontainers
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestGoogleDriveConfig.class)
 public class DefaultDatabaseSetup {
 
-  @Container
-  private static final PostgreSQLContainer<?> CONTAINER =
-      new PostgreSQLContainer<>("postgres:15")
-          .withDatabaseName("testdb")
-          .withUsername("testuser")
-          .withPassword("testpass")
-          .withStartupTimeout(java.time.Duration.ofSeconds(60))
-          .withEnv("POSTGRES_HOST_AUTH_METHOD", "trust");
-
-  @BeforeAll
-  /* default */ static void createTable(@Autowired final DataSource dataSource) {
-    final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-    jdbcTemplate.execute(
-        "CREATE TABLE IF NOT EXISTS page(id TEXT PRIMARY KEY, data JSONB NOT NULL)");
-  }
-
   @DynamicPropertySource
   /* default */ static void configureProperties(final DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", CONTAINER::getJdbcUrl);
-    registry.add("spring.datasource.username", CONTAINER::getUsername);
-    registry.add("spring.datasource.password", CONTAINER::getPassword);
+    var container = PostgresTestContainer.getInstance();
+    registry.add("spring.datasource.url", container::getJdbcUrl);
+    registry.add("spring.datasource.username", container::getUsername);
+    registry.add("spring.datasource.password", container::getPassword);
   }
 }

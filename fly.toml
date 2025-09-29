@@ -1,12 +1,10 @@
-# fly.toml app configuration file generated for wcc-backend on 2025-05-31T19:41:15+02:00
+# fly.toml app configuration file generated for wcc-backend on 2025-09-21T19:00:40+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'wcc-backend'
-
-[deploy]
-  region = "mad"
+primary_region = 'lhr'
 
 [build]
 

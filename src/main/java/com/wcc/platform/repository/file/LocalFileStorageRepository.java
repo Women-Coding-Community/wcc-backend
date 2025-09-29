@@ -9,7 +9,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +37,7 @@ public class LocalFileStorageRepository implements FileStorageRepository {
   @Value("${file.storage.directory}")
   private String baseDirectory;
 
-  private static Path uniquePath(final Path desired) throws IOException {
+  private static Path uniquePath(final Path desired) {
     if (!Files.exists(desired)) {
       return desired;
     }
@@ -77,8 +82,19 @@ public class LocalFileStorageRepository implements FileStorageRepository {
     try {
       final Path folderPath = resolveFolder(folder);
       Files.createDirectories(folderPath);
-      final String safeName = StringUtils.defaultIfBlank(fileName, "file");
-      final Path target = uniquePath(folderPath.resolve(safeName));
+
+      String safeName = StringUtils.defaultIfBlank(fileName, "file");
+      safeName = Paths.get(safeName).getFileName().toString();
+      if (StringUtils.isBlank(safeName)) {
+        safeName = "file";
+      }
+
+      final Path target = uniquePath(folderPath.resolve(safeName)).normalize();
+
+      if (!target.startsWith(folderPath)) {
+        throw new PlatformInternalException("Invalid target path", null);
+      }
+
       Files.write(target, fileData, StandardOpenOption.CREATE_NEW);
       final String id = target.toAbsolutePath().toString();
       final String link = toWebLink(target);
@@ -115,10 +131,32 @@ public class LocalFileStorageRepository implements FileStorageRepository {
   }
 
   private Path resolveFolder(final String folder) {
-    final Path base = Path.of(baseDirectory);
+    final Path base = Path.of(baseDirectory).normalize();
+
+    final Set<String> allowed =
+        Stream.of(
+                folders.getMainFolder(),
+                folders.getResourcesFolder(),
+                folders.getMentorsFolder(),
+                folders.getMentorsProfileFolder(),
+                folders.getEventsFolder(),
+                folders.getImagesFolder())
+            .filter(Objects::nonNull)
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.toSet());
+
     if (StringUtils.isBlank(folder)) {
       return base;
     }
-    return base.resolve(folder);
+
+    if (!allowed.contains(folder)) {
+      throw new PlatformInternalException("Folder is not allowed: " + folder, null);
+    }
+
+    final Path resolved = base.resolve(folder).normalize();
+    if (!resolved.startsWith(base)) {
+      throw new PlatformInternalException("Resolved folder escapes base directory", null);
+    }
+    return resolved;
   }
 }

@@ -1,7 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.platform.type.ResourceType;
-import com.wcc.platform.domain.resource.MentorProfilePicture;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.service.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,40 +96,38 @@ public class ResourceController {
     return ResponseEntity.noContent().build();
   }
 
-  /** Uploads a mentor's profile picture. */
-  @PostMapping(value = "/mentor-profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @Operation(summary = "Upload a mentor's profile picture")
+  /** Uploads a member's profile picture. */
+  @PostMapping(value = "/member-profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @Operation(summary = "Upload a member's profile picture")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<MentorProfilePicture> uploadMentorProfilePicture(
-      @Parameter(description = "Email of the mentor") @RequestParam final String mentorEmail,
+  public ResponseEntity<MemberProfilePicture> uploadMemberProfilePicture(
+      @Parameter(description = "Id of the member") @RequestParam final Long memberId,
       @Parameter(description = "Profile picture file") @RequestParam("file")
           final MultipartFile file) {
 
-    final MentorProfilePicture profilePicture =
-        resourceService.uploadMentorProfilePicture(mentorEmail, file);
+    final var profilePicture = resourceService.uploadMentorProfilePicture(memberId, file);
     return new ResponseEntity<>(profilePicture, HttpStatus.CREATED);
   }
 
   /** Gets a mentor's profile picture. */
-  @GetMapping("/mentor-profile-picture/{mentorEmail}")
-  @Operation(summary = "Get a mentor's profile picture")
+  @GetMapping("/member-profile-picture/{memberId}")
+  @Operation(summary = "Get a member's profile picture")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorProfilePicture> getMentorProfilePicture(
-      @Parameter(description = "Email of the mentor") @PathVariable final String mentorEmail) {
+  public ResponseEntity<MemberProfilePicture> getMentorProfilePicture(
+      @Parameter(description = "Id of the member") @PathVariable final Long memberId) {
 
-    final MentorProfilePicture profilePicture =
-        resourceService.getMentorProfilePicture(mentorEmail);
+    final var profilePicture = resourceService.getMemberProfilePicture(memberId);
     return ResponseEntity.ok(profilePicture);
   }
 
   /** Deletes a mentor's profile picture. */
-  @DeleteMapping("/mentor-profile-picture/{mentorEmail}")
-  @Operation(summary = "Delete a mentor's profile picture")
+  @DeleteMapping("/member-profile-picture/{memberId}")
+  @Operation(summary = "Delete a member's profile picture")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public ResponseEntity<Void> deleteMentorProfilePicture(
-      @Parameter(description = "Email of the mentor") @PathVariable final String mentorEmail) {
+  public ResponseEntity<Void> deleteMemberProfilePicture(
+      @Parameter(description = "Id of the member") @PathVariable final Long memberId) {
 
-    resourceService.deleteMentorProfilePicture(mentorEmail);
+    resourceService.deleteMemberProfilePicture(memberId);
     return ResponseEntity.noContent().build();
   }
 }
