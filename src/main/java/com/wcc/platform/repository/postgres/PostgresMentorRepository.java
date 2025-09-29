@@ -115,7 +115,7 @@ public class PostgresMentorRepository implements MentorRepository {
 
     // 3. Insert into mentor_availability
     for (Availability a : ms.availability()) {
-      jdbc.update(SQL_AVAILABILITY_INSERT, memberId, a.month().name(), a.hours());
+      jdbc.update(SQL_AVAILABILITY_INSERT, memberId, a.month().getValue(), a.hours());
     }
     // 4. Insert into mentor_mentorship_types
     for (MentorshipType mt : ms.mentorshipType()) {

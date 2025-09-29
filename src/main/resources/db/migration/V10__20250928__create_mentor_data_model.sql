@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS mentorship_types
     description TEXT
 );
 
+-- Insert new member status PENDING
+INSERT INTO member_statuses (id, status)
+VALUES (4, 'PENDING');
+
 -- TABLE Mentors (depends on members + member_statuses) default PENDING
 CREATE TABLE IF NOT EXISTS mentors
 (
@@ -62,8 +66,8 @@ CREATE TABLE IF NOT EXISTS mentor_mentorship_types
 -- TABLE Mentor availability
 CREATE TABLE IF NOT EXISTS mentor_availability
 (
-    mentor_id INTEGER     NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
-    month     VARCHAR(20) NOT NULL,
+    mentor_id INTEGER NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
+    month     INTEGER NOT NULL,
     hours     INTEGER,
     PRIMARY KEY (mentor_id, month)
 );
@@ -113,7 +117,3 @@ INSERT INTO mentorship_types (id, name, description)
 VALUES (1, 'AD_HOC', 'Ad-hoc mentorship sessions'),
        (2, 'LONG_TERM', 'Long-term mentorship relationships')
 ON CONFLICT (id) DO NOTHING;
-
--- Insert new member status PENDING
-INSERT INTO member_statuses (id, status)
-VALUES (4, 'PENDING');

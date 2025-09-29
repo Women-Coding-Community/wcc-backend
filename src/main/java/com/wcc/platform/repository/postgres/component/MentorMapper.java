@@ -31,7 +31,6 @@ public class MentorMapper {
   public Mentor mapRowToMentor(final ResultSet rs) throws SQLException {
     final long mentorId = rs.getLong(COLUMN_MENTOR_ID);
 
-    // Prefer to reuse existing Member mapping
     Optional<Member> memberOpt;
     try {
       memberOpt = memberRepository.findById(mentorId);

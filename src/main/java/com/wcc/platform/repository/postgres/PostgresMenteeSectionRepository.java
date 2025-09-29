@@ -86,9 +86,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
     return jdbc.query(
         SQL_AVAILABILITY,
         (rs, rowNum) ->
-            new Availability(
-                Month.valueOf(rs.getString(COLUMN_MONTH)),
-                rs.getObject(COLUMN_HOURS, Integer.class)),
+            new Availability(Month.of(rs.getInt(COLUMN_MONTH)), rs.getInt(COLUMN_HOURS)),
         mentorId);
   }
 }
