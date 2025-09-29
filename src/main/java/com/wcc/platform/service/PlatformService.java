@@ -49,20 +49,20 @@ public class PlatformService {
   /**
    * Update Member data.
    *
-   * @param email member's email as unique identifier
+   * @param memberId member's unique identifier
    * @param memberDto MemberDto with updated member's data
    * @return Updated member.
    */
-  public Member updateMember(final String email, final MemberDto memberDto) {
-    final Optional<Member> memberOptional = emailExists(email);
-    final Member existingMember =
-        memberOptional.orElseThrow(() -> new MemberNotFoundException(email));
-    final Member updatedMember = mergeToMember(existingMember, memberDto);
-    return memberRepository.update(memberRepository.findIdByEmail(email), updatedMember);
+  public Member updateMember(final Long memberId, final MemberDto memberDto) {
+    final Optional<Member> memberOptional = memberRepository.findById(memberId);
+    final var member = memberOptional.orElseThrow(() -> new MemberNotFoundException(memberId));
+
+    final Member updatedMember = mergeToMember(member, memberDto);
+    return memberRepository.update(memberId, updatedMember);
   }
 
   /**
-   * Check that member exists.
+   * Check that a member exists.
    *
    * @param email member's email as unique identifier
    * @return Optional with Member object or empty Optional
@@ -80,6 +80,7 @@ public class PlatformService {
    */
   private Member mergeToMember(final Member member, final MemberDto memberDto) {
     return member.toBuilder()
+        .id(member.getId())
         .fullName(memberDto.fullName())
         .position(memberDto.position())
         .slackDisplayName(memberDto.slackDisplayName())

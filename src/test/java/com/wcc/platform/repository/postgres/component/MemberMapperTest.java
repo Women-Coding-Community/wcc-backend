@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres.component;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -102,11 +103,11 @@ class MemberMapperTest {
     when(member.getMemberTypes()).thenReturn(Collections.emptyList());
     when(member.getNetwork()).thenReturn(Collections.emptyList());
 
-    Long memberId = memberMapper.addMember(member, "insert sql");
+    Long memberId = memberMapper.addMember(member);
 
     assertEquals(10L, memberId);
     verify(imageRepository, never()).addMemberImage(anyLong(), any());
-    verify(memberTypeRepo, never()).addMemberType(anyLong(), anyLong());
+    verify(memberTypeRepo, never()).addMemberType(anyLong(), anyInt());
     verify(socialNetworkRepo, never()).addSocialNetwork(anyLong(), any());
   }
 
@@ -127,7 +128,7 @@ class MemberMapperTest {
     when(member.getMemberTypes()).thenReturn(Collections.emptyList());
     when(member.getNetwork()).thenReturn(Collections.emptyList());
 
-    memberMapper.updateMember(member, "update sql", 20L);
+    memberMapper.updateMember(member, 20L);
 
     verify(jdbc).update(anyString(), any(), any(), any(), any(), any(), any(), any(), any());
     verify(memberTypeRepo).deleteByMemberId(20L);

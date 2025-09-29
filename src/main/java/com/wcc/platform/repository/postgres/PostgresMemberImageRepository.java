@@ -31,7 +31,7 @@ public class PostgresMemberImageRepository {
         memberId);
   }
 
-  /** Add the image for a specific member */
+  /** Add the image for a specific member. */
   public void addMemberImage(final Long memberId, final Image image) {
     final String sql =
         "INSERT INTO member_images (member_id, image_url, image_alt, image_type_id) "

@@ -16,9 +16,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+/**
+ * MemberMapper is responsible for mapping database result sets to Member objects, as well as
+ * handling various operations related to adding, updating, and managing member including their
+ * types, images, and social networks.
+ */
 @Component
 @RequiredArgsConstructor
 public class MemberMapper {
+  private static final String INSERT_SQL =
+      "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
+          + "country_id, status_id, bio, years_experience, spoken_language) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL) RETURNING id";
+  private static final String UPDATE_SQL =
+      "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
+          + "company_name = ?, email = ?, city = ?, country_id = ? WHERE id = ?";
 
   private final JdbcTemplate jdbc;
   private final PostgresCountryRepository countryRepository;
@@ -49,12 +61,12 @@ public class MemberMapper {
         .build();
   }
 
-  /** Adds a new member to the database and returns the member ID */
-  public Long addMember(final Member member, final String sql) {
+  /** Adds a new member to the database and returns the member ID. */
+  public Long addMember(final Member member) {
     final int defaultStatusId = 1;
     final Long memberId =
         jdbc.queryForObject(
-            sql,
+            INSERT_SQL,
             Long.class,
             member.getFullName(),
             member.getSlackDisplayName(),
@@ -71,10 +83,10 @@ public class MemberMapper {
     return memberId;
   }
 
-  /** Updates an existing member in the database */
-  public void updateMember(final Member member, final String sql, final Long memberId) {
+  /** Updates an existing member in the database. */
+  public void updateMember(final Member member, final Long memberId) {
     jdbc.update(
-        sql,
+        UPDATE_SQL,
         member.getFullName(),
         member.getSlackDisplayName(),
         member.getPosition(),
@@ -97,27 +109,23 @@ public class MemberMapper {
     addSocialNetworks(memberId, member);
   }
 
-  /** Adds images to the member */
+  /** Adds images to the member. */
   private void addMemberImages(final Long memberId, final Member member) {
     if (member.getImages() != null) {
       member.getImages().forEach(image -> imageRepository.addMemberImage(memberId, image));
     }
   }
 
-  /** Adds member types to the member */
+  /** Adds member types to the member. */
   private void addMemberTypes(final Long memberId, final Member member) {
     if (member.getMemberTypes() != null) {
       member
           .getMemberTypes()
-          .forEach(
-              type -> {
-                final Long typeId = memberTypeRepo.findMemberTypeId(type);
-                memberTypeRepo.addMemberType(memberId, typeId);
-              });
+          .forEach(type -> memberTypeRepo.addMemberType(memberId, type.getTypeId()));
     }
   }
 
-  /** Adds social networks to the member */
+  /** Adds social networks to the member. */
   private void addSocialNetworks(final Long memberId, final Member member) {
     if (member.getNetwork() != null) {
       member
@@ -126,7 +134,7 @@ public class MemberMapper {
     }
   }
 
-  /** Retrieves the country ID based on the provided country or defaults to "GB" */
+  /** Retrieves the country ID based on the provided country or defaults to "GB". */
   private Long getCountryId(final Country country) {
     return countryRepository.findCountryIdByCode(country != null ? country.countryCode() : "GB");
   }

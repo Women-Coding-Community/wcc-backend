@@ -61,15 +61,15 @@ public class MemberController {
   /**
    * API to update member information.
    *
-   * @param email member's email as unique identifier
+   * @param memberId member's unique identifier
    * @param memberDto MemberDto with updated member's data
    * @return Updated member
    */
-  @PutMapping("/{email}")
+  @PutMapping("/{memberId}")
   @Operation(summary = "API to update member data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
-      @PathVariable final String email, @RequestBody final MemberDto memberDto) {
-    return new ResponseEntity<>(platformService.updateMember(email, memberDto), HttpStatus.OK);
+      @PathVariable final Long memberId, @RequestBody final MemberDto memberDto) {
+    return new ResponseEntity<>(platformService.updateMember(memberId, memberDto), HttpStatus.OK);
   }
 }

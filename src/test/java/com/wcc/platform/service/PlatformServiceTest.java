@@ -79,12 +79,12 @@ class PlatformServiceTest {
       "When updating the member with memberDto, then should return the member with "
           + "updated data from memberDto")
   void testUpdateMember() {
-    when(memberRepository.update(1L, updatedMember)).thenReturn(updatedMember);
-    when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.ofNullable(member));
-    when(memberRepository.findIdByEmail(member.getEmail())).thenReturn(1L);
-    Member result = service.updateMember(member.getEmail(), memberDto);
+    long memberId = 1L;
+    when(memberRepository.update(memberId, updatedMember)).thenReturn(updatedMember);
+    when(memberRepository.findById(memberId)).thenReturn(Optional.ofNullable(member));
+    Member result = service.updateMember(memberId, memberDto);
 
     assertEquals(updatedMember, result);
-    verify(memberRepository).update(1L, updatedMember);
+    verify(memberRepository).update(memberId, updatedMember);
   }
 }

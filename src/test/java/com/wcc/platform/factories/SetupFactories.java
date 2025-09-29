@@ -125,6 +125,7 @@ public class SetupFactories {
   /** Factory test. */
   public static Member createMemberTest(final MemberType type) {
     return Member.builder()
+        .id(1L)
         .fullName("fullName " + type.name())
         .position("position " + type.name())
         .email("member@wcc.com")
@@ -154,6 +155,7 @@ public class SetupFactories {
   /** Factory test to create new member from combining data from member and memberDto. */
   public static Member createUpdatedMemberTest(final Member member, final MemberDto memberDto) {
     return Member.builder()
+        .id(member.getId())
         .fullName(memberDto.fullName())
         .position(memberDto.position())
         .email(member.getEmail())
