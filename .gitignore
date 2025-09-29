@@ -21,6 +21,9 @@ integration-test/test-results/*
 integration-test/.env
 integration-test/playwright-report
 
+# OpenAPI Generator artifacts
+.openapi-generator/
+.openapi-generator-ignore
 
 # Google Drive Files
 /tokens/StoredCredential
