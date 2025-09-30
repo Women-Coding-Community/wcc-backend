@@ -112,6 +112,7 @@ public class PlatformService {
    */
   private Member mergeToMember(final Member member, final MemberDto memberDto) {
     return member.toBuilder()
+        .id(member.getId())
         .fullName(memberDto.fullName())
         .position(memberDto.position())
         .slackDisplayName(memberDto.slackDisplayName())
