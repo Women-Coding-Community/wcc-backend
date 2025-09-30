@@ -14,8 +14,8 @@ public enum MentorshipType {
   private final int mentorshipTypeId;
 
   /** Get MentorshipType from its ID. */
-  public static MentorshipType fromId(int typeId) {
-    return Arrays.stream(MentorshipType.values())
+  public static MentorshipType fromId(final int typeId) {
+    return Arrays.stream(values())
         .filter(type -> type.mentorshipTypeId == typeId)
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Unknown MentorshipType id: " + typeId));

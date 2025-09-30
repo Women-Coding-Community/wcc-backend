@@ -11,7 +11,7 @@ public interface MentorRepository extends CrudRepository<Mentor, Long> {
    * @param email mentor's email
    * @return Optional with Mentor object or empty Optional
    */
-  Optional<Mentor> findByEmail(final String email);
+  Optional<Mentor> findByEmail(String email);
 
   /**
    * Return all mentors.
@@ -25,5 +25,5 @@ public interface MentorRepository extends CrudRepository<Mentor, Long> {
    *
    * @return mentor's Id
    */
-  Long findIdByEmail(final String email);
+  Long findIdByEmail(String email);
 }

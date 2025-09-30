@@ -26,7 +26,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +39,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MentorshipServiceTest {
   private ObjectMapper objectMapper;
   private PageRepository pageRepository;
-  private MentorRepository mentorRepository;
 
   private MentorshipService service;
 
@@ -49,7 +47,7 @@ class MentorshipServiceTest {
     objectMapper = mock(ObjectMapper.class);
     objectMapper.registerModule(new JavaTimeModule());
     pageRepository = mock(PageRepository.class);
-    service = new MentorshipService(objectMapper, pageRepository, mentorRepository);
+    service = new MentorshipService(objectMapper, pageRepository);
   }
 
   @Test

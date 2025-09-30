@@ -26,9 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 class MentorMapperTest {
 
+  @Mock private JdbcTemplate jdbc;
   @Mock private ResultSet resultSet;
   @Mock private PostgresMemberRepository memberRepository;
   @Mock private PostgresSkillRepository skillsRepository;
@@ -40,7 +42,7 @@ class MentorMapperTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     mentorMapper =
-        spy(new MentorMapper(memberRepository, skillsRepository, menteeSectionRepository));
+        spy(new MentorMapper(jdbc, memberRepository, skillsRepository, menteeSectionRepository));
   }
 
   @Test

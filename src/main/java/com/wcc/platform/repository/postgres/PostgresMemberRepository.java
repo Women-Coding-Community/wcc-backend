@@ -25,7 +25,7 @@ public class PostgresMemberRepository implements MemberRepository {
   private static final String INSERT_SQL =
       "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
           + "country_id, status_id, bio, years_experience, spoken_language) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL) RETURNING id";
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)";
   private static final String UPDATE_SQL =
       "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
           + "company_name = ?, email = ?, city = ?, country_id = ? WHERE id = ?";
@@ -41,7 +41,7 @@ public class PostgresMemberRepository implements MemberRepository {
   @Override
   public Member create(final Member entity) {
 
-    final Long memberId = memberMapper.addMember(entity, INSERT_SQL);
+    final Long memberId = memberMapper.addMember(entity);
 
     return findById(memberId).orElseThrow();
   }

@@ -30,13 +30,16 @@ VALUES (4, 'PENDING');
 CREATE TABLE IF NOT EXISTS mentors
 (
     mentor_id        INTEGER PRIMARY KEY REFERENCES members (id) ON DELETE CASCADE,
-    profile_status   INTEGER REFERENCES member_statuses (id) NOT NULL DEFAULT 4,
-    bio              TEXT                                    NOT NULL,
-    years_experience INTEGER                                          DEFAULT 0,
+    profile_status   INTEGER NOT NULL         DEFAULT 4,
+    bio              TEXT    NOT NULL,
+    years_experience INTEGER                  DEFAULT 0,
     spoken_languages VARCHAR(200),
-    is_available     BOOLEAN                                          DEFAULT TRUE,
-    created_at       TIMESTAMP WITH TIME ZONE                         DEFAULT CURRENT_TIMESTAMP,
-    updated_at       TIMESTAMP WITH TIME ZONE                         DEFAULT CURRENT_TIMESTAMP
+    is_available     BOOLEAN                  DEFAULT TRUE,
+    created_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_profile_status FOREIGN KEY (profile_status)
+        REFERENCES member_statuses (id)
+
 );
 
 -- TABLE Mentor technical areas (join table)
@@ -67,9 +70,9 @@ CREATE TABLE IF NOT EXISTS mentor_mentorship_types
 CREATE TABLE IF NOT EXISTS mentor_availability
 (
     mentor_id INTEGER NOT NULL REFERENCES mentors (mentor_id) ON DELETE CASCADE,
-    month     INTEGER NOT NULL,
+    month_num INTEGER NOT NULL,
     hours     INTEGER,
-    PRIMARY KEY (mentor_id, month)
+    PRIMARY KEY (mentor_id, month_num)
 );
 
 -- TABLE Mentor mentee section
@@ -109,11 +112,9 @@ VALUES (1, 'C', 'C language'),
        (10, 'Ruby', 'Ruby'),
        (11, 'Rust', 'Rust'),
        (12, 'Typescript', 'Typescript'),
-       (13, 'Other', 'Other programming languages')
-ON CONFLICT (id) DO NOTHING;
+       (13, 'Other', 'Other programming languages');
 
 -- Insert type of mentorship
 INSERT INTO mentorship_types (id, name, description)
 VALUES (1, 'AD_HOC', 'Ad-hoc mentorship sessions'),
-       (2, 'LONG_TERM', 'Long-term mentorship relationships')
-ON CONFLICT (id) DO NOTHING;
+       (2, 'LONG_TERM', 'Long-term mentorship relationships');

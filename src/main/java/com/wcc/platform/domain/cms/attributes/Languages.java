@@ -22,11 +22,11 @@ public enum Languages {
   OTHER("Other", 13);
 
   private final String name;
-  private final int id;
+  private final int langId;
 
   /** Find Language by name. */
   public static Languages fromName(final String name) {
-    for (Languages lang : Languages.values()) {
+    for (final Languages lang : values()) {
       if (lang.name.equalsIgnoreCase(name)) {
         return lang;
       }

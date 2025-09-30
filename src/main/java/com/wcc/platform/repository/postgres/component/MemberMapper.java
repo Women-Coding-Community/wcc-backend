@@ -1,6 +1,7 @@
 package com.wcc.platform.repository.postgres.component;
 
 import static com.wcc.platform.repository.postgres.constants.MemberConstants.COLUMN_MEMBER_ID;
+import static com.wcc.platform.repository.postgres.constants.MemberConstants.TABLE;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -14,8 +15,10 @@ import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,20 +57,24 @@ public class MemberMapper {
 
   /** Adds a new member to the database and returns the member ID */
   @Transactional
-  public Long addMember(final Member member, final String sql) {
+  public Long addMember(final Member member) {
     final int defaultStatusId = 1;
-    final Long memberId =
-        jdbc.queryForObject(
-            sql,
-            Long.class,
-            member.getFullName(),
-            member.getSlackDisplayName(),
-            member.getPosition(),
-            member.getCompanyName(),
-            member.getEmail(),
-            member.getCity(),
-            getCountryId(member.getCountry()),
-            defaultStatusId);
+    final SimpleJdbcInsert insert =
+        new SimpleJdbcInsert(jdbc).withTableName(TABLE).usingGeneratedKeyColumns("id");
+
+    final Map<String, Object> params =
+        Map.of(
+            "full_name", member.getFullName(),
+            "slack_name", member.getSlackDisplayName(),
+            "position", member.getPosition(),
+            "company_name", member.getCompanyName(),
+            "email", member.getEmail(),
+            "city", member.getCity(),
+            "country_id", getCountryId(member.getCountry()),
+            "status_id", defaultStatusId);
+
+    final Number key = insert.executeAndReturnKey(params);
+    final Long memberId = key.longValue();
     addMemberImages(memberId, member);
     addMemberTypes(memberId, member);
     addSocialNetworks(memberId, member);

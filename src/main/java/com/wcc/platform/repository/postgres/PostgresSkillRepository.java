@@ -1,13 +1,14 @@
 package com.wcc.platform.repository.postgres;
 
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_LANGUAGES;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_TECHNICAL_AREAS;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_TECH_AREAS;
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_YEARS_EXP;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.SkillRepository;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -30,30 +31,30 @@ public class PostgresSkillRepository implements SkillRepository {
 
   private static final String SELECT_MENTOR_SKILLS =
       "SELECT m.years_experience AS years_experience, "
-          + "  COALESCE(array_agg(DISTINCT ta.name) FILTER (WHERE ta.name IS NOT NULL)"
-          + ", ARRAY[]::text[]) AS technical_areas, "
-          + "  COALESCE(array_agg(DISTINCT l.name) FILTER (WHERE l.name IS NOT NULL)"
-          + ", ARRAY[]::text[]) AS languages "
-          + "FROM mentors m "
+          + "    COALESCE(ARRAY_AGG(DISTINCT CASE WHEN ta.name IS NOT NULL THEN ta.name END), "
+          + "        ARRAY[]::VARCHAR"
+          + "    ) AS technical_areas, "
+          + "    COALESCE(ARRAY_AGG(DISTINCT CASE WHEN l.name IS NOT NULL THEN l.name END), "
+          + "        ARRAY[]::VARCHAR) AS languages FROM mentors m "
           + "LEFT JOIN mentor_technical_areas mta ON m.mentor_id = mta.mentor_id "
           + "LEFT JOIN technical_areas ta ON mta.technical_area_id = ta.id "
           + "LEFT JOIN mentor_languages ml ON m.mentor_id = ml.mentor_id "
           + "LEFT JOIN languages l ON ml.language_id = l.id "
           + "WHERE m.mentor_id = ? "
-          + "GROUP BY m.mentor_id, m.years_experience";
+          + "GROUP BY m.mentor_id, m.years_experience;";
 
   private final JdbcTemplate jdbcTemplate;
 
   @Override
   public Optional<Skills> findByMentorId(final Long mentorId) {
     try {
-      Skills skills =
+      final Skills skills =
           jdbcTemplate.queryForObject(
               SELECT_MENTOR_SKILLS,
               (rs, rowNum) -> {
-                Integer years = rs.getInt(COLUMN_YEARS_EXP);
-                List<TechnicalArea> areas = extractTechnicalAreas(rs);
-                List<Languages> languages = extractLanguages(rs);
+                final Integer years = rs.getInt(COLUMN_YEARS_EXP);
+                final List<TechnicalArea> areas = extractTechnicalAreas(rs);
+                final List<Languages> languages = extractLanguages(rs);
 
                 return new Skills(years, areas, languages);
               },
@@ -66,7 +67,12 @@ public class PostgresSkillRepository implements SkillRepository {
 
   private List<TechnicalArea> extractTechnicalAreas(final ResultSet rs) {
     try {
-      Object[] values = (Object[]) rs.getArray(COLUMN_TECHNICAL_AREAS).getArray();
+      final Array sqlArray = rs.getArray(COLUMN_TECH_AREAS);
+      if (sqlArray == null) {
+        return List.of();
+      }
+      final Object[] values = (Object[]) sqlArray.getArray();
+
       return Arrays.stream(values)
           .map(Object::toString)
           .map(
@@ -74,10 +80,12 @@ public class PostgresSkillRepository implements SkillRepository {
                 try {
                   return TechnicalArea.valueOf(value.trim());
                 } catch (IllegalArgumentException ex) {
-                  return null;
+                  return null; // or filter out invalids instead of returning null
                 }
               })
+          .filter(Objects::nonNull)
           .toList();
+
     } catch (SQLException e) {
       return List.of();
     }
@@ -85,7 +93,11 @@ public class PostgresSkillRepository implements SkillRepository {
 
   private List<Languages> extractLanguages(final ResultSet rs) {
     try {
-      Object[] values = (Object[]) rs.getArray(COLUMN_LANGUAGES).getArray();
+      final Array sqlArray = rs.getArray(COLUMN_LANGUAGES);
+      if (sqlArray == null) {
+        return List.of();
+      }
+      final Object[] values = (Object[]) sqlArray.getArray();
       return Arrays.stream(values)
           .map(Object::toString)
           .map(String::trim)

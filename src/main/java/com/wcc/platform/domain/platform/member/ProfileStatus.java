@@ -16,7 +16,7 @@ public enum ProfileStatus {
   private final int statusId;
 
   /** Get ProfileStatus from its status ID. */
-  public static ProfileStatus fromId(int statusId) {
+  public static ProfileStatus fromId(final int statusId) {
     return Arrays.stream(values())
         .filter(status -> status.statusId == statusId)
         .findFirst()

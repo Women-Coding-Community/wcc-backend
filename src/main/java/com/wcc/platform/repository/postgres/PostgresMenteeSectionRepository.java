@@ -1,12 +1,7 @@
 package com.wcc.platform.repository.postgres;
 
 import static ch.qos.logback.core.CoreConstants.EMPTY_STRING;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_ADDITIONAL;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_FOCUS;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_HOURS;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_IDEAL_MENTEE;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTORSHIP_TYPE_ID;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MONTH;
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.*;
 import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.pages.mentorship.Availability;
@@ -39,7 +34,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
       "SELECT t.id as mentorship_type_id FROM mentorship_types t LEFT JOIN mentor_mentorship_types mmt "
           + "ON mmt.mentorship_type = t.id WHERE mmt.mentor_id = ?";
   private static final String SQL_AVAILABILITY =
-      "SELECT month, hours FROM mentor_availability WHERE mentor_id = ?";
+      "SELECT month_num, hours FROM mentor_availability WHERE mentor_id = ?";
 
   private final JdbcTemplate jdbc;
 
@@ -49,9 +44,10 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
    * @param mentorId the mentor id to look up
    * @return an Optional containing the mapped MenteeSection if present, otherwise Optional.empty()
    */
+  @Override
   public Optional<MenteeSection> findByMentorId(final long mentorId) {
     try {
-      MenteeSection menteeSection =
+      final MenteeSection menteeSection =
           jdbc.queryForObject(
               SQL_BASE,
               (rs, rowNum) ->
@@ -78,7 +74,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
   private List<MentorshipType> loadMentorshipTypes(final Long mentorId) {
     return jdbc.query(
         SQL_MENTORSHIP_TYPE,
-        (rs, rowNum) -> MentorshipType.fromId(rs.getInt(COLUMN_MENTORSHIP_TYPE_ID)),
+        (rs, rowNum) -> MentorshipType.fromId(rs.getInt(COL_MTRSHIP_TYPE_ID)),
         mentorId);
   }
 

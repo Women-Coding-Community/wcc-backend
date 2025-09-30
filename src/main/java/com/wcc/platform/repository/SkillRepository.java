@@ -11,5 +11,5 @@ public interface SkillRepository {
    * @param mentorId id of the mentor
    * @return Skills
    */
-  Optional<Skills> findByMentorId(final Long mentorId);
+  Optional<Skills> findByMentorId(Long mentorId);
 }

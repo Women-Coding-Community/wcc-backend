@@ -7,7 +7,6 @@ import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,7 +80,7 @@ public class MemberController {
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(@RequestBody @Valid final Mentor mentor) {
+  public ResponseEntity<Mentor> createMentor(@RequestBody final Mentor mentor) {
     return new ResponseEntity<>(platformService.create(mentor), HttpStatus.CREATED);
   }
 

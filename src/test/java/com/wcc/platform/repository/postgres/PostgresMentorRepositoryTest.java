@@ -1,7 +1,13 @@
 package com.wcc.platform.repository.postgres;
 
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -20,6 +26,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 /** Test class for PostgresMentorRepository. */
 public class PostgresMentorRepositoryTest {
   private JdbcTemplate jdbc;
+  private MemberMapper memberMapper;
   private MentorMapper mentorMapper;
   private PostgresMentorRepository repository;
 
@@ -27,24 +34,16 @@ public class PostgresMentorRepositoryTest {
   void setup() {
     jdbc = mock(JdbcTemplate.class);
     mentorMapper = mock(MentorMapper.class);
-    MemberMapper memberMapper;
     memberMapper = mock(MemberMapper.class);
     repository = spy(new PostgresMentorRepository(jdbc, mentorMapper, memberMapper));
   }
 
   @Test
-  void testFindByEmailWhenOptionalMentor() throws Exception {
-    // Arrange
+  void testFindByEmailMentor() throws Exception {
     String email = "a@b.com";
     Mentor mapped = mock(Mentor.class);
     when(mentorMapper.mapRowToMentor(any(ResultSet.class))).thenReturn(mapped);
-    when(jdbc.query(
-            eq(
-                "SELECT mentors.* FROM mentors "
-                    + "LEFT JOIN members ON mentors.mentor_id = members.id "
-                    + "WHERE members.email = ?"),
-            any(ResultSetExtractor.class),
-            eq(email)))
+    when(jdbc.query(anyString(), any(ResultSetExtractor.class), eq(email)))
         .thenAnswer(
             invocation -> {
               ResultSetExtractor<?> extractor = invocation.getArgument(1);
@@ -61,17 +60,10 @@ public class PostgresMentorRepositoryTest {
 
   @Test
   void testFindIdByEmail() throws Exception {
-    // Arrange
     String email = "x@y.com";
     long expectedId = 42L;
 
-    when(jdbc.query(
-            eq(
-                "SELECT mentors.mentor_id FROM mentors "
-                    + "LEFT JOIN members ON mentors.mentor_id = members.id"
-                    + " WHERE members.email = ?"),
-            any(ResultSetExtractor.class),
-            eq(email)))
+    when(jdbc.query(anyString(), any(ResultSetExtractor.class), eq(email)))
         .thenAnswer(
             invocation -> {
               ResultSetExtractor<?> extractor = invocation.getArgument(1);
@@ -84,6 +76,19 @@ public class PostgresMentorRepositoryTest {
     Long mentorId = repository.findIdByEmail(email);
 
     assert mentorId != null && mentorId == expectedId;
+  }
+
+  @Test
+  void testCreate() {
+    var mentor = createMentorTest();
+    when(memberMapper.addMember(any())).thenReturn(1L);
+    doNothing().when(mentorMapper).addMentor(any(), eq(1L));
+    doReturn(Optional.of(mentor)).when(repository).findById(1L);
+
+    Mentor result = repository.create(mentor);
+
+    assertNotNull(result);
+    assertEquals("Mentor bio", result.getBio());
   }
 
   @Test

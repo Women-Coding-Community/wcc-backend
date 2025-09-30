@@ -12,5 +12,5 @@ public interface MenteeSectionRepository {
    * @param mentorId the id of the mentor
    * @return an {@link Optional} containing the found {@link MenteeSection}, or empty if none found
    */
-  Optional<MenteeSection> findByMentorId(final long mentorId);
+  Optional<MenteeSection> findByMentorId(long mentorId);
 }
