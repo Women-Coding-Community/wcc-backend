@@ -15,7 +15,9 @@ import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
@@ -143,7 +145,10 @@ public class MemberMapper {
 
   /** Retrieves the country ID based on the provided country or defaults to "GB". */
   private Long getCountryId(final Country country) {
-    return countryRepository.findCountryIdByCode(
-        country != null ? country.countryCode().toUpperCase() : "GB");
+    var countryCode = "GB";
+    if (country != null && !StringUtils.isBlank(country.countryCode())) {
+      countryCode = country.countryCode().toUpperCase(Locale.ENGLISH);
+    }
+    return countryRepository.findCountryIdByCode(countryCode);
   }
 }
