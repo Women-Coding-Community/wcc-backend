@@ -15,13 +15,17 @@ import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * The MemberMapper is responsible for managing database operations related to members. It provides
+ * methods for mapping, adding, updating, and enhancing member data with associated types, images,
+ * social networks, and country information.
+ */
 @Component
 @RequiredArgsConstructor
 public class MemberMapper {
@@ -62,16 +66,15 @@ public class MemberMapper {
     final SimpleJdbcInsert insert =
         new SimpleJdbcInsert(jdbc).withTableName(TABLE).usingGeneratedKeyColumns("id");
 
-    final Map<String, Object> params =
-        Map.of(
-            "full_name", member.getFullName(),
-            "slack_name", member.getSlackDisplayName(),
-            "position", member.getPosition(),
-            "company_name", member.getCompanyName(),
-            "email", member.getEmail(),
-            "city", member.getCity(),
-            "country_id", getCountryId(member.getCountry()),
-            "status_id", defaultStatusId);
+    final java.util.Map<String, Object> params = new java.util.HashMap<>();
+    params.put("full_name", member.getFullName());
+    params.put("slack_name", member.getSlackDisplayName());
+    params.put("position", member.getPosition());
+    params.put("company_name", member.getCompanyName());
+    params.put("email", member.getEmail());
+    params.put("city", member.getCity());
+    params.put("country_id", getCountryId(member.getCountry()));
+    params.put("status_id", defaultStatusId);
 
     final Number key = insert.executeAndReturnKey(params);
     final Long memberId = key.longValue();
@@ -140,6 +143,7 @@ public class MemberMapper {
 
   /** Retrieves the country ID based on the provided country or defaults to "GB" */
   private Long getCountryId(final Country country) {
-    return countryRepository.findCountryIdByCode(country != null ? country.countryCode() : "GB");
+    return countryRepository.findCountryIdByCode(
+        country != null ? country.countryCode().toUpperCase() : "GB");
   }
 }
