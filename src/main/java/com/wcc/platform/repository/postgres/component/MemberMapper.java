@@ -59,7 +59,7 @@ public class MemberMapper {
         .build();
   }
 
-  /** Adds a new member to the database and returns the member ID */
+  /** Adds a new member to the database and returns the member ID. */
   @Transactional
   public Long addMember(final Member member) {
     final int defaultStatusId = 1;
@@ -85,7 +85,7 @@ public class MemberMapper {
     return memberId;
   }
 
-  /** Updates an existing member in the database */
+  /** Updates an existing member in the database. */
   @Transactional
   public void updateMember(final Member member, final String sql, final Long memberId) {
     jdbc.update(
@@ -112,14 +112,14 @@ public class MemberMapper {
     addSocialNetworks(memberId, member);
   }
 
-  /** Adds images to the member */
+  /** Adds images to the member. */
   private void addMemberImages(final Long memberId, final Member member) {
     if (member.getImages() != null) {
       member.getImages().forEach(image -> imageRepository.addMemberImage(memberId, image));
     }
   }
 
-  /** Adds member types to the member */
+  /** Adds member types to the member. */
   private void addMemberTypes(final Long memberId, final Member member) {
     if (member.getMemberTypes() != null) {
       member
@@ -132,7 +132,7 @@ public class MemberMapper {
     }
   }
 
-  /** Adds social networks to the member */
+  /** Adds social networks to the member. */
   private void addSocialNetworks(final Long memberId, final Member member) {
     if (member.getNetwork() != null) {
       member
@@ -141,7 +141,7 @@ public class MemberMapper {
     }
   }
 
-  /** Retrieves the country ID based on the provided country or defaults to "GB" */
+  /** Retrieves the country ID based on the provided country or defaults to "GB". */
   private Long getCountryId(final Country country) {
     return countryRepository.findCountryIdByCode(
         country != null ? country.countryCode().toUpperCase() : "GB");
