@@ -16,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -68,7 +70,7 @@ public class MemberMapper {
     final SimpleJdbcInsert insert =
         new SimpleJdbcInsert(jdbc).withTableName(TABLE).usingGeneratedKeyColumns("id");
 
-    final java.util.Map<String, Object> params = new java.util.HashMap<>();
+    final Map<String, Object> params = new ConcurrentHashMap<>();
     params.put("full_name", member.getFullName());
     params.put("slack_name", member.getSlackDisplayName());
     params.put("position", member.getPosition());
