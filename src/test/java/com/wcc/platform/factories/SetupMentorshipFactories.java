@@ -13,7 +13,6 @@ import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSection
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
-import com.wcc.platform.domain.cms.attributes.Experience;
 import com.wcc.platform.domain.cms.attributes.FaqItem;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Languages;
@@ -224,13 +223,12 @@ public class SetupMentorshipFactories {
         .skills(
             new Skills(
                 2,
-                Experience.YEARS_1_TO_5,
                 List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
                 List.of(Languages.JAVASCRIPT)))
         .menteeSection(
             new MenteeSection(
                 List.of(MentorshipType.LONG_TERM),
-                new Availability(List.of(Month.APRIL, Month.JUNE), 2),
+                List.of(new Availability(Month.APRIL, 2)),
                 "ideal mentee description",
                 List.of("focus"),
                 "additional"))
@@ -244,6 +242,7 @@ public class SetupMentorshipFactories {
   public static Mentor createMentorTest(final String mentorName) {
     final Member member = createMemberTest(MemberType.MENTOR);
     return Mentor.mentorBuilder()
+        .id(1L)
         .fullName(mentorName)
         .position(member.getPosition())
         .email(member.getEmail())
@@ -254,13 +253,12 @@ public class SetupMentorshipFactories {
         .skills(
             new Skills(
                 2,
-                Experience.YEARS_1_TO_5,
                 List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
                 List.of(Languages.JAVASCRIPT)))
         .menteeSection(
             new MenteeSection(
                 List.of(MentorshipType.LONG_TERM),
-                new Availability(List.of(Month.APRIL, Month.JUNE), 2),
+                List.of(new Availability(Month.APRIL, 2)),
                 "ideal mentee description",
                 List.of("focus"),
                 "additional"))

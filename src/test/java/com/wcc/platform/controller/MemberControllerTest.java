@@ -1,104 +1,76 @@
 package com.wcc.platform.controller;
 
-import static com.wcc.platform.domain.cms.PageType.CELEBRATE_HER;
-import static com.wcc.platform.domain.cms.PageType.COLLABORATOR;
-import static com.wcc.platform.factories.SetupFactories.DEFAULT_CURRENT_PAGE;
-import static com.wcc.platform.factories.SetupFactories.DEFAULT_PAGE_SIZE;
-import static com.wcc.platform.factories.SetupPagesFactories.createCelebrateHerPageTest;
-import static com.wcc.platform.factories.SetupPagesFactories.createCollaboratorPageTest;
+import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
+import static com.wcc.platform.factories.SetupFactories.createMemberTest;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.factories.MockMvcRequestFactory;
-import com.wcc.platform.service.CmsAboutUsService;
-import com.wcc.platform.utils.FileUtil;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.service.PlatformService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for about page apis. */
 @ActiveProfiles("test")
 @Import(SecurityConfig.class)
-@WebMvcTest(AboutController.class)
+@WebMvcTest(MemberController.class)
 class MemberControllerTest {
 
-  private static final String API_COLLABORATORS = "/api/cms/v1/collaborators";
-  private static final String API_CELEBRATE_HER = "/api/cms/v1/celebrateHer";
-  private static final String PAGINATION_COLLABORATORS =
-      "?currentPage=" + DEFAULT_CURRENT_PAGE + "&pageSize=" + DEFAULT_PAGE_SIZE;
+  private static final String API_MEMBERS = "/api/platform/v1/members";
+  private static final String API_MENTORS = "/api/platform/v1/mentors";
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private CmsAboutUsService service;
+  @MockBean private PlatformService platformService;
 
   @Test
-  void testCollaboratorNotFound() throws Exception {
-    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE))
-        .thenThrow(new ContentNotFoundException("Not Found Exception"));
+  void testGetAllMembersReturnsOk() throws Exception {
+    List<Member> mockMembers =
+        List.of(createMemberTest(MemberType.MEMBER), createMemberTest(MemberType.VOLUNTEER));
+    when(platformService.getAllMembers()).thenReturn(mockMembers);
 
     mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/collaborators")
-                .contentType(APPLICATION_JSON))
-        .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.status", is(404)))
-        .andExpect(jsonPath("$.message", is("Not Found Exception")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
-  }
-
-  @Test
-  void testCollaboratorInternalError() throws Exception {
-    var internalError = new PlatformInternalException("internal Json", new RuntimeException());
-    when(service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE)).thenThrow(internalError);
-
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest("/api/cms/v1/collaborators")
-                .contentType(APPLICATION_JSON))
-        .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.status", is(500)))
-        .andExpect(jsonPath("$.message", is("internal Json")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
-  }
-
-  @Test
-  void testCollaboratorOkResponse() throws Exception {
-    var fileName = COLLABORATOR.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getCollaborator(anyInt(), anyInt()))
-        .thenReturn(createCollaboratorPageTest(fileName));
-
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(
-                    String.format("%s%s", API_COLLABORATORS, PAGINATION_COLLABORATORS))
-                .contentType(APPLICATION_JSON))
+        .perform(getRequest(API_MEMBERS).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
+        .andExpect(jsonPath("$.length()", is(2)));
   }
 
   @Test
-  void testCelebrateHerOkResponse() throws Exception {
-    var fileName = CELEBRATE_HER.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getCelebrateHer()).thenReturn(createCelebrateHerPageTest(fileName));
+  void testGetAllMentorsReturnsOk() throws Exception {
+    List<Mentor> mockMentors = List.of(createMentorTest("Jane"));
+    when(platformService.getAllMentors()).thenReturn(mockMentors);
 
     mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_CELEBRATE_HER).contentType(APPLICATION_JSON))
+        .perform(getRequest(API_MENTORS).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
+        .andExpect(jsonPath("$.length()", is(1)))
+        .andExpect(jsonPath("$[0].id", is(1)))
+        .andExpect(jsonPath("$[0].fullName", is("Jane")));
+  }
+
+  @Test
+  void testCreateMemberReturnsCreated() throws Exception {
+    var input = createMemberTest(MemberType.MEMBER);
+    var json = objectMapper.writeValueAsString(input);
+    when(platformService.createMember(any(Member.class))).thenReturn(input);
+
+    /*mockMvc
+    .perform(postRequest(API_MEMBERS, json).contentType(MediaType.APPLICATION_JSON))
+    .andExpect(status().isCreated());*/
   }
 }

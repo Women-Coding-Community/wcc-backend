@@ -72,7 +72,7 @@ public class MentorshipController {
   @Operation(summary = "API to retrieve mentors page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorsPage> getMentors() {
-    return ResponseEntity.ok(service.getMentors());
+    return ResponseEntity.ok(service.getMentorsPage());
   }
 
   @GetMapping("/ad-hoc-timeline")

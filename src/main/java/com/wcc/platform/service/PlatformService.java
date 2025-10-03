@@ -4,7 +4,9 @@ import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.MentorRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,14 @@ import org.springframework.stereotype.Service;
 public class PlatformService {
 
   private final MemberRepository memberRepository;
+  private final MentorRepository mentorRepository;
 
   /** Constructor . */
   @Autowired
-  public PlatformService(final MemberRepository memberRepository) {
+  public PlatformService(
+      final MemberRepository memberRepository, final MentorRepository mentorRepository) {
     this.memberRepository = memberRepository;
+    this.mentorRepository = mentorRepository;
   }
 
   /** Save Member into storage. */
@@ -34,6 +39,20 @@ public class PlatformService {
   }
 
   /**
+   * Create a mentor record.
+   *
+   * @return Mentor record created successfully.
+   */
+  public Mentor create(final Mentor mentor) {
+    final Optional<Mentor> mentorExists = mentorRepository.findById(mentor.getId());
+
+    if (mentorExists.isPresent()) {
+      throw new DuplicatedMemberException(mentorExists.get().getEmail());
+    }
+    return mentorRepository.create(mentor);
+  }
+
+  /**
    * Return all stored members.
    *
    * @return List of members.
@@ -44,6 +63,19 @@ public class PlatformService {
       return List.of();
     }
     return allMembers;
+  }
+
+  /**
+   * Return all stored mentors.
+   *
+   * @return List of mentors.
+   */
+  public List<Mentor> getAllMentors() {
+    final var allMentors = mentorRepository.getAll();
+    if (allMentors == null) {
+      return List.of();
+    }
+    return allMentors;
   }
 
   /**
@@ -80,6 +112,7 @@ public class PlatformService {
    */
   private Member mergeToMember(final Member member, final MemberDto memberDto) {
     return member.toBuilder()
+        .id(member.getId())
         .fullName(memberDto.fullName())
         .position(memberDto.position())
         .slackDisplayName(memberDto.slackDisplayName())

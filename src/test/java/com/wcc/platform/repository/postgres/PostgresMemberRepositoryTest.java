@@ -54,7 +54,7 @@ class PostgresMemberRepositoryTest {
   @Test
   void testCreate() {
     Member member = getMember();
-    when(memberMapper.addMember(any(), anyString())).thenReturn(1L);
+    when(memberMapper.addMember(any())).thenReturn(1L);
     doReturn(Optional.of(member)).when(repository).findById(1L);
 
     Member result = repository.create(member);

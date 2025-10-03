@@ -73,18 +73,36 @@
           "AD_HOC",
           "LONG_TERM"
         ],
-        "availability": {
-          "months": [
-            "MAY",
-            "JUNE",
-            "JULY",
-            "AUGUST",
-            "SEPTEMBER",
-            "OCTOBER",
-            "NOVEMBER"
-          ],
-          "hours": 2
-        },
+        "availability": [
+          {
+            "months": "MAY",
+            "hours": 2
+          },
+          {
+            "months": "JUNE",
+            "hours": 2
+          },
+          {
+            "months": "JULY",
+            "hours": 3
+          },
+          {
+            "months": "AUGUST",
+            "hours": 1
+          },
+          {
+            "months": "SEPTEMBER",
+            "hours": 2
+          },
+          {
+            "months": "OCTOBER",
+            "hours": 2
+          },
+          {
+            "months": "NOVEMBER",
+            "hours": 2
+          }
+        ],
         "idealMentee": "I am seeking mentees who are enthusiastic about learning and growing in the field of technology. Whether you're a beginner looking to enhance your programming skills or an experienced professional aiming to delve deeper into cloud architecture and e-commerce systems, I am here to support your journey.",
         "focus": [
           "Switch career to IT",
