@@ -4,7 +4,6 @@ import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,16 +60,5 @@ class MemberControllerTest {
         .andExpect(jsonPath("$.length()", is(1)))
         .andExpect(jsonPath("$[0].id", is(1)))
         .andExpect(jsonPath("$[0].fullName", is("Jane")));
-  }
-
-  @Test
-  void testCreateMemberReturnsCreated() throws Exception {
-    var input = createMemberTest(MemberType.MEMBER);
-    var json = objectMapper.writeValueAsString(input);
-    when(platformService.createMember(any(Member.class))).thenReturn(input);
-
-    /*mockMvc
-    .perform(postRequest(API_MEMBERS, json).contentType(MediaType.APPLICATION_JSON))
-    .andExpect(status().isCreated());*/
   }
 }
