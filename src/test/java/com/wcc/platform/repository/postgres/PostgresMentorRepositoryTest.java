@@ -96,6 +96,6 @@ public class PostgresMentorRepositoryTest {
     long mentorId = 7L;
     repository.deleteById(mentorId);
 
-    verify(jdbc).update(eq("SELECT * FROM mentors WHERE mentor_id = ?"), eq(mentorId));
+    verify(jdbc).update(eq("DELETE FROM mentors WHERE mentor_id = ?"), eq(mentorId));
   }
 }

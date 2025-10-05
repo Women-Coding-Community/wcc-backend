@@ -130,7 +130,7 @@ public class SetupFactories {
         .position("position " + type.name())
         .email("member@wcc.com")
         .slackDisplayName("Slack name")
-        .country(new Country("Country code", "Country name"))
+        .country(new Country("ES", "Spain"))
         .city("City")
         .companyName("Company name")
         .memberTypes(List.of(type))

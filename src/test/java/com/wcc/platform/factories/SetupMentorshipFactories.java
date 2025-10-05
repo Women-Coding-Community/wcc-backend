@@ -209,6 +209,7 @@ public class SetupMentorshipFactories {
   public static Mentor createMentorTest() {
     final Member member = createMemberTest(MemberType.MENTOR);
     return Mentor.mentorBuilder()
+        .id(1L)
         .fullName(member.getFullName())
         .position(member.getPosition())
         .email(member.getEmail())

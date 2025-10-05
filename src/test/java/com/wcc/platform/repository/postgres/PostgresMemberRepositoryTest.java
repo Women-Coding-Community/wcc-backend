@@ -12,6 +12,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.attributes.Country;
@@ -178,6 +179,8 @@ class PostgresMemberRepositoryTest {
     when(jdbc.update(anyString(), eq(memberId))).thenReturn(1);
 
     repository.deleteById(memberId);
+
+    verify(jdbc).update(eq("DELETE FROM members WHERE id = ?"), eq(memberId));
   }
 
   @Test

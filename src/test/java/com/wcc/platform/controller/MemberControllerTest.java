@@ -1,9 +1,16 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
+import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
+import static com.wcc.platform.factories.SetupFactories.createMemberDtoTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
+import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.service.PlatformService;
@@ -23,8 +31,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-/** Unit test for about page apis. */
+/** Unit test for members and mentors APIs. */
 @ActiveProfiles("test")
 @Import(SecurityConfig.class)
 @WebMvcTest(MemberController.class)
@@ -32,6 +41,8 @@ class MemberControllerTest {
 
   private static final String API_MEMBERS = "/api/platform/v1/members";
   private static final String API_MENTORS = "/api/platform/v1/mentors";
+  private static final String API_KEY_HEADER = "X-API-KEY";
+  private static final String API_KEY_VALUE = "test-api-key";
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired private MockMvc mockMvc;
@@ -60,5 +71,64 @@ class MemberControllerTest {
         .andExpect(jsonPath("$.length()", is(1)))
         .andExpect(jsonPath("$[0].id", is(1)))
         .andExpect(jsonPath("$[0].fullName", is("Jane")));
+  }
+
+  @Test
+  void testCreateMemberReturnsCreated() throws Exception {
+    Member member = createMemberTest(MemberType.MEMBER);
+    when(platformService.createMember(any(Member.class))).thenReturn(member);
+
+    mockMvc
+        .perform(postRequest(API_MEMBERS, member))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.email", is("member@wcc.com")))
+        .andExpect(jsonPath("$.fullName", is("fullName MEMBER")));
+  }
+
+  @Test
+  void testCreateMentorReturnsCreated() throws Exception {
+    Mentor mentor = createMentorTest("Jane");
+    when(platformService.create(any(Mentor.class))).thenReturn(mentor);
+
+    mockMvc
+        .perform(postRequest(API_MENTORS, mentor))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.fullName", is("Jane")));
+  }
+
+  @Test
+  void testUpdateMemberReturnsOk() throws Exception {
+    Long memberId = 1L;
+    Member existingMember = createMemberTest(MemberType.COLLABORATOR);
+    MemberDto memberDto = createMemberDtoTest(MemberType.COLLABORATOR);
+    Member updated = createUpdatedMemberTest(existingMember, memberDto);
+    when(platformService.updateMember(eq(memberId), any(MemberDto.class))).thenReturn(updated);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put(API_MEMBERS + "/" + memberId)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(memberDto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.fullName", is(updated.getFullName())))
+        .andExpect(jsonPath("$.position", is(updated.getPosition())));
+  }
+
+  @Test
+  void testDeleteMemberReturnsNoContent() throws Exception {
+    Long memberId = 1L;
+    doNothing().when(platformService).deleteMember(memberId);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.delete(API_MEMBERS + "/" + memberId)
+                .header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isNoContent());
+
+    verify(platformService).deleteMember(memberId);
   }
 }
