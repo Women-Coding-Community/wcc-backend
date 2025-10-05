@@ -79,6 +79,20 @@ public class PlatformService {
   }
 
   /**
+   * Delete a member by its unique identifier.
+   *
+   * @param memberId member's unique identifier
+   */
+  public void deleteMember(final Long memberId) {
+    final var mentorId = memberRepository.findById(memberId);
+    if (mentorId.isPresent()) {
+      memberRepository.deleteById(memberId);
+    } else {
+      throw new MemberNotFoundException(memberId);
+    }
+  }
+
+  /**
    * Update Member data.
    *
    * @param memberId member's unique identifier

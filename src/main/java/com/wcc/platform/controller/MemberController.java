@@ -5,12 +5,14 @@ import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.service.PlatformService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,11 +93,21 @@ public class MemberController {
    * @param memberDto MemberDto with updated member's data
    * @return Updated member
    */
-  @PutMapping("/{memberId}")
+  @PutMapping("/members/{memberId}")
   @Operation(summary = "API to update member data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
       @PathVariable final Long memberId, @RequestBody final MemberDto memberDto) {
     return new ResponseEntity<>(platformService.updateMember(memberId, memberDto), HttpStatus.OK);
+  }
+
+  /** Deletes a member. */
+  @DeleteMapping("/members/{memberId}")
+  @Operation(summary = "Delete a member")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public ResponseEntity<Void> deleteMember(
+      @Parameter(description = "ID of the member to delete") @PathVariable final Long memberId) {
+    platformService.deleteMember(memberId);
+    return ResponseEntity.noContent().build();
   }
 }

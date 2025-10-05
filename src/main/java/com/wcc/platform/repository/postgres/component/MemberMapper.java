@@ -1,7 +1,6 @@
 package com.wcc.platform.repository.postgres.component;
 
 import static com.wcc.platform.repository.postgres.constants.MemberConstants.COLUMN_MEMBER_ID;
-import static com.wcc.platform.repository.postgres.constants.MemberConstants.TABLE;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -21,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 /**
  * The MemberMapper is responsible for managing database operations related to members. It provides
@@ -119,14 +119,14 @@ public class MemberMapper {
 
   /** Adds images to the member. */
   private void addMemberImages(final Long memberId, final Member member) {
-    if (member.getImages() != null) {
+    if (!CollectionUtils.isEmpty(member.getImages())) {
       member.getImages().forEach(image -> imageRepository.addMemberImage(memberId, image));
     }
   }
 
   /** Adds member types to the member. */
   private void addMemberTypes(final Long memberId, final Member member) {
-    if (member.getMemberTypes() != null) {
+    if (!CollectionUtils.isEmpty(member.getMemberTypes())) {
       member
           .getMemberTypes()
           .forEach(type -> memberTypeRepo.addMemberType(memberId, type.getTypeId()));
@@ -135,7 +135,7 @@ public class MemberMapper {
 
   /** Adds social networks to the member. */
   private void addSocialNetworks(final Long memberId, final Member member) {
-    if (member.getNetwork() != null) {
+    if (!CollectionUtils.isEmpty(member.getNetwork())) {
       member
           .getNetwork()
           .forEach(socialNetwork -> socialNetworkRepo.addSocialNetwork(memberId, socialNetwork));

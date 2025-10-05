@@ -4,7 +4,7 @@ import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/* Type of mentorship cycle */
+/* Type of mentorship cycle. */
 @Getter
 @AllArgsConstructor
 public enum MentorshipType {

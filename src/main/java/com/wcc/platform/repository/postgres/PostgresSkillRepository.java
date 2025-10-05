@@ -28,20 +28,26 @@ import org.springframework.stereotype.Repository;
 @Repository
 @AllArgsConstructor
 public class PostgresSkillRepository implements SkillRepository {
-
   private static final String SELECT_MENTOR_SKILLS =
-      "SELECT m.years_experience AS years_experience, "
-          + "    COALESCE(ARRAY_AGG(DISTINCT CASE WHEN ta.name IS NOT NULL THEN ta.name END), "
-          + "        ARRAY[]::VARCHAR"
-          + "    ) AS technical_areas, "
-          + "    COALESCE(ARRAY_AGG(DISTINCT CASE WHEN l.name IS NOT NULL THEN l.name END), "
-          + "        ARRAY[]::VARCHAR) AS languages FROM mentors m "
-          + "LEFT JOIN mentor_technical_areas mta ON m.mentor_id = mta.mentor_id "
-          + "LEFT JOIN technical_areas ta ON mta.technical_area_id = ta.id "
-          + "LEFT JOIN mentor_languages ml ON m.mentor_id = ml.mentor_id "
-          + "LEFT JOIN languages l ON ml.language_id = l.id "
-          + "WHERE m.mentor_id = ? "
-          + "GROUP BY m.mentor_id, m.years_experience;";
+      """
+        SELECT
+            m.years_experience AS years_experience,
+            COALESCE(
+                ARRAY_AGG(DISTINCT CASE WHEN ta.name IS NOT NULL THEN ta.name END),
+                ARRAY[]::varchar[]
+            ) AS technical_areas,
+            COALESCE(
+                ARRAY_AGG(DISTINCT CASE WHEN l.name IS NOT NULL THEN l.name END),
+                ARRAY[]::varchar[]
+            ) AS languages
+        FROM mentors m
+        LEFT JOIN mentor_technical_areas mta ON m.mentor_id = mta.mentor_id
+        LEFT JOIN technical_areas ta ON mta.technical_area_id = ta.id
+        LEFT JOIN mentor_languages ml ON m.mentor_id = ml.mentor_id
+        LEFT JOIN languages l ON ml.language_id = l.id
+        WHERE m.mentor_id = ?
+        GROUP BY m.mentor_id, m.years_experience;
+        """;
 
   private final JdbcTemplate jdbcTemplate;
 

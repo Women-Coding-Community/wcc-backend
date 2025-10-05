@@ -3,7 +3,7 @@ package com.wcc.platform.domain.cms.attributes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/* Technical Areas List */
+/* Technical Areas enum list. */
 @Getter
 @AllArgsConstructor
 public enum TechnicalArea {

@@ -12,19 +12,25 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class PostgresSocialNetworkRepository {
-  private final JdbcTemplate jdbc;
 
-  /** Retrieves list of social network links for a member. */
-  public List<SocialNetwork> findByMemberId(final Long memberId) {
-    final String sql =
-        """
+  private static final String INSERT_SOCIAL_NETWORK =
+      "INSERT INTO member_social_networks (member_id, link, network_type_id) VALUES (?, ?, ?) ";
+  private static final String SELECT_BY_MEMBER =
+      """
         SELECT msn.link, snt.type
         FROM member_social_networks msn
         JOIN social_network_types snt ON msn.network_type_id = snt.id
         WHERE msn.member_id = ?
         """;
+  private static final String DELETE_SOCIAL_NETWORK =
+      "DELETE FROM member_social_networks WHERE member_id = ?";
+
+  private final JdbcTemplate jdbc;
+
+  /** Retrieves list of social network for a member. */
+  public List<SocialNetwork> findByMemberId(final Long memberId) {
     return jdbc.query(
-        sql,
+        SELECT_BY_MEMBER,
         (rs, rowNum) ->
             new SocialNetwork(
                 SocialNetworkType.valueOf(rs.getString("type").toUpperCase(Locale.ENGLISH)),
@@ -32,19 +38,13 @@ public class PostgresSocialNetworkRepository {
         memberId);
   }
 
-  /** Add a social network link for a member */
+  /** Add a social network link for a member. */
   public void addSocialNetwork(final Long memberId, final SocialNetwork network) {
-    final String sql =
-        """
-        INSERT INTO member_social_networks (member_id, link, network_type_id)
-        VALUES (?, ?, (SELECT id FROM social_network_types WHERE type = ?))
-        """;
-    jdbc.update(sql, memberId, network.link(), network.type().name().toUpperCase(Locale.ENGLISH));
+    jdbc.update(INSERT_SOCIAL_NETWORK, memberId, network.link(), network.type().getTypeId());
   }
 
   /** Deletes all social network links associated with a specific member. */
   public void deleteByMemberId(final Long memberId) {
-    final String sql = "DELETE FROM member_social_networks WHERE member_id = ?";
-    jdbc.update(sql, memberId);
+    jdbc.update(DELETE_SOCIAL_NETWORK, memberId);
   }
 }

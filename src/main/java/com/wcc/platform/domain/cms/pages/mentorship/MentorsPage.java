@@ -12,4 +12,9 @@ import java.util.List;
  * @param mentors section to highlight why you apply to a become a mentor
  */
 public record MentorsPage(
-    @NotNull String id, @NotNull HeroSection heroSection, @NotNull List<Mentor> mentors) {}
+    @NotNull String id, @NotNull HeroSection heroSection, @NotNull List<Mentor> mentors) {
+
+  public MentorsPage updateMentors(final List<Mentor> mentors) {
+    return new MentorsPage(id, heroSection, mentors);
+  }
+}

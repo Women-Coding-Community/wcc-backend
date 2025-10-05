@@ -3,7 +3,7 @@ package com.wcc.platform.domain.cms.attributes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/* Allowed Programming languages */
+/* Allowed Programming languages. */
 @Getter
 @AllArgsConstructor
 public enum Languages {

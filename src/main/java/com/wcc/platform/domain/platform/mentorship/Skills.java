@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Skills of the mentor
+ * Skills of the mentor.
  *
  * @param yearsExperience number of years of experience
  * @param areas technical areas
