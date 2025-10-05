@@ -6,16 +6,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
-import com.wcc.platform.deserializers.CmsIconDeserializer;
-import com.wcc.platform.deserializers.ColorShadeTypeDeserializer;
-import com.wcc.platform.deserializers.ColorTypeDeserializer;
-import com.wcc.platform.deserializers.ImageTypeDeserializer;
-import com.wcc.platform.deserializers.MemberTypeDeserializer;
-import com.wcc.platform.deserializers.ProgramTypeDeserializer;
-import com.wcc.platform.deserializers.SocialNetworkTypeDeserializer;
-import com.wcc.platform.deserializers.ZonedDateTimeDeserializer;
+import com.wcc.platform.deserializers.*;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.attributes.style.ColorShadeType;
 import com.wcc.platform.domain.cms.attributes.style.ColorType;
 import com.wcc.platform.domain.platform.SocialNetworkType;
@@ -61,6 +56,8 @@ public class ObjectMapperConfig {
                 .addSerializer(ImageType.class, new LowerCaseEnumSerializer())
                 .addSerializer(ColorType.class, new LowerCaseEnumSerializer())
                 .addSerializer(ColorShadeType.class, new LowerCaseEnumSerializer())
+                .addSerializer(Languages.class, new LowerCaseEnumSerializer())
+                .addSerializer(TechnicalArea.class, new LowerCaseEnumSerializer())
                 .addSerializer(SocialNetworkType.class, new LowerCaseEnumSerializer())
                 .addSerializer(MemberType.class, new CapitalizeEnumSerializer())
                 .addDeserializer(ProgramType.class, new ProgramTypeDeserializer())
@@ -68,6 +65,8 @@ public class ObjectMapperConfig {
                 .addDeserializer(ColorType.class, new ColorTypeDeserializer())
                 .addDeserializer(ColorShadeType.class, new ColorShadeTypeDeserializer())
                 .addDeserializer(ImageType.class, new ImageTypeDeserializer())
+                .addDeserializer(Languages.class, new LanguageDeserializer())
+                .addDeserializer(TechnicalArea.class, new TechnicalAreaDeserializer())
                 .addDeserializer(CmsIcon.class, new CmsIconDeserializer())
                 .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
   }

@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: test-db2
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:wcc;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: ""
+
+security:
+  api:
+    key: test-api-key
+
+file:
+  storage:
+    directory: data-test
+
+google:
+  drive:
+    folder-id: test-folder-id
+
+GOOGLE_DRIVE_FOLDER_ID: "some value"

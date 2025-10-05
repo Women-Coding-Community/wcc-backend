@@ -22,13 +22,6 @@ public class PostgresMemberRepository implements MemberRepository {
 
   public static final String MEMBER_ID_COLUMN = "member_id";
 
-  private static final String INSERT_SQL =
-      "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
-          + "country_id, status_id, bio, years_experience, spoken_language) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)";
-  private static final String UPDATE_SQL =
-      "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
-          + "company_name = ?, email = ?, city = ?, country_id = ? WHERE id = ?";
   private static final String DELETE_SQL = "DELETE FROM members WHERE id = ?";
   private static final String DELETE_BY_SQL = "DELETE FROM members WHERE email = ?";
   private static final String SELECT_BY_EMAIL = "SELECT * FROM members WHERE email = ?";
@@ -40,7 +33,6 @@ public class PostgresMemberRepository implements MemberRepository {
 
   @Override
   public Member create(final Member entity) {
-
     final Long memberId = memberMapper.addMember(entity);
 
     return findById(memberId).orElseThrow();
@@ -83,10 +75,10 @@ public class PostgresMemberRepository implements MemberRepository {
   }
 
   @Override
-  public Member update(final Long id, final Member entity) {
-    memberMapper.updateMember(entity, UPDATE_SQL, id);
+  public Member update(final Long id, final Member member) {
+    memberMapper.updateMember(member, id);
 
-    return findById(id).orElseThrow();
+    return member;
   }
 
   @Override

@@ -1,0 +1,70 @@
+{
+  "fullName": "Adriana Zencke",
+  "position": "Developer",
+  "email": "adriana@womencodingcommunity.com",
+  "slackDisplayName": "adriana",
+  "country": {
+    "countryCode": "ES",
+    "countryName": "Spain"
+  },
+  "city": "Barcelona",
+  "companyName": "WCC",
+  "memberTypes": [
+    "DIRECTOR",
+    "MENTOR"
+  ],
+  "images": [],
+  "network": [
+    {
+      "type": "LINKEDIN",
+      "link": "https://www.linkedin.com/in/dricazenck/"
+    }
+  ],
+  "profileStatus": "ACTIVE",
+  "skills": {
+    "yearsExperience": 15,
+    "areas": [
+      "BACKEND",
+      "FULLSTACK",
+      "DISTRIBUTED_SYSTEMS"
+    ],
+    "languages": [
+      "java",
+      "javascript",
+      "python"
+    ]
+  },
+  "spokenLanguages": [
+    "portuguese",
+    "english",
+    "spanish"
+  ],
+  "bio": "I am a mother, a wife, and a Software Engineer. I graduated in Computer Science and have over 14 years of experience working in tech companies in Brazil, Germany, and Spain. As Backend Engineer, I found this to be my passion which I focused on in the last six years of my career. I am always excited to help others, and my goal is to empower women and support them with the difficulties I had as an engineer, and I still have from time to time.",
+  "menteeSection": {
+    "mentorshipType": [
+      "AD_HOC",
+      "LONG_TERM"
+    ],
+    "availability": [
+      {
+        "month": 10,
+        "hours": 1
+      },
+      {
+        "month": 11,
+        "hours": 2
+      }
+    ],
+    "idealMentee": "Someone willing to learn new technologies or to improve current skills, looking for guidance on how to navigate the initial years in the industry or in a new company. Also someone able to invest time in learning.",
+    "focus": [
+      "Grow from mid-level to senior-level",
+      "Grow from beginner to mid-level"
+    ],
+    "additional": "Spring Boot and Best Practices"
+  },
+  "feedbackSection": {
+    "title": "string",
+    "feedbacks": []
+  },
+  "resources": {}
+}

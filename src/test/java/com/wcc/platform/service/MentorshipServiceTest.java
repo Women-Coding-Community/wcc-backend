@@ -24,13 +24,11 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,15 +37,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MentorshipServiceTest {
   private ObjectMapper objectMapper;
   private PageRepository pageRepository;
-
   private MentorshipService service;
+  private PlatformService platformService;
 
   @BeforeEach
   void setUp() {
     objectMapper = mock(ObjectMapper.class);
     objectMapper.registerModule(new JavaTimeModule());
     pageRepository = mock(PageRepository.class);
-    service = new MentorshipService(objectMapper, pageRepository);
+    platformService = mock(PlatformService.class);
+    service = new MentorshipService(objectMapper, pageRepository, platformService);
   }
 
   @Test
@@ -66,14 +65,13 @@ class MentorshipServiceTest {
   }
 
   @Test
-  @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetOverviewGivenRecordNotInDatabaseThenThrowException() {
-
+  void whenGetOverviewGivenRecordNotInDatabaseThenReturnFallback() {
+    var page = createMentorshipPageTest();
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
     when(pageRepository.findById(PageType.MENTORSHIP.getId())).thenReturn(Optional.empty());
 
-    var exception = assertThrows(ContentNotFoundException.class, service::getOverview);
-
-    assertEquals("Content of Page MENTORSHIP not found", exception.getMessage());
+    assertEquals(page, service.getOverview());
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
   }
 
   @Test
@@ -91,12 +89,13 @@ class MentorshipServiceTest {
   }
 
   @Test
-  @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetFaqGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetFaqGivenRecordNotInDatabaseThenReturnFallback() {
+    var page = createMentorshipFaqPageTest();
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
     when(pageRepository.findById(PageType.MENTORSHIP_FAQ.getId())).thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getFaq);
 
-    assertEquals("Content of Page MENTORSHIP_FAQ not found", exception.getMessage());
+    assertEquals(page, service.getFaq());
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
   }
 
   @Test
@@ -128,21 +127,25 @@ class MentorshipServiceTest {
   }
 
   @Test
-  @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetCodeOfConductGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetCodeOfConductGivenRecordNotInDatabaseThenHasFallbackPage() {
+    var page = createMentorshipConductPageTest();
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
     when(pageRepository.findById(PageType.MENTORSHIP_CONDUCT.getId())).thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getCodeOfConduct);
 
-    assertEquals("Content of Page MENTORSHIP_CONDUCT not found", exception.getMessage());
+    var response = service.getCodeOfConduct();
+    assertEquals(page, response);
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
   }
 
   @Test
-  @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetStudyGroupsGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetStudyGroupsGivenRecordNotInDatabaseThenHasFallbackPage() {
+    var page = createMentorshipStudyGroupPageTest();
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
     when(pageRepository.findById(PageType.STUDY_GROUPS.getId())).thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getStudyGroups);
+    var response = service.getStudyGroups();
 
-    assertEquals("Content of Page STUDY_GROUPS not found", exception.getMessage());
+    assertEquals(page, response);
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
   }
 
   @Test
@@ -153,6 +156,7 @@ class MentorshipServiceTest {
 
     when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(MentorsPage.class))).thenReturn(page);
+    when(platformService.getAllMentors()).thenReturn(page.mentors());
 
     var response = service.getMentorsPage();
 
@@ -160,12 +164,14 @@ class MentorshipServiceTest {
   }
 
   @Test
-  @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetMentorsPageGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetMentorsPageGivenRecordNotInDatabaseThenHasFallbackPage() {
+    var page = createMentorPageTest();
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
     when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getMentorsPage);
 
-    assertEquals("Content of Page MENTORS not found", exception.getMessage());
+    var response = service.getMentorsPage();
+    assertEquals(page, response);
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
   }
 
   @Test
@@ -184,12 +190,13 @@ class MentorshipServiceTest {
   }
 
   @Test
-  @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetAdHocTimelineGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetAdHocTimelineGivenRecordNotInDatabaseThenHasFallbackPage() {
+    var page = createMentorshipAdHocTimelinePageTest();
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
     when(pageRepository.findById(PageType.AD_HOC_TIMELINE.getId())).thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getAdHocTimeline);
 
-    assertEquals("Content of Page AD_HOC_TIMELINE not found", exception.getMessage());
+    assertEquals(page, service.getAdHocTimeline());
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
   }
 
   @Test
@@ -208,13 +215,15 @@ class MentorshipServiceTest {
   }
 
   @Test
-  @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetLongTermTimeLineGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetLongTermTimeLineGivenRecordNotInDatabaseThenHasFallbackPage() {
+    var page = createLongTermTimeLinePageTest();
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
     when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
         .thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getLongTermTimeLine);
 
-    assertEquals("Content of Page MENTORSHIP_LONG_TIMELINE not found", exception.getMessage());
+    var response = service.getLongTermTimeLine();
+    assertEquals(page, response);
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
   }
 
   @Test

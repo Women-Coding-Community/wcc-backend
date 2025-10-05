@@ -18,21 +18,17 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /** Mentorship service. */
 @SuppressWarnings("PMD.TooManyStaticImports")
+@AllArgsConstructor
 @Service
 public class MentorshipService {
   private final ObjectMapper objectMapper;
   private final PageRepository repository;
-
-  @Autowired
-  public MentorshipService(final ObjectMapper objectMapper, final PageRepository repository) {
-    this.objectMapper = objectMapper;
-    this.repository = repository;
-  }
+  private final PlatformService service;
 
   /**
    * API to retrieve information about mentorship overview.
@@ -126,16 +122,12 @@ public class MentorshipService {
    *
    * @return Mentors page containing details about mentors.
    */
-  /**
-   * API to retrieve information about mentors.
-   *
-   * @return Mentors page containing details about mentors.
-   */
   public MentorsPage getMentorsPage() {
     final var page = repository.findById(MENTORS.getId());
     if (page.isPresent()) {
       try {
-        return objectMapper.convertValue(page.get(), MentorsPage.class);
+        final var mentorsPage = objectMapper.convertValue(page.get(), MentorsPage.class);
+        return mentorsPage.updateMentors(service.getAllMentors());
       } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }

@@ -13,12 +13,23 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * A repository implementation for managing Mentor entities in a PostgreSQL database. Provides data
+ * access methods for Mentor objects, leveraging JdbcTemplate for interaction with the database.
+ *
+ * <p>This class relies on SQL queries and mappers to interact with the database, ensuring effective
+ * and type-safe ORM-like behavior for Mentor-specific data operations.
+ *
+ * <p>The repository is marked as a Spring `@Repository` to enable automatic exception translation
+ * and dependency injection. It uses `@RequiredArgsConstructor` to generate constructors for
+ * required dependencies.
+ */
 @Repository
 @RequiredArgsConstructor
 public class PostgresMentorRepository implements MentorRepository {
 
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentors WHERE mentor_id = ?";
-  private static final String SQL_DELETE_BY_ID = "SELECT * FROM mentors WHERE mentor_id = ?";
+  private static final String SQL_DELETE_BY_ID = "DELETE FROM mentors WHERE mentor_id = ?";
   private static final String SQL_GET_BY_EMAIL =
       "SELECT mentors.* FROM mentors LEFT JOIN members ON mentors.mentor_id = members.id "
           + "WHERE members.email = ?";
@@ -73,7 +84,8 @@ public class PostgresMentorRepository implements MentorRepository {
 
   @Override
   public Mentor update(final Long mentorId, final Mentor mentor) {
-    return null;
+    // not implemented
+    return mentor;
   }
 
   @Override

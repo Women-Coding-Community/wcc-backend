@@ -2,13 +2,17 @@ package com.wcc.platform.repository.postgres;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.attributes.Country;
@@ -23,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 
 /** PostgresMemberRepositoryTest class for testing the PostgresMemberRepository. */
 class PostgresMemberRepositoryTest {
@@ -65,7 +70,7 @@ class PostgresMemberRepositoryTest {
   @Test
   void testUpdate() {
     Member updatedMember = getMember();
-    doNothing().when(memberMapper).updateMember(any(), anyString(), eq(1L));
+    doNothing().when(memberMapper).updateMember(any(), anyLong());
     doReturn(Optional.of(updatedMember)).when(repository).findById(1L);
 
     Member result = repository.update(1L, updatedMember);
@@ -88,18 +93,6 @@ class PostgresMemberRepositoryTest {
   }
 
   @Test
-  void testFindByEmailNotFound() {
-    String email = "notfound@example.com";
-    when(jdbc.query(anyString(), (ResultSetExtractor<Object>) any(), eq(email)))
-        .thenReturn(Optional.empty());
-
-    Optional<Member> result = repository.findByEmail(email);
-
-    assertNotNull(result);
-    assertEquals(Optional.empty(), result);
-  }
-
-  @Test
   void testFindByIdNotFound() {
     Long memberId = 99L;
     when(jdbc.query(anyString(), (ResultSetExtractor<Object>) any(), eq(memberId)))
@@ -112,9 +105,21 @@ class PostgresMemberRepositoryTest {
   }
 
   @Test
+  void testFindByEmailNotFound() {
+    String email = "notfound@example.com";
+    when(jdbc.query(anyString(), (ResultSetExtractor<Object>) any(), eq(email)))
+        .thenReturn(Optional.empty());
+
+    Optional<Member> result = repository.findByEmail(email);
+
+    assertNotNull(result);
+    assertEquals(Optional.empty(), result);
+  }
+
+  @Test
   void testUpdateNonExistentMember() {
     Member updatedMember = getMember();
-    doNothing().when(memberMapper).updateMember(any(), anyString(), eq(2L));
+    doNothing().when(memberMapper).updateMember(any(), eq(2L));
     doReturn(Optional.empty()).when(repository).findById(2L);
 
     try {
@@ -145,6 +150,96 @@ class PostgresMemberRepositoryTest {
     } catch (MemberNotFoundException e) {
       assertNotNull(e);
     }
+  }
+
+  @Test
+  void testGetAll() {
+    List<Member> members = List.of(getMember(), getMember());
+    when(jdbc.query(anyString(), any(RowMapper.class))).thenReturn(members);
+
+    List<Member> result = repository.getAll();
+
+    assertNotNull(result);
+    assertEquals(2, result.size());
+  }
+
+  @Test
+  void testGetAllEmpty() {
+    when(jdbc.query(anyString(), any(RowMapper.class))).thenReturn(List.of());
+
+    List<Member> result = repository.getAll();
+
+    assertNotNull(result);
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  void testDeleteById() {
+    Long memberId = 1L;
+    when(jdbc.update(anyString(), eq(memberId))).thenReturn(1);
+
+    repository.deleteById(memberId);
+
+    verify(jdbc).update("DELETE FROM members WHERE id = ?", memberId);
+  }
+
+  @Test
+  void testDeleteByEmail() {
+    String email = "test@example.com";
+    when(jdbc.update(anyString(), eq(email))).thenReturn(1);
+
+    repository.deleteByEmail(email);
+
+    verify(jdbc).update("DELETE FROM members WHERE email = ?", email);
+  }
+
+  @Test
+  void testDeleteByEmailNonExistent() {
+    String email = "notfound@example.com";
+    when(jdbc.update(anyString(), eq(email))).thenReturn(0);
+
+    repository.deleteByEmail(email);
+
+    verify(jdbc).update("DELETE FROM members WHERE email = ?", email);
+  }
+
+  @Test
+  void testCreateThrowsWhenFindByIdEmpty() {
+    Member member = getMember();
+    // Simulate insert returning an ID but subsequent lookup not finding the entity
+    when(memberMapper.addMember(any())).thenReturn(123L);
+    doReturn(Optional.empty()).when(repository).findById(123L);
+
+    assertThrows(NoSuchElementException.class, () -> repository.create(member));
+  }
+
+  @Test
+  void testFindIdByEmailReturnsNull() {
+    String email = "missing@example.com";
+    // JdbcTemplate may return null for queryForObject when no rows are found, assert propagation
+    when(jdbc.queryForObject(anyString(), eq(Long.class), eq(email))).thenReturn(null);
+
+    Long result = repository.findIdByEmail(email);
+
+    assertNull(result);
+  }
+
+  @Test
+  void testFindByEmailJdbcThrows() {
+    String email = "boom@example.com";
+    when(jdbc.query(anyString(), (ResultSetExtractor<Object>) any(), eq(email)))
+        .thenThrow(new RuntimeException("DB error"));
+
+    assertThrows(RuntimeException.class, () -> repository.findByEmail(email));
+  }
+
+  @Test
+  void testFindByIdJdbcThrows() {
+    Long memberId = 42L;
+    when(jdbc.query(anyString(), (ResultSetExtractor<Object>) any(), eq(memberId)))
+        .thenThrow(new RuntimeException("DB error"));
+
+    assertThrows(RuntimeException.class, () -> repository.findById(memberId));
   }
 
   private Member getMember() {
