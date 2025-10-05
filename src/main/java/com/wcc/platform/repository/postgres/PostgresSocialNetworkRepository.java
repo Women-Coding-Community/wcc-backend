@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PostgresSocialNetworkRepository {
 
-  private static final String INSERT_SOCIAL_NETWORK =
+  private static final String INSERT_MEMBER_SOCIAL_NETWORK =
       "INSERT INTO member_social_networks (member_id, link, network_type_id) VALUES (?, ?, ?) ";
   private static final String SELECT_BY_MEMBER =
       """
@@ -40,7 +40,7 @@ public class PostgresSocialNetworkRepository {
 
   /** Add a social network link for a member. */
   public void addSocialNetwork(final Long memberId, final SocialNetwork network) {
-    jdbc.update(INSERT_SOCIAL_NETWORK, memberId, network.link(), network.type().getTypeId());
+    jdbc.update(INSERT_MEMBER_SOCIAL_NETWORK, memberId, network.link(), network.type().getTypeId());
   }
 
   /** Deletes all social network links associated with a specific member. */
