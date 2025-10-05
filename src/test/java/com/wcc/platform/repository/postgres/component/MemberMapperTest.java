@@ -95,7 +95,7 @@ class MemberMapperTest {
     when(member.getCountry()).thenReturn(country);
     when(countryRepository.findCountryIdByCode(anyString())).thenReturn(3L);
 
-    when(jdbc.queryForObject(anyString(), eq(Long.class), any())).thenReturn(10L);
+    when(jdbc.queryForObject(anyString(), any(org.springframework.jdbc.core.RowMapper.class), any())).thenReturn(10L);
 
     when(member.getImages()).thenReturn(Collections.emptyList());
     when(member.getMemberTypes()).thenReturn(Collections.emptyList());
