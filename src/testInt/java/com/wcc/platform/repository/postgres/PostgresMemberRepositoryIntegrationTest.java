@@ -69,25 +69,21 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
 
     var updatedMember = repository.update(MEMBER_ID, member2);
     assertEquals(member2, updatedMember, "Should update member attributes");
-
-    var members = repository.getAll();
-    assertEquals(1, members.size(), "Should have only one member");
-
-    var member = repository.findByEmail(member2.getEmail());
-    assertTrue(member.isPresent());
+    assertEquals(1, repository.getAll().size(), "Should have only one member");
+    assertTrue(repository.findByEmail(member2.getEmail()).isPresent());
   }
 
   @Test
   void createReturnEmptyForNotFoundMemberId() {
-    var member = repository.findById(7L);
+    var optionalMember = repository.findById(7L);
 
-    assertTrue(member.isEmpty(), "Should not find member with this id");
+    assertTrue(optionalMember.isEmpty(), "Should not find optionalMember with this id");
   }
 
   @Test
   void findByEmailNotFound() {
-    var member = repository.findByEmail("notFoundEmail@wcc.com");
+    var optionalMember = repository.findByEmail("notFoundEmail@wcc.com");
 
-    assertTrue(member.isEmpty(), "Should not find member with this email");
+    assertTrue(optionalMember.isEmpty(), "Should not find optionalMember with this email");
   }
 }

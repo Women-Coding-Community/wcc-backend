@@ -59,7 +59,7 @@ class PostgresMentorRepositoryTest {
   }
 
   @Test
-  void testFindIdByEmail() throws Exception {
+  void testFindIdByEmail() {
     String email = "x@y.com";
     long expectedId = 42L;
 
@@ -75,7 +75,7 @@ class PostgresMentorRepositoryTest {
 
     Long mentorId = repository.findIdByEmail(email);
 
-    assert mentorId != null && mentorId == expectedId;
+    assertEquals(expectedId, mentorId);
   }
 
   @Test
@@ -96,6 +96,6 @@ class PostgresMentorRepositoryTest {
     long mentorId = 7L;
     repository.deleteById(mentorId);
 
-    verify(jdbc).update(eq("DELETE FROM mentors WHERE mentor_id = ?"), eq(mentorId));
+    verify(jdbc).update("DELETE FROM mentors WHERE mentor_id = ?", mentorId);
   }
 }
