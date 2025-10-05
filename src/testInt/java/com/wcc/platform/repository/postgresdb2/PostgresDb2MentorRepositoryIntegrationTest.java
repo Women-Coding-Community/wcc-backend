@@ -49,7 +49,7 @@ class PostgresDb2MentorRepositoryIntegrationTest {
   }
 
   @Test
-  void getAllShouldContainCreatedMentor() {
+  void testGetAllShouldContainCreatedMentor() {
     final Mentor toCreate = SetupMentorshipFactories.createMentorTest();
     final Mentor created = repository.create(toCreate);
 

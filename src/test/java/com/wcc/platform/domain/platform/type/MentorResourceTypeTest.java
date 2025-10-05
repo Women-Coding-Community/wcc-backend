@@ -16,7 +16,7 @@ class MentorResourceTypeTest {
   }
 
   @Test
-  void getResourceTypeId() {
+  void testGetResourceTypeId() {
     assertEquals(2, MentorResourceType.LINKS.getTypeId());
   }
 }

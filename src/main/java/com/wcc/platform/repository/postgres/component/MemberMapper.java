@@ -30,11 +30,7 @@ import org.springframework.util.CollectionUtils;
 @Component
 @RequiredArgsConstructor
 public class MemberMapper {
-  private static final String INSERT_SQL =
-      "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
-          + "country_id, status_id, bio, years_experience, spoken_language) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL) RETURNING id";
-  private static final String INSERT_SQL_NO_RETURNING =
+  private static final String INSERT =
       "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
           + "country_id, status_id, bio, years_experience, spoken_language) "
           + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)";
@@ -74,38 +70,20 @@ public class MemberMapper {
   /** Adds a new member to the database and returns the member ID. */
   public Long addMember(final Member member) {
     final int defaultStatusId = 1;
-    Long memberId = null;
-    try {
-      memberId =
-          jdbc.queryForObject(
-              INSERT_SQL,
-              Long.class,
-              member.getFullName(),
-              member.getSlackDisplayName(),
-              member.getPosition(),
-              member.getCompanyName(),
-              member.getEmail(),
-              member.getCity(),
-              getCountryId(member.getCountry()),
-              defaultStatusId);
-    } catch (org.springframework.jdbc.BadSqlGrammarException e) {
-      // Fallback for databases that don't support "RETURNING id" (e.g., H2 in PostgreSQL mode)
-      jdbc.update(
-          INSERT_SQL_NO_RETURNING,
-          member.getFullName(),
-          member.getSlackDisplayName(),
-          member.getPosition(),
-          member.getCompanyName(),
-          member.getEmail(),
-          member.getCity(),
-          getCountryId(member.getCountry()),
-          defaultStatusId);
-      memberId =
-          jdbc.queryForObject(
-              "SELECT id FROM members WHERE email = ?",
-              Long.class,
-              member.getEmail());
-    }
+    jdbc.update(
+        INSERT,
+        member.getFullName(),
+        member.getSlackDisplayName(),
+        member.getPosition(),
+        member.getCompanyName(),
+        member.getEmail(),
+        member.getCity(),
+        getCountryId(member.getCountry()),
+        defaultStatusId);
+
+    final var memberId =
+        jdbc.queryForObject(
+            "SELECT id FROM members WHERE email = ?", Long.class, member.getEmail());
 
     addMemberImages(memberId, member);
     addMemberTypes(memberId, member);

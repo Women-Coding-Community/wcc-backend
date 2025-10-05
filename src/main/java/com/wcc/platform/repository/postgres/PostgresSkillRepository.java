@@ -34,12 +34,12 @@ public class PostgresSkillRepository implements SkillRepository {
     }
   }
 
-  private Integer getYearsExperience(Long mentorId) {
+  private Integer getYearsExperience(final Long mentorId) {
     return jdbcTemplate.queryForObject(
         "SELECT years_experience FROM mentors WHERE mentor_id = ?", Integer.class, mentorId);
   }
 
-  private List<TechnicalArea> buildTechnicalAreas(Long mentorId) {
+  private List<TechnicalArea> buildTechnicalAreas(final Long mentorId) {
     return jdbcTemplate
         .query(
             "SELECT ta.name FROM mentor_technical_areas mta JOIN technical_areas ta ON mta.technical_area_id = ta.id WHERE mta.mentor_id = ?",
@@ -61,7 +61,7 @@ public class PostgresSkillRepository implements SkillRepository {
         .toList();
   }
 
-  private List<Languages> buildLanguages(Long mentorId) {
+  private List<Languages> buildLanguages(final Long mentorId) {
     return jdbcTemplate
         .query(
             "SELECT l.name FROM mentor_languages ml JOIN languages l ON ml.language_id = l.id WHERE ml.mentor_id = ?",
