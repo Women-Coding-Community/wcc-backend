@@ -25,10 +25,9 @@ public class PostgresSkillRepository implements SkillRepository {
   @Override
   public Optional<Skills> findByMentorId(final Long mentorId) {
     try {
-      final Integer years = getYearsExperience(mentorId);
       final List<TechnicalArea> areas = buildTechnicalAreas(mentorId);
       final List<Languages> languages = buildLanguages(mentorId);
-      return Optional.of(new Skills(years, areas, languages));
+      return Optional.of(new Skills(getYearsExperience(mentorId), areas, languages));
     } catch (EmptyResultDataAccessException ex) {
       return Optional.empty();
     }

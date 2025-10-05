@@ -4,7 +4,9 @@ import static com.wcc.platform.repository.postgres.constants.MentorConstants.COL
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_PROFILE_STATUS;
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_SPOKEN_LANG;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -62,16 +64,17 @@ class MentorMapperTest {
 
     Mentor mentor = mentorMapper.mapRowToMentor(resultSet);
 
-    assert mentor.getId() == mentorId;
-    assert mentor.getProfileStatus() == ProfileStatus.fromId(1);
-    assert mentor.getSpokenLanguages().containsAll(List.of("English", "Spanish"));
-    assert mentor.getBio().equals("Experienced mentor");
-    assert mentor.getSkills() == skills;
-    assert mentor.getMenteeSection() == menteeSection;
+    assertEquals(mentorId, mentor.getId());
+    assertEquals(mentor.getProfileStatus(), ProfileStatus.fromId(1));
+    assertThat(mentor.getSpokenLanguages())
+        .containsExactlyInAnyOrderElementsOf(List.of("English", "Spanish"));
+    assertEquals(mentor.getSkills(), skills);
+    assertEquals("Experienced mentor", mentor.getBio());
+    assertEquals(mentor.getMenteeSection(), menteeSection);
   }
 
   @Test
-  void handlesSQLExceptionGracefully() throws Exception {
+  void handlesSqlExceptionGracefully() throws Exception {
     when(resultSet.getLong(COLUMN_MENTOR_ID)).thenThrow(SQLException.class);
     assertThrows(SQLException.class, () -> mentorMapper.mapRowToMentor(resultSet));
   }

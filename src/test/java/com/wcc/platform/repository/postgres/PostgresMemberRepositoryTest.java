@@ -180,15 +180,7 @@ class PostgresMemberRepositoryTest {
 
     repository.deleteById(memberId);
 
-    verify(jdbc).update(eq("DELETE FROM members WHERE id = ?"), eq(memberId));
-  }
-
-  @Test
-  void testDeleteByIdNonExistent() {
-    Long memberId = 99L;
-    when(jdbc.update(anyString(), eq(memberId))).thenReturn(0);
-
-    repository.deleteById(memberId);
+    verify(jdbc).update("DELETE FROM members WHERE id = ?", memberId);
   }
 
   @Test
@@ -197,6 +189,8 @@ class PostgresMemberRepositoryTest {
     when(jdbc.update(anyString(), eq(email))).thenReturn(1);
 
     repository.deleteByEmail(email);
+
+    verify(jdbc).update("DELETE FROM members WHERE email = ?", email);
   }
 
   @Test
@@ -205,6 +199,8 @@ class PostgresMemberRepositoryTest {
     when(jdbc.update(anyString(), eq(email))).thenReturn(0);
 
     repository.deleteByEmail(email);
+
+    verify(jdbc).update("DELETE FROM members WHERE email = ?", email);
   }
 
   @Test

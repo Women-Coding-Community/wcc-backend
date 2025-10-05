@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 /** Test class for PostgresMentorRepository. */
-public class PostgresMentorRepositoryTest {
+class PostgresMentorRepositoryTest {
   private JdbcTemplate jdbc;
   private MemberMapper memberMapper;
   private MentorMapper mentorMapper;
