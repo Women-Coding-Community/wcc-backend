@@ -12,6 +12,7 @@ import com.wcc.platform.domain.resource.MentorResource;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
@@ -62,7 +63,7 @@ public class Mentor extends Member {
       final String companyName,
       @NotEmpty final List<Image> images,
       final List<SocialNetwork> network,
-      @NotBlank final ProfileStatus profileStatus,
+      @NotNull final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
       @NotBlank final String bio,
       @NotBlank final Skills skills,

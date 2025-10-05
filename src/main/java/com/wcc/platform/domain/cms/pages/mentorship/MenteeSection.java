@@ -8,7 +8,7 @@ import java.util.List;
 /** Represents the Mentee Section of the Mentorship Page. */
 public record MenteeSection(
     @NotBlank List<MentorshipType> mentorshipType,
-    Availability availability,
+    List<Availability> availability,
     @NotEmpty String idealMentee,
     List<String> focus,
     String additional) {}

@@ -126,7 +126,12 @@ public class MentorshipService {
    *
    * @return Mentors page containing details about mentors.
    */
-  public MentorsPage getMentors() {
+  /**
+   * API to retrieve information about mentors.
+   *
+   * @return Mentors page containing details about mentors.
+   */
+  public MentorsPage getMentorsPage() {
     final var page = repository.findById(MENTORS.getId());
     if (page.isPresent()) {
       try {

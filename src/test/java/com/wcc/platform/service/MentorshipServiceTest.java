@@ -146,7 +146,7 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenGetMentorsGivenRecordExistingInDatabaseThenReturnValidResponse() {
+  void whenGetMentorsPageGivenRecordExistingInDatabaseThenReturnValidResponse() {
     var page = createMentorPageTest();
     var mapPage =
         new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
@@ -154,16 +154,16 @@ class MentorshipServiceTest {
     when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(MentorsPage.class))).thenReturn(page);
 
-    var response = service.getMentors();
+    var response = service.getMentorsPage();
 
     assertEquals(page, response);
   }
 
   @Test
   @Disabled("Temporary Disable until migrate to postgres")
-  void whenGetMentorsGivenRecordNotInDatabaseThenThrowException() {
+  void whenGetMentorsPageGivenRecordNotInDatabaseThenThrowException() {
     when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.empty());
-    var exception = assertThrows(ContentNotFoundException.class, service::getMentors);
+    var exception = assertThrows(ContentNotFoundException.class, service::getMentorsPage);
 
     assertEquals("Content of Page MENTORS not found", exception.getMessage());
   }

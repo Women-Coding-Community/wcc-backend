@@ -29,7 +29,7 @@ public class Member {
   @NotBlank private String position;
   @NotBlank @Email private String email;
   @NotBlank private String slackDisplayName;
-  @NotBlank private Country country;
+  @NotNull private Country country;
   private String city;
   private String companyName;
   @NotNull private List<MemberType> memberTypes;
