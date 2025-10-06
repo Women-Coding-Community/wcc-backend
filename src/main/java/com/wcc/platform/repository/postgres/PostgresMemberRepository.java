@@ -8,6 +8,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -53,7 +54,8 @@ public class PostgresMemberRepository implements MemberRepository {
 
   @Override
   public Long findIdByEmail(final String email) {
-    return jdbc.queryForObject(SELECT_BY_EMAIL, Long.class, email);
+    return jdbc.queryForObject(
+        SELECT_BY_EMAIL, SingleColumnRowMapper.newInstance(Long.class), email);
   }
 
   @Override

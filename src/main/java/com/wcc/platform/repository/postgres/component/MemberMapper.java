@@ -18,6 +18,7 @@ import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -83,7 +84,9 @@ public class MemberMapper {
 
     final var memberId =
         jdbc.queryForObject(
-            "SELECT id FROM members WHERE email = ?", Long.class, member.getEmail());
+            "SELECT id FROM members WHERE email = ?",
+            SingleColumnRowMapper.newInstance(Long.class),
+            member.getEmail());
 
     addMemberImages(memberId, member);
     addMemberTypes(memberId, member);

@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -28,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  * Unit tests for the MemberMapper class, which maps database rows to Member objects and handles
@@ -95,7 +95,7 @@ class MemberMapperTest {
     when(member.getCountry()).thenReturn(country);
     when(countryRepository.findCountryIdByCode(anyString())).thenReturn(3L);
 
-    when(jdbc.queryForObject(anyString(), eq(Long.class), any())).thenReturn(10L);
+    when(jdbc.queryForObject(anyString(), any(RowMapper.class), any())).thenReturn(10L);
 
     when(member.getImages()).thenReturn(Collections.emptyList());
     when(member.getMemberTypes()).thenReturn(Collections.emptyList());

@@ -5,6 +5,7 @@ import com.wcc.platform.repository.CrudRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 
 /** Country data repository. */
@@ -51,6 +52,6 @@ public class PostgresCountryRepository implements CrudRepository<Country, Long> 
   /** Retrieves the country ID associated with the specified country code. */
   public Long findCountryIdByCode(final String countryCode) {
     final String sql = "SELECT id FROM countries WHERE country_code = ?";
-    return jdbc.queryForObject(sql, Long.class, countryCode);
+    return jdbc.queryForObject(sql, SingleColumnRowMapper.newInstance(Long.class), countryCode);
   }
 }

@@ -132,7 +132,7 @@ class PostgresMemberRepositoryTest {
   @Test
   void testFindIdByEmail() {
     String email = "test@example.com";
-    when(jdbc.queryForObject(anyString(), eq(Long.class), eq(email))).thenReturn(1L);
+    when(jdbc.queryForObject(anyString(), any(RowMapper.class), eq(email))).thenReturn(1L);
 
     Long result = repository.findIdByEmail(email);
 
@@ -142,7 +142,7 @@ class PostgresMemberRepositoryTest {
   @Test
   void testFindIdByEmailNotFound() {
     String email = "notfound@example.com";
-    when(jdbc.queryForObject(anyString(), eq(Long.class), eq(email)))
+    when(jdbc.queryForObject(anyString(), any(RowMapper.class), eq(email)))
         .thenThrow(new MemberNotFoundException("Not found"));
 
     try {
@@ -217,7 +217,7 @@ class PostgresMemberRepositoryTest {
   void testFindIdByEmailReturnsNull() {
     String email = "missing@example.com";
     // JdbcTemplate may return null for queryForObject when no rows are found, assert propagation
-    when(jdbc.queryForObject(anyString(), eq(Long.class), eq(email))).thenReturn(null);
+    when(jdbc.queryForObject(anyString(), any(RowMapper.class), eq(email))).thenReturn(null);
 
     Long result = repository.findIdByEmail(email);
 

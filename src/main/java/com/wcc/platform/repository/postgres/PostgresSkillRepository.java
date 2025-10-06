@@ -10,6 +10,7 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -20,6 +21,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 @AllArgsConstructor
 public class PostgresSkillRepository implements SkillRepository {
+
+  private static final String SELECT_AREAS =
+      "SELECT ta.name FROM mentor_technical_areas mta "
+          + "JOIN technical_areas ta ON mta.technical_area_id = ta.id "
+          + "WHERE mta.mentor_id = ?";
+  private static final String SELECT_YEARS =
+      "SELECT years_experience FROM mentors WHERE mentor_id = ?";
   private final JdbcTemplate jdbcTemplate;
 
   @Override
@@ -27,7 +35,10 @@ public class PostgresSkillRepository implements SkillRepository {
     try {
       final List<TechnicalArea> areas = buildTechnicalAreas(mentorId);
       final List<Languages> languages = buildLanguages(mentorId);
-      return Optional.of(new Skills(getYearsExperience(mentorId), areas, languages));
+      final Integer yearsExperience = getYearsExperience(mentorId);
+
+      return Optional.of(
+          new Skills(yearsExperience != null ? yearsExperience : 1, areas, languages));
     } catch (EmptyResultDataAccessException ex) {
       return Optional.empty();
     }
@@ -35,16 +46,11 @@ public class PostgresSkillRepository implements SkillRepository {
 
   private Integer getYearsExperience(final Long mentorId) {
     return jdbcTemplate.queryForObject(
-        "SELECT years_experience FROM mentors WHERE mentor_id = ?", Integer.class, mentorId);
+        SELECT_YEARS, SingleColumnRowMapper.newInstance(Integer.class), mentorId);
   }
 
   private List<TechnicalArea> buildTechnicalAreas(final Long mentorId) {
-    return jdbcTemplate
-        .query(
-            "SELECT ta.name FROM mentor_technical_areas mta JOIN technical_areas ta ON mta.technical_area_id = ta.id WHERE mta.mentor_id = ?",
-            (rs, rowNum) -> rs.getString(1),
-            mentorId)
-        .stream()
+    return jdbcTemplate.query(SELECT_AREAS, (rs, rowNum) -> rs.getString(1), mentorId).stream()
         .filter(Objects::nonNull)
         .map(String::trim)
         .map(
@@ -63,7 +69,9 @@ public class PostgresSkillRepository implements SkillRepository {
   private List<Languages> buildLanguages(final Long mentorId) {
     return jdbcTemplate
         .query(
-            "SELECT l.name FROM mentor_languages ml JOIN languages l ON ml.language_id = l.id WHERE ml.mentor_id = ?",
+            "SELECT l.name FROM mentor_languages ml "
+                + "LEFT JOIN languages l ON ml.language_id = l.id "
+                + "WHERE ml.mentor_id = ?",
             (rs, rowNum) -> rs.getString(1),
             mentorId)
         .stream()
