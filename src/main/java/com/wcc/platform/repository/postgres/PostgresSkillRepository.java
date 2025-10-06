@@ -35,7 +35,7 @@ public class PostgresSkillRepository implements SkillRepository {
     try {
       final List<TechnicalArea> areas = buildTechnicalAreas(mentorId);
       final List<Languages> languages = buildLanguages(mentorId);
-      Integer yearsExperience = getYearsExperience(mentorId);
+      final Integer yearsExperience = getYearsExperience(mentorId);
 
       return Optional.of(
           new Skills(yearsExperience != null ? yearsExperience : 1, areas, languages));
