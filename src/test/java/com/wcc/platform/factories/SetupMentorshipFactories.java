@@ -71,7 +71,7 @@ public class SetupMentorshipFactories {
   public static MentorsPage createMentorPageTest() {
     final String pageId = PageType.MENTORS.getId();
     var mentor = createMentorTest();
-    return new MentorsPage(pageId, createNoImageHeroSectionTest(), List.of(mentor.toDto()));
+    return new MentorsPage(pageId, createNoImageHeroSectionTest(), null, List.of(mentor.toDto()));
   }
 
   /** Test factory. */

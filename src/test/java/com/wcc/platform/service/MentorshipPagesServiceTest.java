@@ -156,7 +156,7 @@ class MentorshipPagesServiceTest {
 
     when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(MentorsPage.class))).thenReturn(page);
-    when(mentorshipService.getAllMentors()).thenReturn(page.mentors());
+    when(mentorshipService.getMentorsPage(page)).thenReturn(page);
 
     var response = service.getMentorsPage();
 

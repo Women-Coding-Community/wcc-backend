@@ -1,8 +1,18 @@
 package com.wcc.platform.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.wcc.platform.service.MentorshipService.CYCLE_CLOSED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -68,8 +78,7 @@ class MentorshipServiceTest {
     when(mentor.toDto()).thenReturn(dto);
     when(mentorRepository.getAll()).thenReturn(List.of(mentor));
 
-    // Cycle closed -> getCurrentCycle returns null
-    doReturn(null).when(service).getCurrentCycle();
+    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
 
     var result = service.getAllMentors();
 
@@ -142,16 +151,16 @@ class MentorshipServiceTest {
     // April -> closed
     var april10 = ZonedDateTime.of(2025, 4, 10, 12, 0, 0, 0, ZoneId.of("Europe/London"));
     doReturn(april10).when(service).nowLondon();
-    assertNull(service.getCurrentCycle());
+    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
 
     // December -> closed
     var dec1 = ZonedDateTime.of(2025, 12, 1, 12, 0, 0, 0, ZoneId.of("Europe/London"));
     doReturn(dec1).when(service).nowLondon();
-    assertNull(service.getCurrentCycle());
+    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
 
     // May but beyond open days -> closed
     var may20 = ZonedDateTime.of(2025, 5, 20, 12, 0, 0, 0, ZoneId.of("Europe/London"));
     doReturn(may20).when(service).nowLondon();
-    assertNull(service.getCurrentCycle());
+    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
   }
 }
