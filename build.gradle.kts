@@ -126,6 +126,12 @@ tasks {
     }
 
     jacocoTestCoverageVerification {
+        executionData(
+            fileTree(layout.buildDirectory.asFile.get()).include(
+                "jacoco/test.exec",
+                "jacoco/testIntegration.exec"
+            )
+        )
         violationRules {
             rule { limit { minimum = BigDecimal.valueOf(0.7) } }
         }
@@ -232,7 +238,10 @@ if (project.hasProperty("localProfile")) {
     }
 }
 
-tasks.register("postmanGenerate", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class.java) {
+tasks.register(
+    "postmanGenerate",
+    org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class.java
+) {
     group = "openapi"
     description = "Generate Postman collection from OpenAPI spec"
 
