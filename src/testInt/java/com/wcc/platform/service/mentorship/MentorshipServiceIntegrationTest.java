@@ -1,12 +1,12 @@
 package com.wcc.platform.service.mentorship;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORS;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorsPageTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.factories.SetupMentorshipFactories;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
@@ -24,7 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
   private final MentorsPage page = createMentorsPageTest(MENTORS.getFileName());
-  private final Mentor mentor = SetupMentorshipFactories.createMentorTest();
+  private Mentor mentor;
 
   @Autowired private MentorshipService service;
   @Autowired private MentorRepository repository;
@@ -33,6 +33,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @BeforeEach
   void setUp() {
+    mentor = createMentorTest(null, "mentor postgres", "postgres@domain.com");
     var mentorOptional = repository.findByEmail(mentor.getEmail());
     mentorOptional.ifPresent(value -> repository.deleteById(value.getId()));
     pageRepository.deleteById(MENTORS.getId());

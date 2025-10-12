@@ -3,10 +3,8 @@ package com.wcc.platform.domain.platform;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.type.MemberType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +40,13 @@ class MentorTest {
 
   @Test
   void testToString() {
-    assertTrue(mentor.toString().contains(MemberType.MENTOR.toString()));
+    final var expected =
+        "Mentor(profileStatus=ACTIVE, skills=Skills[yearsExperience=2, areas=[BACKEND, FRONTEND], "
+            + "languages=[JAVASCRIPT]], spokenLanguages=[English], bio=Mentor bio, "
+            + "menteeSection=MenteeSection[mentorshipType=[LONG_TERM], "
+            + "availability=[MentorMonthAvailability[month=APRIL, hours=2]], "
+            + "idealMentee=ideal mentee description, focus=[focus], "
+            + "additional=additional], feedbackSection=null, resources=null)";
+    assertEquals(expected, mentor.toString());
   }
 }
