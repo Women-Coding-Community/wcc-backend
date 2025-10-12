@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: memory
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:wcc;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: ""
+
+security:
+  enabled: false
+
+storage:
+  type: google
+  folders:
+    main-folder: 1Pd1gATHIHHO4_kEE1jF_hjJQ0IZ9LlhS
+    resources-folder: 1mW2ZASokh-33KPtreVXg1ZLN0z1QrTM_
+    events-folder: 1_sc1QSWnQr4p50IPpwMTp5r_iseG_MT3-id
+    mentors-folder: 1oASDCYdoIleYduTXdogfAEOXwI-ju333
+    mentors-profile-folder: 1nNckq5ETi0flYajiAB9H_SOl5zcu_BfA
+    images-folder: 18LnIwwOsWd9uVKu_KWCFxGvRGA44HQl5
