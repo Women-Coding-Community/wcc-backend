@@ -22,7 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class MemberServiceMemberIntegrationTest extends DefaultDatabaseSetup {
 
-  public static final String MEMBER_EMAIL = "member@wcc.com";
+  private static final String MEMBER_EMAIL = "member@wcc.com";
+
   @Autowired private MemberService service;
   @Autowired private MemberRepository repository;
 
