@@ -1,259 +1,157 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.SetupMentorshipFactories.createLongTermTimeLinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipAdHocTimelinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.wcc.platform.domain.cms.PageType;
-import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.repository.PageRepository;
-import java.util.Map;
+import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.repository.MentorRepository;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MentorshipServiceTest {
-  private ObjectMapper objectMapper;
-  private PageRepository pageRepository;
+
+  @Mock private MentorRepository mentorRepository;
+  private Integer daysOpen = 10;
+
   private MentorshipService service;
-  private PlatformService platformService;
+
+  public MentorshipServiceTest() {
+    super();
+  }
 
   @BeforeEach
   void setUp() {
-    objectMapper = mock(ObjectMapper.class);
-    objectMapper.registerModule(new JavaTimeModule());
-    pageRepository = mock(PageRepository.class);
-    platformService = mock(PlatformService.class);
-    service = new MentorshipService(objectMapper, pageRepository, platformService);
+    service = spy(new MentorshipService(mentorRepository, daysOpen));
   }
 
   @Test
-  @SuppressWarnings("unchecked")
-  void whenGetOverviewGivenRecordExistingInDatabaseThenReturnValidResponse() {
-    var page = createMentorshipPageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+  void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
+    var mentor = mock(Mentor.class);
+    when(mentor.getId()).thenReturn(1L);
+    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
 
-    when(pageRepository.findById(PageType.MENTORSHIP.getId())).thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(MentorshipPage.class))).thenReturn(page);
-
-    var response = service.getOverview();
-
-    assertEquals(page, response);
+    assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
+    verify(mentorRepository, never()).create(any());
   }
 
   @Test
-  void whenGetOverviewGivenRecordNotInDatabaseThenReturnFallback() {
-    var page = createMentorshipPageTest();
-    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.MENTORSHIP.getId())).thenReturn(Optional.empty());
+  void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
+    var mentor = mock(Mentor.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
 
-    assertEquals(page, service.getOverview());
-    verify(pageRepository, times(1)).getFallback(any(), any(), any());
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
   }
 
   @Test
-  void whenGetFaqGivenRecordExistingInDatabaseThenReturnValidResponse() {
-    var page = createMentorshipFaqPageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+  void whenGetAllMentorsGivenCycleClosedThenReturnDtosWithoutCycle() {
+    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
+    var dto = mock(MentorDto.class);
+    when(mentor.toDto()).thenReturn(dto);
+    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
 
-    when(pageRepository.findById(PageType.MENTORSHIP_FAQ.getId())).thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(MentorshipFaqPage.class))).thenReturn(page);
+    // Cycle closed -> getCurrentCycle returns null
+    doReturn(null).when(service).getCurrentCycle();
 
-    var response = service.getFaq();
+    var result = service.getAllMentors();
 
-    assertEquals(page, response);
+    assertEquals(List.of(dto), result);
+    verify(mentor, times(1)).toDto();
+    verify(mentor, never()).toDto(any(MentorshipCycle.class));
   }
 
   @Test
-  void whenGetFaqGivenRecordNotInDatabaseThenReturnFallback() {
-    var page = createMentorshipFaqPageTest();
-    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.MENTORSHIP_FAQ.getId())).thenReturn(Optional.empty());
+  void whenGetAllMentorsGivenAdHocCycleOpenThenReturnDtosWithCycle() {
+    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
+    var dto = mock(MentorDto.class);
+    when(mentor.toDto(any(MentorshipCycle.class))).thenReturn(dto);
+    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
 
-    assertEquals(page, service.getFaq());
-    verify(pageRepository, times(1)).getFallback(any(), any(), any());
+    var cycle = new MentorshipCycle(MentorshipType.AD_HOC);
+    doReturn(cycle).when(service).getCurrentCycle();
+
+    var result = service.getAllMentors();
+
+    assertEquals(List.of(dto), result);
+    verify(mentor, times(1)).toDto(cycle);
+    verify(mentor, never()).toDto();
   }
 
   @Test
-  void whenGetCodeOfConductGivenRecordExistingInDatabaseThenReturnValidResponse() {
-    var page = createMentorshipConductPageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+  void whenGetAllMentorsGivenLongTermCycleOpenThenReturnDtosWithCycle() {
+    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
+    var dto = mock(MentorDto.class);
+    when(mentor.toDto(any(MentorshipCycle.class))).thenReturn(dto);
+    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
 
-    when(pageRepository.findById(PageType.MENTORSHIP_CONDUCT.getId()))
-        .thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(MentorshipCodeOfConductPage.class)))
-        .thenReturn(page);
+    var cycle = new MentorshipCycle(MentorshipType.LONG_TERM);
+    doReturn(cycle).when(service).getCurrentCycle();
 
-    var response = service.getCodeOfConduct();
-    assertEquals(page, response);
+    var result = service.getAllMentors();
+
+    assertEquals(List.of(dto), result);
+    verify(mentor, times(1)).toDto(cycle);
+    verify(mentor, never()).toDto();
   }
 
   @Test
-  void whenGetStudyGroupsGivenRecordExistingInDatabaseThenReturnValidResponse() {
-    var page = createMentorshipStudyGroupPageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+  void testGetCurrentCycleReturnsLongTermDuringMarchWithinOpenDays() {
+    var march3 = ZonedDateTime.of(2025, 3, 3, 10, 0, 0, 0, ZoneId.of("Europe/London"));
+    doReturn(march3).when(service).nowLondon();
 
-    when(pageRepository.findById(PageType.STUDY_GROUPS.getId())).thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(MentorshipStudyGroupsPage.class))).thenReturn(page);
+    var cycle = service.getCurrentCycle();
 
-    var response = service.getStudyGroups();
-    assertEquals(page, response);
+    assertEquals(new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH), cycle);
   }
 
   @Test
-  void whenGetCodeOfConductGivenRecordNotInDatabaseThenHasFallbackPage() {
-    var page = createMentorshipConductPageTest();
-    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.MENTORSHIP_CONDUCT.getId())).thenReturn(Optional.empty());
+  void testGetCurrentCycleReturnsAdHocFromMayWithinOpenDays() {
+    daysOpen = 7;
+    service = spy(new MentorshipService(mentorRepository, daysOpen));
+    var may2 = ZonedDateTime.of(2025, 5, 2, 9, 0, 0, 0, ZoneId.of("Europe/London"));
+    doReturn(may2).when(service).nowLondon();
 
-    var response = service.getCodeOfConduct();
-    assertEquals(page, response);
-    verify(pageRepository, times(1)).getFallback(any(), any(), any());
+    var cycle = service.getCurrentCycle();
+
+    assertEquals(new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY), cycle);
   }
 
   @Test
-  void whenGetStudyGroupsGivenRecordNotInDatabaseThenHasFallbackPage() {
-    var page = createMentorshipStudyGroupPageTest();
-    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.STUDY_GROUPS.getId())).thenReturn(Optional.empty());
-    var response = service.getStudyGroups();
+  void testGetCurrentCycleReturnsClosedOutsideWindows() {
+    daysOpen = 5;
+    service = spy(new MentorshipService(mentorRepository, daysOpen));
 
-    assertEquals(page, response);
-    verify(pageRepository, times(1)).getFallback(any(), any(), any());
-  }
+    // April -> closed
+    var april10 = ZonedDateTime.of(2025, 4, 10, 12, 0, 0, 0, ZoneId.of("Europe/London"));
+    doReturn(april10).when(service).nowLondon();
+    assertNull(service.getCurrentCycle());
 
-  @Test
-  void whenGetMentorsPageGivenRecordExistingInDatabaseThenReturnValidResponse() {
-    var page = createMentorPageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+    // December -> closed
+    var dec1 = ZonedDateTime.of(2025, 12, 1, 12, 0, 0, 0, ZoneId.of("Europe/London"));
+    doReturn(dec1).when(service).nowLondon();
+    assertNull(service.getCurrentCycle());
 
-    when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(MentorsPage.class))).thenReturn(page);
-    when(platformService.getAllMentors()).thenReturn(page.mentors());
-
-    var response = service.getMentorsPage();
-
-    assertEquals(page, response);
-  }
-
-  @Test
-  void whenGetMentorsPageGivenRecordNotInDatabaseThenHasFallbackPage() {
-    var page = createMentorPageTest();
-    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.MENTORS.getId())).thenReturn(Optional.empty());
-
-    var response = service.getMentorsPage();
-    assertEquals(page, response);
-    verify(pageRepository, times(1)).getFallback(any(), any(), any());
-  }
-
-  @Test
-  void whenGetAdHocTimelineGivenRecordExistingInDatabaseThenReturnValidResponse() {
-    var page = createMentorshipAdHocTimelinePageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
-
-    when(pageRepository.findById(PageType.AD_HOC_TIMELINE.getId()))
-        .thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(MentorshipAdHocTimelinePage.class)))
-        .thenReturn(page);
-
-    var response = service.getAdHocTimeline();
-    assertEquals(page, response);
-  }
-
-  @Test
-  void whenGetAdHocTimelineGivenRecordNotInDatabaseThenHasFallbackPage() {
-    var page = createMentorshipAdHocTimelinePageTest();
-    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.AD_HOC_TIMELINE.getId())).thenReturn(Optional.empty());
-
-    assertEquals(page, service.getAdHocTimeline());
-    verify(pageRepository, times(1)).getFallback(any(), any(), any());
-  }
-
-  @Test
-  void whenGetLongTermTimelineGivenRecordExistingInDatabaseThenReturnValidResponse() {
-    var page = createLongTermTimeLinePageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
-
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
-        .thenReturn(Optional.of(mapPage));
-    when(objectMapper.convertValue(anyMap(), eq(LongTermTimeLinePage.class))).thenReturn(page);
-
-    var response = service.getLongTermTimeLine();
-
-    assertEquals(page, response);
-  }
-
-  @Test
-  void whenGetLongTermTimeLineGivenRecordNotInDatabaseThenHasFallbackPage() {
-    var page = createLongTermTimeLinePageTest();
-    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
-        .thenReturn(Optional.empty());
-
-    var response = service.getLongTermTimeLine();
-    assertEquals(page, response);
-    verify(pageRepository, times(1)).getFallback(any(), any(), any());
-  }
-
-  @Test
-  void whenGetLongTermTimeLineGivenIllegalArgumentExceptionThenThrowPlatformInternalException() {
-    var page = createLongTermTimeLinePageTest();
-    var mapPage =
-        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
-
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
-        .thenReturn(Optional.of(mapPage));
-
-    // Mock the objectMapper to throw IllegalArgumentException
-    when(objectMapper.convertValue(anyMap(), eq(LongTermTimeLinePage.class)))
-        .thenThrow(new IllegalArgumentException("Conversion failed"));
-
-    assertThrows(PlatformInternalException.class, service::getLongTermTimeLine);
-  }
-
-  @Test
-  void whenGetLongTermTimeLineGivenRepositoryFindByIdThrowsExceptionThenPropagateException() {
-    // Test that exceptions from repository.findById are propagated
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
-        .thenThrow(new RuntimeException("Database connection failed"));
-
-    // The exception should be propagated
-    var exception = assertThrows(RuntimeException.class, service::getLongTermTimeLine);
-
-    assertEquals("Database connection failed", exception.getMessage());
-
-    // Verify that getFallback is never called since the exception occurs before that
-    verify(pageRepository, never()).getFallback(any(), any(), any());
+    // May but beyond open days -> closed
+    var may20 = ZonedDateTime.of(2025, 5, 20, 12, 0, 0, 0, ZoneId.of("Europe/London"));
+    doReturn(may20).when(service).nowLondon();
+    assertNull(service.getCurrentCycle());
   }
 }

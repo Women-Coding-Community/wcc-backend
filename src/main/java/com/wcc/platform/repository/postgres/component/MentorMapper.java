@@ -5,8 +5,8 @@ import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
-import com.wcc.platform.domain.cms.pages.mentorship.Availability;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -35,7 +35,7 @@ public class MentorMapper {
           + "(mentor_id, ideal_mentee, focus, additional) VALUES (?, ?, ?, ?)";
   private static final String INSERT_AVAILABILITY =
       "INSERT INTO mentor_availability " + "(mentor_id, month_num, hours) VALUES (?, ?, ?)";
-  private static final String INSERT_MTRSHIP_TYPES =
+  private static final String INSERT_MENTOR_TYPES =
       "INSERT INTO " + "mentor_mentorship_types (mentor_id, mentorship_type) VALUES (?, ?)";
   private static final String SQL_TECH_AREAS_INSERT =
       "INSERT INTO mentor_technical_areas " + "(mentor_id, technical_area_id) VALUES (?, ?)";
@@ -108,7 +108,7 @@ public class MentorMapper {
 
   /** Inserts availability records for the mentor in mentor_availability table. */
   private void insertAvailability(final MenteeSection ms, final Long memberId) {
-    for (final Availability a : ms.availability()) {
+    for (final MentorMonthAvailability a : ms.availability()) {
       jdbc.update(INSERT_AVAILABILITY, memberId, a.month().getValue(), a.hours());
     }
   }
@@ -116,7 +116,7 @@ public class MentorMapper {
   /** Inserts mentorship types for the mentor in mentor_mentorship_types table. */
   private void insertMentorshipTypes(final MenteeSection ms, final Long memberId) {
     for (final MentorshipType mt : ms.mentorshipType()) {
-      jdbc.update(INSERT_MTRSHIP_TYPES, memberId, mt.getMentorshipTypeId());
+      jdbc.update(INSERT_MENTOR_TYPES, memberId, mt.getMentorshipTypeId());
     }
   }
 

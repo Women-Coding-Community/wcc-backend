@@ -24,7 +24,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.MockMvcRequestFactory;
-import com.wcc.platform.service.MentorshipService;
+import com.wcc.platform.service.MentorshipPagesService;
 import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class MentorshipControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean private MentorshipService service;
+  @MockBean private MentorshipPagesService service;
 
   @Test
   void testInternalServerError() throws Exception {

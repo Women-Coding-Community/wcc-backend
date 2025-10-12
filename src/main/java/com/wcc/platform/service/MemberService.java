@@ -4,28 +4,18 @@ import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
-import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MemberRepository;
-import com.wcc.platform.repository.MentorRepository;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /** Platform Service. */
 @Service
-public class PlatformService {
+@AllArgsConstructor
+public class MemberService {
 
   private final MemberRepository memberRepository;
-  private final MentorRepository mentorRepository;
-
-  /** Constructor . */
-  @Autowired
-  public PlatformService(
-      final MemberRepository memberRepository, final MentorRepository mentorRepository) {
-    this.memberRepository = memberRepository;
-    this.mentorRepository = mentorRepository;
-  }
 
   /** Save Member into storage. */
   public Member createMember(final Member member) {
@@ -39,20 +29,6 @@ public class PlatformService {
   }
 
   /**
-   * Create a mentor record.
-   *
-   * @return Mentor record created successfully.
-   */
-  public Mentor create(final Mentor mentor) {
-    final Optional<Mentor> mentorExists = mentorRepository.findById(mentor.getId());
-
-    if (mentorExists.isPresent()) {
-      throw new DuplicatedMemberException(mentorExists.get().getEmail());
-    }
-    return mentorRepository.create(mentor);
-  }
-
-  /**
    * Return all stored members.
    *
    * @return List of members.
@@ -63,19 +39,6 @@ public class PlatformService {
       return List.of();
     }
     return allMembers;
-  }
-
-  /**
-   * Return all stored mentors.
-   *
-   * @return List of mentors.
-   */
-  public List<Mentor> getAllMentors() {
-    final var allMentors = mentorRepository.getAll();
-    if (allMentors == null) {
-      return List.of();
-    }
-    return allMentors;
   }
 
   /**
@@ -100,10 +63,14 @@ public class PlatformService {
    * @return Updated member.
    */
   public Member updateMember(final Long memberId, final MemberDto memberDto) {
+    if (!memberId.equals(memberDto.getId())) {
+      throw new IllegalArgumentException("Member ID does not match the provided memberId");
+    }
+
     final Optional<Member> memberOptional = memberRepository.findById(memberId);
     final var member = memberOptional.orElseThrow(() -> new MemberNotFoundException(memberId));
 
-    final Member updatedMember = mergeToMember(member, memberDto);
+    final Member updatedMember = memberDto.merge(member);
     return memberRepository.update(memberId, updatedMember);
   }
 
@@ -115,26 +82,5 @@ public class PlatformService {
    */
   private Optional<Member> emailExists(final String email) {
     return memberRepository.findByEmail(email);
-  }
-
-  /**
-   * Update member fields using DTO.
-   *
-   * @param member member to be updated
-   * @param memberDto memberDto with updates
-   * @return Updated member
-   */
-  private Member mergeToMember(final Member member, final MemberDto memberDto) {
-    return member.toBuilder()
-        .id(member.getId())
-        .fullName(memberDto.fullName())
-        .position(memberDto.position())
-        .slackDisplayName(memberDto.slackDisplayName())
-        .country(memberDto.country())
-        .city(memberDto.city())
-        .companyName(memberDto.companyName())
-        .images(memberDto.images())
-        .network(memberDto.network())
-        .build();
   }
 }

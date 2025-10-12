@@ -4,8 +4,8 @@ import static ch.qos.logback.core.CoreConstants.EMPTY_STRING;
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.*;
 import static io.swagger.v3.core.util.Constants.COMMA;
 
-import com.wcc.platform.domain.cms.pages.mentorship.Availability;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MenteeSectionRepository;
 import java.time.Month;
@@ -78,11 +78,11 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
         mentorId);
   }
 
-  private List<Availability> loadAvailability(final Long mentorId) {
+  private List<MentorMonthAvailability> loadAvailability(final Long mentorId) {
     return jdbc.query(
         SQL_AVAILABILITY,
         (rs, rowNum) ->
-            new Availability(Month.of(rs.getInt(COLUMN_MONTH)), rs.getInt(COLUMN_HOURS)),
+            new MentorMonthAvailability(Month.of(rs.getInt(COLUMN_MONTH)), rs.getInt(COLUMN_HOURS)),
         mentorId);
   }
 }

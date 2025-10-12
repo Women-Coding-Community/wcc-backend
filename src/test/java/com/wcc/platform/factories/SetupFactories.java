@@ -142,30 +142,28 @@ public class SetupFactories {
   /** Factory test to create MemberDto object. */
   public static MemberDto createMemberDtoTest(final MemberType type) {
     return new MemberDto(
+        1L,
         "fullName updated " + type.name(),
         "position updated " + type.name(),
-        "Slack name updated",
-        new Country("Country code updated", "Country name updated"),
+        new Country("ES", "Spain"),
         "City updated",
         "Company name updated",
-        List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")),
-        List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)));
+        List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)),
+        List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")));
   }
 
   /** Factory test to create new member from combining data from member and memberDto. */
   public static Member createUpdatedMemberTest(final Member member, final MemberDto memberDto) {
     return Member.builder()
         .id(member.getId())
-        .fullName(memberDto.fullName())
-        .position(memberDto.position())
+        .fullName(memberDto.getFullName())
+        .position(memberDto.getPosition())
         .email(member.getEmail())
-        .slackDisplayName(memberDto.slackDisplayName())
-        .country(memberDto.country())
-        .city(memberDto.city())
-        .companyName(memberDto.companyName())
-        .memberTypes(member.getMemberTypes())
-        .images(memberDto.images())
-        .network(memberDto.network())
+        .country(memberDto.getCountry())
+        .city(memberDto.getCity())
+        .companyName(memberDto.getCompanyName())
+        .images(memberDto.getImages())
+        .network(memberDto.getNetwork())
         .build();
   }
 

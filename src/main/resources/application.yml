@@ -16,6 +16,9 @@ spring:
     validate-on-migrate: true
     clean-disabled: false
 
+mentorship:
+  daysCycleOpen: 15
+
 logging:
   level:
     org:

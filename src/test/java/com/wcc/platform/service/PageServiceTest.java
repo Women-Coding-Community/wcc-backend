@@ -49,7 +49,7 @@ class PageServiceTest {
     Object result = pageService.update(pageType, pageEntity);
     assertEquals(pageEntity, result);
 
-    verify(pageRepository).update(eq(pageType.getId()), eq(expectedEntity));
+    verify(pageRepository).update(pageType.getId(), expectedEntity);
   }
 
   @Test

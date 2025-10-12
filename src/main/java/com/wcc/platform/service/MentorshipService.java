@@ -1,154 +1,92 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
-import static com.wcc.platform.domain.cms.PageType.MENTORS;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
-import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.repository.PageRepository;
-import lombok.AllArgsConstructor;
+import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.repository.MentorRepository;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/** Mentorship service. */
-@SuppressWarnings("PMD.TooManyStaticImports")
-@AllArgsConstructor
+/** Platform Service. */
 @Service
 public class MentorshipService {
-  private final ObjectMapper objectMapper;
-  private final PageRepository repository;
-  private final PlatformService service;
 
-  /**
-   * API to retrieve information about mentorship overview.
-   *
-   * @return Mentorship overview page.
-   */
-  public MentorshipPage getOverview() {
-    final var page = repository.findById(MENTORSHIP.getId());
-    if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), MentorshipPage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
-    }
-    return repository.getFallback(MENTORSHIP, MentorshipPage.class, objectMapper);
+  private static final String EUROPE_LONDON = "Europe/London";
+  private static final MentorshipCycle ACTIVE_LONG_TERM =
+      new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+  private static final MentorshipCycle CYCLE_CLOSED = null;
+
+  private final MentorRepository mentorRepository;
+  private final int daysCycleOpen;
+
+  @Autowired
+  public MentorshipService(
+      final MentorRepository mentorRepository,
+      final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
+    this.mentorRepository = mentorRepository;
+    this.daysCycleOpen = daysCycleOpen;
   }
 
   /**
-   * API to retrieve information about mentorship faq.
+   * Create a mentor record.
    *
-   * @return Mentorship faq page.
+   * @return Mentor record created successfully.
    */
-  public MentorshipFaqPage getFaq() {
-    final var page = repository.findById(MENTORSHIP_FAQ.getId());
-    if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), MentorshipFaqPage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
+  public Mentor create(final Mentor mentor) {
+    final Optional<Mentor> mentorExists = mentorRepository.findById(mentor.getId());
+
+    if (mentorExists.isPresent()) {
+      throw new DuplicatedMemberException(mentorExists.get().getEmail());
     }
-    return repository.getFallback(MENTORSHIP_FAQ, MentorshipFaqPage.class, objectMapper);
+    return mentorRepository.create(mentor);
   }
 
   /**
-   * API to retrieve information about mentorship TimeLine.
+   * Return all stored mentors.
    *
-   * @return Mentorship Long-Term TimeLine page.
+   * @return List of mentors.
    */
-  public LongTermTimeLinePage getLongTermTimeLine() {
-    final var page = repository.findById(MENTORSHIP_LONG_TIMELINE.getId());
-    if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), LongTermTimeLinePage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
+  public List<MentorDto> getAllMentors() {
+    final var allMentors = mentorRepository.getAll();
+
+    final var currentCycle = getCurrentCycle();
+    if (currentCycle == CYCLE_CLOSED) {
+      return allMentors.stream().map(Mentor::toDto).toList();
     }
-    return repository.getFallback(
-        MENTORSHIP_LONG_TIMELINE, LongTermTimeLinePage.class, objectMapper);
+
+    return allMentors.stream().map(mentor -> mentor.toDto(currentCycle)).toList();
   }
 
-  /**
-   * API to retrieve information about mentorship code of conduct.
-   *
-   * @return Mentorship code of conduct page.
-   */
-  public MentorshipCodeOfConductPage getCodeOfConduct() {
-    final var page = repository.findById(MENTORSHIP_CONDUCT.getId());
-    if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), MentorshipCodeOfConductPage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
+  /* package */ MentorshipCycle getCurrentCycle() {
+    final ZonedDateTime londonTime = nowLondon();
+    final LocalDate currentDate = londonTime.toLocalDate();
+
+    final var currentMonth = currentDate.getMonth();
+    final int dayOfMonth = currentDate.getDayOfMonth();
+
+    if (currentMonth == Month.MARCH && dayOfMonth <= daysCycleOpen) {
+      return ACTIVE_LONG_TERM;
     }
-    return repository.getFallback(
-        MENTORSHIP_CONDUCT, MentorshipCodeOfConductPage.class, objectMapper);
+
+    if (currentMonth.getValue() >= Month.MAY.getValue()
+        && currentMonth.getValue() <= Month.NOVEMBER.getValue()
+        && dayOfMonth <= daysCycleOpen) {
+      return new MentorshipCycle(MentorshipType.AD_HOC, currentMonth);
+    }
+
+    return CYCLE_CLOSED;
   }
 
-  /**
-   * API to retrieve information about the study groups.
-   *
-   * @return Mentorship study groups page.
-   */
-  public MentorshipStudyGroupsPage getStudyGroups() {
-    final var page = repository.findById(STUDY_GROUPS.getId());
-    if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), MentorshipStudyGroupsPage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
-    }
-    return repository.getFallback(STUDY_GROUPS, MentorshipStudyGroupsPage.class, objectMapper);
-  }
-
-  /**
-   * API to retrieve information about mentors.
-   *
-   * @return Mentors page containing details about mentors.
-   */
-  public MentorsPage getMentorsPage() {
-    final var page = repository.findById(MENTORS.getId());
-    if (page.isPresent()) {
-      try {
-        final var mentorsPage = objectMapper.convertValue(page.get(), MentorsPage.class);
-        return mentorsPage.updateMentors(service.getAllMentors());
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
-    }
-    return repository.getFallback(MENTORS, MentorsPage.class, objectMapper);
-  }
-
-  /**
-   * API to retrieve information about ad hoc timeline.
-   *
-   * @return Mentorship ad hoc timeline page.
-   */
-  public MentorshipAdHocTimelinePage getAdHocTimeline() {
-    final var page = repository.findById(AD_HOC_TIMELINE.getId());
-    if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), MentorshipAdHocTimelinePage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
-    }
-    return repository.getFallback(AD_HOC_TIMELINE, MentorshipAdHocTimelinePage.class, objectMapper);
+  /* package */ ZonedDateTime nowLondon() {
+    return ZonedDateTime.now(ZoneId.of(EUROPE_LONDON));
   }
 }
