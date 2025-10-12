@@ -257,3 +257,10 @@ tasks.named<ProcessResources>("processTestIntResources") {
 }
 
 logging.captureStandardOutput(LogLevel.INFO)
+
+tasks.register("pmdAll") {
+    group = "verification"
+    description = "Runs all PMD checks (main, test, testInt)."
+    dependsOn("pmdMain", "pmdTest", "pmdTestInt")
+}
+
