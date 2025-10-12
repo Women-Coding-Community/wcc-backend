@@ -18,11 +18,11 @@ import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
-import com.wcc.platform.domain.cms.pages.mentorship.Availability;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
@@ -70,7 +70,8 @@ public class SetupMentorshipFactories {
   /** Test factory. */
   public static MentorsPage createMentorPageTest() {
     final String pageId = PageType.MENTORS.getId();
-    return new MentorsPage(pageId, createNoImageHeroSectionTest(), List.of(createMentorTest()));
+    var mentor = createMentorTest();
+    return new MentorsPage(pageId, createNoImageHeroSectionTest(), List.of(mentor.toDto()));
   }
 
   /** Test factory. */
@@ -229,7 +230,7 @@ public class SetupMentorshipFactories {
         .menteeSection(
             new MenteeSection(
                 List.of(MentorshipType.LONG_TERM),
-                List.of(new Availability(Month.APRIL, 2)),
+                List.of(new MentorMonthAvailability(Month.APRIL, 2)),
                 "ideal mentee description",
                 List.of("focus"),
                 "additional"))
@@ -259,7 +260,7 @@ public class SetupMentorshipFactories {
         .menteeSection(
             new MenteeSection(
                 List.of(MentorshipType.LONG_TERM),
-                List.of(new Availability(Month.APRIL, 2)),
+                List.of(new MentorMonthAvailability(Month.APRIL, 2)),
                 "ideal mentee description",
                 List.of("focus"),
                 "additional"))

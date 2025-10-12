@@ -20,10 +20,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class PlatformServiceMemberIntegrationTest extends DefaultDatabaseSetup {
+class MemberServiceMemberIntegrationTest extends DefaultDatabaseSetup {
 
   public static final String MEMBER_EMAIL = "member@wcc.com";
-  @Autowired private PlatformService service;
+  @Autowired private MemberService service;
   @Autowired private MemberRepository repository;
 
   @BeforeEach

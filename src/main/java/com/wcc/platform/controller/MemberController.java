@@ -3,13 +3,15 @@ package com.wcc.platform.controller;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.service.PlatformService;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,14 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
 @Tag(name = "Platform", description = "All platform Internal APIs")
+@AllArgsConstructor
 public class MemberController {
 
-  private final PlatformService platformService;
-
-  @Autowired
-  public MemberController(final PlatformService service) {
-    this.platformService = service;
-  }
+  private final MemberService memberService;
+  private final MentorshipService mentorshipService;
 
   /**
    * API to retrieve information about members.
@@ -45,7 +44,7 @@ public class MemberController {
   @Operation(summary = "API to retrieve a list of all members")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Member>> getAllMembers() {
-    final List<Member> members = platformService.getAllMembers();
+    final List<Member> members = memberService.getAllMembers();
     return ResponseEntity.ok(members);
   }
 
@@ -57,8 +56,8 @@ public class MemberController {
   @GetMapping("/mentors")
   @Operation(summary = "API to retrieve a list of all members")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<Mentor>> getAllMentors() {
-    final List<Mentor> mentors = platformService.getAllMentors();
+  public ResponseEntity<List<MentorDto>> getAllMentors() {
+    final List<MentorDto> mentors = mentorshipService.getAllMentors();
     return ResponseEntity.ok(mentors);
   }
 
@@ -71,7 +70,7 @@ public class MemberController {
   @Operation(summary = "API to submit member registration")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Member> createMember(@RequestBody final Member member) {
-    return new ResponseEntity<>(platformService.createMember(member), HttpStatus.CREATED);
+    return new ResponseEntity<>(memberService.createMember(member), HttpStatus.CREATED);
   }
 
   /**
@@ -83,7 +82,7 @@ public class MemberController {
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Mentor> createMentor(@RequestBody final Mentor mentor) {
-    return new ResponseEntity<>(platformService.create(mentor), HttpStatus.CREATED);
+    return new ResponseEntity<>(mentorshipService.create(mentor), HttpStatus.CREATED);
   }
 
   /**
@@ -98,7 +97,7 @@ public class MemberController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
       @PathVariable final Long memberId, @RequestBody final MemberDto memberDto) {
-    return new ResponseEntity<>(platformService.updateMember(memberId, memberDto), HttpStatus.OK);
+    return new ResponseEntity<>(memberService.updateMember(memberId, memberDto), HttpStatus.OK);
   }
 
   /** Deletes a member. */
@@ -107,7 +106,7 @@ public class MemberController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteMember(
       @Parameter(description = "ID of the member to delete") @PathVariable final Long memberId) {
-    platformService.deleteMember(memberId);
+    memberService.deleteMember(memberId);
     return ResponseEntity.noContent().build();
   }
 }

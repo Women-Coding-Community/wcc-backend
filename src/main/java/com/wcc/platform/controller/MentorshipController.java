@@ -7,7 +7,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
-import com.wcc.platform.service.MentorshipService;
+import com.wcc.platform.service.MentorshipPagesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,10 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Pages: Mentorship", description = "All APIs under session Mentorship")
 public class MentorshipController {
 
-  private final MentorshipService service;
+  private final MentorshipPagesService service;
 
   @Autowired
-  public MentorshipController(final MentorshipService service) {
+  public MentorshipController(final MentorshipPagesService service) {
     this.service = service;
   }
 

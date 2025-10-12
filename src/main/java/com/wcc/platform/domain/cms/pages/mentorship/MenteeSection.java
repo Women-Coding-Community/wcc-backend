@@ -8,7 +8,18 @@ import java.util.List;
 /** Represents the Mentee Section of the Mentorship Page. */
 public record MenteeSection(
     @NotBlank List<MentorshipType> mentorshipType,
-    List<Availability> availability,
+    List<MentorMonthAvailability> availability,
     @NotEmpty String idealMentee,
     List<String> focus,
-    String additional) {}
+    String additional) {
+
+  /**
+   * Converts the current MenteeSection instance into a new MenteeSection DTO.
+   *
+   * @return a new MenteeSection instance containing the same mentorshipType, idealMentee, focus,
+   *     and additional fields, but with an empty availability list.
+   */
+  public MenteeSection toDto() {
+    return new MenteeSection(mentorshipType, List.of(), idealMentee, focus, additional);
+  }
+}

@@ -20,8 +20,10 @@ import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.service.PlatformService;
+import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.MentorshipService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +48,14 @@ class MemberControllerTest {
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private PlatformService platformService;
+  @MockBean private MemberService memberService;
+  @MockBean private MentorshipService mentorshipService;
 
   @Test
   void testGetAllMembersReturnsOk() throws Exception {
     List<Member> mockMembers =
         List.of(createMemberTest(MemberType.MEMBER), createMemberTest(MemberType.VOLUNTEER));
-    when(platformService.getAllMembers()).thenReturn(mockMembers);
+    when(memberService.getAllMembers()).thenReturn(mockMembers);
 
     mockMvc
         .perform(getRequest(API_MEMBERS).contentType(MediaType.APPLICATION_JSON))
@@ -62,8 +65,8 @@ class MemberControllerTest {
 
   @Test
   void testGetAllMentorsReturnsOk() throws Exception {
-    List<Mentor> mockMentors = List.of(createMentorTest("Jane"));
-    when(platformService.getAllMentors()).thenReturn(mockMentors);
+    List<MentorDto> mockMentors = List.of(createMentorTest("Jane").toDto());
+    when(mentorshipService.getAllMentors()).thenReturn(mockMentors);
 
     mockMvc
         .perform(getRequest(API_MENTORS).contentType(MediaType.APPLICATION_JSON))
@@ -76,7 +79,7 @@ class MemberControllerTest {
   @Test
   void testCreateMemberReturnsCreated() throws Exception {
     Member member = createMemberTest(MemberType.MEMBER);
-    when(platformService.createMember(any(Member.class))).thenReturn(member);
+    when(memberService.createMember(any(Member.class))).thenReturn(member);
 
     mockMvc
         .perform(postRequest(API_MEMBERS, member))
@@ -88,8 +91,8 @@ class MemberControllerTest {
 
   @Test
   void testCreateMentorReturnsCreated() throws Exception {
-    Mentor mentor = createMentorTest("Jane");
-    when(platformService.create(any(Mentor.class))).thenReturn(mentor);
+    var mentor = createMentorTest("Jane");
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
 
     mockMvc
         .perform(postRequest(API_MENTORS, mentor))
@@ -104,7 +107,7 @@ class MemberControllerTest {
     Member existingMember = createMemberTest(MemberType.COLLABORATOR);
     MemberDto memberDto = createMemberDtoTest(MemberType.COLLABORATOR);
     Member updated = createUpdatedMemberTest(existingMember, memberDto);
-    when(platformService.updateMember(eq(memberId), any(MemberDto.class))).thenReturn(updated);
+    when(memberService.updateMember(eq(memberId), any(MemberDto.class))).thenReturn(updated);
 
     mockMvc
         .perform(
@@ -121,7 +124,7 @@ class MemberControllerTest {
   @Test
   void testDeleteMemberReturnsNoContent() throws Exception {
     Long memberId = 1L;
-    doNothing().when(platformService).deleteMember(memberId);
+    doNothing().when(memberService).deleteMember(memberId);
 
     mockMvc
         .perform(
@@ -129,6 +132,6 @@ class MemberControllerTest {
                 .header(API_KEY_HEADER, API_KEY_VALUE))
         .andExpect(status().isNoContent());
 
-    verify(platformService).deleteMember(memberId);
+    verify(memberService).deleteMember(memberId);
   }
 }

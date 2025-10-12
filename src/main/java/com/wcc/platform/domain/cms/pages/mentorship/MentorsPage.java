@@ -1,7 +1,7 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
@@ -12,9 +12,9 @@ import java.util.List;
  * @param mentors section to highlight why you apply to a become a mentor
  */
 public record MentorsPage(
-    @NotNull String id, @NotNull HeroSection heroSection, @NotNull List<Mentor> mentors) {
+    @NotNull String id, @NotNull HeroSection heroSection, @NotNull List<MentorDto> mentors) {
 
-  public MentorsPage updateMentors(final List<Mentor> mentors) {
+  public MentorsPage updateMentors(final List<MentorDto> mentors) {
     return new MentorsPage(id, heroSection, mentors);
   }
 }

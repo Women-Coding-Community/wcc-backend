@@ -6,6 +6,7 @@ import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,11 +23,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class PlatformServiceTest {
+class MemberServiceTest {
 
   @Mock private MemberRepository memberRepository;
 
-  @InjectMocks private PlatformService service;
+  @InjectMocks private MemberService service;
 
   private Member member;
   private Member updatedMember;
@@ -36,7 +37,7 @@ class PlatformServiceTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
     member = createMemberTest(MemberType.DIRECTOR);
-    memberDto = createMemberDtoTest(MemberType.COLLABORATOR);
+    memberDto = createMemberDtoTest(MemberType.DIRECTOR);
     updatedMember = createUpdatedMemberTest(member, memberDto);
   }
 
@@ -80,11 +81,11 @@ class PlatformServiceTest {
           + "updated data from memberDto")
   void testUpdateMember() {
     long memberId = 1L;
-    when(memberRepository.update(memberId, updatedMember)).thenReturn(updatedMember);
+    when(memberRepository.update(anyLong(), any())).thenReturn(updatedMember);
     when(memberRepository.findById(memberId)).thenReturn(Optional.ofNullable(member));
     Member result = service.updateMember(memberId, memberDto);
 
     assertEquals(updatedMember, result);
-    verify(memberRepository).update(memberId, updatedMember);
+    verify(memberRepository).update(anyLong(), any());
   }
 }

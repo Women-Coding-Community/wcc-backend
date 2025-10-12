@@ -7,6 +7,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.MentorDto.MentorDtoBuilder;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.resource.MentorResource;
 import jakarta.validation.constraints.Email;
@@ -26,27 +27,15 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
+@SuppressWarnings("PMD.ImmutableField")
 public class Mentor extends Member {
 
-  @SuppressWarnings("PMD.ImmutableField")
   private @NotBlank ProfileStatus profileStatus;
-
-  @SuppressWarnings("PMD.ImmutableField")
   private @NotBlank Skills skills;
-
-  @SuppressWarnings("PMD.ImmutableField")
   private List<String> spokenLanguages;
-
-  @SuppressWarnings("PMD.ImmutableField")
   private @NotBlank String bio;
-
-  @SuppressWarnings("PMD.ImmutableField")
-  private @NotBlank MenteeSection menteeSection;
-
-  @SuppressWarnings("PMD.ImmutableField")
+  private @NotNull MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
-
-  @SuppressWarnings("PMD.ImmutableField")
   private MentorResource resources;
 
   /** Mentor Builder. */
@@ -90,5 +79,58 @@ public class Mentor extends Member {
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
+  }
+
+  /**
+   * Converts this Mentor entity and an optional active MentorshipCycle into a MentorDto
+   * representation.
+   *
+   * @param mentorshipCycle an optional MentorshipCycle representing the active mentorship cycle
+   * @return a MentorDto containing the mentor's details and availability information
+   */
+  public MentorDto toDto(final MentorshipCycle mentorshipCycle) {
+    final var mentor = this;
+    final var mentorBuilder = buildFromMentor(mentor);
+
+    if (mentor.getMenteeSection().mentorshipType().contains(mentorshipCycle.cycle())) {
+
+      final var isAvailable =
+          mentor.getMenteeSection().availability().stream()
+              .filter(availability -> availability.month() == mentorshipCycle.month())
+              .findAny();
+
+      mentorBuilder.availability(
+          new MentorAvailability(mentorshipCycle.cycle(), isAvailable.isPresent()));
+    }
+
+    return mentorBuilder.build();
+  }
+
+  /**
+   * Converts this Mentor entity into a MentorDto representation when no mentorship cycle is active.
+   *
+   * @return a MentorDto object constructed from the provided Mentor entity
+   */
+  public MentorDto toDto() {
+    return buildFromMentor(this).build();
+  }
+
+  private MentorDtoBuilder buildFromMentor(final Mentor mentor) {
+    return MentorDto.mentorDtoBuilder()
+        .id(mentor.getId())
+        .availability(null)
+        .fullName(mentor.getFullName())
+        .position(mentor.getPosition())
+        .country(mentor.getCountry())
+        .city(mentor.getCity())
+        .companyName(mentor.getCompanyName())
+        .images(mentor.getImages())
+        .network(mentor.getNetwork())
+        .spokenLanguages(mentor.getSpokenLanguages())
+        .bio(mentor.getBio())
+        .skills(mentor.getSkills())
+        .menteeSection(mentor.getMenteeSection().toDto())
+        .feedbackSection(mentor.getFeedbackSection())
+        .resources(mentor.getResources());
   }
 }
