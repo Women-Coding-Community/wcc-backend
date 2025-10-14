@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
@@ -20,10 +21,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class MentorshipService {
 
+  /* package */ static final MentorshipCycle CYCLE_CLOSED = new MentorshipCycle(null, null);
+
   private static final String EUROPE_LONDON = "Europe/London";
   private static final MentorshipCycle ACTIVE_LONG_TERM =
       new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
-  private static final MentorshipCycle CYCLE_CLOSED = null;
 
   private final MentorRepository mentorRepository;
   private final int daysCycleOpen;
@@ -55,10 +57,25 @@ public class MentorshipService {
    *
    * @return List of mentors.
    */
+  public MentorsPage getMentorsPage(final MentorsPage mentorsPage) {
+    final var currentCycle = getCurrentCycle();
+    final var allMentors = getAllMentors(currentCycle);
+
+    return mentorsPage.updateUpdate(currentCycle.toOpenCycle(), allMentors);
+  }
+
+  /**
+   * Return all stored mentors in the current cycle.
+   *
+   * @return List of mentors.
+   */
   public List<MentorDto> getAllMentors() {
+    return getAllMentors(getCurrentCycle());
+  }
+
+  private List<MentorDto> getAllMentors(final MentorshipCycle currentCycle) {
     final var allMentors = mentorRepository.getAll();
 
-    final var currentCycle = getCurrentCycle();
     if (currentCycle == CYCLE_CLOSED) {
       return allMentors.stream().map(Mentor::toDto).toList();
     }

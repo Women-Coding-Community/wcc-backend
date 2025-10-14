@@ -123,9 +123,10 @@ class MemberServiceTest {
       "Given member does not exist When try to delete member "
           + "Then throws MemberNotFoundException ")
   void deleteUserThrowsException() {
-    when(memberRepository.findById(memberDto.getId())).thenReturn(Optional.empty());
+    Long memberId = memberDto.getId();
+    when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
-    assertThrows(MemberNotFoundException.class, () -> service.deleteMember(memberDto.getId()));
+    assertThrows(MemberNotFoundException.class, () -> service.deleteMember(memberId));
 
     verify(memberRepository, never()).deleteById(any());
   }

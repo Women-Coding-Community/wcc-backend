@@ -33,10 +33,10 @@ import com.wcc.platform.domain.cms.pages.mentorship.StudyGroup;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.domain.resource.MentorResource;
 import com.wcc.platform.utils.FileUtil;
 import java.time.Month;
 import java.time.Year;
@@ -71,7 +71,7 @@ public class SetupMentorshipFactories {
   public static MentorsPage createMentorPageTest() {
     final String pageId = PageType.MENTORS.getId();
     var mentor = createMentorTest();
-    return new MentorsPage(pageId, createNoImageHeroSectionTest(), List.of(mentor.toDto()));
+    return new MentorsPage(pageId, createNoImageHeroSectionTest(), null, List.of(mentor.toDto()));
   }
 
   /** Test factory. */
@@ -209,61 +209,46 @@ public class SetupMentorshipFactories {
   /** Mentor Builder. */
   public static Mentor createMentorTest() {
     final Member member = createMemberTest(MemberType.MENTOR);
-    return Mentor.mentorBuilder()
-        .id(1L)
-        .fullName(member.getFullName())
-        .position(member.getPosition())
-        .email(member.getEmail())
-        .slackDisplayName(member.getSlackDisplayName())
-        .country(member.getCountry())
-        .city(member.getCity())
-        .companyName(member.getCompanyName())
-        .images(member.getImages())
-        .network(member.getNetwork())
-        .profileStatus(ProfileStatus.ACTIVE)
-        .bio("Mentor bio")
-        .skills(
-            new Skills(
-                2,
-                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                List.of(Languages.JAVASCRIPT)))
-        .menteeSection(
-            new MenteeSection(
-                List.of(MentorshipType.LONG_TERM),
-                List.of(new MentorMonthAvailability(Month.APRIL, 2)),
-                "ideal mentee description",
-                List.of("focus"),
-                "additional"))
-        .spokenLanguages(List.of("English", "Spanish"))
-        .feedbackSection(createFeedbackSectionTest())
-        .resources(MentorResource.builder().id("1").build())
-        .build();
+    return createMentorTest(1L, member.getFullName(), member.getEmail());
+  }
+
+  /** Test factory for Mentor. */
+  public static Mentor createMentorTest(
+      final Long mentorId, final String name, final String email) {
+    final Member member = createMemberTest(MemberType.MENTOR);
+
+    MentorBuilder mentorBuilder =
+        Mentor.mentorBuilder()
+            .fullName(name)
+            .position(member.getPosition())
+            .email(email)
+            .slackDisplayName(member.getSlackDisplayName())
+            .country(member.getCountry())
+            .images(member.getImages())
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("Mentor bio")
+            .spokenLanguages(List.of("English"))
+            .skills(
+                new Skills(
+                    2,
+                    List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
+                    List.of(Languages.JAVASCRIPT)))
+            .menteeSection(
+                new MenteeSection(
+                    List.of(MentorshipType.LONG_TERM),
+                    List.of(new MentorMonthAvailability(Month.APRIL, 2)),
+                    "ideal mentee description",
+                    List.of("focus"),
+                    "additional"));
+    if (mentorId != null) {
+      mentorBuilder.id(mentorId);
+    }
+
+    return mentorBuilder.build();
   }
 
   /** Mentor Builder. */
   public static Mentor createMentorTest(final String mentorName) {
-    final Member member = createMemberTest(MemberType.MENTOR);
-    return Mentor.mentorBuilder()
-        .id(1L)
-        .fullName(mentorName)
-        .position(member.getPosition())
-        .email(member.getEmail())
-        .country(member.getCountry())
-        .images(member.getImages())
-        .profileStatus(ProfileStatus.ACTIVE)
-        .bio("Mentor bio")
-        .skills(
-            new Skills(
-                2,
-                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                List.of(Languages.JAVASCRIPT)))
-        .menteeSection(
-            new MenteeSection(
-                List.of(MentorshipType.LONG_TERM),
-                List.of(new MentorMonthAvailability(Month.APRIL, 2)),
-                "ideal mentee description",
-                List.of("focus"),
-                "additional"))
-        .build();
+    return createMentorTest(1L, mentorName, "member@wcc.com");
   }
 }

@@ -17,7 +17,7 @@ spring:
     clean-disabled: false
 
 mentorship:
-  daysCycleOpen: 15
+  daysCycleOpen: 10
 
 logging:
   level:

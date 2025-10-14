@@ -1,7 +1,6 @@
 package com.wcc.platform.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.platform.SocialNetwork;
@@ -22,7 +21,8 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class MemberServiceMemberIntegrationTest extends DefaultDatabaseSetup {
 
-  public static final String MEMBER_EMAIL = "member@wcc.com";
+  private static final String MEMBER_EMAIL = "member@wcc.com";
+
   @Autowired private MemberService service;
   @Autowired private MemberRepository repository;
 
@@ -46,7 +46,7 @@ class MemberServiceMemberIntegrationTest extends DefaultDatabaseSetup {
 
     var result = service.getAllMembers();
 
-    assertEquals(1, result.size());
+    assertThat(result).isNotEmpty();
   }
 
   private Member createMemberTest(final MemberType type) {

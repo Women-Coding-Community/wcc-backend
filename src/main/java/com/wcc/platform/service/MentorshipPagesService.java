@@ -127,7 +127,7 @@ public class MentorshipPagesService {
     if (page.isPresent()) {
       try {
         final var mentorsPage = objectMapper.convertValue(page.get(), MentorsPage.class);
-        return mentorsPage.updateMentors(service.getAllMentors());
+        return service.getMentorsPage(mentorsPage);
       } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
