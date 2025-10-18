@@ -15,10 +15,9 @@ public final class MentorConstants {
   public static final String COLUMN_ADDITIONAL = "additional";
 
   // OTHERS
-  public static final String COL_MTRSHIP_TYPE_ID = "mentorship_type_id";
+  public static final String COL_MENTORSHIP_TYPE = "mentorship_type";
   public static final String COLUMN_MONTH = "month_num";
   public static final String COLUMN_HOURS = "hours";
-  public static final String COLUMN_YEARS_EXP = "years_experience";
 
   private MentorConstants() {}
 }
