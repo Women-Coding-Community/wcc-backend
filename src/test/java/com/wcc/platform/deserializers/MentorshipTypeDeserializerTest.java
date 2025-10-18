@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class LanguageDeserializerTest {
+class MentorshipTypeDeserializerTest {
   @Mock private JsonParser jsonParser;
 
   @Mock private DeserializationContext context;
 
-  @InjectMocks private LanguageDeserializer deserializer;
+  @InjectMocks private MentorshipTypeDeserializer deserializer;
 
   @BeforeEach
   void setUp() {
@@ -28,9 +28,9 @@ class LanguageDeserializerTest {
   }
 
   @ParameterizedTest
-  @EnumSource(Languages.class)
-  void testDeserialize(final Languages type) throws IOException {
-    when(jsonParser.getText()).thenReturn(type.getName());
+  @EnumSource(MentorshipType.class)
+  void testDeserialize(final MentorshipType type) throws IOException {
+    when(jsonParser.getText()).thenReturn(type.toString());
 
     var response = deserializer.deserialize(jsonParser, context);
 
@@ -43,6 +43,6 @@ class LanguageDeserializerTest {
 
     var response = deserializer.deserialize(jsonParser, context);
 
-    assertEquals(Languages.OTHER, response);
+    assertEquals(MentorshipType.AD_HOC, response);
   }
 }

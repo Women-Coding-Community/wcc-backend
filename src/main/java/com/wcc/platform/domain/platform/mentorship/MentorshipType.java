@@ -13,10 +13,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MentorshipType {
-  AD_HOC(1),
-  LONG_TERM(2);
+  AD_HOC(1, "Ad-Hoc"),
+  LONG_TERM(2, "Long-Term");
 
   private final int mentorshipTypeId;
+  private final String description;
 
   /** Get MentorshipType from its ID. */
   public static MentorshipType fromId(final int typeId) {
@@ -24,5 +25,10 @@ public enum MentorshipType {
         .filter(type -> type.mentorshipTypeId == typeId)
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Unknown MentorshipType id: " + typeId));
+  }
+
+  @Override
+  public String toString() {
+    return description;
   }
 }

@@ -59,7 +59,7 @@ class MentorMapperTest {
     when(resultSet.getString(COLUMN_SPOKEN_LANG)).thenReturn("English,Spanish");
     when(resultSet.getString(COLUMN_BIO)).thenReturn("Experienced mentor");
     when(memberRepository.findById(mentorId)).thenReturn(Optional.of(member));
-    when(skillsRepository.findByMentorId(mentorId)).thenReturn(Optional.of(skills));
+    when(skillsRepository.findSkills(mentorId)).thenReturn(Optional.of(skills));
     when(menteeSectionRepository.findByMentorId(mentorId)).thenReturn(Optional.of(menteeSection));
 
     Mentor mentor = mentorMapper.mapRowToMentor(resultSet);

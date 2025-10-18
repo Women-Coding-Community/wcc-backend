@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -71,7 +72,9 @@ public class MentorshipController {
   @GetMapping("/mentors")
   @Operation(summary = "API to retrieve mentors page")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorsPage> getMentors() {
+  public ResponseEntity<MentorsPage> getMentors(
+      @RequestParam(defaultValue = "1") final int currentPage,
+      @RequestParam(defaultValue = "0") final int pageSize) {
     return ResponseEntity.ok(service.getMentorsPage());
   }
 

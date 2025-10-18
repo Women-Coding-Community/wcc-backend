@@ -16,7 +16,10 @@ public class LanguageDeserializer extends JsonDeserializer<Languages> {
       final var value = jsonParser.getText();
 
       return Arrays.stream(Languages.values())
-          .filter(languages -> languages.name().equalsIgnoreCase(value))
+          .filter(
+              language ->
+                  language.getName().equalsIgnoreCase(value)
+                      || language.name().equalsIgnoreCase(value))
           .findFirst()
           .orElse(Languages.OTHER);
 

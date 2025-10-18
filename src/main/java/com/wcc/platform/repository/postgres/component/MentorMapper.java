@@ -10,6 +10,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
@@ -50,26 +51,34 @@ public class MentorMapper {
   /** Maps a ResultSet row to a Mentor object. */
   public Mentor mapRowToMentor(final ResultSet rs) throws SQLException {
     final long mentorId = rs.getLong(COLUMN_MENTOR_ID);
+    final MentorBuilder builder = Mentor.mentorBuilder();
 
     final Optional<Member> memberOpt = memberRepository.findById(mentorId);
-    final Member member = memberOpt.get();
 
-    return Mentor.mentorBuilder()
+    memberOpt.ifPresent(
+        member ->
+            builder
+                .fullName(member.getFullName())
+                .position(member.getPosition())
+                .email(member.getEmail())
+                .slackDisplayName(member.getSlackDisplayName())
+                .country(member.getCountry())
+                .city(member.getCity())
+                .companyName(member.getCompanyName())
+                .images(member.getImages())
+                .network(member.getNetwork()));
+
+    final var skillsMentor = skillsRepository.findSkills(mentorId);
+    skillsMentor.ifPresent(builder::skills);
+
+    final var menteeSection = menteeSectionRepo.findByMentorId(mentorId);
+    menteeSection.ifPresent(builder::menteeSection);
+
+    return builder
         .id(mentorId)
-        .fullName(member.getFullName())
-        .position(member.getPosition())
-        .email(member.getEmail())
-        .slackDisplayName(member.getSlackDisplayName())
-        .country(member.getCountry())
-        .city(member.getCity())
-        .companyName(member.getCompanyName())
-        .images(member.getImages())
-        .network(member.getNetwork())
         .profileStatus(ProfileStatus.fromId(rs.getInt(COLUMN_PROFILE_STATUS)))
-        .skills(skillsRepository.findByMentorId(mentorId).get())
         .spokenLanguages(List.of(rs.getString(COLUMN_SPOKEN_LANG).split(COMMA)))
         .bio(rs.getString(COLUMN_BIO))
-        .menteeSection(menteeSectionRepo.findByMentorId(mentorId).get())
         .build();
   }
 
@@ -80,7 +89,7 @@ public class MentorMapper {
     insertSkills(mentor, memberId);
   }
 
-  /** Inserts mentor-specific details into the mentors table. */
+  /** Inserts mentor-specific details into the mentor. */
   private void insertMentor(final Mentor mentor, final Long memberId) {
     final var profileStatus = mentor.getProfileStatus();
     final var skills = mentor.getSkills();
@@ -94,7 +103,7 @@ public class MentorMapper {
         true);
   }
 
-  /** Inserts the mentee section details for the mentor in mentor_mentee_section table. */
+  /** Inserts the mentee section details for the mentor. */
   private void insertMenteeSection(final MenteeSection menteeSec, final Long memberId) {
     jdbc.update(
         INSERT_MENTOR_MENTEE,

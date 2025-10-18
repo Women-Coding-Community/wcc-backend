@@ -17,11 +17,13 @@ import com.wcc.platform.domain.cms.attributes.FaqItem;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.ListSection;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
@@ -71,7 +73,12 @@ public class SetupMentorshipFactories {
   public static MentorsPage createMentorPageTest() {
     final String pageId = PageType.MENTORS.getId();
     var mentor = createMentorTest();
-    return new MentorsPage(pageId, createNoImageHeroSectionTest(), null, List.of(mentor.toDto()));
+    var filters =
+        MentorFilterSection.builder()
+            .types(List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC))
+            .build();
+    return new MentorsPage(
+        pageId, createNoImageHeroSectionTest(), null, filters, List.of(mentor.toDto()));
   }
 
   /** Test factory. */
@@ -232,7 +239,8 @@ public class SetupMentorshipFactories {
                 new Skills(
                     2,
                     List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                    List.of(Languages.JAVASCRIPT)))
+                    List.of(Languages.JAVASCRIPT),
+                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
             .menteeSection(
                 new MenteeSection(
                     List.of(MentorshipType.LONG_TERM),
