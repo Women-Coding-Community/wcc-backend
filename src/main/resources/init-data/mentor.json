@@ -31,6 +31,10 @@
       "java",
       "javascript",
       "python"
+    ],
+    "mentorshipFocus": [
+      "Grow from beginner to mid-level",
+      "Grow beyond senior level"
     ]
   },
   "spokenLanguages": [
@@ -51,9 +55,6 @@
       }
     ],
     "idealMentee": "Someone willing to learn new technologies or to improve current skills",
-    "focus": [
-      "Grow from mid-level to senior-level"
-    ],
     "additional": "Spring Boot and Best Practices"
   },
   "feedbackSection": {

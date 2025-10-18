@@ -42,11 +42,11 @@ class MentorTest {
   void testToString() {
     final var expected =
         "Mentor(profileStatus=ACTIVE, skills=Skills[yearsExperience=2, areas=[Backend, Frontend], "
-            + "languages=[JAVASCRIPT], mentorshipFocus=[Grow from beginner to mid-level]], "
+            + "languages=[Javascript], mentorshipFocus=[Grow from beginner to mid-level]], "
             + "spokenLanguages=[English], bio=Mentor bio, "
-            + "menteeSection=MenteeSection[mentorshipType=[LONG_TERM], "
+            + "menteeSection=MenteeSection[mentorshipType=[Long-Term], "
             + "availability=[MentorMonthAvailability[month=APRIL, hours=2]], "
-            + "idealMentee=ideal mentee description, focus=[focus], "
+            + "idealMentee=ideal mentee description, "
             + "additional=additional], feedbackSection=null, resources=null)";
     assertEquals(expected, mentor.toString());
   }

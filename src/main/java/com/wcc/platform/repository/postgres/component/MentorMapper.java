@@ -109,7 +109,7 @@ public class MentorMapper {
         INSERT_MENTOR_MENTEE,
         memberId,
         menteeSec.idealMentee(),
-        String.join(",", menteeSec.focus()),
+        String.join(","),
         menteeSec.additional());
     insertAvailability(menteeSec, memberId);
     insertMentorshipTypes(menteeSec, memberId);

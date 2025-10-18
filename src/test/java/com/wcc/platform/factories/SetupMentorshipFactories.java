@@ -246,7 +246,6 @@ public class SetupMentorshipFactories {
                     List.of(MentorshipType.LONG_TERM),
                     List.of(new MentorMonthAvailability(Month.APRIL, 2)),
                     "ideal mentee description",
-                    List.of("focus"),
                     "additional"));
     if (mentorId != null) {
       mentorBuilder.id(mentorId);
