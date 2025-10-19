@@ -12,6 +12,7 @@ import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorsh
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -136,11 +137,31 @@ public class MentorshipControllerTest {
   void testMentorsOkResponse() throws Exception {
     MentorsPage mentorsPage = createMentorPageTest();
 
-    when(service.getMentorsPage()).thenReturn(mentorsPage);
+    when(service.getMentorsPage(any())).thenReturn(mentorsPage);
 
     mockMvc
         .perform(
             MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
+  }
+
+  @Test
+  void testMentorsWithFiltersOkResponse() throws Exception {
+    MentorsPage mentorsPage = createMentorPageTest();
+
+    when(service.getMentorsPage(any())).thenReturn(mentorsPage);
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS)
+                .param("keyword", "Alice")
+                .param("yearsExperience", "3")
+                .param("mentorshipTypes", "AD_HOC")
+                .param("areas", "BACKEND")
+                .param("languages", "JAVA")
+                .param("focus", "GROW_MID_TO_SENIOR")
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
   }

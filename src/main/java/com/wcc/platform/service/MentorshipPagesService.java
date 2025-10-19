@@ -10,6 +10,7 @@ import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
@@ -122,6 +123,25 @@ public class MentorshipPagesService {
    *
    * @return Mentors page containing details about mentors.
    */
+  public MentorsPage getMentorsPage(final MentorAppliedFilters filters) {
+
+    final var page = repository.findById(MENTORS.getId());
+    if (page.isPresent()) {
+      try {
+        final var mentorsPage = objectMapper.convertValue(page.get(), MentorsPage.class);
+        return service.getMentorsPage(mentorsPage, filters);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    return repository.getFallback(MENTORS, MentorsPage.class, objectMapper);
+  }
+
+  /**
+   * API to retrieve information about ad hoc timeline.
+   *
+   * @return Mentorship ad hoc timeline page.
+   */
   public MentorsPage getMentorsPage() {
     final var page = repository.findById(MENTORS.getId());
     if (page.isPresent()) {
@@ -135,11 +155,6 @@ public class MentorshipPagesService {
     return repository.getFallback(MENTORS, MentorsPage.class, objectMapper);
   }
 
-  /**
-   * API to retrieve information about ad hoc timeline.
-   *
-   * @return Mentorship ad hoc timeline page.
-   */
   public MentorshipAdHocTimelinePage getAdHocTimeline() {
     final var page = repository.findById(AD_HOC_TIMELINE.getId());
     if (page.isPresent()) {

@@ -1,16 +1,22 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.service.MentorshipPagesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,13 +75,32 @@ public class MentorshipController {
     return ResponseEntity.ok(service.getStudyGroups());
   }
 
+  /**
+   * Retrieves a paginated list of mentors based on the specified filters.
+   *
+   * @param keyword an optional search keyword to filter by mentor name or description
+   * @param mentorshipTypes an optional list of mentorship types to filter mentors by
+   * @param yearsExperience an optional number to filter mentors by minimum years of experience
+   * @param areas an optional list of technical areas to filter mentors by
+   * @param languages an optional list of languages to filter mentors by
+   * @param focus an optional list of focus areas to filter mentors by
+   * @return a {@code ResponseEntity} containing a {@code MentorsPage} object with the filtered list
+   *     of mentors
+   */
   @GetMapping("/mentors")
   @Operation(summary = "API to retrieve mentors page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorsPage> getMentors(
-      @RequestParam(defaultValue = "1") final int currentPage,
-      @RequestParam(defaultValue = "0") final int pageSize) {
-    return ResponseEntity.ok(service.getMentorsPage());
+      final @RequestParam(required = false) String keyword,
+      final @RequestParam(required = false) List<MentorshipType> mentorshipTypes,
+      final @RequestParam(required = false) Integer yearsExperience,
+      final @RequestParam(required = false) List<TechnicalArea> areas,
+      final @RequestParam(required = false) List<Languages> languages,
+      final @RequestParam(required = false) List<MentorshipFocusArea> focus) {
+    final var filters =
+        new MentorAppliedFilters(
+            keyword, mentorshipTypes, yearsExperience, areas, languages, focus);
+    return ResponseEntity.ok(service.getMentorsPage(filters));
   }
 
   @GetMapping("/ad-hoc-timeline")

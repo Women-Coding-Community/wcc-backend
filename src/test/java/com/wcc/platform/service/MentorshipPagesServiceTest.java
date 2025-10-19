@@ -34,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings("unchecked")
 class MentorshipPagesServiceTest {
   private ObjectMapper objectMapper;
   private PageRepository pageRepository;
@@ -50,7 +51,6 @@ class MentorshipPagesServiceTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   void whenGetOverviewGivenRecordExistingInDatabaseThenReturnValidResponse() {
     var page = createMentorshipPageTest();
     var mapPage =

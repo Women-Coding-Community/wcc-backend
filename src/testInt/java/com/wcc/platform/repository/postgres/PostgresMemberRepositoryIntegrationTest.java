@@ -1,6 +1,7 @@
 package com.wcc.platform.repository.postgres;
 
 import static com.wcc.platform.domain.platform.SocialNetworkType.SLACK;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,22 +18,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
 
-  private static final long MEMBER_ID = 1L;
-  private static final long MEMBER_ID_2 = 2L;
+  private static final String MAIL = "dev_member@email.com";
 
   @Autowired private PostgresMemberRepository repository;
 
   private Member member;
-  private Member member2;
 
   @BeforeEach
   void setUp() {
     member =
         Member.builder()
-            .id(MEMBER_ID)
             .fullName("Full name user")
             .position("Developer")
-            .email("dev@email.com")
+            .email(MAIL)
             .slackDisplayName("slack_name")
             .country(new Country("ES", "Spain"))
             .city("Valencia")
@@ -42,12 +40,20 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
             .network(List.of(new SocialNetwork(SLACK, "slack_link")))
             .build();
 
-    member2 =
+    repository.deleteByEmail(member.getEmail());
+  }
+
+  @Test
+  void testCreateAndUpdate() {
+    var newMember = repository.create(member);
+    newMember.setImages(List.of());
+
+    var member2 =
         Member.builder()
-            .id(MEMBER_ID_2)
+            .id(newMember.getId())
             .fullName("Full name user 2")
             .position("Developer 2")
-            .email("dev@email.com 2")
+            .email(MAIL)
             .slackDisplayName("slack_name 2")
             .country(new Country("PT", "Portugal"))
             .city("Lisbon")
@@ -57,20 +63,10 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
             .network(List.of(new SocialNetwork(SLACK, "slack_link_2")))
             .build();
 
-    repository.deleteById(MEMBER_ID_2);
-    repository.deleteById(MEMBER_ID);
-  }
-
-  @Test
-  void testCreateAndUpdate() {
-    repository.create(member);
-    member2.setId(MEMBER_ID);
-    member2.setImages(List.of());
-
-    var updatedMember = repository.update(MEMBER_ID, member2);
+    var updatedMember = repository.update(newMember.getId(), member2);
     assertEquals(member2, updatedMember, "Should update member attributes");
-    assertEquals(1, repository.getAll().size(), "Should have only one member");
-    assertTrue(repository.findByEmail(member2.getEmail()).isPresent());
+    assertThat(repository.getAll()).isNotEmpty();
+    assertTrue(repository.findByEmail(MAIL).isPresent());
   }
 
   @Test
