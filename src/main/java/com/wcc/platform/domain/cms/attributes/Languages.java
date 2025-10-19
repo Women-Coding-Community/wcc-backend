@@ -1,9 +1,15 @@
 package com.wcc.platform.domain.cms.attributes;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/* Allowed Programming languages. */
+/**
+ * Enum representing various programming languages.
+ *
+ * <p>Each enum instance represents a programming language with a specific name and an associated
+ * unique identifier.
+ */
 @Getter
 @AllArgsConstructor
 public enum Languages {
@@ -25,12 +31,21 @@ public enum Languages {
   private final int langId;
 
   /** Find Language by name. */
-  public static Languages fromName(final String name) {
+  public static Languages fromId(final int languageId) {
     for (final Languages lang : values()) {
-      if (lang.name.equalsIgnoreCase(name)) {
+      if (lang.langId == languageId) {
         return lang;
       }
     }
-    throw new IllegalArgumentException("Unknown Language: " + name);
+    return OTHER;
+  }
+
+  public static List<Languages> getAll() {
+    return List.of(values());
+  }
+
+  @Override
+  public String toString() {
+    return name;
   }
 }

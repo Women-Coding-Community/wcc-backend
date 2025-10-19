@@ -12,16 +12,12 @@ public final class MentorConstants {
 
   // MENTOR_MENTEE_SECTION table
   public static final String COLUMN_IDEAL_MENTEE = "ideal_mentee";
-  public static final String COLUMN_FOCUS = "focus";
   public static final String COLUMN_ADDITIONAL = "additional";
 
   // OTHERS
-  public static final String COL_MTRSHIP_TYPE_ID = "mentorship_type_id";
+  public static final String COL_MENTORSHIP_TYPE = "mentorship_type";
   public static final String COLUMN_MONTH = "month_num";
   public static final String COLUMN_HOURS = "hours";
-  public static final String COLUMN_YEARS_EXP = "years_experience";
-  public static final String COLUMN_TECH_AREAS = "technical_areas";
-  public static final String COLUMN_LANGUAGES = "languages";
 
   private MentorConstants() {}
 }

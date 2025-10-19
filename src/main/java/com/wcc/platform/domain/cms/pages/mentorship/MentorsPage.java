@@ -9,17 +9,21 @@ import java.util.List;
 /**
  * CMS Mentors Page details.
  *
- * @param heroSection hero section to be shown on mentors page
- * @param mentors section to highlight why you apply to a become a mentor
+ * @param heroSection hero section to be shown on the mentors page
+ * @param mentors section to highlight why you apply to become a mentor
  */
 public record MentorsPage(
     @NotNull String id,
     @NotNull HeroSection heroSection,
     OpenCycle openCycle,
+    MentorFilterSection filterSection,
     @NotNull List<MentorDto> mentors) {
 
-  public MentorsPage updateUpdate(final OpenCycle openCycle, final List<MentorDto> mentors) {
-    return new MentorsPage(id, heroSection, openCycle, mentors);
+  public MentorsPage updateUpdate(
+      final OpenCycle openCycle,
+      final MentorFilterSection filterSection,
+      final List<MentorDto> mentors) {
+    return new MentorsPage(id, heroSection, openCycle, filterSection, mentors);
   }
 
   /**

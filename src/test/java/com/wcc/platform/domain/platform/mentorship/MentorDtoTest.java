@@ -34,7 +34,7 @@ class MentorDtoTest {
             .id(1L)
             .build();
     var expected =
-        "MentorDto(availability=MentorAvailability[mentorshipType=AD_HOC, available=true]"
+        "MentorDto(availability=MentorAvailability[mentorshipType=Ad-Hoc, available=true]"
             + ", skills=null, spokenLanguages=[English, Spanish], bio=bio info, menteeSection=null,"
             + " feedbackSection=null, resources=null)";
 

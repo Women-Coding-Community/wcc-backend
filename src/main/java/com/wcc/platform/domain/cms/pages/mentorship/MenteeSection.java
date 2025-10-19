@@ -10,7 +10,6 @@ public record MenteeSection(
     @NotBlank List<MentorshipType> mentorshipType,
     List<MentorMonthAvailability> availability,
     @NotEmpty String idealMentee,
-    List<String> focus,
     String additional) {
 
   /**
@@ -20,6 +19,6 @@ public record MenteeSection(
    *     and additional fields, but with an empty availability list.
    */
   public MenteeSection toDto() {
-    return new MenteeSection(mentorshipType, List.of(), idealMentee, focus, additional);
+    return new MenteeSection(mentorshipType, List.of(), idealMentee, additional);
   }
 }

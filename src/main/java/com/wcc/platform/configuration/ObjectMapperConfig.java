@@ -10,12 +10,15 @@ import com.wcc.platform.deserializers.*;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.attributes.style.ColorShadeType;
 import com.wcc.platform.domain.cms.attributes.style.ColorType;
 import com.wcc.platform.domain.platform.SocialNetworkType;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ProgramType;
+import com.wcc.platform.serializer.CapitalizeEnumFromStringSerializer;
 import com.wcc.platform.serializer.CapitalizeEnumSerializer;
 import com.wcc.platform.serializer.LowerCaseEnumSerializer;
 import java.time.ZonedDateTime;
@@ -56,8 +59,10 @@ public class ObjectMapperConfig {
                 .addSerializer(ImageType.class, new LowerCaseEnumSerializer())
                 .addSerializer(ColorType.class, new LowerCaseEnumSerializer())
                 .addSerializer(ColorShadeType.class, new LowerCaseEnumSerializer())
-                .addSerializer(Languages.class, new LowerCaseEnumSerializer())
-                .addSerializer(TechnicalArea.class, new LowerCaseEnumSerializer())
+                .addSerializer(Languages.class, new CapitalizeEnumFromStringSerializer())
+                .addSerializer(TechnicalArea.class, new CapitalizeEnumFromStringSerializer())
+                .addSerializer(MentorshipFocusArea.class, new CapitalizeEnumFromStringSerializer())
+                .addSerializer(MentorshipType.class, new CapitalizeEnumFromStringSerializer())
                 .addSerializer(SocialNetworkType.class, new LowerCaseEnumSerializer())
                 .addSerializer(MemberType.class, new CapitalizeEnumSerializer())
                 .addDeserializer(ProgramType.class, new ProgramTypeDeserializer())
@@ -67,6 +72,8 @@ public class ObjectMapperConfig {
                 .addDeserializer(ImageType.class, new ImageTypeDeserializer())
                 .addDeserializer(Languages.class, new LanguageDeserializer())
                 .addDeserializer(TechnicalArea.class, new TechnicalAreaDeserializer())
+                .addDeserializer(MentorshipFocusArea.class, new MentorshipFocusAreaDeserializer())
+                .addDeserializer(MentorshipType.class, new MentorshipTypeDeserializer())
                 .addDeserializer(CmsIcon.class, new CmsIconDeserializer())
                 .addDeserializer(SocialNetworkType.class, new SocialNetworkTypeDeserializer()));
   }

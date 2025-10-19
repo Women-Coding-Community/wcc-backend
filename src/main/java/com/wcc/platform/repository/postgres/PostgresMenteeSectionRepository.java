@@ -1,15 +1,12 @@
 package com.wcc.platform.repository.postgres;
 
-import static ch.qos.logback.core.CoreConstants.EMPTY_STRING;
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.*;
-import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MenteeSectionRepository;
 import java.time.Month;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -28,11 +25,10 @@ import org.springframework.stereotype.Repository;
 public class PostgresMenteeSectionRepository implements MenteeSectionRepository {
 
   private static final String SQL_BASE =
-      "SELECT ideal_mentee, focus, additional, created_at, updated_at "
+      "SELECT ideal_mentee, additional, created_at, updated_at "
           + "FROM mentor_mentee_section WHERE mentor_id = ?";
   private static final String SQL_MENTORSHIP_TYPE =
-      "SELECT t.id as mentorship_type_id FROM mentorship_types t LEFT JOIN mentor_mentorship_types mmt "
-          + "ON mmt.mentorship_type = t.id WHERE mmt.mentor_id = ?";
+      "SELECT mentorship_type FROM mentor_mentorship_types WHERE mentor_id = ?";
   private static final String SQL_AVAILABILITY =
       "SELECT month_num, hours FROM mentor_availability WHERE mentor_id = ?";
 
@@ -55,8 +51,6 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
                       loadMentorshipTypes(mentorId),
                       loadAvailability(mentorId),
                       rs.getString(COLUMN_IDEAL_MENTEE),
-                      parseFocus(
-                          Optional.ofNullable(rs.getString(COLUMN_FOCUS)).orElse(EMPTY_STRING)),
                       rs.getString(COLUMN_ADDITIONAL)),
               mentorId);
       return Optional.ofNullable(menteeSection);
@@ -65,16 +59,10 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
     }
   }
 
-  private List<String> parseFocus(final String focus) {
-    return focus.isBlank()
-        ? List.of()
-        : Arrays.stream(focus.split(COMMA)).map(String::trim).toList();
-  }
-
   private List<MentorshipType> loadMentorshipTypes(final Long mentorId) {
     return jdbc.query(
         SQL_MENTORSHIP_TYPE,
-        (rs, rowNum) -> MentorshipType.fromId(rs.getInt(COL_MTRSHIP_TYPE_ID)),
+        (rs, rowNum) -> MentorshipType.fromId(rs.getInt(COL_MENTORSHIP_TYPE)),
         mentorId);
   }
 

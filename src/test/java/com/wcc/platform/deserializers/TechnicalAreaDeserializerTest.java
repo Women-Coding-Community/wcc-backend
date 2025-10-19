@@ -30,7 +30,7 @@ class TechnicalAreaDeserializerTest {
   @ParameterizedTest
   @EnumSource(TechnicalArea.class)
   void testDeserialize(final TechnicalArea type) throws IOException {
-    when(jsonParser.getText()).thenReturn(type.name());
+    when(jsonParser.getText()).thenReturn(type.getDescription());
 
     var response = deserializer.deserialize(jsonParser, context);
 

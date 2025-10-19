@@ -1,11 +1,16 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.MentorRepository;
 import java.time.LocalDate;
 import java.time.Month;
@@ -60,8 +65,19 @@ public class MentorshipService {
   public MentorsPage getMentorsPage(final MentorsPage mentorsPage) {
     final var currentCycle = getCurrentCycle();
     final var allMentors = getAllMentors(currentCycle);
+    final var filter = mentorshipAllFilters();
 
-    return mentorsPage.updateUpdate(currentCycle.toOpenCycle(), allMentors);
+    return mentorsPage.updateUpdate(currentCycle.toOpenCycle(), filter, allMentors);
+  }
+
+  private MentorFilterSection mentorshipAllFilters() {
+    final var skills =
+        new Skills(0, TechnicalArea.getAll(), Languages.getAll(), MentorshipFocusArea.getAll());
+
+    return MentorFilterSection.builder()
+        .types(List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC))
+        .skills(skills)
+        .build();
   }
 
   /**
