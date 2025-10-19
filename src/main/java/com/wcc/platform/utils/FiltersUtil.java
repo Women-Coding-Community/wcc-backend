@@ -121,7 +121,7 @@ public final class FiltersUtil {
   private static boolean matchesLanguages(
       final MentorDto mentorDto, final MentorAppliedFilters filters) {
     final var wantedLangs = filters.languages();
-    if (wantedLangs == null || wantedLangs.isEmpty()) {
+    if (CollectionUtils.isEmpty(wantedLangs)) {
       return true;
     }
     final var skills = mentorDto.getSkills();
@@ -133,12 +133,12 @@ public final class FiltersUtil {
   private static boolean matchesFocus(
       final MentorDto mentorDto, final MentorAppliedFilters filters) {
     final var wantedFocus = filters.focus();
-    if (wantedFocus == null || wantedFocus.isEmpty()) {
+    if (CollectionUtils.isEmpty(wantedFocus)) {
       return true;
     }
     final var skills = mentorDto.getSkills();
     return skills != null
-        && skills.mentorshipFocus() != null
+        && !CollectionUtils.isEmpty(skills.mentorshipFocus())
         && skills.mentorshipFocus().stream().anyMatch(wantedFocus::contains);
   }
 }
