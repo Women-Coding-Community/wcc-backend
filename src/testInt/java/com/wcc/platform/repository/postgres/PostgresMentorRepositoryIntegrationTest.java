@@ -1,5 +1,8 @@
 package com.wcc.platform.repository.postgres;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.factories.SetupMentorshipFactories;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,15 +27,16 @@ class PostgresMentorRepositoryIntegrationTest extends DefaultDatabaseSetup
   @Test
   void testBasicCrud() {
     executeMentorCrud(mentor, repository, memberRepository);
+    assertTrue(memberRepository.findById(mentor.getId()).isEmpty());
   }
 
   @Test
   void notFoundIdByEmail() {
-    notFoundIdByEmail(repository, "mentor13@mail.com");
+    assertNull(repository.findIdByEmail("mentor13@mail.com"));
   }
 
   @Test
   void notFoundById() {
-    notFoundById(repository, 13L);
+    assertTrue(repository.findById(13L).isEmpty());
   }
 }

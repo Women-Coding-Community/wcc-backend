@@ -1,5 +1,8 @@
 package com.wcc.platform.repository.postgresdb2;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.factories.SetupMentorshipFactories;
@@ -34,15 +37,16 @@ class PostgresDb2MentorRepositoryIntegrationTest implements PostgresMentorTestSe
   @Test
   void testBasicCrud() {
     executeMentorCrud(mentor, repository, memberRepository);
+    assertTrue(memberRepository.findById(42L).isEmpty());
   }
 
   @Test
   void notFoundIdByEmail() {
-    notFoundIdByEmail(repository, "invalid@mail.com");
+    assertNull(repository.findIdByEmail("mentor13@mail.com"));
   }
 
   @Test
   void notFoundById() {
-    notFoundById(repository, 42L);
+    assertTrue(repository.findById(13L).isEmpty());
   }
 }

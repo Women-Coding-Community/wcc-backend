@@ -2,7 +2,6 @@ package com.wcc.platform.repository.postgres;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -11,9 +10,9 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 public interface PostgresMentorTestSetup {
 
   default void deleteAll(
-      Mentor mentor,
-      PostgresMentorRepository repository,
-      PostgresMemberRepository memberRepository) {
+      final Mentor mentor,
+      final PostgresMentorRepository repository,
+      final PostgresMemberRepository memberRepository) {
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
   }
@@ -23,9 +22,9 @@ public interface PostgresMentorTestSetup {
    * provided repository implementations.
    */
   default void executeMentorCrud(
-      Mentor mentor,
-      PostgresMentorRepository repository,
-      PostgresMemberRepository memberRepository) {
+      final Mentor mentor,
+      final PostgresMentorRepository repository,
+      final PostgresMemberRepository memberRepository) {
     var mentorCreated = repository.create(mentor);
 
     assertNotNull(mentorCreated, "Should return mentorCreated mentorCreated");
@@ -47,13 +46,5 @@ public interface PostgresMentorTestSetup {
 
     memberRepository.deleteById(mentor.getId());
     assertTrue(memberRepository.findById(mentor.getId()).isEmpty());
-  }
-
-  default void notFoundIdByEmail(PostgresMentorRepository repository, String email) {
-    assertNull(repository.findIdByEmail(email));
-  }
-
-  default void notFoundById(PostgresMentorRepository repository, Long id) {
-    assertTrue(repository.findById(id).isEmpty());
   }
 }
