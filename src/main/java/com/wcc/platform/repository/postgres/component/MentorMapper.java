@@ -4,6 +4,7 @@ import static com.wcc.platform.repository.postgres.constants.MentorConstants.*;
 import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
@@ -32,16 +33,17 @@ public class MentorMapper {
       "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "
           + " spoken_languages, is_available) VALUES (?, ?, ?, ?, ?, ?)";
   private static final String INSERT_MENTOR_MENTEE =
-      "INSERT INTO mentor_mentee_section "
-          + "(mentor_id, ideal_mentee, focus, additional) VALUES (?, ?, ?, ?)";
+      "INSERT INTO mentor_mentee_section (mentor_id, ideal_mentee, additional) VALUES (?, ?, ?)";
   private static final String INSERT_AVAILABILITY =
-      "INSERT INTO mentor_availability " + "(mentor_id, month_num, hours) VALUES (?, ?, ?)";
+      "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
   private static final String INSERT_MENTOR_TYPES =
-      "INSERT INTO " + "mentor_mentorship_types (mentor_id, mentorship_type) VALUES (?, ?)";
+      "INSERT INTO mentor_mentorship_types (mentor_id, mentorship_type) VALUES (?, ?)";
   private static final String SQL_TECH_AREAS_INSERT =
-      "INSERT INTO mentor_technical_areas " + "(mentor_id, technical_area_id) VALUES (?, ?)";
+      "INSERT INTO mentor_technical_areas (mentor_id, technical_area_id) VALUES (?, ?)";
   private static final String SQL_PROG_LANG_INSERT =
-      "INSERT INTO mentor_languages " + "(mentor_id, language_id) VALUES (?, ?)";
+      "INSERT INTO mentor_languages (mentor_id, language_id) VALUES (?, ?)";
+  private static final String SQL_FOCUS_INSERT =
+      "INSERT INTO mentor_mentorship_focus_areas (mentor_id, focus_area_id) VALUES (?, ?)";
 
   private final JdbcTemplate jdbc;
   private final PostgresMemberRepository memberRepository;
@@ -105,12 +107,7 @@ public class MentorMapper {
 
   /** Inserts the mentee section details for the mentor. */
   private void insertMenteeSection(final MenteeSection menteeSec, final Long memberId) {
-    jdbc.update(
-        INSERT_MENTOR_MENTEE,
-        memberId,
-        menteeSec.idealMentee(),
-        String.join(","),
-        menteeSec.additional());
+    jdbc.update(INSERT_MENTOR_MENTEE, memberId, menteeSec.idealMentee(), menteeSec.additional());
     insertAvailability(menteeSec, memberId);
     insertMentorshipTypes(menteeSec, memberId);
   }
@@ -132,6 +129,7 @@ public class MentorMapper {
   /** Inserts the skills (technical areas and programming languages) for the mentor. */
   private void insertSkills(final Mentor mentor, final Long memberId) {
     insertTechnicalAreas(mentor.getSkills(), memberId);
+    insertFocusArea(mentor.getSkills(), memberId);
     insertLanguages(mentor.getSkills(), memberId);
   }
 
@@ -146,6 +144,13 @@ public class MentorMapper {
   private void insertLanguages(final Skills mentorSkills, final Long memberId) {
     for (final Languages lang : mentorSkills.languages()) {
       jdbc.update(SQL_PROG_LANG_INSERT, memberId, lang.getLangId());
+    }
+  }
+
+  /** Inserts the focus area for the mentor in mentor_mentorship_focus_area table. */
+  private void insertFocusArea(final Skills mentorSkills, final Long memberId) {
+    for (final MentorshipFocusArea focus : mentorSkills.mentorshipFocus()) {
+      jdbc.update(SQL_FOCUS_INSERT, memberId, focus.getFocusId());
     }
   }
 }
