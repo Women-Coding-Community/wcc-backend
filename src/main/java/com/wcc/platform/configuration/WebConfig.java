@@ -1,7 +1,8 @@
 package com.wcc.platform.configuration;
 
+import com.wcc.platform.configuration.converter.StringToEnumConverter;
+import com.wcc.platform.configuration.converter.StringToEnumConverterFactory;
 import com.wcc.platform.domain.platform.config.PlatformServers;
-import com.wcc.platform.serializer.StringToEnumConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -23,5 +24,6 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addFormatters(final FormatterRegistry registry) {
     registry.addConverter(new StringToEnumConverter());
+    registry.addConverterFactory(new StringToEnumConverterFactory());
   }
 }

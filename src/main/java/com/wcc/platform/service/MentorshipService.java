@@ -1,17 +1,14 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
-import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
-import com.wcc.platform.domain.cms.attributes.TechnicalArea;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
-import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.utils.FiltersUtil;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
@@ -62,22 +59,18 @@ public class MentorshipService {
    *
    * @return List of mentors.
    */
-  public MentorsPage getMentorsPage(final MentorsPage mentorsPage) {
+  public MentorsPage getMentorsPage(
+      final MentorsPage mentorsPage, final MentorAppliedFilters filters) {
     final var currentCycle = getCurrentCycle();
-    final var allMentors = getAllMentors(currentCycle);
-    final var filter = mentorshipAllFilters();
 
-    return mentorsPage.updateUpdate(currentCycle.toOpenCycle(), filter, allMentors);
+    final var mentors = FiltersUtil.applyFilters(getAllMentors(currentCycle), filters);
+
+    return mentorsPage.updateUpdate(
+        currentCycle.toOpenCycle(), FiltersUtil.mentorshipAllFilters(), mentors);
   }
 
-  private MentorFilterSection mentorshipAllFilters() {
-    final var skills =
-        new Skills(0, TechnicalArea.getAll(), Languages.getAll(), MentorshipFocusArea.getAll());
-
-    return MentorFilterSection.builder()
-        .types(List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC))
-        .skills(skills)
-        .build();
+  public MentorsPage getMentorsPage(final MentorsPage mentorsPage) {
+    return getMentorsPage(mentorsPage, null);
   }
 
   /**
