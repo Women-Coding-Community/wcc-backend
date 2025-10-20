@@ -112,6 +112,7 @@ public class Mentor extends Member {
    *
    * @return a MentorDto object constructed from the provided Mentor entity
    */
+  @Override
   public MentorDto toDto() {
     return buildFromMentor(this).build();
   }

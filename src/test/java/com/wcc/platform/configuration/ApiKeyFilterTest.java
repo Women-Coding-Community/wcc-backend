@@ -1,9 +1,15 @@
 package com.wcc.platform.configuration;
 
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -14,8 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import jakarta.servlet.ServletOutputStream;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @WebMvcTest(ApiKeyFilter.class)
 class ApiKeyFilterTest {
@@ -34,7 +38,7 @@ class ApiKeyFilterTest {
 
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
-    verify(filterChain, times(1)).doFilter(request, response);
+    verify(filterChain).doFilter(request, response);
     verifyNoInteractions(response);
   }
 
@@ -51,11 +55,12 @@ class ApiKeyFilterTest {
 
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
-    verify(filterChain, times(1)).doFilter(request, response);
+    verify(filterChain).doFilter(request, response);
     verifyNoInteractions(response);
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void shouldRejectRequestWhenApiKeyDoesNotMatch() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -69,12 +74,12 @@ class ApiKeyFilterTest {
     ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
-    verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    verify(response, times(1)).setContentType("application/json");
-    verify(response, times(1)).setCharacterEncoding("UTF-8");
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    verify(response).setContentType("application/json");
+    verify(response).setCharacterEncoding("UTF-8");
 
     ArgumentCaptor<Map<String, String>> mapCaptor = ArgumentCaptor.forClass(Map.class);
-    verify(objectMapper, times(1)).writeValue(eq(servletOutputStream), mapCaptor.capture());
+    verify(objectMapper).writeValue(eq(servletOutputStream), mapCaptor.capture());
 
     Map<String, String> actualMap = mapCaptor.getValue();
     assertThat(actualMap.get("error")).isEqualTo("Unauthorized");
@@ -84,6 +89,7 @@ class ApiKeyFilterTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void shouldRejectRequestWhenApiKeyIsMissing() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -97,12 +103,12 @@ class ApiKeyFilterTest {
     var apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
-    verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    verify(response, times(1)).setContentType("application/json");
-    verify(response, times(1)).setCharacterEncoding("UTF-8");
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    verify(response).setContentType("application/json");
+    verify(response).setCharacterEncoding("UTF-8");
 
     ArgumentCaptor<Map<String, String>> mapCaptor = ArgumentCaptor.forClass(Map.class);
-    verify(objectMapper, times(1)).writeValue(eq(servletOutputStream), mapCaptor.capture());
+    verify(objectMapper).writeValue(eq(servletOutputStream), mapCaptor.capture());
 
     Map<String, String> actualMap = mapCaptor.getValue();
     assertThat(actualMap.get("error")).isEqualTo("Unauthorized");
@@ -123,7 +129,7 @@ class ApiKeyFilterTest {
 
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
-    verify(filterChain, times(1)).doFilter(request, response);
+    verify(filterChain).doFilter(request, response);
     verifyNoInteractions(response);
   }
 
@@ -133,7 +139,7 @@ class ApiKeyFilterTest {
     public ApiKeyFilter apiKeyFilter(
         final @Value("${security.enabled:false}") boolean securityEnabled,
         final @Value("${security.api.key:test-api-key}") String apiKey,
-        ObjectMapper objectMapper) {
+        final ObjectMapper objectMapper) {
       return new ApiKeyFilter(securityEnabled, apiKey, objectMapper);
     }
   }

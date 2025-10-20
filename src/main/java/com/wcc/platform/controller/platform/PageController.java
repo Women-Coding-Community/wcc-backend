@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,14 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/platform/v1/page")
 @SecurityRequirement(name = "apiKey")
 @Tag(name = "Platform: Pages", description = "Platform Internal Pages APIs")
+@AllArgsConstructor
 public class PageController {
 
   private final PageService service;
-
-  @Autowired
-  public PageController(final PageService service) {
-    this.service = service;
-  }
 
   /** Create Page Content and store into database. */
   @PostMapping

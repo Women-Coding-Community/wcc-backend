@@ -14,15 +14,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * Filter for handling API key-based authentication. This filter is executed once per request and
- * checks for the presence and validity of an API key in the request headers.
+ * checks for the presence and validity of an API key in the request headers or query parameter.
  *
- * <p>The filter operates with the following behavior: - Skips authentication if enabled false.
- * Header Details: The API key is expected in the "X-API-KEY" request header.
+ * <p>The filter operates with the following behavior:
+ * - Skips authentication if security is disabled.
+ * - Accepts API key via "X-API-KEY" header or "api_key" query parameter (for compatibility with external callers).
  */
 @Component
 public class ApiKeyFilter extends OncePerRequestFilter {
 
   private static final String API_KEY_HEADER = "X-API-KEY";
+  private static final String API_KEY_QUERY = "api_key";
 
   private final String apiKey;
 
@@ -56,7 +58,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     }
 
     if (requestUri.startsWith("/api/cms/v1/") || requestUri.startsWith("/api/platform/v1/")) {
-      final String requestApiKey = request.getHeader(API_KEY_HEADER);
+      String requestApiKey = request.getHeader(API_KEY_HEADER);
+      if (requestApiKey == null || requestApiKey.isBlank()) {
+        // Fallback to query parameter for compatibility with public endpoints
+        requestApiKey = request.getParameter(API_KEY_QUERY);
+      }
       if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
         final Map<String,String> errorBody = formatUnauthorizedError("Invalid API Key");
         sendUnauthorizedResponse(response, errorBody);

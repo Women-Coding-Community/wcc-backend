@@ -227,17 +227,25 @@ After this you can tests execute this curl and you will get the response.
 You can generate a Postman collection from the application’s OpenAPI specification.
 
 1. Start the application (e.g. via Docker Compose):
+
 ```shell
    docker compose -f docker/docker-compose.yml up --build
 ```
-2. In the root directory of the repository, there is a folder called `postman-collection` which contains the OpenAPI specification and the generated Postman collection.
+
+2. In the root directory of the repository, there is a folder called `postman-collection` which
+   contains the OpenAPI specification and the generated Postman collection.
 
 
-3. You can download the OpenAPI specification directly from the running app. This will overwrite the existing OpenAPI specification file in the `postman-collection` folder:
+3. You can download the OpenAPI specification directly from the running app. This will overwrite the
+   existing OpenAPI specification file in the `postman-collection` folder:
+
 ```shell
    curl http://localhost:8080/api-docs -o postman-collection/openapi.yaml
 ```
-4. You can generate a new .json file of the Postman collection. This will overwrite the existing Postman collection file in the `postman-collection` folder:
+
+4. You can generate a new .json file of the Postman collection. This will overwrite the existing
+   Postman collection file in the `postman-collection` folder:
+
 ```shell
     ./gradlew postmanGenerate
 ```
@@ -248,8 +256,10 @@ You can generate a Postman collection from the application’s OpenAPI specifica
 
 ## API Documentation
 
-* [Resource API Documentation](docs/resource_api.md) - API for uploading, retrieving, and managing resources and mentor profile pictures
-* [Google Drive API Setup](docs/google_drive_setup.md) - Instructions for setting up Google Drive API credentials
+* [Resource API Documentation](docs/resource_api.md) - API for uploading, retrieving, and managing
+  resources and mentor profile pictures
+* [Google Drive API Setup](docs/google_drive_setup.md) - Instructions for setting up Google Drive
+  API credentials
 
 ## Quality Checks
 
@@ -258,3 +268,84 @@ You can generate a Postman collection from the application’s OpenAPI specifica
 ## Deploy
 
 * [Deployment Guideline](docs/deployment.md)
+
+## Frontend (Administration Platform)
+
+A Next.js + MUI frontend is included under `admin-wcc-app/` to allow authenticated admins to manage
+users, mentors, and members using the backend APIs. It uses JWT bearer tokens and handles token
+expiry. The UI follows Women Coding Community colors (purple/pink palette).
+
+- Tech stack: Next.js 14, React 18, TypeScript, MUI 6, Jest + React Testing Library
+- Auth: Email/password login against `/api/auth/login` returning a JWT. Token is sent as
+  `Authorization: Bearer <token>` and stored locally with expiry checks.
+- Config: API base via `NEXT_PUBLIC_API_BASE` and optional `NEXT_PUBLIC_API_KEY` (sent as
+  `X-API-KEY`).
+
+### Run frontend locally
+
+#### Test credentials (seeded)
+
+A default admin user is auto-created at startup for local testing:
+
+- Email: admin@wcc.dev
+- Password: wcc-admin
+
+You can change or disable this seeding with properties:
+
+- app.seed.admin.enabled=false (disable seeding)
+- app.seed.admin.email=your@email
+- app.seed.admin.password=yourpassword
+
+1. Copy env example and adjust as needed:
+
+   cp admin-wcc-app/.env.example admin-wcc-app/.env
+
+   Edit `NEXT_PUBLIC_API_BASE` to point to your backend (local or remote). If your backend uses API
+   key, set `NEXT_PUBLIC_API_KEY`.
+
+2. Install and start:
+
+```shell
+   cd admin-wcc-app
+   npm install
+   npm run dev
+
+   Open http://localhost:3000
+```
+
+3. Authentication
+
+- Use a valid user email/password from the backend auth tables. On success, you will be redirected
+  to `/admin`.
+
+### Frontend tests
+
+Run unit tests for the frontend:
+
+```shell
+cd admin-wcc-app
+npm test
+```
+
+### CORS configuration (backend)
+
+CORS is enabled via a `CorsConfig` bean. Allowed origins are controlled by the property:
+
+app.cors.allowed-origins=http://localhost:3000,https://your-frontend-domain
+
+Update `application.properties` or environment variables to include your deployed frontend domain to
+avoid CORS issues.
+
+### CI/CD and deploy (Vercel)
+
+A GitHub Actions workflow is provided at `.github/workflows/deploy-frontend.yml` to deploy the
+frontend to Vercel on pushes to `main`. Configure the following repository secrets:
+
+- VERCEL_TOKEN
+- VERCEL_ORG_ID
+- VERCEL_PROJECT_ID
+- NEXT_PUBLIC_API_BASE
+- NEXT_PUBLIC_API_KEY (optional)
+- NEXT_PUBLIC_APP_URL (optional)
+
+Alternatively, you can connect the repository directly in Vercel dashboard and set env vars there.

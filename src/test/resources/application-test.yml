@@ -4,9 +4,18 @@ spring:
       on-profile: test
 
 security:
+  token:
+    ttl-minutes: 60
   api:
     key: test-api-key
 
 file:
   storage:
     directory: data-test
+
+app:
+  seed:
+    admin:
+      enabled: true
+      email: admin@wcc.dev
+      password: wcc-admin

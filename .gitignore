@@ -30,3 +30,6 @@ integration-test/playwright-report
 src/main/resources/credentials.json
 src/main/resources/application-local.yml
 /data/members.json
+/admin-wcc-app/.vite/
+/admin-wcc-app/node_modules/
+/admin-wcc-app/.next/
