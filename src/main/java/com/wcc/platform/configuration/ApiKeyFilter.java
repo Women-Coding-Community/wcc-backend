@@ -27,14 +27,17 @@ public class ApiKeyFilter extends OncePerRequestFilter {
   private final String apiKey;
 
   private final boolean securityEnabled;
+  private final ObjectMapper objectMapper;
 
   /** Constructor. */
   public ApiKeyFilter(
       @Value("${security.enabled}") final boolean securityEnabled,
-      @Value("${security.api.key}") final String apiKey) {
+      @Value("${security.api.key}") final String apiKey,
+      ObjectMapper objectMapper) {
     super();
     this.apiKey = apiKey;
     this.securityEnabled = securityEnabled;
+    this.objectMapper = objectMapper;
   }
 
   @SuppressWarnings("PMD.LawOfDemeter")
@@ -77,6 +80,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
 
-    new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
+    objectMapper.writeValue(response.getOutputStream(), errorResponse);
   }
 }
