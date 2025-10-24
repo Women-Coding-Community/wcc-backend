@@ -1,10 +1,13 @@
 package com.wcc.platform.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -52,12 +55,28 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     if (requestUri.startsWith("/api/cms/v1/") || requestUri.startsWith("/api/platform/v1/")) {
       final String requestApiKey = request.getHeader(API_KEY_HEADER);
       if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("Unauthorized: Invalid API Key");
+        Map<String,String> errorBody = formatUnauthorizedError("Invalid API Key");
+        sendUnauthorizedResponse(response, errorBody);
         return;
       }
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private Map<String,String> formatUnauthorizedError(String errorMessage) {
+    Map<String, String> errorResponse = new HashMap<>();
+    errorResponse.put("error", "Unauthorized");
+    errorResponse.put("message", errorMessage);
+
+    return errorResponse;
+  }
+
+  private void sendUnauthorizedResponse(HttpServletResponse response, Map<String,String> errorResponse) throws IOException {
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+
+    new ObjectMapper().writeValue(response.getOutputStream(), errorResponse);
   }
 }
