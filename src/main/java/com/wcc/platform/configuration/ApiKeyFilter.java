@@ -6,8 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,7 +33,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
   public ApiKeyFilter(
       @Value("${security.enabled}") final boolean securityEnabled,
       @Value("${security.api.key}") final String apiKey,
-      ObjectMapper objectMapper) {
+      final ObjectMapper objectMapper) {
     super();
     this.apiKey = apiKey;
     this.securityEnabled = securityEnabled;
@@ -58,7 +58,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     if (requestUri.startsWith("/api/cms/v1/") || requestUri.startsWith("/api/platform/v1/")) {
       final String requestApiKey = request.getHeader(API_KEY_HEADER);
       if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
-        Map<String,String> errorBody = formatUnauthorizedError("Invalid API Key");
+        final Map<String,String> errorBody = formatUnauthorizedError("Invalid API Key");
         sendUnauthorizedResponse(response, errorBody);
         return;
       }
@@ -67,15 +67,15 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  private Map<String,String> formatUnauthorizedError(String errorMessage) {
-    Map<String, String> errorResponse = new HashMap<>();
+  private Map<String,String> formatUnauthorizedError(final String errorMessage) {
+    final Map<String, String> errorResponse = new ConcurrentHashMap<>();
     errorResponse.put("error", "Unauthorized");
     errorResponse.put("message", errorMessage);
 
     return errorResponse;
   }
 
-  private void sendUnauthorizedResponse(HttpServletResponse response, Map<String,String> errorResponse) throws IOException {
+  private void sendUnauthorizedResponse(final HttpServletResponse response, final Map<String,String> errorResponse) throws IOException {
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
