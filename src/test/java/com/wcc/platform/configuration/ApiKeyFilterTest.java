@@ -89,17 +89,26 @@ class ApiKeyFilterTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     ObjectMapper objectMapper = mock(ObjectMapper.class);
-    PrintWriter writer = mock(PrintWriter.class);
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
 
     when(request.getRequestURI()).thenReturn("/api/cms/v1/test");
     when(request.getHeader("X-API-KEY")).thenReturn(null);
-    when(response.getWriter()).thenReturn(writer);
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
 
     var apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
     verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    verify(writer, times(1)).write("Unauthorized: Invalid API Key");
+    verify(response, times(1)).setContentType("application/json");
+    verify(response, times(1)).setCharacterEncoding("UTF-8");
+
+    ArgumentCaptor<Map<String, String>> mapCaptor = ArgumentCaptor.forClass(Map.class);
+    verify(objectMapper, times(1)).writeValue(eq(servletOutputStream), mapCaptor.capture());
+
+    Map<String, String> actualMap = mapCaptor.getValue();
+    assertThat(actualMap.get("error")).isEqualTo("Unauthorized");
+    assertThat(actualMap.get("message")).isEqualTo("Invalid API Key");
+
     verifyNoInteractions(filterChain);
   }
 
