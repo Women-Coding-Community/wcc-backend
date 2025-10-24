@@ -25,7 +25,8 @@ class ApiKeyFilterTest {
 
   @Test
   void shouldAllowRequestWhenSecurityDisabled() throws Exception {
-    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(false, "test-api-key");
+    ObjectMapper objectMapper = mock(ObjectMapper.class);
+    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(false, "test-api-key", objectMapper);
 
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -40,7 +41,8 @@ class ApiKeyFilterTest {
 
   @Test
   void shouldAllowRequestWhenApiKeyMatches() throws Exception {
-    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
+    ObjectMapper objectMapper = mock(ObjectMapper.class);
+    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
 
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -86,13 +88,14 @@ class ApiKeyFilterTest {
   void shouldRejectRequestWhenApiKeyIsMissing() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
+    ObjectMapper objectMapper = mock(ObjectMapper.class);
     PrintWriter writer = mock(PrintWriter.class);
 
     when(request.getRequestURI()).thenReturn("/api/cms/v1/test");
     when(request.getHeader("X-API-KEY")).thenReturn(null);
     when(response.getWriter()).thenReturn(writer);
 
-    var apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
+    var apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
     apiKeyFilter.doFilterInternal(request, response, filterChain);
 
     verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -102,7 +105,8 @@ class ApiKeyFilterTest {
 
   @Test
   void shouldAllowRequestForNonProtectedUri() throws Exception {
-    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key");
+    ObjectMapper objectMapper = mock(ObjectMapper.class);
+    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
 
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
