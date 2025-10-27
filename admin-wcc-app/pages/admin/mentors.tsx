@@ -60,10 +60,10 @@ export default function MentorsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const t = getStoredToken();
-    if (!t || isTokenExpired(t)) router.replace('/login');
+    const token = getStoredToken();
+    if (!token || isTokenExpired(token)) router.replace('/login');
     else {
-      load(t);
+      load(token);
     }
   }, [router]);
 
