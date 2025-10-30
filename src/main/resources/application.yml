@@ -28,12 +28,21 @@ logging:
 
 security:
   enabled: true
+  token:
+    ttl-minutes: 60
   api:
     key: local
 
 file:
   storage:
     directory: data
+
+app:
+  seed:
+    admin:
+      enabled: true
+      email: admin@wcc.dev
+      password: wcc-admin
 
 storage:
   type: local

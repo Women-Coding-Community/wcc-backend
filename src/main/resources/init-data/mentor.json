@@ -1,16 +1,17 @@
 {
-  "fullName": "Mentor Fullname",
-  "position": "Developer",
-  "email": "email@domain.com",
-  "slackDisplayName": "mentor",
+  "fullName": "Adriana Zencke Zimmermann",
+  "position": "Senior Software Engineer",
+  "email": "adriana@womencodingcommunity.com",
+  "slackDisplayName": "@Adriana Zencke",
   "country": {
-    "countryCode": "DE",
-    "countryName": "Germany"
+    "countryCode": "ES",
+    "countryName": "Spain"
   },
-  "city": "Berlin",
+  "city": "Valencia",
   "companyName": "WCC",
   "memberTypes": [
-    "MENTOR"
+    "MENTOR",
+    "DIRECTOR"
   ],
   "images": [],
   "network": [
@@ -30,7 +31,7 @@
     "languages": [
       "java",
       "javascript",
-      "python"
+      "Kotlin"
     ],
     "mentorshipFocus": [
       "Grow from beginner to mid-level",
@@ -40,26 +41,41 @@
   "spokenLanguages": [
     "portuguese",
     "english",
-    "deutsch",
     "spanish"
   ],
   "bio": "I am a mother, a wife, and a Software Engineer. I graduated in Computer Science and have over 14 years of experience working in tech companies in Brazil, Germany, and Spain. As Backend Engineer, I found this to be my passion which I focused on in the last six years of my career. I am always excited to help others, and my goal is to empower women and support them with the difficulties I had as an engineer, and I still have from time to time.",
   "menteeSection": {
     "mentorshipType": [
-      "LONG_TERM"
+      "LONG_TERM",
+      "AD_HOC"
     ],
     "availability": [
       {
+        "month": 6,
+        "hours": 2
+      },
+      {
+        "month": 7,
+        "hours": 2
+      },
+      {
+        "month": 8,
+        "hours": 2
+      },
+      {
+        "month": 9,
+        "hours": 2
+      },
+      {
         "month": 10,
-        "hours": 1
+        "hours": 2
+      },
+      {
+        "month": 11,
+        "hours": 2
       }
     ],
     "idealMentee": "Someone willing to learn new technologies or to improve current skills",
     "additional": "Spring Boot and Best Practices"
-  },
-  "feedbackSection": {
-    "title": "string",
-    "feedbacks": []
-  },
-  "resources": {}
+  }
 }

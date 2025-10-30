@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.ProgrammeService;
@@ -25,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for the programme apis. */
 @ActiveProfiles("test")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, TestConfig.class})
 @WebMvcTest(ProgrammeController.class)
 class ProgrammeControllerTest {
   public static final String API_PROGRAMME = "/api/cms/v1/program";

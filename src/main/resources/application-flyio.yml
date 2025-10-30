@@ -35,3 +35,8 @@ file:
 
 security:
   enabled: true
+
+app:
+  seed:
+    admin:
+      enabled: false
