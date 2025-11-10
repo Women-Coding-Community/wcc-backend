@@ -1,7 +1,7 @@
 package com.wcc.platform.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.Template;
@@ -12,19 +12,22 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class EmailTemplateService {
   private static final String TEMPLATE_PATH = "email-templates/";
   private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
 
-  private final ObjectMapper objectMapper;
+  private final ObjectMapper yamlObjectMapper;
+
+  public EmailTemplateService(@Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper) {
+    this.yamlObjectMapper = yamlObjectMapper;
+  }
 
   public RenderedTemplate renderTemplate(TemplateType templateType, Map<String, String> params) {
     Template template = loadTemplate(templateType);
@@ -36,13 +39,8 @@ public class EmailTemplateService {
     try {
       ClassPathResource resource =
           new ClassPathResource(TEMPLATE_PATH + templateType.getTemplateFile());
-      ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
       Map<String, Template> templates =
-          yamlMapper.readValue(
-              resource.getInputStream(),
-              yamlMapper
-                  .getTypeFactory()
-                  .constructMapType(Map.class, String.class, Template.class));
+          yamlObjectMapper.readValue(resource.getInputStream(), new TypeReference<>() {});
 
       return templates.get(templateType.name());
     } catch (IOException e) {
