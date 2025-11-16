@@ -52,3 +52,35 @@ docker compose down
 3. Check application log during deployment: ```fly logs -a wcc-backend```
 4. Access the application [here](https://wcc-backend.fly.dev/swagger-ui/index.html)
 5. Check application status: ``fly status -a wcc-backend``
+
+#### Testing Fly.io Deployment
+
+After deploying, verify the authentication endpoint is working correctly:
+
+```bash
+curl -X 'POST' \
+  'https://wcc-backend.fly.dev/api/auth/login' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "your-email@example.com",
+  "password": "your-secure-password"
+}'
+```
+
+**Note**: Replace `your-email@example.com` and `your-secure-password` with valid admin credentials configured in your fly.io environment.
+
+**Expected response:**
+```json
+{
+  "token": "generated-jwt-token",
+  "expiresAt": "2025-11-16T10:48:50.992574288Z",
+  "roles": ["ADMIN"]
+}
+```
+
+A successful response confirms:
+- Backend is running on fly.io
+- Database connectivity is working
+- Authentication system is functioning properly
+- CORS configuration is correct
