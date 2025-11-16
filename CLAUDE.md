@@ -127,7 +127,53 @@ Interface: `FileStorageRepository` with two implementations (selected by `storag
 
 Used for: Member profile pictures, mentor resources, event images, general uploads
 
-**4. Custom Repository Pattern**
+**4. Email Service**
+
+Spring Mail-based email service for sending transactional emails:
+
+- **Service**: `EmailService` - Handles email sending operations
+- **Controller**: `EmailController` - REST endpoints at `/api/platform/v1/email`
+- **Configuration**: SMTP settings in `spring.mail.*` properties
+- **Features**:
+  - Single email sending (`POST /send`)
+  - Bulk email sending (`POST /send/bulk`)
+  - HTML and plain text support
+  - CC, BCC, and Reply-To support
+  - Comprehensive error handling
+
+**Email Configuration (environment variables):**
+```yaml
+spring.mail.host: smtp.gmail.com          # SMTP server host
+spring.mail.port: 587                      # SMTP port
+spring.mail.username: ${MAIL_USERNAME}     # SMTP username (email)
+spring.mail.password: ${MAIL_PASSWORD}     # SMTP password (app password for Gmail)
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: true
+```
+
+**Usage example:**
+```bash
+curl -X POST http://localhost:8080/api/platform/v1/email/send \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: your-api-key" \
+  -d '{
+    "to": "recipient@example.com",
+    "subject": "Welcome to WCC",
+    "body": "Hello and welcome!",
+    "html": false
+  }'
+```
+
+**Domain models:**
+- `EmailRequest` - Input DTO for email requests
+- `EmailResponse` - Response containing success status and timestamp
+- `EmailSendException` - Custom exception for email failures
+
+**Testing:**
+- Unit tests: `EmailServiceTest`, `EmailControllerTest`
+- Integration tests: `EmailServiceIntegrationTest` (uses GreenMail mock SMTP server)
+
+**5. Custom Repository Pattern**
 
 NOT using Spring Data JPA. Custom `CrudRepository` interface with implementations:
 
@@ -155,6 +201,7 @@ Database migrations managed by Flyway in `src/main/resources/db/migration/`
   - `cms/` - CMS page objects and attributes
   - `platform/` - Core entities (Member, Mentor, Event, Programme)
   - `auth/` - UserAccount, UserToken
+  - `email/` - Email request/response models
   - `exceptions/` - Custom exceptions
   - `resource/` - File storage models
 
@@ -199,6 +246,11 @@ security.token.ttl-minutes: 60      # Token expiry time
 
 storage.type: local                 # Or 'google-drive'
 file.storage.directory: data        # Local storage path
+
+spring.mail.host: smtp.gmail.com    # SMTP server host
+spring.mail.port: 587               # SMTP port
+spring.mail.username: ${MAIL_USERNAME}  # SMTP username (from env var)
+spring.mail.password: ${MAIL_PASSWORD}  # SMTP password (from env var)
 
 app.cors.allowed-origins: http://localhost:3000,https://your-frontend.com
 app.seed.admin.enabled: true        # Auto-create admin user

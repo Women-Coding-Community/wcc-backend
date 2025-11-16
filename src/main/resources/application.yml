@@ -16,6 +16,22 @@ spring:
     validate-on-migrate: true
     clean-disabled: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: test@email.com
+    password: your-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
 mentorship:
   daysCycleOpen: 10
 

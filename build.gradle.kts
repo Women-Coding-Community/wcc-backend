@@ -50,6 +50,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.java-websocket:Java-WebSocket:1.5.7")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
@@ -73,6 +74,8 @@ dependencies {
 
     testImplementation("org.testcontainers:postgresql:${testContainer}")
     testImplementation("org.apiguardian:apiguardian-api:1.1.2")
+    testImplementation("com.icegreen:greenmail-spring:2.0.1")
+    testImplementation("com.icegreen:greenmail-junit5:2.0.1")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testCompileOnly("org.projectlombok:lombok")
