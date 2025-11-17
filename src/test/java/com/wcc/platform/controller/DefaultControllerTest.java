@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.ListSection;
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for footer api. */
 @ActiveProfiles("test")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, TestConfig.class})
 @WebMvcTest(DefaultController.class)
 class DefaultControllerTest {
   @Autowired private MockMvc mockMvc;

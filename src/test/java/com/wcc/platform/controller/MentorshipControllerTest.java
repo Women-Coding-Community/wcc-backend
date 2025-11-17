@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for mentorship apis. */
 @ActiveProfiles("test")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, TestConfig.class})
 @WebMvcTest(MentorshipController.class)
 public class MentorshipControllerTest {
 

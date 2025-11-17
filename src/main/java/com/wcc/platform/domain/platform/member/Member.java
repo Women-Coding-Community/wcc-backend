@@ -35,4 +35,8 @@ public class Member {
   @NotNull private List<MemberType> memberTypes;
   @NotEmpty private List<Image> images;
   private List<SocialNetwork> network;
+
+  public MemberDto toDto() {
+    return new MemberDto(id, fullName, position, country, city, companyName, images, network);
+  }
 }

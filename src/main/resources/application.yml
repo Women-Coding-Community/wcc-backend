@@ -28,12 +28,23 @@ logging:
 
 security:
   enabled: true
+  token:
+    ttl-minutes: 60
   api:
     key: local
 
 file:
   storage:
     directory: data
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000,https://localhost:3000
+  seed:
+    admin:
+      enabled: true
+      email: admin@wcc.dev
+      password: wcc-admin
 
 storage:
   type: local

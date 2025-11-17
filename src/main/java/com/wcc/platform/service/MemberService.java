@@ -1,10 +1,12 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.UserAccountRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
   private final MemberRepository memberRepository;
+  private final UserAccountRepository userRepository;
 
   /** Save Member into storage. */
   public Member createMember(final Member member) {
@@ -72,6 +75,15 @@ public class MemberService {
 
     final Member updatedMember = memberDto.merge(member);
     return memberRepository.update(memberId, updatedMember);
+  }
+
+  /**
+   * Return all users allowed to access the platform restrict area.
+   *
+   * @return List of user accounts available.
+   */
+  public List<UserAccount> getUsers() {
+    return userRepository.findAll();
   }
 
   /**
