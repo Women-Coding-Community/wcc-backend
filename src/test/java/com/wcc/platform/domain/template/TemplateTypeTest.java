@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 class TemplateTypeTest {
 
   @Test
-  void getTemplateFile_ReturnsCorrectFileName() {
-    TemplateType templateType = TemplateType.FEEDBACK_FROM_MENTOR_ADHOC;
+  void templateFileWithCorrectFileName() {
+    TemplateType templateType = TemplateType.FEEDBACK_MENTOR_ADHOC;
 
     String templateFile = templateType.getTemplateFile();
 

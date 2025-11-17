@@ -26,7 +26,7 @@ public class EmailTemplateController {
   @PostMapping("/preview")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<RenderedTemplate> preview(@RequestBody final TemplateRequest request) {
-    RenderedTemplate renderedTemplate =
+    final RenderedTemplate renderedTemplate =
         emailTemplateService.renderTemplate(request.getTemplateType(), request.getParams());
     return new ResponseEntity<>(renderedTemplate, HttpStatus.CREATED);
   }

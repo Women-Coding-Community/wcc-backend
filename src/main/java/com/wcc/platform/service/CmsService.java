@@ -9,16 +9,22 @@ import com.wcc.platform.domain.cms.pages.events.EventsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.FileUtil;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
 @Service
-@AllArgsConstructor
 public class CmsService {
 
   private final ObjectMapper objectMapper;
   private final PageRepository pageRepository;
+
+  public CmsService(
+      final @Qualifier("objectMapper") ObjectMapper objectMapper,
+      final PageRepository pageRepository) {
+    this.objectMapper = objectMapper;
+    this.pageRepository = pageRepository;
+  }
 
   /**
    * Find the Footer section in DB and convert to Pojo FooterPage.

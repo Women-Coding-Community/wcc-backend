@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -27,8 +28,8 @@ public class FileMemberRepository implements MemberRepository {
    * @param directoryPath path to the data folder where the file is saved
    */
   public FileMemberRepository(
-      final ObjectMapper objectMapper,
-      @Value("${file.storage.directory}") final String directoryPath) {
+      final @Qualifier("objectMapper") ObjectMapper objectMapper,
+      final @Value("${file.storage.directory}") String directoryPath) {
     this.objectMapper = objectMapper;
     file = new File(directoryPath + File.separator + FILE_NAME);
   }

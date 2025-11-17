@@ -1,9 +1,11 @@
 package com.wcc.platform.configuration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -14,8 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import jakarta.servlet.ServletOutputStream;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @WebMvcTest(ApiKeyFilter.class)
 class ApiKeyFilterTest {
@@ -133,7 +133,7 @@ class ApiKeyFilterTest {
     public ApiKeyFilter apiKeyFilter(
         final @Value("${security.enabled:false}") boolean securityEnabled,
         final @Value("${security.api.key:test-api-key}") String apiKey,
-        ObjectMapper objectMapper) {
+        final ObjectMapper objectMapper) {
       return new ApiKeyFilter(securityEnabled, apiKey, objectMapper);
     }
   }

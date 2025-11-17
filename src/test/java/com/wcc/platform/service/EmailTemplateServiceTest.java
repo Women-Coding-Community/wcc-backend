@@ -38,7 +38,7 @@ class EmailTemplateServiceTest {
   }
 
   @Test
-  void renderTemplate_ValidParameters_RendersSuccessfully() throws IOException {
+  void renderTemplateValidParametersSuccess() throws IOException {
     Map<String, String> params = new HashMap<>();
     params.put("mentorName", "Doe");
     params.put("menteeName", "Smith");
@@ -46,13 +46,13 @@ class EmailTemplateServiceTest {
     Template template = createFeedbackTemplate();
 
     Map<String, Template> templates = new HashMap<>();
-    templates.put(TemplateType.FEEDBACK_FROM_MENTOR_ADHOC.name(), template);
+    templates.put(TemplateType.FEEDBACK_MENTOR_ADHOC.name(), template);
 
     when(yamlObjectMapper.readValue(any(InputStream.class), any(TypeReference.class)))
         .thenReturn(templates);
 
     RenderedTemplate result =
-        emailTemplateService.renderTemplate(TemplateType.FEEDBACK_FROM_MENTOR_ADHOC, params);
+        emailTemplateService.renderTemplate(TemplateType.FEEDBACK_MENTOR_ADHOC, params);
 
     assertThat(result).isNotNull();
     assertThat(result.getSubject()).isEqualTo("Request: feedback from Doe for Smith");
@@ -60,7 +60,7 @@ class EmailTemplateServiceTest {
   }
 
   @Test
-  void renderTemplate_MissingParameters_ThrowsValidationException() throws IOException {
+  void renderTemplateMissingParametersException() throws IOException {
     // Given
     Map<String, String> params = new HashMap<>();
     params.put("mentorName", "John Doe");
@@ -68,21 +68,19 @@ class EmailTemplateServiceTest {
     Template template = createFeedbackTemplate();
 
     Map<String, Template> templates = new HashMap<>();
-    templates.put(TemplateType.FEEDBACK_FROM_MENTOR_ADHOC.name(), template);
+    templates.put(TemplateType.FEEDBACK_MENTOR_ADHOC.name(), template);
 
     when(yamlObjectMapper.readValue(any(InputStream.class), any(TypeReference.class)))
         .thenReturn(templates);
 
     assertThatThrownBy(
-            () ->
-                emailTemplateService.renderTemplate(
-                    TemplateType.FEEDBACK_FROM_MENTOR_ADHOC, params))
+            () -> emailTemplateService.renderTemplate(TemplateType.FEEDBACK_MENTOR_ADHOC, params))
         .isInstanceOf(TemplateValidationException.class)
         .hasMessageContaining("Missing required parameters: [menteeName]");
   }
 
   @Test
-  void renderTemplate_InvalidTemplate_ThrowsRuntimeException() throws IOException {
+  void invalidTemplateThrowsException() throws IOException {
     Map<String, String> params = new HashMap<>();
     params.put("mentorName", "John Doe");
 
@@ -90,9 +88,7 @@ class EmailTemplateServiceTest {
         .thenThrow(new IOException("Template file not found"));
 
     assertThatThrownBy(
-            () ->
-                emailTemplateService.renderTemplate(
-                    TemplateType.FEEDBACK_FROM_MENTOR_ADHOC, params))
+            () -> emailTemplateService.renderTemplate(TemplateType.FEEDBACK_MENTOR_ADHOC, params))
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("Failed to load template")
         .hasCauseInstanceOf(IOException.class);

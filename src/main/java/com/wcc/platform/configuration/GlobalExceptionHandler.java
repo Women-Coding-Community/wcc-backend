@@ -10,6 +10,7 @@ import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
@@ -53,10 +54,14 @@ public class GlobalExceptionHandler {
    * Receive {@link InvalidProgramTypeException} or {@link IllegalArgumentException} then return
    * {@link HttpStatus#BAD_REQUEST}.
    */
-  @ExceptionHandler({InvalidProgramTypeException.class, IllegalArgumentException.class})
+  @ExceptionHandler({
+    InvalidProgramTypeException.class,
+    IllegalArgumentException.class,
+    TemplateValidationException.class
+  })
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ErrorDetails> handleProgramTypeError(
-      final InvalidProgramTypeException ex, final WebRequest request) {
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
             HttpStatus.BAD_REQUEST.value(), ex.getMessage(), request.getDescription(false));

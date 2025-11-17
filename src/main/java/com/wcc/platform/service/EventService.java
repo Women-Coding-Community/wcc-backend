@@ -13,6 +13,7 @@ import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.PaginationUtil;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** Event service. */
@@ -23,7 +24,9 @@ public class EventService {
   private final PageRepository pageRepository;
 
   @Autowired
-  public EventService(final ObjectMapper objectMapper, final PageRepository pageRepository) {
+  public EventService(
+      final @Qualifier("objectMapper") ObjectMapper objectMapper,
+      final PageRepository pageRepository) {
     this.objectMapper = objectMapper;
     this.pageRepository = pageRepository;
   }

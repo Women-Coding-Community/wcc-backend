@@ -25,33 +25,34 @@ public class EmailTemplateService {
 
   private final ObjectMapper yamlObjectMapper;
 
-  public EmailTemplateService(@Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper) {
+  public EmailTemplateService(final @Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper) {
     this.yamlObjectMapper = yamlObjectMapper;
   }
 
-  public RenderedTemplate renderTemplate(TemplateType templateType, Map<String, String> params) {
-    Template template = loadTemplate(templateType);
+  public RenderedTemplate renderTemplate(
+      final TemplateType templateType, final Map<String, String> params) {
+    final Template template = loadTemplate(templateType);
     validateTemplateParams(template, params);
     return RenderedTemplate.from(replacePlaceholders(template, params));
   }
 
-  private Template loadTemplate(TemplateType templateType) {
+  private Template loadTemplate(final TemplateType templateType) {
     try {
-      ClassPathResource resource =
+      final ClassPathResource resource =
           new ClassPathResource(TEMPLATE_PATH + templateType.getTemplateFile());
-      Map<String, Template> templates =
+      final Map<String, Template> templates =
           yamlObjectMapper.readValue(resource.getInputStream(), new TypeReference<>() {});
 
       return templates.get(templateType.name());
     } catch (IOException e) {
       log.error("Failed to load template: {}", templateType, e);
-      throw new RuntimeException("Failed to load template", e);
+      throw new IllegalArgumentException("Failed to load template", e);
     }
   }
 
-  private void validateTemplateParams(Template template, Map<String, String> params) {
-    Set<String> requiredParams = extractPlaceholders(template);
-    Set<String> missingParams =
+  private void validateTemplateParams(final Template template, final Map<String, String> params) {
+    final Set<String> requiredParams = extractPlaceholders(template);
+    final Set<String> missingParams =
         requiredParams.stream()
             .filter(param -> !params.containsKey(param))
             .collect(Collectors.toSet());
@@ -61,27 +62,27 @@ public class EmailTemplateService {
     }
   }
 
-  private Set<String> extractPlaceholders(Template template) {
-    Set<String> placeholders = extractPlaceholdersFromText(template.getSubject());
+  private Set<String> extractPlaceholders(final Template template) {
+    final Set<String> placeholders = extractPlaceholdersFromText(template.getSubject());
     placeholders.addAll(extractPlaceholdersFromText(template.getBody()));
     return placeholders;
   }
 
-  private Set<String> extractPlaceholdersFromText(String text) {
-    Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
+  private Set<String> extractPlaceholdersFromText(final String text) {
+    final Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
     return matcher.results().map(result -> result.group(1)).collect(Collectors.toSet());
   }
 
-  private Template replacePlaceholders(Template template, Map<String, String> params) {
-    Template rendered = new Template();
+  private Template replacePlaceholders(final Template template, final Map<String, String> params) {
+    final Template rendered = new Template();
     rendered.setSubject(replacePlaceholdersInText(template.getSubject(), params));
     rendered.setBody(replacePlaceholdersInText(template.getBody(), params));
     return rendered;
   }
 
-  private String replacePlaceholdersInText(String text, Map<String, String> params) {
+  private String replacePlaceholdersInText(final String text, final Map<String, String> params) {
     String result = text;
-    for (Map.Entry<String, String> entry : params.entrySet()) {
+    for (final Map.Entry<String, String> entry : params.entrySet()) {
       result = result.replace("{{" + entry.getKey() + "}}", entry.getValue());
     }
     return result;

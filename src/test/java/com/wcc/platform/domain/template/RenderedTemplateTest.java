@@ -9,7 +9,7 @@ class RenderedTemplateTest {
 
   @Test
   @DisplayName("Create RenderedTemplate from Template")
-  void from_CreatesRenderedTemplate() {
+  void createsRenderedTemplate() {
     Template template = new Template();
     template.setSubject("Test Subject");
     template.setBody("Test Body");

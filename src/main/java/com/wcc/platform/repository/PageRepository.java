@@ -6,6 +6,7 @@ import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /** Generic page repository interface. */
 public interface PageRepository extends CrudRepository<Map<String, Object>, String> {
@@ -15,7 +16,9 @@ public interface PageRepository extends CrudRepository<Map<String, Object>, Stri
    * database.
    */
   default <T> T getFallback(
-      final PageType pageType, final Class<T> valueType, final ObjectMapper objectMapper) {
+      final PageType pageType,
+      final Class<T> valueType,
+      final @Qualifier("objectMapper") ObjectMapper objectMapper) {
     try {
       return objectMapper.readValue(FileUtil.readFileAsString(pageType.getFileName()), valueType);
     } catch (JsonProcessingException e) {
