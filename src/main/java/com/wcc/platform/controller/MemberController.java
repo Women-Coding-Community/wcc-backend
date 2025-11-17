@@ -1,5 +1,6 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -46,6 +47,18 @@ public class MemberController {
   public ResponseEntity<List<Member>> getAllMembers() {
     final List<Member> members = memberService.getAllMembers();
     return ResponseEntity.ok(members);
+  }
+
+  /**
+   * API to retrieve information users with access to platform restrict area.
+   *
+   * @return List of all members.
+   */
+  @GetMapping("/users")
+  @Operation(summary = "API to retrieve users with access to restrict area")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<UserAccount>> getUsers() {
+    return ResponseEntity.ok(memberService.getUsers());
   }
 
   /**

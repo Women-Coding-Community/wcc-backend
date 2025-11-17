@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.EventService;
@@ -29,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for event controller. */
 @ActiveProfiles("test")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, TestConfig.class})
 @WebMvcTest(EventController.class)
 class EventControllerTest {
 

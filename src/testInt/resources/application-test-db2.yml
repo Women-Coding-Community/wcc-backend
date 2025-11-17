@@ -22,3 +22,8 @@ google:
     folder-id: test-folder-id
 
 GOOGLE_DRIVE_FOLDER_ID: "some value"
+
+app:
+  seed:
+    admin:
+      enabled: false

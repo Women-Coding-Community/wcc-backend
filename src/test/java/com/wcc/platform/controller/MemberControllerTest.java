@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 /** Unit test for members and mentors APIs. */
 @ActiveProfiles("test")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, TestConfig.class})
 @WebMvcTest(MemberController.class)
 class MemberControllerTest {
 
