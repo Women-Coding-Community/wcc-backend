@@ -10,7 +10,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.domain.template.RenderedTemplate;
@@ -31,7 +30,6 @@ import org.springframework.test.web.servlet.MockMvc;
 class EmailTemplateControllerTest {
 
   private static final String API_EMAIL_TEMP_PREVIEW = "/api/platform/v1/email/template/preview";
-  @Autowired private ObjectMapper objectMapper;
   @Autowired private MockMvc mockMvc;
   @MockBean private EmailTemplateService emailTemplateService;
 
