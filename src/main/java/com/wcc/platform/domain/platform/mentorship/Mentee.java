@@ -12,8 +12,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
+@Getter
 public class Mentee extends Member {
 
     private @NotBlank MentorshipType previousMentorshipType;
