@@ -12,10 +12,13 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
+@NoArgsConstructor
 public class Mentee extends Member {
 
     private @NotBlank MentorshipType previousMentorshipType;
@@ -25,6 +28,7 @@ public class Mentee extends Member {
     private @NotBlank String bio;
     private List<String> spokenLanguages;
 
+    @Builder(builderMethodName = "menteeBuilder")
     public Mentee(
         final Long id,
         @NotBlank final String fullName,
