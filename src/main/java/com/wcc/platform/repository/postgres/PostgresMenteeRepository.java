@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @RequiredArgsConstructor
 public class PostgresMenteeRepository implements MenteeRepository {
-
-
+    private static final String SQL_GET_BY_ID = "SELECT * FROM mentees WHERE mentee_id = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM mentees WHERE mentee_id = ?";
 
 
@@ -39,8 +38,15 @@ public class PostgresMenteeRepository implements MenteeRepository {
 
     @Override
     public Optional<Mentee> findById(final Long menteeId) {
-        //not implemented
-        return null;
+        return jdbc.query(
+            SQL_GET_BY_ID,
+            rs -> {
+                if (rs.next()) {
+                    return Optional.of(menteeMapper.mapRowToMentee(rs));
+                }
+                return Optional.empty();
+            },
+            menteeId);
     }
 
     @Override
