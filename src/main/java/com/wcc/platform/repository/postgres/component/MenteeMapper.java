@@ -1,15 +1,9 @@
 package com.wcc.platform.repository.postgres.component;
 
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_BIO;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_PROFILE_STATUS;
-import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_SPOKEN_LANG;
 import static io.swagger.v3.core.util.Constants.COMMA;
-
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
-import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Mentee.MenteeBuilder;
 import com.wcc.platform.repository.SkillRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
