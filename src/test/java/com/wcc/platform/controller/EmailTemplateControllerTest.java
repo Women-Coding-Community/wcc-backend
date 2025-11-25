@@ -41,9 +41,10 @@ class EmailTemplateControllerTest {
             TemplateType.FEEDBACK_MENTOR_ADHOC,
             Map.of("mentorName", "test-mentor-name", "menteeName", "test-mentee-name"));
 
-    RenderedTemplate renderedTemplate = new RenderedTemplate();
-    renderedTemplate.setSubject("Feedback from John Doe");
-    renderedTemplate.setBody("Dear Jane Smith, Your mentor John Doe has provided feedback.");
+    RenderedTemplate renderedTemplate =
+        new RenderedTemplate(
+            "Feedback from John Doe",
+            "Dear Jane Smith, Your mentor John Doe has provided feedback.");
 
     when(emailTemplateService.renderTemplate(eq(TemplateType.FEEDBACK_MENTOR_ADHOC), any()))
         .thenReturn(renderedTemplate);

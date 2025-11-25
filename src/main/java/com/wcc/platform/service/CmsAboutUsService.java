@@ -16,7 +16,6 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.PaginationUtil;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
@@ -26,9 +25,7 @@ public class CmsAboutUsService {
   private final ObjectMapper objectMapper;
   private final PageRepository pageRepository;
 
-  public CmsAboutUsService(
-      final @Qualifier("objectMapper") ObjectMapper objectMapper,
-      final PageRepository pageRepository) {
+  public CmsAboutUsService(final ObjectMapper objectMapper, final PageRepository pageRepository) {
     this.objectMapper = objectMapper;
     this.pageRepository = pageRepository;
   }

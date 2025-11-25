@@ -8,7 +8,6 @@ import com.wcc.platform.domain.cms.pages.FiltersSection;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** Page filters related service. */
@@ -18,7 +17,7 @@ public class FilterService {
   private final ObjectMapper objectMapper;
 
   @Autowired
-  public FilterService(final @Qualifier("objectMapper") ObjectMapper objectMapper) {
+  public FilterService(final ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }
 

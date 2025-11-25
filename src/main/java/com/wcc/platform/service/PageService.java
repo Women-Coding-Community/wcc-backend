@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** Page Service. */
@@ -24,9 +23,7 @@ public class PageService {
 
   /** Constructor . */
   @Autowired
-  public PageService(
-      final PageRepository pageRepository,
-      @Qualifier("objectMapper") final ObjectMapper objectMapper) {
+  public PageService(final PageRepository pageRepository, final ObjectMapper objectMapper) {
     this.pageRepository = pageRepository;
     this.objectMapper = objectMapper;
   }

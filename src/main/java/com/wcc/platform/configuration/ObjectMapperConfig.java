@@ -24,9 +24,9 @@ import com.wcc.platform.serializer.LowerCaseEnumSerializer;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /** ObjectMapperConfig. */
 @Configuration
@@ -36,7 +36,7 @@ public class ObjectMapperConfig {
 
   /** Create ObjectMapper bean and include custom serializer. */
   @Bean
-  @Qualifier("objectMapper")
+  @Primary
   public ObjectMapper objectMapper() {
     final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -48,8 +48,7 @@ public class ObjectMapperConfig {
     return objectMapper;
   }
 
-  private void registerCustomDeserializers(
-      final @Qualifier("objectMapper") ObjectMapper objectMapper) {
+  private void registerCustomDeserializers(final ObjectMapper objectMapper) {
     final DateTimeFormatter formatter =
         DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH);
     objectMapper

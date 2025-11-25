@@ -1,9 +1,9 @@
 package com.wcc.platform.domain.template;
 
-import lombok.Data;
-
-@Data
-public class Template {
-  private String subject;
-  private String body;
-}
+/**
+ * Template record representing a email template with subject and body.
+ *
+ * @param subject
+ * @param body
+ */
+public record Template(String subject, String body) {}

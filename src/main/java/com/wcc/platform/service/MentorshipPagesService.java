@@ -19,7 +19,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /** Mentorship service. */
@@ -31,7 +30,7 @@ public class MentorshipPagesService {
   private final MentorshipService service;
 
   public MentorshipPagesService(
-      final @Qualifier("objectMapper") ObjectMapper objectMapper,
+      final ObjectMapper objectMapper,
       final PageRepository repository,
       final MentorshipService service) {
     this.objectMapper = objectMapper;

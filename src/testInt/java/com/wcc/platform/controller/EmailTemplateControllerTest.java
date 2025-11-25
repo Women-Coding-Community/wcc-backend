@@ -32,14 +32,13 @@ class EmailTemplateControllerTest extends DefaultDatabaseSetup {
 
   @Test
   void previewValidRequestReturnsRenderedTemplate() {
-    var request = new TemplateRequest();
-    request.setTemplateType(TemplateType.FEEDBACK_MENTOR_ADHOC);
-    request.setParams(
+    var params =
         Map.of(
             "mentorName", "Alice",
             "menteeName", "Bob",
             "program", "Mentorship",
-            "deadline", "2025-12-01"));
+            "deadline", "2025-12-01");
+    var request = new TemplateRequest(TemplateType.FEEDBACK_MENTOR_ADHOC, params);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -53,15 +52,14 @@ class EmailTemplateControllerTest extends DefaultDatabaseSetup {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     assertThat(response.getBody()).isNotNull();
-    // assertThat(response.getBody().getSubject()).contains("Alice");
-    assertThat(response.getBody().getBody()).contains("Bob");
+    assertThat(response.getBody().subject()).contains("Alice");
+    assertThat(response.getBody().body()).contains("Bob");
   }
 
   @Test
   void previewMissingParamsReturnsBadRequest() {
-    var request = new TemplateRequest();
-    request.setTemplateType(TemplateType.FEEDBACK_MENTOR_ADHOC);
-    request.setParams(Map.of("mentorName", "Alice"));
+    var request =
+        new TemplateRequest(TemplateType.FEEDBACK_MENTOR_ADHOC, Map.of("mentorName", "Alice"));
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);

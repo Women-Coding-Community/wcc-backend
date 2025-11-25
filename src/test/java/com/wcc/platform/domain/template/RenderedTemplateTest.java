@@ -10,13 +10,11 @@ class RenderedTemplateTest {
   @Test
   @DisplayName("Create RenderedTemplate from Template")
   void createsRenderedTemplate() {
-    Template template = new Template();
-    template.setSubject("Test Subject");
-    template.setBody("Test Body");
+    Template template = new Template("Test Subject", "Test Body");
 
     RenderedTemplate renderedTemplate = RenderedTemplate.from(template);
 
-    assertThat(renderedTemplate.getSubject()).isEqualTo("Test Subject");
-    assertThat(renderedTemplate.getBody()).isEqualTo("Test Body");
+    assertThat(renderedTemplate).hasFieldOrPropertyWithValue("subject", "Test Subject");
+    assertThat(renderedTemplate).hasFieldOrPropertyWithValue("body", "Test Body");
   }
 }

@@ -55,8 +55,9 @@ class EmailTemplateServiceTest {
         emailTemplateService.renderTemplate(TemplateType.FEEDBACK_MENTOR_ADHOC, params);
 
     assertThat(result).isNotNull();
-    assertThat(result.getSubject()).isEqualTo("Request: feedback from Doe for Smith");
-    assertThat(result.getBody()).isEqualTo("Hi Doe,Test feedback for the Smith.");
+    assertThat(result)
+        .hasFieldOrPropertyWithValue("subject", "Request: feedback from Doe for Smith");
+    assertThat(result).hasFieldOrPropertyWithValue("body", "Hi Doe,Test feedback for the Smith.");
   }
 
   @Test

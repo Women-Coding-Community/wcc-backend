@@ -63,8 +63,8 @@ public class EmailTemplateService {
   }
 
   private Set<String> extractPlaceholders(final Template template) {
-    final Set<String> placeholders = extractPlaceholdersFromText(template.getSubject());
-    placeholders.addAll(extractPlaceholdersFromText(template.getBody()));
+    final Set<String> placeholders = extractPlaceholdersFromText(template.subject());
+    placeholders.addAll(extractPlaceholdersFromText(template.body()));
     return placeholders;
   }
 
@@ -74,10 +74,9 @@ public class EmailTemplateService {
   }
 
   private Template replacePlaceholders(final Template template, final Map<String, String> params) {
-    final Template rendered = new Template();
-    rendered.setSubject(replacePlaceholdersInText(template.getSubject(), params));
-    rendered.setBody(replacePlaceholdersInText(template.getBody(), params));
-    return rendered;
+    return new Template(
+        replacePlaceholdersInText(template.subject(), params),
+        replacePlaceholdersInText(template.body(), params));
   }
 
   private String replacePlaceholdersInText(final String text, final Map<String, String> params) {

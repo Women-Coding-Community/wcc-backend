@@ -27,7 +27,7 @@ public class EmailTemplateController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<RenderedTemplate> preview(@RequestBody final TemplateRequest request) {
     final RenderedTemplate renderedTemplate =
-        emailTemplateService.renderTemplate(request.getTemplateType(), request.getParams());
+        emailTemplateService.renderTemplate(request.templateType(), request.params());
     return new ResponseEntity<>(renderedTemplate, HttpStatus.CREATED);
   }
 }

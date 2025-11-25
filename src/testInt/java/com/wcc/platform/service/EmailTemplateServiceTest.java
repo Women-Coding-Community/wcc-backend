@@ -36,7 +36,7 @@ public class EmailTemplateServiceTest extends DefaultDatabaseSetup {
     var out = templateService.renderTemplate(templateType, parameters);
 
     assertThat(out).isNotNull();
-    assertThat(out.getSubject()).contains("Alice Mentor");
-    assertThat(out.getBody()).contains("Mentorship");
+    assertThat(out.subject()).contains("Alice Mentor");
+    assertThat(out.body()).contains("Mentorship");
   }
 }

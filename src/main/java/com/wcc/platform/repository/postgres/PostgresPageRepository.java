@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DuplicateKeyException;
@@ -33,7 +32,7 @@ public class PostgresPageRepository implements PageRepository {
   @Autowired
   public PostgresPageRepository(
       final JdbcTemplate jdbc,
-      final @Qualifier("objectMapper") ObjectMapper mapper,
+      final ObjectMapper mapper,
       final @Value("${spring.datasource.driver-class-name}") String driverClassName) {
     this.jdbc = jdbc;
     this.mapper = mapper;

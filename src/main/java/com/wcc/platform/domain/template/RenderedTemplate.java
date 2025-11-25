@@ -1,16 +1,13 @@
 package com.wcc.platform.domain.template;
 
-import lombok.Data;
-
-@Data
-public class RenderedTemplate {
-  private String subject;
-  private String body;
-
+/**
+ * RenderedTemplate record representing a rendered email template.
+ *
+ * @param subject
+ * @param body
+ */
+public record RenderedTemplate(String subject, String body) {
   public static RenderedTemplate from(final Template template) {
-    final RenderedTemplate rendered = new RenderedTemplate();
-    rendered.setSubject(template.getSubject());
-    rendered.setBody(template.getBody());
-    return rendered;
+    return new RenderedTemplate(template.subject(), template.body());
   }
 }

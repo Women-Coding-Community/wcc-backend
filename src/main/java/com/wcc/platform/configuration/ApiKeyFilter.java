@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,7 +35,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
   public ApiKeyFilter(
       @Value("${security.enabled}") final boolean securityEnabled,
       @Value("${security.api.key}") final String apiKey,
-      final @Qualifier("objectMapper") ObjectMapper objectMapper) {
+      final ObjectMapper objectMapper) {
     super();
     this.apiKey = apiKey;
     this.securityEnabled = securityEnabled;
