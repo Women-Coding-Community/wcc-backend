@@ -4,6 +4,7 @@ import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
@@ -36,6 +37,8 @@ public class MenteeMapper {
         "INSERT INTO mentee_previous_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)";
     private static final String SQL_TECH_AREAS_INSERT =
         "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)";
+    private static final String INSERT_MENTORSHIP_FOCUS_AREAS =
+        "INSERT INTO mentee_mentorship_focus_areas (mentee_id, focus_area_id) VALUES (?, ?)";
 
     private final JdbcTemplate jdbc;
     private final PostgresMemberRepository memberRepository;
@@ -79,6 +82,7 @@ public class MenteeMapper {
         insertLanguages(mentee.getSkills(), memberId);
         insertMentorshipTypes(mentee.getMentorshipType(), memberId);
         insertPreviousMentorshipTypes(mentee.getPreviousMentorshipType(), memberId);
+        insertMentorshipFocusAreas(mentee.getSkills(), memberId);
     }
 
     private void insertMentee(final Mentee mentee, final Long memberId) {
@@ -116,6 +120,13 @@ public class MenteeMapper {
     /** Inserts previous mentorship types for a mentee in mentee_previous_mentorship_types table. */
     private void insertPreviousMentorshipTypes(final MentorshipType mt, final Long memberId) {
         jdbc.update(INSERT_PREVIOUS_MENTORSHIP_TYPES, memberId, mt.getMentorshipTypeId());
+    }
+
+    /** Inserts focus areas for the mentorship for a mentee in mentee_mentorship_focus_areas table. */
+    private void insertMentorshipFocusAreas(final Skills menteeSkills, final Long memberId) {
+        for (final MentorshipFocusArea focus : menteeSkills.mentorshipFocus()) {
+            jdbc.update(INSERT_MENTORSHIP_FOCUS_AREAS, memberId, focus.getFocusId());
+        }
     }
 
 }
