@@ -24,14 +24,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class PostgresMenteeRepositoryTest {
-    private JdbcTemplate jdbc;
     private MemberMapper memberMapper;
     private MenteeMapper menteeMapper;
     private PostgresMenteeRepository repository;
 
     @BeforeEach
     void setup() {
-        jdbc = mock(JdbcTemplate.class);
+        JdbcTemplate jdbc = mock(JdbcTemplate.class);
         menteeMapper = mock(MenteeMapper.class);
         memberMapper = mock(MemberMapper.class);
         repository = spy(new PostgresMenteeRepository(jdbc, menteeMapper, memberMapper));
