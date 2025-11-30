@@ -11,9 +11,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,5 +49,13 @@ public class PostgresMenteeRepositoryTest {
         assertNotNull(result);
         assertEquals("Mentee bio", result.getBio());
         assertEquals("ACTIVE", result.getProfileStatus().toString());
+        assertEquals("Company name", result.getCompanyName());
+        assertEquals("member@wcc.com", result.getEmail());
+        assertEquals("City", result.getCity());
+        assertEquals(2, result.getSkills().yearsExperience());
+        assertEquals("Spain", result.getCountry().countryName());
+        assertEquals(List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND), result.getSkills().areas());
+        assertEquals(List.of(Languages.JAVASCRIPT), result.getSkills().languages());
+        assertEquals(List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID), result.getSkills().mentorshipFocus());
     }
 }
