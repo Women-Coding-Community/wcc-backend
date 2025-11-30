@@ -38,6 +38,8 @@ file:
     directory: data
 
 app:
+  cors:
+    allowed-origins: http://localhost:3000,https://localhost:3000
   seed:
     admin:
       enabled: true
