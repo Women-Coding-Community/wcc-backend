@@ -11,4 +11,11 @@ import java.util.Optional;
  */
 public interface MenteeRepository extends CrudRepository<Mentee, Long> {
 
+    /**
+     * Return all saved mentees.
+     *
+     * @return list of mentees
+     */
+    List<Mentee> getAll();
+
 }

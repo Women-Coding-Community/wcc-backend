@@ -3,6 +3,7 @@ package com.wcc.platform.service;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.repository.MenteeRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +28,18 @@ public class MenteeService {
             throw new DuplicatedMemberException(menteeExists.get().getEmail());
         }
         return menteeRepository.create(mentee);
+    }
+
+    /**
+     * Return all stored mentees.
+     *
+     * @return List of mentees.
+     */
+    public List<Mentee> getAllMentees() {
+        final var allMentees = menteeRepository.getAll();
+        if (allMentees == null) {
+            return List.of();
+        }
+        return allMentees;
     }
 }
