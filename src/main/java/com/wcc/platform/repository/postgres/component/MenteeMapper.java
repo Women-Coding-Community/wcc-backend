@@ -28,7 +28,7 @@ public class MenteeMapper {
 
     private static final String SQL_INSERT_MENTEE =
         "INSERT INTO mentees (mentee_id, profile_status, bio, years_experience, "
-            + " spoken_languages) VALUES (?, ?, ?, ?, ?)";
+            + "spoken_languages) VALUES (?, ?, ?, ?, ?)";
     private static final String SQL_PROG_LANG_INSERT =
         "INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)";
     private static final String INSERT_MENTORSHIP_TYPES =
