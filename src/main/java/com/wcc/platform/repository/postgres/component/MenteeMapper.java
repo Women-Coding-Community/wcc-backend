@@ -1,5 +1,6 @@
 package com.wcc.platform.repository.postgres.component;
 
+import static com.wcc.platform.repository.postgres.constants.MentorConstants.COL_MENTORSHIP_TYPE;
 import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
@@ -39,6 +40,8 @@ public class MenteeMapper {
         "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)";
     private static final String INSERT_MENTORSHIP_FOCUS_AREAS =
         "INSERT INTO mentee_mentorship_focus_areas (mentee_id, focus_area_id) VALUES (?, ?)";
+    private static final String SQL_MENTORSHIP_TYPE =
+        "SELECT mentorship_type FROM mentee_mentorship_types WHERE mentee_id = ?";
 
     private final JdbcTemplate jdbc;
     private final PostgresMemberRepository memberRepository;
@@ -67,6 +70,9 @@ public class MenteeMapper {
         final var skillsMentee = skillsRepository.findSkills(menteeId);
         skillsMentee.ifPresent(builder::skills);
 
+        final var mentorshipType = loadMentorshipTypes(menteeId);
+        mentorshipType.ifPresent(builder::mentorshipType);
+
 
         return builder
             .id(menteeId)
@@ -74,6 +80,20 @@ public class MenteeMapper {
             .spokenLanguages(List.of(rs.getString("spoken_languages").split(COMMA)))
             .bio(rs.getString("bio"))
             .build();
+    }
+
+    public Optional<MentorshipType> loadMentorshipTypes(final Long menteeId) {
+        List<MentorshipType> types = jdbc.query(
+            SQL_MENTORSHIP_TYPE,
+            (rs, rowNum) -> MentorshipType.fromId(rs.getInt(COL_MENTORSHIP_TYPE)),
+            menteeId
+        );
+
+        if (types.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(types.get(0));
     }
 
     public void addMentee(final Mentee mentee, final Long memberId) {

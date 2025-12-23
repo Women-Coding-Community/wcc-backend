@@ -38,7 +38,6 @@ public class MenteeMapperTest {
     public static final String COLUMN_PROFILE_STATUS = "profile_status";
     public static final String COLUMN_BIO = "bio";
     public static final String COLUMN_SPOKEN_LANGUAGES = "spoken_languages";
-    public static final String COLUMN_MENTORSHIP_TYPE = "mentorship_type";
 
     @Mock private JdbcTemplate jdbc;
     @Mock private ResultSet resultSet;
@@ -63,17 +62,20 @@ public class MenteeMapperTest {
         when(resultSet.getInt(COLUMN_PROFILE_STATUS)).thenReturn(1);
         when(resultSet.getString(COLUMN_BIO)).thenReturn("Looking for a mentor");
         when(resultSet.getString(COLUMN_SPOKEN_LANGUAGES)).thenReturn("German");
+
         when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
+        when(menteeMapper.loadMentorshipTypes(menteeId)).thenReturn(Optional.of(MentorshipType.fromId(1)));
 
         //Act
         Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
 
         //Assert
         assertEquals(menteeId, mentee.getId());
-        assertEquals(mentee.getProfileStatus(), ProfileStatus.fromId(1));
+        assertEquals(ProfileStatus.fromId(1), mentee.getProfileStatus());
         assertThat(mentee.getSpokenLanguages())
             .containsExactlyInAnyOrderElementsOf(List.of("German"));
         assertEquals("Looking for a mentor", mentee.getBio());
+        assertEquals("Ad-Hoc", mentee.getMentorshipType().toString());
     }
 
     @Test
