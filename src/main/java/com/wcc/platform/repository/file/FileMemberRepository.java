@@ -28,7 +28,7 @@ public class FileMemberRepository implements MemberRepository {
    */
   public FileMemberRepository(
       final ObjectMapper objectMapper,
-      @Value("${file.storage.directory}") final String directoryPath) {
+      final @Value("${file.storage.directory}") String directoryPath) {
     this.objectMapper = objectMapper;
     file = new File(directoryPath + File.separator + FILE_NAME);
   }

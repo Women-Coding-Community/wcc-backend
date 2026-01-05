@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /** ObjectMapperConfig. */
 @Configuration
@@ -35,6 +36,7 @@ public class ObjectMapperConfig {
 
   /** Create ObjectMapper bean and include custom serializer. */
   @Bean
+  @Primary
   public ObjectMapper objectMapper() {
     final ObjectMapper objectMapper = new ObjectMapper();
 

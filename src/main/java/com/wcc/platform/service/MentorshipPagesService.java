@@ -19,17 +19,24 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /** Mentorship service. */
 @SuppressWarnings("PMD.TooManyStaticImports")
-@AllArgsConstructor
 @Service
 public class MentorshipPagesService {
   private final ObjectMapper objectMapper;
   private final PageRepository repository;
   private final MentorshipService service;
+
+  public MentorshipPagesService(
+      final ObjectMapper objectMapper,
+      final PageRepository repository,
+      final MentorshipService service) {
+    this.objectMapper = objectMapper;
+    this.repository = repository;
+    this.service = service;
+  }
 
   /**
    * API to retrieve information about mentorship overview.

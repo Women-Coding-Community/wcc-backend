@@ -1,0 +1,9 @@
+FEEDBACK_MENTOR_ADHOC:
+  subject: "Request: feedback from {{mentorName}} for {{menteeName}}"
+  body: |
+    <p>Hi {{mentorName}},</p>
+    <p>We hope the {{program}} mentorship is going well. Please could you provide feedback for <strong>{{menteeName}}</strong> to help us and the mentee track progress?</p>
+    <p>You can submit feedback using this form: <a href="https://docs.google.com/forms/d/e/EXAMPLE_FORM_ID/viewform">Submit feedback</a></p>
+    <p>If possible, please reply by {{deadline}}.</p>
+    <p>Thank you for supporting {{menteeName}}.</p>
+    <p>Best,<br/>Mentorship Team</p>
