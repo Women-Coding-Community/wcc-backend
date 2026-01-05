@@ -49,24 +49,23 @@ public class EmailService {
       log.info("Attempting to send email to: {}", emailRequest.getTo());
 
       final MimeMessage message = javaMailSender.createMimeMessage();
-      final MimeMessageHelper helper =
-          new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+      final var mimeMessageHelper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
-      helper.setFrom(fromEmail);
-      helper.setTo(emailRequest.getTo());
-      helper.setSubject(emailRequest.getSubject());
-      helper.setText(emailRequest.getBody(), emailRequest.isHtml());
+      mimeMessageHelper.setFrom(fromEmail);
+      mimeMessageHelper.setTo(emailRequest.getTo());
+      mimeMessageHelper.setSubject(emailRequest.getSubject());
+      mimeMessageHelper.setText(emailRequest.getBody(), emailRequest.isHtml());
 
       if (!ObjectUtils.isEmpty(emailRequest.getCc())) {
-        helper.setCc(emailRequest.getCc().toArray(new String[0]));
+        mimeMessageHelper.setCc(emailRequest.getCc().toArray(new String[0]));
       }
 
       if (!ObjectUtils.isEmpty(emailRequest.getBcc())) {
-        helper.setBcc(emailRequest.getBcc().toArray(new String[0]));
+        mimeMessageHelper.setBcc(emailRequest.getBcc().toArray(new String[0]));
       }
 
       if (!ObjectUtils.isEmpty(emailRequest.getReplyTo())) {
-        helper.setReplyTo(emailRequest.getReplyTo());
+        mimeMessageHelper.setReplyTo(emailRequest.getReplyTo());
       }
 
       javaMailSender.send(message);
