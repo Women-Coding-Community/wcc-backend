@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
@@ -40,7 +41,11 @@ public class GlobalExceptionHandler {
   }
 
   /** Receive PlatformInternalException and return {@link HttpStatus#INTERNAL_SERVER_ERROR}. */
-  @ExceptionHandler({PlatformInternalException.class, FileRepositoryException.class})
+  @ExceptionHandler({
+    PlatformInternalException.class,
+    FileRepositoryException.class,
+    EmailSendException.class
+  })
   @ResponseStatus(INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorDetails> handleInternalError(
       final RuntimeException ex, final WebRequest request) {

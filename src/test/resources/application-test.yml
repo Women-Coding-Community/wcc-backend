@@ -3,6 +3,12 @@ spring:
     activate:
       on-profile: test
 
+  mail:
+    host: localhost
+    port: 3025
+    username: test@wcc.dev
+    password: test
+
 security:
   token:
     ttl-minutes: 60
