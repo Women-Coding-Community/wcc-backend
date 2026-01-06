@@ -5,6 +5,7 @@ import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
 import static com.wcc.platform.factories.SetupFactories.createMemberDtoTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
+import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,10 +21,12 @@ import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -44,6 +47,7 @@ class MemberControllerTest {
 
   private static final String API_MEMBERS = "/api/platform/v1/members";
   private static final String API_MENTORS = "/api/platform/v1/mentors";
+  private static final String API_MENTEES = "/api/platform/v1/mentees";
   private static final String API_KEY_HEADER = "X-API-KEY";
   private static final String API_KEY_VALUE = "test-api-key";
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -51,6 +55,7 @@ class MemberControllerTest {
   @Autowired private MockMvc mockMvc;
   @MockBean private MemberService memberService;
   @MockBean private MentorshipService mentorshipService;
+  @MockBean private MenteeService menteeService;
 
   @Test
   void testGetAllMembersReturnsOk() throws Exception {
@@ -100,6 +105,18 @@ class MemberControllerTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(1)))
         .andExpect(jsonPath("$.fullName", is("Jane")));
+  }
+
+  @Test
+  void testCreateMenteeReturnsCreated() throws Exception {
+    Mentee mockMentee = createMenteeTest(2L, "Mark", "mark@test.com");
+    when(menteeService.create(any(Mentee.class))).thenReturn(mockMentee);
+
+    mockMvc
+        .perform(postRequest(API_MENTEES, mockMentee))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id", is(2)))
+        .andExpect(jsonPath("$.fullName", is("Mark")));
   }
 
   @Test
