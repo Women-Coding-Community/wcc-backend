@@ -37,6 +37,17 @@ public class Member {
   private List<SocialNetwork> network;
 
   public MemberDto toDto() {
-    return new MemberDto(id, fullName, position, country, city, companyName, images, network);
+    return new MemberDto(
+        id,
+        fullName,
+        position,
+        email,
+        slackDisplayName,
+        country,
+        city,
+        companyName,
+        memberTypes,
+        images,
+        network);
   }
 }
