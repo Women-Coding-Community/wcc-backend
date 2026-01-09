@@ -9,6 +9,18 @@ spring:
     username: sa
     password: ""
 
+  mail:
+    host: localhost
+    port: 3025
+    username: test
+    password: test
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
 security:
   enabled: false
 
