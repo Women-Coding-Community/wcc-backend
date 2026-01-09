@@ -86,36 +86,39 @@ public class MentorDto extends MemberDto {
   @Override
   public Member merge(final Member member) {
     // Merge Member fields using parent's merge method
-    final Member mergedMember = super.merge(member);
-    final Mentor mentor = (Mentor) mergedMember;
+    final Mentor existingMentor = (Mentor) member;
 
     // Build updated Mentor with Mentor-specific fields
     return Mentor.mentorBuilder()
-        .id(mentor.getId())
-        .fullName(mentor.getFullName())
-        .position(mentor.getPosition())
-        .email(mentor.getEmail())
-        .slackDisplayName(mentor.getSlackDisplayName())
-        .country(mentor.getCountry())
-        .city(mentor.getCity())
-        .companyName(mentor.getCompanyName())
-        .images(mentor.getImages())
-        .network(mentor.getNetwork())
+        .id(existingMentor.getId())
+        .fullName(this.getFullName() != null ? this.getFullName() : existingMentor.getFullName())
+        .position(this.getPosition() != null ? this.getPosition() : existingMentor.getPosition())
+        .email(this.getEmail() != null ? this.getEmail() : existingMentor.getEmail())
+        .slackDisplayName(
+            this.getSlackDisplayName() != null
+                ? this.getSlackDisplayName()
+                : existingMentor.getSlackDisplayName())
+        .country(this.getCountry() != null ? this.getCountry() : existingMentor.getCountry())
+        .city(this.getCity() != null ? this.getCity() : existingMentor.getCity())
+        .companyName(
+            this.getCompanyName() != null ? this.getCompanyName() : existingMentor.getCompanyName())
+        .images(this.getImages() != null ? this.getImages() : existingMentor.getImages())
+        .network(this.getNetwork() != null ? this.getNetwork() : existingMentor.getNetwork())
         .profileStatus(
-            this.profileStatus != null ? this.profileStatus : ((Mentor) member).getProfileStatus())
+            this.profileStatus != null ? this.profileStatus : existingMentor.getProfileStatus())
         .spokenLanguages(
             this.spokenLanguages != null
                 ? this.spokenLanguages
-                : ((Mentor) member).getSpokenLanguages())
-        .bio(this.bio != null ? this.bio : ((Mentor) member).getBio())
-        .skills(this.skills != null ? this.skills : ((Mentor) member).getSkills())
+                : existingMentor.getSpokenLanguages())
+        .bio(this.bio != null ? this.bio : existingMentor.getBio())
+        .skills(this.skills != null ? this.skills : existingMentor.getSkills())
         .menteeSection(
-            this.menteeSection != null ? this.menteeSection : ((Mentor) member).getMenteeSection())
+            this.menteeSection != null ? this.menteeSection : existingMentor.getMenteeSection())
         .feedbackSection(
             this.feedbackSection != null
                 ? this.feedbackSection
-                : ((Mentor) member).getFeedbackSection())
-        .resources(this.resources != null ? this.resources : ((Mentor) member).getResources())
+                : existingMentor.getFeedbackSection())
+        .resources(this.resources != null ? this.resources : existingMentor.getResources())
         .build();
   }
 }
