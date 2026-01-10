@@ -16,7 +16,8 @@ public enum ResourceType {
   OTHER(5),
   MENTOR_RESOURCE(6),
   IMAGE(7),
-  RESOURCE(8);
+  RESOURCE(8),
+  MENTORSHIP(9);
 
   private final int resourceTypeId;
 
@@ -54,6 +55,7 @@ public enum ResourceType {
           StringUtils.trimToEmpty(properties.getEventsFolder());
       case MENTOR_RESOURCE -> StringUtils.trimToEmpty(properties.getMentorsFolder());
       case IMAGE -> StringUtils.trimToEmpty(properties.getImagesFolder());
+      case MENTORSHIP -> StringUtils.trimToEmpty(properties.getResourcesFolder());
       default -> StringUtils.trimToEmpty(properties.getResourcesFolder());
     };
   }

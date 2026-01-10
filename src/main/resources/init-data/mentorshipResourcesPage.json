@@ -1,0 +1,60 @@
+{
+  "id": "page:MENTORSHIP_RESOURCES",
+  "heroSection": {
+    "title": "Mentorship Resources"
+  },
+  "section": {
+    "description": "Whether you’re a mentee looking to navigate your journey, a mentor aiming to provide the best guidance, or a seasoned mentor seeking quick tips, we have the tools you need. Explore our guides for insightful mentorship advice and strategies."
+  },
+  "resourcesSection": {
+    "title": "Available Resources",
+    "description": "Download and explore our curated mentorship materials",
+    "items": [
+      {
+        "title": "Mentees Guide",
+        "link": {
+          "label": "Download PDF",
+          "uri": "https://drive.google.com/file/d/1xPbW8BlQoLXkuAJ7m0RuvOV02Opyr445"
+        },
+        "image": {
+          "path": "https://drive.google.com/file/d/1C-hgV5xWTeTQ4T_sO4puvNQfo8ez-rTX",
+          "alt": "woman working on a laptop",
+          "type": "desktop"
+        }
+      },
+      {
+        "title": "Mentor's Pocketbook",
+        "link": {
+          "label": "Download PDF",
+          "uri": "https://drive.google.com/file/d/1rgoOTqqG4Gu6e4tw45efFspDnoYRgYd9"
+        },
+        "image": {
+          "path": "https://drive.google.com/file/d/1AQKAp76gjk1kMX7pB7pnY5G5TMnxmDVk",
+          "alt": "Image decorative",
+          "type": "desktop"
+        }
+      },
+      {
+        "title": "Mentor's Guide",
+        "link": {
+          "label": "Download PDF",
+          "uri": "https://drive.google.com/file/d/1wTkCSG95BVg-0XX4r7FnFiV24_SXlbM_"
+        },
+        "image": {
+          "path": "https://drive.google.com/file/d/1opnOPWSxFP_Rq9Pylr02mxveLUYOjNkJ",
+          "alt": "two women sitting by a desk and talking together",
+          "type": "desktop"
+        }
+      }
+    ]
+  },
+  "customStyle": {
+    "backgroundColour": {
+      "color": "primary",
+      "shade": {
+        "name": "light",
+        "value": 90
+      }
+    }
+  }
+}

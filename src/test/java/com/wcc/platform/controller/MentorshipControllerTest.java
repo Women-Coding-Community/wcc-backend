@@ -3,6 +3,7 @@ package com.wcc.platform.controller;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_RESOURCES;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createLongTermTimeLinePageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
@@ -10,6 +11,7 @@ import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorsh
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipResourcesPageTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +30,7 @@ import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.MentorshipPagesService;
 import com.wcc.platform.utils.FileUtil;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -49,6 +52,7 @@ public class MentorshipControllerTest {
   public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/study-groups";
   public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
   public static final String API_AD_HOC_TIMELINE = "/api/cms/v1/mentorship/ad-hoc-timeline";
+  public static final String API_MENTORSHIP_RESOURCES = "/api/cms/v1/mentorship/resources";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
@@ -178,5 +182,20 @@ public class MentorshipControllerTest {
             MockMvcRequestFactory.getRequest(API_AD_HOC_TIMELINE).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(objectMapper.writeValueAsString(adHocTimelinePage)));
+  }
+
+  @Test
+  @DisplayName("Given resources page exists, when GET /resources, then return OK with JSON")
+  void shouldReturnOkResponseForMentorshipResources() throws Exception {
+    var fileName = MENTORSHIP_RESOURCES.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getResources()).thenReturn(createMentorshipResourcesPageTest(fileName));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_RESOURCES).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
   }
 }

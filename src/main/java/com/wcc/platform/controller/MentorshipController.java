@@ -10,6 +10,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.service.MentorshipPagesService;
@@ -108,5 +109,12 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipAdHocTimelinePage> getAdHocTimeline() {
     return ResponseEntity.ok(service.getAdHocTimeline());
+  }
+
+  @GetMapping("/resources")
+  @Operation(summary = "API to retrieve mentorship resources page")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipResourcesPage> getMentorshipResources() {
+    return ResponseEntity.ok(service.getResources());
   }
 }

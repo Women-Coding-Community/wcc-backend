@@ -531,3 +531,22 @@ docker compose -f docker/docker-compose.yml up postgres
 - Generate Postman collection: `./gradlew postmanGenerate`
 
 See `docs/resource_api.md` for detailed resource API documentation.
+
+## Git Commit Conventions
+
+**IMPORTANT: DO NOT include AI attribution in commit messages**
+
+When creating commits:
+- ❌ **NEVER** add "Generated with Claude Code" or similar AI attribution lines
+- ❌ **NEVER** add "Co-Authored-By: Claude" or AI co-author tags
+- ✅ Use standard conventional commit format: `feat:`, `fix:`, `docs:`, etc.
+- ✅ Keep commit messages concise and focused on the "why" rather than the "what"
+- ✅ Follow the existing commit style in the repository
+
+**Example of correct commit message:**
+```
+feat: Add mentorship resources page endpoint
+
+Implement new CMS endpoint to serve downloadable mentorship resources
+including guides for mentees and mentors with Google Drive links.
+```
