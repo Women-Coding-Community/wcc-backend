@@ -26,7 +26,8 @@ public enum PageType {
   CELEBRATE_HER("init-data/celebrateHerPage.json", "page:CELEBRATE_HER"),
   PARTNERS("init-data/partnersPage.json", "page:PARTNERS"),
   STUDY_GROUPS("init-data/mentorshipStudyGroupsPage.json", "page:STUDY_GROUPS"),
-  AD_HOC_TIMELINE("init-data/adHocTimelinePage.json", "page:AD_HOC_TIMELINE");
+  AD_HOC_TIMELINE("init-data/adHocTimelinePage.json", "page:AD_HOC_TIMELINE"),
+  MENTORSHIP_RESOURCES("init-data/mentorshipResourcesPage.json", "page:MENTORSHIP_RESOURCES");
 
   public static final String ID_PREFIX = "page:";
 

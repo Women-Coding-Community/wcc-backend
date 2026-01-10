@@ -6,6 +6,7 @@ import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_RESOURCES;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
@@ -172,5 +174,23 @@ public class MentorshipPagesService {
       }
     }
     return repository.getFallback(AD_HOC_TIMELINE, MentorshipAdHocTimelinePage.class, objectMapper);
+  }
+
+  /**
+   * API to retrieve information about mentorship resources.
+   *
+   * @return Mentorship resources page.
+   */
+  public MentorshipResourcesPage getResources() {
+    final var page = repository.findById(MENTORSHIP_RESOURCES.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), MentorshipResourcesPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    return repository.getFallback(
+        MENTORSHIP_RESOURCES, MentorshipResourcesPage.class, objectMapper);
   }
 }

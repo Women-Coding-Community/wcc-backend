@@ -14,6 +14,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.FaqItem;
+import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.ListSection;
@@ -30,6 +32,8 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResource;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.StudyGroup;
 import com.wcc.platform.domain.platform.member.Member;
@@ -45,6 +49,7 @@ import java.time.Year;
 import java.util.List;
 
 /** Mentorship test factories. */
+@SuppressWarnings("PMD.TooManyMethods")
 public class SetupMentorshipFactories {
 
   /** Test factory. */
@@ -200,6 +205,44 @@ public class SetupMentorshipFactories {
         createCommonSectionTest(),
         createContactTest(),
         new ListSection<>("Study Groups", null, null, List.of(studyGroup)),
+        createCustomStyleTest());
+  }
+
+  /** Test factory for Mentorship Resources Page with file. */
+  public static MentorshipResourcesPage createMentorshipResourcesPageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return OBJECT_MAPPER.readValue(content, MentorshipResourcesPage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorshipResourcesPageTest();
+    }
+  }
+
+  /** Test factory for Mentorship Resources Page. */
+  public static MentorshipResourcesPage createMentorshipResourcesPageTest() {
+    final String pageId = PageType.MENTORSHIP_RESOURCES.getId();
+
+    MentorshipResource resource1 =
+        MentorshipResource.builder()
+            .title("Mentees Guide")
+            .link(
+                new LabelLink(
+                    "Download PDF",
+                    "Download PDF",
+                    "https://drive.google.com/file/d/1xPbW8BlQoLXkuAJ7m0RuvOV02Opyr445"))
+            .image(
+                new Image(
+                    "/assets/images/resources/stock-unsplash-resources-mentee-guide.jpg",
+                    "woman working on a laptop",
+                    ImageType.DESKTOP))
+            .build();
+
+    return new MentorshipResourcesPage(
+        pageId,
+        createNoImageHeroSectionTest(),
+        createCommonSectionTest(),
+        new ListSection<>(
+            "Available Resources", "Download and explore our resources", null, List.of(resource1)),
         createCustomStyleTest());
   }
 
