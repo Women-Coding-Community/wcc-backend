@@ -159,6 +159,12 @@ Setup Data source in the IntelliJ.
 **Note**: In case of problems with the database during the development phase,
 when changes to the db tables are frequent, from the DB source connection in IntelliJ drop the
 tables and refresh the DB. Start the application.
+To fix database issues (for example, incompatibility errors with older DB versions), the simple
+command
+
+``docker system prune -a --volumes``
+
+can be executed from the terminal.
 
 ## Run Locally
 

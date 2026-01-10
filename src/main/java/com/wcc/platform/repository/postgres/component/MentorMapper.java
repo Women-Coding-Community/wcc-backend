@@ -24,6 +24,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /** Maps database rows to Mentor domain objects. */
 @Component
@@ -152,5 +153,62 @@ public class MentorMapper {
     for (final MentorshipFocusArea focus : mentorSkills.mentorshipFocus()) {
       jdbc.update(SQL_FOCUS_INSERT, memberId, focus.getFocusId());
     }
+  }
+
+  /** Updates an existing Mentor in the database, including related skills and mentee section. */
+  @Transactional
+  public void updateMentor(Mentor mentor, Long mentorId) {
+    // Update mentor-specific details in mentors table
+    updateMentorDetails(mentor, mentorId);
+
+    // Update mentee section (delete old and insert new)
+    updateMenteeSection(mentor.getMenteeSection(), mentorId);
+
+    // Update skills (delete old and insert new)
+    updateSkills(mentor, mentorId);
+  }
+
+  /** Updates mentor-specific details in the mentors table. */
+  private void updateMentorDetails(Mentor mentor, Long mentorId) {
+    String sql =
+        "UPDATE mentors SET "
+            + "profile_status = ?, "
+            + "bio = ?, "
+            + "years_experience = ?, "
+            + "spoken_languages = ?, "
+            + "is_available = ? "
+            + "WHERE mentor_id = ?";
+
+    final var skills = mentor.getSkills();
+    jdbc.update(
+        sql,
+        mentor.getProfileStatus().getStatusId(),
+        mentor.getBio(),
+        skills.yearsExperience(),
+        String.join(",", mentor.getSpokenLanguages()),
+        true,
+        mentorId);
+  }
+
+  /** Updates the mentee section for a mentor (deletes old records and inserts new ones). */
+  private void updateMenteeSection(MenteeSection menteeSec, Long mentorId) {
+    // Delete old mentee section data
+    jdbc.update("DELETE FROM mentor_mentee_section WHERE mentor_id = ?", mentorId);
+    jdbc.update("DELETE FROM mentor_availability WHERE mentor_id = ?", mentorId);
+    jdbc.update("DELETE FROM mentor_mentorship_types WHERE mentor_id = ?", mentorId);
+
+    // Insert new mentee section data
+    insertMenteeSection(menteeSec, mentorId);
+  }
+
+  /** Updates skills for a mentor (deletes old records and inserts new ones). */
+  private void updateSkills(Mentor mentor, Long mentorId) {
+    // Delete old skills data
+    jdbc.update("DELETE FROM mentor_technical_areas WHERE mentor_id = ?", mentorId);
+    jdbc.update("DELETE FROM mentor_languages WHERE mentor_id = ?", mentorId);
+    jdbc.update("DELETE FROM mentor_mentorship_focus_areas WHERE mentor_id = ?", mentorId);
+
+    // Insert new skills data
+    insertSkills(mentor, mentorId);
   }
 }

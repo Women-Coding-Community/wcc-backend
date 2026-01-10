@@ -83,9 +83,11 @@ public class PostgresMentorRepository implements MentorRepository {
   }
 
   @Override
+  @Transactional
   public Mentor update(final Long mentorId, final Mentor mentor) {
-    // not implemented
-    return mentor;
+    memberMapper.updateMember(mentor, mentorId);
+    mentorMapper.updateMentor(mentor, mentorId);
+    return findById(mentorId).orElse(null);
   }
 
   @Override

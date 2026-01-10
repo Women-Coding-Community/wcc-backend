@@ -141,15 +141,19 @@ public class SetupFactories {
 
   /** Factory test to create MemberDto object. */
   public static MemberDto createMemberDtoTest(final MemberType type) {
-    return new MemberDto(
-        1L,
-        "fullName updated " + type.name(),
-        "position updated " + type.name(),
-        new Country("ES", "Spain"),
-        "City updated",
-        "Company name updated",
-        List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)),
-        List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")));
+    return MemberDto.builder()
+        .id(1L)
+        .fullName("fullName updated " + type.name())
+        .position("position updated " + type.name())
+        .email("email.updated@" + type.name().toLowerCase())
+        .slackDisplayName("slackDisplayNameUpdated")
+        .country(new Country("ES", "Spain"))
+        .city("City updated")
+        .companyName("Company name updated")
+        .memberTypes(List.of(type))
+        .images(List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)))
+        .network(List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")))
+        .build();
   }
 
   /** Factory test to create new member from combining data from member and memberDto. */
