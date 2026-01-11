@@ -8,7 +8,6 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
-import com.wcc.platform.repository.postgres.PostgresMemberImageRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberMemberTypeRepository;
 import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
@@ -42,7 +41,6 @@ public class MemberMapper {
   private final JdbcTemplate jdbc;
   private final PostgresCountryRepository countryRepository;
   private final PostgresMemberMemberTypeRepository memberTypeRepo;
-  private final PostgresMemberImageRepository imageRepository;
   private final PostgresSocialNetworkRepository socialNetworkRepo;
 
   /** Mapper method to convert ResultSet to Member object. */
@@ -50,7 +48,7 @@ public class MemberMapper {
     final Long memberId = rs.getLong("id");
     final Country country = countryRepository.findById(rs.getLong("country_id")).orElse(null);
     final List<MemberType> memberTypes = memberTypeRepo.findByMemberId(memberId);
-    final List<Image> images = imageRepository.findByMemberId(memberId);
+    final List<Image> images = List.of();
     final List<SocialNetwork> networks = socialNetworkRepo.findByMemberId(memberId);
 
     return Member.builder()
@@ -88,7 +86,6 @@ public class MemberMapper {
             SingleColumnRowMapper.newInstance(Long.class),
             member.getEmail());
 
-    addMemberImages(memberId, member);
     addMemberTypes(memberId, member);
     addSocialNetworks(memberId, member);
 
@@ -113,20 +110,9 @@ public class MemberMapper {
     memberTypeRepo.deleteByMemberId(memberId);
     addMemberTypes(memberId, member);
 
-    // Update images
-    imageRepository.deleteMemberImage(memberId);
-    addMemberImages(memberId, member);
-
     // Update social networks
     socialNetworkRepo.deleteByMemberId(memberId);
     addSocialNetworks(memberId, member);
-  }
-
-  /** Adds images to the member. */
-  private void addMemberImages(final Long memberId, final Member member) {
-    if (!CollectionUtils.isEmpty(member.getImages())) {
-      member.getImages().forEach(image -> imageRepository.addMemberImage(memberId, image));
-    }
   }
 
   /** Adds member types to the member. */

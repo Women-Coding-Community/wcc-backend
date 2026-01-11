@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
-import com.wcc.platform.repository.postgres.PostgresMemberImageRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberMemberTypeRepository;
 import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
@@ -37,7 +36,6 @@ class MemberMapperTest {
   @Mock private JdbcTemplate jdbc;
   @Mock private PostgresCountryRepository countryRepository;
   @Mock private PostgresMemberMemberTypeRepository memberTypeRepo;
-  @Mock private PostgresMemberImageRepository imageRepository;
   @Mock private PostgresSocialNetworkRepository socialNetworkRepo;
 
   @InjectMocks private MemberMapper memberMapper;
@@ -46,8 +44,7 @@ class MemberMapperTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
     memberMapper =
-        new MemberMapper(
-            jdbc, countryRepository, memberTypeRepo, imageRepository, socialNetworkRepo);
+        new MemberMapper(jdbc, countryRepository, memberTypeRepo, socialNetworkRepo);
   }
 
   @Test
@@ -65,7 +62,6 @@ class MemberMapperTest {
     Country country = mock(Country.class);
     when(countryRepository.findById(2L)).thenReturn(Optional.of(country));
     when(memberTypeRepo.findByMemberId(1L)).thenReturn(Collections.emptyList());
-    when(imageRepository.findByMemberId(1L)).thenReturn(Collections.emptyList());
     when(socialNetworkRepo.findByMemberId(1L)).thenReturn(Collections.emptyList());
 
     Member member = memberMapper.mapRowToMember(resultSet);
@@ -104,7 +100,6 @@ class MemberMapperTest {
     Long memberId = memberMapper.addMember(member);
 
     assertEquals(10L, memberId);
-    verify(imageRepository, never()).addMemberImage(anyLong(), any());
     verify(memberTypeRepo, never()).addMemberType(anyLong(), anyInt());
     verify(socialNetworkRepo, never()).addSocialNetwork(anyLong(), any());
   }
@@ -130,7 +125,6 @@ class MemberMapperTest {
 
     verify(jdbc).update(anyString(), any(), any(), any(), any(), any(), any(), any(), any());
     verify(memberTypeRepo).deleteByMemberId(20L);
-    verify(imageRepository).deleteMemberImage(20L);
     verify(socialNetworkRepo).deleteByMemberId(20L);
   }
 }

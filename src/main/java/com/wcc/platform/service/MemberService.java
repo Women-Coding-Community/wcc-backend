@@ -1,24 +1,32 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.domain.auth.UserAccount;
+import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
+import com.wcc.platform.domain.resource.Resource;
+import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /** Platform Service. */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class MemberService {
 
   private final MemberRepository memberRepository;
   private final UserAccountRepository userRepository;
+  private final MemberProfilePictureRepository profilePicRepo;
 
   /** Save Member into storage. */
   public Member createMember(final Member member) {
@@ -41,7 +49,7 @@ public class MemberService {
     if (allMembers == null) {
       return List.of();
     }
-    return allMembers;
+    return allMembers.stream().map(this::enrichWithProfilePicture).toList();
   }
 
   /**
@@ -94,5 +102,36 @@ public class MemberService {
    */
   private Optional<Member> emailExists(final String email) {
     return memberRepository.findByEmail(email);
+  }
+
+  private Member enrichWithProfilePicture(final Member member) {
+    final Optional<Image> profilePicture = fetchProfilePicture(member.getId());
+
+    if (profilePicture.isEmpty()) {
+      return member;
+    }
+
+    return member.toBuilder().images(List.of(profilePicture.get())).build();
+  }
+
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
+  private Optional<Image> fetchProfilePicture(final Long memberId) {
+    try {
+      return profilePicRepo.findByMemberId(memberId)
+          .map(MemberProfilePicture::getResource)
+          .map(this::convertResourceToImage);
+    } catch (Exception e) {
+      // Catching generic exception intentionally to ensure profile picture fetch
+      // failures don't break the entire member retrieval operation
+      log.warn("Failed to fetch profile picture for member {}: {}", memberId, e.getMessage());
+      return Optional.empty();
+    }
+  }
+
+  private Image convertResourceToImage(final Resource resource) {
+    return new Image(
+        resource.getDriveFileLink(),
+        resource.getName().isEmpty() ? "Profile picture" : resource.getName(),
+        ImageType.DESKTOP);
   }
 }
