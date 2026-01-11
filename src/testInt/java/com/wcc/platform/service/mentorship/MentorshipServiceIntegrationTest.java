@@ -8,15 +8,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.repository.ResourceRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import com.wcc.platform.service.MentorshipService;
 import com.wcc.platform.service.PageService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,24 +36,33 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private MentorshipService service;
   @Autowired private MentorRepository repository;
+  @Autowired private MemberRepository memberRepository;
   @Autowired private PageService pageService;
   @Autowired private PageRepository pageRepository;
   @Autowired private ResourceRepository resourceRepository;
   @Autowired private MemberProfilePictureRepository profilePicRepository;
 
+  private Mentor setupMentor;
+
   @BeforeEach
   void setUp() {
-    var mentor = createMentorTest(4L, "mentor postgres", "postgres@domain.com");
-    var mentorOptional = repository.findByEmail(mentor.getEmail());
-    mentorOptional.ifPresent(value -> repository.deleteById(value.getId()));
+    setupMentor = createMentorTest(4L, "mentor postgres", "postgres@domain.com");
+    cleanupMentor(setupMentor);
     pageRepository.deleteById(MENTORS.getId());
     pageService.create(MENTORS, page);
-    repository.deleteById(mentor.getId());
-    service.create(mentor);
+    service.create(setupMentor);
+  }
+
+  @AfterEach
+  void tearDown() {
+    cleanupMentor(setupMentor);
   }
 
   @Test
-  void testGetPageWithMentor() {
+  @DisplayName(
+      "Given mentors page and mentor in database, when getMentorsPage is called, then it should"
+          + " return page with mentors and open cycle")
+  void shouldReturnMentorsPageWithMentorsAndOpenCycle() {
     var mentorsPage = service.getMentorsPage(page);
 
     assertThat(service.getAllMentors()).isNotEmpty();
@@ -65,13 +77,12 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
           + " DTO images should contain profile picture with correct URL")
   void shouldFetchMentorsWithProfilePicturesFromDatabase() {
     var mentor = createMentorTest(5L, "mentor with picture", "picture@domain.com");
-    var mentorOptional = repository.findByEmail(mentor.getEmail());
-    mentorOptional.ifPresent(value -> repository.deleteById(value.getId()));
-    repository.create(mentor);
+    memberRepository.deleteByEmail(mentor.getEmail());
+    repository.deleteById(mentor.getId());
+    var createdMentor = repository.create(mentor);
 
     var resource =
-        createResourceTest()
-            .toBuilder()
+        createResourceTest().toBuilder()
             .resourceType(ResourceType.PROFILE_PICTURE)
             .driveFileLink("https://drive.google.com/file/d/integration-test-file/view")
             .build();
@@ -79,7 +90,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
     var profilePicture =
         MemberProfilePicture.builder()
-            .memberId(mentor.getId())
+            .memberId(createdMentor.getId())
             .resourceId(createdResource.getId())
             .resource(createdResource)
             .build();
@@ -89,7 +100,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
     var mentorWithPicture =
         mentors.stream()
-            .filter(m -> m.getId().equals(mentor.getId()))
+            .filter(m -> m.getId().equals(createdMentor.getId()))
             .findFirst()
             .orElseThrow();
 
@@ -98,9 +109,10 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
         .isEqualTo(createdResource.getDriveFileLink());
     assertThat(mentorWithPicture.getImages().get(0).type()).isEqualTo(ImageType.DESKTOP);
 
-    profilePicRepository.deleteByMemberId(mentor.getId());
+    profilePicRepository.deleteByMemberId(createdMentor.getId());
     resourceRepository.deleteById(createdResource.getId());
-    repository.deleteById(mentor.getId());
+    repository.deleteById(createdMentor.getId());
+    memberRepository.deleteById(createdMentor.getId());
   }
 
   @Test
@@ -109,20 +121,26 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
           + " list should be empty")
   void shouldHandleMentorsWithoutProfilePicturesInDatabase() {
     var mentor = createMentorTest(6L, "mentor without picture", "nopicture@domain.com");
-    var mentorOptional = repository.findByEmail(mentor.getEmail());
-    mentorOptional.ifPresent(value -> repository.deleteById(value.getId()));
-    repository.create(mentor);
+    memberRepository.deleteByEmail(mentor.getEmail());
+    repository.deleteById(mentor.getId());
+    var createdMentor = repository.create(mentor);
 
     var mentors = service.getAllMentors();
 
     var mentorWithoutPicture =
         mentors.stream()
-            .filter(m -> m.getId().equals(mentor.getId()))
+            .filter(m -> m.getId().equals(createdMentor.getId()))
             .findFirst()
             .orElseThrow();
 
     assertThat(mentorWithoutPicture.getImages()).isNullOrEmpty();
 
+    repository.deleteById(createdMentor.getId());
+    memberRepository.deleteById(createdMentor.getId());
+  }
+
+  private void cleanupMentor(final Mentor mentor) {
+    memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
   }
 }
