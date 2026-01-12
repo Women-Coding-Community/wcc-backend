@@ -46,7 +46,6 @@ const SOCIAL_NETWORK_TYPES = [
   "Meetup",
   "Medium",
   "Slack",
-  "Unknown",
   "Website",
   "YouTube",
 ];
