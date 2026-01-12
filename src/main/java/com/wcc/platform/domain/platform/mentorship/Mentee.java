@@ -18,15 +18,18 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
-@NoArgsConstructor
+@SuppressWarnings({
+    "PMD.LongVariable",
+    "PMD.ExcessiveParameterList"
+})
 public class Mentee extends Member {
 
-    private @NotBlank MentorshipType previousMentorshipType;
-    private @NotBlank MentorshipType mentorshipType;
-    private @NotNull ProfileStatus profileStatus;
-    private @NotBlank Skills skills;
-    private @NotBlank String bio;
-    private List<String> spokenLanguages;
+    private final @NotBlank MentorshipType previousMentorshipType;
+    private final @NotBlank MentorshipType mentorshipType;
+    private final @NotNull ProfileStatus profileStatus;
+    private final @NotBlank Skills skills;
+    private final @NotBlank String bio;
+    private final List<String> spokenLanguages;
 
     @Builder(builderMethodName = "menteeBuilder")
     public Mentee(
