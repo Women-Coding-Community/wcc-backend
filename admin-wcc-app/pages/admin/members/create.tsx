@@ -30,8 +30,6 @@ const MEMBER_TYPES = [
   'Collaborator',
   'Evangelist',
   'Leader',
-  'Mentee',
-  'Mentor',
   'Member',
   'Partner',
   'Speaker',
