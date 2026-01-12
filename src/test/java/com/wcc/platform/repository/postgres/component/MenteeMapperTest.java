@@ -32,12 +32,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 
-public class MenteeMapperTest {
+class MenteeMapperTest {
 
-    public static final String COLUMN_MENTEE_ID = "mentee_id";
-    public static final String COLUMN_PROFILE_STATUS = "mentees_profile_status";
-    public static final String COLUMN_BIO = "bio";
-    public static final String COLUMN_SPOKEN_LANGUAGES = "spoken_languages";
+    private static final String COLUMN_MENTEE_ID = "mentee_id";
+    private static final String COLUMN_PROFILE_STATUS = "mentees_profile_status";
+    private static final String COLUMN_BIO = "bio";
+    private static final String COLUMN_SPOKEN_LANGUAGES = "spoken_languages";
 
     @Mock private JdbcTemplate jdbc;
     @Mock private ResultSet resultSet;
