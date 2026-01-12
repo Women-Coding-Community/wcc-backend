@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.LongVariable")
 public class MenteeMapper {
 
 
