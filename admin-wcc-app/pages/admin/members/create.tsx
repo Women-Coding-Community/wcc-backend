@@ -37,17 +37,17 @@ const MEMBER_TYPES = [
 ];
 
 const SOCIAL_NETWORK_TYPES = [
-  "LinkedIn",
-  "Default Link",
-  "Email",
-  "Facebook",
-  "Github",
-  "Instagram",
-  "Meetup",
-  "Medium",
-  "Slack",
-  "Website",
-  "YouTube",
+  { id: "LINKEDIN", name: "LinkedIn" },
+  { id: "DEFAULT_LINK", name: "Default Link" },
+  { id: "EMAIL", name: "Email" },
+  { id: "FACEBOOK", name: "Facebook" },
+  { id: "GITHUB", name: "Github" },
+  { id: "INSTAGRAM", name: "Instagram" },
+  { id: "MEETUP", name: "Meetup" },
+  { id: "MEDIUM", name: "Medium" },
+  { id: "SLACK", name: "Slack" },
+  { id: "WEBSITE", name: "Website" },
+  { id: "YOUTUBE", name: "YouTube" },
 ];
 
 interface NetworkLink {
@@ -466,7 +466,7 @@ export default function CreateMemberPage() {
                   startIcon={<AddIcon />}
                   onClick={() =>
                     handleArrayAdd("network", {
-                      type: SOCIAL_NETWORK_TYPES[0],
+                      type: SOCIAL_NETWORK_TYPES[0].id,
                       link: "",
                     })
                   }
@@ -491,8 +491,8 @@ export default function CreateMemberPage() {
                       }
                     >
                       {SOCIAL_NETWORK_TYPES.map((type) => (
-                        <MenuItem key={type} value={type}>
-                          {type}
+                        <MenuItem key={type.id} value={type.id}>
+                          {type.name}
                         </MenuItem>
                       ))}
                     </Select>
