@@ -35,7 +35,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class MenteeMapperTest {
 
     public static final String COLUMN_MENTEE_ID = "mentee_id";
-    public static final String COLUMN_PROFILE_STATUS = "profile_status";
+    public static final String COLUMN_PROFILE_STATUS = "mentees_profile_status";
     public static final String COLUMN_BIO = "bio";
     public static final String COLUMN_SPOKEN_LANGUAGES = "spoken_languages";
 
@@ -133,7 +133,7 @@ public class MenteeMapperTest {
 
         //Assert
         verify(jdbc).update(
-            eq("INSERT INTO mentees (mentee_id, profile_status, bio, years_experience, spoken_languages) VALUES (?, ?, ?, ?, ?)"),
+            eq("INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, spoken_languages) VALUES (?, ?, ?, ?, ?)"),
             eq(memberId),
             eq(1),
             eq("Looking for a mentor"),

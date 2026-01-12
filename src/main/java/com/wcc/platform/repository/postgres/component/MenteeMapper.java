@@ -28,7 +28,7 @@ public class MenteeMapper {
 
 
     private static final String SQL_INSERT_MENTEE =
-        "INSERT INTO mentees (mentee_id, profile_status, bio, years_experience, "
+        "INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, "
             + "spoken_languages) VALUES (?, ?, ?, ?, ?)";
     private static final String SQL_PROG_LANG_INSERT =
         "INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)";
@@ -76,7 +76,7 @@ public class MenteeMapper {
 
         return builder
             .id(menteeId)
-            .profileStatus(ProfileStatus.fromId(rs.getInt("profile_status")))
+            .profileStatus(ProfileStatus.fromId(rs.getInt("mentees_profile_status")))
             .spokenLanguages(List.of(rs.getString("spoken_languages").split(COMMA)))
             .bio(rs.getString("bio"))
             .build();

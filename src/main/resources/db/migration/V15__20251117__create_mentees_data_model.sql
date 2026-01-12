@@ -2,13 +2,13 @@
 CREATE TABLE IF NOT EXISTS mentees
 (
     mentee_id        INTEGER PRIMARY KEY REFERENCES members (id) ON DELETE CASCADE,
-    profile_status   INTEGER NOT NULL         DEFAULT 4,
+    mentees_profile_status   INTEGER NOT NULL         DEFAULT 4,
     bio              TEXT    NOT NULL,
     years_experience INTEGER                  DEFAULT 0,
     spoken_languages VARCHAR(200),
     created_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_profile_status FOREIGN KEY (profile_status)
+    CONSTRAINT fk_mentees_profile_status FOREIGN KEY (mentees_profile_status)
         REFERENCES member_statuses (id)
 );
 
