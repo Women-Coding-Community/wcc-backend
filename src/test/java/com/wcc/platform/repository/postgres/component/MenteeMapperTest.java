@@ -1,6 +1,7 @@
 package com.wcc.platform.repository.postgres.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,6 +22,7 @@ import com.wcc.platform.repository.SkillRepository;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -165,5 +167,19 @@ class MenteeMapperTest {
             eq(20)
         );
     }
+
+    @Test
+    void testMapRowToMenteeThrowsExceptionOnSqlError() throws Exception {
+        // Arrange
+        when(resultSet.getLong(COLUMN_MENTEE_ID)).thenThrow(new SQLException("DB error"));
+
+        // Act & Assert
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            menteeMapper.mapRowToMentee(resultSet);
+        });
+
+        assertEquals("DB error", exception.getMessage());
+    }
+
 
 }
