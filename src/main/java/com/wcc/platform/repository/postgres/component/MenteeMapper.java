@@ -84,7 +84,7 @@ public class MenteeMapper {
     }
 
     public Optional<MentorshipType> loadMentorshipTypes(final Long menteeId) {
-        List<MentorshipType> types = jdbc.query(
+        final List<MentorshipType> types = jdbc.query(
             SQL_MENTORSHIP_TYPE,
             (rs, rowNum) -> MentorshipType.fromId(rs.getInt(COL_MENTORSHIP_TYPE)),
             menteeId
