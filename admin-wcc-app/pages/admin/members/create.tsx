@@ -38,7 +38,7 @@ const MEMBER_TYPES = [
 
 const SOCIAL_NETWORK_TYPES = [
   { id: "LINKEDIN", name: "LinkedIn" },
-  { id: "DEFAULT_LINK", name: "Default Link" },
+  { id: "DEFAULT_LINK", name: "Link" },
   { id: "EMAIL", name: "Email" },
   { id: "FACEBOOK", name: "Facebook" },
   { id: "GITHUB", name: "Github" },
