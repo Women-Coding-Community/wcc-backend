@@ -22,11 +22,10 @@ public class MenteeService {
      * @return Mentee record created successfully.
      */
     public Mentee create(final Mentee mentee) {
-        final Optional<Mentee> menteeExists = menteeRepository.findById(mentee.getId());
-
-        if (menteeExists.isPresent()) {
-            throw new DuplicatedMemberException(menteeExists.get().getEmail());
-        }
+        menteeRepository.findById(mentee.getId())
+            .ifPresent(existing -> {
+                throw new DuplicatedMemberException(String.valueOf(existing.getId()));
+            });
         return menteeRepository.create(mentee);
     }
 
