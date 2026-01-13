@@ -4,7 +4,7 @@ import com.wcc.platform.domain.platform.type.MemberType;
 import jakarta.validation.constraints.NotBlank;
 import java.time.Year;
 
-/** Community members and partners Feedbacks. */
+/** Community members and overall Feedbacks. */
 public record FeedbackItem(
     @NotBlank String name,
     @NotBlank String feedback,
