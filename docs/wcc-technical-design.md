@@ -44,14 +44,6 @@ that serves dual purposes:
 - Real-world portfolio-building opportunities for 100+ community members
 - Sustainable, cost-effective infrastructure (Vercel + Fly.io)
 
-### What's Out of Scope
-
-- ❌ **Certificate generation system** - Not part of MVP or any future releases
-- ❌ **API Gateway** - Using direct Spring Boot REST APIs instead
-- ❌ **Microservices architecture** - Monolithic Spring Boot application
-- ❌ **Event management** - Post-MVP feature
-- ❌ **Study group management** - Post-MVP feature
-
 ---
 
 ## System Architecture
@@ -69,25 +61,23 @@ that serves dual purposes:
          └───────────────────┼─────────────────────┘
                              │
                              │
-         ┌───────────────────▼─────────────────────┐
-         │         APPLICATION LAYER               │
-         │      Spring Boot 3.x Backend API        │
+         ┌───────────────────▼─────────────────-────┐
+         │         APPLICATION LAYER                │
+         │      Spring Boot 3.x Backend API         │
          ├──────────────────────────────────────────┤
          │  • REST API Controllers                  │
          │  • Service Layer (Business Logic)        │
          │  • Repository Layer (Data Access)        │
          │  • Security & Auth (JWT)                 │
          │  • Email Service (Transactional)         │
-         │  • Certificate Generation Service        │
          │  • Resource Management Service           │
-         └───────────────────┬─────────────────────┘
+         └───────────────────┬──────────────────-───┘
                              │
          ┌───────────────────▼─────────────────────┐
          │           DATA LAYER                    │
          ├─────────────────┬───────────────────────┤
          │   PostgreSQL    │   File Storage        │
-         │   Database      │   (Images, PDFs,      │
-         │                 │    Certificates)      │
+         │   Database      │   (Images, PDFs)      │
          └─────────────────┴───────────────────────┘
                              │
          ┌───────────────────▼─────────────────────┐
@@ -95,7 +85,6 @@ that serves dual purposes:
          ├─────────────────────────────────────────┤
          │  • Email Service (SMTP/SendGrid)        │
          │  • Google Drive API                     │
-         │  • QR Code Generation                   │
          │  • Analytics & Monitoring               │
          └─────────────────────────────────────────┘
 ```
@@ -237,16 +226,17 @@ Monitoring & Analytics:
 
 ---
 
-
 ## 11. Critical Gaps for MVP
 
 ### Authentication APIs (HIGH PRIORITY)
+
 - ❌ `POST /api/auth/register` - User registration endpoint needed
 - ❌ `POST /api/auth/reset-password` - Password reset workflow needed
 - ✅ `POST /api/auth/login` - Implemented
 - ✅ `GET /api/auth/me` - Implemented
 
 ### Mentorship Workflow APIs (CRITICAL)
+
 - ❌ Mentor approval: `PATCH /api/platform/v1/mentors/{id}/approve`
 - ❌ Mentor rejection: `PATCH /api/platform/v1/mentors/{id}/reject`
 - ❌ Mentee creation: `POST /api/platform/v1/mentees`
@@ -257,15 +247,18 @@ Monitoring & Analytics:
 - ❌ Accept/decline: `PATCH /api/platform/v1/mentors/{id}/applications/{appId}/accept`
 
 ### Database Tables (CRITICAL)
+
 - ❌ `mentee_applications` table - Tracks applications with priority order
 - ❌ `mentorship_matches` table - Confirmed mentor-mentee pairs
 
 ### Frontend Dashboards (CRITICAL)
+
 - ❌ Mentorship Team dashboard (approve mentors/mentees)
 - ❌ Mentor dashboard (view/accept applications, update profile)
 - ❌ Mentee dashboard (view status, apply to mentors with priority)
 
 ### Email Workflows (HIGH PRIORITY)
+
 - ❌ Mentorship cycle emails
 - ❌ Application approval/rejection notifications
 - ❌ Mentor acceptance request emails
@@ -275,4 +268,3 @@ Monitoring & Analytics:
 **Document Version Control:**
 
 - v1.0 - January 2026 - Initial comprehensive design document
-- v2.0 - January 12, 2026 - Updated with current implementation status, removed certificate feature, clarified MVP gaps

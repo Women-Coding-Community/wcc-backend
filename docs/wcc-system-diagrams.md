@@ -55,25 +55,18 @@ graph TB
 
         subgraph "Controllers"
             AuthCtrl[AuthController]
-            MemberCtrl[MemberController]
-            MentorCtrl[MentorController]
             CMSCtrl[CMSController]
-            ResourceCtrl[ResourceController]
         end
 
         subgraph "Services"
-            UserSvc[UserService]
-            MemberSvc[MemberService]
             MentorSvc[MentorshipService]
             EmailSvc[EmailService]
-            ResourceSvc[ResourceService]
         end
 
         subgraph "Repositories"
             UserRepo[UserRepository]
             MemberRepo[MemberRepository]
             MentorRepo[MentorRepository]
-            ResourceRepo[ResourceRepository]
         end
 
         Controllers --> Services
@@ -97,8 +90,7 @@ sequenceDiagram
     participant Backend
     participant DB
     participant Token
-
-    Note over User,Token: Login Flow (✅ IMPLEMENTED)
+    Note over User, Token: Login Flow (✅ IMPLEMENTED)
     User ->> Frontend: Enter credentials
     Frontend ->> Backend: POST /api/auth/login
     Backend ->> DB: Query user_account
@@ -108,8 +100,7 @@ sequenceDiagram
     Backend ->> DB: Store token with expiry
     Backend -->> Frontend: {token, user}
     Frontend ->> Frontend: Store token (Bearer)
-
-    Note over User,Token: Registration Flow (❌ TODO: /api/auth/register)
+    Note over User, Token: Registration Flow (❌ TODO: /api/auth/register)
     User ->> Frontend: Enter registration info
     Frontend ->> Backend: POST /api/auth/register
     Backend ->> Backend: Validate input
@@ -117,16 +108,14 @@ sequenceDiagram
     Backend ->> DB: Create user_account
     Backend ->> Backend: Send verification email
     Backend -->> Frontend: Registration success
-
-    Note over User,Token: Password Reset (❌ TODO: /api/auth/reset-password)
+    Note over User, Token: Password Reset (❌ TODO: /api/auth/reset-password)
     User ->> Frontend: Request password reset
     Frontend ->> Backend: POST /api/auth/reset-password
     Backend ->> DB: Validate user
     Backend ->> Backend: Generate reset token
     Backend ->> Backend: Send reset email
     Backend -->> Frontend: Reset email sent
-
-    Note over Frontend,Token: Authenticated Requests (✅ IMPLEMENTED)
+    Note over Frontend, Token: Authenticated Requests (✅ IMPLEMENTED)
     Frontend ->> Backend: API Request + Bearer token
     Backend ->> Backend: Validate token
     Backend ->> DB: Check token expiry
@@ -141,47 +130,35 @@ sequenceDiagram
 flowchart TD
     Start([New Mentor Registration]) --> MentorApp[Mentor Submits Profile<br/>Bio, Skills, Availability<br/>Focus Areas]
     MentorApp --> MentorPending[Status: PENDING]
-
     MentorPending --> TeamReview1{Mentorship Team<br/>Reviews Profile}
     TeamReview1 -->|Approve| MentorActive[Status: ACTIVE<br/>Visible in Platform]
     TeamReview1 -->|Reject| MentorRejected[Notify Mentor<br/>Provide Feedback]
-
     MenteeStart([Mentee Registration]) --> MenteeApp[Mentee Submits Application<br/>Learning Goals, Career Stage<br/>Preferences]
     MenteeApp --> MenteePending[Status: PENDING]
-
     MenteePending --> TeamReview2{Mentorship Team<br/>Reviews Application}
     TeamReview2 -->|Approve| MenteeActive[Status: ACTIVE]
     TeamReview2 -->|Reject| MenteeRejected[Notify Mentee<br/>Provide Feedback]
-
     MenteeActive --> SelectMentors{Mentee Selects<br/>Mentors?}
     SelectMentors -->|Yes| MenteeChooses[Mentee Applies to<br/>Multiple Mentors<br/>with Priority Order]
     SelectMentors -->|No| AutoMatch[API: Suggest<br/>Matching Mentors<br/>Based on Compatibility]
-
     AutoMatch --> MatchScore[Calculate Match Score<br/>Skills, Focus, Availability<br/>Experience Level]
     MatchScore --> MenteeChooses
-
     MenteeChooses --> StoreApps[Store Applications<br/>with Priority Order]
     StoreApps --> AssignFirst[Assign to<br/>First Priority Mentor]
-
     AssignFirst --> CheckAvail1{Mentor<br/>Available?}
     CheckAvail1 -->|Yes| NotifyMentor1[Email Mentor<br/>to Accept/Decline]
     CheckAvail1 -->|No| AssignNext[Assign to<br/>Next Priority Mentor]
-
     AssignNext --> CheckAvail2{Mentor<br/>Available?}
     CheckAvail2 -->|Yes| NotifyMentor1
     CheckAvail2 -->|No| CheckMore{More Mentors<br/>in List?}
-
     CheckMore -->|Yes| AssignNext
     CheckMore -->|No| AutoMatch
-
     NotifyMentor1 --> MentorDecision{Mentor<br/>Response}
     MentorDecision -->|Accept| CreateMatch[Create Mentorship<br/>Relationship]
     MentorDecision -->|Decline| AssignNext
     MentorDecision -->|Timeout| AssignNext
-
     CreateMatch --> SendEmails[Send Cycle Emails<br/>to Mentor & Mentee]
     SendEmails --> End([Mentorship Started])
-
     style Start fill: #E1BEE7
     style MenteeStart fill: #E1BEE7
     style TeamReview1 fill: #FFCC80
@@ -190,126 +167,6 @@ flowchart TD
     style End fill: #81C784
     style MentorActive fill: #C5E1A5
     style MenteeActive fill: #C5E1A5
-```
-
-## 5. Database Entity Relationship Diagram (Current Schema)
-
-```mermaid
-erDiagram
-    USER_ACCOUNT ||--o{ USER_TOKEN: has
-    USER_ACCOUNT ||--o| MEMBERS: can_have
-    USER_ACCOUNT {
-        integer id PK
-        string email UK
-        string password_hash
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    USER_TOKEN {
-        integer id PK
-        integer user_id FK
-        string token UK
-        timestamp expiry_date
-        timestamp created_at
-    }
-
-    MEMBERS ||--o{ MEMBER_IMAGES: has
-    MEMBERS ||--o{ MEMBER_SOCIAL_NETWORKS: has
-    MEMBERS ||--o| MENTORS: can_be
-    MEMBERS {
-        integer id PK
-        string full_name
-        integer member_type_id FK
-        string slack_name
-        string position
-        string company_name
-        string email UK
-        string city
-        integer country_id FK
-        integer status_id FK
-        text bio
-        integer years_experience
-        text spoken_language
-        integer permission_id FK
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    MENTORS ||--o{ MENTOR_TECHNICAL_AREAS: has
-    MENTORS ||--o{ MENTOR_LANGUAGES: has
-    MENTORS ||--o{ MENTOR_MENTORSHIP_TYPES: has
-    MENTORS ||--o{ MENTOR_MENTORSHIP_FOCUS_AREAS: has
-    MENTORS ||--o{ MENTOR_AVAILABILITY: has
-    MENTORS ||--o{ MENTEE_APPLICATIONS: receives
-    MENTORS {
-        integer mentor_id PK_FK
-        integer profile_status FK
-        text bio
-        integer years_experience
-        text spoken_languages
-        boolean is_available
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    MENTEE_APPLICATIONS ||--o| MEMBERS: submitted_by
-    MENTEE_APPLICATIONS {
-        integer id PK
-        integer mentee_id FK
-        integer mentor_id FK
-        integer priority_order
-        string status
-        text learning_goals
-        string career_stage
-        timestamp applied_at
-        timestamp updated_at
-    }
-
-    MENTORSHIP_CYCLE {
-        integer id PK
-        string cycle_name
-        integer mentorship_type_id FK
-        date start_date
-        date end_date
-        boolean is_active
-    }
-
-    MEMBER_STATUSES {
-        integer id PK
-        string status
-    }
-
-    TECHNICAL_AREAS {
-        integer id PK
-        string area_name
-    }
-
-    LANGUAGES {
-        integer id PK
-        string language_name
-    }
-
-    MENTORSHIP_TYPES {
-        integer id PK
-        string type_name
-    }
-
-    MENTORSHIP_FOCUS_AREAS {
-        integer id PK
-        string focus_area
-    }
-
-    PAGES {
-        integer id PK
-        string page_name UK
-        jsonb content
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    Note: MENTEE_APPLICATIONS table is planned (TODO)
-    Note: Feedback system planned but not yet implemented
 ```
 
 ## 7. Deployment Architecture
@@ -403,9 +260,7 @@ sequenceDiagram
     participant Service
     participant Repository
     participant Database
-
-    Note over Client,Database: No API Gateway - Direct REST API
-
+    Note over Client, Database: No API Gateway - Direct REST API
     Client ->> Security: HTTPS Request<br/>+ Bearer Token or API Key
     Security ->> Security: Authentication Filter<br/>Token/API Key Validation
     Security -->> Client: 401 Unauthorized (if invalid)
@@ -422,65 +277,13 @@ sequenceDiagram
     Service -->> Controller: Service Response
     Controller ->> Controller: Map to DTO<br/>Prepare JSON Response
     Controller -->> Client: HTTP Response<br/>JSON with proper status
-    Note over Client,Database: Global exception handling via<br/>@ControllerAdvice
-```
-
-## 10. Resource Management Flow
-
-```mermaid
-stateDiagram-v2
-    [*] --> Upload: User uploads resource
-    Upload --> Validation: Validate file
-    Validation --> GoogleDrive: Store file
-    GoogleDrive --> ProcessMetadata: Extract metadata
-    ProcessMetadata --> CreateRecord: Save to database
-    CreateRecord --> Active: Resource available
-    Active --> Viewed: User views resource
-    Viewed --> Active: Continue browsing
-    Active --> Downloaded: User downloads
-    Downloaded --> Active: Return to list
-    Active --> Editing: Admin edits
-    Editing --> Active: Save changes
-    Active --> Deleted: Admin deletes
-    Deleted --> [*]
-    Validation --> Error: Invalid file
-    Error --> [*]
-```
-
-## 11. Event Registration Flow
-
-```mermaid
-flowchart TD
-    Start([User Browses Events]) --> List[Display Event List<br/>Filters: Date, Type, Status]
-    List --> Select[User Selects Event]
-    Select --> Details[Show Event Details<br/>Date, Time, Location<br/>Capacity, Description]
-    Details --> CheckAuth{User<br/>Authenticated?}
-    CheckAuth -->|No| Login[Redirect to Login]
-    Login --> CheckAuth
-    CheckAuth -->|Yes| CheckCap{Spots<br/>Available?}
-    CheckCap -->|No| Waitlist[Add to Waitlist]
-    CheckCap -->|Yes| Register[Register for Event]
-    Register --> SaveReg[Save Registration<br/>to Database]
-    SaveReg --> SendConf[Send Confirmation<br/>Email]
-    SendConf --> Calendar[Add to Calendar<br/>Option]
-    Waitlist --> NotifyWait[Notify if Spot<br/>Opens]
-    Calendar --> End([Registration Complete])
-    NotifyWait --> End
-
-    subgraph "Day Before Event"
-        Reminder[Send Reminder Email] --> CheckStatus{Registration<br/>Still Active?}
-        CheckStatus -->|Yes| SendReminder[Send Email]
-        CheckStatus -->|No| Skip[Skip Reminder]
-    end
-
-    style Start fill: #E1BEE7
-    style Register fill: #C5E1A5
-    style End fill: #E1BEE7
+    Note over Client, Database: Global exception handling via<br/>@ControllerAdvice
 ```
 
 ## 12. Platform Administration Access Roles
 
-The WCC Platform Administration area (admin-wcc-app) provides role-based access for different user types:
+The WCC Platform Administration area (admin-wcc-app) provides role-based access for different user
+types:
 
 ### User Roles and Access
 
@@ -496,20 +299,20 @@ graph TB
         Leader[Community Leader<br/>Team Management]
     end
 
-    subgraph "Key Features by Role"
-        SuperAdmin --> SA_Features[• User management<br/>• System configuration<br/>• All CRUD operations<br/>• Database access]
-        Admin --> A_Features[• CMS content<br/>• Member management<br/>• Event management<br/>• Resource uploads]
-        MentorshipTeam --> MT_Features[• Approve/reject mentors<br/>• Approve/reject mentees<br/>• View applications<br/>• Send cycle emails<br/>• Manage matches]
-        Mentor --> M_Features[• Update own profile<br/>• View mentee applications<br/>• Accept/decline mentees<br/>• Session management]
-        Mentee --> ME_Features[• View application status<br/>• See assigned mentor<br/>• Track applications]
-        Volunteer --> V_Features[• View-only access<br/>• Limited resources]
-        Leader --> L_Features[• Team coordination<br/>• Event management<br/>• Reports]
-    end
+subgraph "Key Features by Role"
+SuperAdmin --> SA_Features[• User management<br/>• System configuration<br/>• All CRUD operations<br/>• Database access]
+Admin --> A_Features[• CMS content<br/>• Member management<br/>• Event management<br/>• Resource uploads]
+MentorshipTeam --> MT_Features[• Approve/reject mentors<br/>• Approve/reject mentees<br/>• View applications<br/>• Send cycle emails<br/>• Manage matches]
+Mentor --> M_Features[• Update own profile<br/>• View mentee applications<br/>• Accept/decline mentees<br/>• Session management]
+Mentee --> ME_Features[• View application status<br/>• See assigned mentor<br/>• Track applications]
+Volunteer --> V_Features[• View-only access<br/>• Limited resources]
+Leader --> L_Features[• Team coordination<br/>• Event management<br/>• Reports]
+end
 
-    style SuperAdmin fill: #FF6B6B
-    style Admin fill: #4ECDC4
-    style MentorshipTeam fill: #95E1D3
-    style Mentor fill: #C7CEEA
-    style Mentee fill: #FFDAB9
+style SuperAdmin fill: #FF6B6B
+style Admin fill: #4ECDC4
+style MentorshipTeam fill: #95E1D3
+style Mentor fill: #C7CEEA
+style Mentee fill: #FFDAB9
 ```
 
