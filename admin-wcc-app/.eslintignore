@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Test coverage
+coverage
+
+# Environment files
+.env
+.env*.local
+
+# Config files
+next.config.js
+jest.config.js
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

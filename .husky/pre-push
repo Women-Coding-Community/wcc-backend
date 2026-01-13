@@ -1,0 +1,1 @@
+cd admin-wcc-app && npm run build
