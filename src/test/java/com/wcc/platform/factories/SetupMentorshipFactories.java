@@ -7,24 +7,19 @@ import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createContactTest;
 import static com.wcc.platform.factories.SetupFactories.createLinkTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
-import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.PageType;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.FaqItem;
 import com.wcc.platform.domain.cms.attributes.LabelLink;
-import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.ListSection;
-import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
-import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackItem;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
-import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
@@ -32,15 +27,9 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.StudyGroup;
-import com.wcc.platform.domain.platform.member.Member;
-import com.wcc.platform.domain.platform.member.ProfileStatus;
-import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
-import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.utils.FileUtil;
-import java.time.Month;
 import java.time.Year;
 import java.util.List;
 
@@ -211,51 +200,5 @@ public class SetupMentorshipFactories {
         pageId,
         createNoImageHeroSectionTest(),
         new ListSection<>("Events", "description", null, null));
-  }
-
-  /** Mentor Builder. */
-  public static Mentor createMentorTest() {
-    final Member member = createMemberTest(MemberType.MENTOR);
-    return createMentorTest(1L, member.getFullName(), member.getEmail());
-  }
-
-  /** Test factory for Mentor. */
-  public static Mentor createMentorTest(
-      final Long mentorId, final String name, final String email) {
-    final Member member = createMemberTest(MemberType.MENTOR);
-
-    MentorBuilder mentorBuilder =
-        Mentor.mentorBuilder()
-            .fullName(name)
-            .position(member.getPosition())
-            .email(email)
-            .slackDisplayName(member.getSlackDisplayName())
-            .country(member.getCountry())
-            .images(member.getImages())
-            .profileStatus(ProfileStatus.ACTIVE)
-            .bio("Mentor bio")
-            .spokenLanguages(List.of("English"))
-            .skills(
-                new Skills(
-                    2,
-                    List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                    List.of(Languages.JAVASCRIPT),
-                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
-            .menteeSection(
-                new MenteeSection(
-                    List.of(MentorshipType.LONG_TERM),
-                    List.of(new MentorMonthAvailability(Month.APRIL, 2)),
-                    "ideal mentee description",
-                    "additional"));
-    if (mentorId != null) {
-      mentorBuilder.id(mentorId);
-    }
-
-    return mentorBuilder.build();
-  }
-
-  /** Mentor Builder. */
-  public static Mentor createMentorTest(final String mentorName) {
-    return createMentorTest(1L, mentorName, "member@wcc.com");
   }
 }
