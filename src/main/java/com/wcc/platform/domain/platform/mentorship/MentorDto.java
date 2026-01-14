@@ -4,17 +4,20 @@ import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.resource.MentorResource;
+import io.micrometer.common.util.StringUtils;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.util.CollectionUtils;
 
 /** Represents the mentor members of the community. */
 @Getter
@@ -82,43 +85,78 @@ public class MentorDto extends MemberDto {
    *
    * @param member the existing mentor to merge with
    * @return Updated mentor
+   * @throws InvalidMentorException if member is null
+   * @throws IllegalArgumentException if member is not a Mentor instance
    */
   @Override
   public Member merge(final Member member) {
-    // Merge Member fields using parent's merge method
-    final Mentor existingMentor = (Mentor) member;
+    if (member == null) {
+      throw new InvalidMentorException("Cannot merge with null mentor");
+    }
+    if (!(member instanceof Mentor existingMentor)) {
+      throw new InvalidMentorException(
+          "Expected Mentor instance but got: " + member.getClass().getSimpleName());
+    }
 
-    // Build updated Mentor with Mentor-specific fields
-    return Mentor.mentorBuilder()
-        .id(existingMentor.getId())
-        .fullName(this.getFullName() != null ? this.getFullName() : existingMentor.getFullName())
-        .position(this.getPosition() != null ? this.getPosition() : existingMentor.getPosition())
-        .email(this.getEmail() != null ? this.getEmail() : existingMentor.getEmail())
-        .slackDisplayName(
-            this.getSlackDisplayName() != null
-                ? this.getSlackDisplayName()
-                : existingMentor.getSlackDisplayName())
-        .country(this.getCountry() != null ? this.getCountry() : existingMentor.getCountry())
-        .city(this.getCity() != null ? this.getCity() : existingMentor.getCity())
-        .companyName(
-            this.getCompanyName() != null ? this.getCompanyName() : existingMentor.getCompanyName())
-        .images(this.getImages() != null ? this.getImages() : existingMentor.getImages())
-        .network(this.getNetwork() != null ? this.getNetwork() : existingMentor.getNetwork())
-        .profileStatus(
-            this.profileStatus != null ? this.profileStatus : existingMentor.getProfileStatus())
-        .spokenLanguages(
-            this.spokenLanguages != null
-                ? this.spokenLanguages
-                : existingMentor.getSpokenLanguages())
-        .bio(this.bio != null ? this.bio : existingMentor.getBio())
-        .skills(this.skills != null ? this.skills : existingMentor.getSkills())
-        .menteeSection(
-            this.menteeSection != null ? this.menteeSection : existingMentor.getMenteeSection())
-        .feedbackSection(
-            this.feedbackSection != null
-                ? this.feedbackSection
-                : existingMentor.getFeedbackSection())
-        .resources(this.resources != null ? this.resources : existingMentor.getResources())
-        .build();
+    final Mentor.MentorBuilder builder =
+        Mentor.mentorBuilder()
+            .id(existingMentor.getId())
+            .fullName(mergeString(this.getFullName(), existingMentor.getFullName()))
+            .position(mergeString(this.getPosition(), existingMentor.getPosition()))
+            .email(mergeString(this.getEmail(), existingMentor.getEmail()))
+            .slackDisplayName(
+                mergeString(this.getSlackDisplayName(), existingMentor.getSlackDisplayName()))
+            .country(mergeNullable(this.getCountry(), existingMentor.getCountry()))
+            .profileStatus(mergeNullable(this.profileStatus, existingMentor.getProfileStatus()))
+            .bio(mergeString(this.bio, existingMentor.getBio()))
+            .skills(mergeNullable(this.skills, existingMentor.getSkills()))
+            .menteeSection(mergeNullable(this.menteeSection, existingMentor.getMenteeSection()));
+
+    mergeOptionalString(this.getCity(), existingMentor.getCity(), builder::city);
+
+    mergeOptionalString(
+        this.getCompanyName(), existingMentor.getCompanyName(), builder::companyName);
+
+    builder.network(mergeCollection(this.getNetwork(), existingMentor.getNetwork()));
+    builder.spokenLanguages(
+        mergeCollection(this.getSpokenLanguages(), existingMentor.getSpokenLanguages()));
+    builder.images(mergeCollection(this.getImages(), existingMentor.getImages()));
+
+    mergeOptional(
+        this.feedbackSection, existingMentor.getFeedbackSection(), builder::feedbackSection);
+
+    mergeOptional(this.resources, existingMentor.getResources(), builder::resources);
+
+    return builder.build();
+  }
+
+  private String mergeString(final String candidate, final String existing) {
+    return StringUtils.isNotBlank(candidate) ? candidate : existing;
+  }
+
+  private <T> T mergeNullable(final T candidate, final T existing) {
+    return candidate != null ? candidate : existing;
+  }
+
+  private <T> List<T> mergeCollection(final List<T> candidate, final List<T> existing) {
+    return CollectionUtils.isEmpty(candidate) ? existing : candidate;
+  }
+
+  private void mergeOptionalString(
+      final String candidate,
+      final String existing,
+      final java.util.function.Consumer<String> setter) {
+
+    if (StringUtils.isNotBlank(candidate) || StringUtils.isNotBlank(existing)) {
+      setter.accept(mergeString(candidate, existing));
+    }
+  }
+
+  private <T> void mergeOptional(
+      final T candidate, final T existing, final java.util.function.Consumer<T> setter) {
+
+    if (candidate != null || existing != null) {
+      setter.accept(mergeNullable(candidate, existing));
+    }
   }
 }
