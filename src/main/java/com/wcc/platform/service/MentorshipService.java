@@ -125,7 +125,7 @@ public class MentorshipService {
    * @param mentorDto MentorDto with updated member's data
    * @return Mentor record updated successfully.
    */
-  public Member updateMentor(Long mentorId, MentorDto mentorDto) {
+  public Member updateMentor(final Long mentorId, final MentorDto mentorDto) {
     if (mentorDto.getId() != null && !mentorId.equals(mentorDto.getId())) {
       throw new IllegalArgumentException("Mentor ID does not match the provided mentorId");
     }
