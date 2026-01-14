@@ -1,10 +1,14 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
 import static com.wcc.platform.service.MentorshipService.CYCLE_CLOSED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -15,10 +19,13 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.repository.MentorRepository;
 import java.time.Month;
 import java.time.ZoneId;
@@ -26,9 +33,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +45,9 @@ class MentorshipServiceTest {
 
   @Mock private MentorRepository mentorRepository;
   private Integer daysOpen = 10;
-
+  private Mentor mentor;
+  private Mentor updatedMentor;
+  private MentorDto mentorDto;
   private MentorshipService service;
 
   public MentorshipServiceTest() {
@@ -45,7 +56,11 @@ class MentorshipServiceTest {
 
   @BeforeEach
   void setUp() {
+    MockitoAnnotations.openMocks(this);
     service = spy(new MentorshipService(mentorRepository, daysOpen));
+    mentor = createMentorTest();
+    mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
+    updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
   }
 
   @Test
@@ -162,5 +177,48 @@ class MentorshipServiceTest {
     var may20 = ZonedDateTime.of(2025, 5, 20, 12, 0, 0, 0, ZoneId.of("Europe/London"));
     doReturn(may20).when(service).nowLondon();
     assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor exists When updating the mentor Then should update mentor attributes and return updated mentor")
+  void testUpdateMentor() {
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentor);
+
+    Member result = service.updateMentor(mentorId, mentorDto);
+
+    assertEquals(updatedMentor, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor does not exist When updating the mentor Then should throw MemberNotFoundException")
+  void testUpdateMentorNotFound() {
+    long mentorId = 1L;
+
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.empty());
+
+    assertThrows(MemberNotFoundException.class, () -> service.updateMentor(mentorId, mentorDto));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor exists When updating with mismatched mentor ID Then should throw IllegalArgumentException")
+  void testUpdateMentorIllegalIdMismatch() {
+    long mentorId = 1L;
+    MentorDto newMentorDto = createMentorDtoTest(999L, MemberType.DIRECTOR);
+
+    assertThrows(
+        IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
+
+    verify(mentorRepository, never()).findById(anyLong());
+    verify(mentorRepository, never()).update(anyLong(), any());
   }
 }

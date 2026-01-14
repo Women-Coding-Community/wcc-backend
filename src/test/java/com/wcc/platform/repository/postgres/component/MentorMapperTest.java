@@ -7,8 +7,12 @@ import static com.wcc.platform.repository.postgres.constants.MentorConstants.COL
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -27,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -77,5 +82,33 @@ class MentorMapperTest {
   void handlesSqlExceptionGracefully() throws Exception {
     when(resultSet.getLong(COLUMN_MENTOR_ID)).thenThrow(SQLException.class);
     assertThrows(SQLException.class, () -> mentorMapper.mapRowToMentor(resultSet));
+  }
+
+  @Test
+  void testUpdateMentor() {
+    // Mock static methods from refactored mappers to prevent NPE
+    try (MockedStatic<MentorMentorshipMapper> mentorshipMock =
+            mockStatic(MentorMentorshipMapper.class);
+        MockedStatic<MentorSkillsMapper> skillsMock = mockStatic(MentorSkillsMapper.class)) {
+
+      Mentor mentor = mock(Mentor.class);
+      Skills skills = mock(Skills.class);
+      MenteeSection menteeSection = mock(MenteeSection.class);
+
+      when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+      when(mentor.getBio()).thenReturn("Updated bio");
+      when(mentor.getSkills()).thenReturn(skills);
+      when(skills.yearsExperience()).thenReturn(15);
+      when(mentor.getSpokenLanguages()).thenReturn(List.of("English", "Spanish"));
+      when(mentor.getMenteeSection()).thenReturn(menteeSection);
+      when(menteeSection.idealMentee()).thenReturn("Junior developers");
+      when(menteeSection.additional()).thenReturn("Backend focused");
+      when(menteeSection.availability()).thenReturn(List.of());
+      when(menteeSection.mentorshipType()).thenReturn(List.of());
+
+      mentorMapper.updateMentor(mentor, 1L);
+
+      verify(jdbc).update(anyString(), any(), any(), any(), any(), any(), any());
+    }
   }
 }

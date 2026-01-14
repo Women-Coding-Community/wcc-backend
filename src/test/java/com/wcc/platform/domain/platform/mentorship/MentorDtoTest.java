@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform.mentorship;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -32,9 +33,10 @@ class MentorDtoTest {
             .spokenLanguages(List.of("English", "Spanish"))
             .fullName("Jane Doe")
             .id(1L)
+            .profileStatus(ProfileStatus.PENDING)
             .build();
     var expected =
-        "MentorDto(profileStatus=null, availability=MentorAvailability[mentorshipType=Ad-Hoc, available=true]"
+        "MentorDto(profileStatus=PENDING, availability=MentorAvailability[mentorshipType=Ad-Hoc, available=true]"
             + ", skills=null, spokenLanguages=[English, Spanish], bio=bio info, menteeSection=null,"
             + " feedbackSection=null, resources=null)";
 

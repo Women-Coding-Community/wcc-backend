@@ -1,7 +1,7 @@
 package com.wcc.platform.service.mentorship;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORS;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorsPageTest;
 import static org.assertj.core.api.Assertions.assertThat;
 

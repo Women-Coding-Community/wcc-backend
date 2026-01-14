@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.factories.SetupMentorshipFactories;
+import com.wcc.platform.factories.SetupMentorFactories;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
 import com.wcc.platform.repository.postgres.PostgresMentorRepository;
 import com.wcc.platform.repository.postgres.PostgresMentorTestSetup;
@@ -30,7 +30,7 @@ class PostgresDb2MentorRepositoryIntegrationTest implements PostgresMentorTestSe
 
   @BeforeEach
   void setUp() {
-    mentor = SetupMentorshipFactories.createMentorTest(2L, "Mentor DB2", "mentordb2_2@email.com");
+    mentor = SetupMentorFactories.createMentorTest(2L, "Mentor DB2", "mentordb2_2@email.com");
     deleteAll(mentor, repository, memberRepository);
   }
 
