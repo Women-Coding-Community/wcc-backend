@@ -34,6 +34,8 @@ spring:
 
 mentorship:
   daysCycleOpen: 10
+  validation:
+    enabled: false
 
 logging:
   level:

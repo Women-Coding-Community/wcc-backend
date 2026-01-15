@@ -199,3 +199,100 @@ curl -s -X POST "${API_BASE}/platform/v1/members" \
 }'
 echo " "
 echo "✅  Done!"
+
+# 4️⃣ Add Mentees
+echo "➡️ Adding Mentees..."
+curl -s -X POST "${API_BASE}/platform/v1/mentees" \
+  -H "accept: */*" \
+  -H "X-API-KEY: ${API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "fullName": "Maria Silva",
+        "position": "Junior Software Engineer",
+        "email": "maria.silva@email.com",
+        "slackDisplayName": "@MariaS",
+        "country": {
+          "countryCode": "BR",
+          "countryName": "Brazil"
+        },
+        "city": "São Paulo",
+        "companyName": "TechBrasil",
+        "images": [],
+        "network": [
+          {
+            "type": "LINKEDIN",
+            "link": "https://www.linkedin.com/in/maria-silva/"
+          },
+          {
+            "type": "GITHUB",
+            "link": "https://github.com/mariasilva"
+          }
+        ],
+        "profileStatus": "ACTIVE",
+        "skills": {
+          "yearsExperience": 2,
+          "areas": [ "BACKEND", "FULLSTACK" ],
+          "languages": [ "Java", "Javascript", "Python" ],
+          "mentorshipFocus": [
+            "Grow from beginner to mid-level",
+            "Grow beyond senior level"
+          ]
+        },
+        "spokenLanguages": [ "Portuguese", "English", "Spanish" ],
+        "bio": "I am a Junior Software Engineer passionate about backend development and eager to learn best practices in software architecture and cloud technologies. I graduated in Computer Science and have been working with Java and Spring Boot for the past 2 years. I am looking for guidance to advance my career and become a senior engineer.",
+        "mentorshipType": "LONG_TERM",
+        "prevMentorshipType": "AD_HOC"
+      }'
+echo " "
+echo "✅  Mentee Maria added."
+echo " "
+
+curl -s -X POST "${API_BASE}/platform/v1/mentees" \
+  -H "accept: */*" \
+  -H "X-API-KEY: ${API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "fullName": "Emma Schmidt",
+        "position": "Frontend Developer",
+        "email": "emma.schmidt@email.com",
+        "slackDisplayName": "@EmmaS",
+        "country": {
+          "countryCode": "DE",
+          "countryName": "Germany"
+        },
+        "city": "Berlin",
+        "companyName": "CloudTech GmbH",
+        "images": [],
+        "network": [
+          {
+            "type": "LINKEDIN",
+            "link": "https://www.linkedin.com/in/emma-schmidt/"
+          }
+        ],
+        "profileStatus": "ACTIVE",
+        "skills": {
+          "yearsExperience": 3,
+          "areas": [ "FRONTEND", "DEVOPS" ],
+          "languages": [ "Javascript", "Python" ],
+          "mentorshipFocus": [
+            "Switch career to IT",
+            "Grow from beginner to mid-level"
+          ]
+        },
+        "spokenLanguages": [ "German", "English" ],
+        "bio": "I am a Frontend Developer transitioning from traditional web development to cloud-native applications. I have experience with React and Vue.js, and I am currently learning AWS and Kubernetes. I am seeking mentorship to understand DevOps practices and how to build scalable frontend applications integrated with cloud services.",
+        "mentorshipType": "AD_HOC",
+        "prevMentorshipType": "AD_HOC"
+      }'
+echo " "
+echo "✅  Mentee Emma added."
+echo " "
+
+# 5️⃣ List Mentees (endpoint not yet implemented)
+# echo "➡️ Fetching all mentees..."
+# curl -s -X GET "${API_BASE}/platform/v1/mentees" \
+#   -H "accept: */*" \
+#   -H "X-API-KEY: ${API_KEY}" | jq '.'
+# echo ""
+# echo "✅  Mentees listed."
+# echo ""

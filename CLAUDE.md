@@ -305,6 +305,10 @@ void shouldCreateCorsConfigurationSourceWithAllowedOrigins() {
 - **Global exception handling**: `GlobalExceptionHandler` catches all exceptions
 - **OpenAPI/Swagger**: All endpoints documented, available at `/swagger-ui/index.html`
 - **Google Java Format**: Code formatting enforced (see README for IntelliJ setup)
+- **Configuration properties**: Avoid inline `@Value` annotations in services
+  - For single properties: Use constructor injection with `@Value` in the constructor parameter
+  - For multiple related properties: Create a `@ConfigurationProperties` class in the `configuration/` package
+  - Always prefer constructor injection over field injection for better testability and immutability
 
 ## Common Development Tasks
 

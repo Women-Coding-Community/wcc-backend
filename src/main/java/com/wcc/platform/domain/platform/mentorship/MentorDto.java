@@ -11,6 +11,10 @@ import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.resource.MentorResource;
 import io.micrometer.common.util.StringUtils;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -41,20 +45,20 @@ public class MentorDto extends MemberDto {
   @Builder(builderMethodName = "mentorDtoBuilder")
   public MentorDto(
       final Long id,
-      final String fullName,
-      final String position,
-      final String email,
-      final String slackDisplayName,
-      final Country country,
-      final String city,
+      @NotBlank final String fullName,
+      @NotBlank final String position,
+      @NotBlank @Email final String email,
+      @NotBlank final String slackDisplayName,
+      @NotBlank final Country country,
+      @NotBlank final String city,
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
       final ProfileStatus profileStatus,
-      final List<String> spokenLanguages,
-      final String bio,
-      final Skills skills,
-      final MenteeSection menteeSection,
+      @NotEmpty final List<String> spokenLanguages,
+      @NotBlank final String bio,
+      @NotNull final Skills skills,
+      @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources,
       final MentorAvailability availability) {
@@ -67,10 +71,9 @@ public class MentorDto extends MemberDto {
         country,
         city,
         companyName,
-        null,
+        null, // TODO to be fixe this will cleanup member types
         images,
         network);
-    this.profileStatus = profileStatus;
     this.availability = availability;
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
@@ -78,6 +81,7 @@ public class MentorDto extends MemberDto {
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
+    this.profileStatus = profileStatus;
   }
 
   /**

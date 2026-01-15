@@ -159,7 +159,8 @@ public class MentorshipService {
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private Optional<Image> fetchProfilePicture(final Long memberId) {
     try {
-      return profilePicRepo.findByMemberId(memberId)
+      return profilePicRepo
+          .findByMemberId(memberId)
           .map(MemberProfilePicture::getResource)
           .map(this::convertResourceToImage);
     } catch (Exception e) {

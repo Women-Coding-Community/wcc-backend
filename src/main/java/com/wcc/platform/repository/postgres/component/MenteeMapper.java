@@ -4,8 +4,8 @@ import static com.wcc.platform.repository.postgres.constants.MentorConstants.COL
 import static io.swagger.v3.core.util.Constants.COMMA;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
-import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
@@ -24,22 +24,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@SuppressWarnings("PMD.LongVariable")
 public class MenteeMapper {
-
-
+    
     private static final String SQL_INSERT_MENTEE =
         "INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, "
             + "spoken_languages) VALUES (?, ?, ?, ?, ?)";
     private static final String SQL_PROG_LANG_INSERT =
         "INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)";
-    private static final String INSERT_MENTORSHIP_TYPES =
+    private static final String INSERT_MT_TYPES =
         "INSERT INTO mentee_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)";
-    private static final String INSERT_PREVIOUS_MENTORSHIP_TYPES =
+    private static final String INSERT_PREV_MT_TYPES =
         "INSERT INTO mentee_previous_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)";
     private static final String SQL_TECH_AREAS_INSERT =
         "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)";
-    private static final String INSERT_MENTORSHIP_FOCUS_AREAS =
+    private static final String INSERT_FOCUS_AREAS =
         "INSERT INTO mentee_mentorship_focus_areas (mentee_id, focus_area_id) VALUES (?, ?)";
     private static final String SQL_MENTORSHIP_TYPE =
         "SELECT mentorship_type FROM mentee_mentorship_types WHERE mentee_id = ?";
@@ -102,7 +100,7 @@ public class MenteeMapper {
         insertTechnicalAreas(mentee.getSkills(), memberId);
         insertLanguages(mentee.getSkills(), memberId);
         insertMentorshipTypes(mentee.getMentorshipType(), memberId);
-        insertPreviousMentorshipTypes(mentee.getPreviousMentorshipType(), memberId);
+        insertPreviousMentorshipTypes(mentee.getPrevMentorshipType(), memberId);
         insertMentorshipFocusAreas(mentee.getSkills(), memberId);
     }
 
@@ -135,18 +133,18 @@ public class MenteeMapper {
 
     /** Inserts mentorship types for a mentee in mentee_mentorship_types table. */
     private void insertMentorshipTypes(final MentorshipType mt, final Long memberId) {
-        jdbc.update(INSERT_MENTORSHIP_TYPES, memberId, mt.getMentorshipTypeId());
+        jdbc.update(INSERT_MT_TYPES, memberId, mt.getMentorshipTypeId());
     }
 
     /** Inserts previous mentorship types for a mentee in mentee_previous_mentorship_types table. */
     private void insertPreviousMentorshipTypes(final MentorshipType mt, final Long memberId) {
-        jdbc.update(INSERT_PREVIOUS_MENTORSHIP_TYPES, memberId, mt.getMentorshipTypeId());
+        jdbc.update(INSERT_PREV_MT_TYPES, memberId, mt.getMentorshipTypeId());
     }
 
     /** Inserts focus areas for the mentorship for a mentee in mentee_mentorship_focus_areas table. */
     private void insertMentorshipFocusAreas(final Skills menteeSkills, final Long memberId) {
         for (final MentorshipFocusArea focus : menteeSkills.mentorshipFocus()) {
-            jdbc.update(INSERT_MENTORSHIP_FOCUS_AREAS, memberId, focus.getFocusId());
+            jdbc.update(INSERT_FOCUS_AREAS, memberId, focus.getFocusId());
         }
     }
 

@@ -210,13 +210,14 @@ public class SetupMentorshipPagesFactories {
     }
   }
 
-  /** Test factory for Mentorship Resources Page with file. */
-  public static MentorshipResourcesPage createMentorshipResourcesPageTest() {
+/** Test factory for Mentorship Resources Page with file. */
+public static MentorshipResourcesPage createMentorshipResourcesPageTest() {
     try {
-      final String content = FileUtil.readFileAsString(PageType.MENTORSHIP_RESOURCES.getFileName());
-      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipResourcesPage.class);
+        final String content = FileUtil.readFileAsString(PageType.MENTORSHIP_RESOURCES.getFileName());
+        return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipResourcesPage.class);
     } catch (JsonProcessingException e) {
-      return createMentorshipResourcesPageTest();
+        return createMentorshipResourcesPageTest();
     }
-  }
+}
+
 }
