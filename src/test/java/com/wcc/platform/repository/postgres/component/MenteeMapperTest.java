@@ -33,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-
 class MenteeMapperTest {
 
     private static final String COLUMN_MENTEE_ID = "mentee_id";

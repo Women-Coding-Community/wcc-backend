@@ -1,9 +1,10 @@
 package com.wcc.platform.repository.postgres;
 
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -17,6 +18,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
 import java.sql.ResultSet;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,5 +99,32 @@ class PostgresMentorRepositoryTest {
     repository.deleteById(mentorId);
 
     verify(jdbc).update("DELETE FROM mentors WHERE mentor_id = ?", mentorId);
+  }
+
+  @Test
+  void testUpdateMentor() {
+    Mentor updatedMentor = createMentorTest();
+
+    doNothing().when(mentorMapper).updateMentor(any(), anyLong());
+    doReturn(Optional.of(updatedMentor)).when(repository).findById(1L);
+
+    Mentor result = repository.update(1L, updatedMentor);
+
+    assertNotNull(result);
+    assertEquals("Mentor bio", result.getBio());
+  }
+
+  @Test
+  void testUpdateNonExistentMentor() {
+    Mentor updatedMentor = createMentorTest();
+
+    doNothing().when(mentorMapper).updateMentor(any(), eq(2L));
+    doReturn(Optional.empty()).when(repository).findById(2L);
+
+    try {
+      repository.update(2L, updatedMentor);
+    } catch (NoSuchElementException e) {
+      assertNotNull(e);
+    }
   }
 }

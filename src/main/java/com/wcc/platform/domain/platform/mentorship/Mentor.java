@@ -46,7 +46,7 @@ public class Mentor extends Member {
       @NotBlank final String fullName,
       @NotBlank final String position,
       @NotBlank @Email final String email,
-      final String slackDisplayName,
+      @NotBlank final String slackDisplayName,
       @NotBlank final Country country,
       @NotBlank final String city,
       final String companyName,
@@ -122,11 +122,14 @@ public class Mentor extends Member {
         .availability(null)
         .fullName(mentor.getFullName())
         .position(mentor.getPosition())
+        .email(mentor.getEmail())
+        .slackDisplayName(mentor.getSlackDisplayName())
         .country(mentor.getCountry())
         .city(mentor.getCity())
         .companyName(mentor.getCompanyName())
         .images(mentor.getImages())
         .network(mentor.getNetwork())
+        .profileStatus(mentor.getProfileStatus())
         .spokenLanguages(mentor.getSpokenLanguages())
         .bio(mentor.getBio())
         .skills(mentor.getSkills())

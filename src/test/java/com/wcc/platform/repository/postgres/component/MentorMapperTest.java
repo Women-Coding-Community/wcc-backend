@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -28,11 +29,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 class MentorMapperTest {
-
-  @Mock private JdbcTemplate jdbc;
+  
   @Mock private ResultSet resultSet;
   @Mock private PostgresMemberRepository memberRepository;
   @Mock private PostgresSkillRepository skillsRepository;
@@ -44,7 +43,7 @@ class MentorMapperTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     mentorMapper =
-        spy(new MentorMapper(jdbc, memberRepository, skillsRepository, menteeSectionRepository));
+        spy(new MentorMapper(memberRepository, skillsRepository, menteeSectionRepository));
   }
 
   @Test
@@ -77,5 +76,19 @@ class MentorMapperTest {
   void handlesSqlExceptionGracefully() throws Exception {
     when(resultSet.getLong(COLUMN_MENTOR_ID)).thenThrow(SQLException.class);
     assertThrows(SQLException.class, () -> mentorMapper.mapRowToMentor(resultSet));
+  }
+
+  @Test
+  void testUpdateMentor() {
+    Mentor mentor = mock(Mentor.class);
+    MenteeSection menteeSection = mock(MenteeSection.class);
+    Long mentorId = 1L;
+
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+
+    mentorMapper.updateMentor(mentor, mentorId);
+
+    verify(menteeSectionRepository).updateMenteeSection(menteeSection, mentorId);
+    verify(skillsRepository).updateSkills(mentor, mentorId);
   }
 }

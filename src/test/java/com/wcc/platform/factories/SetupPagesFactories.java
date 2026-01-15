@@ -9,7 +9,7 @@ import static com.wcc.platform.factories.SetupFactories.createListSectionPartner
 import static com.wcc.platform.factories.SetupFactories.createListSectionProgrammeItemTest;
 import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
 import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createFeedbackSectionTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createFeedbackSectionTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -3,8 +3,10 @@ package com.wcc.platform.domain.platform.member;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.domain.platform.type.MemberType;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,13 +18,17 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Builder
 public class MemberDto {
   private Long id;
   private String fullName;
   private String position;
+  private String email;
+  private String slackDisplayName;
   private Country country;
   private String city;
   private String companyName;
+  private List<MemberType> memberTypes;
   private List<Image> images;
   private List<SocialNetwork> network;
 
@@ -37,9 +43,12 @@ public class MemberDto {
         .id(member.getId())
         .fullName(getFullName())
         .position(getPosition())
+        .email(getEmail())
+        .slackDisplayName(getSlackDisplayName())
         .country(getCountry())
         .city(getCity())
         .companyName(getCompanyName())
+        .memberTypes(getMemberTypes())
         .images(getImages())
         .network(getNetwork())
         .build();

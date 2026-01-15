@@ -1,6 +1,6 @@
 package com.wcc.platform.service.mentorship;
 
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.auth.UserAccount;

@@ -24,7 +24,7 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.factories.SetupEventFactories;
 import com.wcc.platform.factories.SetupFactories;
-import com.wcc.platform.factories.SetupMentorshipFactories;
+import com.wcc.platform.factories.SetupMentorshipPagesFactories;
 import com.wcc.platform.factories.SetupProgrammeFactories;
 import com.wcc.platform.service.CmsService;
 import java.util.List;
@@ -106,7 +106,7 @@ class DefaultControllerTest {
             .programmes(createSectionProgramme())
             .events(createSectionEvent("Events", ProgramType.TECH_TALK))
             .announcements(createSectionEvent("Announcements", ProgramType.OTHERS))
-            .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
+            .feedbackSection(SetupMentorshipPagesFactories.createFeedbackSectionTest())
             .partners(SetupFactories.createListSectionPartnerTest())
             .build();
 
