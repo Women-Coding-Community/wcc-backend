@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
  * the prefix "mentorship" in the application configuration file.
  *
  * <p>Properties: - daysCycleOpen: Number of days a mentorship cycle remains open for registration.
- * Default is 10. - validation.enabled: Flag to enable or disable mentorship cycle validation
- * during mentee registration. Default is true. Set to false for testing and debugging purposes.
+ * Default is 10. - validation.enabled: Flag to enable or disable mentorship cycle validation during
+ * mentee registration. Default is true. Set to false for testing and debugging purposes.
  */
 @Getter
 @Setter
@@ -19,11 +19,11 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "mentorship")
 public class MentorshipConfig {
 
-  /** Default number of days a mentorship cycle remains open. */
-  private static final int DEFAULT_DAYS_CYCLE_OPEN = 10;
+  /** the default n. days for the mentorship cycle remains open from the beginning of the month. */
+  private static final int DEFAULT_DAYS = 10;
 
   /** Number of days a mentorship cycle remains open for registration. */
-  private int daysCycleOpen = DEFAULT_DAYS_CYCLE_OPEN;
+  private int daysCycleOpen = DEFAULT_DAYS;
 
   /** Validation-specific configuration. */
   private Validation validation = new Validation();
