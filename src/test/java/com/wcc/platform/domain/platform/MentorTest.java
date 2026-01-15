@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.platform;
 
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 

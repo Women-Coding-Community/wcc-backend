@@ -33,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-
 class MenteeMapperTest {
 
     private static final String COLUMN_MENTEE_ID = "mentee_id";
@@ -114,9 +113,9 @@ class MenteeMapperTest {
         when(skills.languages()).thenReturn(Collections.emptyList());
         when(skills.mentorshipFocus()).thenReturn(Collections.emptyList());
 
-        MentorshipType mt = mock(MentorshipType.class);
-        when(mentee.getMentorshipType()).thenReturn(mt);
-        when(mt.getMentorshipTypeId()).thenReturn(10);
+        MentorshipType mentorshipType = mock(MentorshipType.class);
+        when(mentee.getMentorshipType()).thenReturn(mentorshipType);
+        when(mentorshipType.getMentorshipTypeId()).thenReturn(10);
 
         MentorshipType prevMt = mock(MentorshipType.class);
         when(mentee.getPreviousMentorshipType()).thenReturn(prevMt);

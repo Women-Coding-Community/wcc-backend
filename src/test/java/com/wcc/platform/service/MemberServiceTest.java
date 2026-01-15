@@ -3,8 +3,8 @@ package com.wcc.platform.service;
 import static com.wcc.platform.factories.SetupFactories.createMemberDtoTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMemberProfilePictureTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createResourceTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMemberProfilePictureTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createResourceTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -158,7 +158,8 @@ class MemberServiceTest {
     when(memberRepository.getAll()).thenReturn(List.of(member));
 
     var resource = createResourceTest();
-    var profilePicture = createMemberProfilePictureTest(member.getId()).toBuilder().resource(resource).build();
+    var profilePicture =
+        createMemberProfilePictureTest(member.getId()).toBuilder().resource(resource).build();
     when(profilePicRepo.findByMemberId(member.getId())).thenReturn(Optional.of(profilePicture));
 
     var result = service.getAllMembers();

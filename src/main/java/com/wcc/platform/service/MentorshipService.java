@@ -5,6 +5,8 @@ import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
@@ -173,5 +175,24 @@ public class MentorshipService {
         resource.getDriveFileLink(),
         resource.getName().isEmpty() ? "Profile picture" : resource.getName(),
         ImageType.DESKTOP);
+  }
+
+  /**
+   * Update a mentor record.
+   *
+   * @param mentorId mentor's unique identifier
+   * @param mentorDto MentorDto with updated member's data
+   * @return Mentor record updated successfully.
+   */
+  public Member updateMentor(final Long mentorId, final MentorDto mentorDto) {
+    if (mentorDto.getId() != null && !mentorId.equals(mentorDto.getId())) {
+      throw new IllegalArgumentException("Mentor ID does not match the provided mentorId");
+    }
+
+    final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
+    final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
+
+    final Mentor updatedMentor = (Mentor) mentorDto.merge(mentor);
+    return mentorRepository.update(mentorId, updatedMentor);
   }
 }

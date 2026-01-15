@@ -102,6 +102,21 @@ public class MemberController {
   }
 
   /**
+   * API to update mentor information.
+   *
+   * @param mentorId mentor's unique identifier
+   * @param mentorDto MentorDto with updated mentor's data
+   * @return Updated mentor
+   */
+  @PutMapping("/mentors/{mentorId}")
+  @Operation(summary = "API to update mentor data")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<Member> updateMentor(
+      @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
+    return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
+  }
+
+  /**
    * API to create mentee.
    *
    * @return Create a new mentee.

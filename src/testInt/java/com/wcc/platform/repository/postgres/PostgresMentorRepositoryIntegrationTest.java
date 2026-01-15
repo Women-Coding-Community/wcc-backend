@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.factories.SetupMentorshipFactories;
+import com.wcc.platform.factories.SetupMentorFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ class PostgresMentorRepositoryIntegrationTest extends DefaultDatabaseSetup
 
   @BeforeEach
   void setUp() {
-    mentor = SetupMentorshipFactories.createMentorTest(14L, "Mentor 14", "mentor14@email.com");
+    mentor = SetupMentorFactories.createMentorTest(14L, "Mentor 14", "mentor14@email.com");
     deleteAll(mentor, repository, memberRepository);
   }
 

@@ -5,14 +5,14 @@ import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_RESOURCES;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createLongTermTimeLinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipAdHocTimelinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipResourcesPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createLongTermTimeLinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipAdHocTimelinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipConductPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipFaqPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipResourcesPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipStudyGroupPageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -194,7 +194,8 @@ public class MentorshipControllerTest {
 
     mockMvc
         .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_RESOURCES).contentType(APPLICATION_JSON))
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_RESOURCES)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

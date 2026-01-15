@@ -5,20 +5,24 @@ import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
 import static com.wcc.platform.factories.SetupFactories.createMemberDtoTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
+import static org.hamcrest.Matchers.hasSize;
 import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
@@ -34,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -64,7 +67,7 @@ class MemberControllerTest {
     when(memberService.getAllMembers()).thenReturn(mockMembers);
 
     mockMvc
-        .perform(getRequest(API_MEMBERS).contentType(MediaType.APPLICATION_JSON))
+        .perform(getRequest(API_MEMBERS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", is(2)));
   }
@@ -75,7 +78,7 @@ class MemberControllerTest {
     when(mentorshipService.getAllMentors()).thenReturn(mockMentors);
 
     mockMvc
-        .perform(getRequest(API_MENTORS).contentType(MediaType.APPLICATION_JSON))
+        .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", is(1)))
         .andExpect(jsonPath("$[0].id", is(1)))
@@ -131,7 +134,7 @@ class MemberControllerTest {
         .perform(
             MockMvcRequestBuilders.put(API_MEMBERS + "/" + memberId)
                 .header(API_KEY_HEADER, API_KEY_VALUE)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(memberDto)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(1)))
@@ -151,5 +154,88 @@ class MemberControllerTest {
         .andExpect(status().isNoContent());
 
     verify(memberService).deleteMember(memberId);
+  }
+
+  @Test
+  void testUpdateMentorReturnsOk() throws Exception {
+    Long mentorId = 1L;
+    Mentor existingMentor = createMentorTest();
+    MentorDto mentorDto = createMentorTest().toDto();
+    Mentor updatedMentor = createUpdatedMentorTest(existingMentor, mentorDto);
+
+    when(mentorshipService.updateMentor(eq(mentorId), any(MentorDto.class)))
+        .thenReturn(updatedMentor);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put(API_MENTORS + "/" + mentorId)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mentorDto)))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void testUpdateMentorReturnsUpdatedFields() throws Exception {
+    Long mentorId = 1L;
+    Mentor existingMentor = createMentorTest();
+    MentorDto mentorDto = createMentorTest().toDto();
+    Mentor updatedMentor = createUpdatedMentorTest(existingMentor, mentorDto);
+
+    when(mentorshipService.updateMentor(eq(mentorId), any(MentorDto.class)))
+        .thenReturn(updatedMentor);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put(API_MENTORS + "/" + mentorId)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mentorDto)))
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.bio", is(updatedMentor.getBio())))
+        .andExpect(jsonPath("$.spokenLanguages", hasSize(2)))
+        .andExpect(jsonPath("$.spokenLanguages[0]", is(updatedMentor.getSpokenLanguages().get(0))))
+        .andExpect(jsonPath("$.spokenLanguages[1]", is(updatedMentor.getSpokenLanguages().get(1))))
+        .andExpect(
+            jsonPath("$.skills.yearsExperience", is(updatedMentor.getSkills().yearsExperience())))
+        .andExpect(jsonPath("$.skills.areas", hasSize(1)))
+        .andExpect(
+            jsonPath("$.skills.areas[0]", is(updatedMentor.getSkills().areas().get(0).toString())))
+        .andExpect(jsonPath("$.skills.languages", hasSize(2)))
+        .andExpect(
+            jsonPath(
+                "$.skills.languages[0]",
+                is(updatedMentor.getSkills().languages().get(0).toString())))
+        .andExpect(
+            jsonPath(
+                "$.skills.languages[1]",
+                is(updatedMentor.getSkills().languages().get(1).toString())))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.mentorshipType[0]",
+                is(updatedMentor.getMenteeSection().mentorshipType().get(0).toString())))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.idealMentee", is(updatedMentor.getMenteeSection().idealMentee())))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.additional", is(updatedMentor.getMenteeSection().additional())));
+  }
+
+  @Test
+  void testUpdateNonExistentMentorThrowsException() throws Exception {
+    Long nonExistentMentorId = 999L;
+    MentorDto mentorDto = createMentorTest().toDto();
+
+    when(mentorshipService.updateMentor(eq(nonExistentMentorId), any(MentorDto.class)))
+        .thenThrow(new MemberNotFoundException(nonExistentMentorId));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put(API_MENTORS + "/" + nonExistentMentorId)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mentorDto)))
+        .andExpect(status().isNotFound());
   }
 }

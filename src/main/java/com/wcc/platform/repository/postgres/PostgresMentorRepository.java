@@ -28,6 +28,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PostgresMentorRepository implements MentorRepository {
 
+  /* default */ static final String UPDATE_MENTOR_SQL =
+      "UPDATE mentors SET "
+          + "profile_status = ?, "
+          + "bio = ?, "
+          + "years_experience = ?, "
+          + "spoken_languages = ?, "
+          + "is_available = ? "
+          + "WHERE mentor_id = ?";
+  private static final String SQL_INSERT_MENTOR =
+      "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "
+          + " spoken_languages, is_available) VALUES (?, ?, ?, ?, ?, ?)";
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentors WHERE mentor_id = ?";
   private static final String SQL_DELETE_BY_ID = "DELETE FROM mentors WHERE mentor_id = ?";
   private static final String SQL_GET_BY_EMAIL =
@@ -77,15 +88,17 @@ public class PostgresMentorRepository implements MentorRepository {
   @Transactional
   public Mentor create(final Mentor mentor) {
     final Long memberId = memberMapper.addMember(mentor);
-    mentorMapper.addMentor(mentor, memberId);
+    addMentor(mentor, memberId);
     final var mentorAdded = findById(memberId);
     return mentorAdded.orElse(null);
   }
 
   @Override
+  @Transactional
   public Mentor update(final Long mentorId, final Mentor mentor) {
-    // not implemented
-    return mentor;
+    memberMapper.updateMember(mentor, mentorId);
+    updateMentor(mentor, mentorId);
+    return findById(mentorId).orElse(null);
   }
 
   @Override
@@ -104,5 +117,46 @@ public class PostgresMentorRepository implements MentorRepository {
   @Override
   public void deleteById(final Long mentorId) {
     jdbc.update(SQL_DELETE_BY_ID, mentorId);
+  }
+
+  /** Inserts a new Mentor into the database, including related skills and mentee section. */
+  private void addMentor(final Mentor mentor, final Long memberId) {
+    insertMentor(mentor, memberId);
+    mentorMapper.addMentor(mentor, memberId);
+  }
+
+  /** Inserts mentor-specific details into the mentor. */
+  private void insertMentor(final Mentor mentor, final Long memberId) {
+    final var profileStatus = mentor.getProfileStatus();
+    final var skills = mentor.getSkills();
+    jdbc.update(
+        SQL_INSERT_MENTOR,
+        memberId,
+        profileStatus.getStatusId(),
+        mentor.getBio(),
+        skills.yearsExperience(),
+        String.join(",", mentor.getSpokenLanguages()),
+        true);
+  }
+
+  /**
+   * Updates an existing Mentor in the database, including related skills and mentee section. An
+   * existing mentee section will be deleted and a new one inserted.
+   */
+  private void updateMentor(final Mentor mentor, final Long mentorId) {
+    updateMentorDetails(mentor, mentorId);
+    mentorMapper.updateMentor(mentor, mentorId);
+  }
+
+  private void updateMentorDetails(final Mentor mentor, final Long mentorId) {
+    final var skills = mentor.getSkills();
+    jdbc.update(
+        UPDATE_MENTOR_SQL,
+        mentor.getProfileStatus().getStatusId(),
+        mentor.getBio(),
+        skills.yearsExperience(),
+        String.join(",", mentor.getSpokenLanguages()),
+        true,
+        mentorId);
   }
 }

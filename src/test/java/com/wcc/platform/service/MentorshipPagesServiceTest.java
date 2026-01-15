@@ -1,13 +1,13 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.SetupMentorshipFactories.createLongTermTimeLinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipAdHocTimelinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipResourcesPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createLongTermTimeLinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipAdHocTimelinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipConductPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipFaqPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipResourcesPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipStudyGroupPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
