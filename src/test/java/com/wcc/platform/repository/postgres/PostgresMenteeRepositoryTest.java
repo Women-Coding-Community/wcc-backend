@@ -73,23 +73,23 @@ class PostgresMenteeRepositoryTest {
     void testFindById() throws Exception {
         Long menteeId = 1L;
         Mentee mentee = mock(Mentee.class);
-        ResultSet rs = mock(ResultSet.class);
+        ResultSet resultSet = mock(ResultSet.class);
 
         when(jdbc.query(eq(SQL_GET_BY_ID), any(ResultSetExtractor.class), eq(menteeId)))
             .thenAnswer(invocation -> {
                 ResultSetExtractor<Optional<Mentee>> extractor = invocation.getArgument(1);
 
-                when(rs.next()).thenReturn(true);
-                when(menteeMapper.mapRowToMentee(rs)).thenReturn(mentee);
+                when(resultSet.next()).thenReturn(true);
+                when(menteeMapper.mapRowToMentee(resultSet)).thenReturn(mentee);
 
-                return extractor.extractData(rs);
+                return extractor.extractData(resultSet);
             });
 
         Optional<Mentee> result = repository.findById(menteeId);
 
         assertTrue(result.isPresent());
         assertEquals(mentee, result.get());
-        verify(menteeMapper).mapRowToMentee(rs);
+        verify(menteeMapper).mapRowToMentee(resultSet);
     }
 
     @Test
@@ -101,12 +101,12 @@ class PostgresMenteeRepositoryTest {
             .thenAnswer(invocation -> {
                 RowMapper<Mentee> rowMapper = invocation.getArgument(1);
 
-                ResultSet rs = mock(ResultSet.class);
-                when(rs.getLong(anyString())).thenReturn(1L, 2L);
+                ResultSet resultSet = mock(ResultSet.class);
+                when(resultSet.getLong(anyString())).thenReturn(1L, 2L);
 
                 return List.of(
-                    rowMapper.mapRow(rs, 0),
-                    rowMapper.mapRow(rs, 1)
+                    rowMapper.mapRow(resultSet, 0),
+                    rowMapper.mapRow(resultSet, 1)
                 );
             });
 

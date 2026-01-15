@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.UUID;
 
 /** Mentorship test factories. */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
 public class SetupMentorshipFactories {
 
   /** Test factory. */

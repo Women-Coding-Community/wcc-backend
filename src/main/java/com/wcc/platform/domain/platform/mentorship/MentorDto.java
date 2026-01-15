@@ -7,6 +7,9 @@ import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.resource.MentorResource;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -35,17 +38,17 @@ public class MentorDto extends MemberDto {
   @Builder(builderMethodName = "mentorDtoBuilder")
   public MentorDto(
       final Long id,
-      final String fullName,
-      final String position,
-      final Country country,
-      final String city,
+      @NotBlank final String fullName,
+      @NotBlank final String position,
+      @NotBlank final Country country,
+      @NotBlank final String city,
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
-      final List<String> spokenLanguages,
-      final String bio,
-      final Skills skills,
-      final MenteeSection menteeSection,
+      @NotEmpty final List<String> spokenLanguages,
+      @NotBlank final String bio,
+      @NotNull final Skills skills,
+      @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources,
       final MentorAvailability availability) {
