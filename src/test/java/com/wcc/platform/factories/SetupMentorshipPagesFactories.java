@@ -2,12 +2,6 @@ package com.wcc.platform.factories;
 
 import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
 import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
-import static com.wcc.platform.factories.SetupFactories.OBJECT_MAPPER;
-import static com.wcc.platform.factories.SetupFactories.createCommonSectionTest;
-import static com.wcc.platform.factories.SetupFactories.createContactTest;
-import static com.wcc.platform.factories.SetupFactories.createLinkTest;
-import static com.wcc.platform.factories.SetupFactories.createListSectionTest;
-import static com.wcc.platform.factories.SetupFactories.createNoImageHeroSectionTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,6 +19,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.StudyGroup;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
@@ -34,13 +29,13 @@ import java.time.Year;
 import java.util.List;
 
 /** Mentorship test factories. */
-public class SetupMentorshipFactories {
+public class SetupMentorshipPagesFactories {
 
   /** Test factory. */
   public static MentorshipPage createMentorshipPageTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, MentorshipPage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipPage.class);
     } catch (JsonProcessingException e) {
       return createMentorshipPageTest();
     }
@@ -51,30 +46,33 @@ public class SetupMentorshipFactories {
     final String pageId = PageType.MENTORSHIP.getId();
     return new MentorshipPage(
         pageId,
-        createNoImageHeroSectionTest(),
-        createCommonSectionTest(),
-        createListSectionTest("Mentor"),
-        createListSectionTest("Mentee"),
+        SetupFactories.createNoImageHeroSectionTest(),
+        SetupFactories.createCommonSectionTest(),
+        SetupFactories.createListSectionTest("Mentor"),
+        SetupFactories.createListSectionTest("Mentee"),
         createFeedbackSectionTest());
   }
 
   /** Test factory. */
   public static MentorsPage createMentorPageTest() {
     final String pageId = PageType.MENTORS.getId();
-    var mentor = createMentorTest();
     var filters =
         MentorFilterSection.builder()
             .types(List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC))
             .build();
     return new MentorsPage(
-        pageId, createNoImageHeroSectionTest(), null, filters, List.of(mentor.toDto()));
+        pageId,
+        SetupFactories.createNoImageHeroSectionTest(),
+        null,
+        filters,
+        List.of(createMentorTest().toDto()));
   }
 
   /** Test factory. */
   public static MentorsPage createMentorsPageTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, MentorsPage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorsPage.class);
     } catch (JsonProcessingException e) {
       return createMentorPageTest();
     }
@@ -100,7 +98,7 @@ public class SetupMentorshipFactories {
   public static MentorshipFaqPage createMentorshipFaqPageTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, MentorshipFaqPage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipFaqPage.class);
     } catch (JsonProcessingException e) {
       return createMentorshipFaqPageTest();
     }
@@ -110,7 +108,7 @@ public class SetupMentorshipFactories {
     final String pageId = PageType.MENTORSHIP_FAQ.getId();
     return new MentorshipFaqPage(
         pageId,
-        createNoImageHeroSectionTest(),
+        SetupFactories.createNoImageHeroSectionTest(),
         createListFaqSectionTest(new FaqItem("Common", "Common FAQ")),
         createListFaqSectionTest(new FaqItem("Mentor", "Mentor FAQ")),
         createListFaqSectionTest(new FaqItem("Mentee", "Mentee FAQ")));
@@ -123,7 +121,7 @@ public class SetupMentorshipFactories {
   public static MentorshipCodeOfConductPage createMentorshipConductPageTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, MentorshipCodeOfConductPage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipCodeOfConductPage.class);
     } catch (JsonProcessingException e) {
       return createMentorshipConductPageTest();
     }
@@ -133,9 +131,9 @@ public class SetupMentorshipFactories {
     final String pageId = PageType.MENTORSHIP_CONDUCT.getId();
     return new MentorshipCodeOfConductPage(
         pageId,
-        createNoImageHeroSectionTest(),
-        createListSectionTest("Mentee Code of Conduct"),
-        createListSectionTest("Mentor Code of Conduct"),
+        SetupFactories.createNoImageHeroSectionTest(),
+        SetupFactories.createListSectionTest("Mentee Code of Conduct"),
+        SetupFactories.createListSectionTest("Mentor Code of Conduct"),
         createCommonSectionOnlyLinkTest());
   }
 
@@ -143,7 +141,7 @@ public class SetupMentorshipFactories {
   public static LongTermTimeLinePage createLongTermTimeLinePageTest(final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, LongTermTimeLinePage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, LongTermTimeLinePage.class);
     } catch (JsonProcessingException e) {
       return createLongTermTimeLinePageTest();
     }
@@ -153,12 +151,12 @@ public class SetupMentorshipFactories {
     final String pageId = PageType.MENTORSHIP_LONG_TIMELINE.getId();
     return new LongTermTimeLinePage(
         pageId,
-        createNoImageHeroSectionTest(),
+        SetupFactories.createNoImageHeroSectionTest(),
         new ListSection<>("Timeline Events", "description", null, List.of()));
   }
 
   private static CommonSection createCommonSectionOnlyLinkTest() {
-    return new CommonSection(null, null, null, createLinkTest(), null, null);
+    return new CommonSection(null, null, null, SetupFactories.createLinkTest(), null, null);
   }
 
   /** Test factory for Study Group Page. */
@@ -166,7 +164,7 @@ public class SetupMentorshipFactories {
       final String fileName) {
     try {
       final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, MentorshipStudyGroupsPage.class);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipStudyGroupsPage.class);
     } catch (JsonProcessingException e) {
       return createMentorshipStudyGroupPageTest();
     }
@@ -185,9 +183,9 @@ public class SetupMentorshipFactories {
 
     return new MentorshipStudyGroupsPage(
         pageId,
-        createNoImageHeroSectionTest(),
-        createCommonSectionTest(),
-        createContactTest(),
+        SetupFactories.createNoImageHeroSectionTest(),
+        SetupFactories.createCommonSectionTest(),
+        SetupFactories.createContactTest(),
         new ListSection<>("Study Groups", null, null, List.of(studyGroup)),
         createCustomStyleTest());
   }
@@ -198,7 +196,27 @@ public class SetupMentorshipFactories {
 
     return new MentorshipAdHocTimelinePage(
         pageId,
-        createNoImageHeroSectionTest(),
+        SetupFactories.createNoImageHeroSectionTest(),
         new ListSection<>("Events", "description", null, null));
+  }
+
+  /** Test factory for Mentorship Resources Page with file. */
+  public static MentorshipResourcesPage createMentorshipResourcesPageTest(final String fileName) {
+    try {
+      final String content = FileUtil.readFileAsString(fileName);
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipResourcesPage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorshipResourcesPageTest();
+    }
+  }
+
+  /** Test factory for Mentorship Resources Page with file. */
+  public static MentorshipResourcesPage createMentorshipResourcesPageTest() {
+    try {
+      final String content = FileUtil.readFileAsString(PageType.MENTORSHIP_RESOURCES.getFileName());
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipResourcesPage.class);
+    } catch (JsonProcessingException e) {
+      return createMentorshipResourcesPageTest();
+    }
   }
 }

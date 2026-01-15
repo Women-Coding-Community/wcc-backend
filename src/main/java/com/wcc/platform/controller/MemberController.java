@@ -3,9 +3,11 @@ package com.wcc.platform.controller;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +37,7 @@ public class MemberController {
 
   private final MemberService memberService;
   private final MentorshipService mentorshipService;
+  private final MenteeService menteeService;
 
   /**
    * API to retrieve information about members.
@@ -111,6 +114,18 @@ public class MemberController {
   public ResponseEntity<Member> updateMentor(
       @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
     return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
+  }
+
+  /**
+   * API to create mentee.
+   *
+   * @return Create a new mentee.
+   */
+  @PostMapping("/mentees")
+  @Operation(summary = "API to submit mentee registration")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<Mentee> createMentee(@RequestBody final Mentee mentee) {
+    return new ResponseEntity<>(menteeService.create(mentee), HttpStatus.CREATED);
   }
 
   /**

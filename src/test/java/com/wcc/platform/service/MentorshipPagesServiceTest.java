@@ -1,12 +1,13 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.SetupMentorshipFactories.createLongTermTimeLinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipAdHocTimelinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipConductPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipFaqPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipPageTest;
-import static com.wcc.platform.factories.SetupMentorshipFactories.createMentorshipStudyGroupPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createLongTermTimeLinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipAdHocTimelinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipConductPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipFaqPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipResourcesPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipStudyGroupPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -23,12 +24,14 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -255,5 +258,49 @@ class MentorshipPagesServiceTest {
 
     // Verify that getFallback is never called since the exception occurs before that
     verify(pageRepository, never()).getFallback(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Given record exists in database, when getResources, then return valid response")
+  void shouldReturnMentorshipResourcesPageWhenRecordExistsInDatabase() {
+    var page = createMentorshipResourcesPageTest();
+    var mapPage =
+        new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
+
+    when(pageRepository.findById(PageType.MENTORSHIP_RESOURCES.getId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(MentorshipResourcesPage.class))).thenReturn(page);
+
+    var response = service.getResources();
+
+    assertEquals(page, response);
+  }
+
+  @Test
+  @DisplayName("Given record not in database, when getResources, then return fallback")
+  void shouldReturnFallbackWhenMentorshipResourcesNotInDatabase() {
+    var page = createMentorshipResourcesPageTest();
+
+    when(pageRepository.findById(PageType.MENTORSHIP_RESOURCES.getId()))
+        .thenReturn(Optional.empty());
+    when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
+
+    var response = service.getResources();
+
+    assertEquals(page, response);
+    verify(pageRepository, times(1)).getFallback(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Given conversion fails, when getResources, then throw PlatformInternalException")
+  void shouldThrowPlatformInternalExceptionWhenResourcesConversionFails() {
+    Map<String, Object> mapPage = Map.of("id", "page:MENTORSHIP_RESOURCES");
+
+    when(pageRepository.findById(PageType.MENTORSHIP_RESOURCES.getId()))
+        .thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(MentorshipResourcesPage.class)))
+        .thenThrow(new IllegalArgumentException("Conversion failed"));
+
+    assertThrows(PlatformInternalException.class, service::getResources);
   }
 }

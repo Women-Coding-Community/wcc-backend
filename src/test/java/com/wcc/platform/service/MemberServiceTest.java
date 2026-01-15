@@ -3,6 +3,9 @@ package com.wcc.platform.service;
 import static com.wcc.platform.factories.SetupFactories.createMemberDtoTest;
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMemberProfilePictureTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createResourceTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,26 +16,30 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.UserAccountRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class MemberServiceTest {
 
   @Mock private MemberRepository memberRepository;
+  @Mock private UserAccountRepository userAccountRepository;
+  @Mock private MemberProfilePictureRepository profilePicRepo;
 
-  @InjectMocks private MemberService service;
+  private MemberService service;
 
   private Member member;
   private Member updatedMember;
@@ -41,6 +48,7 @@ class MemberServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
+    service = new MemberService(memberRepository, userAccountRepository, profilePicRepo);
     member = createMemberTest(MemberType.DIRECTOR);
     memberDto = createMemberDtoTest(MemberType.DIRECTOR);
     updatedMember = createUpdatedMemberTest(member, memberDto);
@@ -140,5 +148,57 @@ class MemberServiceTest {
     service.deleteMember(memberId);
 
     verify(memberRepository, times(1)).deleteById(memberId);
+  }
+
+  @Test
+  @DisplayName(
+      "Given member with profile picture, when getAllMembers is called, then images list should"
+          + " contain profile picture")
+  void shouldMergeProfilePictureIntoImagesWhenMemberHasProfilePicture() {
+    when(memberRepository.getAll()).thenReturn(List.of(member));
+
+    var resource = createResourceTest();
+    var profilePicture =
+        createMemberProfilePictureTest(member.getId()).toBuilder().resource(resource).build();
+    when(profilePicRepo.findByMemberId(member.getId())).thenReturn(Optional.of(profilePicture));
+
+    var result = service.getAllMembers();
+
+    assertThat(result).hasSize(1);
+    var memberResult = result.get(0);
+    assertThat(memberResult.getImages()).hasSize(1);
+    assertThat(memberResult.getImages().get(0).path()).isEqualTo(resource.getDriveFileLink());
+    assertThat(memberResult.getImages().get(0).type()).isEqualTo(ImageType.DESKTOP);
+  }
+
+  @Test
+  @DisplayName(
+      "Given member without profile picture, when getAllMembers is called, then images list should"
+          + " remain unchanged from original member")
+  void shouldReturnOriginalImagesWhenMemberHasNoProfilePicture() {
+    when(memberRepository.getAll()).thenReturn(List.of(member));
+    when(profilePicRepo.findByMemberId(member.getId())).thenReturn(Optional.empty());
+
+    var result = service.getAllMembers();
+
+    assertThat(result).hasSize(1);
+    var memberResult = result.get(0);
+    assertThat(memberResult.getImages()).isEqualTo(member.getImages());
+  }
+
+  @Test
+  @DisplayName(
+      "Given profile picture fetch throws exception, when getAllMembers is called, then images"
+          + " should remain unchanged and exception should be logged")
+  void shouldHandleExceptionWhenFetchingProfilePictureFails() {
+    when(memberRepository.getAll()).thenReturn(List.of(member));
+    when(profilePicRepo.findByMemberId(member.getId()))
+        .thenThrow(new RuntimeException("Database error"));
+
+    var result = service.getAllMembers();
+
+    assertThat(result).hasSize(1);
+    var memberResult = result.get(0);
+    assertThat(memberResult.getImages()).isEqualTo(member.getImages());
   }
 }

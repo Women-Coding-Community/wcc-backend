@@ -1,5 +1,7 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
@@ -9,6 +11,9 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
+import com.wcc.platform.domain.resource.Resource;
+import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.utils.FiltersUtil;
 import java.time.LocalDate;
@@ -17,11 +22,13 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /** Platform Service. */
+@Slf4j
 @Service
 public class MentorshipService {
 
@@ -32,13 +39,16 @@ public class MentorshipService {
       new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
 
   private final MentorRepository mentorRepository;
+  private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
 
   @Autowired
   public MentorshipService(
       final MentorRepository mentorRepository,
+      final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
     this.mentorRepository = mentorRepository;
+    this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
   }
 
@@ -88,10 +98,12 @@ public class MentorshipService {
     final var allMentors = mentorRepository.getAll();
 
     if (currentCycle == CYCLE_CLOSED) {
-      return allMentors.stream().map(Mentor::toDto).toList();
+      return allMentors.stream().map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
     }
 
-    return allMentors.stream().map(mentor -> mentor.toDto(currentCycle)).toList();
+    return allMentors.stream()
+        .map(mentor -> enrichWithProfilePicture(mentor.toDto(currentCycle)))
+        .toList();
   }
 
   /* package */ MentorshipCycle getCurrentCycle() {
@@ -116,6 +128,53 @@ public class MentorshipService {
 
   /* package */ ZonedDateTime nowLondon() {
     return ZonedDateTime.now(ZoneId.of(EUROPE_LONDON));
+  }
+
+  private MentorDto enrichWithProfilePicture(final MentorDto dto) {
+    final Optional<Image> profilePicture = fetchProfilePicture(dto.getId());
+
+    if (profilePicture.isEmpty()) {
+      return dto;
+    }
+
+    return MentorDto.mentorDtoBuilder()
+        .id(dto.getId())
+        .fullName(dto.getFullName())
+        .position(dto.getPosition())
+        .country(dto.getCountry())
+        .city(dto.getCity())
+        .companyName(dto.getCompanyName())
+        .images(List.of(profilePicture.get()))
+        .network(dto.getNetwork())
+        .availability(dto.getAvailability())
+        .skills(dto.getSkills())
+        .spokenLanguages(dto.getSpokenLanguages())
+        .bio(dto.getBio())
+        .menteeSection(dto.getMenteeSection())
+        .feedbackSection(dto.getFeedbackSection())
+        .resources(dto.getResources())
+        .build();
+  }
+
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
+  private Optional<Image> fetchProfilePicture(final Long memberId) {
+    try {
+      return profilePicRepo.findByMemberId(memberId)
+          .map(MemberProfilePicture::getResource)
+          .map(this::convertResourceToImage);
+    } catch (Exception e) {
+      // Catching generic exception intentionally to ensure profile picture fetch
+      // failures don't break the entire mentor retrieval operation
+      log.warn("Failed to fetch profile picture for member {}: {}", memberId, e.getMessage());
+      return Optional.empty();
+    }
+  }
+
+  private Image convertResourceToImage(final Resource resource) {
+    return new Image(
+        resource.getDriveFileLink(),
+        resource.getName().isEmpty() ? "Profile picture" : resource.getName(),
+        ImageType.DESKTOP);
   }
 
   /**

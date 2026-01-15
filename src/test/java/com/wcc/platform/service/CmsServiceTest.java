@@ -13,7 +13,7 @@ import com.wcc.platform.domain.cms.pages.LandingPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupFactories;
-import com.wcc.platform.factories.SetupMentorshipFactories;
+import com.wcc.platform.factories.SetupMentorshipPagesFactories;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +29,7 @@ class CmsServiceTest {
           .id(PageType.LANDING_PAGE.getId())
           .heroSection(SetupFactories.createHeroSectionTest())
           .fullBannerSection(SetupFactories.createCommonSectionTest("Page banner section"))
-          .feedbackSection(SetupMentorshipFactories.createFeedbackSectionTest())
+          .feedbackSection(SetupMentorshipPagesFactories.createFeedbackSectionTest())
           .volunteerSection(SetupFactories.createCommonSectionTest("Volunteer"))
           .partners(SetupFactories.createListSectionPartnerTest())
           .build();

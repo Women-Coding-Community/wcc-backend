@@ -20,8 +20,13 @@ import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.ResourceType;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
+import com.wcc.platform.domain.resource.Resource;
 import java.time.Month;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /** Mentorship test factories. */
 public class SetupMentorFactories {
@@ -129,6 +134,32 @@ public class SetupMentorFactories {
                 List.of(new MentorMonthAvailability(Month.JUNE, 2)),
                 "ideal mentee description UPDATED",
                 "additional UPDATED"))
+        .build();
+  }
+
+  /** Creates a test MemberProfilePicture with associated Resource. */
+  public static MemberProfilePicture createMemberProfilePictureTest(final Long memberId) {
+    return MemberProfilePicture.builder()
+        .memberId(memberId)
+        .resourceId(UUID.randomUUID())
+        .resource(createResourceTest())
+        .build();
+  }
+
+  /** Creates a test Resource for profile pictures. */
+  public static Resource createResourceTest() {
+    return Resource.builder()
+        .id(UUID.randomUUID())
+        .name("Profile Picture")
+        .description("Test profile picture")
+        .fileName("test-profile.jpg")
+        .contentType("image/jpeg")
+        .size(1024L)
+        .driveFileId("test-drive-file-id")
+        .driveFileLink("https://drive.google.com/file/d/test-drive-file-id/view")
+        .resourceType(ResourceType.PROFILE_PICTURE)
+        .createdAt(OffsetDateTime.now())
+        .updatedAt(OffsetDateTime.now())
         .build();
   }
 }
