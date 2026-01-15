@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.configuration.MentorshipConfig;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
@@ -16,6 +17,7 @@ public class MenteeService {
 
   private final MenteeRepository menteeRepository;
   private final MentorshipService mentorshipService;
+  private final MentorshipConfig mentorshipConfig;
 
   /**
    * Create a mentee record.
@@ -30,7 +32,9 @@ public class MenteeService {
               throw new DuplicatedMemberException(String.valueOf(existing.getId()));
             });
 
-    validateMentorshipCycle(mentee);
+    if (mentorshipConfig.getValidation().isEnabled()) {
+      validateMentorshipCycle(mentee);
+    }
 
     return menteeRepository.create(mentee);
   }

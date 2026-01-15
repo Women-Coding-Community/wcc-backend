@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.configuration.MentorshipConfig;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.member.Member;
@@ -28,6 +30,8 @@ class MenteeServiceTest {
 
     @Mock private MenteeRepository menteeRepository;
     @Mock private MentorshipService mentorshipService;
+    @Mock private MentorshipConfig mentorshipConfig;
+    @Mock private MentorshipConfig.Validation validation;
 
     private MenteeService menteeService;
 
@@ -36,7 +40,9 @@ class MenteeServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        menteeService = new MenteeService(menteeRepository, mentorshipService);
+        when(mentorshipConfig.getValidation()).thenReturn(validation);
+        when(validation.isEnabled()).thenReturn(true);
+        menteeService = new MenteeService(menteeRepository, mentorshipService, mentorshipConfig);
         mentee = createMenteeTest();
     }
 
@@ -157,5 +163,36 @@ class MenteeServiceTest {
         assertThat(result).isEqualTo(adHocMentee);
         verify(menteeRepository).create(adHocMentee);
         verify(mentorshipService).getCurrentCycle();
+    }
+
+    @Test
+    @DisplayName("Given validation is disabled When creating mentee Then should skip validation and create successfully")
+    void shouldSkipValidationWhenValidationIsDisabled() {
+        when(validation.isEnabled()).thenReturn(false);
+
+        Mentee adHocMentee = Mentee.menteeBuilder()
+            .id(1L)
+            .fullName("Test Mentee")
+            .email("test@example.com")
+            .position("Software Engineer")
+            .country(mentee.getCountry())
+            .city("Test City")
+            .companyName("Test Company")
+            .images(mentee.getImages())
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("Test bio")
+            .spokenLanguages(List.of("English"))
+            .skills(mentee.getSkills())
+            .mentorshipType(MentorshipType.AD_HOC)
+            .prevMentorshipType(MentorshipType.AD_HOC)
+            .build();
+
+        when(menteeRepository.create(any(Mentee.class))).thenReturn(adHocMentee);
+
+        Member result = menteeService.create(adHocMentee);
+
+        assertThat(result).isEqualTo(adHocMentee);
+        verify(menteeRepository).create(adHocMentee);
+        verify(mentorshipService, never()).getCurrentCycle();
     }
 }

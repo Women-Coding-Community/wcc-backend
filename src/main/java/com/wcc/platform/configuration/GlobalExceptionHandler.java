@@ -10,6 +10,7 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.repository.file.FileRepositoryException;
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler {
   }
 
   /** Receive {@link ConstraintViolationException} and return {@link HttpStatus#NOT_ACCEPTABLE}. */
-  @ExceptionHandler({ConstraintViolationException.class})
+  @ExceptionHandler({ConstraintViolationException.class, MentorshipCycleClosedException.class})
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   public ResponseEntity<ErrorDetails> handleNotAcceptableError(
       final ConstraintViolationException ex, final WebRequest request) {
