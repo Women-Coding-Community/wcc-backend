@@ -34,7 +34,7 @@ public class Mentee extends Member {
       @NotBlank final String fullName,
       @NotBlank final String position,
       @NotBlank @Email final String email,
-      final String slackDisplayName,
+      @NotBlank final String slackDisplayName,
       @NotBlank final Country country,
       @NotBlank final String city,
       final String companyName,
