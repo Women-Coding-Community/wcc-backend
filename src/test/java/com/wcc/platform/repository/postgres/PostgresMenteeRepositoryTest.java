@@ -20,6 +20,7 @@ import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeRepository;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;

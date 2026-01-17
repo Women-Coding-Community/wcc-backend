@@ -2,7 +2,10 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
+import com.wcc.platform.domain.template.RenderedTemplate;
+import com.wcc.platform.domain.template.TemplateRequest;
 import com.wcc.platform.service.EmailService;
+import com.wcc.platform.service.EmailTemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmailController {
 
   private final EmailService emailService;
+  private final EmailTemplateService emailTemplateService;
 
   /**
    * API to send a single email.
@@ -84,5 +88,32 @@ public class EmailController {
       @Valid @RequestBody final List<EmailRequest> emailRequests) {
     final List<EmailResponse> responses = emailService.sendBulkEmails(emailRequests);
     return ResponseEntity.ok(responses);
+  }
+
+  /**
+   * API to preview an email template.
+   *
+   * @param templateRequest the template request containing template type and parameters
+   * @return RenderedTemplate with the subject and body of the rendered template
+   */
+  @PostMapping("/template/preview")
+  @Operation(summary = "Preview an email template", description = "Renders an email template")
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "201",
+        description = "Template rendered successfully",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = RenderedTemplate.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid template request", content = @Content)
+  })
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<RenderedTemplate> previewTemplate(
+      @Valid @RequestBody final TemplateRequest templateRequest) {
+    final RenderedTemplate renderedTemplate =
+        emailTemplateService.renderTemplate(
+            templateRequest.templateType(), templateRequest.params());
+    return new ResponseEntity<>(renderedTemplate, HttpStatus.CREATED);
   }
 }

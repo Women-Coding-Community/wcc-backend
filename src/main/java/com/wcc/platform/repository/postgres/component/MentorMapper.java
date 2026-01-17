@@ -8,8 +8,8 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
-import com.wcc.platform.repository.postgres.PostgresMenteeSectionRepository;
-import com.wcc.platform.repository.postgres.PostgresSkillRepository;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository;
+import com.wcc.platform.repository.postgres.mentorship.PostgresSkillRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class MentorMapper {
-  
+
   private final PostgresMemberRepository memberRepository;
   private final PostgresSkillRepository skillsRepository;
   private final PostgresMenteeSectionRepository menteeSectionRepo;

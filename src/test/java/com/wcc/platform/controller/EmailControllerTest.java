@@ -14,6 +14,7 @@ import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.service.EmailService;
+import com.wcc.platform.service.EmailTemplateService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,8 @@ class EmailControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private EmailService emailService;
+
+  @MockBean private EmailTemplateService templateService;
 
   private EmailRequest emailRequest;
   private EmailResponse emailResponse;
@@ -98,8 +101,7 @@ class EmailControllerTest {
   }
 
   @Test
-  @DisplayName(
-      "Given invalid email format, when sending email, then should return bad request")
+  @DisplayName("Given invalid email format, when sending email, then should return bad request")
   void shouldReturnBadRequestForInvalidEmailFormat() throws Exception {
     EmailRequest invalidRequest =
         EmailRequest.builder()

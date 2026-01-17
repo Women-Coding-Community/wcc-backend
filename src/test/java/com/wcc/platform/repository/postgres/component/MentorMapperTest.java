@@ -18,8 +18,8 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
-import com.wcc.platform.repository.postgres.PostgresMenteeSectionRepository;
-import com.wcc.platform.repository.postgres.PostgresSkillRepository;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository;
+import com.wcc.platform.repository.postgres.mentorship.PostgresSkillRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class MentorMapperTest {
-  
+
   @Mock private ResultSet resultSet;
   @Mock private PostgresMemberRepository memberRepository;
   @Mock private PostgresSkillRepository skillsRepository;
