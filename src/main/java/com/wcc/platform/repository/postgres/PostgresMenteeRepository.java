@@ -4,6 +4,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,9 @@ public class PostgresMenteeRepository implements MenteeRepository {
     @Transactional
     public Mentee create(final Mentee mentee) {
         final Long memberId = memberMapper.addMember(mentee);
-        menteeMapper.addMentee(mentee, memberId);
+        // TODO: cycleYear should be passed from service layer, using current year as temporary solution
+        final Integer cycleYear = Year.now().getValue();
+        menteeMapper.addMentee(mentee, memberId, cycleYear);
         final var menteeAdded = findById(memberId);
         return menteeAdded.orElse(null);
     }

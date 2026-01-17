@@ -32,9 +32,7 @@ public class MenteeMapper {
     private static final String SQL_PROG_LANG_INSERT =
         "INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)";
     private static final String INSERT_MT_TYPES =
-        "INSERT INTO mentee_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)";
-    private static final String INSERT_PREV_MT_TYPES =
-        "INSERT INTO mentee_previous_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)";
+        "INSERT INTO mentee_mentorship_types (mentee_id, mentorship_type, cycle_year) VALUES (?, ?, ?)";
     private static final String SQL_TECH_AREAS_INSERT =
         "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)";
     private static final String INSERT_FOCUS_AREAS =
@@ -95,12 +93,11 @@ public class MenteeMapper {
         return Optional.of(types.get(0));
     }
 
-    public void addMentee(final Mentee mentee, final Long memberId) {
+    public void addMentee(final Mentee mentee, final Long memberId, final Integer cycleYear) {
         insertMentee(mentee, memberId);
         insertTechnicalAreas(mentee.getSkills(), memberId);
         insertLanguages(mentee.getSkills(), memberId);
-        insertMentorshipTypes(mentee.getMentorshipType(), memberId);
-        insertPreviousMentorshipTypes(mentee.getPrevMentorshipType(), memberId);
+        insertMentorshipTypes(mentee.getMentorshipType(), memberId, cycleYear);
         insertMentorshipFocusAreas(mentee.getSkills(), memberId);
     }
 
@@ -132,13 +129,8 @@ public class MenteeMapper {
     }
 
     /** Inserts mentorship types for a mentee in mentee_mentorship_types table. */
-    private void insertMentorshipTypes(final MentorshipType mt, final Long memberId) {
-        jdbc.update(INSERT_MT_TYPES, memberId, mt.getMentorshipTypeId());
-    }
-
-    /** Inserts previous mentorship types for a mentee in mentee_previous_mentorship_types table. */
-    private void insertPreviousMentorshipTypes(final MentorshipType mt, final Long memberId) {
-        jdbc.update(INSERT_PREV_MT_TYPES, memberId, mt.getMentorshipTypeId());
+    private void insertMentorshipTypes(final MentorshipType mt, final Long memberId, final Integer cycleYear) {
+        jdbc.update(INSERT_MT_TYPES, memberId, mt.getMentorshipTypeId(), cycleYear);
     }
 
     /** Inserts focus areas for the mentorship for a mentee in mentee_mentorship_focus_areas table. */

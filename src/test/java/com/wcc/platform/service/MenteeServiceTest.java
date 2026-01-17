@@ -63,7 +63,6 @@ class MenteeServiceTest {
             .spokenLanguages(List.of("English"))
             .skills(mentee.getSkills())
             .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
             .build();
 
         MentorshipCycle openCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
@@ -119,7 +118,6 @@ class MenteeServiceTest {
             .spokenLanguages(List.of("English"))
             .skills(mentee.getSkills())
             .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
             .build();
 
         MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
@@ -151,7 +149,6 @@ class MenteeServiceTest {
             .spokenLanguages(List.of("English"))
             .skills(mentee.getSkills())
             .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
             .build();
 
         MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
@@ -184,7 +181,6 @@ class MenteeServiceTest {
             .spokenLanguages(List.of("English"))
             .skills(mentee.getSkills())
             .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
             .build();
 
         when(menteeRepository.create(any(Mentee.class))).thenReturn(adHocMentee);

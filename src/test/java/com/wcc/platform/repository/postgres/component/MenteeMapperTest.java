@@ -117,10 +117,6 @@ class MenteeMapperTest {
         when(mentee.getMentorshipType()).thenReturn(mentorshipType);
         when(mentorshipType.getMentorshipTypeId()).thenReturn(10);
 
-        MentorshipType prevMentorshipType = mock(MentorshipType.class);
-        when(mentee.getPrevMentorshipType()).thenReturn(prevMentorshipType);
-        when(prevMentorshipType.getMentorshipTypeId()).thenReturn(20);
-
         TechnicalArea techArea = mock(TechnicalArea.class);
         when(techArea.getTechnicalAreaId()).thenReturn(100);
         when(skills.areas()).thenReturn(List.of(techArea));
@@ -129,8 +125,10 @@ class MenteeMapperTest {
         when(lang.getLangId()).thenReturn(55);
         when(skills.languages()).thenReturn(List.of(lang));
 
+        Integer cycleYear = 2026;
+
         //Act
-        menteeMapper.addMentee(mentee, memberId);
+        menteeMapper.addMentee(mentee, memberId, cycleYear);
 
         //Assert
         verify(jdbc).update(
@@ -155,15 +153,10 @@ class MenteeMapperTest {
         );
 
         verify(jdbc).update(
-            eq("INSERT INTO mentee_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)"),
+            eq("INSERT INTO mentee_mentorship_types (mentee_id, mentorship_type, cycle_year) VALUES (?, ?, ?)"),
             eq(memberId),
-            eq(10)
-        );
-
-        verify(jdbc).update(
-            eq("INSERT INTO mentee_previous_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)"),
-            eq(memberId),
-            eq(20)
+            eq(10),
+            eq(cycleYear)
         );
     }
 

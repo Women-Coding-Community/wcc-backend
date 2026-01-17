@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
-  private @NotBlank MentorshipType prevMentorshipType;
   private @NotBlank MentorshipType mentorshipType;
   private @NotNull ProfileStatus profileStatus;
   private @NotBlank Skills skills;
@@ -44,8 +43,7 @@ public class Mentee extends Member {
       final List<String> spokenLanguages, // TODO
       @NotBlank final String bio,
       @NotBlank final Skills skills,
-      @NotBlank final MentorshipType mentorshipType,
-      @NotBlank final MentorshipType prevMentorshipType) {
+      @NotBlank final MentorshipType mentorshipType) {
     super(
         id,
         fullName,
@@ -64,6 +62,5 @@ public class Mentee extends Member {
     this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
     this.bio = bio;
     this.mentorshipType = mentorshipType;
-    this.prevMentorshipType = prevMentorshipType;
   }
 }
