@@ -30,6 +30,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.MenteeApplicationService;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
@@ -59,6 +60,7 @@ class MemberControllerTest {
   @MockBean private MemberService memberService;
   @MockBean private MentorshipService mentorshipService;
   @MockBean private MenteeService menteeService;
+  @MockBean private MenteeApplicationService applicationService;
 
   @Test
   void testGetAllMembersReturnsOk() throws Exception {
@@ -113,7 +115,7 @@ class MemberControllerTest {
   @Test
   void testCreateMenteeReturnsCreated() throws Exception {
     Mentee mockMentee = createMenteeTest(2L, "Mark", "mark@test.com");
-    when(menteeService.create(any(Mentee.class))).thenReturn(mockMentee);
+    when(menteeService.create(any(Mentee.class), any(Integer.class))).thenReturn(mockMentee);
 
     mockMvc
         .perform(postRequest(API_MENTEES, mockMentee))
