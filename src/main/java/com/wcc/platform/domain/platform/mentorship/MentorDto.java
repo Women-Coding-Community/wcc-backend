@@ -49,7 +49,7 @@ public class MentorDto extends MemberDto {
       @NotBlank final String position,
       @NotBlank @Email final String email,
       @NotBlank final String slackDisplayName,
-      @NotBlank final Country country,
+      @NotNull final Country country,
       @NotBlank final String city,
       final String companyName,
       final List<Image> images,
