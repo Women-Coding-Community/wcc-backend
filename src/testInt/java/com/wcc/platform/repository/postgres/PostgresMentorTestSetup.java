@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
 
 /** Interface for default setup operations for Postgres repositories. */
 public interface PostgresMentorTestSetup {

@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
 import java.sql.ResultSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;

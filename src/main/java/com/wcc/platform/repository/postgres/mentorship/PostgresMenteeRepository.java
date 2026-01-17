@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.postgres;
+package com.wcc.platform.repository.postgres.mentorship;
 
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
@@ -19,7 +19,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentees WHERE mentee_id = ?";
   private static final String SQL_DELETE_BY_ID = "DELETE FROM mentees WHERE mentee_id = ?";
   private static final String SELECT_ALL_MENTEES = "SELECT * FROM mentees";
-  private static final String SQL_EXISTS_BY_MENTEE_YEAR_TYPE =
+  private static final String SQL_EXISTS =
       "SELECT EXISTS(SELECT 1 FROM mentee_mentorship_types "
           + "WHERE mentee_id = ? AND cycle_year = ? AND mentorship_type = ?)";
 
@@ -83,10 +83,6 @@ public class PostgresMenteeRepository implements MenteeRepository {
   public boolean existsByMenteeYearType(
       final Long menteeId, final Integer cycleYear, final MentorshipType mentorshipType) {
     return jdbc.queryForObject(
-        SQL_EXISTS_BY_MENTEE_YEAR_TYPE,
-        Boolean.class,
-        menteeId,
-        cycleYear,
-        mentorshipType.getMentorshipTypeId());
+        SQL_EXISTS, Boolean.class, menteeId, cycleYear, mentorshipType.getMentorshipTypeId());
   }
 }

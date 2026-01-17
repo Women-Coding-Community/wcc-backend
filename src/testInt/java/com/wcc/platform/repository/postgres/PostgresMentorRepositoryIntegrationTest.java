@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.factories.SetupMentorFactories;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

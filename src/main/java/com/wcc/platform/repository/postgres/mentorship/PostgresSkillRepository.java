@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.postgres;
+package com.wcc.platform.repository.postgres.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;

@@ -1,4 +1,4 @@
-package com.wcc.platform.repository.postgres;
+package com.wcc.platform.repository.postgres.mentorship;
 
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 

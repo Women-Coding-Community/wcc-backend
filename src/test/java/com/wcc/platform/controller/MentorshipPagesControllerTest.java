@@ -42,8 +42,8 @@ import org.springframework.test.web.servlet.MockMvc;
 /** Unit test for mentorship apis. */
 @ActiveProfiles("test")
 @Import({SecurityConfig.class, TestConfig.class})
-@WebMvcTest(MentorshipController.class)
-public class MentorshipControllerTest {
+@WebMvcTest(MentorshipPagesController.class)
+public class MentorshipPagesControllerTest {
 
   public static final String API_MENTORSHIP_OVERVIEW = "/api/cms/v1/mentorship/overview";
   public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
