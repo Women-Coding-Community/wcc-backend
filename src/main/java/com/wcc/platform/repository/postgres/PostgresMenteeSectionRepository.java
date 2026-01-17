@@ -43,6 +43,8 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
       "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
   private static final String INSERT_MENTOR_TYPES =
       "INSERT INTO mentor_mentorship_types (mentor_id, mentorship_type) VALUES (?, ?)";
+  private static final String DELETE_MENTOR_TYPES =
+      "DELETE FROM mentor_mentorship_types WHERE mentor_id = ?";
   private final JdbcTemplate jdbc;
 
   /** Inserts the mentee section details for the mentor. */
@@ -58,7 +60,8 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
    */
   public void updateMenteeSection(final MenteeSection menteeSec, final Long mentorId) {
     jdbc.update(UPDATE_MENTEE_SECTION, menteeSec.idealMentee(), menteeSec.additional(), mentorId);
-    jdbc.update(UPDATE_MENTOR_TYPE, menteeSec.mentorshipType(), mentorId);
+    jdbc.update(DELETE_MENTOR_TYPES, mentorId);
+    insertMentorshipTypes(menteeSec, mentorId);
     updateAvailability(menteeSec, mentorId);
   }
 
