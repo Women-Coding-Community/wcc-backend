@@ -27,7 +27,7 @@ public enum MatchStatus {
      * @throws IllegalArgumentException if the value doesn't match any enum
      */
     public static MatchStatus fromValue(final String value) {
-        for (MatchStatus status : values()) {
+        for (final MatchStatus status : values()) {
             if (status.value.equalsIgnoreCase(value)) {
                 return status;
             }

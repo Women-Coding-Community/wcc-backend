@@ -18,6 +18,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,7 @@ class MenteeServiceTest {
     @Mock private MentorshipService mentorshipService;
     @Mock private MentorshipConfig mentorshipConfig;
     @Mock private MentorshipConfig.Validation validation;
+    @Mock private MentorshipCycleRepository cycleRepository;
 
     private MenteeService menteeService;
 
@@ -42,7 +44,7 @@ class MenteeServiceTest {
         MockitoAnnotations.openMocks(this);
         when(mentorshipConfig.getValidation()).thenReturn(validation);
         when(validation.isEnabled()).thenReturn(true);
-        menteeService = new MenteeService(menteeRepository, mentorshipService, mentorshipConfig);
+        menteeService = new MenteeService(menteeRepository, mentorshipService, mentorshipConfig, cycleRepository);
         mentee = createMenteeTest();
     }
 
@@ -67,12 +69,12 @@ class MenteeServiceTest {
 
         MentorshipCycle openCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
         when(mentorshipService.getCurrentCycle()).thenReturn(openCycle);
-        when(menteeRepository.create(any(Mentee.class))).thenReturn(validMentee);
+        when(menteeRepository.create(any(Mentee.class), any(Integer.class))).thenReturn(validMentee);
 
         Member result = menteeService.create(validMentee);
 
         assertEquals(validMentee, result);
-        verify(menteeRepository).create(validMentee);
+        verify(menteeRepository).create(any(Mentee.class), any(Integer.class));
     }
 
     @Test
@@ -153,12 +155,12 @@ class MenteeServiceTest {
 
         MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
         when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
-        when(menteeRepository.create(any(Mentee.class))).thenReturn(adHocMentee);
+        when(menteeRepository.create(any(Mentee.class), any(Integer.class))).thenReturn(adHocMentee);
 
         Member result = menteeService.create(adHocMentee);
 
         assertThat(result).isEqualTo(adHocMentee);
-        verify(menteeRepository).create(adHocMentee);
+        verify(menteeRepository).create(any(Mentee.class), any(Integer.class));
         verify(mentorshipService).getCurrentCycle();
     }
 
@@ -183,12 +185,12 @@ class MenteeServiceTest {
             .mentorshipType(MentorshipType.AD_HOC)
             .build();
 
-        when(menteeRepository.create(any(Mentee.class))).thenReturn(adHocMentee);
+        when(menteeRepository.create(any(Mentee.class), any(Integer.class))).thenReturn(adHocMentee);
 
         Member result = menteeService.create(adHocMentee);
 
         assertThat(result).isEqualTo(adHocMentee);
-        verify(menteeRepository).create(adHocMentee);
+        verify(menteeRepository).create(any(Mentee.class), any(Integer.class));
         verify(mentorshipService, never()).getCurrentCycle();
     }
 }

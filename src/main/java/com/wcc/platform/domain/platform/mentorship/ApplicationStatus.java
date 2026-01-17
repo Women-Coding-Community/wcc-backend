@@ -31,7 +31,7 @@ public enum ApplicationStatus {
      * @throws IllegalArgumentException if the value doesn't match any enum
      */
     public static ApplicationStatus fromValue(final String value) {
-        for (ApplicationStatus status : values()) {
+        for (final ApplicationStatus status : values()) {
             if (status.value.equalsIgnoreCase(value)) {
                 return status;
             }

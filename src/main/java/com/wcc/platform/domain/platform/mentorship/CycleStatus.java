@@ -28,7 +28,7 @@ public enum CycleStatus {
      * @throws IllegalArgumentException if the value doesn't match any enum
      */
     public static CycleStatus fromValue(final String value) {
-        for (CycleStatus status : values()) {
+        for (final CycleStatus status : values()) {
             if (status.value.equalsIgnoreCase(value)) {
                 return status;
             }
