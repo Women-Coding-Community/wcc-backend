@@ -26,13 +26,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Admin controller for mentorship management operations.
- * Handles match confirmation, cycle management, and admin reporting.
+ * Admin controller for mentorship management operations. Handles match confirmation, cycle
+ * management, and admin reporting.
  */
 @RestController
 @RequestMapping("/api/platform/v1/admin/mentorship")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Admin - Mentorship", description = "Admin endpoints for mentorship management")
+@Tag(name = "Platform: Mentorship Admin", description = "Admin endpoints for mentorship management")
 @RequiredArgsConstructor
 public class AdminMentorshipController {
 
@@ -42,8 +42,8 @@ public class AdminMentorshipController {
   // ==================== Match Management ====================
 
   /**
-   * API for admin to confirm a match from an accepted application.
-   * This creates the official mentorship match record.
+   * API for admin to confirm a match from an accepted application. This creates the official
+   * mentorship match record.
    *
    * @param applicationId The application ID
    * @return Created match
@@ -52,8 +52,8 @@ public class AdminMentorshipController {
   @Operation(summary = "Admin confirms a mentorship match from accepted application")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MentorshipMatch> confirmMatch(
-      @Parameter(description = "Application ID to confirm as match")
-      @PathVariable final Long applicationId) {
+      @Parameter(description = "Application ID to confirm as match") @PathVariable
+          final Long applicationId) {
     final MentorshipMatch match = matchingService.confirmMatch(applicationId);
     return new ResponseEntity<>(match, HttpStatus.CREATED);
   }
@@ -85,7 +85,8 @@ public class AdminMentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> completeMatch(
       @Parameter(description = "Match ID") @PathVariable final Long matchId,
-      @Parameter(description = "Completion notes") @RequestParam(required = false) final String notes) {
+      @Parameter(description = "Completion notes") @RequestParam(required = false)
+          final String notes) {
     final MentorshipMatch updated = matchingService.completeMatch(matchId, notes);
     return ResponseEntity.ok(updated);
   }
@@ -134,7 +135,8 @@ public class AdminMentorshipController {
   @Operation(summary = "Get the currently open mentorship cycle")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCurrentCycle() {
-    return cycleRepository.findOpenCycle()
+    return cycleRepository
+        .findOpenCycle()
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
@@ -165,7 +167,8 @@ public class AdminMentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCycleById(
       @Parameter(description = "Cycle ID") @PathVariable final Long cycleId) {
-    return cycleRepository.findById(cycleId)
+    return cycleRepository
+        .findById(cycleId)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }

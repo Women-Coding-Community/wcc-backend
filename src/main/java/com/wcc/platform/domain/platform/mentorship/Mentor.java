@@ -30,8 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class Mentor extends Member {
 
-  private @NotBlank ProfileStatus profileStatus;
-  private @NotBlank Skills skills;
+  private @NotNull ProfileStatus profileStatus;
+  private @NotNull Skills skills;
   private List<String> spokenLanguages;
   private @NotBlank String bio;
   private @NotNull MenteeSection menteeSection;
@@ -55,8 +55,8 @@ public class Mentor extends Member {
       @NotNull final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
       @NotBlank final String bio,
-      @NotBlank final Skills skills,
-      @NotBlank final MenteeSection menteeSection,
+      @NotNull final Skills skills,
+      @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources) {
     super(
