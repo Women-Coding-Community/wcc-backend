@@ -29,7 +29,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
   public static final String UPDATE_MENTOR_TYPE =
       "UPDATE mentor_mentorship_types SET mentorship_type = ? WHERE mentor_id = ?";
   private static final String UPDATE_AVAILABILITY =
-      "UPDATE mentor_availability SET " + "month_num = ?, " + "hours = ? " + "WHERE mentor_id = ?";
+      "UPDATE mentor_availability SET month_num = ?, hours = ? WHERE mentor_id = ?";
   private static final String SQL_BASE =
       "SELECT ideal_mentee, additional, created_at, updated_at "
           + "FROM mentor_mentee_section WHERE mentor_id = ?";

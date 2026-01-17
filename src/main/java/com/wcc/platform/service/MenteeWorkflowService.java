@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MenteeApplicationService {
+public class MenteeWorkflowService {
 
   private static final int MAX_MENTORS = 5;
 
@@ -147,6 +147,10 @@ public class MenteeApplicationService {
    * @return list of applications ordered by priority
    */
   public List<MenteeApplication> getMenteeApplications(final Long menteeId, final Long cycleId) {
+    if (menteeId == null) {
+      return List.of();
+    }
+
     return applicationRepository.findByMenteeAndCycleOrderByPriority(menteeId, cycleId);
   }
 

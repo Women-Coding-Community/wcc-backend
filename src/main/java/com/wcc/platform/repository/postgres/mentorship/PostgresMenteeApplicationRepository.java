@@ -30,6 +30,9 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
       "SELECT * FROM mentee_applications WHERE mentee_id = ? AND cycle_id = ? "
           + "ORDER BY priority_order";
 
+  private static final String COUNT_MENTEE_APPS =
+      "SELECT COUNT(mentee_id) FROM mentee_applications WHERE mentee_id = ? AND cycle_id = ?";
+
   private static final String SEL_BY_MENTOR_PRIO =
       "SELECT * FROM mentee_applications WHERE mentor_id = ? "
           + "ORDER BY priority_order, applied_at DESC";
@@ -51,7 +54,7 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   @Override
   public MenteeApplication create(final MenteeApplication entity) {
-    // TODO: Implement create - not needed for MVP
+    // TODO: TO BE IMPLEMENTED AS PART OF THIS PR
     throw new UnsupportedOperationException("Create not yet implemented");
   }
 
@@ -69,7 +72,6 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   @Override
   public void deleteById(final Long id) {
-    // TODO: Implement delete - not needed for Phase 3
     throw new UnsupportedOperationException("Delete not yet implemented");
   }
 
@@ -118,6 +120,11 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   @Override
   public List<MenteeApplication> getAll() {
     return jdbc.query(SELECT_ALL, (rs, rowNum) -> mapRow(rs));
+  }
+
+  @Override
+  public Long countMenteeApplications(Long menteeId, Long cycleId) {
+    return jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
   }
 
   private MenteeApplication mapRow(final ResultSet rs) throws SQLException {

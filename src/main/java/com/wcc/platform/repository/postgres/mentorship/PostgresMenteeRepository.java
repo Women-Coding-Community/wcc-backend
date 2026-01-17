@@ -1,11 +1,14 @@
 package com.wcc.platform.repository.postgres.mentorship;
 
+import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
-import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,35 +22,36 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentees WHERE mentee_id = ?";
   private static final String SQL_DELETE_BY_ID = "DELETE FROM mentees WHERE mentee_id = ?";
   private static final String SELECT_ALL_MENTEES = "SELECT * FROM mentees";
-  private static final String SQL_EXISTS =
-      "SELECT EXISTS(SELECT 1 FROM mentee_mentorship_types "
-          + "WHERE mentee_id = ? AND cycle_year = ? AND mentorship_type = ?)";
+  private static final String SQL_INSERT_MENTEE =
+      "INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, "
+          + "spoken_languages) VALUES (?, ?, ?, ?, ?)";
+  private static final String SQL_PROG_LANG_INSERT =
+      "INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)";
+  private static final String SQL_TECH_AREAS_INSERT =
+      "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)";
+  private static final String INSERT_FOCUS_AREAS =
+      "INSERT INTO mentee_mentorship_focus_areas (mentee_id, focus_area_id) VALUES (?, ?)";
 
   private final JdbcTemplate jdbc;
   private final MenteeMapper menteeMapper;
   private final MemberMapper memberMapper;
 
-  /**
-   * Create a mentee for a specific cycle year.
-   *
-   * @param mentee The mentee to create
-   * @param cycleYear The year of the mentorship cycle
-   * @return The created mentee
-   */
-  @Override
-  @Transactional
-  public Mentee create(final Mentee mentee, final Integer cycleYear) {
-    final Long memberId = memberMapper.addMember(mentee);
-    menteeMapper.addMentee(mentee, memberId, cycleYear);
-    final var menteeAdded = findById(memberId);
-    return menteeAdded.orElse(null);
-  }
-
   @Override
   @Transactional
   public Mentee create(final Mentee mentee) {
-    // Default to current year for backward compatibility
-    return create(mentee, Year.now().getValue());
+    final Long memberId = memberMapper.addMember(mentee);
+
+    insertMenteeDetails(mentee, memberId);
+    insertTechnicalAreas(mentee.getSkills(), memberId);
+    insertLanguages(mentee.getSkills(), memberId);
+    insertMentorshipFocusAreas(mentee.getSkills(), memberId);
+
+    final var menteeSaved = findById(memberId);
+    if (menteeSaved.isEmpty()) {
+      throw new MenteeNotSavedException("Unable to save mentee " + mentee.getEmail());
+    }
+
+    return mentee;
   }
 
   @Override
@@ -79,10 +83,36 @@ public class PostgresMenteeRepository implements MenteeRepository {
     jdbc.update(SQL_DELETE_BY_ID, menteeId);
   }
 
-  @Override
-  public boolean existsByMenteeYearType(
-      final Long menteeId, final Integer cycleYear, final MentorshipType mentorshipType) {
-    return jdbc.queryForObject(
-        SQL_EXISTS, Boolean.class, menteeId, cycleYear, mentorshipType.getMentorshipTypeId());
+  private void insertMenteeDetails(final Mentee mentee, final Long memberId) {
+    final var profileStatus = mentee.getProfileStatus();
+    final var skills = mentee.getSkills();
+    jdbc.update(
+        SQL_INSERT_MENTEE,
+        memberId,
+        profileStatus.getStatusId(),
+        mentee.getBio(),
+        skills.yearsExperience(),
+        String.join(",", mentee.getSpokenLanguages()));
+  }
+
+  /** Inserts technical areas for the mentee in mentee_technical_areas table. */
+  private void insertTechnicalAreas(final Skills menteeSkills, final Long memberId) {
+    for (final TechnicalArea area : menteeSkills.areas()) {
+      jdbc.update(SQL_TECH_AREAS_INSERT, memberId, area.getTechnicalAreaId());
+    }
+  }
+
+  /** Inserts programming languages for a mentee in mentee_languages table. */
+  private void insertLanguages(final Skills menteeSkills, final Long memberId) {
+    for (final Languages lang : menteeSkills.languages()) {
+      jdbc.update(SQL_PROG_LANG_INSERT, memberId, lang.getLangId());
+    }
+  }
+
+  /** Inserts focus areas for the mentorship for a mentee in mentee_mentorship_focus_areas table. */
+  private void insertMentorshipFocusAreas(final Skills menteeSkills, final Long memberId) {
+    for (final MentorshipFocusArea focus : menteeSkills.mentorshipFocus()) {
+      jdbc.update(INSERT_FOCUS_AREAS, memberId, focus.getFocusId());
+    }
   }
 }

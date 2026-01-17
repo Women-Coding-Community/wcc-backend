@@ -6,7 +6,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
-import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
@@ -185,7 +184,7 @@ public class MentorshipService {
    * @param mentorDto MentorDto with updated member's data
    * @return Mentor record updated successfully.
    */
-  public Member updateMentor(final Long mentorId, final MentorDto mentorDto) {
+  public Mentor updateMentor(final Long mentorId, final MentorDto mentorDto) {
     if (mentorDto.getId() != null && !mentorId.equals(mentorDto.getId())) {
       throw new IllegalArgumentException("Mentor ID does not match the provided mentorId");
     }

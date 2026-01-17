@@ -21,9 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
-  private @NotBlank MentorshipType mentorshipType;
   private @NotNull ProfileStatus profileStatus;
-  private @NotBlank Skills skills;
+  private @NotNull Skills skills;
   private @NotBlank String bio;
   private List<String> spokenLanguages;
 
@@ -34,7 +33,7 @@ public class Mentee extends Member {
       @NotBlank final String position,
       @NotBlank @Email final String email,
       @NotBlank final String slackDisplayName,
-      @NotBlank final Country country,
+      @NotNull final Country country,
       @NotBlank final String city,
       final String companyName,
       final List<Image> images,
@@ -42,8 +41,7 @@ public class Mentee extends Member {
       @NotNull final ProfileStatus profileStatus,
       final List<String> spokenLanguages, // TODO
       @NotBlank final String bio,
-      @NotBlank final Skills skills,
-      @NotBlank final MentorshipType mentorshipType) {
+      @NotNull final Skills skills) {
     super(
         id,
         fullName,
@@ -61,6 +59,5 @@ public class Mentee extends Member {
     this.skills = skills;
     this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
     this.bio = bio;
-    this.mentorshipType = mentorshipType;
   }
 }

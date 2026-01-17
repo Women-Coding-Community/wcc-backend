@@ -6,6 +6,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
@@ -35,11 +36,10 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
       "SELECT * FROM mentorship_cycles WHERE cycle_year = ? AND mentorship_type = ?";
 
   private static final String SELECT_BY_STATUS =
-      "SELECT * FROM mentorship_cycles WHERE status = ?::cycle_status "
-          + "ORDER BY cycle_year DESC, cycle_month";
+      "SELECT * FROM mentorship_cycles WHERE status = ? ORDER BY cycle_year DESC, cycle_month";
 
   private static final String SELECT_BY_YEAR =
-      "SELECT * FROM mentorship_cycles WHERE cycle_year = ? " + "ORDER BY cycle_month";
+      "SELECT * FROM mentorship_cycles WHERE cycle_year = ? ORDER BY cycle_month";
 
   private final JdbcTemplate jdbc;
 
@@ -75,7 +75,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
 
   @Override
   public Optional<MentorshipCycleEntity> findByYearAndType(
-      final Integer year, final MentorshipType type) {
+      final Year year, final MentorshipType type) {
     return jdbc.query(
         SEL_BY_YEAR_TYPE,
         rs -> rs.next() ? Optional.of(mapRow(rs)) : Optional.empty(),
@@ -101,7 +101,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
   private MentorshipCycleEntity mapRow(final ResultSet rs) throws SQLException {
     return MentorshipCycleEntity.builder()
         .cycleId(rs.getLong("cycle_id"))
-        .cycleYear(rs.getInt("cycle_year"))
+        .cycleYear(Year.of(rs.getInt("cycle_year")))
         .mentorshipType(MentorshipType.fromId(rs.getInt("mentorship_type")))
         .cycleMonth(rs.getInt("cycle_month"))
         .registrationStartDate(rs.getDate("registration_start_date").toLocalDate())

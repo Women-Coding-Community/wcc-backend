@@ -10,6 +10,8 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitExceededException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
@@ -45,7 +47,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     PlatformInternalException.class,
     FileRepositoryException.class,
-    EmailSendException.class
+    EmailSendException.class,
+    MenteeNotSavedException.class
   })
   @ResponseStatus(INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorDetails> handleInternalError(
@@ -91,10 +94,14 @@ public class GlobalExceptionHandler {
   }
 
   /** Receive {@link ConstraintViolationException} and return {@link HttpStatus#NOT_ACCEPTABLE}. */
-  @ExceptionHandler({ConstraintViolationException.class, MentorshipCycleClosedException.class})
+  @ExceptionHandler({
+    ConstraintViolationException.class,
+    MentorshipCycleClosedException.class,
+    MenteeRegistrationLimitExceededException.class
+  })
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   public ResponseEntity<ErrorDetails> handleNotAcceptableError(
-      final ConstraintViolationException ex, final WebRequest request) {
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
             HttpStatus.NOT_ACCEPTABLE.value(), ex.getMessage(), request.getDescription(false));
