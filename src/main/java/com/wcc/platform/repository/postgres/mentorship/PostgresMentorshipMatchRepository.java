@@ -51,18 +51,78 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
       "SELECT * FROM mentorship_matches "
           + "WHERE mentor_id = ? AND mentee_id = ? AND cycle_id = ?";
 
+  private static final String INSERT =
+      "INSERT INTO mentorship_matches "
+          + "(mentor_id, mentee_id, cycle_id, application_id, match_status, start_date, "
+          + "end_date, expected_end_date, session_frequency, total_sessions, "
+          + "cancellation_reason, cancelled_by, cancelled_at, created_at, updated_at) "
+          + "VALUES (?, ?, ?, ?, ?::match_status, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+          + "RETURNING match_id";
+
+  private static final String UPDATE =
+      "UPDATE mentorship_matches SET "
+          + "match_status = ?::match_status, "
+          + "end_date = ?, "
+          + "expected_end_date = ?, "
+          + "session_frequency = ?, "
+          + "total_sessions = ?, "
+          + "cancellation_reason = ?, "
+          + "cancelled_by = ?, "
+          + "cancelled_at = ? "
+          + "WHERE match_id = ?";
+
+  private static final String DELETE = "DELETE FROM mentorship_matches WHERE match_id = ?";
+
   private final JdbcTemplate jdbc;
 
   @Override
   public MentorshipMatch create(final MentorshipMatch entity) {
-    // TODO: Implement create - not needed for Phase 3
-    throw new UnsupportedOperationException("Create not yet implemented");
+    final Long matchId =
+        jdbc.queryForObject(
+            INSERT,
+            Long.class,
+            entity.getMentorId(),
+            entity.getMenteeId(),
+            entity.getCycleId(),
+            entity.getApplicationId(),
+            entity.getStatus().getValue(),
+            entity.getStartDate(),
+            entity.getEndDate(),
+            entity.getExpectedEndDate(),
+            entity.getSessionFrequency(),
+            entity.getTotalSessions(),
+            entity.getCancellationReason(),
+            entity.getCancelledBy(),
+            entity.getCancelledAt() != null
+                ? java.sql.Timestamp.from(entity.getCancelledAt().toInstant())
+                : null,
+            entity.getCreatedAt() != null
+                ? java.sql.Timestamp.from(entity.getCreatedAt().toInstant())
+                : null,
+            entity.getUpdatedAt() != null
+                ? java.sql.Timestamp.from(entity.getUpdatedAt().toInstant())
+                : null);
+
+    return findById(matchId).orElseThrow();
   }
 
   @Override
   public MentorshipMatch update(final Long id, final MentorshipMatch entity) {
-    // TODO: Implement update - not needed for Phase 3
-    throw new UnsupportedOperationException("Update not yet implemented");
+    jdbc.update(
+        UPDATE,
+        entity.getStatus().getValue(),
+        entity.getEndDate(),
+        entity.getExpectedEndDate(),
+        entity.getSessionFrequency(),
+        entity.getTotalSessions(),
+        entity.getCancellationReason(),
+        entity.getCancelledBy(),
+        entity.getCancelledAt() != null
+            ? java.sql.Timestamp.from(entity.getCancelledAt().toInstant())
+            : null,
+        id);
+
+    return findById(id).orElseThrow();
   }
 
   @Override
@@ -73,8 +133,7 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
 
   @Override
   public void deleteById(final Long id) {
-    // TODO: Implement delete - not needed for Phase 3
-    throw new UnsupportedOperationException("Delete not yet implemented");
+    jdbc.update(DELETE, id);
   }
 
   @Override
