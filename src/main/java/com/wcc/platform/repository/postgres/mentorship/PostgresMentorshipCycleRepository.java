@@ -64,7 +64,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
 
   @Override
   public MentorshipCycleEntity create(final MentorshipCycleEntity entity) {
-    Long generatedId =
+    final Long generatedId =
         jdbc.queryForObject(
             INSERT_CYCLE,
             Long.class,
@@ -88,7 +88,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
 
   @Override
   public MentorshipCycleEntity update(final Long id, final MentorshipCycleEntity entity) {
-    int rowsUpdated =
+    final int rowsUpdated =
         jdbc.update(
             UPDATE_CYCLE,
             entity.getCycleYear().getValue(),

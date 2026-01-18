@@ -6,18 +6,12 @@ import java.time.Year;
 import java.util.List;
 
 /**
- * Represents the registration process for a mentee within the mentorship program. This record
- * encapsulates the mentee's details, the type of mentorship they are registering for, and a list of
- * mentors assigned to them.
+ * Represents a mentee registration with mentorship preferences and mentor applications.
  *
- * <p>Components: - mentee: An instance of the {@link Mentee} class, representing the mentee's
- * profile and associated details. - mentorshipType: The type of mentorship the mentee is
- * registering for, represented by {@link MentorshipType}. Determines whether the mentorship is
- * short-term (AD_HOC) or long-term (LONG_TERM). - mentorIds: A list of unique IDs representing the
- * mentors assigned to the mentee.
- *
- * <p>Validation Constraints: - The mentee field must not be null. - The mentorshipType field must
- * not be null. - The mentorIds list must not be empty.
+ * @param mentee The mentee profile
+ * @param mentorshipType The type of mentorship (AD_HOC or LONG_TERM)
+ * @param cycleYear The year of the mentorship cycle
+ * @param applications List of mentor applications with priority order (1-5)
  */
 public record MenteeRegistration(
     @NotNull Mentee mentee,
@@ -25,7 +19,8 @@ public record MenteeRegistration(
     @NotNull Year cycleYear,
     @Size(min = 1, max = 5) List<MenteeApplicationDto> applications) {
 
-  public List<MenteeApplication> toApplications(MentorshipCycleEntity cycle, Long menteeId) {
+  public List<MenteeApplication> toApplications(
+      final MentorshipCycleEntity cycle, final Long menteeId) {
     return applications.stream()
         .map(
             application ->
@@ -39,11 +34,11 @@ public record MenteeRegistration(
         .toList();
   }
 
-  public MenteeRegistration withApplications(List<MenteeApplicationDto> applications) {
+  public MenteeRegistration withApplications(final List<MenteeApplicationDto> applications) {
     return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
   }
 
-  public MenteeRegistration withMentee(Mentee mentee) {
+  public MenteeRegistration withMentee(final Mentee mentee) {
     return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
   }
 }

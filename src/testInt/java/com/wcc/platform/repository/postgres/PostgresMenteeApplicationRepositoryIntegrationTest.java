@@ -176,7 +176,7 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
     assertEquals(1L, count);
   }
 
-  private MenteeApplication createTestApplication(int priority) {
+  private MenteeApplication createTestApplication(final int priority) {
     return applicationRepository.create(
         MenteeApplication.builder()
             .menteeId(mentee.getId())

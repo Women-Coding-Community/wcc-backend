@@ -38,14 +38,13 @@ class PostgresMenteeRepositoryTest {
   private MenteeMapper menteeMapper;
   private PostgresMenteeRepository repository;
   private JdbcTemplate jdbc;
-  private Validator validator;
 
   @BeforeEach
   void setup() {
     jdbc = mock(JdbcTemplate.class);
     menteeMapper = mock(MenteeMapper.class);
     memberMapper = mock(MemberMapper.class);
-    validator = mock(Validator.class);
+    var validator = mock(Validator.class);
     when(validator.validate(any())).thenReturn(Collections.emptySet());
     repository = spy(new PostgresMenteeRepository(jdbc, menteeMapper, memberMapper, validator));
   }

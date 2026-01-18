@@ -81,8 +81,8 @@ public class MenteeService {
   }
 
   private Mentee createMenteeRegistrations(
-      MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle) {
-    var applications =
+      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    final var applications =
         menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
     applications.forEach(registrationsRepo::create);
 
@@ -101,16 +101,16 @@ public class MenteeService {
    */
   private MenteeRegistration ignoreDuplicateApplications(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    var existingApplications =
+    final var existingApplications =
         registrationsRepo.findByMenteeAndCycle(
             menteeRegistration.mentee().getId(), cycle.getCycleId());
 
-    var existingMentorIds =
+    final var existingMentorIds =
         existingApplications.stream()
             .map(MenteeApplication::getMentorId)
             .collect(Collectors.toSet());
 
-    var filteredApplications =
+    final var filteredApplications =
         menteeRegistration.applications().stream()
             .filter(application -> !existingMentorIds.contains(application.mentorId()))
             .toList();

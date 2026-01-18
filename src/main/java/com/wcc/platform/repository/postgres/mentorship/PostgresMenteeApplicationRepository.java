@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class PostgresMenteeApplicationRepository implements MenteeApplicationRepository {
 
   private static final String SELECT_ALL =
@@ -60,7 +61,7 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   @Override
   public MenteeApplication create(final MenteeApplication entity) {
-    Long generatedId =
+    final Long generatedId =
         jdbc.queryForObject(
             INSERT_APPLICATION,
             Long.class,
@@ -143,7 +144,7 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   }
 
   @Override
-  public Long countMenteeApplications(Long menteeId, Long cycleId) {
+  public Long countMenteeApplications(final Long menteeId, final Long cycleId) {
     return jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
   }
 

@@ -59,7 +59,7 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
           + "VALUES (?, ?, ?, ?, ?::match_status, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
           + "RETURNING match_id";
 
-  private static final String UPDATE =
+  private static final String UPDATE_SQL =
       "UPDATE mentorship_matches SET "
           + "match_status = ?::match_status, "
           + "end_date = ?, "
@@ -109,7 +109,7 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
   @Override
   public MentorshipMatch update(final Long id, final MentorshipMatch entity) {
     jdbc.update(
-        UPDATE,
+        UPDATE_SQL,
         entity.getStatus().getValue(),
         entity.getEndDate(),
         entity.getExpectedEndDate(),

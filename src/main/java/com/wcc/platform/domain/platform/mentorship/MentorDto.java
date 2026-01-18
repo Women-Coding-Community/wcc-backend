@@ -94,7 +94,7 @@ public class MentorDto extends MemberDto {
    *     provided instance
    */
   public Mentor merge(final Mentor mentor) {
-    var member = super.merge(mentor);
+    final var member = super.merge(mentor);
 
     final Mentor.MentorBuilder builder =
         Mentor.mentorBuilder()

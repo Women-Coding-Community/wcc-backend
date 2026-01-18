@@ -80,5 +80,5 @@ public interface MenteeApplicationRepository extends CrudRepository<MenteeApplic
    *     counted
    * @return the total number of applications submitted by the mentee in the specified cycle
    */
-  Long countMenteeApplications(final Long menteeId, final Long cycleId);
+  Long countMenteeApplications(Long menteeId, Long cycleId);
 }

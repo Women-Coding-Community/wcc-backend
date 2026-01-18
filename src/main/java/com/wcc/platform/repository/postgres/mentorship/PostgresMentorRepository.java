@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class PostgresMentorRepository implements MentorRepository {
 
   /* default */ static final String UPDATE_MENTOR_SQL =

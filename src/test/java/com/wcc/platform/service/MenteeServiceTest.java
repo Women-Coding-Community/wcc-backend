@@ -37,7 +37,7 @@ import org.mockito.MockitoAnnotations;
 class MenteeServiceTest {
 
   @Mock private MenteeApplicationRepository applicationRepository;
-  @Mock private MenteeRepository menteeRegistrationRepository;
+  @Mock private MenteeRepository menteeRepository;
   @Mock private MentorshipService mentorshipService;
   @Mock private MentorshipConfig mentorshipConfig;
   @Mock private MentorshipConfig.Validation validation;
@@ -58,7 +58,7 @@ class MenteeServiceTest {
             mentorshipConfig,
             cycleRepository,
             applicationRepository,
-            menteeRegistrationRepository);
+            menteeRepository);
     mentee = createMenteeTest();
   }
 
@@ -81,8 +81,8 @@ class MenteeServiceTest {
             .status(CycleStatus.OPEN)
             .build();
 
-    when(menteeRegistrationRepository.create(any(Mentee.class))).thenReturn(mentee);
-    when(menteeRegistrationRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(menteeRepository.create(any(Mentee.class))).thenReturn(mentee);
+    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
@@ -90,7 +90,7 @@ class MenteeServiceTest {
     Mentee result = menteeService.saveRegistration(registration);
 
     assertEquals(mentee, result);
-    verify(menteeRegistrationRepository).create(any(Mentee.class));
+    verify(menteeRepository).create(any(Mentee.class));
     verify(applicationRepository).create(any());
   }
 
@@ -145,12 +145,12 @@ class MenteeServiceTest {
   @DisplayName("Given has mentees When getting all mentees Then should return all")
   void testGetAllMentees() {
     List<Mentee> mentees = List.of(mentee);
-    when(menteeRegistrationRepository.getAll()).thenReturn(mentees);
+    when(menteeRepository.getAll()).thenReturn(mentees);
 
     List<Mentee> result = menteeService.getAllMentees();
 
     assertEquals(mentees, result);
-    verify(menteeRegistrationRepository).getAll();
+    verify(menteeRepository).getAll();
   }
 
   @Test
@@ -212,14 +212,14 @@ class MenteeServiceTest {
 
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
-    when(menteeRegistrationRepository.create(any(Mentee.class))).thenReturn(mentee);
-    when(menteeRegistrationRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(menteeRepository.create(any(Mentee.class))).thenReturn(mentee);
+    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
     Member result = menteeService.saveRegistration(registration);
 
     assertThat(result).isEqualTo(mentee);
-    verify(menteeRegistrationRepository).create(any(Mentee.class));
+    verify(menteeRepository).create(any(Mentee.class));
     verify(mentorshipService).getCurrentCycle();
   }
 
@@ -239,15 +239,15 @@ class MenteeServiceTest {
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
     when(mentorshipService.getCurrentCycle())
         .thenReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.JANUARY));
-    when(menteeRegistrationRepository.create(any())).thenReturn(mentee);
-    when(menteeRegistrationRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(menteeRepository.create(any())).thenReturn(mentee);
+    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
 
     Member result = menteeService.saveRegistration(registration);
 
     assertThat(result).isEqualTo(mentee);
-    verify(menteeRegistrationRepository).create(any(Mentee.class));
+    verify(menteeRepository).create(any(Mentee.class));
     verify(mentorshipService).getCurrentCycle();
   }
 }

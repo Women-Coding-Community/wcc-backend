@@ -40,7 +40,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
       "DELETE FROM mentee_technical_areas WHERE mentee_id = ?";
   private static final String SQL_DELETE_LANGUAGES =
       "DELETE FROM mentee_languages WHERE mentee_id = ?";
-  private static final String SQL_DELETE_FOCUS_AREAS =
+  private static final String DELETE_FOCUS_AREAS =
       "DELETE FROM mentee_mentorship_focus_areas WHERE mentee_id = ?";
 
   private final JdbcTemplate jdbc;
@@ -74,7 +74,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
 
     jdbc.update(SQL_DELETE_TECH_AREAS, id);
     jdbc.update(SQL_DELETE_LANGUAGES, id);
-    jdbc.update(SQL_DELETE_FOCUS_AREAS, id);
+    jdbc.update(DELETE_FOCUS_AREAS, id);
 
     insertTechnicalAreas(mentee.getSkills(), id);
     insertLanguages(mentee.getSkills(), id);
