@@ -286,4 +286,14 @@ class MentorDtoTest {
     assertEquals(2, result.getMenteeSection().availability().size());
     assertEquals(Month.MARCH, result.getMenteeSection().availability().getFirst().month());
   }
+
+  @Test
+  void testMergeShouldThrowExceptionIfMentorIsNull() {
+    mentorDto = MentorDto.mentorDtoBuilder().build();
+
+    InvalidMentorException exception =
+        assertThrows(InvalidMentorException.class, () -> mentorDto.merge(null));
+
+    assertEquals("Cannot merge with null mentor", exception.getMessage());
+  }
 }
