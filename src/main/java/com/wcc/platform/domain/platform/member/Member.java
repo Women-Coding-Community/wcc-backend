@@ -24,10 +24,10 @@ import lombok.ToString;
 @Getter
 @Builder(toBuilder = true)
 public class Member {
-  private Long id;
+  @Setter private Long id;
   @NotBlank private String fullName;
   @NotBlank private String position;
-  @NotBlank @Email private String email;
+  @Setter @NotBlank @Email private String email;
   @NotBlank private String slackDisplayName;
   @NotNull private Country country;
   private String city;

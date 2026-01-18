@@ -82,8 +82,10 @@ class MenteeServiceTest {
             .build();
 
     when(menteeRegistrationRepository.create(any(Mentee.class))).thenReturn(mentee);
+    when(menteeRegistrationRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
     Mentee result = menteeService.saveRegistration(registration);
 
@@ -128,6 +130,7 @@ class MenteeServiceTest {
 
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(1L, 1L)).thenReturn(5L);
 
     MenteeRegistrationLimitException exception =
@@ -210,6 +213,8 @@ class MenteeServiceTest {
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
     when(menteeRegistrationRepository.create(any(Mentee.class))).thenReturn(mentee);
+    when(menteeRegistrationRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
     Member result = menteeService.saveRegistration(registration);
 
@@ -235,6 +240,8 @@ class MenteeServiceTest {
     when(mentorshipService.getCurrentCycle())
         .thenReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.JANUARY));
     when(menteeRegistrationRepository.create(any())).thenReturn(mentee);
+    when(menteeRegistrationRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
 
     Member result = menteeService.saveRegistration(registration);
