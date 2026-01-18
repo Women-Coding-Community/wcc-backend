@@ -6,7 +6,6 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.type.MemberType;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
@@ -21,31 +20,31 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
-  private @NotBlank MentorshipType prevMentorshipType;
-  private @NotBlank MentorshipType mentorshipType;
-  private @NotNull ProfileStatus profileStatus;
-  private @NotBlank Skills skills;
-  private @NotBlank String bio;
+  @NotNull private MentorshipType prevMentorshipType;
+  @NotNull private MentorshipType mentorshipType;
+  @NotNull private ProfileStatus profileStatus;
+  @NotNull private Skills skills;
+  @NotBlank private String bio;
   private List<String> spokenLanguages;
 
   @Builder(builderMethodName = "menteeBuilder")
   public Mentee(
       final Long id,
-      @NotBlank final String fullName,
-      @NotBlank final String position,
-      @NotBlank @Email final String email,
-      @NotBlank final String slackDisplayName,
-      @NotBlank final Country country,
-      @NotBlank final String city,
+      final String fullName,
+      final String position,
+      final String email,
+      final String slackDisplayName,
+      final Country country,
+      final String city,
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
-      @NotNull final ProfileStatus profileStatus,
-      final List<String> spokenLanguages, // TODO
-      @NotBlank final String bio,
-      @NotBlank final Skills skills,
-      @NotBlank final MentorshipType mentorshipType,
-      @NotBlank final MentorshipType prevMentorshipType) {
+      final ProfileStatus profileStatus,
+      final List<String> spokenLanguages,
+      final String bio,
+      final Skills skills,
+      final MentorshipType mentorshipType,
+      final MentorshipType prevMentorshipType) {
     super(
         id,
         fullName,
