@@ -6,6 +6,7 @@ import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitExceededExcepti
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
@@ -15,12 +16,15 @@ import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Year;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class MenteeService {
+
+  private static final int MAX_MENTORS = 5;
 
   private final MentorshipService mentorshipService;
   private final MentorshipConfig mentorshipConfig;
@@ -52,32 +56,61 @@ public class MenteeService {
         getMentorshipCycle(menteeRegistration.mentorshipType(), menteeRegistration.cycleYear());
 
     var menteeId = menteeRegistration.mentee().getId();
-    var registrations = registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
-    if (registrations != null && registrations > 0) {
-      updateMenteeApplications(menteeRegistration, menteeId, cycle);
+    final var registrations = ignoreDuplicateApplications(menteeRegistration, cycle);
+    final var registrationCount =
+        registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
+    validateRegistrationLimit(registrationCount);
+
+    if (registrationCount != null && registrationCount > 0) {
+      createMenteeRegistrations(registrations, cycle);
       return menteeRegistration.mentee();
     } else {
-      return createMenteeAndApplications(menteeRegistration, cycle);
+      return createMenteeAndApplications(registrations, cycle);
     }
   }
 
   private Mentee createMenteeAndApplications(
       MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle) {
+
     var savedMentee = menteeRepository.create(menteeRegistration.mentee());
-    saveMenteeRegistrations(menteeRegistration, cycle, savedMentee.getId());
+    createMenteeRegistrations(menteeRegistration, cycle);
     return savedMentee;
   }
 
-  private void updateMenteeApplications(
-      MenteeRegistration menteeRegistration, Long menteeId, MentorshipCycleEntity cycle) {
-    validateRegistrationLimit(menteeId, cycle);
-    saveMenteeRegistrations(menteeRegistration, cycle, menteeId);
+  private void createMenteeRegistrations(
+      MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle) {
+    var applications =
+        menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
+    applications.forEach(registrationsRepo::create);
   }
 
-  private void saveMenteeRegistrations(
-      MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle, Long menteeId) {
-    var applications = menteeRegistration.toApplications(cycle, menteeId);
-    applications.forEach(registrationsRepo::create);
+  /**
+   * Filters out duplicate mentorship applications for a mentee within a given mentorship cycle.
+   * Applications that reference mentors already associated with the mentee in the current cycle are
+   * removed from the provided mentee registration.
+   *
+   * @param menteeRegistration The current registration details of the mentee, including planned
+   *     applications.
+   * @param cycle The mentorship cycle within which duplicates are identified and removed.
+   * @return A new MenteeRegistration object with duplicate applications removed.
+   */
+  private MenteeRegistration ignoreDuplicateApplications(
+      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    var existingApplications =
+        registrationsRepo.findByMenteeAndCycle(
+            menteeRegistration.mentee().getId(), cycle.getCycleId());
+
+    var existingMentorIds =
+        existingApplications.stream()
+            .map(MenteeApplication::getMentorId)
+            .collect(Collectors.toSet());
+
+    var filteredApplications =
+        menteeRegistration.applications().stream()
+            .filter(application -> !existingMentorIds.contains(application.mentorId()))
+            .toList();
+
+    return menteeRegistration.withApplications(filteredApplications);
   }
 
   /**
@@ -99,8 +132,7 @@ public class MenteeService {
       final MentorshipCycleEntity cycle = openCycle.get();
 
       // Only validate status if validation is enabled
-      if (mentorshipConfig.getValidation().isEnabled()
-          && cycle.getStatus() != CycleStatus.OPEN) {
+      if (mentorshipConfig.getValidation().isEnabled() && cycle.getStatus() != CycleStatus.OPEN) {
         throw new MentorshipCycleClosedException(
             String.format(
                 "Mentorship cycle for %s in %d is %s. Registration is not available.",
@@ -134,19 +166,14 @@ public class MenteeService {
   /**
    * Validates that the mentee hasn't exceeded the registration limit for the cycle.
    *
-   * @param menteeId The mentee ID
-   * @param cycle The mentorship cycle
-   * @throws MenteeRegistrationLimitExceededException if limit exceeded
+   * @throws MenteeRegistrationLimitException if limit exceeded
    */
-  private void validateRegistrationLimit(final Long menteeId, final MentorshipCycleEntity cycle) {
-    final long registrationsCount =
-        registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
-
-    if (registrationsCount >= 5) {
-      throw new MenteeRegistrationLimitExceededException(
+  private void validateRegistrationLimit(final Long registrationsCount) {
+    if (registrationsCount != null && registrationsCount >= MAX_MENTORS) {
+      throw new MenteeRegistrationLimitException(
           String.format(
-              "Mentee %d has already reached the limit of 5 registrations for %s in %d",
-              menteeId, cycle.getMentorshipType(), cycle.getCycleYear().getValue()));
+              "Mentee has already reached the limit of 5 registrations for %d",
+              registrationsCount));
     }
   }
 }

@@ -1,8 +1,7 @@
 package com.wcc.platform.domain.platform.mentorship;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.Year;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public record MenteeRegistration(
     @NotNull Mentee mentee,
     @NotNull MentorshipType mentorshipType,
     @NotNull Year cycleYear,
-    @Max(5) @Min(1) List<MenteeApplicationDto> applications) {
+    @Size(min = 1, max = 5) List<MenteeApplicationDto> applications) {
 
   public List<MenteeApplication> toApplications(MentorshipCycleEntity cycle, Long menteeId) {
     return applications.stream()
@@ -38,5 +37,9 @@ public record MenteeRegistration(
                     .cycleId(cycle.getCycleId())
                     .build())
         .toList();
+  }
+
+  public MenteeRegistration withApplications(List<MenteeApplicationDto> applications) {
+    return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
   }
 }
