@@ -13,6 +13,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.utils.FiltersUtil;
 import java.time.LocalDate;
@@ -38,15 +39,18 @@ public class MentorshipService {
       new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
 
   private final MentorRepository mentorRepository;
+  private final MemberRepository memberRepository;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
 
   @Autowired
   public MentorshipService(
       final MentorRepository mentorRepository,
+      final MemberRepository memberRepository,
       final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
     this.mentorRepository = mentorRepository;
+    this.memberRepository = memberRepository;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
   }

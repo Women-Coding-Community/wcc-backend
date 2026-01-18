@@ -31,7 +31,7 @@ class PostgresDb2MentorRepositoryIntegrationTest implements PostgresMentorTestSe
   @BeforeEach
   void setUp() {
     mentor = SetupMentorFactories.createMentorTest(2L, "Mentor DB2", "mentordb2_2@email.com");
-    deleteAll(mentor, repository, memberRepository);
+    deleteMentor(mentor, repository, memberRepository);
   }
 
   @Test

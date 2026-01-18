@@ -20,7 +20,9 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeRepository;
+import jakarta.validation.Validator;
 import java.sql.ResultSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,13 +38,16 @@ class PostgresMenteeRepositoryTest {
   private MenteeMapper menteeMapper;
   private PostgresMenteeRepository repository;
   private JdbcTemplate jdbc;
+  private Validator validator;
 
   @BeforeEach
   void setup() {
     jdbc = mock(JdbcTemplate.class);
     menteeMapper = mock(MenteeMapper.class);
     memberMapper = mock(MemberMapper.class);
-    repository = spy(new PostgresMenteeRepository(jdbc, menteeMapper, memberMapper));
+    validator = mock(Validator.class);
+    when(validator.validate(any())).thenReturn(Collections.emptySet());
+    repository = spy(new PostgresMenteeRepository(jdbc, menteeMapper, memberMapper, validator));
   }
 
   @Test

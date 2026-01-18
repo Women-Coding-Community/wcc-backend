@@ -4,10 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private MentorshipCycleRepository cycleRepository;
+
+  @BeforeEach
+  void setUp() {
+    // Clean up before starting
+    cycleRepository
+        .findByYearAndType(Year.of(2026), MentorshipType.LONG_TERM)
+        .ifPresent(c -> cycleRepository.deleteById(c.getCycleId()));
+
+    // Setup cycle
+    cycleRepository.create(
+        MentorshipCycleEntity.builder()
+            .cycleYear(Year.of(2026))
+            .mentorshipType(MentorshipType.LONG_TERM)
+            .cycleMonth(Month.JANUARY)
+            .registrationStartDate(LocalDate.now().minusDays(1))
+            .registrationEndDate(LocalDate.now().plusDays(10))
+            .cycleStartDate(LocalDate.now().plusDays(15))
+            .status(CycleStatus.OPEN)
+            .maxMenteesPerMentor(3)
+            .description("Test Cycle")
+            .build());
+  }
 
   @Test
   @DisplayName(

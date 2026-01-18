@@ -5,15 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
 
 /** Interface for default setup operations for Postgres repositories. */
 public interface PostgresMentorTestSetup {
 
-  default void deleteAll(
+  default void deleteMentor(
       final Mentor mentor,
-      final PostgresMentorRepository repository,
-      final PostgresMemberRepository memberRepository) {
+      final MentorRepository repository,
+      final MemberRepository memberRepository) {
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
   }

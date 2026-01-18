@@ -1,9 +1,8 @@
-package com.wcc.platform.service;
+package com.wcc.platform.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
-import com.wcc.platform.repository.MentorshipMatchRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.util.List;
 import java.util.Optional;

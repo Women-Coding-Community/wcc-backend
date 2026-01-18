@@ -66,10 +66,14 @@ class MenteeServiceTest {
   @DisplayName("Given Mentee Registration When saved Then should return mentee")
   void testSaveRegistrationMentee() {
     var currentYear = java.time.Year.now();
-    MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
+    var registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
 
-    MentorshipCycleEntity cycle =
+    var cycle =
         MentorshipCycleEntity.builder()
             .cycleId(1L)
             .cycleYear(currentYear)
@@ -77,6 +81,7 @@ class MenteeServiceTest {
             .status(CycleStatus.OPEN)
             .build();
 
+    when(menteeRegistrationRepository.create(any(Mentee.class))).thenReturn(mentee);
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
 
@@ -107,7 +112,11 @@ class MenteeServiceTest {
             .spokenLanguages(List.of("English"))
             .build();
     MenteeRegistration registration =
-        new MenteeRegistration(menteeWithId, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
+        new MenteeRegistration(
+            menteeWithId,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
 
     MentorshipCycleEntity cycle =
         MentorshipCycleEntity.builder()
@@ -147,7 +156,11 @@ class MenteeServiceTest {
   void shouldThrowExceptionWhenCycleIsClosed() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
     when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
 
     MentorshipCycleClosedException exception =
@@ -164,7 +177,11 @@ class MenteeServiceTest {
   void shouldThrowExceptionWhenMenteeTypeDoesNotMatchCycleType() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
 
     MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
     when(mentorshipService.getCurrentCycle()).thenReturn(longTermCycle);
@@ -184,7 +201,11 @@ class MenteeServiceTest {
   void shouldSaveRegistrationMenteeWhenCycleIsOpenAndTypeMatches() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
 
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
@@ -203,7 +224,11 @@ class MenteeServiceTest {
   void shouldSkipValidationWhenValidationIsDisabled() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
     when(validation.isEnabled()).thenReturn(false);
 
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());

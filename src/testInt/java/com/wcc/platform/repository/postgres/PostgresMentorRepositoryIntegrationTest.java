@@ -1,11 +1,14 @@
 package com.wcc.platform.repository.postgres;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.factories.SetupMentorFactories;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
+import jakarta.validation.ConstraintViolationException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +25,25 @@ class PostgresMentorRepositoryIntegrationTest extends DefaultDatabaseSetup
   @BeforeEach
   void setUp() {
     mentor = SetupMentorFactories.createMentorTest(14L, "Mentor 14", "mentor14@email.com");
-    deleteAll(mentor, repository, memberRepository);
+    deleteMentor(mentor, repository, memberRepository);
   }
 
   @Test
   void testBasicCrud() {
     executeMentorCrud(mentor, repository, memberRepository);
     assertTrue(memberRepository.findById(mentor.getId()).isEmpty());
+  }
+
+  @Test
+  void testCreateInvalidMentorThrowsException() {
+    var invalidMentor =
+        Mentor.mentorBuilder()
+            .fullName("") // Invalid: @NotBlank
+            .email("invalid-email") // Invalid: @Email
+            .spokenLanguages(List.of())
+            .build();
+
+    assertThrows(ConstraintViolationException.class, () -> repository.create(invalidMentor));
   }
 
   @Test

@@ -18,7 +18,9 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
+import jakarta.validation.Validator;
 import java.sql.ResultSet;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,13 +34,16 @@ class PostgresMentorRepositoryTest {
   private MemberMapper memberMapper;
   private MentorMapper mentorMapper;
   private PostgresMentorRepository repository;
+  private Validator validator;
 
   @BeforeEach
   void setup() {
     jdbc = mock(JdbcTemplate.class);
     mentorMapper = mock(MentorMapper.class);
     memberMapper = mock(MemberMapper.class);
-    repository = spy(new PostgresMentorRepository(jdbc, mentorMapper, memberMapper));
+    validator = mock(Validator.class);
+    when(validator.validate(any())).thenReturn(Collections.emptySet());
+    repository = spy(new PostgresMentorRepository(jdbc, mentorMapper, memberMapper, validator));
   }
 
   @Test
