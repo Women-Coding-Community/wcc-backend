@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 /** Represents the mentor members of the community. */
 @Getter
@@ -73,11 +74,20 @@ public class Mentor extends Member {
 
     this.profileStatus = profileStatus;
     this.skills = skills;
-    this.spokenLanguages = spokenLanguages != null ? spokenLanguages : List.of();
+    this.spokenLanguages = normalizeLanguages(spokenLanguages);
     this.bio = bio;
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
+  }
+
+  /** Checks for empty or null and returns capitalized list of string. */
+  private static List<String> normalizeLanguages(final List<String> languages) {
+    if (languages == null || languages.isEmpty()) {
+      return List.of();
+    }
+
+    return languages.stream().filter(StringUtils::isNotBlank).map(StringUtils::capitalize).toList();
   }
 
   /**
@@ -135,5 +145,13 @@ public class Mentor extends Member {
         .menteeSection(mentor.getMenteeSection().toDto())
         .feedbackSection(mentor.getFeedbackSection())
         .resources(mentor.getResources());
+  }
+
+  /** Lombok builder hook to enforce normalization. */
+  public static class MentorBuilder {
+    public MentorBuilder spokenLanguages(final List<String> spokenLanguages) {
+      this.spokenLanguages = normalizeLanguages(spokenLanguages);
+      return this;
+    }
   }
 }
