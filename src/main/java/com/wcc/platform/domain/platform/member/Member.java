@@ -10,9 +10,10 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 /** Member class with common attributes for all community members. */
@@ -20,7 +21,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-@Data
+@Getter
 @Builder(toBuilder = true)
 public class Member {
   private Long id;
@@ -31,7 +32,7 @@ public class Member {
   @NotNull private Country country;
   private String city;
   private String companyName;
-  @NotNull private List<MemberType> memberTypes;
+  @Setter @NotNull private List<MemberType> memberTypes;
   private List<Image> images;
   private List<SocialNetwork> network;
 
