@@ -119,7 +119,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
 
   private void updateAvailability(final MenteeSection ms, final Long memberId) {
     for (final MentorMonthAvailability a : ms.availability()) {
-      jdbc.update(UPDATE_AVAILABILITY, memberId, a.month().getValue(), a.hours());
+      jdbc.update(UPDATE_AVAILABILITY, a.month().getValue(), a.hours(), memberId);
     }
   }
 }
