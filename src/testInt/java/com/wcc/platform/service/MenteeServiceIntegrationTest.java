@@ -3,17 +3,29 @@ package com.wcc.platform.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.configuration.MentorshipConfig;
+import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitExceededException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
+import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.factories.SetupMenteeFactories;
-import com.wcc.platform.repository.MenteeRegistrationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
+import java.time.Month;
+import java.time.Year;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.annotation.DirtiesContext;
+
+import static org.mockito.Mockito.when;
 
 /**
  * Integration tests for MenteeService with PostgreSQL. Tests mentee registration with cycle year
@@ -22,26 +34,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private MenteeService menteeService;
-
-  @Autowired private MenteeRegistrationRepository menteeRegistrationRepository;
+  @Autowired private MenteeRepository menteeRepository;
+  @Autowired private com.wcc.platform.repository.MentorRepository mentorRepository;
+  @SpyBean private MentorshipConfig mentorshipConfig;
+  @SpyBean private MentorshipConfig.Validation validation;
+  @SpyBean private MentorshipService mentorshipService;
 
   private Mentee createdMentee;
+  private Long testMentorId;
+
+  @BeforeEach
+  void setupTestData() {
+    // Create a test mentor for applications to reference with unique email
+    String uniqueEmail = "test-mentor-" + System.currentTimeMillis() + "@test.com";
+    var testMentor = com.wcc.platform.factories.SetupMentorFactories.createMentorTest(
+        null, "Test Mentor", uniqueEmail);
+    var createdMentor = mentorRepository.create(testMentor);
+    testMentorId = createdMentor.getId();
+  }
 
   @AfterEach
   void cleanup() {
     if (createdMentee != null && createdMentee.getId() != null) {
-      menteeRegistrationRepository.deleteById(createdMentee.getId());
+      menteeRepository.deleteById(createdMentee.getId());
+    }
+    if (testMentorId != null) {
+      mentorRepository.deleteById(testMentorId);
     }
   }
 
   @Test
-  @DisplayName("Given valid mentee and cycle year, when creating mentee, then it should succeed")
-  void shouldSaveRegistrationMenteeWithCycleYear() {
+  @DisplayName("Given valid mentee registration, when saving, then it should succeed")
+  void shouldSaveRegistrationMentee() {
     final Mentee mentee =
         SetupMenteeFactories.createMenteeTest(
             null, "Integration Test Mentee", "integration-mentee@test.com");
 
-    createdMentee = menteeService.saveRegistration(mentee, 2026);
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(new MenteeApplicationDto(null, testMentorId, 1)));
+
+    createdMentee = menteeService.saveRegistration(registration);
 
     assertThat(createdMentee).isNotNull();
     assertThat(createdMentee.getId()).isNotNull();
@@ -50,14 +86,20 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
   }
 
   @Test
-  @DisplayName(
-      "Given valid mentee without cycle year, when creating mentee, then it should use current year")
+  @DisplayName("Given current year registration, when saving, then it should succeed")
   void shouldSaveRegistrationMenteeWithCurrentYear() {
     final Mentee mentee =
         SetupMenteeFactories.createMenteeTest(
             null, "Current Year Mentee", "current-year-mentee@test.com");
 
-    createdMentee = menteeService.saveRegistration(mentee);
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.now(),
+            List.of(new MenteeApplicationDto(null, testMentorId, 1)));
+
+    createdMentee = menteeService.saveRegistration(registration);
 
     assertThat(createdMentee).isNotNull();
     assertThat(createdMentee.getId()).isNotNull();
@@ -65,101 +107,139 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @Test
   @DisplayName(
-      "Given mentee already exists, when creating duplicate, then it should throw exception")
-  void shouldThrowExceptionForDuplicateMentee() {
+      "Given ad-hoc mentorship type when cycle type is long-term, then it should throw InvalidMentorshipTypeException")
+  void shouldThrowExceptionWhenMentorshipTypeDoesNotMatch() {
     final Mentee mentee =
-        SetupMenteeFactories.createMenteeTest(
-            null, "Duplicate Mentee", "duplicate-mentee@test.com");
-
-    createdMentee = menteeService.saveRegistration(mentee, 2026);
-    assertThat(createdMentee.getId()).isNotNull();
-
-    final Mentee duplicate =
-        SetupMenteeFactories.createMenteeTest(
-            createdMentee.getId(), "Duplicate Mentee", "duplicate-mentee@test.com");
-
-    assertThatThrownBy(() -> menteeService.saveRegistration(duplicate, 2026))
-        .isInstanceOf(DuplicatedMemberException.class);
-  }
-
-  @Test
-  @DisplayName(
-      "Given mentee already registered for year/type, when registering again, then it should throw exception")
-  void shouldThrowExceptionForDuplicateYearTypeRegistration() {
-    final Mentee mentee =
-        SetupMenteeFactories.createMenteeTest(
-            null, "Year Type Duplicate", "year-type-duplicate@test.com");
-
-    createdMentee = menteeService.saveRegistration(mentee, 2026);
-    assertThat(createdMentee.getId()).isNotNull();
-
-    // Try to register same mentee for same year/type again
-    final boolean exists =
-        menteeRegistrationRepository.existsByMenteeYearType(
-            createdMentee.getId(), 2026, mentee.getMentorshipType());
-
-    assertThat(exists).isTrue();
-
-    // Attempting to create again should fail with duplicate check
-    final Mentee duplicate =
-        SetupMenteeFactories.createMenteeTest(
-            createdMentee.getId(), "Year Type Duplicate", "year-type-duplicate@test.com");
-
-    assertThatThrownBy(() -> menteeService.saveRegistration(duplicate, 2026))
-        .isInstanceOf(DuplicatedMemberException.class);
-  }
-
-  @Test
-  @DisplayName(
-      "Given mentee with non-matching type, when cycle validation enabled, then it should throw exception")
-  void shouldThrowExceptionWhenMentorshipTypeDoesNotMatchCycle() {
-    // This test assumes validation is enabled and there's an open LONG_TERM cycle
-    // but mentee is applying for AD_HOC
-    final Mentee adHocMentee =
         SetupMenteeFactories.createMenteeTest(null, "Ad Hoc Mentee", "adhoc-mentee@test.com");
 
-    // Change mentorship type to AD_HOC
-    final Mentee menteeWithWrongType =
-        Mentee.menteeBuilder()
-            .fullName(adHocMentee.getFullName())
-            .email(adHocMentee.getEmail())
-            .position(adHocMentee.getPosition())
-            .country(adHocMentee.getCountry())
-            .city(adHocMentee.getCity())
-            .companyName(adHocMentee.getCompanyName())
-            .images(adHocMentee.getImages())
-            .profileStatus(adHocMentee.getProfileStatus())
-            .bio(adHocMentee.getBio())
-            .spokenLanguages(adHocMentee.getSpokenLanguages())
-            .skills(adHocMentee.getSkills())
-            .mentorshipType(MentorshipType.AD_HOC) // Different from open cycle
-            .build();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            Year.of(2026),
+            List.of(new MenteeApplicationDto(null, testMentorId, 1)));
 
-    // This might throw MentorshipCycleClosedException or succeed depending on
-    // what cycles are open. The test verifies validation is working.
-    try {
-      createdMentee = menteeService.saveRegistration(menteeWithWrongType, 2026);
-      // If it succeeds, there must be an open AD_HOC cycle
-      assertThat(createdMentee).isNotNull();
-    } catch (MentorshipCycleClosedException e) {
-      // Expected if no open cycle matches the type
-      assertThat(e).hasMessageContaining("Mentorship cycle");
-    }
+    assertThatThrownBy(() -> menteeService.saveRegistration(registration))
+        .isInstanceOf(InvalidMentorshipTypeException.class)
+        .hasMessageContaining("does not match current cycle type");
   }
 
   @Test
-  @DisplayName(
-      "Given valid mentee data, when getting all mentees, then list should include created mentee")
+  @DisplayName("Given mentee exceeds 5 applications, when registering, then it should throw")
+  void shouldThrowExceptionWhenRegistrationLimitExceeded() {
+    final Mentee mentee =
+        SetupMenteeFactories.createMenteeTest(null, "Limit Test", "limit-test@test.com");
+
+    MenteeRegistration initialRegistration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(
+                new MenteeApplicationDto(null, testMentorId, 1),
+                new MenteeApplicationDto(null, testMentorId, 2),
+                new MenteeApplicationDto(null, testMentorId, 3),
+                new MenteeApplicationDto(null, testMentorId, 4),
+                new MenteeApplicationDto(null, testMentorId, 5)));
+
+    createdMentee = menteeService.saveRegistration(initialRegistration);
+    assertThat(createdMentee.getId()).isNotNull();
+
+    final Mentee menteeWithId =
+        Mentee.menteeBuilder()
+            .id(createdMentee.getId())
+            .fullName(mentee.getFullName())
+            .email(mentee.getEmail())
+            .position(mentee.getPosition())
+            .slackDisplayName(mentee.getSlackDisplayName())
+            .country(mentee.getCountry())
+            .city(mentee.getCity())
+            .profileStatus(mentee.getProfileStatus())
+            .bio(mentee.getBio())
+            .skills(mentee.getSkills())
+            .spokenLanguages(mentee.getSpokenLanguages())
+            .build();
+
+    MenteeRegistration exceedingRegistration =
+        new MenteeRegistration(
+            menteeWithId,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(new MenteeApplicationDto(menteeWithId.getId(), testMentorId, 1)));
+
+    assertThatThrownBy(() -> menteeService.saveRegistration(exceedingRegistration))
+        .isInstanceOf(MenteeRegistrationLimitExceededException.class);
+  }
+
+  @Test
+  @DisplayName("Given valid registration, when getting all mentees, then list should include it")
   void shouldIncludeCreatedMenteeInAllMentees() {
     final Mentee mentee =
         SetupMenteeFactories.createMenteeTest(
             null, "List Test Mentee", "list-test-mentee@test.com");
 
-    createdMentee = menteeService.saveRegistration(mentee, 2026);
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(new MenteeApplicationDto(null, testMentorId, 1)));
+
+    createdMentee = menteeService.saveRegistration(registration);
 
     final var allMentees = menteeService.getAllMentees();
 
     assertThat(allMentees).isNotEmpty();
     assertThat(allMentees).anyMatch(m -> m.getId().equals(createdMentee.getId()));
+  }
+
+  @Test
+  @DirtiesContext
+  @DisplayName(
+      "Given validation enabled and cycle is closed, when registering, then it should throw MentorshipCycleClosedException")
+  void shouldThrowExceptionWhenValidationEnabledAndCycleIsClosed() {
+    when(validation.isEnabled()).thenReturn(true);
+    when(mentorshipConfig.getValidation()).thenReturn(validation);
+    when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
+
+    final Mentee mentee =
+        SetupMenteeFactories.createMenteeTest(null, "Closed Cycle Test", "closed@test.com");
+
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(new MenteeApplicationDto(null, testMentorId, 1)));
+
+    assertThatThrownBy(() -> menteeService.saveRegistration(registration))
+        .isInstanceOf(MentorshipCycleClosedException.class)
+        .hasMessageContaining("Mentorship cycle");
+  }
+
+  @Test
+  @DirtiesContext
+  @DisplayName(
+      "Given validation disabled, when registering with current year, then it should succeed")
+  void shouldSucceedWhenValidationDisabled() {
+    when(validation.isEnabled()).thenReturn(false);
+    when(mentorshipConfig.getValidation()).thenReturn(validation);
+
+    final Mentee mentee =
+        SetupMenteeFactories.createMenteeTest(
+            null, "Validation Disabled Test", "validation-disabled@test.com");
+
+    // Use 2026 which exists in database from V18 migration
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(new MenteeApplicationDto(null, testMentorId, 1)));
+
+    createdMentee = menteeService.saveRegistration(registration);
+
+    assertThat(createdMentee).isNotNull();
+    assertThat(createdMentee.getId()).isNotNull();
   }
 }

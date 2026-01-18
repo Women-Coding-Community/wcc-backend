@@ -24,15 +24,17 @@ public record MenteeRegistration(
     @NotNull Mentee mentee,
     @NotNull MentorshipType mentorshipType,
     @NotNull Year cycleYear,
-    @Max(5) @Min(1) List<Long> mentorIds) {
+    @Max(5) @Min(1) List<MenteeApplicationDto> applications) {
 
-  public List<MenteeApplication> toApplications(MentorshipCycleEntity cycle) {
-    return mentorIds.stream()
+  public List<MenteeApplication> toApplications(MentorshipCycleEntity cycle, Long menteeId) {
+    return applications.stream()
         .map(
-            mentorId ->
+            application ->
                 MenteeApplication.builder()
-                    .menteeId(mentee.getId())
-                    .mentorId(mentorId)
+                    .menteeId(menteeId)
+                    .mentorId(application.mentorId())
+                    .priorityOrder(application.priorityOrder())
+                    .status(ApplicationStatus.PENDING)
                     .cycleId(cycle.getCycleId())
                     .build())
         .toList();

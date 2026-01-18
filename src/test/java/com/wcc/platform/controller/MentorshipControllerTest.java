@@ -89,7 +89,7 @@ class MentorshipControllerTest {
                 .content(
                     "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[\"BACKEND\"],\"languages\":[\"JAVASCRIPT\"],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
                         + currentYear
-                        + "\",\"mentorIds\":[1]}"))
+                        + "\",\"applications\":[{\"menteeId\":null,\"mentorId\":1,\"priorityOrder\":1}]}"))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(2)))
         .andExpect(jsonPath("$.fullName", is("Mark")));

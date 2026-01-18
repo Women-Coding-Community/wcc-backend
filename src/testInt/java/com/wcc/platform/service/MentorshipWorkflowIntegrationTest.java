@@ -168,7 +168,6 @@ class MentorshipWorkflowIntegrationTest extends DefaultDatabaseSetup {
   void shouldSupportYearTrackingInMentorshipTypes() {
     // This verifies V17 migration worked correctly
     // The mentee_mentorship_types table should now have cycle_year column
-    // and mentee_previous_mentorship_types should be removed
 
     // Indirect verification: If the application boots and mentee creation works,
     // then the schema is correct
@@ -177,6 +176,6 @@ class MentorshipWorkflowIntegrationTest extends DefaultDatabaseSetup {
 
     // All cycles should have a valid year
     assertThat(cycles)
-        .allMatch(cycle -> cycle.getCycleYear() != null && cycle.getCycleYear() > 2025);
+        .allMatch(cycle -> cycle.getCycleYear() != null && cycle.getCycleYear().getValue() > 2025);
   }
 }

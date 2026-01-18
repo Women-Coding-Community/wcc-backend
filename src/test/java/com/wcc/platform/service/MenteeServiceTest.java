@@ -16,6 +16,7 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
@@ -66,7 +67,7 @@ class MenteeServiceTest {
   void testSaveRegistrationMentee() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(1L));
+        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
 
     MentorshipCycleEntity cycle =
         MentorshipCycleEntity.builder()
@@ -106,7 +107,7 @@ class MenteeServiceTest {
             .spokenLanguages(List.of("English"))
             .build();
     MenteeRegistration registration =
-        new MenteeRegistration(menteeWithId, MentorshipType.AD_HOC, currentYear, List.of(1L));
+        new MenteeRegistration(menteeWithId, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
 
     MentorshipCycleEntity cycle =
         MentorshipCycleEntity.builder()
@@ -146,7 +147,7 @@ class MenteeServiceTest {
   void shouldThrowExceptionWhenCycleIsClosed() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(1L));
+        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
     when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
 
     MentorshipCycleClosedException exception =
@@ -163,7 +164,7 @@ class MenteeServiceTest {
   void shouldThrowExceptionWhenMenteeTypeDoesNotMatchCycleType() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(1L));
+        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
 
     MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
     when(mentorshipService.getCurrentCycle()).thenReturn(longTermCycle);
@@ -183,7 +184,7 @@ class MenteeServiceTest {
   void shouldSaveRegistrationMenteeWhenCycleIsOpenAndTypeMatches() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(1L));
+        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
 
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
@@ -202,7 +203,7 @@ class MenteeServiceTest {
   void shouldSkipValidationWhenValidationIsDisabled() {
     var currentYear = java.time.Year.now();
     MenteeRegistration registration =
-        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(1L));
+        new MenteeRegistration(mentee, MentorshipType.AD_HOC, currentYear, List.of(new MenteeApplicationDto(null, 1L, 1)));
     when(validation.isEnabled()).thenReturn(false);
 
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());

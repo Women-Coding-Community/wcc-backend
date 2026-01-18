@@ -31,6 +31,15 @@ public class PostgresMenteeRepository implements MenteeRepository {
       "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)";
   private static final String INSERT_FOCUS_AREAS =
       "INSERT INTO mentee_mentorship_focus_areas (mentee_id, focus_area_id) VALUES (?, ?)";
+  private static final String SQL_UPDATE_MENTEE =
+      "UPDATE mentees SET mentees_profile_status = ?, bio = ?, years_experience = ?, "
+          + "spoken_languages = ? WHERE mentee_id = ?";
+  private static final String SQL_DELETE_TECH_AREAS =
+      "DELETE FROM mentee_technical_areas WHERE mentee_id = ?";
+  private static final String SQL_DELETE_LANGUAGES =
+      "DELETE FROM mentee_languages WHERE mentee_id = ?";
+  private static final String SQL_DELETE_FOCUS_AREAS =
+      "DELETE FROM mentee_mentorship_focus_areas WHERE mentee_id = ?";
 
   private final JdbcTemplate jdbc;
   private final MenteeMapper menteeMapper;
@@ -46,18 +55,28 @@ public class PostgresMenteeRepository implements MenteeRepository {
     insertLanguages(mentee.getSkills(), memberId);
     insertMentorshipFocusAreas(mentee.getSkills(), memberId);
 
-    final var menteeSaved = findById(memberId);
-    if (menteeSaved.isEmpty()) {
-      throw new MenteeNotSavedException("Unable to save mentee " + mentee.getEmail());
-    }
-
-    return mentee;
+    return findById(memberId)
+        .orElseThrow(
+            () -> new MenteeNotSavedException("Unable to save mentee " + mentee.getEmail()));
   }
 
   @Override
+  @Transactional
   public Mentee update(final Long id, final Mentee mentee) {
-    // not implemented
-    return mentee;
+    memberMapper.updateMember(mentee, id);
+
+    updateMenteeDetails(mentee, id);
+
+    jdbc.update(SQL_DELETE_TECH_AREAS, id);
+    jdbc.update(SQL_DELETE_LANGUAGES, id);
+    jdbc.update(SQL_DELETE_FOCUS_AREAS, id);
+
+    insertTechnicalAreas(mentee.getSkills(), id);
+    insertLanguages(mentee.getSkills(), id);
+    insertMentorshipFocusAreas(mentee.getSkills(), id);
+
+    return findById(id)
+        .orElseThrow(() -> new MenteeNotSavedException("Unable to update mentee " + id));
   }
 
   @Override
@@ -81,6 +100,18 @@ public class PostgresMenteeRepository implements MenteeRepository {
   @Override
   public void deleteById(final Long menteeId) {
     jdbc.update(SQL_DELETE_BY_ID, menteeId);
+  }
+
+  private void updateMenteeDetails(final Mentee mentee, final Long memberId) {
+    final var profileStatus = mentee.getProfileStatus();
+    final var skills = mentee.getSkills();
+    jdbc.update(
+        SQL_UPDATE_MENTEE,
+        profileStatus.getStatusId(),
+        mentee.getBio(),
+        skills.yearsExperience(),
+        String.join(",", mentee.getSpokenLanguages()),
+        memberId);
   }
 
   private void insertMenteeDetails(final Mentee mentee, final Long memberId) {

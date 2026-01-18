@@ -72,7 +72,7 @@ public class MentorshipController {
   @Operation(summary = "API to update mentor data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> updateMentor(
-      @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
+      @Valid @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
     return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
   }
 
@@ -86,7 +86,7 @@ public class MentorshipController {
   @Operation(summary = "API to submit mentee registration")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Mentee> createMentee(
-      @RequestBody final MenteeRegistration menteeRegistration) {
+      @Valid @RequestBody final MenteeRegistration menteeRegistration) {
     return new ResponseEntity<>(
         menteeService.saveRegistration(menteeRegistration), HttpStatus.CREATED);
   }

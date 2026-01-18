@@ -1,6 +1,7 @@
 package com.wcc.platform.domain.platform.mentorship;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public class MentorshipCycleEntity {
   private Long cycleId;
   private Year cycleYear;
   private MentorshipType mentorshipType;
-  private Integer cycleMonth;
+  private Month cycleMonth;
   private LocalDate registrationStartDate;
   private LocalDate registrationEndDate;
   private LocalDate cycleStartDate;
@@ -56,7 +57,6 @@ public class MentorshipCycleEntity {
    * @return MentorshipCycle value object
    */
   public MentorshipCycle toMentorshipCycle() {
-    return new MentorshipCycle(
-        mentorshipType, cycleMonth != null ? java.time.Month.of(cycleMonth) : null);
+    return new MentorshipCycle(mentorshipType, cycleMonth != null ? cycleMonth : null);
   }
 }

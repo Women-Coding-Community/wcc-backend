@@ -50,12 +50,32 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
           + "mentor_response = ?, updated_at = CURRENT_TIMESTAMP "
           + "WHERE application_id = ?";
 
+  private static final String INSERT_APPLICATION =
+      "INSERT INTO mentee_applications "
+          + "(mentee_id, mentor_id, cycle_id, priority_order, application_status, application_message) "
+          + "VALUES (?, ?, ?, ?, ?::application_status, ?) "
+          + "RETURNING application_id";
+
   private final JdbcTemplate jdbc;
 
   @Override
   public MenteeApplication create(final MenteeApplication entity) {
-    // TODO: TO BE IMPLEMENTED AS PART OF THIS PR
-    throw new UnsupportedOperationException("Create not yet implemented");
+    Long generatedId =
+        jdbc.queryForObject(
+            INSERT_APPLICATION,
+            Long.class,
+            entity.getMenteeId(),
+            entity.getMentorId(),
+            entity.getCycleId(),
+            entity.getPriorityOrder(),
+            entity.getStatus().getValue(),
+            entity.getApplicationMessage());
+
+    return findById(generatedId)
+        .orElseThrow(
+            () ->
+                new IllegalStateException(
+                    "Failed to retrieve created application with ID: " + generatedId));
   }
 
   @Override

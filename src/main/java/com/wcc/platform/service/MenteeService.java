@@ -55,28 +55,28 @@ public class MenteeService {
     var registrations = registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
     if (registrations != null && registrations > 0) {
       updateMenteeApplications(menteeRegistration, menteeId, cycle);
+      return menteeRegistration.mentee();
     } else {
-      createMenteeAndApplications(menteeRegistration, cycle);
+      return createMenteeAndApplications(menteeRegistration, cycle);
     }
-
-    return menteeRegistration.mentee();
   }
 
-  private void createMenteeAndApplications(
+  private Mentee createMenteeAndApplications(
       MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle) {
-    menteeRepository.create(menteeRegistration.mentee());
-    saveMenteeRegistrations(menteeRegistration, cycle);
+    var savedMentee = menteeRepository.create(menteeRegistration.mentee());
+    saveMenteeRegistrations(menteeRegistration, cycle, savedMentee.getId());
+    return savedMentee;
   }
 
   private void updateMenteeApplications(
       MenteeRegistration menteeRegistration, Long menteeId, MentorshipCycleEntity cycle) {
     validateRegistrationLimit(menteeId, cycle);
-    saveMenteeRegistrations(menteeRegistration, cycle);
+    saveMenteeRegistrations(menteeRegistration, cycle, menteeId);
   }
 
   private void saveMenteeRegistrations(
-      MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle) {
-    var applications = menteeRegistration.toApplications(cycle);
+      MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle, Long menteeId) {
+    var applications = menteeRegistration.toApplications(cycle, menteeId);
     applications.forEach(registrationsRepo::create);
   }
 
@@ -95,9 +95,12 @@ public class MenteeService {
       final MentorshipType mentorshipType, final Year cycleYear) {
     final var openCycle = cycleRepository.findByYearAndType(cycleYear, mentorshipType);
 
-    if (openCycle.isPresent() && mentorshipConfig.getValidation().isEnabled()) {
+    if (openCycle.isPresent()) {
       final MentorshipCycleEntity cycle = openCycle.get();
-      if (cycle.getStatus() != CycleStatus.OPEN) {
+
+      // Only validate status if validation is enabled
+      if (mentorshipConfig.getValidation().isEnabled()
+          && cycle.getStatus() != CycleStatus.OPEN) {
         throw new MentorshipCycleClosedException(
             String.format(
                 "Mentorship cycle for %s in %d is %s. Registration is not available.",
