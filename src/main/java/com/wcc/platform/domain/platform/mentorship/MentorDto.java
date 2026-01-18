@@ -6,7 +6,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.resource.MentorResource;
@@ -21,7 +20,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.util.CollectionUtils;
 
 /** Represents the mentor members of the community. */
 @Getter
@@ -49,7 +47,7 @@ public class MentorDto extends MemberDto {
       @NotBlank final String position,
       @NotBlank @Email final String email,
       @NotBlank final String slackDisplayName,
-      @NotBlank final Country country,
+      @NotNull final Country country,
       @NotBlank final String city,
       final String companyName,
       final List<Image> images,
@@ -85,53 +83,36 @@ public class MentorDto extends MemberDto {
   }
 
   /**
-   * Merge this DTO with an existing Mentor entity.
+   * Merges this DTO with an existing Mentor entity. Non-null/non-blank DTO values override existing
+   * values; otherwise existing values are retained.
    *
-   * @param member the existing mentor to merge with
-   * @return Updated mentor
-   * @throws InvalidMentorException if member is null
-   * @throws IllegalArgumentException if member is not a Mentor instance
+   * @param mentor the existing mentor to merge with
+   * @return merged Mentor with updated fields
    */
-  @Override
-  public Member merge(final Member member) {
-    if (member == null) {
+  public Mentor merge(final Mentor mentor) {
+    if (mentor == null) {
       throw new InvalidMentorException("Cannot merge with null mentor");
     }
-    if (!(member instanceof Mentor existingMentor)) {
-      throw new InvalidMentorException(
-          "Expected Mentor instance but got: " + member.getClass().getSimpleName());
-    }
 
-    final Mentor.MentorBuilder builder =
-        Mentor.mentorBuilder()
-            .id(existingMentor.getId())
-            .fullName(mergeString(this.getFullName(), existingMentor.getFullName()))
-            .position(mergeString(this.getPosition(), existingMentor.getPosition()))
-            .email(mergeString(this.getEmail(), existingMentor.getEmail()))
-            .slackDisplayName(
-                mergeString(this.getSlackDisplayName(), existingMentor.getSlackDisplayName()))
-            .country(mergeNullable(this.getCountry(), existingMentor.getCountry()))
-            .profileStatus(mergeNullable(this.profileStatus, existingMentor.getProfileStatus()))
-            .bio(mergeString(this.bio, existingMentor.getBio()))
-            .skills(mergeNullable(this.skills, existingMentor.getSkills()))
-            .menteeSection(mergeNullable(this.menteeSection, existingMentor.getMenteeSection()));
-
-    mergeOptionalString(this.getCity(), existingMentor.getCity(), builder::city);
-
-    mergeOptionalString(
-        this.getCompanyName(), existingMentor.getCompanyName(), builder::companyName);
-
-    builder.network(mergeCollection(this.getNetwork(), existingMentor.getNetwork()));
-    builder.spokenLanguages(
-        mergeCollection(this.getSpokenLanguages(), existingMentor.getSpokenLanguages()));
-    builder.images(mergeCollection(this.getImages(), existingMentor.getImages()));
-
-    mergeOptional(
-        this.feedbackSection, existingMentor.getFeedbackSection(), builder::feedbackSection);
-
-    mergeOptional(this.resources, existingMentor.getResources(), builder::resources);
-
-    return builder.build();
+    return Mentor.mentorBuilder()
+        .id(mentor.getId())
+        .fullName(mergeString(this.getFullName(), mentor.getFullName()))
+        .position(mergeString(this.getPosition(), mentor.getPosition()))
+        .email(mergeString(this.getEmail(), mentor.getEmail()))
+        .slackDisplayName(mergeString(this.getSlackDisplayName(), mentor.getSlackDisplayName()))
+        .city(mergeString(this.getCity(), mentor.getCity()))
+        .companyName(mergeString(this.getCompanyName(), mentor.getCompanyName()))
+        .country(mergeNullable(this.getCountry(), mentor.getCountry()))
+        .profileStatus(mergeNullable(this.getProfileStatus(), mentor.getProfileStatus()))
+        .bio(mergeString(this.getBio(), mentor.getBio()))
+        .skills(mergeNullable(this.getSkills(), mentor.getSkills()))
+        .menteeSection(mergeNullable(this.getMenteeSection(), mentor.getMenteeSection()))
+        .feedbackSection(mergeNullable(this.getFeedbackSection(), mentor.getFeedbackSection()))
+        .resources(mergeNullable(this.getResources(), mentor.getResources()))
+        .network(mergeCollection(this.getNetwork(), mentor.getNetwork()))
+        .spokenLanguages(mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()))
+        .images(mergeCollection(this.getImages(), mentor.getImages()))
+        .build();
   }
 
   private String mergeString(final String candidate, final String existing) {
@@ -143,24 +124,9 @@ public class MentorDto extends MemberDto {
   }
 
   private <T> List<T> mergeCollection(final List<T> candidate, final List<T> existing) {
-    return CollectionUtils.isEmpty(candidate) ? existing : candidate;
-  }
-
-  private void mergeOptionalString(
-      final String candidate,
-      final String existing,
-      final java.util.function.Consumer<String> setter) {
-
-    if (StringUtils.isNotBlank(candidate) || StringUtils.isNotBlank(existing)) {
-      setter.accept(mergeString(candidate, existing));
+    if (candidate != null && !candidate.isEmpty()) {
+      return candidate;
     }
-  }
-
-  private <T> void mergeOptional(
-      final T candidate, final T existing, final java.util.function.Consumer<T> setter) {
-
-    if (candidate != null || existing != null) {
-      setter.accept(mergeNullable(candidate, existing));
-    }
+    return existing != null ? existing : List.of();
   }
 }
