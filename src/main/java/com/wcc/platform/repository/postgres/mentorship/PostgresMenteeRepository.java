@@ -6,6 +6,7 @@ import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
@@ -46,13 +47,21 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private final JdbcTemplate jdbc;
   private final MenteeMapper menteeMapper;
   private final MemberMapper memberMapper;
+  private final MemberRepository memberRepository;
   private final Validator validator;
 
   @Override
   @Transactional
   public Mentee create(final Mentee mentee) {
     validate(mentee);
-    final Long memberId = memberMapper.addMember(mentee);
+
+    final Long memberId;
+    if (mentee.getId() != null && memberRepository.findById(mentee.getId()).isPresent()) {
+      memberId = mentee.getId();
+      memberMapper.updateMember(mentee, memberId);
+    } else {
+      memberId = memberMapper.addMember(mentee);
+    }
 
     insertMenteeDetails(mentee, memberId);
     insertTechnicalAreas(mentee.getSkills(), memberId);

@@ -61,11 +61,41 @@ public class MentorshipService {
    * @return Mentor record created successfully.
    */
   public Mentor create(final Mentor mentor) {
-    final Optional<Mentor> mentorExists = mentorRepository.findById(mentor.getId());
+    final var existingMember = memberRepository.findByEmail(mentor.getEmail());
 
-    if (mentorExists.isPresent()) {
-      throw new DuplicatedMemberException(mentorExists.get().getEmail());
+    if (existingMember.isPresent()) {
+      final var existingMemberId = existingMember.get().getId();
+      final var mentorWithExistingId =
+          Mentor.mentorBuilder()
+              .id(existingMemberId)
+              .fullName(mentor.getFullName())
+              .position(mentor.getPosition())
+              .email(mentor.getEmail())
+              .slackDisplayName(mentor.getSlackDisplayName())
+              .country(mentor.getCountry())
+              .city(mentor.getCity())
+              .companyName(mentor.getCompanyName())
+              .images(mentor.getImages())
+              .network(mentor.getNetwork())
+              .profileStatus(mentor.getProfileStatus())
+              .skills(mentor.getSkills())
+              .spokenLanguages(mentor.getSpokenLanguages())
+              .bio(mentor.getBio())
+              .menteeSection(mentor.getMenteeSection())
+              .feedbackSection(mentor.getFeedbackSection())
+              .resources(mentor.getResources())
+              .build();
+
+      return mentorRepository.create(mentorWithExistingId);
     }
+
+    if (mentor.getId() != null) {
+      final Optional<Mentor> mentorExists = mentorRepository.findById(mentor.getId());
+      if (mentorExists.isPresent()) {
+        throw new DuplicatedMemberException(mentorExists.get().getEmail());
+      }
+    }
+
     return mentorRepository.create(mentor);
   }
 

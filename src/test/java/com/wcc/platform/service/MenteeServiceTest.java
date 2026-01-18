@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,6 +37,7 @@ import org.mockito.MockitoAnnotations;
 
 class MenteeServiceTest {
 
+  
   @Mock private MenteeApplicationRepository applicationRepository;
   @Mock private MenteeRepository menteeRepository;
   @Mock private MentorshipService mentorshipService;
@@ -58,7 +60,8 @@ class MenteeServiceTest {
             mentorshipConfig,
             cycleRepository,
             applicationRepository,
-            menteeRepository);
+            menteeRepository,
+            memberRepository);
     mentee = createMenteeTest();
   }
 
@@ -81,6 +84,7 @@ class MenteeServiceTest {
             .status(CycleStatus.OPEN)
             .build();
 
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
     when(menteeRepository.create(any(Mentee.class))).thenReturn(mentee);
     when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
@@ -90,6 +94,7 @@ class MenteeServiceTest {
     Mentee result = menteeService.saveRegistration(registration);
 
     assertEquals(mentee, result);
+    verify(memberRepository).findByEmail(anyString());
     verify(menteeRepository).create(any(Mentee.class));
     verify(applicationRepository).create(any());
   }
@@ -212,6 +217,7 @@ class MenteeServiceTest {
 
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
     when(menteeRepository.create(any(Mentee.class))).thenReturn(mentee);
     when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
@@ -239,6 +245,7 @@ class MenteeServiceTest {
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
     when(mentorshipService.getCurrentCycle())
         .thenReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.JANUARY));
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
     when(menteeRepository.create(any())).thenReturn(mentee);
     when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
@@ -249,5 +256,57 @@ class MenteeServiceTest {
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));
     verify(mentorshipService).getCurrentCycle();
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with email, when creating mentee with same email, then it should use existing member")
+  void shouldUseExistingMemberWhenMenteeEmailAlreadyExists() {
+    var currentYear = java.time.Year.now();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    // Mock existing member with same email
+    Member existingMember = Member.builder().id(999L).email(mentee.getEmail()).build();
+    Mentee menteeWithExistingId =
+        Mentee.menteeBuilder()
+            .id(999L)
+            .fullName(mentee.getFullName())
+            .email(mentee.getEmail())
+            .position(mentee.getPosition())
+            .slackDisplayName(mentee.getSlackDisplayName())
+            .country(mentee.getCountry())
+            .city(mentee.getCity())
+            .profileStatus(mentee.getProfileStatus())
+            .bio(mentee.getBio())
+            .skills(mentee.getSkills())
+            .spokenLanguages(mentee.getSpokenLanguages())
+            .build();
+
+    when(memberRepository.findByEmail(mentee.getEmail())).thenReturn(Optional.of(existingMember));
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(menteeRepository.create(any(Mentee.class))).thenReturn(menteeWithExistingId);
+    when(menteeRepository.findById(999L)).thenReturn(Optional.of(menteeWithExistingId));
+
+    Mentee result = menteeService.saveRegistration(registration);
+
+    assertThat(result.getId()).isEqualTo(999L);
+    assertThat(result.getEmail()).isEqualTo(mentee.getEmail());
+    verify(memberRepository).findByEmail(mentee.getEmail());
+    verify(menteeRepository).create(any(Mentee.class));
   }
 }

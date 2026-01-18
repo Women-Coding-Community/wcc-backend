@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
@@ -55,6 +56,7 @@ public class PostgresMentorRepository implements MentorRepository {
   private final JdbcTemplate jdbc;
   private final MentorMapper mentorMapper;
   private final MemberMapper memberMapper;
+  private final MemberRepository memberRepository;
   private final Validator validator;
 
   @Override
@@ -92,7 +94,15 @@ public class PostgresMentorRepository implements MentorRepository {
   @Transactional
   public Mentor create(final Mentor mentor) {
     validate(mentor);
-    final Long memberId = memberMapper.addMember(mentor);
+
+    final Long memberId;
+    if (mentor.getId() != null && memberRepository.findById(mentor.getId()).isPresent()) {
+      memberId = mentor.getId();
+      memberMapper.updateMember(mentor, memberId);
+    } else {
+      memberId = memberMapper.addMember(mentor);
+    }
+
     addMentor(mentor, memberId);
     final var mentorAdded = findById(memberId);
     return mentorAdded.orElse(null);

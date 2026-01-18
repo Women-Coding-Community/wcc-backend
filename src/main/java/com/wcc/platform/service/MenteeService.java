@@ -12,6 +12,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
@@ -32,6 +33,7 @@ public class MenteeService {
   private final MentorshipCycleRepository cycleRepository;
   private final MenteeApplicationRepository registrationsRepo;
   private final MenteeRepository menteeRepository;
+  private final MemberRepository memberRepository;
 
   /**
    * Return all stored mentees.
@@ -73,9 +75,36 @@ public class MenteeService {
   private Mentee createMenteeAndApplications(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
     final var menteeToBeSaved = menteeRegistration.mentee();
-    menteeToBeSaved.setMemberTypes(List.of(MemberType.MENTEE));
 
-    final var mentee = menteeRepository.create(menteeToBeSaved);
+    final var existingMember = memberRepository.findByEmail(menteeToBeSaved.getEmail());
+
+    final Mentee mentee;
+    if (existingMember.isPresent()) {
+      final var existingMemberId = existingMember.get().getId();
+      final var menteeWithExistingId =
+          Mentee.menteeBuilder()
+              .id(existingMemberId)
+              .fullName(menteeToBeSaved.getFullName())
+              .position(menteeToBeSaved.getPosition())
+              .email(menteeToBeSaved.getEmail())
+              .slackDisplayName(menteeToBeSaved.getSlackDisplayName())
+              .country(menteeToBeSaved.getCountry())
+              .city(menteeToBeSaved.getCity())
+              .companyName(menteeToBeSaved.getCompanyName())
+              .images(menteeToBeSaved.getImages())
+              .network(menteeToBeSaved.getNetwork())
+              .profileStatus(menteeToBeSaved.getProfileStatus())
+              .skills(menteeToBeSaved.getSkills())
+              .spokenLanguages(menteeToBeSaved.getSpokenLanguages())
+              .bio(menteeToBeSaved.getBio())
+              .build();
+
+      mentee = menteeRepository.create(menteeWithExistingId);
+    } else {
+      menteeToBeSaved.setMemberTypes(List.of(MemberType.MENTEE));
+      mentee = menteeRepository.create(menteeToBeSaved);
+    }
+
     final var registration = menteeRegistration.withMentee(mentee);
     return createMenteeRegistrations(registration, cycle);
   }

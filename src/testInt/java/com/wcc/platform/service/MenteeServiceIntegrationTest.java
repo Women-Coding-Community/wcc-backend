@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
@@ -34,10 +35,12 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
   private final List<Mentee> createdMentees = new ArrayList<>();
   private final List<Long> createdMentors = new ArrayList<>();
   private final List<Long> createdCycles = new ArrayList<>();
+  private final List<Long> createdMembers = new ArrayList<>();
 
   @Autowired private MenteeService menteeService;
   @Autowired private MenteeRepository menteeRepository;
   @Autowired private com.wcc.platform.repository.MentorRepository mentorRepository;
+  @Autowired private com.wcc.platform.repository.MemberRepository memberRepository;
   @Autowired private MentorshipCycleRepository cycleRepository;
 
   @BeforeEach
@@ -87,9 +90,11 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
           }
         });
     createdMentors.forEach(mentorRepository::deleteById);
+    createdMembers.forEach(memberRepository::deleteById);
     createdCycles.forEach(cycleRepository::deleteById);
     createdMentees.clear();
     createdMentors.clear();
+    createdMembers.clear();
     createdCycles.clear();
   }
 
@@ -304,5 +309,48 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
 
     assertThat(updatedMentee).isNotNull();
     assertThat(updatedMentee.getId()).isEqualTo(savedMentee.getId());
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with email, when creating mentee with same email, then it should use existing member")
+  void shouldUseExistingMemberWhenMenteeEmailAlreadyExists() {
+    // Create a regular member first
+    final Member existingMember =
+        Member.builder()
+            .fullName("Existing Member")
+            .email("existing-member@test.com")
+            .position("Software Engineer")
+            .slackDisplayName("@existing")
+            .country(new com.wcc.platform.domain.cms.attributes.Country("US", "United States"))
+            .city("New York")
+            .companyName("Tech Corp")
+            .memberTypes(List.of(com.wcc.platform.domain.platform.type.MemberType.MEMBER))
+            .images(List.of())
+            .network(List.of())
+            .build();
+
+    final Member savedMember = memberRepository.create(existingMember);
+    createdMembers.add(savedMember.getId());
+
+    // Create a mentee with the same email
+    final Mentee mentee =
+        SetupMenteeFactories.createMenteeTest(
+            null, "Mentee From Existing Member", "existing-member@test.com");
+
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1)));
+
+    // Should successfully create mentee using existing member's ID
+    final Mentee savedMentee = menteeService.saveRegistration(registration);
+    createdMentees.add(savedMentee);
+
+    assertThat(savedMentee).isNotNull();
+    assertThat(savedMentee.getId()).isEqualTo(savedMember.getId());
+    assertThat(savedMentee.getEmail()).isEqualTo("existing-member@test.com");
   }
 }

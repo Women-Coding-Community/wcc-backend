@@ -46,7 +46,10 @@ class PostgresMenteeRepositoryTest {
     memberMapper = mock(MemberMapper.class);
     var validator = mock(Validator.class);
     when(validator.validate(any())).thenReturn(Collections.emptySet());
-    repository = spy(new PostgresMenteeRepository(jdbc, menteeMapper, memberMapper, validator));
+    repository =
+        spy(
+            new PostgresMenteeRepository(
+                jdbc, menteeMapper, memberMapper, mock(com.wcc.platform.repository.MemberRepository.class), validator));
   }
 
   @Test

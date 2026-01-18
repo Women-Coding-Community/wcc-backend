@@ -76,6 +76,8 @@ class MentorshipServiceTest {
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
+    when(mentor.getEmail()).thenReturn("test@test.com");
+    when(memberRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
     when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
 
     assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
@@ -86,12 +88,15 @@ class MentorshipServiceTest {
   void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(2L);
+    when(mentor.getEmail()).thenReturn("newmentor@test.com");
+    when(memberRepository.findByEmail("newmentor@test.com")).thenReturn(Optional.empty());
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
     var result = service.create(mentor);
 
     assertEquals(mentor, result);
+    verify(memberRepository).findByEmail("newmentor@test.com");
     verify(mentorRepository).create(mentor);
   }
 
@@ -299,5 +304,44 @@ class MentorshipServiceTest {
     assertThat(result).hasSize(1);
     var mentorDto = result.getFirst();
     assertThat(mentorDto.getImages()).isNullOrEmpty();
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with email, when creating mentor with same email, then it should use existing member")
+  void shouldUseExistingMemberWhenMentorEmailAlreadyExists() {
+    var mentor = mock(Mentor.class);
+    when(mentor.getEmail()).thenReturn("existing@test.com");
+    when(mentor.getFullName()).thenReturn("Existing Member as Mentor");
+    when(mentor.getPosition()).thenReturn("Software Engineer");
+    when(mentor.getSlackDisplayName()).thenReturn("@existing");
+    when(mentor.getCountry()).thenReturn(mock(com.wcc.platform.domain.cms.attributes.Country.class));
+    when(mentor.getCity()).thenReturn("New York");
+    when(mentor.getCompanyName()).thenReturn("Tech Corp");
+    when(mentor.getImages()).thenReturn(List.of());
+    when(mentor.getNetwork()).thenReturn(List.of());
+    when(mentor.getProfileStatus())
+        .thenReturn(com.wcc.platform.domain.platform.member.ProfileStatus.ACTIVE);
+    when(mentor.getSkills()).thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
+    when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
+    when(mentor.getBio()).thenReturn("Bio");
+    when(mentor.getMenteeSection()).thenReturn(
+        mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
+    when(mentor.getFeedbackSection()).thenReturn(null);
+    when(mentor.getResources()).thenReturn(null);
+
+    // Mock existing member with same email
+    Member existingMember = Member.builder().id(999L).email("existing@test.com").build();
+    when(memberRepository.findByEmail("existing@test.com")).thenReturn(Optional.of(existingMember));
+
+    var mentorWithExistingId = mock(Mentor.class);
+    when(mentorWithExistingId.getId()).thenReturn(999L);
+    when(mentorRepository.create(any(Mentor.class))).thenReturn(mentorWithExistingId);
+
+    Mentor result = service.create(mentor);
+
+    assertThat(result.getId()).isEqualTo(999L);
+    verify(memberRepository).findByEmail("existing@test.com");
+    verify(mentorRepository).create(any(Mentor.class));
   }
 }
