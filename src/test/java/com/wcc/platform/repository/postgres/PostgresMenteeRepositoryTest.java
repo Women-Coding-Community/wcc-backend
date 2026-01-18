@@ -49,7 +49,7 @@ class PostgresMenteeRepositoryTest {
   void testCreate() {
     var mentee = createMenteeTest();
     when(memberMapper.addMember(any())).thenReturn(1L);
-    doNothing().when(menteeMapper).addMentee(any(), eq(1L));
+    doNothing().when(menteeMapper).addMentee(any(), eq(1L), any(Integer.class));
     doReturn(Optional.of(mentee)).when(repository).findById(1L);
 
     Mentee result = repository.create(mentee);
