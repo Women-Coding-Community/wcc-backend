@@ -31,7 +31,7 @@ public class ProgrammeController {
   }
 
   /** Get program API. */
-  @Tag(name = "Pages and Sections", description = "Pages and/or sections APIs")
+  @Tag(name = "Pages: General", description = "Pages and/or sections APIs")
   @GetMapping("/api/cms/v1/program")
   @Operation(
       summary = "API to retrieve programme page",

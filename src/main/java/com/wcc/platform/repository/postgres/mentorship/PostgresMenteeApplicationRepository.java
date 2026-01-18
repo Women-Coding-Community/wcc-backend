@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class PostgresMenteeApplicationRepository implements MenteeApplicationRepository {
 
   private static final String SELECT_ALL =
@@ -29,6 +30,9 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   private static final String SEL_BY_MENTEE_PRIO =
       "SELECT * FROM mentee_applications WHERE mentee_id = ? AND cycle_id = ? "
           + "ORDER BY priority_order";
+
+  private static final String COUNT_MENTEE_APPS =
+      "SELECT COUNT(mentee_id) FROM mentee_applications WHERE mentee_id = ? AND cycle_id = ?";
 
   private static final String SEL_BY_MENTOR_PRIO =
       "SELECT * FROM mentee_applications WHERE mentor_id = ? "
@@ -47,12 +51,32 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
           + "mentor_response = ?, updated_at = CURRENT_TIMESTAMP "
           + "WHERE application_id = ?";
 
+  private static final String INSERT_APPLICATION =
+      "INSERT INTO mentee_applications "
+          + "(mentee_id, mentor_id, cycle_id, priority_order, application_status, application_message) "
+          + "VALUES (?, ?, ?, ?, ?::application_status, ?) "
+          + "RETURNING application_id";
+
   private final JdbcTemplate jdbc;
 
   @Override
   public MenteeApplication create(final MenteeApplication entity) {
-    // TODO: Implement create - not needed for MVP
-    throw new UnsupportedOperationException("Create not yet implemented");
+    final Long generatedId =
+        jdbc.queryForObject(
+            INSERT_APPLICATION,
+            Long.class,
+            entity.getMenteeId(),
+            entity.getMentorId(),
+            entity.getCycleId(),
+            entity.getPriorityOrder(),
+            entity.getStatus().getValue(),
+            entity.getApplicationMessage());
+
+    return findById(generatedId)
+        .orElseThrow(
+            () ->
+                new IllegalStateException(
+                    "Failed to retrieve created application with ID: " + generatedId));
   }
 
   @Override
@@ -69,7 +93,6 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   @Override
   public void deleteById(final Long id) {
-    // TODO: Implement delete - not needed for Phase 3
     throw new UnsupportedOperationException("Delete not yet implemented");
   }
 
@@ -118,6 +141,11 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   @Override
   public List<MenteeApplication> getAll() {
     return jdbc.query(SELECT_ALL, (rs, rowNum) -> mapRow(rs));
+  }
+
+  @Override
+  public Long countMenteeApplications(final Long menteeId, final Long cycleId) {
+    return jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
   }
 
   private MenteeApplication mapRow(final ResultSet rs) throws SQLException {

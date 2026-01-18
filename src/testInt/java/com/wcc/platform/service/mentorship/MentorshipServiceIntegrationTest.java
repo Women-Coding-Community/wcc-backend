@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
@@ -137,6 +138,43 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
     repository.deleteById(createdMentor.getId());
     memberRepository.deleteById(createdMentor.getId());
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with email, when creating mentor with same email, then it should use existing member")
+  void shouldUseExistingMemberWhenMentorEmailAlreadyExists() {
+    // Create a regular member first
+    final Member existingMember =
+        Member.builder()
+            .fullName("Existing Member")
+            .email("existing-mentor-member@test.com")
+            .position("Software Engineer")
+            .slackDisplayName("@existing-mentor")
+            .country(new com.wcc.platform.domain.cms.attributes.Country("US", "United States"))
+            .city("New York")
+            .companyName("Tech Corp")
+            .memberTypes(java.util.List.of(com.wcc.platform.domain.platform.type.MemberType.MEMBER))
+            .images(java.util.List.of())
+            .network(java.util.List.of())
+            .build();
+
+    final Member savedMember = memberRepository.create(existingMember);
+
+    // Create a mentor with the same email
+    final Mentor mentor =
+        createMentorTest(null, "Mentor From Existing Member", "existing-mentor-member@test.com");
+
+    // Should successfully create mentor using existing member's ID
+    final Mentor savedMentor = service.create(mentor);
+
+    assertThat(savedMentor).isNotNull();
+    assertThat(savedMentor.getId()).isEqualTo(savedMember.getId());
+    assertThat(savedMentor.getEmail()).isEqualTo("existing-mentor-member@test.com");
+
+    // Cleanup
+    repository.deleteById(savedMentor.getId());
+    memberRepository.deleteById(savedMember.getId());
   }
 
   private void cleanupMentor(final Mentor mentor) {

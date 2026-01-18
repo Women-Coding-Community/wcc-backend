@@ -1,7 +1,7 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
-import com.wcc.platform.domain.exceptions.DuplicateApplicationException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
@@ -9,7 +9,6 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,40 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MenteeApplicationService {
-
-  private static final int MAX_MENTORS = 5;
+public class MenteeWorkflowService {
 
   private final MenteeApplicationRepository applicationRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
-
-  /**
-   * Submit applications to multiple mentors with priority ranking.
-   *
-   * @param menteeId the mentee ID
-   * @param cycleId the cycle ID
-   * @param mentorIds list of mentor IDs ordered by priority (first = highest)
-   * @param message application message from mentee
-   * @return list of created applications
-   * @throws DuplicateApplicationException if mentee already applied to any mentor
-   * @throws IllegalArgumentException if mentorIds list is empty or too large
-   */
-  @Transactional
-  public List<MenteeApplication> submitApplications(
-      final Long menteeId, final Long cycleId, final List<Long> mentorIds, final String message) {
-
-    validateMentorIdsList(mentorIds);
-    checkForDuplicateApplications(menteeId, cycleId, mentorIds);
-
-    // TODO: Implement application creation when repository create method is ready
-    final List<MenteeApplication> applications = new ArrayList<>();
-
-    log.info(
-        "Mentee {} submitted {} applications for cycle {}", menteeId, mentorIds.size(), cycleId);
-
-    return applications;
-  }
 
   /**
    * Mentor accepts an application.
@@ -147,6 +117,10 @@ public class MenteeApplicationService {
    * @return list of applications ordered by priority
    */
   public List<MenteeApplication> getMenteeApplications(final Long menteeId, final Long cycleId) {
+    if (menteeId == null) {
+      return List.of();
+    }
+
     return applicationRepository.findByMenteeAndCycleOrderByPriority(menteeId, cycleId);
   }
 
@@ -170,30 +144,6 @@ public class MenteeApplicationService {
     return applicationRepository.findByStatus(status);
   }
 
-  // Private helper methods
-
-  private void validateMentorIdsList(final List<Long> mentorIds) {
-    if (mentorIds == null || mentorIds.isEmpty()) {
-      throw new IllegalArgumentException("Must apply to at least one mentor");
-    }
-    if (mentorIds.size() > MAX_MENTORS) {
-      throw new IllegalArgumentException("Cannot apply to more than " + MAX_MENTORS + " mentors");
-    }
-  }
-
-  private void checkForDuplicateApplications(
-      final Long menteeId, final Long cycleId, final List<Long> mentorIds) {
-
-    for (final Long mentorId : mentorIds) {
-      applicationRepository
-          .findByMenteeMentorCycle(menteeId, mentorId, cycleId)
-          .ifPresent(
-              existing -> {
-                throw new DuplicateApplicationException(menteeId, mentorId, cycleId);
-              });
-    }
-  }
-
   private MenteeApplication getApplicationOrThrow(final Long applicationId) {
     return applicationRepository
         .findById(applicationId)
@@ -202,7 +152,7 @@ public class MenteeApplicationService {
 
   private void validateApplicationCanBeAccepted(final MenteeApplication application) {
     if (!application.canBeModified()) {
-      throw new IllegalStateException(
+      throw new ApplicationMenteeWorkflowException(
           "Application is in terminal state: " + application.getStatus());
     }
   }

@@ -46,7 +46,6 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
   @Test
   void testCreateAndUpdate() {
     var newMember = repository.create(member);
-    newMember.setImages(List.of());
 
     var member2 =
         Member.builder()

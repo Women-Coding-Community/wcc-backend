@@ -68,7 +68,7 @@ public class MemberMapper {
 
   /** Adds a new member to the database and returns the member ID. */
   public Long addMember(final Member member) {
-    final int defaultStatusId = 1;
+    final int defaultStatusPending = 1;
     jdbc.update(
         INSERT,
         member.getFullName(),
@@ -78,7 +78,7 @@ public class MemberMapper {
         member.getEmail(),
         member.getCity(),
         getCountryId(member.getCountry()),
-        defaultStatusId);
+        defaultStatusPending);
 
     final var memberId =
         jdbc.queryForObject(

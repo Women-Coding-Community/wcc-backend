@@ -3,15 +3,15 @@ package com.wcc.platform.controller;
 import com.wcc.platform.domain.platform.mentorship.ApplicationAcceptRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationDeclineRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
-import com.wcc.platform.domain.platform.mentorship.ApplicationSubmitRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationWithdrawRequest;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
-import com.wcc.platform.service.MenteeApplicationService;
+import com.wcc.platform.service.MenteeWorkflowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,27 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class MentorshipApplicationController {
 
-  private final MenteeApplicationService applicationService;
-
-  /**
-   * API for mentee to submit applications to multiple mentors with priority ranking.
-   *
-   * @param menteeId The mentee ID
-   * @param request Application submission request
-   * @return List of created applications
-   */
-  @PostMapping("/mentees/{menteeId}/applications")
-  @Operation(summary = "Submit mentee applications to mentors with priority ranking")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<List<MenteeApplication>> submitApplications(
-      @Parameter(description = "ID of the mentee") @PathVariable final Long menteeId,
-      @Valid @RequestBody final ApplicationSubmitRequest request) {
-    final List<MenteeApplication> applications =
-        applicationService.submitApplications(
-            menteeId, request.cycleId(), request.mentorIds(), request.message());
-    return new ResponseEntity<>(applications, HttpStatus.CREATED);
-  }
-
+  private final MenteeWorkflowService applicationService;
+  
   /**
    * API to get all applications submitted by a mentee for a specific cycle.
    *
@@ -68,8 +48,8 @@ public class MentorshipApplicationController {
   @Operation(summary = "Get mentee applications for a cycle")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getMenteeApplications(
-      @Parameter(description = "ID of the mentee") @PathVariable final Long menteeId,
-      @Parameter(description = "Cycle ID") @RequestParam final Long cycleId) {
+      @NotNull @Parameter(description = "ID of the mentee") @PathVariable final Long menteeId,
+      @NotNull @Parameter(description = "Cycle ID") @RequestParam final Long cycleId) {
     final List<MenteeApplication> applications =
         applicationService.getMenteeApplications(menteeId, cycleId);
     return ResponseEntity.ok(applications);
