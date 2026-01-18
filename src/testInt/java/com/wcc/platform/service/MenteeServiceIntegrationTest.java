@@ -34,6 +34,7 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
   private final List<Mentee> createdMentees = new ArrayList<>();
   private final List<Long> createdMentors = new ArrayList<>();
   private final List<Long> createdCycles = new ArrayList<>();
+
   @Autowired private MenteeService menteeService;
   @Autowired private MenteeRepository menteeRepository;
   @Autowired private com.wcc.platform.repository.MentorRepository mentorRepository;
@@ -41,6 +42,23 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @BeforeEach
   void setupTestData() {
+
+    var cycle = cycleRepository.findByYearAndType(Year.of(2026), MentorshipType.LONG_TERM);
+    if (cycle.isEmpty()) {
+      cycleRepository.create(
+          MentorshipCycleEntity.builder()
+              .cycleYear(Year.of(2026))
+              .mentorshipType(MentorshipType.LONG_TERM)
+              .cycleMonth(Month.MARCH)
+              .registrationStartDate(LocalDate.now().minusDays(1))
+              .registrationEndDate(LocalDate.now().plusDays(10))
+              .cycleStartDate(LocalDate.now().plusDays(15))
+              .status(CycleStatus.OPEN)
+              .maxMenteesPerMentor(6)
+              .description("Test Cycle")
+              .build());
+    }
+
     // Create test mentors for applications to reference
     for (int i = 0; i < 6; i++) {
       String uniqueEmail = "test-mentor-" + System.currentTimeMillis() + "-" + i + "@test.com";
@@ -89,7 +107,7 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             MentorshipType.LONG_TERM,
             Year.of(2026),
             List.of(
-                new MenteeApplicationDto(null, createdMentors.get(0), 1),
+                new MenteeApplicationDto(null, createdMentors.getFirst(), 1),
                 new MenteeApplicationDto(null, createdMentors.get(1), 2)));
 
     var savedMentee = menteeService.saveRegistration(registration);
@@ -154,7 +172,7 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.LONG_TERM,
             Year.now(),
-            List.of(new MenteeApplicationDto(null, createdMentors.get(0), 1)));
+            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1)));
 
     var savedMentee = menteeService.saveRegistration(registration);
     createdMentees.add(savedMentee);
@@ -176,7 +194,7 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             MentorshipType.LONG_TERM,
             Year.of(2026),
             List.of(
-                new MenteeApplicationDto(null, createdMentors.get(0), 1),
+                new MenteeApplicationDto(null, createdMentors.getFirst(), 1),
                 new MenteeApplicationDto(null, createdMentors.get(1), 2),
                 new MenteeApplicationDto(null, createdMentors.get(2), 3),
                 new MenteeApplicationDto(null, createdMentors.get(3), 4),
@@ -226,7 +244,7 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.LONG_TERM,
             Year.of(2026),
-            List.of(new MenteeApplicationDto(null, createdMentors.get(0), 1)));
+            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1)));
 
     var savedMentee = menteeService.saveRegistration(registration);
     createdMentees.add(savedMentee);
@@ -250,7 +268,7 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.LONG_TERM,
             Year.of(2026),
-            List.of(new MenteeApplicationDto(null, createdMentors.get(0), 1)));
+            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1)));
 
     var savedMentee = menteeService.saveRegistration(initialRegistration);
     createdMentees.add(savedMentee);

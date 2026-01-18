@@ -11,6 +11,7 @@ import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
@@ -46,42 +47,46 @@ public class MenteeService {
   }
 
   /**
-   * Create a mentee menteeRegistration for a mentorship cycle.
+   * Create a mentee registration for a mentorship cycle.
    *
-   * @param menteeRegistration The menteeRegistration to create
-   * @return Mentee record created successfully.
+   * @param registrationRequest The registration details to process
+   * @return The created or updated Mentee record.
    */
-  public Mentee saveRegistration(final MenteeRegistration menteeRegistration) {
+  public Mentee saveRegistration(final MenteeRegistration registrationRequest) {
+    final var mentee = registrationRequest.mentee();
     final var cycle =
-        getMentorshipCycle(menteeRegistration.mentorshipType(), menteeRegistration.cycleYear());
+        getMentorshipCycle(registrationRequest.mentorshipType(), registrationRequest.cycleYear());
 
-    var menteeId = menteeRegistration.mentee().getId();
-    final var registrations = ignoreDuplicateApplications(menteeRegistration, cycle);
+    final var filteredRegistrations = ignoreDuplicateApplications(registrationRequest, cycle);
     final var registrationCount =
-        registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
+        registrationsRepo.countMenteeApplications(mentee.getId(), cycle.getCycleId());
+
     validateRegistrationLimit(registrationCount);
 
     if (registrationCount != null && registrationCount > 0) {
-      createMenteeRegistrations(registrations, cycle);
-      return menteeRegistration.mentee();
-    } else {
-      return createMenteeAndApplications(registrations, cycle);
+      return createMenteeRegistrations(filteredRegistrations, cycle);
     }
+
+    return createMenteeAndApplications(filteredRegistrations, cycle);
   }
 
   private Mentee createMenteeAndApplications(
-      MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle) {
+      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    final var menteeToBeSaved = menteeRegistration.mentee();
+    menteeToBeSaved.setMemberTypes(List.of(MemberType.MENTEE));
 
-    var savedMentee = menteeRepository.create(menteeRegistration.mentee());
-    createMenteeRegistrations(menteeRegistration, cycle);
-    return savedMentee;
+    final var mentee = menteeRepository.create(menteeToBeSaved);
+    final var registration = menteeRegistration.withMentee(mentee);
+    return createMenteeRegistrations(registration, cycle);
   }
 
-  private void createMenteeRegistrations(
+  private Mentee createMenteeRegistrations(
       MenteeRegistration menteeRegistration, MentorshipCycleEntity cycle) {
     var applications =
         menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
     applications.forEach(registrationsRepo::create);
+
+    return menteeRepository.findById(menteeRegistration.mentee().getId()).orElseThrow();
   }
 
   /**

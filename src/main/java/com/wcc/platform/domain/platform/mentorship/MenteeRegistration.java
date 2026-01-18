@@ -42,4 +42,8 @@ public record MenteeRegistration(
   public MenteeRegistration withApplications(List<MenteeApplicationDto> applications) {
     return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
   }
+
+  public MenteeRegistration withMentee(Mentee mentee) {
+    return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
+  }
 }
