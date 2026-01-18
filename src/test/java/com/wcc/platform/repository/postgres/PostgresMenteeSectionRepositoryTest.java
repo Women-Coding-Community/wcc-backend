@@ -58,14 +58,13 @@ class PostgresMenteeSectionRepositoryTest {
             eq("Additional info UPDATED"),
             eq(mentorId));
 
-    verify(jdbc, times(1)).update(contains("DELETE FROM mentor_mentorship_types"), eq(mentorId));
+    verify(jdbc, times(1)).update(eq(DELETE_MENTOR_TYPES), eq(mentorId));
 
-    verify(jdbc, times(2))
-        .update(contains("INSERT INTO mentor_mentorship_types"), eq(mentorId), anyInt());
+    verify(jdbc, times(2)).update(eq(INSERT_MENTOR_TYPES), eq(mentorId), anyInt());
 
     verify(jdbc, times(2))
         .update(
-            contains("UPDATE mentor_availability"),
+            eq(UPDATE_AVAILABILITY),
             anyInt(), // month_num
             anyInt(), // hours
             eq(mentorId));
@@ -87,8 +86,7 @@ class PostgresMenteeSectionRepositoryTest {
   void testUpdateMenteeSectionDeletesOldMentorshipTypes() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
-    verify(jdbc)
-        .update(contains("DELETE FROM mentor_mentorship_types WHERE mentor_id = ?"), eq(mentorId));
+    verify(jdbc).update(eq(DELETE_MENTOR_TYPES), eq(mentorId));
   }
 
   @Test
@@ -97,15 +95,13 @@ class PostgresMenteeSectionRepositoryTest {
 
     verify(jdbc)
         .update(
-            contains("INSERT INTO mentor_mentorship_types"),
+            eq(INSERT_MENTOR_TYPES),
             eq(mentorId),
             eq(MentorshipType.LONG_TERM.getMentorshipTypeId()));
 
     verify(jdbc)
         .update(
-            contains("INSERT INTO mentor_mentorship_types"),
-            eq(mentorId),
-            eq(MentorshipType.AD_HOC.getMentorshipTypeId()));
+            eq(INSERT_MENTOR_TYPES), eq(mentorId), eq(MentorshipType.AD_HOC.getMentorshipTypeId()));
   }
 
   @Test
@@ -113,18 +109,10 @@ class PostgresMenteeSectionRepositoryTest {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc)
-        .update(
-            contains("UPDATE mentor_availability"),
-            eq(Month.JANUARY.getValue()),
-            eq(2),
-            eq(mentorId));
+        .update(contains(UPDATE_AVAILABILITY), eq(Month.JANUARY.getValue()), eq(2), eq(mentorId));
 
     verify(jdbc)
-        .update(
-            contains("UPDATE mentor_availability"),
-            eq(Month.FEBRUARY.getValue()),
-            eq(3),
-            eq(mentorId));
+        .update(contains(UPDATE_AVAILABILITY), eq(Month.FEBRUARY.getValue()), eq(3), eq(mentorId));
   }
 
   @Test
@@ -138,10 +126,9 @@ class PostgresMenteeSectionRepositoryTest {
 
     menteeSecRepo.updateMenteeSection(emptyTypesSection, mentorId);
 
-    verify(jdbc, times(1)).update(contains("DELETE FROM mentor_mentorship_types"), eq(mentorId));
+    verify(jdbc, times(1)).update(eq(DELETE_MENTOR_TYPES), eq(mentorId));
 
-    verify(jdbc, never())
-        .update(contains("INSERT INTO mentor_mentorship_types"), anyLong(), anyInt());
+    verify(jdbc, never()).update(eq(INSERT_MENTOR_TYPES), anyLong(), anyInt());
   }
 
   @Test
@@ -155,8 +142,7 @@ class PostgresMenteeSectionRepositoryTest {
 
     menteeSecRepo.updateMenteeSection(emptyAvailabilitySection, mentorId);
 
-    verify(jdbc, never())
-        .update(contains("UPDATE mentor_availability"), anyInt(), anyInt(), anyLong());
+    verify(jdbc, never()).update(contains(UPDATE_AVAILABILITY), anyInt(), anyInt(), anyLong());
   }
 
   @Test
@@ -164,10 +150,8 @@ class PostgresMenteeSectionRepositoryTest {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc).update(eq(UPDATE_MENTEE_SECTION), anyString(), anyString(), anyLong());
-    verify(jdbc).update(contains("DELETE FROM mentor_mentorship_types"), anyLong());
-    verify(jdbc, atLeastOnce())
-        .update(contains("INSERT INTO mentor_mentorship_types"), anyLong(), anyInt());
-    verify(jdbc, atLeastOnce())
-        .update(contains("UPDATE mentor_availability"), anyInt(), anyInt(), anyLong());
+    verify(jdbc).update(eq(DELETE_MENTOR_TYPES), anyLong());
+    verify(jdbc, atLeastOnce()).update(eq(INSERT_MENTOR_TYPES), anyLong(), anyInt());
+    verify(jdbc, atLeastOnce()).update(eq(UPDATE_AVAILABILITY), anyInt(), anyInt(), anyLong());
   }
 }
