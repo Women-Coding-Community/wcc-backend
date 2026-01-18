@@ -22,7 +22,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class PostgresMentorshipCycleRepository implements MentorshipCycleRepository {
-  private static final String DELETE_SQL = "DELETE FROM mentorship_cycles WHERE id = ?";
+  private static final String DELETE_SQL = "DELETE FROM mentorship_cycles WHERE cycle_id = ?";
 
   private static final String SELECT_ALL =
       "SELECT * FROM mentorship_cycles ORDER BY cycle_year DESC, cycle_month";
@@ -38,7 +38,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
       "SELECT * FROM mentorship_cycles WHERE cycle_year = ? AND mentorship_type = ?";
 
   private static final String SELECT_BY_STATUS =
-      "SELECT * FROM mentorship_cycles WHERE status = ? ORDER BY cycle_year DESC, cycle_month";
+      "SELECT * FROM mentorship_cycles WHERE status = ?::cycle_status ORDER BY cycle_year DESC, cycle_month";
 
   private static final String SELECT_BY_YEAR =
       "SELECT * FROM mentorship_cycles WHERE cycle_year = ? ORDER BY cycle_month";
@@ -48,7 +48,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
           + "(cycle_year, mentorship_type, cycle_month, registration_start_date, "
           + "registration_end_date, cycle_start_date, cycle_end_date, status, "
           + "max_mentees_per_mentor, description) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?::cycle_status, ?, ?) "
           + "RETURNING cycle_id";
 
   private static final String UPDATE_CYCLE =
@@ -56,7 +56,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
           + "cycle_year = ?, mentorship_type = ?, cycle_month = ?, "
           + "registration_start_date = ?, registration_end_date = ?, "
           + "cycle_start_date = ?, cycle_end_date = ?, "
-          + "status = ?, max_mentees_per_mentor = ?, "
+          + "status = ?::cycle_status, max_mentees_per_mentor = ?, "
           + "description = ?, updated_at = CURRENT_TIMESTAMP "
           + "WHERE cycle_id = ?";
 
