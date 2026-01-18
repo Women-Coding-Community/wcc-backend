@@ -52,7 +52,7 @@ public class SetupMentorFactories {
             .images(member.getImages())
             .profileStatus(ProfileStatus.ACTIVE)
             .bio("Mentor bio")
-            .spokenLanguages(List.of("English"))
+            .spokenLanguages(List.of("english", "spanish", "german"))
             .skills(
                 new Skills(
                     2,
