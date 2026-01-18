@@ -6,7 +6,6 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -33,7 +32,7 @@ public class Member {
   private String city;
   private String companyName;
   @NotNull private List<MemberType> memberTypes;
-  @NotEmpty private List<Image> images;
+  private List<Image> images;
   private List<SocialNetwork> network;
 
   public MemberDto toDto() {

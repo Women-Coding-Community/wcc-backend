@@ -6,6 +6,8 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,7 @@ public class PostgresMentorRepository implements MentorRepository {
   private final JdbcTemplate jdbc;
   private final MentorMapper mentorMapper;
   private final MemberMapper memberMapper;
+  private final Validator validator;
 
   @Override
   public Optional<Mentor> findByEmail(final String email) {
@@ -87,6 +90,7 @@ public class PostgresMentorRepository implements MentorRepository {
   @Override
   @Transactional
   public Mentor create(final Mentor mentor) {
+    validate(mentor);
     final Long memberId = memberMapper.addMember(mentor);
     addMentor(mentor, memberId);
     final var mentorAdded = findById(memberId);
@@ -96,9 +100,17 @@ public class PostgresMentorRepository implements MentorRepository {
   @Override
   @Transactional
   public Mentor update(final Long mentorId, final Mentor mentor) {
+    validate(mentor);
     memberMapper.updateMember(mentor, mentorId);
     updateMentor(mentor, mentorId);
     return findById(mentorId).orElse(null);
+  }
+
+  private void validate(final Mentor mentor) {
+    final var violations = validator.validate(mentor);
+    if (!violations.isEmpty()) {
+      throw new ConstraintViolationException(violations);
+    }
   }
 
   @Override

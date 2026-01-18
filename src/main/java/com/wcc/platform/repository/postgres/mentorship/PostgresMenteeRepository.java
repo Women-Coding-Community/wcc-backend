@@ -9,6 +9,8 @@ import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -44,10 +46,12 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private final JdbcTemplate jdbc;
   private final MenteeMapper menteeMapper;
   private final MemberMapper memberMapper;
+  private final Validator validator;
 
   @Override
   @Transactional
   public Mentee create(final Mentee mentee) {
+    validate(mentee);
     final Long memberId = memberMapper.addMember(mentee);
 
     insertMenteeDetails(mentee, memberId);
@@ -63,6 +67,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
   @Override
   @Transactional
   public Mentee update(final Long id, final Mentee mentee) {
+    validate(mentee);
     memberMapper.updateMember(mentee, id);
 
     updateMenteeDetails(mentee, id);
@@ -77,6 +82,13 @@ public class PostgresMenteeRepository implements MenteeRepository {
 
     return findById(id)
         .orElseThrow(() -> new MenteeNotSavedException("Unable to update mentee " + id));
+  }
+
+  private void validate(final Mentee mentee) {
+    final var violations = validator.validate(mentee);
+    if (!violations.isEmpty()) {
+      throw new ConstraintViolationException(violations);
+    }
   }
 
   @Override

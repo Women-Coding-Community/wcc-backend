@@ -6,7 +6,6 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.type.MemberType;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
@@ -29,19 +28,19 @@ public class Mentee extends Member {
   @Builder(builderMethodName = "menteeBuilder")
   public Mentee(
       final Long id,
-      @NotBlank final String fullName,
-      @NotBlank final String position,
-      @NotBlank @Email final String email,
-      @NotBlank final String slackDisplayName,
-      @NotNull final Country country,
-      @NotBlank final String city,
+      final String fullName,
+      final String position,
+      final String email,
+      final String slackDisplayName,
+      final Country country,
+      final String city,
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
-      @NotNull final ProfileStatus profileStatus,
-      final List<String> spokenLanguages, // TODO
-      @NotBlank final String bio,
-      @NotNull final Skills skills) {
+      final ProfileStatus profileStatus,
+      final List<String> spokenLanguages,
+      final String bio,
+      final Skills skills) {
     super(
         id,
         fullName,
