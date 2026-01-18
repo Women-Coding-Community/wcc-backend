@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/platform/v1/email")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Email", description = "Email service APIs for sending emails")
+@Tag(name = "Platform: Emails", description = "Email APIs for sending emails and templates")
 @RequiredArgsConstructor
 public class EmailController {
 

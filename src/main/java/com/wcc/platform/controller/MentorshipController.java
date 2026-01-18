@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Platform", description = "All platform Internal APIs")
+@Tag(name = "Platform: Mentors & Mentees", description = "All platform Internal APIs")
 @AllArgsConstructor
 @Validated
 public class MentorshipController {
