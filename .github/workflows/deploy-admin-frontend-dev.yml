@@ -1,11 +1,11 @@
-name: Deploy Frontend to Vercel
+name: "Dev Deploy to Vercel: Admin App Frontend"
 
 on:
   push:
     branches: [ main ]
     paths:
       - 'admin-wcc-app/**'
-      - '.github/workflows/deploy-frontend.yml'
+      - '.github/workflows/deploy-admin-frontend-dev.yml'
 
 jobs:
   deploy:
@@ -32,13 +32,12 @@ jobs:
           NEXT_PUBLIC_API_KEY: ${{ secrets.NEXT_PUBLIC_API_KEY }}
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
 
-      - name: Deploy to Vercel
+      - name: Deploy to Vercel (Dev)
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./admin-wcc-app
-          vercel-args: '--prod'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

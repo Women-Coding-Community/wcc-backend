@@ -459,7 +459,7 @@ Required for frontend (see `.env.example`):
 - `NEXT_PUBLIC_APP_URL` - Frontend URL (e.g., `https://dev-wcc-admin.vercel.app`)
 
 **GitHub Actions Deployment:**
-Automated deployment via `.github/workflows/deploy-frontend.yml`:
+Automated deployment via `.github/workflows/deploy-admin-frontend-dev.yml`:
 - Triggers on push to `main` branch when `admin-wcc-app/**` files change
 - Requires GitHub secrets:
   - `VERCEL_TOKEN` - Vercel API token
