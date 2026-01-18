@@ -1,7 +1,7 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
-import com.wcc.platform.domain.exceptions.DuplicateApplicationException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
@@ -152,7 +152,7 @@ public class MenteeWorkflowService {
 
   private void validateApplicationCanBeAccepted(final MenteeApplication application) {
     if (!application.canBeModified()) {
-      throw new IllegalStateException(
+      throw new ApplicationMenteeWorkflowException(
           "Application is in terminal state: " + application.getStatus());
     }
   }

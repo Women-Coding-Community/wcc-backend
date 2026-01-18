@@ -243,7 +243,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
           "bio": "I am a Junior Software Engineer passionate about backend development and eager to learn best practices in software architecture and cloud technologies. I graduated in Computer Science and have been working with Java and Spring Boot for the past 2 years. I am looking for guidance to advance my career and become a senior engineer."
         },
         "mentorshipType": "LONG_TERM",
-        "cycleYear": 2025,
+        "cycleYear": 2026,
         "applications": [
           {
             "menteeId": 1,

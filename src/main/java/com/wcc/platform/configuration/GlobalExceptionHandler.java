@@ -3,6 +3,7 @@ package com.wcc.platform.configuration;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
@@ -93,8 +94,9 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
-  /** Receive {@link ConstraintViolationException} and return {@link HttpStatus#NOT_ACCEPTABLE}. */
+  /** Receive Constraints violations and return {@link HttpStatus#NOT_ACCEPTABLE}. */
   @ExceptionHandler({
+    ApplicationMenteeWorkflowException.class,
     ConstraintViolationException.class,
     MentorshipCycleClosedException.class,
     MenteeRegistrationLimitException.class
