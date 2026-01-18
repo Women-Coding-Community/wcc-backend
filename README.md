@@ -344,9 +344,7 @@ avoid CORS issues.
 
 ### CI/CD and deploy (Vercel)
 
-A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-frontend-dev.yml` to deploy
-the
-frontend to Vercel Dev environment on pushes to `main`. Configure the following repository secrets:
+A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-frontend-dev.yml` to deploy the frontend to Vercel Dev environment on pushes to `main`. Configure the following repository secrets:
 
 - VERCEL_TOKEN
 - VERCEL_ORG_ID
