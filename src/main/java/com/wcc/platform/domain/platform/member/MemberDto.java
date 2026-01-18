@@ -3,7 +3,6 @@ package com.wcc.platform.domain.platform.member;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -40,12 +39,6 @@ public class MemberDto {
    * @return Updated member
    */
   public Member merge(final Member member) {
-    if (this instanceof MentorDto) {
-      throw new IllegalStateException(
-          "MemberDto.merge() should not be called on MentorDto. "
-              + "This is likely a programming error - ensure the correct type is used.");
-    }
-
     return member.toBuilder()
         .id(member.getId())
         .fullName(getFullName())
