@@ -1,10 +1,12 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this
+repository.
 
 ## Project Overview
 
 WCC (Women Coding Community) Platform Backend - A Spring Boot 3.2.5 application (Java 21) providing:
+
 - Public CMS API for website content (landing page, events, mentorship info)
 - Private platform API for managing members, mentors, and resources
 - Authentication system with API keys and JWT-like tokens
@@ -15,27 +17,32 @@ WCC (Women Coding Community) Platform Backend - A Spring Boot 3.2.5 application 
 ### Backend (Java/Gradle)
 
 **Build and run with Docker:**
+
 ```bash
 ./gradlew clean bootJar
 docker compose -f docker/docker-compose.yml up --build
 ```
 
 **Run tests:**
+
 ```bash
 ./gradlew test                    # Unit tests
 ./gradlew testIntegration         # Integration tests (requires Docker running)
 ```
 
 **Run locally from IDE:**
+
 1. Start PostgreSQL: `docker compose -f docker/docker-compose.yml up postgres`
 2. Run `PlatformApplication.java` from IntelliJ (right-click > Run/Debug)
 
 **Run with Gradle:**
+
 ```bash
 ./gradlew bootRun
 ```
 
 **Quality checks:**
+
 ```bash
 ./gradlew pmdMain pmdTest         # PMD static analysis
 ./gradlew test jacocoTestReport   # Code coverage (minimum 70% required)
@@ -43,6 +50,7 @@ docker compose -f docker/docker-compose.yml up --build
 ```
 
 **Local SonarQube analysis:**
+
 ```bash
 ./gradlew sonarQubeAnalysis -PlocalProfile
 ```
@@ -58,6 +66,7 @@ npm run build      # Production build
 ```
 
 **Default admin credentials (local):**
+
 - Email: `admin@wcc.dev`
 - Password: `wcc-admin`
 
@@ -86,6 +95,7 @@ The application uses a dual-source repository pattern with automatic fallback:
 - **Mechanism**: If database query returns empty, falls back to JSON files using `PageType` enum
 
 This allows:
+
 - Development with static content (no database setup needed initially)
 - Production with dynamic content managed via admin API
 - Version-controlled default content
@@ -97,12 +107,14 @@ Files in `init-data/`: `landingPage.json`, `eventsPage.json`, `mentorshipPage.js
 Two independent authentication mechanisms:
 
 **API Key Authentication** (`ApiKeyFilter`):
+
 - For public CMS API (`/api/cms/v1/**`) and platform API (`/api/platform/v1/**`)
 - Header: `X-API-KEY` or query param `api_key`
 - Configured via `security.api.key` property
 - Can be disabled: `security.enabled=false`
 
 **Token Authentication** (`TokenAuthFilter`):
+
 - For admin frontend authentication
 - Login: `POST /api/auth/login` with email/password
 - Returns token with expiry (configurable TTL)
@@ -115,15 +127,15 @@ Two independent authentication mechanisms:
 Interface: `FileStorageRepository` with two implementations (selected by `storage.type` property):
 
 - **Google Drive** (`storage.type=google-drive`):
-  - Requires `credentials.json` in resources (see `docs/google_drive_setup.md`)
-  - Uploads to configured folder IDs
-  - Sets public read permissions
-  - Returns shareable web links
+    - Requires `credentials.json` in resources (see `docs/google_drive_setup.md`)
+    - Uploads to configured folder IDs
+    - Sets public read permissions
+    - Returns shareable web links
 
 - **Local Filesystem** (`storage.type=local`):
-  - Stores in `file.storage.directory` path
-  - Returns file:// URLs
-  - Good for development
+    - Stores in `file.storage.directory` path
+    - Returns file:// URLs
+    - Good for development
 
 Used for: Member profile pictures, mentor resources, event images, general uploads
 
@@ -135,13 +147,14 @@ Spring Mail-based email service for sending transactional emails:
 - **Controller**: `EmailController` - REST endpoints at `/api/platform/v1/email`
 - **Configuration**: SMTP settings in `spring.mail.*` properties
 - **Features**:
-  - Single email sending (`POST /send`)
-  - Bulk email sending (`POST /send/bulk`)
-  - HTML and plain text support
-  - CC, BCC, and Reply-To support
-  - Comprehensive error handling
+    - Single email sending (`POST /send`)
+    - Bulk email sending (`POST /send/bulk`)
+    - HTML and plain text support
+    - CC, BCC, and Reply-To support
+    - Comprehensive error handling
 
 **Email Configuration (environment variables):**
+
 ```yaml
 spring.mail.host: smtp.gmail.com          # SMTP server host
 spring.mail.port: 587                      # SMTP port
@@ -152,6 +165,7 @@ spring.mail.properties.mail.smtp.starttls.enable: true
 ```
 
 **Usage example:**
+
 ```bash
 curl -X POST http://localhost:8080/api/platform/v1/email/send \
   -H "Content-Type: application/json" \
@@ -165,11 +179,13 @@ curl -X POST http://localhost:8080/api/platform/v1/email/send \
 ```
 
 **Domain models:**
+
 - `EmailRequest` - Input DTO for email requests
 - `EmailResponse` - Response containing success status and timestamp
 - `EmailSendException` - Custom exception for email failures
 
 **Testing:**
+
 - Unit tests: `EmailServiceTest`, `EmailControllerTest`
 - Integration tests: `EmailServiceIntegrationTest` (uses GreenMail mock SMTP server)
 
@@ -186,41 +202,43 @@ Database migrations managed by Flyway in `src/main/resources/db/migration/`
 ### Package Structure
 
 - `controller/` - REST endpoints, two main API namespaces:
-  - `/api/cms/v1/` - Public CMS content
-  - `/api/platform/v1/` - Internal CRUD operations
-  - `/api/auth/` - Authentication
+    - `/api/cms/v1/` - Public CMS content
+    - `/api/platform/v1/` - Internal CRUD operations
+    - `/api/auth/` - Authentication
 
 - `service/` - Business logic layer (CmsService, MemberService, AuthService, etc.)
 
 - `repository/` - Data access implementations
-  - `file/` - File-based repositories
-  - `spi/` - Repository interfaces
-  - `googledrive/` - Google Drive integration
+    - `file/` - File-based repositories
+    - `spi/` - Repository interfaces
+    - `googledrive/` - Google Drive integration
 
 - `domain/` - Domain models organized by concern:
-  - `cms/` - CMS page objects and attributes
-  - `platform/` - Core entities (Member, Mentor, Event, Programme)
-  - `auth/` - UserAccount, UserToken
-  - `email/` - Email request/response models
-  - `exceptions/` - Custom exceptions
-  - `resource/` - File storage models
+    - `cms/` - CMS page objects and attributes
+    - `platform/` - Core entities (Member, Mentor, Event, Programme)
+    - `auth/` - UserAccount, UserToken
+    - `email/` - Email request/response models
+    - `exceptions/` - Custom exceptions
+    - `resource/` - File storage models
 
 - `configuration/` - Spring configuration beans
-  - `SecurityConfig` - API key and token filters
-  - `CorsConfig` - CORS setup (origins from `app.cors.allowed-origins`)
-  - `DataSourceConfig` - Database configuration
-  - `ObjectMapperConfig` - Jackson customizations
+    - `SecurityConfig` - API key and token filters
+    - `CorsConfig` - CORS setup (origins from `app.cors.allowed-origins`)
+    - `DataSourceConfig` - Database configuration
+    - `ObjectMapperConfig` - Jackson customizations
 
 - `bootstrap/` - Application initialization and seeding
 
 ### Database Schema
 
 PostgreSQL with hybrid approach:
+
 - Structured tables for core entities (member, mentor, user_account, user_token)
 - JSONB columns for flexible CMS content (page table)
 - Flyway migrations for version control
 
 Key tables:
+
 - `page` - Dynamic CMS content (JSONB)
 - `member` - Community members with skills, links, images
 - `mentor` - Mentorship data with availability
@@ -231,6 +249,7 @@ Key tables:
 ## Configuration Patterns
 
 **Profile-based configuration:**
+
 - `application.yml` - Base configuration
 - `application-local.yml` - Local development
 - `application-flyio.yml` - Fly.io deployment
@@ -263,36 +282,43 @@ app.seed.admin.password: wcc-admin
 ## Testing Patterns
 
 **Test structure:**
+
 - `src/test/java` - Unit tests (Mockito, JUnit 5)
 - `src/testInt/java` - Integration tests (Testcontainers with PostgreSQL)
 
 **Integration tests require Docker daemon running:**
+
 ```bash
 docker ps  # Verify Docker is running before tests
 ```
 
 **Coverage requirements:**
+
 - Minimum 70% coverage enforced by `jacocoTestCoverageVerification`
 - Reports in `build/reports/jacoco/test/html/index.html`
 
 **Test naming and documentation:**
+
 - Use `@DisplayName` annotation with Given-When-Then format for all tests
 - Format: `"Given [precondition], when [action], then [expected outcome]"`
 - Do NOT use `// Given`, `// When`, `// Then` comments in test body
-- Test method names should be descriptive using `should` prefix (e.g., `shouldCreateCorsConfigurationSourceWithAllowedOrigins`)
+- Test method names should be descriptive using `should` prefix (e.g.,
+  `shouldCreateCorsConfigurationSourceWithAllowedOrigins`)
 - Use AssertJ assertions (`assertThat`) for all assertions
 
 Example:
+
 ```java
+
 @Test
 @DisplayName("Given allowed origins are configured, when creating CORS configuration source, then it should contain the allowed origins")
 void shouldCreateCorsConfigurationSourceWithAllowedOrigins() {
-  List<String> allowedOrigins = List.of("http://localhost:3000");
-  CorsConfig corsConfig = new CorsConfig(allowedOrigins);
+    List<String> allowedOrigins = List.of("http://localhost:3000");
+    CorsConfig corsConfig = new CorsConfig(allowedOrigins);
 
-  CorsConfigurationSource source = corsConfig.corsConfigurationSource();
+    CorsConfigurationSource source = corsConfig.corsConfigurationSource();
 
-  assertThat(source).isInstanceOf(UrlBasedCorsConfigurationSource.class);
+    assertThat(source).isInstanceOf(UrlBasedCorsConfigurationSource.class);
 }
 ```
 
@@ -306,13 +332,16 @@ void shouldCreateCorsConfigurationSourceWithAllowedOrigins() {
 - **OpenAPI/Swagger**: All endpoints documented, available at `/swagger-ui/index.html`
 - **Google Java Format**: Code formatting enforced (see README for IntelliJ setup)
 - **Configuration properties**: Avoid inline `@Value` annotations in services
-  - For single properties: Use constructor injection with `@Value` in the constructor parameter
-  - For multiple related properties: Create a `@ConfigurationProperties` class in the `configuration/` package
-  - Always prefer constructor injection over field injection for better testability and immutability
+    - For single properties: Use constructor injection with `@Value` in the constructor parameter
+    - For multiple related properties: Create a `@ConfigurationProperties` class in the
+      `configuration/` package
+    - Always prefer constructor injection over field injection for better testability and
+      immutability
 
 ## Common Development Tasks
 
 **Add a new CMS page:**
+
 1. Create JSON file in `src/main/resources/init-data/`
 2. Add enum value to `PageType` mapping to file path
 3. Create domain class in `domain.cms.pages/`
@@ -320,6 +349,7 @@ void shouldCreateCorsConfigurationSourceWithAllowedOrigins() {
 5. Service layer will automatically use hybrid repository pattern
 
 **Add a new database entity:**
+
 1. Create Flyway migration in `src/main/resources/db/migration/`
 2. Create domain class in `domain.platform/`
 3. Create repository interface extending `CrudRepository`
@@ -328,11 +358,13 @@ void shouldCreateCorsConfigurationSourceWithAllowedOrigins() {
 6. Add controller endpoints
 
 **Modify authentication:**
+
 - API key: Update `SecurityConfig` and `ApiKeyFilter`
 - Token auth: Update `TokenAuthFilter` and `AuthService`
 - Token TTL: Change `security.token.ttl-minutes` property
 
 **Add file upload endpoint:**
+
 1. Inject `FileStorageRepository` in service
 2. Use `uploadFile(fileName, inputStream, folderId)` method
 3. Store returned `FileStored` object (contains URI, metadata)
@@ -343,6 +375,7 @@ void shouldCreateCorsConfigurationSourceWithAllowedOrigins() {
 ### Backend Deployment (Fly.io)
 
 **Deploy to Fly.io:**
+
 ```bash
 # Build the JAR
 ./gradlew clean bootJar
@@ -361,6 +394,7 @@ fly secrets list -a wcc-backend
 ```
 
 **Manage Fly.io Environment Variables:**
+
 ```bash
 # Set a new secret
 fly secrets set SECURITY_API_KEY=your-api-key -a wcc-backend
@@ -379,13 +413,15 @@ fly secrets unset SECRET_NAME -a wcc-backend
 
 **Important Fly.io Secrets:**
 Required environment variables (see `application-flyio.yml`):
+
 - `SPRING_DATASOURCE_URL` - PostgreSQL connection URL
 - `SPRING_DATASOURCE_USERNAME` - Database username
 - `SPRING_DATASOURCE_PASSWORD` - Database password
 - `SPRING_DATASOURCE_DRIVER_CLASS_NAME` - `org.postgresql.Driver`
 - `SECURITY_API_KEY` - API key for authentication
 - `SECURITY_ENABLED` - `true` or `false`
-- `APP_CORS_ALLOWED_ORIGINS` - Comma-separated frontend URLs (e.g., `https://dev-wcc-admin.vercel.app,https://prod-wcc-admin.vercel.app`)
+- `APP_CORS_ALLOWED_ORIGINS` - Comma-separated frontend URLs (e.g.,
+  `https://dev-wcc-admin.vercel.app,https://prod-wcc-admin.vercel.app`)
 - `APP_SEED_ADMIN_EMAIL` - Admin user email
 - `APP_SEED_ADMIN_PASSWORD` - Admin user password
 - `APP_SEED_ADMIN_ENABLED` - `true` or `false`
@@ -393,6 +429,7 @@ Required environment variables (see `application-flyio.yml`):
 - `SPRING_FLYWAY_CLEAN_DISABLED` - `true` for production safety
 
 **Common Fly.io Commands:**
+
 ```bash
 fly status -a wcc-backend          # Check app status
 fly logs -a wcc-backend            # View real-time logs
@@ -403,12 +440,14 @@ fly postgres connect -a <db-name>  # Connect to PostgreSQL database
 ### Frontend Deployment (Vercel)
 
 **Prerequisites:**
+
 - Vercel CLI installed: `npm install -g vercel`
 - Logged in: `vercel login`
 
 **Deploy/Redeploy Frontend:**
 
 **Option 1: Redeploy existing deployment (recommended for updates)**
+
 ```bash
 # From the admin-wcc-app directory
 cd admin-wcc-app
@@ -425,6 +464,7 @@ echo "y" | vercel redeploy https://dev-wcc-admin-dd1zukrcf-women-coding-communit
 ```
 
 **Option 2: Fresh deployment**
+
 ```bash
 # From the project root directory (NOT admin-wcc-app)
 cd /path/to/wcc-backend
@@ -434,6 +474,7 @@ vercel --prod --yes
 ```
 
 **Manage Vercel Environment Variables:**
+
 ```bash
 # List all environment variables
 vercel env ls --cwd admin-wcc-app
@@ -454,22 +495,25 @@ vercel env pull --cwd admin-wcc-app
 
 **Important Vercel Environment Variables:**
 Required for frontend (see `.env.example`):
+
 - `NEXT_PUBLIC_API_BASE` - Backend URL (e.g., `https://wcc-backend.fly.dev`)
 - `NEXT_PUBLIC_API_KEY` - API key matching backend's `SECURITY_API_KEY`
 - `NEXT_PUBLIC_APP_URL` - Frontend URL (e.g., `https://dev-wcc-admin.vercel.app`)
 
 **GitHub Actions Deployment:**
-Automated deployment via `.github/workflows/deploy-frontend.yml`:
+Automated deployment via `.github/workflows/deploy-admin-frontend-dev.yml`:
+
 - Triggers on push to `main` branch when `admin-wcc-app/**` files change
 - Requires GitHub secrets:
-  - `VERCEL_TOKEN` - Vercel API token
-  - `VERCEL_ORG_ID` - Vercel organization ID
-  - `VERCEL_PROJECT_ID` - Vercel project ID
-  - `NEXT_PUBLIC_API_BASE` - Backend URL
-  - `NEXT_PUBLIC_API_KEY` - API key
-  - `NEXT_PUBLIC_APP_URL` - Frontend URL
+    - `VERCEL_TOKEN` - Vercel API token
+    - `VERCEL_ORG_ID` - Vercel organization ID
+    - `VERCEL_PROJECT_ID` - Vercel project ID
+    - `NEXT_PUBLIC_API_BASE` - Backend URL
+    - `NEXT_PUBLIC_API_KEY` - API key
+    - `NEXT_PUBLIC_APP_URL` - Frontend URL
 
 **Verify Deployment:**
+
 ```bash
 # Check deployment status
 vercel inspect <deployment-url> --cwd admin-wcc-app
@@ -484,6 +528,7 @@ curl https://dev-wcc-admin.vercel.app/api/health
 ### Local with Docker
 
 For local development with Docker:
+
 ```bash
 # Build and run both backend and database
 ./gradlew clean bootJar
@@ -496,6 +541,7 @@ docker compose -f docker/docker-compose.yml up postgres
 ### Deployment Checklist
 
 **Before deploying backend:**
+
 1. ✅ Run tests: `./gradlew test testIntegration`
 2. ✅ Check code quality: `./gradlew check`
 3. ✅ Build JAR: `./gradlew clean bootJar`
@@ -503,6 +549,7 @@ docker compose -f docker/docker-compose.yml up postgres
 5. ✅ Update CORS origins if frontend URL changed
 
 **Before deploying frontend:**
+
 1. ✅ Run tests: `cd admin-wcc-app && npm test`
 2. ✅ Build locally: `npm run build`
 3. ✅ Verify Vercel env vars match backend configuration
@@ -510,6 +557,7 @@ docker compose -f docker/docker-compose.yml up postgres
 5. ✅ Ensure backend CORS includes frontend URL
 
 **After deployment:**
+
 1. ✅ Check logs for errors: `fly logs -a wcc-backend` or Vercel dashboard
 2. ✅ Test login at frontend URL
 3. ✅ Verify API connectivity from frontend to backend
@@ -518,11 +566,13 @@ docker compose -f docker/docker-compose.yml up postgres
 ### Troubleshooting Deployments
 
 **Backend issues:**
+
 - **CORS errors**: Update `APP_CORS_ALLOWED_ORIGINS` in Fly.io secrets
 - **Database connection**: Check `SPRING_DATASOURCE_*` secrets
 - **500 errors**: Check `fly logs -a wcc-backend` for stack traces
 
 **Frontend issues:**
+
 - **Can't connect to backend**: Verify `NEXT_PUBLIC_API_BASE` is correct
 - **401 Unauthorized**: Check `NEXT_PUBLIC_API_KEY` matches backend
 - **Deployment failed**: Check build logs in Vercel dashboard
@@ -541,6 +591,7 @@ See `docs/resource_api.md` for detailed resource API documentation.
 **IMPORTANT: DO NOT include AI attribution in commit messages**
 
 When creating commits:
+
 - ❌ **NEVER** add "Generated with Claude Code" or similar AI attribution lines
 - ❌ **NEVER** add "Co-Authored-By: Claude" or AI co-author tags
 - ✅ Use standard conventional commit format: `feat:`, `fix:`, `docs:`, etc.
@@ -548,6 +599,7 @@ When creating commits:
 - ✅ Follow the existing commit style in the repository
 
 **Example of correct commit message:**
+
 ```
 feat: Add mentorship resources page endpoint
 
