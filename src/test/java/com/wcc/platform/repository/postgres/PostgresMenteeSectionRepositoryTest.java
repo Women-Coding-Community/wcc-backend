@@ -47,7 +47,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_Success() {
+  void testUpdateMenteeSectionSuccess() {
 
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
@@ -72,7 +72,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_UpdatesTextFields() {
+  void testUpdateMenteeSectionUpdatesTextFields() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc)
@@ -84,7 +84,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_DeletesOldMentorshipTypes() {
+  void testUpdateMenteeSectionDeletesOldMentorshipTypes() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc)
@@ -92,7 +92,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_InsertsAllMentorshipTypes() {
+  void testUpdateMenteeSectionInsertsAllMentorshipTypes() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc)
@@ -109,7 +109,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_UpdatesAllAvailability() {
+  void testUpdateMenteeSectionUpdatesAllAvailability() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc)
@@ -128,7 +128,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_WithEmptyMentorshipTypes() {
+  void testUpdateMenteeSectionWithEmptyMentorshipTypes() {
     MenteeSection emptyTypesSection =
         new MenteeSection(
             List.of(), // Empty mentorship types
@@ -145,7 +145,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_WithEmptyAvailability() {
+  void testUpdateMenteeSectionWithEmptyAvailability() {
     MenteeSection emptyAvailabilitySection =
         new MenteeSection(
             List.of(MentorshipType.AD_HOC),
@@ -160,7 +160,7 @@ class PostgresMenteeSectionRepositoryTest {
   }
 
   @Test
-  void testUpdateMenteeSection_VerifiesAllSqlStatements() {
+  void testUpdateMenteeSectionVerifiesAllSqlStatements() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc).update(eq(UPDATE_MENTEE_SECTION), anyString(), anyString(), anyLong());
