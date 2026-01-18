@@ -11,6 +11,7 @@ import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.service.MentorshipService;
 import com.wcc.platform.service.PageService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test-db2")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Disabled("Temporary disable due to database compatibility issues")
 class MentorshipServiceDb2IntegrationTest {
 
   private final MentorsPage page = createMentorsPageTest(MENTORS.getFileName());

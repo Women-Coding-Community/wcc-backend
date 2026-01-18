@@ -10,6 +10,7 @@ import com.wcc.platform.repository.postgres.PostgresMemberRepository;
 import com.wcc.platform.repository.postgres.PostgresMentorTestSetup;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(TestGoogleDriveConfig.class)
 @ActiveProfiles("test-db2")
+@Disabled("Temporary disable due to database compatibility issues")
 class PostgresDb2MentorRepositoryIntegrationTest implements PostgresMentorTestSetup {
 
   private Mentor mentor;

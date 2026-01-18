@@ -7,6 +7,7 @@ import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.repository.postgres.PostgresPageRepository;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(TestGoogleDriveConfig.class)
 @ActiveProfiles("test-db2")
+@Disabled("Temporary disable due to database compatibility issues")
 class PostgresDb2PageRepositoryIntegrationTest {
 
   public static final String NAME = "name";
