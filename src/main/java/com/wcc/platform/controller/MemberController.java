@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -85,7 +86,7 @@ public class MemberController {
   @PostMapping("/members")
   @Operation(summary = "API to submit member registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Member> createMember(@RequestBody final Member member) {
+  public ResponseEntity<Member> createMember(@Valid @RequestBody final Member member) {
     return new ResponseEntity<>(memberService.createMember(member), HttpStatus.CREATED);
   }
 
@@ -97,7 +98,7 @@ public class MemberController {
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(@RequestBody final Mentor mentor) {
+  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final Mentor mentor) {
     return new ResponseEntity<>(mentorshipService.create(mentor), HttpStatus.CREATED);
   }
 
@@ -112,7 +113,7 @@ public class MemberController {
   @Operation(summary = "API to update mentor data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMentor(
-      @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
+      @PathVariable final Long mentorId, @Valid @RequestBody final MentorDto mentorDto) {
     return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
   }
 
@@ -124,7 +125,7 @@ public class MemberController {
   @PostMapping("/mentees")
   @Operation(summary = "API to submit mentee registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentee> createMentee(@RequestBody final Mentee mentee) {
+  public ResponseEntity<Mentee> createMentee(@Valid @RequestBody final Mentee mentee) {
     return new ResponseEntity<>(menteeService.create(mentee), HttpStatus.CREATED);
   }
 
@@ -139,7 +140,7 @@ public class MemberController {
   @Operation(summary = "API to update member data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
-      @PathVariable final Long memberId, @RequestBody final MemberDto memberDto) {
+      @PathVariable final Long memberId, @Valid @RequestBody final MemberDto memberDto) {
     return new ResponseEntity<>(memberService.updateMember(memberId, memberDto), HttpStatus.OK);
   }
 
