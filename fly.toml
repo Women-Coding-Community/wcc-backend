@@ -1,25 +1,23 @@
-# fly.toml app configuration file generated for wcc-backend on 2025-09-21T19:00:40+02:00
+# fly.toml app configuration file generated for wcc-backend-damp-sea-3383 on 2026-01-18T19:15:45Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'wcc-backend'
-primary_region = 'lhr'
+app = 'wcc-backend-damp-sea-3383'
+primary_region = 'iad'
 
 [build]
-
-[env]
-  SPRING_PROFILES_ACTIVE = "flyio"
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = 'off'
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
 
 [[vm]]
-  memory = '512mb'
+  memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 1024
