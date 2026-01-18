@@ -1,9 +1,9 @@
-package com.wcc.platform.repository;
+package com.wcc.platform.repository.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
-import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
+import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Integration tests for MentorshipMatchRepository with PostgreSQL. Tests match queries and counting
  * operations.
  */
-class MentorshipMatchRepositoryIntegrationTest extends DefaultDatabaseSetup {
+class PostgresMentorshipMatchRepositoryIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private MentorshipMatchRepository matchRepository;
 
