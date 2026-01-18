@@ -20,7 +20,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 /** Represents the mentor members of the community. */
 @Getter
@@ -74,7 +73,7 @@ public class Mentor extends Member {
 
     this.profileStatus = profileStatus;
     this.skills = skills;
-    this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
+    this.spokenLanguages = spokenLanguages != null ? spokenLanguages : List.of();
     this.bio = bio;
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
