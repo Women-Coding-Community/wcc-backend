@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.wcc.platform.configuration.MentorshipConfig;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
-import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitExceededException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
@@ -121,9 +121,9 @@ class MenteeServiceTest {
         .thenReturn(Optional.of(cycle));
     when(applicationRepository.countMenteeApplications(1L, 1L)).thenReturn(5L);
 
-    MenteeRegistrationLimitExceededException exception =
+    MenteeRegistrationLimitException exception =
         assertThrows(
-            MenteeRegistrationLimitExceededException.class,
+            MenteeRegistrationLimitException.class,
             () -> menteeService.saveRegistration(registration));
 
     assertThat(exception.getMessage()).contains("has already reached the limit of 5 registrations");

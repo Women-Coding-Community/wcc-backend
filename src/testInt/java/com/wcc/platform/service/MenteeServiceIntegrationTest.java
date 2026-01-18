@@ -3,10 +3,8 @@ package com.wcc.platform.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.wcc.platform.configuration.MentorshipConfig;
-import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
-import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitExceededException;
-import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;

@@ -2,7 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.MentorshipConfig;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
-import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitExceededException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;

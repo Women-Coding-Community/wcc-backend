@@ -11,7 +11,7 @@ import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
-import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitExceededException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     ConstraintViolationException.class,
     MentorshipCycleClosedException.class,
-    MenteeRegistrationLimitExceededException.class
+    MenteeRegistrationLimitException.class
   })
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   public ResponseEntity<ErrorDetails> handleNotAcceptableError(
