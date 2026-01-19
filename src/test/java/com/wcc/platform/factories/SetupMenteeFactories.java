@@ -14,40 +14,40 @@ import java.util.List;
 
 /** Mentee test factories. */
 public class SetupMenteeFactories {
-    /** Mentee Builder. */
-    public static Mentee createMenteeTest() {
-        final Member member = createMemberTest(MemberType.MENTEE);
-        return createMenteeTest(1L, member.getFullName(), member.getEmail());
+  /** Mentee Builder. */
+  public static Mentee createMenteeTest() {
+    final Member member = createMemberTest(MemberType.MENTEE);
+    return createMenteeTest(1L, member.getFullName(), member.getEmail());
+  }
+
+  /** Test factory for a Mentee. */
+  public static Mentee createMenteeTest(
+      final Long menteeId, final String name, final String email) {
+    final Member member = createMemberTest(MemberType.MENTEE);
+
+    Mentee.MenteeBuilder menteeBuilder =
+        Mentee.menteeBuilder()
+            .fullName(name)
+            .position(member.getPosition())
+            .email(email)
+            .companyName(member.getCompanyName())
+            .slackDisplayName(member.getSlackDisplayName())
+            .country(member.getCountry())
+            .city(member.getCity())
+            .images(member.getImages())
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("Mentee bio")
+            .spokenLanguages(List.of("English"))
+            .skills(
+                new Skills(
+                    2,
+                    List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
+                    List.of(Languages.JAVASCRIPT),
+                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)));
+    if (menteeId != null) {
+      menteeBuilder.id(menteeId);
     }
 
-    /** Test factory for a Mentee. */
-    public static Mentee createMenteeTest(
-        final Long menteeId, final String name, final String email) {
-        final Member member = createMemberTest(MemberType.MENTEE);
-
-        Mentee.MenteeBuilder menteeBuilder =
-            Mentee.menteeBuilder()
-                .fullName(name)
-                .position(member.getPosition())
-                .email(email)
-                .companyName(member.getCompanyName())
-                .slackDisplayName(member.getSlackDisplayName())
-                .country(member.getCountry())
-                .city(member.getCity())
-                .images(member.getImages())
-                .profileStatus(ProfileStatus.ACTIVE)
-                .bio("Mentee bio")
-                .spokenLanguages(List.of("English"))
-                .skills(
-                    new Skills(
-                        2,
-                        List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                        List.of(Languages.JAVASCRIPT),
-                        List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)));
-        if (menteeId != null) {
-            menteeBuilder.id(menteeId);
-        }
-
-        return menteeBuilder.build();
-    }
+    return menteeBuilder.build();
+  }
 }
