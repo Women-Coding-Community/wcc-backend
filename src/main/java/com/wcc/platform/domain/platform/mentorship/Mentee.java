@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
-  @NotNull private MentorshipType prevMentorshipType;
+  private MentorshipType prevMentorshipType;
   @NotNull private MentorshipType mentorshipType;
   @NotNull private ProfileStatus profileStatus;
   @NotNull private Skills skills;
