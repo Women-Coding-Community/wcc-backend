@@ -30,7 +30,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
   private static final String SELECT_BY_ID = "SELECT * FROM mentorship_cycles WHERE cycle_id = ?";
 
   private static final String SELECT_OPEN_CYCLE =
-      "SELECT * FROM mentorship_cycles WHERE status = 'open' "
+      "SELECT * FROM mentorship_cycles WHERE status = 2 "
           + "AND CURRENT_DATE BETWEEN registration_start_date AND registration_end_date "
           + "LIMIT 1";
 
@@ -38,7 +38,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
       "SELECT * FROM mentorship_cycles WHERE cycle_year = ? AND mentorship_type = ?";
 
   private static final String SELECT_BY_STATUS =
-      "SELECT * FROM mentorship_cycles WHERE status = ?::cycle_status ORDER BY cycle_year DESC, cycle_month";
+      "SELECT * FROM mentorship_cycles WHERE status = ? ORDER BY cycle_year DESC, cycle_month";
 
   private static final String SELECT_BY_YEAR =
       "SELECT * FROM mentorship_cycles WHERE cycle_year = ? ORDER BY cycle_month";
@@ -48,7 +48,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
           + "(cycle_year, mentorship_type, cycle_month, registration_start_date, "
           + "registration_end_date, cycle_start_date, cycle_end_date, status, "
           + "max_mentees_per_mentor, description) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?::cycle_status, ?, ?) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
           + "RETURNING cycle_id";
 
   private static final String UPDATE_CYCLE =
@@ -56,7 +56,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
           + "cycle_year = ?, mentorship_type = ?, cycle_month = ?, "
           + "registration_start_date = ?, registration_end_date = ?, "
           + "cycle_start_date = ?, cycle_end_date = ?, "
-          + "status = ?::cycle_status, max_mentees_per_mentor = ?, "
+          + "status = ?, max_mentees_per_mentor = ?, "
           + "description = ?, updated_at = CURRENT_TIMESTAMP "
           + "WHERE cycle_id = ?";
 
@@ -75,7 +75,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
             entity.getRegistrationEndDate(),
             entity.getCycleStartDate(),
             entity.getCycleEndDate(),
-            entity.getStatus().getValue(),
+            entity.getStatus().getStatusId(),
             entity.getMaxMenteesPerMentor(),
             entity.getDescription());
 
@@ -98,7 +98,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
             entity.getRegistrationEndDate(),
             entity.getCycleStartDate(),
             entity.getCycleEndDate(),
-            entity.getStatus().getValue(),
+            entity.getStatus().getStatusId(),
             entity.getMaxMenteesPerMentor(),
             entity.getDescription(),
             id);
@@ -140,7 +140,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
 
   @Override
   public List<MentorshipCycleEntity> findByStatus(final CycleStatus status) {
-    return jdbc.query(SELECT_BY_STATUS, (rs, rowNum) -> mapRow(rs), status.getValue());
+    return jdbc.query(SELECT_BY_STATUS, (rs, rowNum) -> mapRow(rs), status.getStatusId());
   }
 
   @Override
@@ -166,7 +166,7 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
             rs.getDate("cycle_end_date") != null
                 ? rs.getDate("cycle_end_date").toLocalDate()
                 : null)
-        .status(CycleStatus.fromValue(rs.getString("status")))
+        .status(CycleStatus.fromId(rs.getInt("status")))
         .maxMenteesPerMentor(rs.getInt("max_mentees_per_mentor"))
         .description(rs.getString("description"))
         .createdAt(rs.getTimestamp("created_at").toInstant().atZone(ZoneId.systemDefault()))
