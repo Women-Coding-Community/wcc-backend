@@ -29,8 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class Mentor extends Member {
 
-  @NotNull private ProfileStatus profileStatus;
-  @NotNull private Skills skills;
+  private @NotNull ProfileStatus profileStatus;
+  private @NotNull Skills skills;
   private List<String> spokenLanguages;
   @NotBlank private String bio;
   @NotNull private MenteeSection menteeSection;

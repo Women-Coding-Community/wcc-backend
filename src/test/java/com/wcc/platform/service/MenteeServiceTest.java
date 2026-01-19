@@ -5,21 +5,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.configuration.MentorshipConfig;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
+import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.repository.MemberRepository;
+import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,171 +37,276 @@ import org.mockito.MockitoAnnotations;
 
 class MenteeServiceTest {
 
-    @Mock private MenteeRepository menteeRepository;
-    @Mock private MentorshipService mentorshipService;
-    @Mock private MentorshipConfig mentorshipConfig;
-    @Mock private MentorshipConfig.Validation validation;
+  
+  @Mock private MenteeApplicationRepository applicationRepository;
+  @Mock private MenteeRepository menteeRepository;
+  @Mock private MentorshipService mentorshipService;
+  @Mock private MentorshipConfig mentorshipConfig;
+  @Mock private MentorshipConfig.Validation validation;
+  @Mock private MentorshipCycleRepository cycleRepository;
+  @Mock private MemberRepository memberRepository;
 
-    private MenteeService menteeService;
+  private MenteeService menteeService;
+  private Mentee mentee;
 
-    private Mentee mentee;
+  @BeforeEach
+  void setUp() {
+    MockitoAnnotations.openMocks(this);
+    when(mentorshipConfig.getValidation()).thenReturn(validation);
+    when(validation.isEnabled()).thenReturn(true);
+    menteeService =
+        new MenteeService(
+            mentorshipService,
+            mentorshipConfig,
+            cycleRepository,
+            applicationRepository,
+            menteeRepository,
+            memberRepository);
+    mentee = createMenteeTest();
+  }
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(mentorshipConfig.getValidation()).thenReturn(validation);
-        when(validation.isEnabled()).thenReturn(true);
-        menteeService = new MenteeService(menteeRepository, mentorshipService, mentorshipConfig);
-        mentee = createMenteeTest();
-    }
+  @Test
+  @DisplayName("Given Mentee Registration When saved Then should return mentee")
+  void testSaveRegistrationMentee() {
+    var currentYear = java.time.Year.now();
+    var registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
 
-    @Test
-    @DisplayName("Given Mentee When created Then should return created mentee")
-    void testCreateMentee() {
-        Mentee validMentee = Mentee.menteeBuilder()
-            .id(1L)
-            .fullName("Test Mentee")
-            .email("test@example.com")
-            .position("Software Engineer")
-            .country(mentee.getCountry())
-            .city("Test City")
-            .companyName("Test Company")
-            .images(mentee.getImages())
-            .profileStatus(ProfileStatus.ACTIVE)
-            .bio("Test bio")
-            .spokenLanguages(List.of("English"))
-            .skills(mentee.getSkills())
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
             .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
             .build();
 
-        MentorshipCycle openCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
-        when(mentorshipService.getCurrentCycle()).thenReturn(openCycle);
-        when(menteeRepository.create(any(Mentee.class))).thenReturn(validMentee);
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(menteeRepository.create(any(Mentee.class))).thenReturn(mentee);
+    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
-        Member result = menteeService.create(validMentee);
+    Mentee result = menteeService.saveRegistration(registration);
 
-        assertEquals(validMentee, result);
-        verify(menteeRepository).create(validMentee);
-    }
+    assertEquals(mentee, result);
+    verify(memberRepository).findByEmail(anyString());
+    verify(menteeRepository).create(any(Mentee.class));
+    verify(applicationRepository).create(any());
+  }
 
-    @Test
-    @DisplayName("Given has mentees When getting all mentees Then should return all")
-    void testGetAllMentees() {
-        List<Mentee> mentees = List.of(mentee);
-        when(menteeRepository.getAll()).thenReturn(mentees);
+  @Test
+  @DisplayName(
+      "Given mentee exceeds registration limit When creating mentee Then should throw MenteeRegistrationLimitExceededException")
+  void shouldThrowExceptionWhenRegistrationLimitExceeded() {
+    var currentYear = java.time.Year.now();
+    Mentee menteeWithId =
+        Mentee.menteeBuilder()
+            .id(1L)
+            .fullName("Mentee")
+            .email("a@b.com")
+            .position("pos")
+            .slackDisplayName("slack")
+            .country(mentee.getCountry())
+            .city("city")
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("bio")
+            .skills(mentee.getSkills())
+            .spokenLanguages(List.of("English"))
+            .build();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            menteeWithId,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
 
-        List<Mentee> result = menteeService.getAllMentees();
+    MentorshipCycleEntity cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
 
-        assertEquals(mentees, result);
-        verify(menteeRepository).getAll();
-    }
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(1L, 1L)).thenReturn(5L);
 
-    @Test
-    @DisplayName("Given closed cycle When creating mentee Then should throw MentorshipCycleClosedException")
-    void shouldThrowExceptionWhenCycleIsClosed() {
-        when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
+    MenteeRegistrationLimitException exception =
+        assertThrows(
+            MenteeRegistrationLimitException.class,
+            () -> menteeService.saveRegistration(registration));
 
-        MentorshipCycleClosedException exception = assertThrows(
+    assertThat(exception.getMessage()).contains("has already reached the limit of 5 registrations");
+  }
+
+  @Test
+  @DisplayName("Given has mentees When getting all mentees Then should return all")
+  void testGetAllMentees() {
+    List<Mentee> mentees = List.of(mentee);
+    when(menteeRepository.getAll()).thenReturn(mentees);
+
+    List<Mentee> result = menteeService.getAllMentees();
+
+    assertEquals(mentees, result);
+    verify(menteeRepository).getAll();
+  }
+
+  @Test
+  @DisplayName(
+      "Given closed cycle When creating mentee Then should throw MentorshipCycleClosedException")
+  void shouldThrowExceptionWhenCycleIsClosed() {
+    var currentYear = java.time.Year.now();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
+    when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
+
+    MentorshipCycleClosedException exception =
+        assertThrows(
             MentorshipCycleClosedException.class,
-            () -> menteeService.create(mentee)
-        );
+            () -> menteeService.saveRegistration(registration));
 
-        assertThat(exception.getMessage())
-            .contains("Mentorship cycle is currently closed");
-    }
+    assertThat(exception.getMessage()).contains("Mentorship cycle is currently closed");
+  }
 
-    @Test
-    @DisplayName("Given mentee type does not match cycle type When creating mentee Then should throw InvalidMentorshipTypeException")
-    void shouldThrowExceptionWhenMenteeTypeDoesNotMatchCycleType() {
-        Mentee adHocMentee = Mentee.menteeBuilder()
-            .id(1L)
-            .fullName("Test Mentee")
-            .email("test@example.com")
-            .position("Software Engineer")
-            .country(mentee.getCountry())
-            .city("Test City")
-            .companyName("Test Company")
-            .images(mentee.getImages())
-            .profileStatus(ProfileStatus.ACTIVE)
-            .bio("Test bio")
-            .spokenLanguages(List.of("English"))
-            .skills(mentee.getSkills())
-            .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
-            .build();
+  @Test
+  @DisplayName(
+      "Given mentee type does not match cycle type When creating mentee Then should throw InvalidMentorshipTypeException")
+  void shouldThrowExceptionWhenMenteeTypeDoesNotMatchCycleType() {
+    var currentYear = java.time.Year.now();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
 
-        MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
-        when(mentorshipService.getCurrentCycle()).thenReturn(longTermCycle);
+    MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+    when(mentorshipService.getCurrentCycle()).thenReturn(longTermCycle);
 
-        InvalidMentorshipTypeException exception = assertThrows(
+    InvalidMentorshipTypeException exception =
+        assertThrows(
             InvalidMentorshipTypeException.class,
-            () -> menteeService.create(adHocMentee)
-        );
+            () -> menteeService.saveRegistration(registration));
 
-        assertThat(exception.getMessage())
-            .contains("Mentee mentorship type 'Ad-Hoc' does not match current cycle type 'Long-Term'");
-    }
+    assertThat(exception.getMessage())
+        .contains("Mentee mentorship type 'Ad-Hoc' does not match current cycle type 'Long-Term'");
+  }
 
-    @Test
-    @DisplayName("Given valid cycle and matching mentee type When creating mentee Then should create successfully")
-    void shouldCreateMenteeWhenCycleIsOpenAndTypeMatches() {
-        Mentee adHocMentee = Mentee.menteeBuilder()
-            .id(1L)
-            .fullName("Test Mentee")
-            .email("test@example.com")
-            .position("Software Engineer")
-            .country(mentee.getCountry())
-            .city("Test City")
-            .companyName("Test Company")
-            .images(mentee.getImages())
-            .profileStatus(ProfileStatus.ACTIVE)
-            .bio("Test bio")
-            .spokenLanguages(List.of("English"))
-            .skills(mentee.getSkills())
+  @Test
+  @DisplayName(
+      "Given valid cycle and matching mentee type When creating mentee Then should create successfully")
+  void shouldSaveRegistrationMenteeWhenCycleIsOpenAndTypeMatches() {
+    var currentYear = java.time.Year.now();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
+
+    MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
+    when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(menteeRepository.create(any(Mentee.class))).thenReturn(mentee);
+    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+
+    Member result = menteeService.saveRegistration(registration);
+
+    assertThat(result).isEqualTo(mentee);
+    verify(menteeRepository).create(any(Mentee.class));
+    verify(mentorshipService).getCurrentCycle();
+  }
+
+  @Test
+  @DisplayName(
+      "Given validation is disabled When creating mentee Then should skip validation and create successfully")
+  void shouldSkipValidationWhenValidationIsDisabled() {
+    var currentYear = java.time.Year.now();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
+    when(validation.isEnabled()).thenReturn(false);
+
+    when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
+    when(mentorshipService.getCurrentCycle())
+        .thenReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.JANUARY));
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(menteeRepository.create(any())).thenReturn(mentee);
+    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+
+    Member result = menteeService.saveRegistration(registration);
+
+    assertThat(result).isEqualTo(mentee);
+    verify(menteeRepository).create(any(Mentee.class));
+    verify(mentorshipService).getCurrentCycle();
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with email, when creating mentee with same email, then it should use existing member")
+  void shouldUseExistingMemberWhenMenteeEmailAlreadyExists() {
+    var currentYear = java.time.Year.now();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(null, 1L, 1)));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
             .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
             .build();
 
-        MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
-        when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
-        when(menteeRepository.create(any(Mentee.class))).thenReturn(adHocMentee);
-
-        Member result = menteeService.create(adHocMentee);
-
-        assertThat(result).isEqualTo(adHocMentee);
-        verify(menteeRepository).create(adHocMentee);
-        verify(mentorshipService).getCurrentCycle();
-    }
-
-    @Test
-    @DisplayName("Given validation is disabled When creating mentee Then should skip validation and create successfully")
-    void shouldSkipValidationWhenValidationIsDisabled() {
-        when(validation.isEnabled()).thenReturn(false);
-
-        Mentee adHocMentee = Mentee.menteeBuilder()
-            .id(1L)
-            .fullName("Test Mentee")
-            .email("test@example.com")
-            .position("Software Engineer")
+    // Mock existing member with same email
+    Member existingMember = Member.builder().id(999L).email(mentee.getEmail()).build();
+    Mentee menteeWithExistingId =
+        Mentee.menteeBuilder()
+            .id(999L)
+            .fullName(mentee.getFullName())
+            .email(mentee.getEmail())
+            .position(mentee.getPosition())
+            .slackDisplayName(mentee.getSlackDisplayName())
             .country(mentee.getCountry())
-            .city("Test City")
-            .companyName("Test Company")
-            .images(mentee.getImages())
-            .profileStatus(ProfileStatus.ACTIVE)
-            .bio("Test bio")
-            .spokenLanguages(List.of("English"))
+            .city(mentee.getCity())
+            .profileStatus(mentee.getProfileStatus())
+            .bio(mentee.getBio())
             .skills(mentee.getSkills())
-            .mentorshipType(MentorshipType.AD_HOC)
-            .prevMentorshipType(MentorshipType.AD_HOC)
+            .spokenLanguages(mentee.getSpokenLanguages())
             .build();
 
-        when(menteeRepository.create(any(Mentee.class))).thenReturn(adHocMentee);
+    when(memberRepository.findByEmail(mentee.getEmail())).thenReturn(Optional.of(existingMember));
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(menteeRepository.create(any(Mentee.class))).thenReturn(menteeWithExistingId);
+    when(menteeRepository.findById(999L)).thenReturn(Optional.of(menteeWithExistingId));
 
-        Member result = menteeService.create(adHocMentee);
+    Mentee result = menteeService.saveRegistration(registration);
 
-        assertThat(result).isEqualTo(adHocMentee);
-        verify(menteeRepository).create(adHocMentee);
-        verify(mentorshipService, never()).getCurrentCycle();
-    }
+    assertThat(result.getId()).isEqualTo(999L);
+    assertThat(result.getEmail()).isEqualTo(mentee.getEmail());
+    verify(memberRepository).findByEmail(mentee.getEmail());
+    verify(menteeRepository).create(any(Mentee.class));
+  }
 }

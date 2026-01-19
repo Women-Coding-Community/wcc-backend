@@ -3,6 +3,7 @@ package com.wcc.platform.configuration;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
@@ -10,6 +11,8 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
@@ -47,7 +50,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     PlatformInternalException.class,
     FileRepositoryException.class,
-    EmailSendException.class
+    EmailSendException.class,
+    MenteeNotSavedException.class
   })
   @ResponseStatus(INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorDetails> handleInternalError(
@@ -92,11 +96,16 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
-  /** Receive {@link ConstraintViolationException} and return {@link HttpStatus#NOT_ACCEPTABLE}. */
-  @ExceptionHandler({ConstraintViolationException.class, MentorshipCycleClosedException.class})
+  /** Receive Constraints violations and return {@link HttpStatus#NOT_ACCEPTABLE}. */
+  @ExceptionHandler({
+    ApplicationMenteeWorkflowException.class,
+    ConstraintViolationException.class,
+    MentorshipCycleClosedException.class,
+    MenteeRegistrationLimitException.class
+  })
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   public ResponseEntity<ErrorDetails> handleNotAcceptableError(
-      final ConstraintViolationException ex, final WebRequest request) {
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
             HttpStatus.NOT_ACCEPTABLE.value(), ex.getMessage(), request.getDescription(false));

@@ -15,6 +15,7 @@ import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.TemplateType;
+import com.wcc.platform.service.EmailService;
 import com.wcc.platform.service.EmailTemplateService;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -27,11 +28,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @ActiveProfiles("test")
 @Import({SecurityConfig.class, TestConfig.class})
-@WebMvcTest(EmailTemplateController.class)
+@WebMvcTest(EmailController.class)
 class EmailTemplateControllerTest {
 
   private static final String API_EMAIL_TEMP_PREVIEW = "/api/platform/v1/email/template/preview";
   @Autowired private MockMvc mockMvc;
+  @MockBean private EmailService emailService;
   @MockBean private EmailTemplateService emailTemplateService;
 
   @Test

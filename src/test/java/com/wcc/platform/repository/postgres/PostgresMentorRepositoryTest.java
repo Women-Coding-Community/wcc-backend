@@ -17,7 +17,10 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
+import jakarta.validation.Validator;
 import java.sql.ResultSet;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +40,12 @@ class PostgresMentorRepositoryTest {
     jdbc = mock(JdbcTemplate.class);
     mentorMapper = mock(MentorMapper.class);
     memberMapper = mock(MemberMapper.class);
-    repository = spy(new PostgresMentorRepository(jdbc, mentorMapper, memberMapper));
+    var validator = mock(Validator.class);
+    when(validator.validate(any())).thenReturn(Collections.emptySet());
+    repository =
+        spy(
+            new PostgresMentorRepository(
+                jdbc, mentorMapper, memberMapper, mock(com.wcc.platform.repository.MemberRepository.class), validator));
   }
 
   @Test

@@ -8,7 +8,6 @@ import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
 import java.util.List;
@@ -44,8 +43,7 @@ public class SetupMenteeFactories {
                     2,
                     List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
                     List.of(Languages.JAVASCRIPT),
-                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
-            .mentorshipType(MentorshipType.AD_HOC);
+                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)));
     if (menteeId != null) {
       menteeBuilder.id(menteeId);
     }
