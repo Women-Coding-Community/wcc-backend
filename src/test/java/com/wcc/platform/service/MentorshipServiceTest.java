@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
@@ -91,6 +93,69 @@ class MentorshipServiceTest {
 
     assertEquals(mentor, result);
     verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  void whenCreateGivenLongTermMentorIsAvailableTwoHoursPerMonthThenCreateMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.mentorshipType())
+        .thenReturn(List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM));
+    when(menteeSection.availability())
+        .thenReturn(
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 3),
+                new MentorMonthAvailability(Month.FEBRUARY, 4)));
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
+
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  void whenCreateGivenAdHocMentorIsNotAvailableTwoHoursPerMonthThenCreateMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.mentorshipType()).thenReturn(List.of(MentorshipType.AD_HOC));
+    when(menteeSection.availability())
+        .thenReturn(
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 1),
+                new MentorMonthAvailability(Month.FEBRUARY, 1)));
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
+
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  void
+      whenCreateGivenLongTermMentorIsNotAvailableTwoHoursPerMonthThenThrowIllegalArgumentException() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(1L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.mentorshipType())
+        .thenReturn(List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM));
+    when(menteeSection.availability())
+        .thenReturn(
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 1),
+                new MentorMonthAvailability(Month.FEBRUARY, 2)));
+    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
+
+    assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
+    verify(mentorRepository, never()).create(any());
   }
 
   @Test
