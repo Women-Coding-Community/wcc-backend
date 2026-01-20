@@ -85,7 +85,9 @@ class MentorshipServiceTest {
   @Test
   void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
     var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
@@ -96,7 +98,7 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenCreateGivenLongTermMentorIsAvailableTwoHoursPerMonthThenCreateMentor() {
+  void whenCreateGivenLongTermMentorAndTwoHoursAvailabilityThenCreateMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
@@ -118,7 +120,7 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenCreateGivenAdHocMentorIsNotAvailableTwoHoursPerMonthThenCreateMentor() {
+  void whenCreateGivenAdHocMentorAndUnavailabilityThenCreateMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
@@ -139,8 +141,7 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void
-      whenCreateGivenLongTermMentorIsNotAvailableTwoHoursPerMonthThenThrowIllegalArgumentException() {
+  void whenCreateGivenLongTermMentorAndUnavailabilityThenThrowIllegalArgumentException() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(1L);
@@ -152,9 +153,9 @@ class MentorshipServiceTest {
             List.of(
                 new MentorMonthAvailability(Month.JANUARY, 1),
                 new MentorMonthAvailability(Month.FEBRUARY, 2)));
-    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
+    assertThrows(IllegalArgumentException.class, () -> service.create(mentor));
     verify(mentorRepository, never()).create(any());
   }
 
