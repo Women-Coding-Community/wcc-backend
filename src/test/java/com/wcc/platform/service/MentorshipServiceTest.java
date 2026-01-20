@@ -98,7 +98,10 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenCreateGivenLongTermMentorAndTwoHoursAvailabilityThenCreateMentor() {
+  @DisplayName(
+      "Given mentor with long-term mentorship and 2+ hours commitment When creating Then create"
+          + " mentor and return it")
+  void testCreateAvailableLongTermMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
@@ -120,7 +123,10 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenCreateGivenAdHocMentorAndUnavailabilityThenCreateMentor() {
+  @DisplayName(
+      "Given mentor with adhoc mentorship and under 2 hours commitment When creating Then create"
+          + " mentor and return it")
+  void testCreateUnavailableAdHocMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
@@ -141,7 +147,10 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenCreateGivenLongTermMentorAndUnavailabilityThenThrowIllegalArgumentException() {
+  @DisplayName(
+      "Given mentor with long-term mentorship and 2+ hours commitment When creating the"
+          + " mentor Then throw IllegalArgumentException")
+  void testCreateUnavailableLongTermMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(1L);
@@ -292,6 +301,77 @@ class MentorshipServiceTest {
         IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
 
     verify(mentorRepository, never()).findById(anyLong());
+    verify(mentorRepository, never()).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and 2+ hours commitment When updating the mentor"
+          + " Then update and return it")
+  void testUpdateLongTermMentorAvailableTwoHours() {
+    final var updatedMentorWithAvailabilities =
+        createUpdatedMentorTest(
+            mentor,
+            mentorDto,
+            List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM),
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 2),
+                new MentorMonthAvailability(Month.FEBRUARY, 2)));
+    long mentorId = 1L;
+    var mentor = mock(Mentor.class);
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
+    Member result = service.updateMentor(mentorId, mentorDto);
+
+    assertEquals(updatedMentorWithAvailabilities, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with adhoc mentorship and under 2 hours commitment When updating the mentor"
+          + " Then update and return it")
+  void testUpdateUnavailableAdHocMentor() {
+    final var updatedMentorWithAvailabilities =
+        createUpdatedMentorTest(
+            mentor,
+            mentorDto,
+            List.of(MentorshipType.AD_HOC),
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 1),
+                new MentorMonthAvailability(Month.FEBRUARY, 0)));
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
+
+    Member result = service.updateMentor(mentorId, mentorDto);
+
+    assertEquals(updatedMentorWithAvailabilities, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and under 2 hours commitment"
+          + " When updating the mentor Then throw IllegalArgumentException")
+  void testUpdateUnavailableLongTermMentorIllegalArgumentException() {
+    long mentorId = 1L;
+    MentorDto newMentorDto =
+        createMentorDtoTest(
+            1L,
+            MemberType.DIRECTOR,
+            List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM),
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 2),
+                new MentorMonthAvailability(Month.FEBRUARY, 0)));
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+
+    assertThrows(
+        IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
+
+    verify(mentorRepository).findById(anyLong());
     verify(mentorRepository, never()).update(anyLong(), any());
   }
 
