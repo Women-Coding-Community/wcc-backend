@@ -63,6 +63,7 @@ public class MentorshipService {
     if (mentorExists.isPresent()) {
       throw new DuplicatedMemberException(mentorExists.get().getEmail());
     }
+    validateMentorCommitment(mentor);
     return mentorRepository.create(mentor);
   }
 
@@ -194,6 +195,21 @@ public class MentorshipService {
     final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
 
     final Mentor updatedMentor = (Mentor) mentorDto.merge(mentor);
+    validateMentorCommitment(updatedMentor);
     return mentorRepository.update(mentorId, updatedMentor);
+  }
+
+  private void validateMentorCommitment(Mentor mentor) {
+    final var isLongTermMentorship =
+        mentor.getMenteeSection().mentorshipType().contains(MentorshipType.LONG_TERM);
+
+    boolean hasInsufficientAvailability =
+        mentor.getMenteeSection().availability().stream()
+            .anyMatch(availability -> availability.hours() < 2);
+
+    if (isLongTermMentorship && hasInsufficientAvailability) {
+      throw new IllegalArgumentException(
+          "Long-term mentorship requires mentor to commit at least 2 hours per month.");
+    }
   }
 }
