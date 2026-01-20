@@ -4,9 +4,7 @@ import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
-import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.resource.MentorResource;
@@ -49,7 +47,7 @@ public class MentorDto extends MemberDto {
       @NotBlank final String position,
       @NotBlank @Email final String email,
       @NotBlank final String slackDisplayName,
-      @NotBlank final Country country,
+      @NotNull final Country country,
       @NotBlank final String city,
       final String companyName,
       final List<Image> images,
@@ -85,51 +83,44 @@ public class MentorDto extends MemberDto {
   }
 
   /**
-   * Merge this DTO with an existing Mentor entity.
+   * Merges the current Mentor instance with the attributes of the provided Mentor instance.
+   * Combines properties from both instances into a new Mentor object, giving precedence to non-null
+   * values in the provided Mentor instance while retaining existing values where the provided
+   * values are null or empty.
    *
-   * @param member the existing mentor to merge with
-   * @return Updated mentor
-   * @throws InvalidMentorException if member is null
-   * @throws IllegalArgumentException if member is not a Mentor instance
+   * @param mentor the Mentor object containing updated attributes to merge with the current
+   *     instance
+   * @return a new Mentor object created by merging attributes from the current instance and the
+   *     provided instance
    */
-  @Override
-  public Member merge(final Member member) {
-    if (member == null) {
-      throw new InvalidMentorException("Cannot merge with null mentor");
-    }
-    if (!(member instanceof Mentor existingMentor)) {
-      throw new InvalidMentorException(
-          "Expected Mentor instance but got: " + member.getClass().getSimpleName());
-    }
+  public Mentor merge(final Mentor mentor) {
+    final var member = super.merge(mentor);
 
     final Mentor.MentorBuilder builder =
         Mentor.mentorBuilder()
-            .id(existingMentor.getId())
-            .fullName(mergeString(this.getFullName(), existingMentor.getFullName()))
-            .position(mergeString(this.getPosition(), existingMentor.getPosition()))
-            .email(mergeString(this.getEmail(), existingMentor.getEmail()))
-            .slackDisplayName(
-                mergeString(this.getSlackDisplayName(), existingMentor.getSlackDisplayName()))
-            .country(mergeNullable(this.getCountry(), existingMentor.getCountry()))
-            .profileStatus(mergeNullable(this.profileStatus, existingMentor.getProfileStatus()))
-            .bio(mergeString(this.bio, existingMentor.getBio()))
-            .skills(mergeNullable(this.skills, existingMentor.getSkills()))
-            .menteeSection(mergeNullable(this.menteeSection, existingMentor.getMenteeSection()));
+            .id(member.getId())
+            .fullName(mergeString(this.getFullName(), member.getFullName()))
+            .position(mergeString(this.getPosition(), member.getPosition()))
+            .email(mergeString(this.getEmail(), member.getEmail()))
+            .slackDisplayName(mergeString(this.getSlackDisplayName(), member.getSlackDisplayName()))
+            .country(mergeNullable(this.getCountry(), member.getCountry()))
+            .profileStatus(mergeNullable(this.profileStatus, mentor.getProfileStatus()))
+            .bio(mergeString(this.bio, mentor.getBio()))
+            .skills(mergeNullable(this.skills, mentor.getSkills()))
+            .menteeSection(mergeNullable(this.menteeSection, mentor.getMenteeSection()));
 
-    mergeOptionalString(this.getCity(), existingMentor.getCity(), builder::city);
+    mergeOptionalString(this.getCity(), member.getCity(), builder::city);
 
-    mergeOptionalString(
-        this.getCompanyName(), existingMentor.getCompanyName(), builder::companyName);
+    mergeOptionalString(this.getCompanyName(), member.getCompanyName(), builder::companyName);
 
-    builder.network(mergeCollection(this.getNetwork(), existingMentor.getNetwork()));
+    builder.network(mergeCollection(this.getNetwork(), member.getNetwork()));
     builder.spokenLanguages(
-        mergeCollection(this.getSpokenLanguages(), existingMentor.getSpokenLanguages()));
-    builder.images(mergeCollection(this.getImages(), existingMentor.getImages()));
+        mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()));
+    builder.images(mergeCollection(this.getImages(), member.getImages()));
 
-    mergeOptional(
-        this.feedbackSection, existingMentor.getFeedbackSection(), builder::feedbackSection);
+    mergeOptional(this.feedbackSection, mentor.getFeedbackSection(), builder::feedbackSection);
 
-    mergeOptional(this.resources, existingMentor.getResources(), builder::resources);
+    mergeOptional(this.resources, mentor.getResources(), builder::resources);
 
     return builder.build();
   }

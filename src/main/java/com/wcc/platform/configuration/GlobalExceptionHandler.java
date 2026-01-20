@@ -3,6 +3,7 @@ package com.wcc.platform.configuration;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
@@ -10,14 +11,18 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -45,7 +50,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     PlatformInternalException.class,
     FileRepositoryException.class,
-    EmailSendException.class
+    EmailSendException.class,
+    MenteeNotSavedException.class
   })
   @ResponseStatus(INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorDetails> handleInternalError(
@@ -90,14 +96,37 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
-  /** Receive {@link ConstraintViolationException} and return {@link HttpStatus#NOT_ACCEPTABLE}. */
-  @ExceptionHandler({ConstraintViolationException.class, MentorshipCycleClosedException.class})
+  /** Receive Constraints violations and return {@link HttpStatus#NOT_ACCEPTABLE}. */
+  @ExceptionHandler({
+    ApplicationMenteeWorkflowException.class,
+    ConstraintViolationException.class,
+    MentorshipCycleClosedException.class,
+    MenteeRegistrationLimitException.class
+  })
   @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
   public ResponseEntity<ErrorDetails> handleNotAcceptableError(
-      final ConstraintViolationException ex, final WebRequest request) {
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
             HttpStatus.NOT_ACCEPTABLE.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
+  }
+
+  /**
+   * Receive {@link MethodArgumentNotValidException} for bean validation errors and return {@link
+   * HttpStatus#NOT_ACCEPTABLE}.
+   */
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ErrorDetails> handleMethodArgumentNotValidException(
+      final MethodArgumentNotValidException ex, final WebRequest request) {
+    final var errorMessage =
+        ex.getBindingResult().getFieldErrors().stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.joining(", "));
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.BAD_REQUEST.value(), errorMessage, request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 }

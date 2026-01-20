@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication")
+@Tag(name = "Platform: Authentication")
 @RequiredArgsConstructor
 public class AuthController {
   private static final ResponseEntity<LoginResponse> UNAUTHORIZED =

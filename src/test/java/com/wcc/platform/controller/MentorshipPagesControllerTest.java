@@ -1,0 +1,202 @@
+package com.wcc.platform.controller;
+
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
+import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_RESOURCES;
+import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createLongTermTimeLinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipAdHocTimelinePageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipConductPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipFaqPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipResourcesPageTest;
+import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipStudyGroupPageTest;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.configuration.SecurityConfig;
+import com.wcc.platform.configuration.TestConfig;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.factories.MockMvcRequestFactory;
+import com.wcc.platform.service.MentorshipPagesService;
+import com.wcc.platform.utils.FileUtil;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+
+/** Unit test for mentorship apis. */
+@ActiveProfiles("test")
+@Import({SecurityConfig.class, TestConfig.class})
+@WebMvcTest(MentorshipPagesController.class)
+public class MentorshipPagesControllerTest {
+
+  public static final String API_MENTORSHIP_OVERVIEW = "/api/cms/v1/mentorship/overview";
+  public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
+  public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
+  public static final String API_MENTORSHIP_TIMELINE = "/api/cms/v1/mentorship/long-term-timeline";
+  public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/study-groups";
+  public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
+  public static final String API_AD_HOC_TIMELINE = "/api/cms/v1/mentorship/ad-hoc-timeline";
+  public static final String API_MENTORSHIP_RESOURCES = "/api/cms/v1/mentorship/resources";
+
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
+
+  @MockBean private MentorshipPagesService service;
+
+  @Test
+  void testInternalServerError() throws Exception {
+    when(service.getOverview())
+        .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.status", is(500)))
+        .andExpect(jsonPath("$.message", is("Invalid Json")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/mentorship/overview")));
+  }
+
+  @Test
+  void testOkResponse() throws Exception {
+    var fileName = MENTORSHIP.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getOverview()).thenReturn(createMentorshipPageTest(fileName));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testFaqOkResponse() throws Exception {
+    var fileName = "init-data/mentorshipFaqPage.json";
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getFaq()).thenReturn(createMentorshipFaqPageTest(fileName));
+
+    mockMvc
+        .perform(MockMvcRequestFactory.getRequest(API_MENTORSHIP_FAQ).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testOkCodeOfConductResponse() throws Exception {
+    var fileName = MENTORSHIP_CONDUCT.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getCodeOfConduct()).thenReturn(createMentorshipConductPageTest(fileName));
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_CONDUCT).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testLongTermTimelineOkResponse() throws Exception {
+    var fileName = MENTORSHIP_LONG_TIMELINE.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getLongTermTimeLine()).thenReturn(createLongTermTimeLinePageTest(fileName));
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_TIMELINE).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testStudyGroupResponse() throws Exception {
+    var fileName = STUDY_GROUPS.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getStudyGroups()).thenReturn(createMentorshipStudyGroupPageTest(fileName));
+    mockMvc
+        .perform(MockMvcRequestFactory.getRequest(API_STUDY_GROUPS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testMentorsOkResponse() throws Exception {
+    MentorsPage mentorsPage = createMentorPageTest();
+
+    when(service.getMentorsPage(any())).thenReturn(mentorsPage);
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
+  }
+
+  @Test
+  void testMentorsWithFiltersOkResponse() throws Exception {
+    MentorsPage mentorsPage = createMentorPageTest();
+
+    when(service.getMentorsPage(any())).thenReturn(mentorsPage);
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS)
+                .param("keyword", "Alice")
+                .param("yearsExperience", "3")
+                .param("mentorshipTypes", "AD_HOC")
+                .param("areas", "BACKEND")
+                .param("languages", "JAVA")
+                .param("focus", "GROW_MID_TO_SENIOR")
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
+  }
+
+  @Test
+  void testAdHocTimelineOkResponse() throws Exception {
+    MentorshipAdHocTimelinePage adHocTimelinePage = createMentorshipAdHocTimelinePageTest();
+
+    when(service.getAdHocTimeline()).thenReturn(adHocTimelinePage);
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_AD_HOC_TIMELINE).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(adHocTimelinePage)));
+  }
+
+  @Test
+  @DisplayName("Given resources page exists, when GET /resources, then return OK with JSON")
+  void shouldReturnOkResponseForMentorshipResources() throws Exception {
+    var fileName = MENTORSHIP_RESOURCES.getFileName();
+    var expectedJson = FileUtil.readFileAsString(fileName);
+
+    when(service.getResources()).thenReturn(createMentorshipResourcesPageTest(fileName));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest(API_MENTORSHIP_RESOURCES)
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+}

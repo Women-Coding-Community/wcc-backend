@@ -1,120 +1,93 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
-import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
-import com.wcc.platform.domain.cms.attributes.TechnicalArea;
-import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipCodeOfConductPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
-import com.wcc.platform.service.MentorshipPagesService;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.service.MenteeService;
+import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Rest controller for mentorship apis. */
+/** Rest controller for members pages apis. */
 @RestController
-@RequestMapping("/api/cms/v1/mentorship")
+@RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Pages: Mentorship", description = "All APIs under session Mentorship")
+@Tag(name = "Platform: Mentors & Mentees", description = "All platform Internal APIs")
+@AllArgsConstructor
+@Validated
 public class MentorshipController {
 
-  private final MentorshipPagesService service;
+  private final MentorshipService mentorshipService;
+  private final MenteeService menteeService;
 
-  @Autowired
-  public MentorshipController(final MentorshipPagesService service) {
-    this.service = service;
-  }
-
-  @GetMapping("/overview")
-  @Operation(summary = "API to retrieve mentorship overview page")
+  /**
+   * API to retrieve information about mentors.
+   *
+   * @return List of all mentors.
+   */
+  @GetMapping("/mentors")
+  @Operation(summary = "API to retrieve a list of all members")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorshipPage> getMentorshipOverview() {
-    return ResponseEntity.ok(service.getOverview());
-  }
-
-  @GetMapping("/faq")
-  @Operation(summary = "API to retrieve mentorship faq page")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorshipFaqPage> getMentorshipFaq() {
-    return ResponseEntity.ok(service.getFaq());
-  }
-
-  @GetMapping("/long-term-timeline")
-  @Operation(summary = "API to retrieve timeline for long-term mentorship")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<LongTermTimeLinePage> getMentorshipLongTermTimeLine() {
-    return ResponseEntity.ok(service.getLongTermTimeLine());
-  }
-
-  @GetMapping("/code-of-conduct")
-  @Operation(summary = "API to retrieve mentorship code of conduct page")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorshipCodeOfConductPage> getMentorshipCodeOfConduct() {
-    return ResponseEntity.ok(service.getCodeOfConduct());
-  }
-
-  @GetMapping("/study-groups")
-  @Operation(summary = "API to retrieve mentorship study groups page")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorshipStudyGroupsPage> getMentorshipStudyGroup() {
-    return ResponseEntity.ok(service.getStudyGroups());
+  public ResponseEntity<List<MentorDto>> getAllMentors() {
+    final List<MentorDto> mentors = mentorshipService.getAllMentors();
+    return ResponseEntity.ok(mentors);
   }
 
   /**
-   * Retrieves a paginated list of mentors based on the specified filters.
+   * API to create mentor.
    *
-   * @param keyword an optional search keyword to filter by mentor name or description
-   * @param mentorshipTypes an optional list of mentorship types to filter mentors by
-   * @param yearsExperience an optional number to filter mentors by minimum years of experience
-   * @param areas an optional list of technical areas to filter mentors by
-   * @param languages an optional list of languages to filter mentors by
-   * @param focus an optional list of focus areas to filter mentors by
-   * @return a {@code ResponseEntity} containing a {@code MentorsPage} object with the filtered list
-   *     of mentors
+   * @return Create a new mentor.
    */
-  @GetMapping("/mentors")
-  @Operation(summary = "API to retrieve mentors page")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorsPage> getMentors(
-      final @RequestParam(required = false) String keyword,
-      final @RequestParam(required = false) List<MentorshipType> mentorshipTypes,
-      final @RequestParam(required = false) Integer yearsExperience,
-      final @RequestParam(required = false) List<TechnicalArea> areas,
-      final @RequestParam(required = false) List<Languages> languages,
-      final @RequestParam(required = false) List<MentorshipFocusArea> focus) {
-    final var filters =
-        new MentorAppliedFilters(
-            keyword, mentorshipTypes, yearsExperience, areas, languages, focus);
-    return ResponseEntity.ok(service.getMentorsPage(filters));
+  @PostMapping("/mentors")
+  @Operation(summary = "API to submit mentor registration")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final Mentor mentor) {
+    return new ResponseEntity<>(mentorshipService.create(mentor), HttpStatus.CREATED);
   }
 
-  @GetMapping("/ad-hoc-timeline")
-  @Operation(summary = "API to retrieve ad hoc timeline page")
+  /**
+   * API to update mentor information.
+   *
+   * @param mentorId mentor's unique identifier
+   * @param mentorDto MentorDto with updated mentor's data
+   * @return Updated mentor
+   */
+  @PutMapping("/mentors/{mentorId}")
+  @Operation(summary = "API to update mentor data")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorshipAdHocTimelinePage> getAdHocTimeline() {
-    return ResponseEntity.ok(service.getAdHocTimeline());
+  public ResponseEntity<Mentor> updateMentor(
+      @Valid @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
+    return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
   }
 
-  @GetMapping("/resources")
-  @Operation(summary = "API to retrieve mentorship resources page")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MentorshipResourcesPage> getMentorshipResources() {
-    return ResponseEntity.ok(service.getResources());
+  /**
+   * API to create mentee.
+   *
+   * @param menteeRegistration The mentee registration details
+   * @return Create a new mentee.
+   */
+  @PostMapping("/mentees")
+  @Operation(summary = "API to submit mentee registration")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<Mentee> createMentee(
+      @Valid @RequestBody final MenteeRegistration menteeRegistration) {
+    return new ResponseEntity<>(
+        menteeService.saveRegistration(menteeRegistration), HttpStatus.CREATED);
   }
 }

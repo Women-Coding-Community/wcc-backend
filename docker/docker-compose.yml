@@ -27,6 +27,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/wcc
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: MFpFnhhICniFNPA
+      SPRING_APP_BASE_URL: http://localhost:8080
     networks:
       - app-network
 

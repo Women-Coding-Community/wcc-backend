@@ -10,7 +10,6 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorDto.MentorDtoBuilder;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.resource.MentorResource;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
@@ -30,11 +29,11 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class Mentor extends Member {
 
-  private @NotBlank ProfileStatus profileStatus;
-  private @NotBlank Skills skills;
+  private @NotNull ProfileStatus profileStatus;
+  private @NotNull Skills skills;
   private List<String> spokenLanguages;
-  private @NotBlank String bio;
-  private @NotNull MenteeSection menteeSection;
+  @NotBlank private String bio;
+  @NotNull private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
 
@@ -43,20 +42,20 @@ public class Mentor extends Member {
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public Mentor(
       final Long id,
-      @NotBlank final String fullName,
-      @NotBlank final String position,
-      @NotBlank @Email final String email,
-      @NotBlank final String slackDisplayName,
-      @NotBlank final Country country,
-      @NotBlank final String city,
+      final String fullName,
+      final String position,
+      final String email,
+      final String slackDisplayName,
+      final Country country,
+      final String city,
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
-      @NotNull final ProfileStatus profileStatus,
+      final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
-      @NotBlank final String bio,
-      @NotBlank final Skills skills,
-      @NotBlank final MenteeSection menteeSection,
+      final String bio,
+      final Skills skills,
+      final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources) {
     super(

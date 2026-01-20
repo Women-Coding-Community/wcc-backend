@@ -35,3 +35,4 @@ src/main/resources/application-local.yml
 /admin-wcc-app/.next/
 /scripts/init-dev-env.sh
 .vercel
+/scripts/init-prod-env.sh

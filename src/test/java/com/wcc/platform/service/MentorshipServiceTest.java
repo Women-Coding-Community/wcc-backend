@@ -33,6 +33,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import java.time.Month;
 import java.time.ZoneId;
@@ -51,6 +52,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MentorshipServiceTest {
 
   @Mock private MentorRepository mentorRepository;
+  @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   private Integer daysOpen = 10;
   private Mentor mentor;
@@ -65,17 +67,19 @@ class MentorshipServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
     updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
+    service =
+        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
   }
 
   @Test
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
+    when(mentor.getEmail()).thenReturn("test@test.com");
+    when(memberRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
     when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
 
     assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
@@ -88,12 +92,15 @@ class MentorshipServiceTest {
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
     when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(mentor.getEmail()).thenReturn("newmentor@test.com");
+    when(memberRepository.findByEmail("newmentor@test.com")).thenReturn(Optional.empty());
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
     var result = service.create(mentor);
 
     assertEquals(mentor, result);
+    verify(memberRepository).findByEmail("newmentor@test.com");
     verify(mentorRepository).create(mentor);
   }
 
@@ -231,7 +238,8 @@ class MentorshipServiceTest {
   @Test
   void testGetCurrentCycleReturnsAdHocFromMayWithinOpenDays() {
     daysOpen = 7;
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
+    service =
+        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
     var may2 = ZonedDateTime.of(2025, 5, 2, 9, 0, 0, 0, ZoneId.of("Europe/London"));
     doReturn(may2).when(service).nowLondon();
 
@@ -243,7 +251,8 @@ class MentorshipServiceTest {
   @Test
   void testGetCurrentCycleReturnsClosedOutsideWindows() {
     daysOpen = 5;
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
+    service =
+        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
 
     // April -> closed
     var april10 = ZonedDateTime.of(2025, 4, 10, 12, 0, 0, 0, ZoneId.of("Europe/London"));
@@ -395,10 +404,10 @@ class MentorshipServiceTest {
     var result = service.getAllMentors();
 
     assertThat(result).hasSize(1);
-    var mentorDto = result.get(0);
+    var mentorDto = result.getFirst();
     assertThat(mentorDto.getImages()).hasSize(1);
-    assertThat(mentorDto.getImages().get(0).path()).isEqualTo(resource.getDriveFileLink());
-    assertThat(mentorDto.getImages().get(0).type()).isEqualTo(ImageType.DESKTOP);
+    assertThat(mentorDto.getImages().getFirst().path()).isEqualTo(resource.getDriveFileLink());
+    assertThat(mentorDto.getImages().getFirst().type()).isEqualTo(ImageType.DESKTOP);
   }
 
   @Test
@@ -418,7 +427,7 @@ class MentorshipServiceTest {
     var result = service.getAllMentors();
 
     assertThat(result).hasSize(1);
-    var mentorDto = result.get(0);
+    var mentorDto = result.getFirst();
     assertThat(mentorDto.getImages()).isNullOrEmpty();
   }
 
@@ -439,7 +448,46 @@ class MentorshipServiceTest {
     var result = service.getAllMentors();
 
     assertThat(result).hasSize(1);
-    var mentorDto = result.get(0);
+    var mentorDto = result.getFirst();
     assertThat(mentorDto.getImages()).isNullOrEmpty();
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with email, when creating mentor with same email, then it should use existing member")
+  void shouldUseExistingMemberWhenMentorEmailAlreadyExists() {
+    var mentor = mock(Mentor.class);
+    when(mentor.getEmail()).thenReturn("existing@test.com");
+    when(mentor.getFullName()).thenReturn("Existing Member as Mentor");
+    when(mentor.getPosition()).thenReturn("Software Engineer");
+    when(mentor.getSlackDisplayName()).thenReturn("@existing");
+    when(mentor.getCountry()).thenReturn(mock(com.wcc.platform.domain.cms.attributes.Country.class));
+    when(mentor.getCity()).thenReturn("New York");
+    when(mentor.getCompanyName()).thenReturn("Tech Corp");
+    when(mentor.getImages()).thenReturn(List.of());
+    when(mentor.getNetwork()).thenReturn(List.of());
+    when(mentor.getProfileStatus())
+        .thenReturn(com.wcc.platform.domain.platform.member.ProfileStatus.ACTIVE);
+    when(mentor.getSkills()).thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
+    when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
+    when(mentor.getBio()).thenReturn("Bio");
+    when(mentor.getMenteeSection()).thenReturn(
+        mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
+    when(mentor.getFeedbackSection()).thenReturn(null);
+    when(mentor.getResources()).thenReturn(null);
+
+    // Mock existing member with same email
+    Member existingMember = Member.builder().id(999L).email("existing@test.com").build();
+    when(memberRepository.findByEmail("existing@test.com")).thenReturn(Optional.of(existingMember));
+
+    var mentorWithExistingId = mock(Mentor.class);
+    when(mentorWithExistingId.getId()).thenReturn(999L);
+    when(mentorRepository.create(any(Mentor.class))).thenReturn(mentorWithExistingId);
+
+    Mentor result = service.create(mentor);
+
+    assertThat(result.getId()).isEqualTo(999L);
+    verify(memberRepository).findByEmail("existing@test.com");
+    verify(mentorRepository).create(any(Mentor.class));
   }
 }
