@@ -37,6 +37,7 @@ public class MentorshipService {
   private static final String EUROPE_LONDON = "Europe/London";
   private static final MentorshipCycle ACTIVE_LONG_TERM =
       new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+  private static final int MINIMUM_HOURS = 2;
 
   private final MentorRepository mentorRepository;
   private final MemberRepository memberRepository;
@@ -231,15 +232,15 @@ public class MentorshipService {
     return mentorRepository.update(mentorId, updatedMentor);
   }
 
-  private void validateMentorCommitment(Mentor mentor) {
-    final var isLongTermMentorship =
-        mentor.getMenteeSection().mentorshipType().contains(MentorshipType.LONG_TERM);
+  private void validateMentorCommitment(final Mentor mentor) {
+    final var menteeSection = mentor.getMenteeSection();
+    final boolean isLongTermMentorship =
+        menteeSection.mentorshipType().contains(MentorshipType.LONG_TERM);
+    final boolean hasInsufficientHours =
+        menteeSection.availability().stream()
+            .anyMatch(availability -> availability.hours() < MINIMUM_HOURS);
 
-    boolean hasInsufficientAvailability =
-        mentor.getMenteeSection().availability().stream()
-            .anyMatch(availability -> availability.hours() < 2);
-
-    if (isLongTermMentorship && hasInsufficientAvailability) {
+    if (isLongTermMentorship && hasInsufficientHours) {
       throw new IllegalArgumentException(
           "Long-term mentorship requires mentor to commit at least 2 hours per month.");
     }
