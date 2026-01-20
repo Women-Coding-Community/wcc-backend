@@ -78,9 +78,9 @@ class MentorshipServiceTest {
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
+    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
     when(mentor.getEmail()).thenReturn("test@test.com");
     when(memberRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
-    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
 
     assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
     verify(mentorRepository, never()).create(any());
@@ -327,7 +327,6 @@ class MentorshipServiceTest {
                 new MentorMonthAvailability(Month.JANUARY, 2),
                 new MentorMonthAvailability(Month.FEBRUARY, 2)));
     long mentorId = 1L;
-    var mentor = mock(Mentor.class);
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
     when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
     Member result = service.updateMentor(mentorId, mentorDto);
@@ -461,18 +460,20 @@ class MentorshipServiceTest {
     when(mentor.getFullName()).thenReturn("Existing Member as Mentor");
     when(mentor.getPosition()).thenReturn("Software Engineer");
     when(mentor.getSlackDisplayName()).thenReturn("@existing");
-    when(mentor.getCountry()).thenReturn(mock(com.wcc.platform.domain.cms.attributes.Country.class));
+    when(mentor.getCountry())
+        .thenReturn(mock(com.wcc.platform.domain.cms.attributes.Country.class));
     when(mentor.getCity()).thenReturn("New York");
     when(mentor.getCompanyName()).thenReturn("Tech Corp");
     when(mentor.getImages()).thenReturn(List.of());
     when(mentor.getNetwork()).thenReturn(List.of());
     when(mentor.getProfileStatus())
         .thenReturn(com.wcc.platform.domain.platform.member.ProfileStatus.ACTIVE);
-    when(mentor.getSkills()).thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
+    when(mentor.getSkills())
+        .thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
     when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
     when(mentor.getBio()).thenReturn("Bio");
-    when(mentor.getMenteeSection()).thenReturn(
-        mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
+    when(mentor.getMenteeSection())
+        .thenReturn(mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
     when(mentor.getFeedbackSection()).thenReturn(null);
     when(mentor.getResources()).thenReturn(null);
 
