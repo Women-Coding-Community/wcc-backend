@@ -83,7 +83,7 @@ public class Mentor extends Member {
 
   /** Checks for empty or null and returns capitalized list of string. */
   private static List<String> normalizeLanguages(final List<String> languages) {
-    if (languages == null || languages.isEmpty()) {
+    if (CollectionUtils.isEmpty(languages)) {
       return List.of();
     }
 
