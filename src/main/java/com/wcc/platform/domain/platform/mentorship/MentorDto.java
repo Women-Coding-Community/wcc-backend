@@ -124,7 +124,7 @@ public class MentorDto extends MemberDto {
   }
 
   private <T> List<T> mergeCollection(final List<T> candidate, final List<T> existing) {
-    if (candidate != null && !candidate.isEmpty()) {
+    if (!CollectionUtils.isEmpty(candidate)) {
       return candidate;
     }
     return existing != null ? existing : List.of();
