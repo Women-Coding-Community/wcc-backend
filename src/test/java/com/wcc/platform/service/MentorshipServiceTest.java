@@ -171,7 +171,10 @@ class MentorshipServiceTest {
                 new MentorMonthAvailability(Month.FEBRUARY, 2)));
     when(mentorRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThrows(IllegalArgumentException.class, () -> service.create(mentor));
+    var expectedMsg = "Long-term mentorship requires mentor to commit at least 2 hours per month.";
+    var exception = assertThrows(IllegalArgumentException.class, () -> service.create(mentor));
+
+    assertEquals(expectedMsg, exception.getMessage());
     verify(mentorRepository, never()).create(any());
   }
 
@@ -376,8 +379,11 @@ class MentorshipServiceTest {
                 new MentorMonthAvailability(Month.FEBRUARY, 0)));
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
 
-    assertThrows(
-        IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
+    var expectedMsg = "Long-term mentorship requires mentor to commit at least 2 hours per month.";
+    var exception =
+        assertThrows(
+            IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
+    assertEquals(expectedMsg, exception.getMessage());
 
     verify(mentorRepository).findById(anyLong());
     verify(mentorRepository, never()).update(anyLong(), any());
