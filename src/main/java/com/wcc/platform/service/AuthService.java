@@ -1,17 +1,24 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.auth.UserToken;
+import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
 import java.security.SecureRandom;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -133,5 +140,245 @@ public class AuthService {
             .build();
     userTokenRepository.create(userToken);
     return userToken;
+  }
+
+  /**
+   * Retrieves the complete User (UserAccount + Member) for a given user account ID. This is used
+   * for RBAC permission checking.
+   *
+   * @param userId the ID of the user account
+   * @return an {@code Optional<UserAccount.User>} containing the user and member if found
+   */
+  public Optional<UserAccount.User> getUserWithMember(final Integer userId) {
+    if (userId == null) {
+      return Optional.empty();
+    }
+
+    Optional<UserAccount> userAccountOpt = userAccountRepository.findById(userId);
+    if (userAccountOpt.isEmpty()) {
+      return Optional.empty();
+    }
+
+    UserAccount userAccount = userAccountOpt.get();
+    if (userAccount.getMemberId() == null) {
+      return Optional.empty();
+    }
+
+    Optional<Member> memberOpt = memberRepository.findById(userAccount.getMemberId());
+    return memberOpt.map(member -> new UserAccount.User(userAccount, member));
+  }
+
+  /**
+   * Retrieves the complete User (UserAccount + Member) by email. This is used for authentication
+   * and RBAC.
+   *
+   * @param email the email of the user
+   * @return an {@code Optional<UserAccount.User>} containing the user and member if found
+   */
+  public Optional<UserAccount.User> getUserWithMemberByEmail(final String email) {
+    Optional<UserAccount> userAccountOpt = userAccountRepository.findByEmail(email);
+    if (userAccountOpt.isEmpty()) {
+      return Optional.empty();
+    }
+
+    UserAccount userAccount = userAccountOpt.get();
+    if (userAccount.getMemberId() == null) {
+      return Optional.empty();
+    }
+
+    Optional<Member> memberOpt = memberRepository.findById(userAccount.getMemberId());
+    return memberOpt.map(member -> new UserAccount.User(userAccount, member));
+  }
+
+  /**
+   * Authenticates a user based on the provided token and returns the complete User (UserAccount +
+   * Member). This is the preferred method for RBAC-enabled authentication.
+   *
+   * @param token the authentication token provided by the user
+   * @return an {@code Optional<UserAccount.User>} containing the user and member if the token is
+   *     valid and associated with an existing user, or an empty {@code Optional} if the token is
+   *     invalid or no user account is found
+   */
+  public Optional<UserAccount.User> authenticateByTokenWithMember(final String token) {
+    final Optional<UserToken> tokenOpt =
+        userTokenRepository.findValidByToken(token, OffsetDateTime.now());
+    if (tokenOpt.isEmpty()) {
+      return Optional.empty();
+    }
+
+    final UserToken retrievedToken = tokenOpt.get();
+    return getUserWithMember(retrievedToken.getUserId());
+  }
+
+  /**
+   * Get the current authenticated user with member information from SecurityContext.
+   *
+   * @return the authenticated User (UserAccount + Member)
+   * @throws ForbiddenException if user is not authenticated or principal is invalid
+   */
+  public UserAccount.User getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    if (authentication == null || !authentication.isAuthenticated()) {
+      throw new ForbiddenException("User is not authenticated");
+    }
+
+    Object principal = authentication.getPrincipal();
+
+    if (principal instanceof UserAccount.User) {
+      return (UserAccount.User) principal;
+    }
+
+    throw new ForbiddenException("Invalid authentication principal");
+  }
+
+  /**
+   * Get current user's permissions from all member types and assigned roles.
+   *
+   * @return set of all permissions the user has
+   */
+  public Set<Permission> getCurrentUserPermissions() {
+    return getCurrentUser().getAllPermissions();
+  }
+
+  /**
+   * Get current user's primary role (highest privilege role from member types).
+   *
+   * @return the primary role of the user
+   */
+  public RoleType getCurrentUserPrimaryRole() {
+    return getCurrentUser().getPrimaryRole();
+  }
+
+  /**
+   * Get all roles the current user has (from member types and assigned roles).
+   *
+   * @return set of all roles
+   */
+  public Set<RoleType> getCurrentUserRoles() {
+    return getCurrentUser().getAllRoles();
+  }
+
+  /**
+   * Require a specific permission.
+   *
+   * @param permission the required permission
+   * @throws ForbiddenException if user doesn't have the permission
+   */
+  public void requirePermission(Permission permission) {
+    if (!getCurrentUser().hasPermission(permission)) {
+      throw new ForbiddenException(
+          String.format("Permission denied. Required: %s", permission.name()));
+    }
+  }
+
+  /**
+   * Require any of the specified permissions (OR logic).
+   *
+   * @param permissions the permissions (user needs at least one)
+   * @throws ForbiddenException if user doesn't have any of the permissions
+   */
+  public void requireAnyPermission(Permission... permissions) {
+    UserAccount.User user = getCurrentUser();
+    Set<Permission> userPermissions = user.getAllPermissions();
+
+    boolean hasAny = Arrays.stream(permissions).anyMatch(userPermissions::contains);
+
+    if (!hasAny) {
+      throw new ForbiddenException(
+          String.format("Permission denied. Required any of: %s", Arrays.toString(permissions)));
+    }
+  }
+
+  /**
+   * Require all of the specified permissions (AND logic).
+   *
+   * @param permissions the permissions (user needs all of them)
+   * @throws ForbiddenException if user doesn't have all the permissions
+   */
+  public void requireAllPermissions(Permission... permissions) {
+    UserAccount.User user = getCurrentUser();
+    Set<Permission> userPermissions = user.getAllPermissions();
+
+    boolean hasAll = Arrays.stream(permissions).allMatch(userPermissions::contains);
+
+    if (!hasAll) {
+      throw new ForbiddenException(
+          String.format("Permission denied. Required all of: %s", Arrays.toString(permissions)));
+    }
+  }
+
+  /**
+   * Require specific role(s). User needs at least one of the specified roles (from member types or
+   * assigned roles).
+   *
+   * @param allowedRoles the allowed roles (user needs one of them)
+   * @throws ForbiddenException if user doesn't have any of the roles
+   */
+  public void requireRole(RoleType... allowedRoles) {
+    UserAccount.User user = getCurrentUser();
+
+    if (user.hasAnyRole(allowedRoles)) {
+      return;
+    }
+
+    throw new ForbiddenException(
+        String.format(
+            "Role denied. User roles: %s, Required any of: %s",
+            user.getAllRoles(), Arrays.toString(allowedRoles)));
+  }
+
+  /**
+   * Check if current user has permission (non-throwing).
+   *
+   * @param permission the permission to check
+   * @return true if user has the permission, false otherwise
+   */
+  public boolean hasPermission(Permission permission) {
+    try {
+      return getCurrentUser().hasPermission(permission);
+    } catch (ForbiddenException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Check if current user has role (non-throwing).
+   *
+   * @param role the role to check
+   * @return true if user has the role, false otherwise
+   */
+  public boolean hasRole(RoleType role) {
+    try {
+      return getCurrentUser().hasRole(role);
+    } catch (ForbiddenException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Check if current user is a super admin.
+   *
+   * @return true if user is super admin, false otherwise
+   */
+  public boolean isSuperAdmin() {
+    try {
+      return getCurrentUser().isSuperAdmin();
+    } catch (ForbiddenException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Check if current user is an admin (SUPER_ADMIN or ADMIN).
+   *
+   * @return true if user is admin, false otherwise
+   */
+  public boolean isAdmin() {
+    try {
+      return getCurrentUser().isAdmin();
+    } catch (ForbiddenException e) {
+      return false;
+    }
   }
 }

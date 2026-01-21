@@ -1,12 +1,15 @@
 package com.wcc.platform.configuration;
 
+import com.wcc.platform.domain.auth.UserAccount;
+import com.wcc.platform.domain.auth.UserAccount.User;
 import com.wcc.platform.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -61,21 +64,20 @@ public class TokenAuthFilter extends OncePerRequestFilter {
     final String authHeader = request.getHeader(AUTHORIZATION);
     if (StringUtils.hasText(authHeader) && authHeader.startsWith(BEARER)) {
       final String token = authHeader.substring(AUTH_TOKEN_START);
-      authService
-          .authenticateByToken(token)
-          .ifPresent(
-              user -> {
-                final var authorities =
-                    user.getRoles().stream()
-                        .filter(Objects::nonNull)
-                        .map(role -> new SimpleGrantedAuthority(role.name()))
-                        .toList();
+      final Optional<User> userOpt = authService.authenticateByTokenWithMember(token);
+      if (userOpt.isPresent()) {
+        final UserAccount.User user = userOpt.get();
 
-                SecurityContextHolder.getContext()
-                    .setAuthentication(
-                        new UsernamePasswordAuthenticationToken(
-                            user.getEmail(), null, authorities));
-              });
+        final var authorities = List.of(new SimpleGrantedAuthority(user.getPrimaryRole().name()));
+        final UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(
+                user, // Principal is now UserAccount.User
+                null,
+                authorities // You can add authorities here if needed
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+      }
     }
 
     filterChain.doFilter(request, response);
