@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Paper,
   Typography,
@@ -13,17 +13,21 @@ import {
   FormControl,
   InputLabel,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Breadcrumbs,
+  Link as MuiLink,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import Link from 'next/link';
 import AdminLayout from '@/components/AdminLayout';
-import {COUNTRIES} from '@/lib/countries';
-import {apiFetch} from '@/lib/api';
-import {getStoredToken} from '@/lib/auth';
-import {useRouter} from 'next/router';
+import { COUNTRIES } from '@/lib/countries';
+import { SOCIAL_NETWORK_TYPES } from '@/lib/socialNetworks';
+import { apiFetch } from '@/lib/api';
+import { getStoredToken } from '@/lib/auth';
+import { useRouter } from 'next/router';
 
 const MEMBER_TYPES = [
   'Director',
@@ -33,21 +37,7 @@ const MEMBER_TYPES = [
   'Member',
   'Partner',
   'Speaker',
-  'Volunteer'
-];
-
-const SOCIAL_NETWORK_TYPES = [
-  { id: "LINKEDIN", name: "LinkedIn" },
-  { id: "DEFAULT_LINK", name: "Link" },
-  { id: "EMAIL", name: "Email" },
-  { id: "FACEBOOK", name: "Facebook" },
-  { id: "GITHUB", name: "Github" },
-  { id: "INSTAGRAM", name: "Instagram" },
-  { id: "MEETUP", name: "Meetup" },
-  { id: "MEDIUM", name: "Medium" },
-  { id: "SLACK", name: "Slack" },
-  { id: "WEBSITE", name: "Website" },
-  { id: "YOUTUBE", name: "YouTube" },
+  'Volunteer',
 ];
 
 interface NetworkLink {
@@ -73,7 +63,7 @@ export default function CreateMemberPage() {
     country: null as { countryCode: string; countryName: string } | null,
     memberTypes: [] as string[],
     images: [] as MemberImage[],
-    network: [] as NetworkLink[]
+    network: [] as NetworkLink[],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({
@@ -82,7 +72,7 @@ export default function CreateMemberPage() {
     position: '',
     slackDisplayName: '',
     country: '',
-    memberTypes: ''
+    memberTypes: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -91,11 +81,11 @@ export default function CreateMemberPage() {
 
   const handleFieldChange = <K extends keyof typeof formData>(
     field: K,
-    value: typeof formData[K]
+    value: (typeof formData)[K]
   ) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -105,25 +95,28 @@ export default function CreateMemberPage() {
     itemField: string,
     value: string
   ) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [arrayField]: prev[arrayField].map((item, i) =>
         i === index ? { ...item, [itemField]: value } : item
-      )
+      ),
     }));
   };
 
-  const handleArrayAdd = (arrayField: 'network' | 'images', defaultItem: any) => {
-    setFormData(prev => ({
+  const handleArrayAdd = (
+    arrayField: 'network' | 'images',
+    defaultItem: { path?: string; alt?: string; type: string; link?: string }
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [arrayField]: [...prev[arrayField], defaultItem]
+      [arrayField]: [...prev[arrayField], defaultItem],
     }));
   };
 
   const handleArrayRemove = (arrayField: 'network' | 'images', index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [arrayField]: prev[arrayField].filter((_, i) => i !== index)
+      [arrayField]: prev[arrayField].filter((_, i) => i !== index),
     }));
   };
 
@@ -170,19 +163,19 @@ export default function CreateMemberPage() {
       }
 
       const { country, ...restFormData } = formData;
-      
+
       const submitData = {
         ...restFormData,
         country: {
           countryCode: country?.countryCode,
-          countryName: country?.countryName
-        }
+          countryName: country?.countryName,
+        },
       };
 
       await apiFetch('/api/platform/v1/members', {
         method: 'POST',
         body: submitData,
-        token
+        token,
       });
 
       setFormData({
@@ -195,14 +188,15 @@ export default function CreateMemberPage() {
         country: null,
         memberTypes: [],
         images: [],
-        network: []
+        network: [],
       });
 
       setApiError(null);
       setSuccessMessage('Member created successfully!');
-    } catch (e: any) {
+    } catch (e) {
       setSuccessMessage(null);
-      setApiError(e.message || 'Failed to create member');
+      const errorMessage = e instanceof Error ? e.message : 'Failed to create member';
+      setApiError(errorMessage);
     } finally {
       setLoading(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -214,28 +208,30 @@ export default function CreateMemberPage() {
   return (
     <AdminLayout>
       <Paper sx={{ p: 3 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <IconButton onClick={handleCancel} sx={{ mr: 2 }}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h5">Create New Member</Typography>
-        </Box>
+        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mb: 2 }}>
+          <Link href="/admin" passHref legacyBehavior>
+            <MuiLink underline="hover" color="inherit">
+              Admin
+            </MuiLink>
+          </Link>
+          <Link href="/admin/members" passHref legacyBehavior>
+            <MuiLink underline="hover" color="inherit">
+              Members
+            </MuiLink>
+          </Link>
+          <Typography color="text.primary">Create</Typography>
+        </Breadcrumbs>
+        <Typography variant="h5" sx={{ mb: 3 }}>
+          Create New Member
+        </Typography>
 
         {successMessage && (
-          <Alert
-            severity="success"
-            sx={{ mb: 2 }}
-            onClose={() => setSuccessMessage(null)}
-          >
+          <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccessMessage(null)}>
             {successMessage}
           </Alert>
         )}
         {apiError && (
-          <Alert
-            severity="error"
-            sx={{ mb: 2 }}
-            onClose={() => setApiError(null)}
-          >
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setApiError(null)}>
             {apiError}
           </Alert>
         )}
@@ -248,7 +244,7 @@ export default function CreateMemberPage() {
                 required
                 label="Full Name"
                 value={formData.fullName}
-                onChange={(e) => handleFieldChange("fullName", e.target.value)}
+                onChange={(e) => handleFieldChange('fullName', e.target.value)}
                 error={!!errors.fullName}
                 helperText={errors.fullName}
               />
@@ -261,7 +257,7 @@ export default function CreateMemberPage() {
                 label="Email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleFieldChange("email", e.target.value)}
+                onChange={(e) => handleFieldChange('email', e.target.value)}
                 error={!!errors.email}
                 helperText={errors.email}
               />
@@ -273,9 +269,7 @@ export default function CreateMemberPage() {
                 required
                 label="Slack Display Name"
                 value={formData.slackDisplayName}
-                onChange={(e) =>
-                  handleFieldChange("slackDisplayName", e.target.value)
-                }
+                onChange={(e) => handleFieldChange('slackDisplayName', e.target.value)}
                 error={!!errors.slackDisplayName}
                 helperText={errors.slackDisplayName}
               />
@@ -287,7 +281,7 @@ export default function CreateMemberPage() {
                 required
                 label="Position"
                 value={formData.position}
-                onChange={(e) => handleFieldChange("position", e.target.value)}
+                onChange={(e) => handleFieldChange('position', e.target.value)}
                 error={!!errors.position}
                 helperText={errors.position}
               />
@@ -298,9 +292,7 @@ export default function CreateMemberPage() {
                 fullWidth
                 label="Company Name"
                 value={formData.companyName}
-                onChange={(e) =>
-                  handleFieldChange("companyName", e.target.value)
-                }
+                onChange={(e) => handleFieldChange('companyName', e.target.value)}
               />
             </Grid>
 
@@ -309,7 +301,7 @@ export default function CreateMemberPage() {
                 fullWidth
                 label="City"
                 value={formData.city}
-                onChange={(e) => handleFieldChange("city", e.target.value)}
+                onChange={(e) => handleFieldChange('city', e.target.value)}
               />
             </Grid>
 
@@ -317,15 +309,9 @@ export default function CreateMemberPage() {
               <Autocomplete
                 options={COUNTRIES}
                 value={formData.country}
-                onChange={(_, newValue) =>
-                  handleFieldChange("country", newValue)
-                }
-                getOptionLabel={(option) =>
-                  `${option.countryName} (${option.countryCode})`
-                }
-                isOptionEqualToValue={(option, value) =>
-                  option.countryCode === value.countryCode
-                }
+                onChange={(_, newValue) => handleFieldChange('country', newValue)}
+                getOptionLabel={(option) => `${option.countryName} (${option.countryCode})`}
+                isOptionEqualToValue={(option, value) => option.countryCode === value.countryCode}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -343,9 +329,7 @@ export default function CreateMemberPage() {
                 multiple
                 options={MEMBER_TYPES}
                 value={formData.memberTypes}
-                onChange={(_, newValue) =>
-                  handleFieldChange("memberTypes", newValue)
-                }
+                onChange={(_, newValue) => handleFieldChange('memberTypes', newValue)}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -371,9 +355,9 @@ export default function CreateMemberPage() {
             <Grid size={12}>
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   mb: 2,
                 }}
               >
@@ -382,10 +366,10 @@ export default function CreateMemberPage() {
                   size="small"
                   startIcon={<AddIcon />}
                   onClick={() =>
-                    handleArrayAdd("images", {
-                      path: "",
-                      alt: "",
-                      type: "Desktop",
+                    handleArrayAdd('images', {
+                      path: '',
+                      alt: '',
+                      type: 'Desktop',
                     })
                   }
                 >
@@ -393,19 +377,14 @@ export default function CreateMemberPage() {
                 </Button>
               </Box>
               {formData.images.map((image, index) => (
-                <Box key={index} sx={{ display: "flex", gap: 1, mb: 2 }}>
+                <Box key={index} sx={{ display: 'flex', gap: 1, mb: 2 }}>
                   <FormControl sx={{ minWidth: 120 }}>
                     <InputLabel>Type</InputLabel>
                     <Select
                       value={image.type}
                       label="Type"
                       onChange={(e) =>
-                        handleArrayItemChange(
-                          "images",
-                          index,
-                          "type",
-                          e.target.value
-                        )
+                        handleArrayItemChange('images', index, 'type', e.target.value)
                       }
                     >
                       <MenuItem value="Desktop">Desktop</MenuItem>
@@ -415,35 +394,21 @@ export default function CreateMemberPage() {
                   <TextField
                     label="Image URL"
                     value={image.path}
-                    onChange={(e) =>
-                      handleArrayItemChange(
-                        "images",
-                        index,
-                        "path",
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => handleArrayItemChange('images', index, 'path', e.target.value)}
                     placeholder="https://..."
                     sx={{ flex: 2 }}
                   />
                   <TextField
                     label="Alt Text"
                     value={image.alt}
-                    onChange={(e) =>
-                      handleArrayItemChange(
-                        "images",
-                        index,
-                        "alt",
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => handleArrayItemChange('images', index, 'alt', e.target.value)}
                     placeholder="Description"
                     sx={{ flex: 1 }}
                   />
                   <IconButton
                     color="error"
-                    onClick={() => handleArrayRemove("images", index)}
-                    sx={{ alignSelf: "center" }}
+                    onClick={() => handleArrayRemove('images', index)}
+                    sx={{ alignSelf: 'center' }}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -454,9 +419,9 @@ export default function CreateMemberPage() {
             <Grid size={12}>
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   mb: 2,
                 }}
               >
@@ -465,9 +430,9 @@ export default function CreateMemberPage() {
                   size="small"
                   startIcon={<AddIcon />}
                   onClick={() =>
-                    handleArrayAdd("network", {
+                    handleArrayAdd('network', {
                       type: SOCIAL_NETWORK_TYPES[0].id,
-                      link: "",
+                      link: '',
                     })
                   }
                 >
@@ -475,19 +440,14 @@ export default function CreateMemberPage() {
                 </Button>
               </Box>
               {formData.network.map((networkLink, index) => (
-                <Box key={index} sx={{ display: "flex", gap: 1, mb: 2 }}>
+                <Box key={index} sx={{ display: 'flex', gap: 1, mb: 2 }}>
                   <FormControl sx={{ minWidth: 150 }}>
                     <InputLabel>Type</InputLabel>
                     <Select
                       value={networkLink.type}
                       label="Type"
                       onChange={(e) =>
-                        handleArrayItemChange(
-                          "network",
-                          index,
-                          "type",
-                          e.target.value
-                        )
+                        handleArrayItemChange('network', index, 'type', e.target.value)
                       }
                     >
                       {SOCIAL_NETWORK_TYPES.map((type) => (
@@ -502,19 +462,14 @@ export default function CreateMemberPage() {
                     label="URL"
                     value={networkLink.link}
                     onChange={(e) =>
-                      handleArrayItemChange(
-                        "network",
-                        index,
-                        "link",
-                        e.target.value
-                      )
+                      handleArrayItemChange('network', index, 'link', e.target.value)
                     }
                     placeholder="https://..."
                   />
                   <IconButton
                     color="error"
-                    onClick={() => handleArrayRemove("network", index)}
-                    sx={{ alignSelf: "center" }}
+                    onClick={() => handleArrayRemove('network', index)}
+                    sx={{ alignSelf: 'center' }}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -525,9 +480,9 @@ export default function CreateMemberPage() {
             <Grid size={12}>
               <Box
                 sx={{
-                  display: "flex",
+                  display: 'flex',
                   gap: 2,
-                  justifyContent: "flex-end",
+                  justifyContent: 'flex-end',
                   mt: 2,
                 }}
               >
@@ -542,7 +497,7 @@ export default function CreateMemberPage() {
                   startIcon={loading ? <CircularProgress size={20} /> : null}
                   size="large"
                 >
-                  {loading ? "Creating..." : "Create Member"}
+                  {loading ? 'Creating...' : 'Create Member'}
                 </Button>
               </Box>
             </Grid>

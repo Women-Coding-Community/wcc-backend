@@ -1,0 +1,15 @@
+export const PROGRAMMING_LANGUAGES = [
+  { value: 'C_LANGUAGE', label: 'C' },
+  { value: 'C_PLUS_PLUS', label: 'C++' },
+  { value: 'C_SHARP', label: 'C#' },
+  { value: 'GO', label: 'Go' },
+  { value: 'JAVA', label: 'Java' },
+  { value: 'JAVASCRIPT', label: 'JavaScript' },
+  { value: 'KOTLIN', label: 'Kotlin' },
+  { value: 'PHP', label: 'PHP' },
+  { value: 'PYTHON', label: 'Python' },
+  { value: 'RUBY', label: 'Ruby' },
+  { value: 'RUST', label: 'Rust' },
+  { value: 'TYPESCRIPT', label: 'TypeScript' },
+  { value: 'OTHER', label: 'Other' },
+];
