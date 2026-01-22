@@ -1,0 +1,35 @@
+NEW_MENTEES_ALERT_MENTOR_LONG:
+  subject: "[Action Required] New Mentee Applications for WCC Mentorship Programme"
+  body: |
+    <p>Dear {{mentorName}},</p>
+
+    <p>
+    Thank you for being part of the <strong>Women Coding Community</strong> <strong>{{year}}</strong>
+    Long-Term Mentorship Programme!
+    </p>
+
+    <p>
+    You’ve received new mentee applications. Please review the details in the spreadsheet below:
+    <a href="{{menteesSpreadsheetUrl}}">View mentee applications</a>
+    </p>
+
+    <p>
+    Please take some time to review the profiles of these potential mentees.
+    If you are interested in mentoring any of the applicants, kindly reply to this email and let us know.
+    We will then connect you with them.
+    </p>
+
+    <p>
+    As the official kick-off for the mentorship programme is <strong>{{kickoffDate}}</strong>,
+    we kindly ask you to confirm your selected mentees by <strong>{{selectionDeadline}}</strong>
+    to ensure a smooth and timely pairing process.
+    </p>
+
+    <p>
+    If you have any questions or need further assistance, please don’t hesitate to reach out to us.
+    Your commitment to the mentorship programme is greatly appreciated, and we look forward to your continued support.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

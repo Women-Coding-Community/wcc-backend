@@ -1,0 +1,34 @@
+POTENTIAL_MENTEES_MENTOR_LONG:
+  subject: "Mentee Assignments for WCC Mentorship programme {{year}}"
+  body: |
+    <p>Dear {{mentorName}},</p>
+
+    <p>
+    Thank you for being part of the <strong>Women Coding Community</strong> <strong>{{year}}</strong>
+    Long-Term Mentorship Programme!
+    </p>
+
+    <p>
+    Please find below the spreadsheet containing potential mentees:
+    <a href="{{menteesSpreadsheetUrl}}">View potential mentees</a>
+    </p>
+
+    <p>
+    We recommend mentoring at least <strong>two sessions per month</strong> (45 minutes to 1 hour each)
+    per mentee to ensure a meaningful and impactful relationship.
+    </p>
+
+    <p>
+    Kindly review the list and return the names or email addresses of your selected mentees
+    at your earliest convenience so we can finalise pairings as soon as possible,
+    while taking your availability into consideration.
+    </p>
+
+    <p>
+    If you have any questions, please feel free to reach out.
+    We’re looking forward to another impactful mentorship cycle!
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

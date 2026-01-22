@@ -1,0 +1,45 @@
+UNABLE_MATCH_MENTOR_LONG:
+  subject: "Update on Your Mentorship Application – Women Coding Community"
+  body: |
+    <p>Dear {{menteeNames}},</p>
+
+    <p>
+    Thank you so much for your interest in the <strong>Women Coding Community Mentorship Programme</strong>.
+    </p>
+
+    <p>
+    At this time, we haven’t been able to match you with a mentor from your selected list.
+    We understand how important mentorship is, and we share your disappointment that we were not able to find a mentor for you.
+    </p>
+
+    <p>
+    While we weren’t able to match you with any of the mentors you selected for the long-term mentorship cycle at this stage,
+    we want to assure you that your journey with us is just beginning.
+    Your profile will remain on our waiting list, and if a mentor becomes available or a spot opens up,
+    we’ll reach out to you right away.
+    </p>
+
+    <p>
+    In the meantime, we’re excited to share that we’re launching <strong>study groups</strong> by the end of this week to support more mentees!
+    These groups will be a great way to connect with others, learn together, and grow your skills while staying active in our community.
+    </p>
+
+    <p>
+    More details on study groups and how to apply will be announced soon — stay tuned!
+    </p>
+
+    <p>
+    We also encourage you to consider applying for <strong>one-time (ad-hoc) mentoring sessions</strong> via our website.
+    This option will allow you to connect with mentors who have expertise in your field.
+    Please note that applications for one-time mentoring sessions open at the beginning of each month,
+    and you can apply during the <strong>first 10 days of each month</strong>.
+    </p>
+
+    <p>
+    If you have any questions or concerns, please do not hesitate to contact us.
+    We appreciate your patience and understanding, and we look forward to connecting you with a mentor soon.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

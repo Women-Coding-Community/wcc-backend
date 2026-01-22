@@ -1,0 +1,34 @@
+KICK_OFF_MEETING_LONG:
+  subject: "Kick-off meeting for Mentorship programme {{year}}"
+  body: |
+    <p>Dear Mentors and Mentees,</p>
+
+    <p>
+    We are delighted to welcome you to participate in the <strong>kick-off meeting</strong>,
+    which will take place on <strong>{{kickoffDate}}</strong> (London time).
+    During this session, we will briefly explain each step of the programme and answer any questions you may have.
+    </p>
+
+    <p>
+    Additional meeting details will be shared via email shortly.
+    </p>
+
+    <p>
+    <strong>Meeting link:</strong>
+    <a href="{{meetingLink}}">Join the meeting</a>
+    </p>
+
+    <p>
+    <strong>Agenda:</strong> {{agenda}}
+    </p>
+
+    <p>
+    We look forward to meeting you all!
+    If you have any questions or concerns, please do not hesitate to contact us.
+    </p>
+
+    <p>
+    Best regards,<br/>
+    Mentorship Programme Team<br/>
+    Women Coding Community
+    </p>

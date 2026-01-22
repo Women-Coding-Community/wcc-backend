@@ -1,0 +1,34 @@
+REMINDER_LONG_MENTORSHIP_MENTEE:
+  subject: "Important Information for All Mentees - {{year}} WCC Mentorship Programme"
+  body: |
+    <p>Dear Mentees,</p>
+
+    <p>
+    We’re excited to see you matched with your mentors and would like to share some important information
+    to help you make the most of this opportunity:
+    </p>
+
+    <ul>
+      <li>
+        You are expected to reach out to your mentor to initiate the connection.
+      </li>
+      <li>
+        Your first meeting should focus on determining whether the mentorship is a good fit.
+        If you experience any issues or challenges, please reach out to us as soon as possible —
+        we’re here to support you and will do our best to resolve the issue or find you a new match.
+      </li>
+      <li>
+        It is the mentee’s responsibility to make effective use of the mentor’s time by being proactive and prepared.
+      </li>
+      <li>
+        Please complete the mentorship tracker at the end of each of your sessions.
+      </li>
+    </ul>
+
+    <p>
+    Thank you for your attention, and we look forward to supporting your mentorship journey.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

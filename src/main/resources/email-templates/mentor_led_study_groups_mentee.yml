@@ -1,0 +1,41 @@
+STUDY_GROUPS_MENTEE:
+  subject: "We’ve Got New Study Group Options for You"
+  body: |
+    <p>Dear {{menteeName}},</p>
+
+    <p>
+    We know it can be frustrating not being matched with a mentor, and we truly appreciate your patience.
+    We’re excited to invite you to join our <strong>mentor-led study groups</strong>.
+    </p>
+
+    <p><strong>Join a Mentor-Led Study Group</strong></p>
+
+    <p>These groups offer:</p>
+
+    <ul>
+      <li>Guidance from an experienced mentor</li>
+      <li>Collaborative learning with peers</li>
+      <li>Community support and networking</li>
+      <li>Valuable skill development</li>
+    </ul>
+
+    <p>
+    <a href="{{studyGroupSelectionUrl}}">Click here to select your study group</a>
+    </p>
+
+    <p>
+    Please complete your selection by <strong>{{selectionDeadline}}</strong>,
+    as spaces are limited in each group.
+    </p>
+
+    <p>
+    We’re thrilled to offer this programme and look forward to your participation.
+    If you have any questions, please contact us via email or in the
+    <strong>#mentorship</strong> or <strong>#prog_study_group</strong> Slack channels.
+    </p>
+
+    <p>
+    Warm regards,<br/>
+    The Mentorship Team<br/>
+    Women Coding Community
+    </p>

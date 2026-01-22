@@ -1,0 +1,42 @@
+FOLLOW_UP_POTENTIAL_MENTEES_MENTOR_LONG:
+  subject: "[Reminder] Please Select Your Mentees for the WCC Mentorship programme {{year}}"
+  body: |
+    <p>Dear {{mentorName}},</p>
+  
+    <p>
+    We hope this email finds you well. We wanted to follow up on our previous communication regarding the
+    <strong>Mentorship Programme</strong>. We truly appreciate your dedication to the programme and your
+    willingness to support our mentees in their professional growth journey.
+    </p>
+    
+    <p>
+    As mentioned in our previous email, we shared a list of potential mentees for pairing.
+    Kindly re-check the spreadsheet below to review the <strong>updated list</strong> of potential mentees:
+    </p>
+    
+    <p>
+    <a href="{{menteesSpreadsheetUrl}}">View potential mentees spreadsheet</a>
+    </p>
+    
+    <p>
+    Please take some time to review the profiles of these potential mentees. If you are interested in
+    mentoring any of the mentees listed, please reply to this email and let us know — we will connect you
+    with them.
+    </p>
+    
+    <p>
+    As the official kick-off for the mentorship programme is <strong>{{kickoffDate}}</strong>, we kindly
+    ask you to confirm your selected mentees by <strong>{{selectionDeadline}}</strong> to ensure a smooth
+    and timely pairing process.
+    </p>
+    
+    <p>
+    If you have any questions or need further assistance, please don’t hesitate to reach out to us.
+    Your commitment to the mentorship programme is greatly appreciated, and we look forward to your
+    continued support.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+

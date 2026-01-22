@@ -1,0 +1,33 @@
+MENTORSHIP_APPLICATION_RECEIVED_MENTEE_LONG:
+  subject: "We’ve received your registration for the [year] WCC Mentorship Programme"
+  body: |
+    <p>Dear {{menteeName}},</p>
+
+    <p>
+    Thank you for your interest in being part of the <strong>Mentorship Programme</strong>.
+    We look forward to connecting you with a mentor who has similar interests and experience in the field.
+    </p>
+
+    <p>
+    Once the application period ends, the Mentorship Programme Team will share mentee applications with mentors.
+    Based on their availability, mentors will be able to accept mentees.
+    </p>
+
+    <p>
+    Please note that you can apply for up to <strong>5 mentors</strong>.
+    If your first-choice mentor is not available, we will try to match you with one of your other preferred mentors.
+    </p>
+
+    <p>
+    We will keep you updated on your matching status, and we truly appreciate your interest in becoming a mentee.
+    Thank you for your desire to grow and develop yourself!
+    </p>
+
+    <p>
+    If you have any questions, please visit our website or feel free to reach out by replying to this email
+    or via the <strong>#mentorship</strong> Slack channel.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>
