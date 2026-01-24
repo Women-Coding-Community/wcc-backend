@@ -57,6 +57,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("org.flywaydb:flyway-core")
