@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Typography, Button, Box, Alert, CircularProgress } from '@mui/material';
+import { Button, Box, Alert, CircularProgress } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
@@ -128,40 +128,14 @@ export default function CreateMentorForm() {
           {apiError}
         </Alert>
       )}
-
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Grid container spacing={3}>
-          <Grid size={12}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Basic Information
-            </Typography>
-          </Grid>
           <BasicInfoSection control={control} errors={errors} />
-
-          <Grid size={12}>
-            <Typography variant="h6" sx={{ mb: 2, mt: 3 }}>
-              Profile Information
-            </Typography>
-          </Grid>
           <ProfileSection control={control} errors={errors} />
-
-          <Grid size={12}>
-            <Typography variant="h6" sx={{ mb: 2, mt: 3 }}>
-              Skills & Experience
-            </Typography>
-          </Grid>
           <SkillsSection control={control} errors={errors} />
-
-          <Grid size={12}>
-            <Typography variant="h6" sx={{ mb: 2, mt: 3 }}>
-              Mentorship Preferences
-            </Typography>
-          </Grid>
           <MentorshipSection control={control} errors={errors} />
-
           <ImagesSection control={control} />
           <NetworkLinksSection control={control} />
-
           <Grid size={12}>
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
               <Button onClick={handleCancel} disabled={loading} size="large">

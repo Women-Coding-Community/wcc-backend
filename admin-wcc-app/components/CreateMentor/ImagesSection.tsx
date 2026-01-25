@@ -40,7 +40,7 @@ export default function ImagesSection({ control }: ImagesSectionProps) {
         <Button
           size="small"
           startIcon={<AddIcon />}
-          onClick={() => append({ path: '', alt: '', type: 'Desktop' })}
+          onClick={() => append({ path: '', alt: '', type: 'DESKTOP' })}
         >
           Add Image
         </Button>
@@ -54,8 +54,9 @@ export default function ImagesSection({ control }: ImagesSectionProps) {
               <FormControl sx={{ minWidth: 120 }}>
                 <InputLabel>Type</InputLabel>
                 <Select {...field} label="Type">
-                  <MenuItem value="Desktop">Desktop</MenuItem>
-                  <MenuItem value="Mobile">Mobile</MenuItem>
+                  <MenuItem value="DESKTOP">Desktop</MenuItem>
+                  <MenuItem value="MOBILE">Mobile</MenuItem>
+                  <MenuItem value="TABLET">Tablet</MenuItem>
                 </Select>
               </FormControl>
             )}

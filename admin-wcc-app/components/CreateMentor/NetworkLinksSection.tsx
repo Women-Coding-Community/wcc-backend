@@ -34,6 +34,7 @@ export default function NetworkLinksSection({ control }: NetworkLinksSectionProp
           justifyContent: 'space-between',
           alignItems: 'center',
           mb: 2,
+          mt: 3,
         }}
       >
         <Typography variant="h6">Social Network Links</Typography>
