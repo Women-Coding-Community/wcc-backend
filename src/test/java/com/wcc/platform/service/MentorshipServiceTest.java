@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
@@ -76,9 +78,9 @@ class MentorshipServiceTest {
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
+    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
     when(mentor.getEmail()).thenReturn("test@test.com");
     when(memberRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
-    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
 
     assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
     verify(mentorRepository, never()).create(any());
@@ -87,7 +89,9 @@ class MentorshipServiceTest {
   @Test
   void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
     var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
     when(mentor.getEmail()).thenReturn("newmentor@test.com");
     when(memberRepository.findByEmail("newmentor@test.com")).thenReturn(Optional.empty());
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
@@ -98,6 +102,80 @@ class MentorshipServiceTest {
     assertEquals(mentor, result);
     verify(memberRepository).findByEmail("newmentor@test.com");
     verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and 2+ hours commitment When creating Then create"
+          + " mentor and return it")
+  void testCreateAvailableLongTermMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.mentorshipType())
+        .thenReturn(List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM));
+    when(menteeSection.availability())
+        .thenReturn(
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 3),
+                new MentorMonthAvailability(Month.FEBRUARY, 4)));
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
+
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with adhoc mentorship and under 2 hours commitment When creating Then create"
+          + " mentor and return it")
+  void testCreateUnavailableAdHocMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.mentorshipType()).thenReturn(List.of(MentorshipType.AD_HOC));
+    when(menteeSection.availability())
+        .thenReturn(
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 1),
+                new MentorMonthAvailability(Month.FEBRUARY, 1)));
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
+
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and 2+ hours commitment When creating the"
+          + " mentor Then throw IllegalArgumentException")
+  void testCreateUnavailableLongTermMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(1L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.mentorshipType())
+        .thenReturn(List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM));
+    when(menteeSection.availability())
+        .thenReturn(
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 1),
+                new MentorMonthAvailability(Month.FEBRUARY, 2)));
+    when(mentorRepository.findById(1L)).thenReturn(Optional.empty());
+
+    var expectedMsg = "Long-term mentorship requires mentor to commit at least 2 hours per month.";
+    var exception = assertThrows(IllegalArgumentException.class, () -> service.create(mentor));
+
+    assertEquals(expectedMsg, exception.getMessage());
+    verify(mentorRepository, never()).create(any());
   }
 
   @Test
@@ -240,6 +318,79 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
+      "Given mentor with long-term mentorship and 2+ hours commitment When updating the mentor"
+          + " Then update and return it")
+  void testUpdateLongTermMentorAvailableTwoHours() {
+    final var updatedMentorWithAvailabilities =
+        createUpdatedMentorTest(
+            mentor,
+            mentorDto,
+            List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM),
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 2),
+                new MentorMonthAvailability(Month.FEBRUARY, 2)));
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
+    Member result = service.updateMentor(mentorId, mentorDto);
+
+    assertEquals(updatedMentorWithAvailabilities, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with adhoc mentorship and under 2 hours commitment When updating the mentor"
+          + " Then update and return it")
+  void testUpdateUnavailableAdHocMentor() {
+    final var updatedMentorWithAvailabilities =
+        createUpdatedMentorTest(
+            mentor,
+            mentorDto,
+            List.of(MentorshipType.AD_HOC),
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 1),
+                new MentorMonthAvailability(Month.FEBRUARY, 0)));
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
+
+    Member result = service.updateMentor(mentorId, mentorDto);
+
+    assertEquals(updatedMentorWithAvailabilities, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and under 2 hours commitment"
+          + " When updating the mentor Then throw IllegalArgumentException")
+  void testUpdateUnavailableLongTermMentorIllegalArgumentException() {
+    long mentorId = 1L;
+    MentorDto newMentorDto =
+        createMentorDtoTest(
+            1L,
+            MemberType.DIRECTOR,
+            List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM),
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 2),
+                new MentorMonthAvailability(Month.FEBRUARY, 0)));
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+
+    var expectedMsg = "Long-term mentorship requires mentor to commit at least 2 hours per month.";
+    var exception =
+        assertThrows(
+            IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
+    assertEquals(expectedMsg, exception.getMessage());
+
+    verify(mentorRepository).findById(anyLong());
+    verify(mentorRepository, never()).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
       "Given mentor with profile picture, when getAllMentors is called, then images list should"
           + " contain profile picture")
   void shouldMergeProfilePictureIntoImagesWhenMentorHasProfilePicture() {
@@ -315,18 +466,20 @@ class MentorshipServiceTest {
     when(mentor.getFullName()).thenReturn("Existing Member as Mentor");
     when(mentor.getPosition()).thenReturn("Software Engineer");
     when(mentor.getSlackDisplayName()).thenReturn("@existing");
-    when(mentor.getCountry()).thenReturn(mock(com.wcc.platform.domain.cms.attributes.Country.class));
+    when(mentor.getCountry())
+        .thenReturn(mock(com.wcc.platform.domain.cms.attributes.Country.class));
     when(mentor.getCity()).thenReturn("New York");
     when(mentor.getCompanyName()).thenReturn("Tech Corp");
     when(mentor.getImages()).thenReturn(List.of());
     when(mentor.getNetwork()).thenReturn(List.of());
     when(mentor.getProfileStatus())
         .thenReturn(com.wcc.platform.domain.platform.member.ProfileStatus.ACTIVE);
-    when(mentor.getSkills()).thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
+    when(mentor.getSkills())
+        .thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
     when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
     when(mentor.getBio()).thenReturn("Bio");
-    when(mentor.getMenteeSection()).thenReturn(
-        mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
+    when(mentor.getMenteeSection())
+        .thenReturn(mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
     when(mentor.getFeedbackSection()).thenReturn(null);
     when(mentor.getResources()).thenReturn(null);
 
