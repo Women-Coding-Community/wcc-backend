@@ -146,9 +146,7 @@ docker --version
 
 ### Setup PostgreSQL database
 
-PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running
-the docker compose -f docker/docker-compose.yml up --build as explained
-in [Run Locally](#run-locally) section.
+PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running the `./scripts/docker-up.sh` as explained in [Run Locally](#run-locally) section.
 
 Setup Data source in the IntelliJ.
 
@@ -178,8 +176,7 @@ execute
 * Build containers
 
 ```shell
-./gradlew clean bootJar
-docker compose -f docker/docker-compose.yml up --build
+./scripts/docker-up.sh
 ```
 
 Now you have the application running connected to the postgres database.
@@ -235,7 +232,7 @@ You can generate a Postman collection from the application’s OpenAPI specifica
 1. Start the application (e.g. via Docker Compose):
 
 ```shell
-   docker compose -f docker/docker-compose.yml up --build
+   ./scripts/docker-up.sh
 ```
 
 2. In the root directory of the repository, there is a folder called `postman-collection` which

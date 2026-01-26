@@ -1,6 +1,7 @@
 .gradle/*
 build/*
 .idea/*
+.vscode/*
 .ideaDataSources/
 data-test/*
 bin/*
