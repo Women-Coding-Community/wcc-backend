@@ -4,6 +4,7 @@ build/*
 .ideaDataSources/
 data-test/*
 bin/*
+.kiro/
 
 # IntelliJ customizations
 !.idea/checkstyle-idea.xml
