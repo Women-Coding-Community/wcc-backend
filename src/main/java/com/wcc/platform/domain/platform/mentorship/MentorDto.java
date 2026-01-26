@@ -4,6 +4,7 @@ import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
@@ -83,46 +84,36 @@ public class MentorDto extends MemberDto {
   }
 
   /**
-   * Merges the current Mentor instance with the attributes of the provided Mentor instance.
-   * Combines properties from both instances into a new Mentor object, giving precedence to non-null
-   * values in the provided Mentor instance while retaining existing values where the provided
-   * values are null or empty.
+   * Merges this DTO with an existing Mentor entity. Non-null/non-blank DTO values override existing
+   * values; otherwise existing values are retained.
    *
-   * @param mentor the Mentor object containing updated attributes to merge with the current
-   *     instance
-   * @return a new Mentor object created by merging attributes from the current instance and the
-   *     provided instance
+   * @param mentor the existing mentor to merge with
+   * @return merged Mentor with updated fields
    */
   public Mentor merge(final Mentor mentor) {
-    final var member = super.merge(mentor);
+    if (mentor == null) {
+      throw new InvalidMentorException("Cannot merge with null mentor");
+    }
 
-    final Mentor.MentorBuilder builder =
-        Mentor.mentorBuilder()
-            .id(member.getId())
-            .fullName(mergeString(this.getFullName(), member.getFullName()))
-            .position(mergeString(this.getPosition(), member.getPosition()))
-            .email(mergeString(this.getEmail(), member.getEmail()))
-            .slackDisplayName(mergeString(this.getSlackDisplayName(), member.getSlackDisplayName()))
-            .country(mergeNullable(this.getCountry(), member.getCountry()))
-            .profileStatus(mergeNullable(this.profileStatus, mentor.getProfileStatus()))
-            .bio(mergeString(this.bio, mentor.getBio()))
-            .skills(mergeNullable(this.skills, mentor.getSkills()))
-            .menteeSection(mergeNullable(this.menteeSection, mentor.getMenteeSection()));
-
-    mergeOptionalString(this.getCity(), member.getCity(), builder::city);
-
-    mergeOptionalString(this.getCompanyName(), member.getCompanyName(), builder::companyName);
-
-    builder.network(mergeCollection(this.getNetwork(), member.getNetwork()));
-    builder.spokenLanguages(
-        mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()));
-    builder.images(mergeCollection(this.getImages(), member.getImages()));
-
-    mergeOptional(this.feedbackSection, mentor.getFeedbackSection(), builder::feedbackSection);
-
-    mergeOptional(this.resources, mentor.getResources(), builder::resources);
-
-    return builder.build();
+    return Mentor.mentorBuilder()
+        .id(mentor.getId())
+        .fullName(mergeString(this.getFullName(), mentor.getFullName()))
+        .position(mergeString(this.getPosition(), mentor.getPosition()))
+        .email(mergeString(this.getEmail(), mentor.getEmail()))
+        .slackDisplayName(mergeString(this.getSlackDisplayName(), mentor.getSlackDisplayName()))
+        .city(mergeString(this.getCity(), mentor.getCity()))
+        .companyName(mergeString(this.getCompanyName(), mentor.getCompanyName()))
+        .country(mergeNullable(this.getCountry(), mentor.getCountry()))
+        .profileStatus(mergeNullable(this.getProfileStatus(), mentor.getProfileStatus()))
+        .bio(mergeString(this.getBio(), mentor.getBio()))
+        .skills(mergeNullable(this.getSkills(), mentor.getSkills()))
+        .menteeSection(mergeNullable(this.getMenteeSection(), mentor.getMenteeSection()))
+        .feedbackSection(mergeNullable(this.getFeedbackSection(), mentor.getFeedbackSection()))
+        .resources(mergeNullable(this.getResources(), mentor.getResources()))
+        .network(mergeCollection(this.getNetwork(), mentor.getNetwork()))
+        .spokenLanguages(mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()))
+        .images(mergeCollection(this.getImages(), mentor.getImages()))
+        .build();
   }
 
   private String mergeString(final String candidate, final String existing) {
@@ -134,24 +125,9 @@ public class MentorDto extends MemberDto {
   }
 
   private <T> List<T> mergeCollection(final List<T> candidate, final List<T> existing) {
-    return CollectionUtils.isEmpty(candidate) ? existing : candidate;
-  }
-
-  private void mergeOptionalString(
-      final String candidate,
-      final String existing,
-      final java.util.function.Consumer<String> setter) {
-
-    if (StringUtils.isNotBlank(candidate) || StringUtils.isNotBlank(existing)) {
-      setter.accept(mergeString(candidate, existing));
+    if (!CollectionUtils.isEmpty(candidate)) {
+      return candidate;
     }
-  }
-
-  private <T> void mergeOptional(
-      final T candidate, final T existing, final java.util.function.Consumer<T> setter) {
-
-    if (candidate != null || existing != null) {
-      setter.accept(mergeNullable(candidate, existing));
-    }
+    return existing != null ? existing : List.of();
   }
 }

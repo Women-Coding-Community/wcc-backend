@@ -26,10 +26,12 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
 
   public static final String UPDATE_MENTEE_SECTION =
       "UPDATE mentor_mentee_section SET ideal_mentee = ?, additional = ? WHERE mentor_id = ?";
-  public static final String UPDATE_MENTOR_TYPE =
-      "UPDATE mentor_mentorship_types SET mentorship_type = ? WHERE mentor_id = ?";
-  private static final String UPDATE_AVAILABILITY =
-      "UPDATE mentor_availability SET month_num = ?, hours = ? WHERE mentor_id = ?";
+  public static final String UPDATE_AVAILABILITY =
+      "UPDATE mentor_availability SET " + "month_num = ?, " + "hours = ? " + "WHERE mentor_id = ?";
+  public static final String INSERT_MENTOR_TYPES =
+      "INSERT INTO mentor_mentorship_types (mentor_id, mentorship_type) VALUES (?, ?)";
+  public static final String DELETE_MENTOR_TYPES =
+      "DELETE FROM mentor_mentorship_types WHERE mentor_id = ?";
   private static final String SQL_BASE =
       "SELECT ideal_mentee, additional, created_at, updated_at "
           + "FROM mentor_mentee_section WHERE mentor_id = ?";
@@ -41,8 +43,6 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
       "INSERT INTO mentor_mentee_section (mentor_id, ideal_mentee, additional) VALUES (?, ?, ?)";
   private static final String INSERT_AVAILABILITY =
       "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
-  private static final String INSERT_MENTOR_TYPES =
-      "INSERT INTO mentor_mentorship_types (mentor_id, mentorship_type) VALUES (?, ?)";
   private final JdbcTemplate jdbc;
 
   /** Inserts the mentee section details for the mentor. */
@@ -58,7 +58,8 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
    */
   public void updateMenteeSection(final MenteeSection menteeSec, final Long mentorId) {
     jdbc.update(UPDATE_MENTEE_SECTION, menteeSec.idealMentee(), menteeSec.additional(), mentorId);
-    jdbc.update(UPDATE_MENTOR_TYPE, menteeSec.mentorshipType(), mentorId);
+    jdbc.update(DELETE_MENTOR_TYPES, mentorId);
+    insertMentorshipTypes(menteeSec, mentorId);
     updateAvailability(menteeSec, mentorId);
   }
 
@@ -116,7 +117,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
 
   private void updateAvailability(final MenteeSection ms, final Long memberId) {
     for (final MentorMonthAvailability a : ms.availability()) {
-      jdbc.update(UPDATE_AVAILABILITY, memberId, a.month().getValue(), a.hours());
+      jdbc.update(UPDATE_AVAILABILITY, a.month().getValue(), a.hours(), memberId);
     }
   }
 }
