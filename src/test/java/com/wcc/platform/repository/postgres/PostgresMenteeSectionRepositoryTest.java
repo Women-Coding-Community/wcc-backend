@@ -1,12 +1,13 @@
 package com.wcc.platform.repository.postgres;
 
-import static com.wcc.platform.repository.postgres.PostgresMenteeSectionRepository.*;
+import static com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
