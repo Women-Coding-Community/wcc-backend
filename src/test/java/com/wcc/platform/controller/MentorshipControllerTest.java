@@ -1,36 +1,29 @@
 package com.wcc.platform.controller;
 
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_RESOURCES;
-import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createLongTermTimeLinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorPageTest;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipAdHocTimelinePageTest;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipConductPageTest;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipFaqPageTest;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipPageTest;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipResourcesPageTest;
-import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipStudyGroupPageTest;
+import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
+import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
+import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
-import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.factories.MockMvcRequestFactory;
-import com.wcc.platform.service.MentorshipPagesService;
-import com.wcc.platform.utils.FileUtil;
-import org.junit.jupiter.api.DisplayName;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.service.MenteeService;
+import com.wcc.platform.service.MentorshipService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,165 +31,150 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-/** Unit test for mentorship apis. */
+/** Unit test for mentorship APIs. */
 @ActiveProfiles("test")
 @Import({SecurityConfig.class, TestConfig.class})
 @WebMvcTest(MentorshipController.class)
-public class MentorshipControllerTest {
+class MentorshipControllerTest {
 
-  public static final String API_MENTORSHIP_OVERVIEW = "/api/cms/v1/mentorship/overview";
-  public static final String API_MENTORSHIP_FAQ = "/api/cms/v1/mentorship/faq";
-  public static final String API_MENTORSHIP_CONDUCT = "/api/cms/v1/mentorship/code-of-conduct";
-  public static final String API_MENTORSHIP_TIMELINE = "/api/cms/v1/mentorship/long-term-timeline";
-  public static final String API_STUDY_GROUPS = "/api/cms/v1/mentorship/study-groups";
-  public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
-  public static final String API_AD_HOC_TIMELINE = "/api/cms/v1/mentorship/ad-hoc-timeline";
-  public static final String API_MENTORSHIP_RESOURCES = "/api/cms/v1/mentorship/resources";
+  private static final String API_MENTORS = "/api/platform/v1/mentors";
+  private static final String API_MENTEES = "/api/platform/v1/mentees";
+  private static final String API_KEY_HEADER = "X-API-KEY";
+  private static final String API_KEY_VALUE = "test-api-key";
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
-
-  @MockBean private MentorshipPagesService service;
+  @MockBean private MentorshipService mentorshipService;
+  @MockBean private MenteeService menteeService;
 
   @Test
-  void testInternalServerError() throws Exception {
-    when(service.getOverview())
-        .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));
+  void testGetAllMentorsReturnsOk() throws Exception {
+    List<MentorDto> mockMentors = List.of(createMentorTest("Jane").toDto());
+    when(mentorshipService.getAllMentors()).thenReturn(mockMentors);
+
+    mockMvc
+        .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(1)))
+        .andExpect(jsonPath("$[0].id", is(1)))
+        .andExpect(jsonPath("$[0].fullName", is("Jane")));
+  }
+
+  @Test
+  void testCreateMentorReturnsCreated() throws Exception {
+    var mentor = createMentorTest("Jane");
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
+
+    mockMvc
+        .perform(postRequest(API_MENTORS, mentor))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.fullName", is("Jane")));
+  }
+
+  @Test
+  void testCreateMenteeReturnsCreated() throws Exception {
+    Mentee mockMentee = createMenteeTest(2L, "Mark", "mark@test.com");
+    var currentYear = java.time.Year.now();
+
+    when(menteeService.saveRegistration(any())).thenReturn(mockMentee);
 
     mockMvc
         .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
-        .andExpect(status().isInternalServerError())
-        .andExpect(jsonPath("$.status", is(500)))
-        .andExpect(jsonPath("$.message", is("Invalid Json")))
-        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/mentorship/overview")));
+            MockMvcRequestBuilders.post(API_MENTEES)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(
+                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[\"BACKEND\"],\"languages\":[\"JAVASCRIPT\"],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
+                        + currentYear
+                        + "\",\"applications\":[{\"menteeId\":null,\"mentorId\":1,\"priorityOrder\":1}]}"))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id", is(2)))
+        .andExpect(jsonPath("$.fullName", is("Mark")));
   }
 
   @Test
-  void testOkResponse() throws Exception {
-    var fileName = MENTORSHIP.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
+  void testUpdateMentorReturnsOk() throws Exception {
+    Long mentorId = 1L;
+    Mentor existingMentor = createMentorTest();
+    MentorDto mentorDto = createMentorTest().toDto();
+    Mentor updatedMentor = createUpdatedMentorTest(existingMentor, mentorDto);
 
-    when(service.getOverview()).thenReturn(createMentorshipPageTest(fileName));
+    when(mentorshipService.updateMentor(eq(mentorId), any(MentorDto.class)))
+        .thenReturn(updatedMentor);
 
     mockMvc
         .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_OVERVIEW).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
+            MockMvcRequestBuilders.put(API_MENTORS + "/" + mentorId)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mentorDto)))
+        .andExpect(status().isOk());
   }
 
   @Test
-  void testFaqOkResponse() throws Exception {
-    var fileName = "init-data/mentorshipFaqPage.json";
-    var expectedJson = FileUtil.readFileAsString(fileName);
+  void testUpdateMentorReturnsUpdatedFields() throws Exception {
+    Long mentorId = 1L;
+    Mentor existingMentor = createMentorTest();
+    MentorDto mentorDto = createMentorTest().toDto();
+    Mentor updatedMentor = createUpdatedMentorTest(existingMentor, mentorDto);
 
-    when(service.getFaq()).thenReturn(createMentorshipFaqPageTest(fileName));
-
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_MENTORSHIP_FAQ).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  void testOkCodeOfConductResponse() throws Exception {
-    var fileName = MENTORSHIP_CONDUCT.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getCodeOfConduct()).thenReturn(createMentorshipConductPageTest(fileName));
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_CONDUCT).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  void testLongTermTimelineOkResponse() throws Exception {
-    var fileName = MENTORSHIP_LONG_TIMELINE.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getLongTermTimeLine()).thenReturn(createLongTermTimeLinePageTest(fileName));
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_TIMELINE).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  void testStudyGroupResponse() throws Exception {
-    var fileName = STUDY_GROUPS.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getStudyGroups()).thenReturn(createMentorshipStudyGroupPageTest(fileName));
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_STUDY_GROUPS).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  void testMentorsOkResponse() throws Exception {
-    MentorsPage mentorsPage = createMentorPageTest();
-
-    when(service.getMentorsPage(any())).thenReturn(mentorsPage);
+    when(mentorshipService.updateMentor(eq(mentorId), any(MentorDto.class)))
+        .thenReturn(updatedMentor);
 
     mockMvc
         .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
+            MockMvcRequestBuilders.put(API_MENTORS + "/" + mentorId)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mentorDto)))
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.bio", is(updatedMentor.getBio())))
+        .andExpect(jsonPath("$.spokenLanguages", hasSize(2)))
+        .andExpect(jsonPath("$.spokenLanguages[0]", is(updatedMentor.getSpokenLanguages().get(0))))
+        .andExpect(jsonPath("$.spokenLanguages[1]", is(updatedMentor.getSpokenLanguages().get(1))))
+        .andExpect(
+            jsonPath("$.skills.yearsExperience", is(updatedMentor.getSkills().yearsExperience())))
+        .andExpect(jsonPath("$.skills.areas", hasSize(1)))
+        .andExpect(
+            jsonPath("$.skills.areas[0]", is(updatedMentor.getSkills().areas().get(0).toString())))
+        .andExpect(jsonPath("$.skills.languages", hasSize(2)))
+        .andExpect(
+            jsonPath(
+                "$.skills.languages[0]",
+                is(updatedMentor.getSkills().languages().get(0).toString())))
+        .andExpect(
+            jsonPath(
+                "$.skills.languages[1]",
+                is(updatedMentor.getSkills().languages().get(1).toString())))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.mentorshipType[0]",
+                is(updatedMentor.getMenteeSection().mentorshipType().get(0).toString())))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.idealMentee", is(updatedMentor.getMenteeSection().idealMentee())))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.additional", is(updatedMentor.getMenteeSection().additional())));
   }
 
   @Test
-  void testMentorsWithFiltersOkResponse() throws Exception {
-    MentorsPage mentorsPage = createMentorPageTest();
+  void testUpdateNonExistentMentorThrowsException() throws Exception {
+    Long nonExistentMentorId = 999L;
+    MentorDto mentorDto = createMentorTest().toDto();
 
-    when(service.getMentorsPage(any())).thenReturn(mentorsPage);
-
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_MENTORS)
-                .param("keyword", "Alice")
-                .param("yearsExperience", "3")
-                .param("mentorshipTypes", "AD_HOC")
-                .param("areas", "BACKEND")
-                .param("languages", "JAVA")
-                .param("focus", "GROW_MID_TO_SENIOR")
-                .contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(objectMapper.writeValueAsString(mentorsPage)));
-  }
-
-  @Test
-  void testAdHocTimelineOkResponse() throws Exception {
-    MentorshipAdHocTimelinePage adHocTimelinePage = createMentorshipAdHocTimelinePageTest();
-
-    when(service.getAdHocTimeline()).thenReturn(adHocTimelinePage);
+    when(mentorshipService.updateMentor(eq(nonExistentMentorId), any(MentorDto.class)))
+        .thenThrow(new MemberNotFoundException(nonExistentMentorId));
 
     mockMvc
         .perform(
-            MockMvcRequestFactory.getRequest(API_AD_HOC_TIMELINE).contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(objectMapper.writeValueAsString(adHocTimelinePage)));
-  }
-
-  @Test
-  @DisplayName("Given resources page exists, when GET /resources, then return OK with JSON")
-  void shouldReturnOkResponseForMentorshipResources() throws Exception {
-    var fileName = MENTORSHIP_RESOURCES.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
-
-    when(service.getResources()).thenReturn(createMentorshipResourcesPageTest(fileName));
-
-    mockMvc
-        .perform(
-            MockMvcRequestFactory.getRequest(API_MENTORSHIP_RESOURCES)
-                .contentType(APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
+            MockMvcRequestBuilders.put(API_MENTORS + "/" + nonExistentMentorId)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mentorDto)))
+        .andExpect(status().isNotFound());
   }
 }

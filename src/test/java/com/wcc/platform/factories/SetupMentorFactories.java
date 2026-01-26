@@ -108,6 +108,38 @@ public class SetupMentorFactories {
         .build();
   }
 
+  /** Factory test to create MemberDto object with mentorshipTypes and availabilities params. */
+  public static MentorDto createMentorDtoTest(
+      final Long mentorId,
+      final MemberType type,
+      final List<MentorshipType> mentorshipTypes,
+      final List<MentorMonthAvailability> availabilities) {
+    return MentorDto.mentorDtoBuilder()
+        .id(mentorId)
+        .fullName("fullName " + type.name())
+        .position("position " + type.name())
+        .email("email@" + type.name().toLowerCase())
+        .slackDisplayName("slackDisplayName")
+        .country(new Country("ES", "Spain"))
+        .city("City")
+        .companyName("Company name")
+        .images(List.of(new Image("image.png", "alt image", ImageType.MOBILE)))
+        .network(List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")))
+        .profileStatus(ProfileStatus.ACTIVE)
+        .bio("Mentor bio")
+        .spokenLanguages(List.of("English"))
+        .skills(
+            new Skills(
+                2,
+                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
+                List.of(Languages.JAVASCRIPT),
+                List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
+        .menteeSection(
+            new MenteeSection(
+                mentorshipTypes, availabilities, "ideal mentee description", "additional"))
+        .build();
+  }
+
   /** Test factory for updated Mentor. */
   public static Mentor createUpdatedMentorTest(final Mentor mentor, final MentorDto mentorDto) {
 
@@ -132,6 +164,39 @@ public class SetupMentorFactories {
             new MenteeSection(
                 List.of(MentorshipType.AD_HOC),
                 List.of(new MentorMonthAvailability(Month.JUNE, 2)),
+                "ideal mentee description UPDATED",
+                "additional UPDATED"))
+        .build();
+  }
+
+  /** Test factory for updated Mentor with mentorship types and availabilities params. */
+  public static Mentor createUpdatedMentorTest(
+      final Mentor mentor,
+      final MentorDto mentorDto,
+      final List<MentorshipType> mentorshipTypes,
+      final List<MentorMonthAvailability> availabilities) {
+
+    return Mentor.mentorBuilder()
+        .id(mentor.getId())
+        .fullName(mentorDto.getFullName())
+        .position(mentorDto.getPosition())
+        .email(mentorDto.getEmail())
+        .slackDisplayName(mentorDto.getSlackDisplayName())
+        .country(mentorDto.getCountry())
+        .images(mentorDto.getImages())
+        .profileStatus(ProfileStatus.ACTIVE)
+        .bio("Mentor bio UPDATED")
+        .spokenLanguages(List.of("English", "German"))
+        .skills(
+            new Skills(
+                5,
+                List.of(TechnicalArea.BACKEND),
+                List.of(Languages.JAVASCRIPT, Languages.C_LANGUAGE),
+                List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
+        .menteeSection(
+            new MenteeSection(
+                mentorshipTypes,
+                availabilities,
                 "ideal mentee description UPDATED",
                 "additional UPDATED"))
         .build();

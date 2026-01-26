@@ -32,6 +32,10 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
+backend:
+  app:
+    url: ${SPRING_APP_BASE_URL:http://localhost:8080}
+
 mentorship:
   daysCycleOpen: 10
   validation:

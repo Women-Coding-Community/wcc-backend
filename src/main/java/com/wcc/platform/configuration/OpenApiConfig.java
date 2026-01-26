@@ -1,6 +1,5 @@
 package com.wcc.platform.configuration;
 
-import com.wcc.platform.domain.platform.config.PlatformServers;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -11,6 +10,7 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,6 +26,9 @@ public class OpenApiConfig implements WebMvcConfigurer {
 
   private static final String ACTUATOR = "actuator";
   private static final String ACTUATOR_SPRING = "Spring Boot Actuator";
+
+  @Value("${backend.app.url}")
+  private String appBaseUrl;
 
   private static Consumer<Tag> renameActuator() {
     return tag -> {
@@ -58,9 +61,7 @@ public class OpenApiConfig implements WebMvcConfigurer {
   /** Customize servers for open API. */
   @Bean
   public OpenAPI customOpenApi() {
-    return new OpenAPI()
-        .addServersItem(new Server().url(PlatformServers.DEV.getUri()).description("Dev"))
-        .addServersItem(new Server().url(PlatformServers.LOCAL.getUri()).description("Localhost"));
+    return new OpenAPI().addServersItem(new Server().url(appBaseUrl));
   }
 
   /** Customize Actuator endpoint tag. */

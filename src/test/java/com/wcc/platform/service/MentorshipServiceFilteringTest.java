@@ -23,6 +23,7 @@ import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.factories.SetupMentorshipPagesFactories;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import java.time.Month;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MentorshipServiceFilteringTest {
 
   @Mock private MentorRepository mentorRepository;
+  @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
 
   private MentorshipService service;
@@ -45,7 +47,7 @@ class MentorshipServiceFilteringTest {
 
   @BeforeEach
   void setUp() {
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, 10));
+    service = spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, 10));
     doReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY)).when(service).getCurrentCycle();
     mentorsPage = SetupMentorshipPagesFactories.createMentorPageTest();
     mentor1 =

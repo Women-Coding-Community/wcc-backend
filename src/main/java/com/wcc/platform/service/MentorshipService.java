@@ -6,7 +6,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
-import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
@@ -14,6 +13,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.utils.FiltersUtil;
 import java.time.LocalDate;
@@ -37,17 +37,21 @@ public class MentorshipService {
   private static final String EUROPE_LONDON = "Europe/London";
   private static final MentorshipCycle ACTIVE_LONG_TERM =
       new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+  private static final int MINIMUM_HOURS = 2;
 
   private final MentorRepository mentorRepository;
+  private final MemberRepository memberRepository;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
 
   @Autowired
   public MentorshipService(
       final MentorRepository mentorRepository,
+      final MemberRepository memberRepository,
       final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
     this.mentorRepository = mentorRepository;
+    this.memberRepository = memberRepository;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
   }
@@ -58,11 +62,41 @@ public class MentorshipService {
    * @return Mentor record created successfully.
    */
   public Mentor create(final Mentor mentor) {
-    final Optional<Mentor> mentorExists = mentorRepository.findById(mentor.getId());
+    final var existingMember = memberRepository.findByEmail(mentor.getEmail());
 
-    if (mentorExists.isPresent()) {
-      throw new DuplicatedMemberException(mentorExists.get().getEmail());
+    if (existingMember.isPresent()) {
+      final var existingMemberId = existingMember.get().getId();
+      final var mentorWithExistingId =
+          Mentor.mentorBuilder()
+              .id(existingMemberId)
+              .fullName(mentor.getFullName())
+              .position(mentor.getPosition())
+              .email(mentor.getEmail())
+              .slackDisplayName(mentor.getSlackDisplayName())
+              .country(mentor.getCountry())
+              .city(mentor.getCity())
+              .companyName(mentor.getCompanyName())
+              .images(mentor.getImages())
+              .network(mentor.getNetwork())
+              .profileStatus(mentor.getProfileStatus())
+              .skills(mentor.getSkills())
+              .spokenLanguages(mentor.getSpokenLanguages())
+              .bio(mentor.getBio())
+              .menteeSection(mentor.getMenteeSection())
+              .feedbackSection(mentor.getFeedbackSection())
+              .resources(mentor.getResources())
+              .build();
+
+      return mentorRepository.create(mentorWithExistingId);
     }
+
+    if (mentor.getId() != null) {
+      final Optional<Mentor> mentorExists = mentorRepository.findById(mentor.getId());
+      if (mentorExists.isPresent()) {
+        throw new DuplicatedMemberException(mentorExists.get().getEmail());
+      }
+    }
+    validateMentorCommitment(mentor);
     return mentorRepository.create(mentor);
   }
 
@@ -185,7 +219,7 @@ public class MentorshipService {
    * @param mentorDto MentorDto with updated member's data
    * @return Mentor record updated successfully.
    */
-  public Member updateMentor(final Long mentorId, final MentorDto mentorDto) {
+  public Mentor updateMentor(final Long mentorId, final MentorDto mentorDto) {
     if (mentorDto.getId() != null && !mentorId.equals(mentorDto.getId())) {
       throw new IllegalArgumentException("Mentor ID does not match the provided mentorId");
     }
@@ -194,6 +228,21 @@ public class MentorshipService {
     final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
 
     final Mentor updatedMentor = mentorDto.merge(mentor);
+    validateMentorCommitment(updatedMentor);
     return mentorRepository.update(mentorId, updatedMentor);
+  }
+
+  private void validateMentorCommitment(final Mentor mentor) {
+    final var menteeSection = mentor.getMenteeSection();
+    final boolean isLongTermMentorship =
+        menteeSection.mentorshipType().contains(MentorshipType.LONG_TERM);
+    final boolean hasInsufficientHours =
+        menteeSection.availability().stream()
+            .anyMatch(availability -> availability.hours() < MINIMUM_HOURS);
+
+    if (isLongTermMentorship && hasInsufficientHours) {
+      throw new IllegalArgumentException(
+          "Long-term mentorship requires mentor to commit at least 2 hours per month.");
+    }
   }
 }

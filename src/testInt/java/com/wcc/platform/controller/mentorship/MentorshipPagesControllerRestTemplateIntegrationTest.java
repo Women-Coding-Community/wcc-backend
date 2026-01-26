@@ -39,7 +39,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class MentorshipControllerRestTemplateIntegrationTest extends DefaultDatabaseSetup {
+class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDatabaseSetup {
 
   private static final String API_MENTORS = "/api/cms/v1/mentorship/mentors";
 
