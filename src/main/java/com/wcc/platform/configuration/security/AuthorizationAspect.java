@@ -3,6 +3,7 @@ package com.wcc.platform.configuration.security;
 import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
+import lombok.AllArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,13 +13,10 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Order(1)
+@AllArgsConstructor
 public class AuthorizationAspect {
 
   private final AuthService authService;
-
-  public AuthorizationAspect(final AuthService authService) {
-    this.authService = authService;
-  }
 
   @Around("@annotation(requiresPermission)")
   public Object checkPermission(

@@ -56,31 +56,6 @@ public enum RoleType {
     return VIEWER;
   }
 
-  /** Check if this role has a specific permission. */
-  public boolean hasPermission(Permission permission) {
-    return permissions.contains(permission);
-  }
-
-  /** Check if this role has any of the specified permissions. */
-  public boolean hasAnyPermission(Permission... requiredPermissions) {
-    for (Permission permission : requiredPermissions) {
-      if (permissions.contains(permission)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /** Check if this role has all of the specified permissions. */
-  public boolean hasAllPermissions(Permission... requiredPermissions) {
-    for (Permission permission : requiredPermissions) {
-      if (!permissions.contains(permission)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override
   public String toString() {
     return description;

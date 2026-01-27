@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 /** Domain object representing an application user linked to a Member. */
 @Data
@@ -27,7 +28,7 @@ public class UserAccount {
 
   /** Get all permissions from all assigned roles in UserAccount. */
   public Set<Permission> getPermissions() {
-    if (roles == null || roles.isEmpty()) {
+    if (roles == null || CollectionUtils.isEmpty(roles)) {
       return Set.of();
     }
 
@@ -35,46 +36,6 @@ public class UserAccount {
         .flatMap(role -> role.getPermissions().stream())
         .collect(Collectors.toSet());
   }
-
-  /* */
-  /** Check if user has a specific permission in assigned roles. */
-  /*
-  public boolean hasPermission(Permission permission) {
-    return getPermissions().contains(permission);
-  }
-
-  */
-  /** Check if user has any of the specified permissions. */
-  /*
-  public boolean hasAnyPermission(Permission... permissions) {
-    Set<Permission> userPermissions = getPermissions();
-    return Arrays.stream(permissions).anyMatch(userPermissions::contains);
-  }
-
-  */
-  /** Check if user has all of the specified permissions. */
-  /*
-  public boolean hasAllPermissions(Permission... permissions) {
-    Set<Permission> userPermissions = getPermissions();
-    return Arrays.stream(permissions).allMatch(userPermissions::contains);
-  }
-
-  */
-  /** Check if user has a specific role. */
-  /*
-  public boolean hasRole(RoleType role) {
-    return roles != null && roles.contains(role);
-  }
-
-  */
-  /** Check if user has any of the specified roles. */
-  /*
-  public boolean hasAnyRole(RoleType... rolesToCheck) {
-    if (roles == null) {
-      return false;
-    }
-    return Arrays.stream(rolesToCheck).anyMatch(roles::contains);
-  }*/
 
   /**
    * A record that encapsulates a User within the platform.
@@ -93,7 +54,7 @@ public class UserAccount {
      * (since MENTOR has higher privileges).
      */
     public RoleType getPrimaryRole() {
-      if (member == null || member.getMemberTypes() == null || member.getMemberTypes().isEmpty()) {
+      if (member == null || CollectionUtils.isEmpty(member.getMemberTypes())) {
         return RoleType.VIEWER;
       }
       return MemberTypeRoleMapper.getHighestRole(member.getMemberTypes());
@@ -107,7 +68,7 @@ public class UserAccount {
      * CONTRIBUTOR roles.
      */
     public Set<RoleType> getAllMemberRoles() {
-      if (member == null || member.getMemberTypes() == null) {
+      if (member == null || CollectionUtils.isEmpty(member.getMemberTypes())) {
         return Set.of(RoleType.VIEWER);
       }
       return MemberTypeRoleMapper.getRolesForMemberTypes(member.getMemberTypes());
@@ -138,7 +99,6 @@ public class UserAccount {
             MemberTypeRoleMapper.getAllPermissionsForMemberTypes(member.getMemberTypes()));
       }
 
-      // Add permissions from explicitly assigned roles
       permissions.addAll(userAccount.getPermissions());
 
       return permissions;

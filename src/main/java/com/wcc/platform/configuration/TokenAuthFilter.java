@@ -70,11 +70,7 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
         final var authorities = List.of(new SimpleGrantedAuthority(user.getPrimaryRole().name()));
         final UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(
-                user, // Principal is now UserAccount.User
-                null,
-                authorities // You can add authorities here if needed
-                );
+            new UsernamePasswordAuthenticationToken(user, null, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }

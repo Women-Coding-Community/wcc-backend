@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,35 +28,17 @@ import org.springframework.stereotype.Service;
  * authentication, token management, and member retrieval.
  */
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
   private static final SecureRandom RANDOM = new SecureRandom();
   private final UserAccountRepository userAccountRepository;
   private final UserTokenRepository userTokenRepository;
   private final MemberRepository memberRepository;
-  private final int tokenTtlMinutes;
   private final PasswordEncoder passwordEncoder;
 
-  /**
-   * Constructor for the AuthService class.
-   *
-   * @param userAccountRepository the repository for managing user account entities
-   * @param userTokenRepository the repository for managing user token entities
-   * @param memberRepository the repository for managing member entities
-   * @param tokenTtlMinutes the time-to-live value for tokens, in minutes
-   */
-  public AuthService(
-      final UserAccountRepository userAccountRepository,
-      final UserTokenRepository userTokenRepository,
-      final MemberRepository memberRepository,
-      final @Value("${security.token.ttl-minutes}") int tokenTtlMinutes,
-      final PasswordEncoder passwordEncoder) {
-    this.userAccountRepository = userAccountRepository;
-    this.userTokenRepository = userTokenRepository;
-    this.memberRepository = memberRepository;
-    this.tokenTtlMinutes = tokenTtlMinutes;
-    this.passwordEncoder = passwordEncoder;
-  }
+  @Value("${security.token.ttl-minutes}")
+  private int tokenTtlMinutes;
 
   public Optional<UserAccount> findUserByEmail(final String email) {
     return userAccountRepository.findByEmail(email);
