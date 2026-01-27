@@ -26,11 +26,11 @@
     - [Frontend tests](#frontend-tests)
     - [CORS configuration (backend)](#cors-configuration-backend)
     - [CI/CD and deploy (Vercel)](#cicd-and-deploy-vercel)
-    - [API Testing Collection with Bruno](#api-testing-collection-with-bruno)
-      - [Prerequisites:](#prerequisites)
-      - [Open the Collection in Bruno](#open-the-collection-in-bruno)
-      - [Running Requests](#running-requests)
-      - [How to Add New Flows / Requests](#how-to-add-new-flows--requests)
+  - [API Testing Collection with Bruno](#api-testing-collection-with-bruno)
+    - [Prerequisites](#prerequisites)
+    - [Open the Collection in Bruno](#open-the-collection-in-bruno)
+    - [Running Requests](#running-requests)
+    - [How to Add New Flows / Requests](#how-to-add-new-flows--requests)
 
 <!-- TOC -->
 
@@ -366,25 +366,25 @@ A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-fronten
 
 Alternatively, you can connect the repository directly in Vercel dashboard and set env vars there.
 
-### API Testing Collection with Bruno
+## API Testing Collection with Bruno
 
 `api-flows` folder contains a Bruno API flow used for testing, and validating our backend APIs in a consistent, shareable way.
 
 Bruno is a fast, Git-friendly API client (think Postman, but local-first and text-based). This flow is designed so the whole team can run the same requests with minimal setup and predictable results.
 
-#### Prerequisites:
+### Prerequisites
 Before using this flow, make sure you have:
 1. Bruno installed: https://www.usebruno.com/
 2. Access to the target API environment (local/dev/staging) by running docker locally.
 
-#### Open the Collection in Bruno
+### Open the Collection in Bruno
 
 1. Open Bruno
 2. Click Open Collection
 3. Select the `api-flows` folder of this repository
 4. Bruno will automatically load all requests and local environment variables.
 
-#### Running Requests
+### Running Requests
 **Run a Single Request**
 1. Select a request
 2. Choose the correct environment (top-right)
@@ -405,7 +405,7 @@ Mentor creation → Get Mentors and validate if the mentor was created → Updat
 2. Execute Flow using this command: `bru run --env local --output results.html --format html`
 3. Open report in browser
 
-#### How to Add New Flows / Requests
+### How to Add New Flows / Requests
 
 Follow these guidelines to keep the collection consistent and easy to maintain.
 
