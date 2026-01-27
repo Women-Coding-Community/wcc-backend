@@ -2,21 +2,35 @@
 
 <!-- TOC -->
 
-* [WCC: Platform Backend Service](#wcc-platform-backend-service)
-    * [How to start?](#how-to-start)
-    * [Setup locally](#setup-locally)
-        * [JAVA 21 with SDKMAN](#java-21-with-sdkman)
-        * [Setup IntelliJ](#setup-intellij)
-            * [Lombok](#lombok)
-            * [Enable Save Actions](#enable-save-actions)
-            * [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
-            * [Google Format](#google-format)
-                * [IntelliJ JRE Config](#intellij-jre-config)
-        * [Setup PostgreSQL database](#setup-postgresql-database)
-    * [Run Locally](#run-locally)
-    * [Open API Documentation](#open-api-documentation)
-    * [Quality Checks](#quality-checks)
-    * [Deploy](#deploy)
+- [WCC: Platform Backend Service](#wcc-platform-backend-service)
+  - [How to start?](#how-to-start)
+  - [Setup locally](#setup-locally)
+    - [JAVA 21 with SDKMAN](#java-21-with-sdkman)
+    - [Setup IntelliJ](#setup-intellij)
+      - [Lombok](#lombok)
+      - [Enable Save Actions](#enable-save-actions)
+      - [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
+      - [Google Format](#google-format)
+        - [IntelliJ JRE Config](#intellij-jre-config)
+    - [Setup PostgreSQL database](#setup-postgresql-database)
+  - [Run Locally](#run-locally)
+    - [Run Locally without Authentication](#run-locally-without-authentication)
+  - [Generate Postman Collection](#generate-postman-collection)
+  - [Open API Documentation](#open-api-documentation)
+  - [API Documentation](#api-documentation)
+  - [Quality Checks](#quality-checks)
+  - [Deploy](#deploy)
+  - [Frontend (Administration Platform)](#frontend-administration-platform)
+    - [Run frontend locally](#run-frontend-locally)
+      - [Test credentials (seeded)](#test-credentials-seeded)
+    - [Frontend tests](#frontend-tests)
+    - [CORS configuration (backend)](#cors-configuration-backend)
+    - [CI/CD and deploy (Vercel)](#cicd-and-deploy-vercel)
+    - [API Testing Collection with Bruno](#api-testing-collection-with-bruno)
+      - [Prerequisites:](#prerequisites)
+      - [Open the Collection in Bruno](#open-the-collection-in-bruno)
+      - [Running Requests](#running-requests)
+      - [How to Add New Flows / Requests](#how-to-add-new-flows--requests)
 
 <!-- TOC -->
 
@@ -351,3 +365,63 @@ A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-fronten
 - NEXT_PUBLIC_APP_URL (optional)
 
 Alternatively, you can connect the repository directly in Vercel dashboard and set env vars there.
+
+### API Testing Collection with Bruno
+
+`api-flows` folder contains a Bruno API flow used for testing, and validating our backend APIs in a consistent, shareable way.
+
+Bruno is a fast, Git-friendly API client (think Postman, but local-first and text-based). This flow is designed so the whole team can run the same requests with minimal setup and predictable results.
+
+#### Prerequisites:
+Before using this flow, make sure you have:
+1. Bruno installed: https://www.usebruno.com/
+2. Access to the target API environment (local/dev/staging) by running docker locally.
+
+#### Open the Collection in Bruno
+
+1. Open Bruno
+2. Click Open Collection
+3. Select the `api-flows` folder of this repository
+4. Bruno will automatically load all requests and local environment variables.
+
+#### Running Requests
+**Run a Single Request**
+1. Select a request
+2. Choose the correct environment (top-right)
+3. Click Send
+
+**Run a Folder / Flow**
+1. Right-click a folder
+2. Select Run Folder
+3. Bruno will execute requests in order
+
+This is useful for end-to-end flows like:
+
+Mentor creation → Get Mentors and validate if the mentor was created → Update Mentor data → Get Mentors and validate if the mentor was updated → Delete Mentor → Get Mentors and validate if the mentor was deleted
+
+**Run a Folder and Generate HRML Report**
+
+1. Install Bruno CLI: `npm install -g @usebruno/cli`
+2. Execute Flow using this command: `bru run --env local --output results.html --format html`
+3. Open report in browser
+
+#### How to Add New Flows / Requests
+
+Follow these guidelines to keep the collection consistent and easy to maintain.
+
+**Adding a New Request**
+1. In Bruno, right-click the target folder
+2. Select New Request
+3. Give the request a clear, descriptive name
+4. Select the HTTP method and configure the endpoint, headers, and body
+5. Use environment variables (e.g. {{baseUrl}}, {{mentorId}}) instead of hardcoded values
+6. Use faker built-in faker library to generate realistic data for payloads
+
+**Adding a New Flow (Folder)**
+
+1. Right-click in the collection root or relevant parent folder
+2. Select New Folder
+3. Name the folder after the business flow or feature
+4. Example: `Mentee Registration & Approval Flow`, `Matching Flow`
+5. Add requests in the order they should be executed
+6. Ensure each request can be run sequentially as part of a folder execution
