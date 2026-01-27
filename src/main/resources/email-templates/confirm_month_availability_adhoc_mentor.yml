@@ -1,0 +1,49 @@
+AVAILABILITY_MENTOR_ADHOC:
+  subject: "Confirm Availability for Ad-Hoc Sessions for {{month}}, {{year}}"
+  body: |
+    <p>Dear Mentor,</p>
+  
+    <p>
+    Thank you for your continued support for our mentorship programme.
+    We will soon be opening the ad-hoc mentorship registrations for {{month}}, {{year}}.
+    </p>
+    
+    <p>
+    Your guidance and expertise will have a significant impact on our mentees,
+    and we believe that your continued involvement would greatly enrich the learning experience for participants.
+    </p>
+    
+    <p>
+    Can you please spare 2 minutes of your time and fill in the availability form
+    so we can enable ad-hoc registration against your profile for the upcoming month as per your availability?
+    </p>
+    
+    <p>
+    Availability form link -
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfR_YPoZArhTXbM-lu7KF-GTWVoAx81Ggo82fz3iZDw3Qu8fw/viewform">
+    https://docs.google.com/forms/d/e/1FAIpQLSfR_YPoZArhTXbM-lu7KF-GTWVoAx81Ggo82fz3iZDw3Qu8fw/viewform
+    </a>
+    </p>
+    
+    <p>
+    Please note: the form will close for responses on 29th of {{priorMonth}}
+    to give the team enough time to process the responses.
+    </p>
+    
+    <p>
+    Please don't hesitate to reach out to us if you have any questions or require more details about the programme.
+    </p>
+    
+    <p>
+    We look forward to your response!
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+
+
+
+
+
+

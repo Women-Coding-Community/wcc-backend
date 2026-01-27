@@ -1,0 +1,51 @@
+MENTOR_DEACTIVATION_WARNING:
+  subject: "[Urgent] Your Mentor Status Within Women Coding Community"
+  body: |
+    <p>Hi {{mentorFirstName}},</p>
+
+    <p>
+    We are reaching out regarding your current status within the mentorship programme.
+    We appreciate your participation in our mentorship programme and understand that schedules can get challenging.
+    </p>
+    
+    <p>
+    {{issueSummary}}
+    </p>
+    
+    <p>
+    As per the Mentor Code of Conduct {{mentorsCodeOfConductLink}}, we would like to remind you that:<br/>
+    Section 3: No-shows are unacceptable for mentors and mentees.<br/>
+    Section 4: No-replies by email or Slack in a week are unacceptable during the program.
+    </p>
+    
+    <p>
+    {{additionalCodeOfConductSections}}
+    </p>
+    
+    <p>
+    We want to emphasise that participating as a mentor carries a responsibility to maintain engagement throughout the programme
+    and timely communication is essential to a successful mentorship experience.
+    </p>
+    
+    <p>
+    We would love to continue working with you in future cycles, but we need to ensure that we provide the best experience for both mentors and mentees within our community.
+    </p>
+    
+    <p>
+    Kindly acknowledge receipt of this email and respond by {{deadlineDate}} to retain your status as an active mentor within the programme.
+    </p>
+    
+    <p>
+    Thanks again for your involvement and we hope to hear from you soon.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+
+
+
+
+
+
+

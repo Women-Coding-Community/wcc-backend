@@ -1,0 +1,38 @@
+PROFILE_NOT_APPROVED_MENTOR:
+  subject: "Mentor Profile Not Approved"
+  body: |
+    <p>Dear {{mentorshipApplicantName}},</p>
+  
+    <p>
+    Thank you for expressing interest in the mentorship opportunity with us.
+    We truly appreciate the time and effort you put into your application and for sharing your experiences.
+    </p>
+    
+    <p>
+    After careful consideration, we regret to inform you that we are unable to proceed with your application
+    for the mentorship role at this time.
+    </p>
+    
+    <p>
+    <strong>Reason:</strong> {{rejectionReason}}
+    </p>
+    
+    <p>
+    That said, we would still love for you to contribute to the community in other ways.
+    We regularly host online tech talks, workshops, and events, and you are welcome to apply as a speaker.
+    </p>
+    
+    <p>
+    You can also express your interest in volunteering with us by submitting the following form:
+    <a href="{{volunteerFormUrl}}">Volunteer with Women Coding Community</a>,
+    and by joining our <strong>#i_want_to_help</strong> and <strong>#volunteers</strong> Slack channels.
+    </p>
+    
+    <p>
+    Thank you again for your interest and your willingness to contribute to the community.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+

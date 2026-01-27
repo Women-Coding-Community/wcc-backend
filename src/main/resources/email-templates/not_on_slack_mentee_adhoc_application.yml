@@ -1,0 +1,38 @@
+NOT_ON_SLACK_MENTEE_ADHOC:
+  subject: "Regarding your Ad-Hoc Application - Join our Slack Community"
+  body: |
+    <p>Dear {{menteeName}},</p>
+  
+    <p>
+    Thank you for registering for an ad-hoc session with our mentor.
+    </p>
+    
+    <p>
+    However we noticed that you haven't joined us on Slack yet.
+    It is mandatory to join our Slack community in order to participate in the mentorship program.
+    </p>
+    
+    <p>
+    Please join us on Slack using this link:
+    <a href="{{slackInviteUrl}}">{{slackInviteUrl}}</a>
+    </p>
+    
+    <p>
+    Please note that you can use your personal email/gmail address (do not choose to use work email).
+    If you are already on Slack, please reply to this email with your correct Slack name to help us find your profile.
+    </p>
+    
+    <p>
+    If you have any questions, feel free to reach us by replying to this email or in <strong>#mentorship</strong> Slack channel.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+
+
+
+
+
+
+

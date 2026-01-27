@@ -17,7 +17,20 @@ public enum TemplateType {
   NEW_MENTEES_ALERT_MENTOR_LONG("alert_new_mentees_applications_mentor_long.yml"),
   STUDY_GROUP_AVAILABILITY_MENTOR("confirm_availability_study_group_mentor.yml"),
   STUDY_GROUPS_MENTEE("mentor_led_study_groups_mentee.yml"),
-  STUDY_GROUP_INTRODUCTION_MENTEE("study_group_introduction_email_mentee.yml");
+  STUDY_GROUP_INTRODUCTION_MENTEE("study_group_introduction_email_mentee.yml"),
+  NOT_ON_SLACK_MENTOR("not_on_slack_mentor_applicant.yml"),
+  PROFILE_NOT_APPROVED_MENTOR("mentorship_profile_not_approved_mentor.yml"),
+  PROFILE_APPROVED_MENTOR("mentorship_profile_approved_mentor.yml"),
+  MENTORSHIP_FEEDBACK_MENTOR("mentorship_programme_feedback_mentor.yml"),
+  MENTORSHIP_FEEDBACK_MENTEE("mentorship_programme_feedback_mentee.yml"),
+  FINAL_UPDATES_MENTORSHIP_MENTOR("final_updates_mentorship_cycle_mentor.yml"),
+  CHECKIN_ANNOUNCEMENT_MENTEE("mentorship_checkin_announcement_mentee.yml"),
+  AVAILABILITY_MENTOR_ADHOC("confirm_month_availability_adhoc_mentor.yml"),
+  NOT_ON_SLACK_MENTEE_ADHOC("not_on_slack_mentee_adhoc_application.yml"),
+  PAIRING_TERMINATION_MENTOR_MENTEE("long_term_pairing_termination_mentor_mentee.yml"),
+  NEGATIVE_FEEDBACK_MENTEE_ADHOC("negative_feedback_mentee_adhoc.yml"),
+  MENTOR_DEACTIVATION_WARNING("mentor_deactivation_warning.yml"),
+  MENTEE_TERMINATION_WARNING_LONG("mentorship_termination_noshow_warning_mentee_long.yml");
 
 
   private final String templateFile;

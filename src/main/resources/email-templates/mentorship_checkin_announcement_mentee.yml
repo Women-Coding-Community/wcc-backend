@@ -1,0 +1,44 @@
+CHECKIN_ANNOUNCEMENT_MENTEE:
+  subject: "Mentorship Catch-Up for Mentees, {{checkinDate}}"
+  body: |
+    <p>Dear {{menteeName}},</p>
+  
+    <p>
+    We hope this message finds you well.
+    We are excited to announce an upcoming mentees catch-up session, where we will have the opportunity to reconnect,
+    share progress, and discuss any challenges or questions you may have encountered during your mentorship journey.
+    </p>
+    
+    <p>
+    Date: {{date}}<br/>
+    Time: {{time}}<br/>
+    Location: {{zoomLink}}
+    </p>
+    
+    <p>
+    The mentees catch-up session is designed to encourage a supportive environment
+    where you can engage with fellow mentees, exchange ideas and experience.
+    It’s a valuable opportunity to connect, learn from one another, and gain new perspectives.
+    </p>
+    
+    <p>
+    We kindly request that you confirm your attendance for the catch-up session.
+    Additionally, please take a moment to reflect on your journey so far by filling out
+    Long-term Mentor’s Feedback form here if you have not done so yet,
+    and jot down any specific topics or concerns you would like to discuss during the catch-up session.
+    </p>
+    
+    <p>
+    Remember that your commitment and active participation are crucial for a successful outcome.
+    If you have any urgent matters before the catch-up session, feel free to reach out to us via email.
+    </p>
+    
+    <p>
+    Thank you for your dedication and enthusiasm.
+    Let’s make the most of our time together and continue progressing towards your personal and professional growth.
+    </p>
+
+
+
+
+
