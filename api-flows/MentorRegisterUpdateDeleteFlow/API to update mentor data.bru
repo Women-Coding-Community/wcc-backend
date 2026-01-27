@@ -1,0 +1,51 @@
+meta {
+  name: API to update mentor data
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/platform/v1/mentors/:mentorId
+  body: json
+  auth: apikey
+}
+
+params:path {
+  mentorId: {{userId}}
+}
+
+headers {
+  X-API-KEY: {{apiKey}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+body:json {
+  {{PUTpayload}}
+}
+
+script:pre-request {
+  const original = bru.getVar("payload"); 
+  const userId = bru.getVar("userId"); 
+  
+  const putPayload = {
+    id: userId,
+    fullName: original.fullName,
+    position: bru.interpolate('{{$randomJobTitle}}'), 
+    email: original.email,
+    slackDisplayName: original.slackDisplayName,
+    country: {
+      countryCode: original.country.countryCode,
+      countryName: original.country.countryName
+    },
+    city: original.city,
+    companyName: original.companyName,
+    //memberTypes: original.memberTypes 
+  };
+  
+  bru.setVar("PUTpayload", putPayload);
+}
