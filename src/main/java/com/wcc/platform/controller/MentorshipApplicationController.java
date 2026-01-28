@@ -1,5 +1,8 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.configuration.security.LogicalOperator;
+import com.wcc.platform.configuration.security.RequiresPermission;
+import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.ApplicationAcceptRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationDeclineRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
@@ -36,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MentorshipApplicationController {
 
   private final MenteeWorkflowService applicationService;
-  
+
   /**
    * API to get all applications submitted by a mentee for a specific cycle.
    *
@@ -81,6 +84,9 @@ public class MentorshipApplicationController {
    * @return List of applications
    */
   @GetMapping("/mentors/{mentorId}/applications")
+  @RequiresPermission(
+      value = {Permission.MENTOR_APPLICATION_READ, Permission.MENTOR_APPROVE},
+      operator = LogicalOperator.OR)
   @Operation(summary = "Get applications received by a mentor")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getMentorApplications(
