@@ -59,7 +59,7 @@ class AuthServiceTest {
 
   @Test
   void testFindUserByEmail_userExists_returnsUserAccount() {
-    String email = "user@example.com";
+    var email = "user@example.com";
     UserAccount userAccount =
         UserAccount.builder()
             .id(1)
@@ -80,7 +80,7 @@ class AuthServiceTest {
 
   @Test
   void testFindUserByEmail_userNotFound_returnsEmpty() {
-    String email = "notfound@example.com";
+    var email = "notfound@example.com";
     when(userAccountRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     Optional<UserAccount> result = authService.findUserByEmail(email);
@@ -348,7 +348,7 @@ class AuthServiceTest {
 
   @Test
   void testAuthenticateByTokenWithMember_invalidToken_returnsEmpty() {
-    String token = "invalid-token";
+    var token = "invalid-token";
 
     when(userTokenRepository.findValidByToken(eq(token), any(OffsetDateTime.class)))
         .thenReturn(Optional.empty());
@@ -362,8 +362,8 @@ class AuthServiceTest {
 
   @Test
   void testGetCurrentUser_validAuthentication_returnsUser() {
-    Integer userId = 1;
-    Long memberId = 1L;
+    var userId = 1;
+    var memberId = 1L;
 
     UserAccount userAccount =
         UserAccount.builder()
