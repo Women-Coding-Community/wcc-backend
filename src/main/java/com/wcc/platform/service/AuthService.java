@@ -152,28 +152,6 @@ public class AuthService {
   }
 
   /**
-   * Retrieves the complete User (UserAccount + Member) by email. This is used for authentication
-   * and RBAC.
-   *
-   * @param email the email of the user
-   * @return an {@code Optional<UserAccount.User>} containing the user and member if found
-   */
-  public Optional<UserAccount.User> getUserWithMemberByEmail(final String email) {
-    Optional<UserAccount> userAccountOpt = userAccountRepository.findByEmail(email);
-    if (userAccountOpt.isEmpty()) {
-      return Optional.empty();
-    }
-
-    UserAccount userAccount = userAccountOpt.get();
-    if (userAccount.getMemberId() == null) {
-      return Optional.empty();
-    }
-
-    Optional<Member> memberOpt = memberRepository.findById(userAccount.getMemberId());
-    return memberOpt.map(member -> new UserAccount.User(userAccount, member));
-  }
-
-  /**
    * Authenticates a user based on the provided token and returns the complete User (UserAccount +
    * Member). This is the preferred method for RBAC-enabled authentication.
    *
@@ -213,46 +191,6 @@ public class AuthService {
     }
 
     throw new ForbiddenException("Invalid authentication principal");
-  }
-
-  /**
-   * Get current user's permissions from all member types and assigned roles.
-   *
-   * @return set of all permissions the user has
-   */
-  public Set<Permission> getCurrentUserPermissions() {
-    return getCurrentUser().getAllPermissions();
-  }
-
-  /**
-   * Get current user's primary role (highest privilege role from member types).
-   *
-   * @return the primary role of the user
-   */
-  public RoleType getCurrentUserPrimaryRole() {
-    return getCurrentUser().getPrimaryRole();
-  }
-
-  /**
-   * Get all roles the current user has (from member types and assigned roles).
-   *
-   * @return set of all roles
-   */
-  public Set<RoleType> getCurrentUserRoles() {
-    return getCurrentUser().getAllRoles();
-  }
-
-  /**
-   * Require a specific permission.
-   *
-   * @param permission the required permission
-   * @throws ForbiddenException if user doesn't have the permission
-   */
-  public void requirePermission(Permission permission) {
-    if (!getCurrentUser().hasPermission(permission)) {
-      throw new ForbiddenException(
-          String.format("Permission denied. Required: %s", permission.name()));
-    }
   }
 
   /**
@@ -309,59 +247,5 @@ public class AuthService {
         String.format(
             "Role denied. User roles: %s, Required any of: %s",
             user.getAllRoles(), Arrays.toString(allowedRoles)));
-  }
-
-  /**
-   * Check if current user has permission (non-throwing).
-   *
-   * @param permission the permission to check
-   * @return true if user has the permission, false otherwise
-   */
-  public boolean hasPermission(Permission permission) {
-    try {
-      return getCurrentUser().hasPermission(permission);
-    } catch (ForbiddenException e) {
-      return false;
-    }
-  }
-
-  /**
-   * Check if current user has role (non-throwing).
-   *
-   * @param role the role to check
-   * @return true if user has the role, false otherwise
-   */
-  public boolean hasRole(RoleType role) {
-    try {
-      return getCurrentUser().hasRole(role);
-    } catch (ForbiddenException e) {
-      return false;
-    }
-  }
-
-  /**
-   * Check if current user is a super admin.
-   *
-   * @return true if user is super admin, false otherwise
-   */
-  public boolean isSuperAdmin() {
-    try {
-      return getCurrentUser().isSuperAdmin();
-    } catch (ForbiddenException e) {
-      return false;
-    }
-  }
-
-  /**
-   * Check if current user is an admin (SUPER_ADMIN or ADMIN).
-   *
-   * @return true if user is admin, false otherwise
-   */
-  public boolean isAdmin() {
-    try {
-      return getCurrentUser().isAdmin();
-    } catch (ForbiddenException e) {
-      return false;
-    }
   }
 }

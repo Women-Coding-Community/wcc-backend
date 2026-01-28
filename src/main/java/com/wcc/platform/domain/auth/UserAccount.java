@@ -104,42 +104,10 @@ public class UserAccount {
       return permissions;
     }
 
-    /**
-     * Check if user has a specific permission. Checks permissions from both member types and
-     * assigned roles.
-     */
-    public boolean hasPermission(Permission permission) {
-      return getAllPermissions().contains(permission);
-    }
-
-    /**
-     * Check if user has a specific role. Checks both member-type-derived roles and explicitly
-     * assigned roles.
-     */
-    public boolean hasRole(RoleType role) {
-      return getAllRoles().contains(role);
-    }
-
     /** Check if user has any of the specified roles. */
     public boolean hasAnyRole(RoleType... roles) {
       Set<RoleType> userRoles = getAllRoles();
       return Arrays.stream(roles).anyMatch(userRoles::contains);
-    }
-
-    /** Check if user is a super admin (has DIRECTOR member type). */
-    public boolean isSuperAdmin() {
-      if (member == null || member.getMemberTypes() == null) {
-        return false;
-      }
-      return MemberTypeRoleMapper.isSuperAdmin(member.getMemberTypes());
-    }
-
-    /** Check if user is an admin (has DIRECTOR or LEADER member type). */
-    public boolean isAdmin() {
-      if (member == null || member.getMemberTypes() == null) {
-        return false;
-      }
-      return MemberTypeRoleMapper.isAdmin(member.getMemberTypes());
     }
   }
 }
