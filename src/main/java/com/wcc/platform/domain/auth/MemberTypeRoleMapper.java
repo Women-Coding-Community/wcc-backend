@@ -113,7 +113,8 @@ public final class MemberTypeRoleMapper {
 
   /** Check if member has a specific role through any of their member types. */
   public static boolean hasRole(final List<MemberType> memberTypes, final RoleType targetRole) {
-    return (memberTypes != null && targetRole != null)
+    return memberTypes != null
+        && targetRole != null
         && memberTypes.stream()
             .map(MemberTypeRoleMapper::getRoleForMemberType)
             .anyMatch(role -> role == targetRole);
