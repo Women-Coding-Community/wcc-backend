@@ -2,6 +2,7 @@ package com.wcc.platform.configuration;
 
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.auth.UserAccount.User;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -73,9 +74,16 @@ public class TokenAuthFilter extends OncePerRequestFilter {
             new UsernamePasswordAuthenticationToken(user, null, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+      } else {
+        final Optional<UserAccount> userAccount = authService.authenticateByToken(token);
+        final var adminAuthorities = List.of(new SimpleGrantedAuthority(RoleType.ADMIN.name()));
+        if (userAccount.isPresent()) {
+          final UsernamePasswordAuthenticationToken authentication =
+              new UsernamePasswordAuthenticationToken(userAccount.get(), null, adminAuthorities);
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
       }
     }
-
     filterChain.doFilter(request, response);
   }
 }
