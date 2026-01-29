@@ -9,6 +9,7 @@ import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
+import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
@@ -128,5 +129,16 @@ public class GlobalExceptionHandler {
         new ErrorDetails(
             HttpStatus.BAD_REQUEST.value(), errorMessage, request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+  }
+
+  /** Return 403 Forbidden for ForbiddenException. */
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<ErrorDetails> handleForbiddenException(
+      final ForbiddenException ex, final WebRequest request) {
+    final var errorResponse =
+        new ErrorDetails(
+            HttpStatus.FORBIDDEN.value(), ex.getMessage(), request.getDescription(false));
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
   }
 }

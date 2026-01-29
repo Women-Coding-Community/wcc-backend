@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.platform.type;
 
+import com.wcc.platform.domain.auth.Permission;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,24 +9,33 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum RoleType {
-  ADMIN(1, "Platform Administrator"),
-  MEMBER(2, "Community Member"),
+  ADMIN(1, "Platform Administrator", Set.of(Permission.values())),
+  LEADER(
+      4,
+      "Platform Leader",
+      Set.of(
+          Permission.USER_READ,
+          Permission.MENTOR_APPROVE,
+          Permission.MENTEE_APPROVE,
+          Permission.CYCLE_EMAIL_SEND,
+          Permission.MATCH_MANAGE,
+          Permission.MENTOR_APPL_READ)),
+  MENTEE(
+      5, "Mentee In Community", Set.of(Permission.MENTEE_APPL_SUBMIT, Permission.MENTEE_APPL_READ)),
+  MENTOR(
+      6,
+      "Mentor In Community",
+      Set.of(
+          Permission.MENTOR_APPL_READ,
+          Permission.MENTOR_APPL_WRITE,
+          Permission.MENTOR_PROFILE_UPDATE)),
 
-  MENTORSHIP_ADMIN(20, "Mentorship Administrator"),
-  MENTORSHIP_EDITOR(21, "Mentorship Team"),
-
-  MAIL_ADMIN(30, "Newsletter Administrator"),
-  MAIL_EDITOR(31, "Newsletter Editor"),
-  MAIL_PUBLISHER(33, "Newsletter Publisher"),
-  MAIL_SUBSCRIBER(32, "Newsletter Subscriber Coordinator"),
-  MAIL_VIEWER(34, "Newsletter Viewer"),
-
-  CONTENT_ADMIN(40, "Website Content Administrator"),
-  CONTENT_EDITOR(41, "Website Content Editor"),
-  CONTENT_VIEWER(42, "Website Content Viewer");
+  CONTRIBUTOR(2, "Contributor In Community", Set.of(Permission.USER_READ)),
+  VIEWER(7, "Member In Community", Set.of(Permission.USER_READ));
 
   private final int typeId;
   private final String description;
+  private final Set<Permission> permissions;
 
   /**
    * Retrieves the corresponding {@code MemberType} enum value based on a given type ID. If no match
@@ -40,7 +51,7 @@ public enum RoleType {
         return type;
       }
     }
-    return MEMBER;
+    return VIEWER;
   }
 
   @Override
