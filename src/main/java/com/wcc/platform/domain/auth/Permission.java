@@ -10,13 +10,13 @@ public enum Permission {
   USER_DELETE("user:delete", "Delete users"),
 
   // Mentor Operations
-  MENTOR_APPLICATION_READ("mentor:application:read", "View mentor applications"),
-  MENTOR_APPLICATION_WRITE("mentor:application:write", "Accept/decline mentee applications"),
+  MENTOR_APPL_READ("mentor:application:read", "View mentor applications"),
+  MENTOR_APPL_WRITE("mentor:application:write", "Accept/decline mentee applications"),
   MENTOR_PROFILE_UPDATE("mentor:profile:update", "Update mentor profile"),
 
   // Mentee Operations
-  MENTEE_APPLICATION_SUBMIT("mentee:application:submit", "Submit mentee applications"),
-  MENTEE_APPLICATION_READ("mentee:application:read", "View own application status"),
+  MENTEE_APPL_SUBMIT("mentee:application:submit", "Submit mentee applications"),
+  MENTEE_APPL_READ("mentee:application:read", "View own application status"),
 
   // Admin Operations
   MENTOR_APPROVE("admin:mentor:approve", "Approve/reject mentors"),

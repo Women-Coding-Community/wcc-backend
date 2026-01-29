@@ -134,8 +134,8 @@ public class GlobalExceptionHandler {
   /** Return 403 Forbidden for ForbiddenException. */
   @ExceptionHandler(ForbiddenException.class)
   public ResponseEntity<ErrorDetails> handleForbiddenException(
-      ForbiddenException ex, final WebRequest request) {
-    var errorResponse =
+      final ForbiddenException ex, final WebRequest request) {
+    final var errorResponse =
         new ErrorDetails(
             HttpStatus.FORBIDDEN.value(), ex.getMessage(), request.getDescription(false));
 

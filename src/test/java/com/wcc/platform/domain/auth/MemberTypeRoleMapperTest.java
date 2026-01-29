@@ -15,9 +15,8 @@ class MemberTypeRoleMapperTest {
 
   @Test
   void getRoleForMemberType_returnsMappedRole() {
-    assertEquals(
-        RoleType.SUPER_ADMIN, MemberTypeRoleMapper.getRoleForMemberType(MemberType.DIRECTOR));
-    assertEquals(RoleType.ADMIN, MemberTypeRoleMapper.getRoleForMemberType(MemberType.LEADER));
+    assertEquals(RoleType.ADMIN, MemberTypeRoleMapper.getRoleForMemberType(MemberType.DIRECTOR));
+    assertEquals(RoleType.LEADER, MemberTypeRoleMapper.getRoleForMemberType(MemberType.LEADER));
     assertEquals(RoleType.MENTOR, MemberTypeRoleMapper.getRoleForMemberType(MemberType.MENTOR));
     assertEquals(RoleType.MENTEE, MemberTypeRoleMapper.getRoleForMemberType(MemberType.MENTEE));
     assertEquals(
@@ -47,7 +46,7 @@ class MemberTypeRoleMapperTest {
     Set<RoleType> roles =
         MemberTypeRoleMapper.getRolesForMemberTypes(
             List.of(MemberType.LEADER, MemberType.MENTEE, MemberType.SPEAKER));
-    assertTrue(roles.contains(RoleType.ADMIN));
+    assertTrue(roles.contains(RoleType.LEADER));
     assertTrue(roles.contains(RoleType.MENTEE));
     assertTrue(roles.contains(RoleType.CONTRIBUTOR));
   }
@@ -57,11 +56,11 @@ class MemberTypeRoleMapperTest {
     // Director maps to SUPER_ADMIN (highest), Member maps to VIEWER (low)
     RoleType highest =
         MemberTypeRoleMapper.getHighestRole(List.of(MemberType.MEMBER, MemberType.DIRECTOR));
-    assertEquals(RoleType.SUPER_ADMIN, highest);
+    assertEquals(RoleType.ADMIN, highest);
 
     // Leader(Admin) vs Mentor -> ADMIN is higher in defined hierarchy
     highest = MemberTypeRoleMapper.getHighestRole(List.of(MemberType.MENTOR, MemberType.LEADER));
-    assertEquals(RoleType.ADMIN, highest);
+    assertEquals(RoleType.LEADER, highest);
   }
 
   @Test
@@ -101,9 +100,9 @@ class MemberTypeRoleMapperTest {
   void hasRole_checksCorrectly() {
     assertTrue(
         MemberTypeRoleMapper.hasRole(
-            List.of(MemberType.LEADER, MemberType.MEMBER), RoleType.ADMIN));
-    assertFalse(MemberTypeRoleMapper.hasRole(List.of(MemberType.MEMBER), RoleType.ADMIN));
-    assertFalse(MemberTypeRoleMapper.hasRole(null, RoleType.ADMIN));
+            List.of(MemberType.LEADER, MemberType.MEMBER), RoleType.LEADER));
+    assertFalse(MemberTypeRoleMapper.hasRole(List.of(MemberType.MEMBER), RoleType.LEADER));
+    assertFalse(MemberTypeRoleMapper.hasRole(null, RoleType.LEADER));
     assertFalse(MemberTypeRoleMapper.hasRole(List.of(MemberType.LEADER), null));
   }
 }

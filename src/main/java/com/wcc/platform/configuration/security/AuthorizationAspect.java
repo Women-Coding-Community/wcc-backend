@@ -20,9 +20,10 @@ public class AuthorizationAspect {
 
   @Around("@annotation(requiresPermission)")
   public Object checkPermission(
-      ProceedingJoinPoint joinPoint, RequiresPermission requiresPermission) throws Throwable {
+      final ProceedingJoinPoint joinPoint, final RequiresPermission requiresPermission)
+      throws Throwable {
 
-    Permission[] permissions = requiresPermission.value();
+    final Permission[] permissions = requiresPermission.value();
 
     if (permissions.length == 0) {
       throw new IllegalArgumentException(
@@ -39,10 +40,10 @@ public class AuthorizationAspect {
   }
 
   @Around("@annotation(requiresRole)")
-  public Object checkRole(ProceedingJoinPoint joinPoint, RequiresRole requiresRole)
+  public Object checkRole(final ProceedingJoinPoint joinPoint, final RequiresRole requiresRole)
       throws Throwable {
 
-    RoleType[] roles = requiresRole.value();
+    final RoleType[] roles = requiresRole.value();
 
     if (roles.length == 0) {
       throw new IllegalArgumentException("@RequiresRole must specify at least one role");

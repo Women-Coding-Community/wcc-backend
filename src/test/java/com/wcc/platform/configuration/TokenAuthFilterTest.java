@@ -60,7 +60,7 @@ class TokenAuthFilterTest {
         Member.builder()
             .id(1L)
             .fullName("Admin WCC")
-            .memberTypes(List.of(MemberType.LEADER))
+            .memberTypes(List.of(MemberType.DIRECTOR))
             .build();
     UserAccount.User user = new UserAccount.User(mockUser, member);
 

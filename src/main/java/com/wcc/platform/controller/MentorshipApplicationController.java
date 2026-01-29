@@ -85,7 +85,7 @@ public class MentorshipApplicationController {
    */
   @GetMapping("/mentors/{mentorId}/applications")
   @RequiresPermission(
-      value = {Permission.MENTOR_APPLICATION_READ, Permission.MENTOR_APPROVE},
+      value = {Permission.MENTOR_APPL_READ, Permission.MENTOR_APPROVE},
       operator = LogicalOperator.OR)
   @Operation(summary = "Get applications received by a mentor")
   @ResponseStatus(HttpStatus.OK)

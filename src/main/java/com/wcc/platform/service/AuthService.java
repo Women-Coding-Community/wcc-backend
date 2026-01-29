@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class AuthService {
 
   private static final SecureRandom RANDOM = new SecureRandom();
@@ -137,17 +138,17 @@ public class AuthService {
       return Optional.empty();
     }
 
-    Optional<UserAccount> userAccountOpt = userAccountRepository.findById(userId);
+    final Optional<UserAccount> userAccountOpt = userAccountRepository.findById(userId);
     if (userAccountOpt.isEmpty()) {
       return Optional.empty();
     }
 
-    UserAccount userAccount = userAccountOpt.get();
+    final UserAccount userAccount = userAccountOpt.get();
     if (userAccount.getMemberId() == null) {
       return Optional.empty();
     }
 
-    Optional<Member> memberOpt = memberRepository.findById(userAccount.getMemberId());
+    final Optional<Member> memberOpt = memberRepository.findById(userAccount.getMemberId());
     return memberOpt.map(member -> new UserAccount.User(userAccount, member));
   }
 
@@ -178,13 +179,13 @@ public class AuthService {
    * @throws ForbiddenException if user is not authenticated or principal is invalid
    */
   public UserAccount.User getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication == null || !authentication.isAuthenticated()) {
       throw new ForbiddenException("User is not authenticated");
     }
 
-    Object principal = authentication.getPrincipal();
+    final Object principal = authentication.getPrincipal();
 
     if (principal instanceof UserAccount.User) {
       return (UserAccount.User) principal;
@@ -199,11 +200,11 @@ public class AuthService {
    * @param permissions the permissions (user needs at least one)
    * @throws ForbiddenException if user doesn't have any of the permissions
    */
-  public void requireAnyPermission(Permission... permissions) {
-    UserAccount.User user = getCurrentUser();
-    Set<Permission> userPermissions = user.getAllPermissions();
+  public void requireAnyPermission(final Permission... permissions) {
+    final UserAccount.User user = getCurrentUser();
+    final Set<Permission> userPermissions = user.getAllPermissions();
 
-    boolean hasAny = Arrays.stream(permissions).anyMatch(userPermissions::contains);
+    final boolean hasAny = Arrays.stream(permissions).anyMatch(userPermissions::contains);
 
     if (!hasAny) {
       throw new ForbiddenException(
@@ -217,11 +218,11 @@ public class AuthService {
    * @param permissions the permissions (user needs all of them)
    * @throws ForbiddenException if user doesn't have all the permissions
    */
-  public void requireAllPermissions(Permission... permissions) {
-    UserAccount.User user = getCurrentUser();
-    Set<Permission> userPermissions = user.getAllPermissions();
+  public void requireAllPermissions(final Permission... permissions) {
+    final UserAccount.User user = getCurrentUser();
+    final Set<Permission> userPermissions = user.getAllPermissions();
 
-    boolean hasAll = Arrays.stream(permissions).allMatch(userPermissions::contains);
+    final boolean hasAll = Arrays.stream(permissions).allMatch(userPermissions::contains);
 
     if (!hasAll) {
       throw new ForbiddenException(
@@ -236,8 +237,8 @@ public class AuthService {
    * @param allowedRoles the allowed roles (user needs one of them)
    * @throws ForbiddenException if user doesn't have any of the roles
    */
-  public void requireRole(RoleType... allowedRoles) {
-    UserAccount.User user = getCurrentUser();
+  public void requireRole(final RoleType... allowedRoles) {
+    final UserAccount.User user = getCurrentUser();
 
     if (user.hasAnyRole(allowedRoles)) {
       return;

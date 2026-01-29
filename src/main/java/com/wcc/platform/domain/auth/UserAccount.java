@@ -78,8 +78,9 @@ public class UserAccount {
      * Get all roles including both: 1. Roles derived from member types 2. Roles explicitly assigned
      * in UserAccount
      */
+    @SuppressWarnings("PMD.UseEnumCollections")
     public Set<RoleType> getAllRoles() {
-      Set<RoleType> allRoles = new HashSet<>(getAllMemberRoles());
+      final Set<RoleType> allRoles = new HashSet<>(getAllMemberRoles());
       if (userAccount.getRoles() != null) {
         allRoles.addAll(userAccount.getRoles());
       }
@@ -90,8 +91,9 @@ public class UserAccount {
      * Get all permissions including those from: 1. All member types (union of permissions) 2.
      * Explicitly assigned roles in UserAccount
      */
+    @SuppressWarnings("PMD.UseEnumCollections")
     public Set<Permission> getAllPermissions() {
-      Set<Permission> permissions = new HashSet<>();
+      final Set<Permission> permissions = new HashSet<>();
 
       // Add permissions from member types
       if (member != null && member.getMemberTypes() != null) {
@@ -105,8 +107,8 @@ public class UserAccount {
     }
 
     /** Check if user has any of the specified roles. */
-    public boolean hasAnyRole(RoleType... roles) {
-      Set<RoleType> userRoles = getAllRoles();
+    public boolean hasAnyRole(final RoleType... roles) {
+      final Set<RoleType> userRoles = getAllRoles();
       return Arrays.stream(roles).anyMatch(userRoles::contains);
     }
   }

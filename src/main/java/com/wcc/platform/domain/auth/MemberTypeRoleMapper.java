@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MemberTypeRoleMapper {
+public final class MemberTypeRoleMapper {
 
-  private static final Map<MemberType, RoleType> MEMBER_TYPE_TO_ROLE_MAP =
+  private static final Map<MemberType, RoleType> MEMBER_TYPE_TO_ROLE =
       Map.of(
-          MemberType.DIRECTOR, RoleType.SUPER_ADMIN,
-          MemberType.LEADER, RoleType.ADMIN,
+          MemberType.DIRECTOR, RoleType.ADMIN,
+          MemberType.LEADER, RoleType.LEADER,
           MemberType.MENTOR, RoleType.MENTOR,
           MemberType.MENTEE, RoleType.MENTEE,
           MemberType.COLLABORATOR, RoleType.CONTRIBUTOR,
@@ -26,8 +26,8 @@ public class MemberTypeRoleMapper {
   // Role hierarchy: higher number = more privileged
   private static final Map<RoleType, Integer> ROLE_HIERARCHY =
       Map.of(
-          RoleType.SUPER_ADMIN, 100,
-          RoleType.ADMIN, 80,
+          RoleType.ADMIN, 100,
+          RoleType.LEADER, 80,
           RoleType.MENTOR, 60,
           RoleType.CONTRIBUTOR, 50,
           RoleType.MENTEE, 40,
@@ -38,11 +38,11 @@ public class MemberTypeRoleMapper {
   }
 
   /** Get role for a single MemberType. */
-  public static RoleType getRoleForMemberType(MemberType memberType) {
+  public static RoleType getRoleForMemberType(final MemberType memberType) {
     if (memberType == null) {
       throw new IllegalArgumentException("MemberType cannot be null");
     }
-    return MEMBER_TYPE_TO_ROLE_MAP.getOrDefault(memberType, RoleType.VIEWER);
+    return MEMBER_TYPE_TO_ROLE.getOrDefault(memberType, RoleType.VIEWER);
   }
 
   /**
@@ -51,7 +51,7 @@ public class MemberTypeRoleMapper {
    * @param memberTypes list of member types
    * @return set of all roles corresponding to the member types
    */
-  public static Set<RoleType> getRolesForMemberTypes(List<MemberType> memberTypes) {
+  public static Set<RoleType> getRolesForMemberTypes(final List<MemberType> memberTypes) {
     if (memberTypes == null || memberTypes.isEmpty()) {
       return Set.of(RoleType.VIEWER);
     }
@@ -68,7 +68,7 @@ public class MemberTypeRoleMapper {
    * @param memberTypes list of member types
    * @return the role with highest privilege level
    */
-  public static RoleType getHighestRole(List<MemberType> memberTypes) {
+  public static RoleType getHighestRole(final List<MemberType> memberTypes) {
     if (memberTypes == null || memberTypes.isEmpty()) {
       return RoleType.VIEWER;
     }
@@ -85,7 +85,8 @@ public class MemberTypeRoleMapper {
    * @param memberTypes list of member types
    * @return set of all unique permissions
    */
-  public static Set<Permission> getAllPermissionsForMemberTypes(List<MemberType> memberTypes) {
+  public static Set<Permission> getAllPermissionsForMemberTypes(
+      final List<MemberType> memberTypes) {
     if (memberTypes == null || memberTypes.isEmpty()) {
       return RoleType.VIEWER.getPermissions();
     }
@@ -97,31 +98,24 @@ public class MemberTypeRoleMapper {
   }
 
   /** Check if any of the member types maps to SUPER_ADMIN. */
-  public static boolean isSuperAdmin(List<MemberType> memberTypes) {
-    if (memberTypes == null) {
-      return false;
-    }
-    return memberTypes.stream()
-        .anyMatch(type -> getRoleForMemberType(type) == RoleType.SUPER_ADMIN);
+  public static boolean isSuperAdmin(final List<MemberType> memberTypes) {
+    return memberTypes != null
+        && memberTypes.stream().anyMatch(type -> getRoleForMemberType(type) == RoleType.ADMIN);
   }
 
   /** Check if any of the member types maps to ADMIN or SUPER_ADMIN. */
-  public static boolean isAdmin(List<MemberType> memberTypes) {
-    if (memberTypes == null) {
-      return false;
-    }
-    return memberTypes.stream()
-        .map(MemberTypeRoleMapper::getRoleForMemberType)
-        .anyMatch(role -> role == RoleType.SUPER_ADMIN || role == RoleType.ADMIN);
+  public static boolean isAdmin(final List<MemberType> memberTypes) {
+    return memberTypes != null
+        && memberTypes.stream()
+            .map(MemberTypeRoleMapper::getRoleForMemberType)
+            .anyMatch(role -> role == RoleType.LEADER || role == RoleType.ADMIN);
   }
 
   /** Check if member has a specific role through any of their member types. */
-  public static boolean hasRole(List<MemberType> memberTypes, RoleType targetRole) {
-    if (memberTypes == null || targetRole == null) {
-      return false;
-    }
-    return memberTypes.stream()
-        .map(MemberTypeRoleMapper::getRoleForMemberType)
-        .anyMatch(role -> role == targetRole);
+  public static boolean hasRole(final List<MemberType> memberTypes, final RoleType targetRole) {
+    return (memberTypes != null && targetRole != null)
+        && memberTypes.stream()
+            .map(MemberTypeRoleMapper::getRoleForMemberType)
+            .anyMatch(role -> role == targetRole);
   }
 }

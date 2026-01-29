@@ -90,7 +90,7 @@ class UserAccountTest {
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
 
-    assertEquals(RoleType.SUPER_ADMIN, user.getPrimaryRole());
+    assertEquals(RoleType.ADMIN, user.getPrimaryRole());
   }
 
   @Test
@@ -160,14 +160,14 @@ class UserAccountTest {
             .id(1)
             .memberId(1L)
             .email("john@example.com")
-            .roles(List.of(RoleType.ADMIN))
+            .roles(List.of(RoleType.LEADER))
             .build();
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<RoleType> roles = user.getAllRoles();
 
     assertEquals(2, roles.size());
-    assertTrue(roles.contains(RoleType.ADMIN));
+    assertTrue(roles.contains(RoleType.LEADER));
   }
 
   @Test
