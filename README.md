@@ -401,10 +401,11 @@ Mentor creation → Get Mentors and validate if the mentor was created → Updat
 
 **Run a Folder and Generate HTML Report**
 
-1. Install Bruno CLI: `npm install -g @usebruno/cli`
-2. Create `.env` file based on the `.env.example` provided the root of a collection
-3. Execute Flow using this command: `bru run --env local --output results.html --format html`
-4. Open HTML report in browser
+1. Navigate to the root of the collection: `cd api-flows`
+2. Install necessary dependencies: `npm install`
+3. Create `.env` file based on the `.env.example` 
+4. Execute Flow using this command: `npm run test:local`. 
+5. Execute Flow using this command with HTML report generated: `npm run test:local:report`. Open HTML report in browser
 
 ### How to Add New Flows / Requests
 
