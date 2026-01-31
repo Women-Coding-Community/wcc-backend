@@ -399,11 +399,12 @@ This is useful for end-to-end flows like:
 
 Mentor creation → Get Mentors and validate if the mentor was created → Update Mentor data → Get Mentors and validate if the mentor was updated → Delete Mentor → Get Mentors and validate if the mentor was deleted
 
-**Run a Folder and Generate HRML Report**
+**Run a Folder and Generate HTML Report**
 
 1. Install Bruno CLI: `npm install -g @usebruno/cli`
-2. Execute Flow using this command: `bru run --env local --output results.html --format html`
-3. Open report in browser
+2. Create `.env` file based on the `.env.example` provided the root of a collection
+3. Execute Flow using this command: `bru run --env local --output results.html --format html`
+4. Open HTML report in browser
 
 ### How to Add New Flows / Requests
 
