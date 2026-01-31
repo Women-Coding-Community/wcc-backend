@@ -382,7 +382,7 @@ Before using this flow, make sure you have:
 1. Open Bruno
 2. Click Open Collection
 3. Select the `api-flows` folder of this repository
-4. Bruno will automatically load all requests and local environment variables.
+4. Bruno will automatically load all requests and local environment variables. Make sure to select the environment `local` that was loaded alongside the collection
 
 ### Running Requests
 **Run a Single Request**
@@ -424,6 +424,6 @@ Follow these guidelines to keep the collection consistent and easy to maintain.
 1. Right-click in the collection root or relevant parent folder
 2. Select New Folder
 3. Name the folder after the business flow or feature
-4. Example: `Mentee Registration & Approval Flow`, `Matching Flow`
+4. Example: `mentee-registration-approval-flow`, `matching-flow`
 5. Add requests in the order they should be executed
 6. Ensure each request can be run sequentially as part of a folder execution
