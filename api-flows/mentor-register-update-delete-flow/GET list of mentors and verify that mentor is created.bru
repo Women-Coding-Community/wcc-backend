@@ -1,0 +1,39 @@
+meta {
+  name: GET list of mentors and verify that mentor is created
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/mentors
+  body: none
+  auth: apikey
+}
+
+headers {
+  X-API-KEY: {{apiKey}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  const mentors = res.body;
+  const userId = Number(bru.getEnvVar("userId"));
+  
+  expect(mentors, "Mentors response should be an array").to.be.an('array');
+  
+  const mentor = mentors.find(m => m.id === userId);
+  
+  expect(
+    mentor,
+    `Mentor with id ${userId} should be present in mentors list`
+  ).to.exist;
+}

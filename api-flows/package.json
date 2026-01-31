@@ -1,0 +1,16 @@
+{
+  "name": "api-flows",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test:local": "bru run --env local",
+    "test:local:report": "bru run --env local --output results.html --format html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@usebruno/cli": "^3.0.3"
+  }
+}

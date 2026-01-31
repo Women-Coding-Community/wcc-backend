@@ -1,0 +1,92 @@
+meta {
+  name: Submit Mentor Registration
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/platform/v1/mentors
+  body: json
+  auth: apikey
+}
+
+headers {
+  X-API-KEY: {{apiKey}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+body:json {
+  {{payload}}
+}
+
+script:pre-request {
+  const countryCode = bru.interpolate('{{$randomCountryCode}}');
+  const countryName = bru.interpolate('{{$randomCountry}}');
+  
+  const fullName = bru.interpolate('{{$randomFullName}}');
+  
+  const email = bru.interpolate(`{{$randomEmail}}`).toLowerCase();
+  const slackDisplayName = fullName
+    .toLowerCase()
+    .replace(/\s+/g, '.');
+  
+  const city = bru.interpolate('{{$randomCity}}');
+  
+  const payload = {
+    fullName,
+    position: bru.interpolate('{{$randomJobTitle}}'),
+    email,
+    slackDisplayName,
+    country: {
+      countryCode,
+      countryName
+    },
+    city,
+    companyName: bru.interpolate('{{$randomCompanyName}}'),
+    memberTypes: ["MENTOR"],
+    images: [],
+    network: [],
+    profileStatus: "PENDING",
+    skills: {
+      yearsExperience: 10,
+      areas: ["Quality Assurance"],
+      languages: ["Python", "Javascript", "Java"],
+      mentorshipFocus: ["Switch career to IT"]
+    },
+    spokenLanguages: ["English", "Portuguese"],
+    bio: bru.interpolate('{{$randomLoremSentences}}'),
+    menteeSection: {
+      mentorshipType: ["LONG_TERM"],
+      availability: [
+        { month: 6, hours: 2 },
+        { month: 7, hours: 2 },
+        { month: 8, hours: 2 },
+        { month: 9, hours: 2 },
+        { month: 10, hours: 2 },
+        { month: 11, hours: 2 }
+      ],
+      idealMentee: bru.interpolate('{{$randomLoremSentence}}'),
+      additional: "Best practices"
+    }
+  };
+  
+  bru.setVar("payload", payload);
+  
+}
+
+script:post-response {
+  const id = res.body.id;
+  bru.setEnvVar("userId", id);
+  
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+      expect(res.getStatus()).to.equal(201);
+  });
+}
