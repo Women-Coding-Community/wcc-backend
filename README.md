@@ -417,7 +417,7 @@ Follow these guidelines to keep the collection consistent and easy to maintain.
 3. Give the request a clear, descriptive name
 4. Select the HTTP method and configure the endpoint, headers, and body
 5. Use environment variables (e.g. {{baseUrl}}, {{mentorId}}) instead of hardcoded values
-6. Use faker built-in faker library to generate realistic data for payloads
+6. Use [dynamic variables](https://docs.usebruno.com/testing/script/dynamic-variables) in scripts to generate realistic data for payloads
 
 **Adding a New Flow (Folder)**
 
@@ -426,4 +426,4 @@ Follow these guidelines to keep the collection consistent and easy to maintain.
 3. Name the folder after the business flow or feature
 4. Example: `mentee-registration-approval-flow`, `matching-flow`
 5. Add requests in the order they should be executed
-6. Ensure each request can be run sequentially as part of a folder execution
+6. Ensure each request can be run sequentially as part of a folder execution by running the whole folder and making sure the HTML report is generated
