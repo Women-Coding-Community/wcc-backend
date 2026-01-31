@@ -43,3 +43,4 @@ src/main/resources/application-local.yml
 api-flows/results.html
 .env
 node_modules
+.DS_Store
