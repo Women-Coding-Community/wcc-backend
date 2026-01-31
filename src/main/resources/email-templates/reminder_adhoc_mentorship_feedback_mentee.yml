@@ -1,0 +1,28 @@
+MENTORSHIP_FEEDBACK_MENTEE_ADHOC:
+  subject: "We’d Love Your Feedback – {{Month}} Mentorship Experience"
+  body: |
+    <p>Dear Mentee,</p>
+
+    <p>
+    Thank you for being part of the {{month}} Ad Hoc Mentorship Program with the Women Coding Community!
+    </p>
+
+    <p>
+    We’d love to hear about your experience. Please take a minute to fill out this short feedback form: {{feedbackFormUrl}}.
+    </p>
+
+    <p>
+    Your input helps us improve and continue building meaningful mentorship opportunities.
+    </p>
+
+    <p>
+    Thanks again for being part of our community!
+    </p>
+
+    <p>
+    If you’ve already submitted your feedback, please ignore this email.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

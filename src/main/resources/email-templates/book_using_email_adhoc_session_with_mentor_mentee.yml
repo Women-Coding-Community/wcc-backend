@@ -1,0 +1,33 @@
+BOOK_ADHOC_SESSION_MENTEE_EMAIL:
+  subject: "Book ad-hoc session with your mentor"
+  body: |
+    <p>Dear {{menteeName}},</p>
+    
+    <p>
+    Thank you for registering for a one-time session with {{mentorName}}.
+    </p>
+    
+    <p>
+    Please send an email to {{mentorEmail}} to coordinate and book a session. These sessions are typically one hour long.
+    </p>
+    
+    <p>
+    Once you’ve booked your session, kindly reply to this email with the scheduled date.
+    </p>
+    
+    <p>
+    We recommend writing down what you hope to accomplish beforehand. This will help make the session more impactful.
+    </p>
+    
+    <p>
+    After your session, please complete our feedback form: {{feedbackFormUrl}}
+    </p>
+    
+    <p>
+    If you have any questions, feel free to contact us by email or Slack.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+

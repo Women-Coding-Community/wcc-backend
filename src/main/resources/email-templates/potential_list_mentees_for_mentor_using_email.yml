@@ -1,0 +1,39 @@
+LIST_MENTEES_FOR_MENTOR_EMAIL:
+  subject: "WCC: Potential list of mentees for {{month}} ad-hoc sessions"
+  body: |
+    <p>Dear {{mentorName}},</p>
+    
+    <p>
+    We hope this email finds you well. We are excited to share with you some potential mentees 
+    for this month. As someone who has extensive experience, your guidance and insights can be invaluable to these individuals as they seek to grow in their careers.
+    </p>
+    
+    <p>
+    Here is a link to spreadsheet with mentees information: {{link}}
+    </p>
+    
+    <p>We will send your email to the mentee(s) to contact you.</p>
+    
+    <p>
+    Please reply to the mentee(s) via email and also copy (CC) london@womencodingcommunity.com. 
+    Provide the mentee(s) with a preferred date and time for a one-hour session or more in case you 
+    and the mentee(s) are interested.
+    </p>
+    
+    <p>Please conduct the session with the mentee(s).</p>
+    
+    <p>
+    Kindly ask the mentee(s) to provide feedback using this form after the session: feedback form
+    </p>
+    
+    <p>Inform the mentorship team by email or Slack when the session happens.</p>
+    
+    <p>
+    Thank you for your time and consideration. We greatly appreciate your willingness to support 
+    our program and help empower women in tech.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+
