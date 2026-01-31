@@ -74,9 +74,6 @@ export default function MembersPage() {
     return parts.join(', ');
   };
 
-  const getLinkedIn = (m: MemberItem) =>
-    m.network?.find((n) => n.type?.toLowerCase() === 'linkedin')?.link;
-
   const handleCreateMember = () => {
     router.push('/admin/members/create');
   };
@@ -140,12 +137,19 @@ export default function MembersPage() {
                   )}
 
                   {/* Network */}
-                  {getLinkedIn(m) && (
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      <Link href={getLinkedIn(m)!} target="_blank" rel="noopener noreferrer">
-                        LinkedIn
-                      </Link>
-                    </Typography>
+                  {m.network && m.network.length > 0 && (
+                    <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ mt: 1 }}>
+                      {m.network.map((n) => (
+                        <Link
+                          key={`network-${m.id}-${n.type}`}
+                          href={n.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {n.type}
+                        </Link>
+                      ))}
+                    </Stack>
                   )}
                 </Box>
               </Stack>
