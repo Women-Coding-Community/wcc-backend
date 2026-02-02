@@ -1,5 +1,7 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.auth.PasswordGenerator;
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
@@ -10,11 +12,13 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.utils.FiltersUtil;
 import java.time.LocalDate;
 import java.time.Month;
@@ -41,6 +45,7 @@ public class MentorshipService {
 
   private final MentorRepository mentorRepository;
   private final MemberRepository memberRepository;
+  private final UserAccountRepository userRepository;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
 
@@ -48,10 +53,12 @@ public class MentorshipService {
   public MentorshipService(
       final MentorRepository mentorRepository,
       final MemberRepository memberRepository,
+      final UserAccountRepository userRepository,
       final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
     this.mentorRepository = mentorRepository;
     this.memberRepository = memberRepository;
+    this.userRepository = userRepository;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
   }
@@ -97,7 +104,20 @@ public class MentorshipService {
       }
     }
     validateMentorCommitment(mentor);
-    return mentorRepository.create(mentor);
+    final var mentorCreated = mentorRepository.create(mentor);
+    if (mentorRepository.findById(mentorCreated.getId()).isPresent()) {
+      UserAccount userAccount =
+          UserAccount.builder()
+              .memberId(mentorCreated.getId())
+              .email(mentorCreated.getEmail())
+              .passwordHash(PasswordGenerator.generateRandomPassword(12))
+              .roles(List.of(RoleType.MENTOR))
+              .enabled(true)
+              .build();
+      userRepository.create(userAccount);
+    }
+
+    return mentorCreated;
   }
 
   /**

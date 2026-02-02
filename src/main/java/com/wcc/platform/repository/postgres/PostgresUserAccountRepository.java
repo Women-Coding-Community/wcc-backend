@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /** Postgres implementation of the UserAccountRepository interface. */
 @Slf4j
@@ -36,6 +37,7 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
   private final JdbcTemplate jdbc;
 
   @Override
+  @Transactional
   public UserAccount create(final UserAccount userAccount) {
     log.info("Creating userAccount: {}", userAccount);
 
