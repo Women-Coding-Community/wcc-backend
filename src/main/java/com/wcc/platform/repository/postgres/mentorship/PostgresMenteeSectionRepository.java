@@ -28,7 +28,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
       "SELECT ideal_mentee, additional, long_term_num_mentee, long_term_hours, "
           + "created_at, updated_at FROM mentor_mentee_section WHERE mentor_id = ?";
 
-  private static final String SQL_AD_HOC_AVAILABILITY =
+  private static final String SQL_AD_HOC =
       "SELECT month_num, hours FROM mentor_availability WHERE mentor_id = ?";
 
   private static final String INSERT_MENTOR_MENTEE =
@@ -36,7 +36,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
           + "(mentor_id, ideal_mentee, additional, long_term_num_mentee, long_term_hours) "
           + "VALUES (?, ?, ?, ?, ?)";
 
-  private static final String INSERT_AD_HOC_AVAILABILITY =
+  private static final String INSERT_AD_HOC =
       "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
 
   private static final String UPDATE_MENTEE_SECTION =
@@ -44,8 +44,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
           + "SET ideal_mentee = ?, additional = ?, long_term_num_mentee = ?, long_term_hours = ? "
           + "WHERE mentor_id = ?";
 
-  private static final String DELETE_AD_HOC_AVAILABILITY =
-      "DELETE FROM mentor_availability WHERE mentor_id = ?";
+  private static final String DELETE_AD_HOC = "DELETE FROM mentor_availability WHERE mentor_id = ?";
 
   private final JdbcTemplate jdbc;
 
@@ -80,7 +79,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
         mentorId);
 
     // Update ad-hoc availability
-    jdbc.update(DELETE_AD_HOC_AVAILABILITY, mentorId);
+    jdbc.update(DELETE_AD_HOC, mentorId);
     insertAdHocAvailability(menteeSec, mentorId);
   }
 
@@ -97,8 +96,8 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
           jdbc.queryForObject(
               SQL_BASE,
               (rs, rowNum) -> {
-                final Integer numMentee = getInteger(rs, COLUMN_LONG_TERM_NUM_MENTEE);
-                final Integer hours = getInteger(rs, COLUMN_LONG_TERM_HOURS);
+                final Integer numMentee = getInteger(rs, COLUMN_LT_NUM_MENTEE);
+                final Integer hours = getInteger(rs, COLUMN_LT_HOURS);
                 final LongTermMentorship longTerm =
                     (numMentee != null && hours != null)
                         ? new LongTermMentorship(numMentee, hours)
@@ -125,7 +124,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
 
   private List<MentorMonthAvailability> loadAdHocAvailability(final Long mentorId) {
     return jdbc.query(
-        SQL_AD_HOC_AVAILABILITY,
+        SQL_AD_HOC,
         (rs, rowNum) ->
             new MentorMonthAvailability(Month.of(rs.getInt(COLUMN_MONTH)), rs.getInt(COLUMN_HOURS)),
         mentorId);
@@ -134,7 +133,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
   private void insertAdHocAvailability(final MenteeSection ms, final Long memberId) {
     if (ms.adHoc() != null) {
       for (final MentorMonthAvailability a : ms.adHoc()) {
-        jdbc.update(INSERT_AD_HOC_AVAILABILITY, memberId, a.month().getValue(), a.hours());
+        jdbc.update(INSERT_AD_HOC, memberId, a.month().getValue(), a.hours());
       }
     }
   }

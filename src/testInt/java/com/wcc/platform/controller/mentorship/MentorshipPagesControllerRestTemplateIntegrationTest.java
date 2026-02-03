@@ -142,7 +142,6 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
         UriComponentsBuilder.fromHttpUrl("http://localhost:" + port + API_MENTORS)
             .queryParam("keyword", "Berlin")
             .queryParam("yearsExperience", "3")
-            .queryParam("mentorshipTypes", "AD_HOC")
             .queryParam("areas", "BACKEND")
             .queryParam("languages", "JAVA")
             .queryParam("focus", "GROW_MID_TO_SENIOR")

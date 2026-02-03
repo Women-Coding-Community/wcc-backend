@@ -26,10 +26,9 @@ class PostgresMenteeSectionRepositoryTest {
           + "SET ideal_mentee = ?, additional = ?, long_term_num_mentee = ?, long_term_hours = ? "
           + "WHERE mentor_id = ?";
 
-  private static final String DELETE_AD_HOC_AVAILABILITY =
-      "DELETE FROM mentor_availability WHERE mentor_id = ?";
+  private static final String DELETE_AD_HOC = "DELETE FROM mentor_availability WHERE mentor_id = ?";
 
-  private static final String INSERT_AD_HOC_AVAILABILITY =
+  private static final String INSERT_AD_HOC =
       "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
 
   @Mock private JdbcTemplate jdbc;
@@ -72,10 +71,9 @@ class PostgresMenteeSectionRepositoryTest {
             eq(8),
             eq(mentorId));
 
-    verify(jdbc, times(1)).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
+    verify(jdbc, times(1)).update(eq(DELETE_AD_HOC), eq(mentorId));
 
-    verify(jdbc, times(2))
-        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), anyInt(), anyInt());
+    verify(jdbc, times(2)).update(eq(INSERT_AD_HOC), eq(mentorId), anyInt(), anyInt());
   }
 
   @Test
@@ -99,7 +97,7 @@ class PostgresMenteeSectionRepositoryTest {
   void testUpdateMenteeSectionDeletesOldAdHocAvailability() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
-    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
+    verify(jdbc).update(eq(DELETE_AD_HOC), eq(mentorId));
   }
 
   @Test
@@ -108,11 +106,9 @@ class PostgresMenteeSectionRepositoryTest {
   void testUpdateMenteeSectionInsertsAllAdHocAvailability() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
-    verify(jdbc)
-        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), eq(Month.JANUARY.getValue()), eq(2));
+    verify(jdbc).update(eq(INSERT_AD_HOC), eq(mentorId), eq(Month.JANUARY.getValue()), eq(2));
 
-    verify(jdbc)
-        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), eq(Month.FEBRUARY.getValue()), eq(3));
+    verify(jdbc).update(eq(INSERT_AD_HOC), eq(mentorId), eq(Month.FEBRUARY.getValue()), eq(3));
   }
 
   @Test
@@ -138,7 +134,7 @@ class PostgresMenteeSectionRepositoryTest {
             eq(mentorId));
 
     verify(jdbc, times(1))
-        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), eq(Month.APRIL.getValue()), eq(1));
+        .update(eq(INSERT_AD_HOC), eq(mentorId), eq(Month.APRIL.getValue()), eq(1));
   }
 
   @Test
@@ -156,8 +152,8 @@ class PostgresMenteeSectionRepositoryTest {
 
     menteeSecRepo.updateMenteeSection(longTermOnlySection, mentorId);
 
-    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
-    verify(jdbc, never()).update(eq(INSERT_AD_HOC_AVAILABILITY), anyLong(), anyInt(), anyInt());
+    verify(jdbc).update(eq(DELETE_AD_HOC), eq(mentorId));
+    verify(jdbc, never()).update(eq(INSERT_AD_HOC), anyLong(), anyInt(), anyInt());
   }
 
   @Test
@@ -172,19 +168,18 @@ class PostgresMenteeSectionRepositoryTest {
 
     menteeSecRepo.updateMenteeSection(longTermOnlySection, mentorId);
 
-    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
-    verify(jdbc, never()).update(eq(INSERT_AD_HOC_AVAILABILITY), anyLong(), anyInt(), anyInt());
+    verify(jdbc).update(eq(DELETE_AD_HOC), eq(mentorId));
+    verify(jdbc, never()).update(eq(INSERT_AD_HOC), anyLong(), anyInt(), anyInt());
   }
 
   @Test
-  @DisplayName(
-      "Given mentee section, when updating, then all required SQL statements are executed")
+  @DisplayName("Given mentee section, when updating, then all required SQL statements are executed")
   void testUpdateMenteeSectionVerifiesAllSqlStatements() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
-    verify(jdbc).update(eq(UPDATE_MENTEE_SECTION), anyString(), anyString(), any(), any(), anyLong());
-    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), anyLong());
-    verify(jdbc, atLeastOnce())
-        .update(eq(INSERT_AD_HOC_AVAILABILITY), anyLong(), anyInt(), anyInt());
+    verify(jdbc)
+        .update(eq(UPDATE_MENTEE_SECTION), anyString(), anyString(), any(), any(), anyLong());
+    verify(jdbc).update(eq(DELETE_AD_HOC), anyLong());
+    verify(jdbc, atLeastOnce()).update(eq(INSERT_AD_HOC), anyLong(), anyInt(), anyInt());
   }
 }

@@ -39,11 +39,13 @@ public record MenteeSection(
   }
 
   /**
-   * Converts the current MenteeSection instance into a new MenteeSection DTO.
+   * Converts the current MenteeSection instance into a new MenteeSection DTO. The DTO excludes
+   * ad-hoc availability details for public display.
    *
-   * @return a new MenteeSection instance with all fields preserved.
+   * @return a new MenteeSection instance with the same idealMentee, additional, and longTerm
+   *     fields, but with an empty adHoc list.
    */
   public MenteeSection toDto() {
-    return new MenteeSection(idealMentee, additional, longTerm, adHoc);
+    return new MenteeSection(idealMentee, additional, longTerm, List.of());
   }
 }
