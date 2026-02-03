@@ -10,21 +10,21 @@ import java.time.Year;
 public class YearDeserializer extends JsonDeserializer<Year> {
 
   @Override
-  public Year deserialize(final JsonParser p, final DeserializationContext ctxt)
+  public Year deserialize(final JsonParser jsonParser, final DeserializationContext context)
       throws IOException {
     // Handle null values
-    if (p.currentToken() == JsonToken.VALUE_NULL) {
+    if (jsonParser.currentToken() == JsonToken.VALUE_NULL) {
       return null;
     }
 
     // Handle numeric values (e.g., 2026)
-    if (p.currentToken() == JsonToken.VALUE_NUMBER_INT) {
-      return Year.of(p.getIntValue());
+    if (jsonParser.currentToken() == JsonToken.VALUE_NUMBER_INT) {
+      return Year.of(jsonParser.getIntValue());
     }
 
     // Handle string values (e.g., "2026")
-    if (p.currentToken() == JsonToken.VALUE_STRING) {
-      String text = p.getText().trim();
+    if (jsonParser.currentToken() == JsonToken.VALUE_STRING) {
+      final String text = jsonParser.getText().trim();
       if (text.isEmpty()) {
         return null;
       }
@@ -32,6 +32,6 @@ public class YearDeserializer extends JsonDeserializer<Year> {
     }
 
     throw new IllegalArgumentException(
-        "Cannot deserialize Year from token: " + p.currentToken());
+        "Cannot deserialize Year from token: " + jsonParser.currentToken());
   }
 }

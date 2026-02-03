@@ -93,13 +93,13 @@ public class OpenApiConfig implements WebMvcConfigurer {
         return;
       }
 
-      var schemas = openApi.getComponents().getSchemas();
+      final var schemas = openApi.getComponents().getSchemas();
       if (schemas == null) {
         return;
       }
 
       // If MenteeRegistration schema exists, replace the cycleYear property with an integer schema
-      Schema<?> menteeRegistration = schemas.get("MenteeRegistration");
+      final Schema<?> menteeRegistration = schemas.get("MenteeRegistration");
       if (menteeRegistration != null && menteeRegistration.getProperties() != null) {
         menteeRegistration.getProperties().put("cycleYear", new IntegerSchema().format("int32"));
       }
