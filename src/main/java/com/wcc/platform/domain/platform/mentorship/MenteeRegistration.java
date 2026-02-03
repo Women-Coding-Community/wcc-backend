@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Year;
@@ -16,7 +17,7 @@ import java.util.List;
 public record MenteeRegistration(
     @NotNull Mentee mentee,
     @NotNull MentorshipType mentorshipType,
-    @NotNull Year cycleYear,
+    @NotNull @Schema(type = "integer", format = "int32", example = "2026", description = "The year of the mentorship cycle") Year cycleYear,
     @Size(min = 1, max = 5) List<MenteeApplicationDto> applications) {
 
   public List<MenteeApplication> toApplications(
