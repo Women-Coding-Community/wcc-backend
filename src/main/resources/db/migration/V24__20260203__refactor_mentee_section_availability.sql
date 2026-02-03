@@ -64,20 +64,3 @@ CHECK (long_term_num_mentee IS NULL OR long_term_num_mentee >= 1);
 ALTER TABLE mentor_mentee_section
 ADD CONSTRAINT chk_long_term_hours_min 
 CHECK (long_term_hours IS NULL OR long_term_hours >= 2);
-
--- ============================================================================
--- ROLLBACK INSTRUCTIONS (for reference, do not execute)
--- ============================================================================
--- To rollback this migration:
---
--- 1. Drop constraints:
---    ALTER TABLE mentor_mentee_section DROP CONSTRAINT chk_long_term_consistency;
---    ALTER TABLE mentor_mentee_section DROP CONSTRAINT chk_long_term_num_mentee_min;
---    ALTER TABLE mentor_mentee_section DROP CONSTRAINT chk_long_term_hours_min;
---
--- 2. Drop columns:
---    ALTER TABLE mentor_mentee_section DROP COLUMN long_term_num_mentee;
---    ALTER TABLE mentor_mentee_section DROP COLUMN long_term_hours;
---
--- 3. Re-insert availability data from backup (if needed)
--- ============================================================================
