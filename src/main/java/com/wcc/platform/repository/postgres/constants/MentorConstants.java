@@ -13,6 +13,8 @@ public final class MentorConstants {
   // MENTOR_MENTEE_SECTION table
   public static final String COLUMN_IDEAL_MENTEE = "ideal_mentee";
   public static final String COLUMN_ADDITIONAL = "additional";
+  public static final String COLUMN_LONG_TERM_NUM_MENTEE = "long_term_num_mentee";
+  public static final String COLUMN_LONG_TERM_HOURS = "long_term_hours";
 
   // OTHERS
   public static final String COL_MENTORSHIP_TYPE = "mentorship_type";

@@ -1,16 +1,16 @@
 package com.wcc.platform.repository.postgres;
 
-import static com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +20,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class PostgresMenteeSectionRepositoryTest {
+
+  private static final String UPDATE_MENTEE_SECTION =
+      "UPDATE mentor_mentee_section "
+          + "SET ideal_mentee = ?, additional = ?, long_term_num_mentee = ?, long_term_hours = ? "
+          + "WHERE mentor_id = ?";
+
+  private static final String DELETE_AD_HOC_AVAILABILITY =
+      "DELETE FROM mentor_availability WHERE mentor_id = ?";
+
+  private static final String INSERT_AD_HOC_AVAILABILITY =
+      "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
 
   @Mock private JdbcTemplate jdbc;
 
@@ -32,24 +43,24 @@ class PostgresMenteeSectionRepositoryTest {
   void setUp() {
     mentorId = 1L;
 
-    List<MentorshipType> mentorshipTypes = List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC);
-
-    List<MentorMonthAvailability> availability =
+    List<MentorMonthAvailability> adHocAvailability =
         List.of(
             new MentorMonthAvailability(Month.JANUARY, 2),
             new MentorMonthAvailability(Month.FEBRUARY, 3));
 
     menteeSection =
         new MenteeSection(
-            mentorshipTypes,
-            availability,
             "Ideal mentee description UPDATED",
-            "Additional info UPDATED");
+            "Additional info UPDATED",
+            new LongTermMentorship(2, 8),
+            adHocAvailability);
   }
 
   @Test
+  @DisplayName(
+      "Given mentee section with long-term and ad-hoc, when updating, then all fields should be"
+          + " updated")
   void testUpdateMenteeSectionSuccess() {
-
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc, times(1))
@@ -57,22 +68,19 @@ class PostgresMenteeSectionRepositoryTest {
             eq(UPDATE_MENTEE_SECTION),
             eq("Ideal mentee description UPDATED"),
             eq("Additional info UPDATED"),
+            eq(2),
+            eq(8),
             eq(mentorId));
 
-    verify(jdbc, times(1)).update(eq(DELETE_MENTOR_TYPES), eq(mentorId));
-
-    verify(jdbc, times(2)).update(eq(INSERT_MENTOR_TYPES), eq(mentorId), anyInt());
+    verify(jdbc, times(1)).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
 
     verify(jdbc, times(2))
-        .update(
-            eq(UPDATE_AVAILABILITY),
-            anyInt(), // month_num
-            anyInt(), // hours
-            eq(mentorId));
+        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), anyInt(), anyInt());
   }
 
   @Test
-  void testUpdateMenteeSectionUpdatesTextFields() {
+  @DisplayName("Given mentee section, when updating, then text and long-term fields are updated")
+  void testUpdateMenteeSectionUpdatesTextAndLongTermFields() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
     verify(jdbc)
@@ -80,79 +88,103 @@ class PostgresMenteeSectionRepositoryTest {
             eq(UPDATE_MENTEE_SECTION),
             eq("Ideal mentee description UPDATED"),
             eq("Additional info UPDATED"),
+            eq(2),
+            eq(8),
             eq(mentorId));
   }
 
   @Test
-  void testUpdateMenteeSectionDeletesOldMentorshipTypes() {
+  @DisplayName(
+      "Given mentee section with ad-hoc, when updating, then old ad-hoc availability is deleted")
+  void testUpdateMenteeSectionDeletesOldAdHocAvailability() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
-    verify(jdbc).update(eq(DELETE_MENTOR_TYPES), eq(mentorId));
+    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
   }
 
   @Test
-  void testUpdateMenteeSectionInsertsAllMentorshipTypes() {
+  @DisplayName(
+      "Given mentee section with ad-hoc availability, when updating, then all months are inserted")
+  void testUpdateMenteeSectionInsertsAllAdHocAvailability() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
+
+    verify(jdbc)
+        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), eq(Month.JANUARY.getValue()), eq(2));
+
+    verify(jdbc)
+        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), eq(Month.FEBRUARY.getValue()), eq(3));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentee section without long-term, when updating, then long-term fields are null")
+  void testUpdateMenteeSectionWithNoLongTerm() {
+    MenteeSection adHocOnlySection =
+        new MenteeSection(
+            "Ideal mentee",
+            "Additional",
+            null, // No long-term
+            List.of(new MentorMonthAvailability(Month.APRIL, 1)));
+
+    menteeSecRepo.updateMenteeSection(adHocOnlySection, mentorId);
 
     verify(jdbc)
         .update(
-            eq(INSERT_MENTOR_TYPES),
-            eq(mentorId),
-            eq(MentorshipType.LONG_TERM.getMentorshipTypeId()));
+            eq(UPDATE_MENTEE_SECTION),
+            eq("Ideal mentee"),
+            eq("Additional"),
+            isNull(),
+            isNull(),
+            eq(mentorId));
 
-    verify(jdbc)
-        .update(
-            eq(INSERT_MENTOR_TYPES), eq(mentorId), eq(MentorshipType.AD_HOC.getMentorshipTypeId()));
+    verify(jdbc, times(1))
+        .update(eq(INSERT_AD_HOC_AVAILABILITY), eq(mentorId), eq(Month.APRIL.getValue()), eq(1));
   }
 
   @Test
-  void testUpdateMenteeSectionUpdatesAllAvailability() {
-    menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
-
-    verify(jdbc)
-        .update(contains(UPDATE_AVAILABILITY), eq(Month.JANUARY.getValue()), eq(2), eq(mentorId));
-
-    verify(jdbc)
-        .update(contains(UPDATE_AVAILABILITY), eq(Month.FEBRUARY.getValue()), eq(3), eq(mentorId));
-  }
-
-  @Test
-  void testUpdateMenteeSectionWithEmptyMentorshipTypes() {
-    MenteeSection emptyTypesSection =
+  @DisplayName(
+      "Given mentee section with empty ad-hoc availability, when updating, then no ad-hoc records"
+          + " are inserted")
+  void testUpdateMenteeSectionWithEmptyAdHocAvailability() {
+    MenteeSection longTermOnlySection =
         new MenteeSection(
-            List.of(), // Empty mentorship types
-            List.of(new MentorMonthAvailability(Month.APRIL, 1)),
             "Ideal mentee",
-            "Additional");
+            "Additional",
+            new LongTermMentorship(1, 4),
+            List.of() // Empty ad-hoc availability
+            );
 
-    menteeSecRepo.updateMenteeSection(emptyTypesSection, mentorId);
+    menteeSecRepo.updateMenteeSection(longTermOnlySection, mentorId);
 
-    verify(jdbc, times(1)).update(eq(DELETE_MENTOR_TYPES), eq(mentorId));
-
-    verify(jdbc, never()).update(eq(INSERT_MENTOR_TYPES), anyLong(), anyInt());
+    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
+    verify(jdbc, never()).update(eq(INSERT_AD_HOC_AVAILABILITY), anyLong(), anyInt(), anyInt());
   }
 
   @Test
-  void testUpdateMenteeSectionWithEmptyAvailability() {
-    MenteeSection emptyAvailabilitySection =
+  @DisplayName(
+      "Given mentee section with null ad-hoc availability, when updating, then no ad-hoc records"
+          + " are inserted")
+  void testUpdateMenteeSectionWithNullAdHocAvailability() {
+    MenteeSection longTermOnlySection =
         new MenteeSection(
-            List.of(MentorshipType.AD_HOC),
-            List.of(), // Empty availability
-            "Ideal mentee",
-            "Additional");
+            "Ideal mentee", "Additional", new LongTermMentorship(1, 4), null // Null ad-hoc
+            );
 
-    menteeSecRepo.updateMenteeSection(emptyAvailabilitySection, mentorId);
+    menteeSecRepo.updateMenteeSection(longTermOnlySection, mentorId);
 
-    verify(jdbc, never()).update(contains(UPDATE_AVAILABILITY), anyInt(), anyInt(), anyLong());
+    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), eq(mentorId));
+    verify(jdbc, never()).update(eq(INSERT_AD_HOC_AVAILABILITY), anyLong(), anyInt(), anyInt());
   }
 
   @Test
+  @DisplayName(
+      "Given mentee section, when updating, then all required SQL statements are executed")
   void testUpdateMenteeSectionVerifiesAllSqlStatements() {
     menteeSecRepo.updateMenteeSection(menteeSection, mentorId);
 
-    verify(jdbc).update(eq(UPDATE_MENTEE_SECTION), anyString(), anyString(), anyLong());
-    verify(jdbc).update(eq(DELETE_MENTOR_TYPES), anyLong());
-    verify(jdbc, atLeastOnce()).update(eq(INSERT_MENTOR_TYPES), anyLong(), anyInt());
-    verify(jdbc, atLeastOnce()).update(eq(UPDATE_AVAILABILITY), anyInt(), anyInt(), anyLong());
+    verify(jdbc).update(eq(UPDATE_MENTEE_SECTION), anyString(), anyString(), any(), any(), anyLong());
+    verify(jdbc).update(eq(DELETE_AD_HOC_AVAILABILITY), anyLong());
+    verify(jdbc, atLeastOnce())
+        .update(eq(INSERT_AD_HOC_AVAILABILITY), anyLong(), anyInt(), anyInt());
   }
 }

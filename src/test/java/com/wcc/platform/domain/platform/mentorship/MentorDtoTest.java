@@ -12,6 +12,7 @@ import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.InvalidMentorException;
@@ -54,10 +55,10 @@ class MentorDtoTest {
                     List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
             .menteeSection(
                 new MenteeSection(
-                    List.of(MentorshipType.LONG_TERM),
-                    List.of(new MentorMonthAvailability(Month.JANUARY, 2)),
                     "Original ideal mentee",
-                    "Original additional info"))
+                    "Original additional info",
+                    new LongTermMentorship(1, 4),
+                    List.of(new MentorMonthAvailability(Month.JANUARY, 2))))
             .build();
   }
 
@@ -123,10 +124,10 @@ class MentorDtoTest {
                     List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
             .menteeSection(
                 new MenteeSection(
-                    List.of(MentorshipType.AD_HOC),
-                    List.of(new MentorMonthAvailability(Month.JUNE, 3)),
                     "New ideal mentee",
-                    "New additional info"))
+                    "New additional info",
+                    null,
+                    List.of(new MentorMonthAvailability(Month.JUNE, 3))))
             .build();
 
     Mentor result = mentorDto.merge(existingMentor);
@@ -218,7 +219,7 @@ class MentorDtoTest {
             .profileStatus(ProfileStatus.ACTIVE)
             .bio("Bio")
             .skills(new Skills(5, List.of(), List.of(), List.of()))
-            .menteeSection(new MenteeSection(List.of(), List.of(), "ideal", "additional"))
+            .menteeSection(new MenteeSection("ideal", "additional", null, List.of()))
             .spokenLanguages(null)
             .city(null)
             .companyName(null)
@@ -269,12 +270,12 @@ class MentorDtoTest {
   void testMergeShouldUpdateMenteeSectionCorrectly() {
     MenteeSection newMenteeSection =
         new MenteeSection(
-            List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM),
+            "Updated ideal mentee",
+            "Updated additional",
+            new LongTermMentorship(2, 8),
             List.of(
                 new MentorMonthAvailability(Month.MARCH, 4),
-                new MentorMonthAvailability(Month.APRIL, 5)),
-            "Updated ideal mentee",
-            "Updated additional");
+                new MentorMonthAvailability(Month.APRIL, 5)));
 
     mentorDto = MentorDto.mentorDtoBuilder().menteeSection(newMenteeSection).build();
 
@@ -282,9 +283,11 @@ class MentorDtoTest {
 
     assertEquals("Updated ideal mentee", result.getMenteeSection().idealMentee());
     assertEquals("Updated additional", result.getMenteeSection().additional());
-    assertEquals(2, result.getMenteeSection().mentorshipType().size());
-    assertEquals(2, result.getMenteeSection().availability().size());
-    assertEquals(Month.MARCH, result.getMenteeSection().availability().getFirst().month());
+    assertEquals(2, result.getMenteeSection().getMentorshipTypes().size());
+    assertEquals(2, result.getMenteeSection().adHoc().size());
+    assertEquals(Month.MARCH, result.getMenteeSection().adHoc().getFirst().month());
+    assertEquals(2, result.getMenteeSection().longTerm().numMentee());
+    assertEquals(8, result.getMenteeSection().longTerm().hours());
   }
 
   @Test

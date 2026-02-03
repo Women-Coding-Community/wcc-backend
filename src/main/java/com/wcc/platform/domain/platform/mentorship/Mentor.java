@@ -100,16 +100,18 @@ public class Mentor extends Member {
   public MentorDto toDto(final MentorshipCycle mentorshipCycle) {
     final var mentor = this;
     final var mentorBuilder = buildFromMentor(mentor);
+    final var menteeSection = mentor.getMenteeSection();
 
-    if (mentor.getMenteeSection().mentorshipType().contains(mentorshipCycle.cycle())) {
-
-      final var isAvailable =
-          mentor.getMenteeSection().availability().stream()
-              .filter(availability -> availability.month() == mentorshipCycle.month())
-              .findAny();
-
-      mentorBuilder.availability(
-          new MentorAvailability(mentorshipCycle.cycle(), isAvailable.isPresent()));
+    if (mentorshipCycle.cycle() == MentorshipType.LONG_TERM) {
+      final boolean isAvailable = menteeSection.longTerm() != null;
+      mentorBuilder.availability(new MentorAvailability(mentorshipCycle.cycle(), isAvailable));
+    } else if (mentorshipCycle.cycle() == MentorshipType.AD_HOC) {
+      final var adHoc = menteeSection.adHoc();
+      final boolean isAvailable =
+          adHoc != null
+              && adHoc.stream()
+                  .anyMatch(availability -> availability.month() == mentorshipCycle.month());
+      mentorBuilder.availability(new MentorAvailability(mentorshipCycle.cycle(), isAvailable));
     }
 
     return mentorBuilder.build();

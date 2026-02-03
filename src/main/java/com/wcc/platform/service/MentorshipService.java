@@ -234,15 +234,14 @@ public class MentorshipService {
 
   private void validateMentorCommitment(final Mentor mentor) {
     final var menteeSection = mentor.getMenteeSection();
-    final boolean isLongTermMentorship =
-        menteeSection.mentorshipType().contains(MentorshipType.LONG_TERM);
-    final boolean hasInsufficientHours =
-        menteeSection.availability().stream()
-            .anyMatch(availability -> availability.hours() < MINIMUM_HOURS);
 
-    if (isLongTermMentorship && hasInsufficientHours) {
-      throw new IllegalArgumentException(
-          "Long-term mentorship requires mentor to commit at least 2 hours per month.");
+    if (menteeSection.longTerm() != null) {
+      final var longTerm = menteeSection.longTerm();
+      final int hoursPerMentee = longTerm.hours() / longTerm.numMentee();
+      if (hoursPerMentee < MINIMUM_HOURS) {
+        throw new IllegalArgumentException(
+            "Long-term mentorship requires at least 2 hours per mentee.");
+      }
     }
   }
 }
