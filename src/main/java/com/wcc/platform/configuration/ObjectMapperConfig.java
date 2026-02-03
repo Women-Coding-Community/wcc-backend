@@ -21,6 +21,7 @@ import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.serializer.CapitalizeEnumFromStringSerializer;
 import com.wcc.platform.serializer.CapitalizeEnumSerializer;
 import com.wcc.platform.serializer.LowerCaseEnumSerializer;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -55,7 +56,8 @@ public class ObjectMapperConfig {
         .registerModule(
             new JavaTimeModule()
                 .addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(formatter))
-                .addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(formatter)))
+                .addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(formatter))
+                .addDeserializer(Year.class, new YearDeserializer()))
         .registerModule(
             new SimpleModule()
                 .addSerializer(ImageType.class, new LowerCaseEnumSerializer())
