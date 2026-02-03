@@ -79,7 +79,7 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
         longTerm != null ? longTerm.hours() : null,
         mentorId);
 
-    // Replace ad-hoc availability
+    // Update ad-hoc availability
     jdbc.update(DELETE_AD_HOC_AVAILABILITY, mentorId);
     insertAdHocAvailability(menteeSec, mentorId);
   }
