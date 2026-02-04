@@ -1,5 +1,8 @@
 package com.wcc.platform.repository.postgres;
 
+import static com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository.DELETE_AD_HOC;
+import static com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository.INSERT_AD_HOC;
+import static com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository.UPDATE_MENTEE_SECTION;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -20,16 +23,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class PostgresMenteeSectionRepositoryTest {
-
-  private static final String UPDATE_MENTEE_SECTION =
-      "UPDATE mentor_mentee_section "
-          + "SET ideal_mentee = ?, additional = ?, long_term_num_mentee = ?, long_term_hours = ? "
-          + "WHERE mentor_id = ?";
-
-  private static final String DELETE_AD_HOC = "DELETE FROM mentor_availability WHERE mentor_id = ?";
-
-  private static final String INSERT_AD_HOC =
-      "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
 
   @Mock private JdbcTemplate jdbc;
 

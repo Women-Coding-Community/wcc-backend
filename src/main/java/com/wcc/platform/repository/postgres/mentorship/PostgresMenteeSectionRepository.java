@@ -24,28 +24,23 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor
 public class PostgresMenteeSectionRepository implements MenteeSectionRepository {
 
-  private static final String SQL_BASE =
-      "SELECT ideal_mentee, additional, long_term_num_mentee, long_term_hours, "
-          + "created_at, updated_at FROM mentor_mentee_section WHERE mentor_id = ?";
-
-  private static final String SQL_AD_HOC =
-      "SELECT month_num, hours FROM mentor_availability WHERE mentor_id = ?";
-
-  private static final String INSERT_MENTOR_MENTEE =
-      "INSERT INTO mentor_mentee_section "
-          + "(mentor_id, ideal_mentee, additional, long_term_num_mentee, long_term_hours) "
-          + "VALUES (?, ?, ?, ?, ?)";
-
-  private static final String INSERT_AD_HOC =
+  public static final String INSERT_AD_HOC =
       "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
-
-  private static final String UPDATE_MENTEE_SECTION =
+  public static final String DELETE_AD_HOC = "DELETE FROM mentor_availability WHERE mentor_id = ?";
+  public static final String UPDATE_MENTEE_SECTION =
       "UPDATE mentor_mentee_section "
           + "SET ideal_mentee = ?, additional = ?, long_term_num_mentee = ?, long_term_hours = ? "
           + "WHERE mentor_id = ?";
 
-  private static final String DELETE_AD_HOC = "DELETE FROM mentor_availability WHERE mentor_id = ?";
-
+  private static final String SQL_BASE =
+      "SELECT ideal_mentee, additional, long_term_num_mentee, long_term_hours, "
+          + "created_at, updated_at FROM mentor_mentee_section WHERE mentor_id = ?";
+  private static final String SQL_AD_HOC =
+      "SELECT month_num, hours FROM mentor_availability WHERE mentor_id = ?";
+  private static final String INSERT_MENTOR_MENTEE =
+      "INSERT INTO mentor_mentee_section "
+          + "(mentor_id, ideal_mentee, additional, long_term_num_mentee, long_term_hours) "
+          + "VALUES (?, ?, ?, ?, ?)";
   private final JdbcTemplate jdbc;
 
   /** Inserts the mentee section details for the mentor. */
