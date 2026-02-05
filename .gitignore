@@ -38,3 +38,9 @@ src/main/resources/application-local.yml
 /scripts/init-dev-env.sh
 .vercel
 /scripts/init-prod-env.sh
+
+# bruno
+api-flows/results.html
+.env
+node_modules
+.DS_Store
