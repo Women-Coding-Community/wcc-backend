@@ -6,6 +6,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.Schema;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import org.springdoc.core.customizers.OpenApiCustomizer;
@@ -77,6 +79,32 @@ public class OpenApiConfig implements WebMvcConfigurer {
             .values()
             .forEach(pathItem -> pathItem.readOperations().forEach(updateOperationTag()));
       }
+    };
+  }
+
+  /**
+   * Ensure generated OpenAPI maps the mentorship `cycleYear` to an integer.
+   * This overrides the schema produced by the generator at runtime (used by `/api-docs`).
+   */
+  @Bean
+  public OpenApiCustomizer cycleYearSchemaCustomizer() {
+    return openApi -> {
+      if (openApi.getComponents() == null) {
+        return;
+      }
+
+      final var schemas = openApi.getComponents().getSchemas();
+      if (schemas == null) {
+        return;
+      }
+
+      final Schema<?> menteeRegistration = schemas.get("MenteeRegistration");
+      final IntegerSchema integerSchema = new IntegerSchema().format("int32");
+      if (menteeRegistration != null && menteeRegistration.getProperties() != null) {
+        menteeRegistration.getProperties().put("cycleYear", integerSchema);
+      }
+
+      schemas.put("Year", integerSchema);
     };
   }
 }
