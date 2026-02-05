@@ -98,14 +98,13 @@ public class OpenApiConfig implements WebMvcConfigurer {
         return;
       }
 
-      // If MenteeRegistration schema exists, replace the cycleYear property with an integer schema
       final Schema<?> menteeRegistration = schemas.get("MenteeRegistration");
+      final IntegerSchema integerSchema = new IntegerSchema().format("int32");
       if (menteeRegistration != null && menteeRegistration.getProperties() != null) {
-        menteeRegistration.getProperties().put("cycleYear", new IntegerSchema().format("int32"));
+        menteeRegistration.getProperties().put("cycleYear", integerSchema);
       }
 
-      // Also add/override a global Year schema as an integer (helps other inlined references)
-      schemas.put("Year", new IntegerSchema().format("int32"));
+      schemas.put("Year", integerSchema);
     };
   }
 }

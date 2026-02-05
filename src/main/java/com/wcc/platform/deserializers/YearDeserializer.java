@@ -6,29 +6,27 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
 import java.time.Year;
+import org.apache.commons.lang3.StringUtils;
 
 public class YearDeserializer extends JsonDeserializer<Year> {
 
   @Override
   public Year deserialize(final JsonParser jsonParser, final DeserializationContext context)
       throws IOException {
-    // Handle null values
     if (jsonParser.currentToken() == JsonToken.VALUE_NULL) {
       return null;
     }
 
-    // Handle numeric values (e.g., 2026)
     if (jsonParser.currentToken() == JsonToken.VALUE_NUMBER_INT) {
       return Year.of(jsonParser.getIntValue());
     }
 
-    // Handle string values (e.g., "2026")
     if (jsonParser.currentToken() == JsonToken.VALUE_STRING) {
-      final String text = jsonParser.getText().trim();
-      if (text.isEmpty()) {
-        return null;
+      final String year = jsonParser.getText();
+      if (!StringUtils.isBlank(year)) {
+        return Year.parse(year.trim());
       }
-      return Year.parse(text);
+      return null;
     }
 
     throw new IllegalArgumentException(

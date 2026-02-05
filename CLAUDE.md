@@ -554,3 +554,30 @@ feat: Add mentorship resources page endpoint
 Implement new CMS endpoint to serve downloadable mentorship resources
 including guides for mentees and mentors with Google Drive links.
 ```
+
+## Comment Lines
+
+### Javadoc Comments
+
+To enhance code readability and maintainability, it is strongly recommended to use Javadoc comments for all classes, methods, and fields. Javadoc comments provide a structured way to document your code and make it easier for other developers to understand your codebase.
+
+**Best Practices:**
+- **Comprehensive Documentation**: Javadoc comments should be comprehensive and provide enough detail for anyone reading the code.
+- **Tags**: Use Javadoc tags such as `@param` to describe method parameters, `@return` to describe the return value, and `@throws` to describe any exceptions that can be thrown.
+- **Formatting**: Ensure that Javadoc comments are well-formatted with proper indentation and line breaks.
+- **Avoid Excessive Inline Comments:** Inline comments should be used sparingly to explain complex logic or non-obvious code. For simple operations, comments are usually unnecessary. If a comment is needed, make sure it adds value by explaining why a specific piece of code is being executed.
+- **Use Block Comments for Larger Sections:** For larger sections of code that are difficult to understand without additional context, consider using block comments to explain the purpose and intended behavior of the code.
+- **Keep Comments Concise and Precise:** When commenting, be concise and precise. Avoid lengthy or vague comments that do not add value. Make sure that the comment accurately reflects the code it is commenting.
+
+**Example:**
+```java
+/**
+ * This method calculates the sum of two integers.
+ *
+ * @param a the first integer
+ * @param b the second integer
+ * @return the sum of a and b
+ */
+public int add(int a, int b) {
+  return a + b;
+}

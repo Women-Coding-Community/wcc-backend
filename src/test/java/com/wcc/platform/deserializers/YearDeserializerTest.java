@@ -66,7 +66,7 @@ class YearDeserializerTest {
   @DisplayName("Given empty string, when deserializing, then should return null")
   void testDeserializeEmptyString() throws IOException {
     when(jsonParser.currentToken()).thenReturn(JsonToken.VALUE_STRING);
-    when(jsonParser.getText()).thenReturn("   ");
+    when(jsonParser.getText()).thenReturn(null);
 
     Year result = deserializer.deserialize(jsonParser, context);
 
