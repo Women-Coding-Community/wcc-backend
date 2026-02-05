@@ -8,6 +8,7 @@ import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.platform.SocialNetwork;
@@ -17,7 +18,6 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ResourceType;
@@ -61,10 +61,10 @@ public class SetupMentorFactories {
                     List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
             .menteeSection(
                 new MenteeSection(
-                    List.of(MentorshipType.LONG_TERM),
-                    List.of(new MentorMonthAvailability(Month.APRIL, 2)),
                     "ideal mentee description",
-                    "additional"));
+                    "additional",
+                    new LongTermMentorship(1, 4),
+                    List.of(new MentorMonthAvailability(Month.APRIL, 2))));
     if (mentorId != null) {
       mentorBuilder.id(mentorId);
     }
@@ -101,19 +101,19 @@ public class SetupMentorFactories {
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
             new MenteeSection(
-                List.of(MentorshipType.LONG_TERM),
-                List.of(new MentorMonthAvailability(Month.MARCH, 2)),
                 "ideal mentee description",
-                "additional"))
+                "additional",
+                new LongTermMentorship(1, 4),
+                List.of(new MentorMonthAvailability(Month.MARCH, 2))))
         .build();
   }
 
-  /** Factory test to create MemberDto object with mentorshipTypes and availabilities params. */
+  /** Factory test to create MemberDto object with long-term and ad-hoc availability params. */
   public static MentorDto createMentorDtoTest(
       final Long mentorId,
       final MemberType type,
-      final List<MentorshipType> mentorshipTypes,
-      final List<MentorMonthAvailability> availabilities) {
+      final LongTermMentorship longTerm,
+      final List<MentorMonthAvailability> adHocAvailability) {
     return MentorDto.mentorDtoBuilder()
         .id(mentorId)
         .fullName("fullName " + type.name())
@@ -135,8 +135,7 @@ public class SetupMentorFactories {
                 List.of(Languages.JAVASCRIPT),
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
-            new MenteeSection(
-                mentorshipTypes, availabilities, "ideal mentee description", "additional"))
+            new MenteeSection("ideal mentee description", "additional", longTerm, adHocAvailability))
         .build();
   }
 
@@ -162,19 +161,19 @@ public class SetupMentorFactories {
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(
-                List.of(MentorshipType.AD_HOC),
-                List.of(new MentorMonthAvailability(Month.JUNE, 2)),
                 "ideal mentee description UPDATED",
-                "additional UPDATED"))
+                "additional UPDATED",
+                null,
+                List.of(new MentorMonthAvailability(Month.JUNE, 2))))
         .build();
   }
 
-  /** Test factory for updated Mentor with mentorship types and availabilities params. */
+  /** Test factory for updated Mentor with long-term and ad-hoc availability params. */
   public static Mentor createUpdatedMentorTest(
       final Mentor mentor,
       final MentorDto mentorDto,
-      final List<MentorshipType> mentorshipTypes,
-      final List<MentorMonthAvailability> availabilities) {
+      final LongTermMentorship longTerm,
+      final List<MentorMonthAvailability> adHocAvailability) {
 
     return Mentor.mentorBuilder()
         .id(mentor.getId())
@@ -195,10 +194,7 @@ public class SetupMentorFactories {
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(
-                mentorshipTypes,
-                availabilities,
-                "ideal mentee description UPDATED",
-                "additional UPDATED"))
+                "ideal mentee description UPDATED", "additional UPDATED", longTerm, adHocAvailability))
         .build();
   }
 

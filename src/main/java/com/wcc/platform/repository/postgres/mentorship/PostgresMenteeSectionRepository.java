@@ -2,9 +2,9 @@ package com.wcc.platform.repository.postgres.mentorship;
 
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.*;
 
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MenteeSectionRepository;
 import java.time.Month;
 import java.util.List;
@@ -17,50 +17,65 @@ import org.springframework.stereotype.Repository;
 /**
  * Repository for loading a mentor's MenteeSection from Postgres using JdbcTemplate.
  *
- * <p>Maps results from the following tables: - mentor_mentee_section - mentor_mentorship_types
- * (joined with mentorship_types) - mentor_availability
+ * <p>Maps results from the following tables: - mentor_mentee_section (includes long-term data) -
+ * mentor_availability (for ad-hoc availability)
  */
 @Repository
 @AllArgsConstructor
 public class PostgresMenteeSectionRepository implements MenteeSectionRepository {
 
+  public static final String INSERT_AD_HOC =
+      "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
+  public static final String DELETE_AD_HOC = "DELETE FROM mentor_availability WHERE mentor_id = ?";
   public static final String UPDATE_MENTEE_SECTION =
-      "UPDATE mentor_mentee_section SET ideal_mentee = ?, additional = ? WHERE mentor_id = ?";
-  public static final String UPDATE_AVAILABILITY =
-      "UPDATE mentor_availability SET " + "month_num = ?, " + "hours = ? " + "WHERE mentor_id = ?";
-  public static final String INSERT_MENTOR_TYPES =
-      "INSERT INTO mentor_mentorship_types (mentor_id, mentorship_type) VALUES (?, ?)";
-  public static final String DELETE_MENTOR_TYPES =
-      "DELETE FROM mentor_mentorship_types WHERE mentor_id = ?";
+      "UPDATE mentor_mentee_section "
+          + "SET ideal_mentee = ?, additional = ?, long_term_num_mentee = ?, long_term_hours = ? "
+          + "WHERE mentor_id = ?";
+
   private static final String SQL_BASE =
-      "SELECT ideal_mentee, additional, created_at, updated_at "
-          + "FROM mentor_mentee_section WHERE mentor_id = ?";
-  private static final String SQL_MENTORSHIP_TYPE =
-      "SELECT mentorship_type FROM mentor_mentorship_types WHERE mentor_id = ?";
-  private static final String SQL_AVAILABILITY =
+      "SELECT ideal_mentee, additional, long_term_num_mentee, long_term_hours, "
+          + "created_at, updated_at FROM mentor_mentee_section WHERE mentor_id = ?";
+  private static final String SQL_AD_HOC =
       "SELECT month_num, hours FROM mentor_availability WHERE mentor_id = ?";
   private static final String INSERT_MENTOR_MENTEE =
-      "INSERT INTO mentor_mentee_section (mentor_id, ideal_mentee, additional) VALUES (?, ?, ?)";
-  private static final String INSERT_AVAILABILITY =
-      "INSERT INTO mentor_availability (mentor_id, month_num, hours) VALUES (?, ?, ?)";
+      "INSERT INTO mentor_mentee_section "
+          + "(mentor_id, ideal_mentee, additional, long_term_num_mentee, long_term_hours) "
+          + "VALUES (?, ?, ?, ?, ?)";
   private final JdbcTemplate jdbc;
 
   /** Inserts the mentee section details for the mentor. */
   public void insertMenteeSection(final MenteeSection menteeSec, final Long memberId) {
-    jdbc.update(INSERT_MENTOR_MENTEE, memberId, menteeSec.idealMentee(), menteeSec.additional());
-    insertAvailability(menteeSec, memberId);
-    insertMentorshipTypes(menteeSec, memberId);
+    final var longTerm = menteeSec.longTerm();
+    jdbc.update(
+        INSERT_MENTOR_MENTEE,
+        memberId,
+        menteeSec.idealMentee(),
+        menteeSec.additional(),
+        longTerm != null ? longTerm.numMentee() : null,
+        longTerm != null ? longTerm.hours() : null);
+
+    insertAdHocAvailability(menteeSec, memberId);
   }
 
   /**
-   * Updates the mentee section for a mentor (updates menteeSection, deletes old records of mentor
-   * availability and type and inserts new ones).
+   * Updates the mentee section for a mentor. Replaces ad-hoc availability records.
+   *
+   * @param menteeSec the updated mentee section
+   * @param mentorId the mentor's ID
    */
   public void updateMenteeSection(final MenteeSection menteeSec, final Long mentorId) {
-    jdbc.update(UPDATE_MENTEE_SECTION, menteeSec.idealMentee(), menteeSec.additional(), mentorId);
-    jdbc.update(DELETE_MENTOR_TYPES, mentorId);
-    insertMentorshipTypes(menteeSec, mentorId);
-    updateAvailability(menteeSec, mentorId);
+    final var longTerm = menteeSec.longTerm();
+    jdbc.update(
+        UPDATE_MENTEE_SECTION,
+        menteeSec.idealMentee(),
+        menteeSec.additional(),
+        longTerm != null ? longTerm.numMentee() : null,
+        longTerm != null ? longTerm.hours() : null,
+        mentorId);
+
+    // Update ad-hoc availability
+    jdbc.update(DELETE_AD_HOC, mentorId);
+    insertAdHocAvailability(menteeSec, mentorId);
   }
 
   /**
@@ -75,12 +90,20 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
       final MenteeSection menteeSection =
           jdbc.queryForObject(
               SQL_BASE,
-              (rs, rowNum) ->
-                  new MenteeSection(
-                      loadMentorshipTypes(mentorId),
-                      loadAvailability(mentorId),
-                      rs.getString(COLUMN_IDEAL_MENTEE),
-                      rs.getString(COLUMN_ADDITIONAL)),
+              (rs, rowNum) -> {
+                final Integer numMentee = getInteger(rs, COLUMN_LT_NUM_MENTEE);
+                final Integer hours = getInteger(rs, COLUMN_LT_HOURS);
+                final LongTermMentorship longTerm =
+                    (numMentee != null && hours != null)
+                        ? new LongTermMentorship(numMentee, hours)
+                        : null;
+
+                return new MenteeSection(
+                    rs.getString(COLUMN_IDEAL_MENTEE),
+                    rs.getString(COLUMN_ADDITIONAL),
+                    longTerm,
+                    loadAdHocAvailability(mentorId));
+              },
               mentorId);
       return Optional.ofNullable(menteeSection);
     } catch (EmptyResultDataAccessException ex) {
@@ -88,36 +111,25 @@ public class PostgresMenteeSectionRepository implements MenteeSectionRepository 
     }
   }
 
-  private List<MentorshipType> loadMentorshipTypes(final Long mentorId) {
-    return jdbc.query(
-        SQL_MENTORSHIP_TYPE,
-        (rs, rowNum) -> MentorshipType.fromId(rs.getInt(COL_MENTORSHIP_TYPE)),
-        mentorId);
+  private Integer getInteger(final java.sql.ResultSet rs, final String column)
+      throws java.sql.SQLException {
+    final int value = rs.getInt(column);
+    return rs.wasNull() ? null : value;
   }
 
-  private List<MentorMonthAvailability> loadAvailability(final Long mentorId) {
+  private List<MentorMonthAvailability> loadAdHocAvailability(final Long mentorId) {
     return jdbc.query(
-        SQL_AVAILABILITY,
+        SQL_AD_HOC,
         (rs, rowNum) ->
             new MentorMonthAvailability(Month.of(rs.getInt(COLUMN_MONTH)), rs.getInt(COLUMN_HOURS)),
         mentorId);
   }
 
-  private void insertAvailability(final MenteeSection ms, final Long memberId) {
-    for (final MentorMonthAvailability a : ms.availability()) {
-      jdbc.update(INSERT_AVAILABILITY, memberId, a.month().getValue(), a.hours());
-    }
-  }
-
-  private void insertMentorshipTypes(final MenteeSection ms, final Long memberId) {
-    for (final MentorshipType mt : ms.mentorshipType()) {
-      jdbc.update(INSERT_MENTOR_TYPES, memberId, mt.getMentorshipTypeId());
-    }
-  }
-
-  private void updateAvailability(final MenteeSection ms, final Long memberId) {
-    for (final MentorMonthAvailability a : ms.availability()) {
-      jdbc.update(UPDATE_AVAILABILITY, a.month().getValue(), a.hours(), memberId);
+  private void insertAdHocAvailability(final MenteeSection ms, final Long memberId) {
+    if (ms.adHoc() != null) {
+      for (final MentorMonthAvailability a : ms.adHoc()) {
+        jdbc.update(INSERT_AD_HOC, memberId, a.month().getValue(), a.hours());
+      }
     }
   }
 }

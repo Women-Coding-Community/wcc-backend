@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
@@ -106,20 +107,14 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and 2+ hours commitment When creating Then create"
-          + " mentor and return it")
+      "Given mentor with long-term mentorship and 4+ hours commitment for 1 mentee When creating"
+          + " Then create mentor and return it")
   void testCreateAvailableLongTermMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
     when(mentor.getMenteeSection()).thenReturn(menteeSection);
-    when(menteeSection.mentorshipType())
-        .thenReturn(List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM));
-    when(menteeSection.availability())
-        .thenReturn(
-            List.of(
-                new MentorMonthAvailability(Month.JANUARY, 3),
-                new MentorMonthAvailability(Month.FEBRUARY, 4)));
+    when(menteeSection.longTerm()).thenReturn(new LongTermMentorship(1, 4));
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
@@ -131,19 +126,14 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with adhoc mentorship and under 2 hours commitment When creating Then create"
+      "Given mentor with ad-hoc mentorship only and 1 hour per month When creating Then create"
           + " mentor and return it")
-  void testCreateUnavailableAdHocMentor() {
+  void testCreateAdHocOnlyMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
     when(mentor.getMenteeSection()).thenReturn(menteeSection);
-    when(menteeSection.mentorshipType()).thenReturn(List.of(MentorshipType.AD_HOC));
-    when(menteeSection.availability())
-        .thenReturn(
-            List.of(
-                new MentorMonthAvailability(Month.JANUARY, 1),
-                new MentorMonthAvailability(Month.FEBRUARY, 1)));
+    when(menteeSection.longTerm()).thenReturn(null);
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
@@ -155,27 +145,42 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and 2+ hours commitment When creating the"
-          + " mentor Then throw IllegalArgumentException")
+      "Given mentor with long-term mentorship and insufficient hours per mentee When creating"
+          + " Then throw IllegalArgumentException")
   void testCreateUnavailableLongTermMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(1L);
     when(mentor.getMenteeSection()).thenReturn(menteeSection);
-    when(menteeSection.mentorshipType())
-        .thenReturn(List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM));
-    when(menteeSection.availability())
-        .thenReturn(
-            List.of(
-                new MentorMonthAvailability(Month.JANUARY, 1),
-                new MentorMonthAvailability(Month.FEBRUARY, 2)));
+    // 2 mentees with only 2 total hours = 1 hour per mentee (below minimum of 2)
+    when(menteeSection.longTerm()).thenReturn(new LongTermMentorship(2, 2));
     when(mentorRepository.findById(1L)).thenReturn(Optional.empty());
 
-    var expectedMsg = "Long-term mentorship requires mentor to commit at least 2 hours per month.";
+    var expectedMsg = "Long-term mentorship requires at least 2 hours per mentee.";
     var exception = assertThrows(IllegalArgumentException.class, () -> service.create(mentor));
 
     assertEquals(expectedMsg, exception.getMessage());
     verify(mentorRepository, never()).create(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and exactly 2 hours per mentee When creating"
+          + " Then create mentor")
+  void testCreateLongTermMentorWithMinimumHours() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    // 2 mentees with 4 total hours = 2 hours per mentee (exactly minimum)
+    when(menteeSection.longTerm()).thenReturn(new LongTermMentorship(2, 4));
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
+
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
   }
 
   @Test
@@ -275,7 +280,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor exists When updating the mentor Then should update mentor attributes and return updated mentor")
+      "Given mentor exists When updating the mentor Then should update mentor attributes and return"
+          + " updated mentor")
   void testUpdateMentor() {
     long mentorId = 1L;
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
@@ -290,7 +296,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor does not exist When updating the mentor Then should throw MemberNotFoundException")
+      "Given mentor does not exist When updating the mentor Then should throw"
+          + " MemberNotFoundException")
   void testUpdateMentorNotFound() {
     long mentorId = 1L;
 
@@ -304,7 +311,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor exists When updating with mismatched mentor ID Then should throw IllegalArgumentException")
+      "Given mentor exists When updating with mismatched mentor ID Then should throw"
+          + " IllegalArgumentException")
   void testUpdateMentorIllegalIdMismatch() {
     long mentorId = 1L;
     MentorDto newMentorDto = createMentorDtoTest(999L, MemberType.DIRECTOR);
@@ -318,17 +326,15 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and 2+ hours commitment When updating the mentor"
+      "Given mentor with long-term mentorship and 4+ hours per mentee When updating the mentor"
           + " Then update and return it")
-  void testUpdateLongTermMentorAvailableTwoHours() {
+  void testUpdateLongTermMentorAvailableHours() {
     final var updatedMentorWithAvailabilities =
         createUpdatedMentorTest(
             mentor,
             mentorDto,
-            List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM),
-            List.of(
-                new MentorMonthAvailability(Month.JANUARY, 2),
-                new MentorMonthAvailability(Month.FEBRUARY, 2)));
+            new LongTermMentorship(2, 8), // 4 hours per mentee
+            List.of(new MentorMonthAvailability(Month.JANUARY, 2)));
     long mentorId = 1L;
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
     when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
@@ -341,14 +347,13 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with adhoc mentorship and under 2 hours commitment When updating the mentor"
-          + " Then update and return it")
-  void testUpdateUnavailableAdHocMentor() {
+      "Given mentor with ad-hoc mentorship only When updating the mentor Then update and return it")
+  void testUpdateAdHocOnlyMentor() {
     final var updatedMentorWithAvailabilities =
         createUpdatedMentorTest(
             mentor,
             mentorDto,
-            List.of(MentorshipType.AD_HOC),
+            null, // No long-term
             List.of(
                 new MentorMonthAvailability(Month.JANUARY, 1),
                 new MentorMonthAvailability(Month.FEBRUARY, 0)));
@@ -365,21 +370,20 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and under 2 hours commitment"
-          + " When updating the mentor Then throw IllegalArgumentException")
+      "Given mentor with long-term mentorship and under 2 hours per mentee When updating the mentor"
+          + " Then throw IllegalArgumentException")
   void testUpdateUnavailableLongTermMentorIllegalArgumentException() {
     long mentorId = 1L;
+    // 2 mentees with only 2 total hours = 1 hour per mentee (below minimum)
     MentorDto newMentorDto =
         createMentorDtoTest(
             1L,
             MemberType.DIRECTOR,
-            List.of(MentorshipType.AD_HOC, MentorshipType.LONG_TERM),
-            List.of(
-                new MentorMonthAvailability(Month.JANUARY, 2),
-                new MentorMonthAvailability(Month.FEBRUARY, 0)));
+            new LongTermMentorship(2, 2),
+            List.of(new MentorMonthAvailability(Month.JANUARY, 2)));
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
 
-    var expectedMsg = "Long-term mentorship requires mentor to commit at least 2 hours per month.";
+    var expectedMsg = "Long-term mentorship requires at least 2 hours per mentee.";
     var exception =
         assertThrows(
             IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
@@ -459,7 +463,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given existing member with email, when creating mentor with same email, then it should use existing member")
+      "Given existing member with email, when creating mentor with same email, then it should use"
+          + " existing member")
   void shouldUseExistingMemberWhenMentorEmailAlreadyExists() {
     var mentor = mock(Mentor.class);
     when(mentor.getEmail()).thenReturn("existing@test.com");

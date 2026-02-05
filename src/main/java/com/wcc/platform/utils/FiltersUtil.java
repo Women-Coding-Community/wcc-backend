@@ -8,7 +8,6 @@ import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import java.util.List;
@@ -38,8 +37,6 @@ public final class FiltersUtil {
    * @param filters the filtering criteria encapsulated in a {@link MentorAppliedFilters} object; it
    *     can include various fields such as keyword, mentorship types, years of experience,
    *     technical areas, languages, or mentorship focus. If null, no filtering is applied.
-   * @param currentCycle the current mentorship cycle as a {@link MentorshipCycle} object, used to
-   *     retrieve the initial list of mentors to be filtered.
    * @return a list of {@link MentorDto} objects that match the specified filtering criteria, or the
    *     full list of mentors if no filters are provided.
    */
@@ -88,10 +85,11 @@ public final class FiltersUtil {
     if (CollectionUtils.isEmpty(types)) {
       return true;
     }
-    if (mentor.getMenteeSection() == null || mentor.getMenteeSection().mentorshipType() == null) {
+    if (mentor.getMenteeSection() == null) {
       return false;
     }
-    return types.stream().anyMatch(t -> mentor.getMenteeSection().mentorshipType().contains(t));
+    final var mentorTypes = mentor.getMenteeSection().getMentorshipTypes();
+    return types.stream().anyMatch(mentorTypes::contains);
   }
 
   private static boolean matchesMinYears(

@@ -151,14 +151,15 @@ class MentorshipControllerTest {
                 is(updatedMentor.getSkills().languages().get(1).toString())))
         .andExpect(
             jsonPath(
-                "$.menteeSection.mentorshipType[0]",
-                is(updatedMentor.getMenteeSection().mentorshipType().get(0).toString())))
-        .andExpect(
-            jsonPath(
                 "$.menteeSection.idealMentee", is(updatedMentor.getMenteeSection().idealMentee())))
         .andExpect(
             jsonPath(
-                "$.menteeSection.additional", is(updatedMentor.getMenteeSection().additional())));
+                "$.menteeSection.additional", is(updatedMentor.getMenteeSection().additional())))
+        .andExpect(jsonPath("$.menteeSection.adHoc", hasSize(1)))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.adHoc[0].month",
+                is(updatedMentor.getMenteeSection().adHoc().get(0).month().toString())));
   }
 
   @Test
