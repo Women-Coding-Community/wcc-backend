@@ -192,7 +192,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
         "mentee": {
           "fullName": "Maria Silva",
           "position": "Junior Software Engineer",
-          "email": "test-new@email.com",
+          "email": "maria.silva@email.com",
           "slackDisplayName": "@MariaS",
           "country": {
             "countryCode": "BR",
@@ -228,8 +228,14 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
         "cycleYear": 2026,
         "applications": [
           {
-            "mentorId": 2,
+            "menteeId": 1,
+            "mentorId": 1,
             "priorityOrder": 1
+          },
+          {
+            "menteeId": 1,
+            "mentorId": 2,
+            "priorityOrder": 2
           }
         ]
       }'
@@ -279,6 +285,10 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                 {
                   "mentorId": 2,
                   "priorityOrder": 1
+                },
+                {
+                  "mentorId": 1,
+                  "priorityOrder": 2
                 }
               ]
             }'
