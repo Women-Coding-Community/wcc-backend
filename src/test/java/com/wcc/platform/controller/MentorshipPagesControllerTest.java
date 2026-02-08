@@ -2,9 +2,9 @@ package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_RESOURCES;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
+import static com.wcc.platform.domain.cms.PageType.TIMELINE_LONG_TERM;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createLongTermTimeLinePageTest;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorPageTest;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipAdHocTimelinePageTest;
@@ -115,7 +115,7 @@ public class MentorshipPagesControllerTest {
 
   @Test
   void testLongTermTimelineOkResponse() throws Exception {
-    var fileName = MENTORSHIP_LONG_TIMELINE.getFileName();
+    var fileName = TIMELINE_LONG_TERM.getFileName();
     var expectedJson = FileUtil.readFileAsString(fileName);
 
     when(service.getLongTermTimeLine()).thenReturn(createLongTermTimeLinePageTest(fileName));

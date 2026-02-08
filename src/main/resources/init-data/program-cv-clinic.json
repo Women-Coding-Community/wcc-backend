@@ -11,22 +11,26 @@
     ]
   },
   "section": {
-    "description": "Are you ready to take your CV to the next level? Join us for an exciting opportunity to elevate your professional profile with our CV Clinic! \uD83D\uDE80\n At the Women Coding Community, we believe in the power of collaboration and support. That's why we're thrilled to offer our members a unique chance to receive personalized feedback and guidance on their CVs from their peers.\nOur CV Clinic is designed to provide you with valuable insights, expert tips, and constructive feedback to help you craft a standout CV that showcases your true potential."
+    "description": "Are you ready to take your CV to the next level? \n\nJoin us for an exciting opportunity to elevate your professional profile with our CV Clinic! \n\nAt the Women Coding Community, we believe in the power of collaboration and support. That's why we're thrilled to offer our members a unique chance to receive personalized feedback and guidance on their CVs from their peers. \n\nOur CV Clinic is designed to provide you with valuable insights, expert tips, and constructive feedback to help you craft a standout CV that showcases your true potential."
   },
   "contact": {
     "title": "Join us in our CV Clinic Slack channel",
     "links": [
       {
         "type": "SLACK",
-        "link": "http://shortlink_to_slack.com/#prog_cv_clinic"
+        "link": "https://womencodingcommunity.slack.com/archives/C0703P2RUTV"
       }
     ]
   },
   "programmeDetails": [
     {
       "title": "How It Works",
-      "description": "Participating in our Peer CV Clinic is easy and fun! Simply join our Slack CV Slack channel and submit your CV (PDF or Google Docs), alongside a brief description of the role you’re applying for. Our fellow members review each other's CVs, exchange feedback, and brainstorm ideas for improvement. Whether you're a seasoned professional or just starting out in your career, our CV Clinic is the perfect chance to refine your CV and take your CV to the next level",
-      "card": null
+      "description": "Participating in our Peer CV Clinic is easy and fun!",
+      "items": [
+        "Simply join our Slack CV Slack channel and submit your CV (PDF or Google Docs), alongside a brief description of the role you’re applying for.",
+        "Our fellow members review each other's CVs, exchange feedback, and brainstorm ideas for improvement.",
+        "Whether you're a seasoned professional or just starting out in your career, our CV Clinic is the perfect chance to refine your CV and take your CV to the next level."
+      ]
     },
     {
       "title": "Benefits of Joining",
@@ -35,8 +39,7 @@
         "Expert Feedback: Receive personalized feedback and tips from peers who understand the nuances of your industry and role.",
         "New Strategies: Sharpen your resume-writing skills and learn new techniques to make your resume stand out to potential employers.",
         "Confidence Boost: Gain confidence in your professional profile and feel empowered to take the next step in your career journey."
-      ],
-      "card": null
+      ]
     },
     {
       "title": "Resources to Build Your Resume",
@@ -52,8 +55,7 @@
     },
     {
       "title": "Ready to Elevate Your CV?",
-      "description": "Don't miss out on this exciting opportunity to take your resume to new heights! Join us in our CV Clinic Slack channel",
-      "card": null
+      "description": "Don't miss out on this exciting opportunity to take your resume to new heights! Join us in our CV Clinic Slack channel"
     }
   ],
   "customStyle": {

@@ -27,7 +27,7 @@
     "links": [
       {
         "type": "SLACK",
-        "link": "http://shortlink_to_slack.com/#prog_leetcode"
+        "link": "https://womencodingcommunity.slack.com/archives/C0715E7E5T2"
       }
     ]
   },
@@ -40,19 +40,48 @@
         "Accountability and motivation: Set goals, track progress and engage with peers.",
         "Gain confidence: Build confidence to approach a problem in a structured manner.",
         "Different perspectives: Exchange different problem solving approaches."
-      ],
-      "card": null
+      ]
     },
     {
-      "title": "Resources for Coding Interviews",
-      "description": "",
+      "title": "CS50 2020 - Lecture 3",
+      "description": "Algorithms: is a comprehensive lecture from Harvard's CS50 course that covers fundamental algorithms, essential for coding interview preparation.",
       "card": {
-        "items": [
-          "CS50 2020 - Lecture 3 - Algorithms: is a comprehensive lecture from Harvard's CS50 course that covers fundamental algorithms, essential for coding interview preparation."
-        ],
         "link": {
           "label": "CS50",
           "uri": "https://www.youtube.com/watch?v=gR6nycuZKlM"
+        }
+      }
+    },
+    {
+      "title": "Grind 75 Practice Questions",
+      "description": "Offers a curated list of 75 essential coding interview questions to practice and master, helping you efficiently prepare for technical interviews.",
+      "card": {
+        "link": {
+          "label": "Grind 75",
+          "uri": "https://www.techinterviewhandbook.org/grind75"
+        }
+      }
+    },
+    {
+      "title": "Awesome Leetcode Resources",
+      "description": "It is a GitHub repository that compiles a wide range of Leetcode resources to aid your coding interview practice.",
+      "card": {
+        "items": [
+          "Tech Interview Handbook: provides a comprehensive guide to technical interviews, covering coding, system design, and behavioral aspects. https://www.techinterviewhandbook.org/"
+        ],
+        "link": {
+          "label": "Awesome LeetCode - Github",
+          "uri": "https://github.com/ashishps1/awesome-leetcode-resources"
+        }
+      }
+    },
+    {
+      "title": "Tech Interview Handbook",
+      "description": "Provides a comprehensive guide to technical interviews, covering coding, system design, and behavioral aspects.",
+      "card": {
+        "link": {
+          "label": "Handbook",
+          "uri": "https://www.techinterviewhandbook.org"
         }
       }
     }

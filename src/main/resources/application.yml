@@ -61,7 +61,7 @@ file:
 
 app:
   cors:
-    allowed-origins: http://localhost:3000,https://localhost:3000
+    allowed-originS: http://localhost:3000,https://localhost:3000
   seed:
     admin:
       enabled: true
