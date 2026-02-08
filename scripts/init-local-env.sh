@@ -74,19 +74,16 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         "spokenLanguages": [ "english"],
         "bio": "Sonali serves as a Lead Engineer at Yoox-Net-a-porter, specializing in managing and constructing extensive-scale ecommerce solutions. She leverages Java-based commerce platforms and integrates them with open-source technologies like Spring Boot and Spring Batch. As an AWS-certified Solution Architect, she possesses deep knowledge of Amazon Web Services, complemented by proficiency in implementing continuous integration and continuous deployment (CICD) practices to ensure seamless software delivery. Additionally, she excels in architecting and implementing microservices-based architectures to drive agility and modularity in software development With over 13 years of experience in the technology industry, Sonali brings a wealth of expertise in steering technical direction and fostering high-performance outcomes. Her passion lies in nurturing a culture of continuous learning and innovation. Outside of her professional endeavors, Sonali actively volunteers with Women Who Code, advocating for gender diversity. She is also a creative enthusiast, utilizing design templates to convey ideas, thoughts, and emotions visually.",
         "menteeSection": {
-          "mentorshipType": [ "LONG_TERM", "AD_HOC"],
-          "availability": [
-            {
-              "month": 6,
-              "hours": 1
-            },
-            {
-              "month": 7,
-              "hours": 1
-            }
-          ],
           "idealMentee": "I am seeking mentees who are enthusiastic about learning and growing in the field of technology. Whether you are a beginner looking to enhance your programming skills or an experienced professional aiming to delve deeper into cloud architecture and e-commerce systems, I am here to support your journey. I value proactive communication, eagerness to learn, and a collaborative spirit. If you are committed to expanding your knowledge and skills in software development, AWS architecture, CI/CD pipelines, and Terraform, I would be delighted to work with you.",
-          "additional": "Career Growth and Development, Resume Review, Preparation for Technical Interviews, Leadership and Team Management Skills, Learning Resources and Skill Development Plans."
+          "additional": "Career Growth and Development, Resume Review, Preparation for Technical Interviews, Leadership and Team Management Skills, Learning Resources and Skill Development Plans.",
+          "longTerm": {
+            "numMentee": 2,
+            "hours": 4
+          },
+          "adHoc": [
+            { "month": "JUNE", "hours": 1 },
+            { "month": "JULY", "hours": 1 }
+          ]
         }
       }'
 echo " "
@@ -127,35 +124,20 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         "spokenLanguages": [ "portuguese", "english", "spanish"],
         "bio": "I am a mother, a wife, and a Software Engineer. I graduated in Computer Science and have over 14 years of experience working in tech companies in Brazil, Germany, and Spain. As Backend Engineer, I found this to be my passion which I focused on in the last six years of my career. I am always excited to help others, and my goal is to empower women and support them with the difficulties I had as an engineer, and I still have from time to time.",
         "menteeSection": {
-          "mentorshipType": [ "LONG_TERM",  "AD_HOC" ],
-          "availability": [
-            {
-              "month": 6,
-              "hours": 2
-            },
-            {
-              "month": 7,
-              "hours": 2
-            },
-            {
-              "month": 8,
-              "hours": 2
-            },
-            {
-              "month": 9,
-              "hours": 2
-            },
-            {
-              "month": 10,
-              "hours": 2
-            },
-            {
-              "month": 11,
-              "hours": 2
-            }
-          ],
           "idealMentee": "Someone willing to learn new technologies or to improve current skills",
-          "additional": "Spring Boot and Best Practices"
+          "additional": "Spring Boot and Best Practices",
+          "longTerm": {
+            "numMentee": 2,
+            "hours": 8
+          },
+          "adHoc": [
+            { "month": "JUNE", "hours": 2 },
+            { "month": "JULY", "hours": 2 },
+            { "month": "AUGUST", "hours": 2 },
+            { "month": "SEPTEMBER", "hours": 2 },
+            { "month": "OCTOBER", "hours": 2 },
+            { "month": "NOVEMBER", "hours": 2 }
+          ]
         }
       }'
 echo ""

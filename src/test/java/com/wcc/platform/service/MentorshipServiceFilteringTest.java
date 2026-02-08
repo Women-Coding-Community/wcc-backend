@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
@@ -139,6 +140,14 @@ class MentorshipServiceFilteringTest {
 
     final Member base = SetupFactories.createMemberTest(MemberType.MENTOR);
 
+    // Determine long-term and ad-hoc from types
+    final LongTermMentorship longTerm =
+        types.contains(MentorshipType.LONG_TERM) ? new LongTermMentorship(1, 4) : null;
+    final List<MentorMonthAvailability> adHoc =
+        types.contains(MentorshipType.AD_HOC)
+            ? List.of(new MentorMonthAvailability(availableMonth, 2))
+            : List.of();
+
     return Mentor.mentorBuilder()
         .id(mentorId)
         .fullName(name)
@@ -154,12 +163,7 @@ class MentorshipServiceFilteringTest {
         .bio("Bio for " + name)
         .spokenLanguages(List.of("English"))
         .skills(new Skills(years, areas, languages, focus))
-        .menteeSection(
-            new MenteeSection(
-                types,
-                List.of(new MentorMonthAvailability(availableMonth, 2)),
-                "ideal",
-                "additional"))
+        .menteeSection(new MenteeSection("ideal", "additional", longTerm, adHoc))
         .build();
   }
 }

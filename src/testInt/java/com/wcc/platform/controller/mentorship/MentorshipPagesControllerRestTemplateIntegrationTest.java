@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
@@ -89,10 +90,10 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
                     List.of(MentorshipFocusArea.GROW_MID_TO_SENIOR)))
             .menteeSection(
                 new MenteeSection(
-                    List.of(MentorshipType.AD_HOC),
-                    List.of(new MentorMonthAvailability(Month.MAY, 2)),
                     "ideal",
-                    "additional"))
+                    "additional",
+                    null,
+                    List.of(new MentorMonthAvailability(Month.MAY, 2))))
             .build();
 
     var persistedAlice = mentorRepository.findByEmail(matchedMentor.getEmail()).orElse(null);
@@ -123,10 +124,10 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
                     List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT)))
             .menteeSection(
                 new MenteeSection(
-                    List.of(MentorshipType.LONG_TERM),
-                    List.of(new MentorMonthAvailability(Month.MARCH, 1)),
                     "ideal",
-                    "additional"))
+                    "additional",
+                    new LongTermMentorship(1, 4),
+                    List.of()))
             .build();
 
     var persistedBob = mentorRepository.findByEmail(bob.getEmail()).orElse(null);
@@ -141,7 +142,6 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
         UriComponentsBuilder.fromHttpUrl("http://localhost:" + port + API_MENTORS)
             .queryParam("keyword", "Berlin")
             .queryParam("yearsExperience", "3")
-            .queryParam("mentorshipTypes", "AD_HOC")
             .queryParam("areas", "BACKEND")
             .queryParam("languages", "JAVA")
             .queryParam("focus", "GROW_MID_TO_SENIOR")
