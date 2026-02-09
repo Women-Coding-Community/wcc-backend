@@ -10,13 +10,9 @@ post {
   auth: apikey
 }
 
-headers {
-  X-API-KEY: {{apiKey}}
-}
-
 auth:apikey {
-  key: X-API-KEY
-  value: {{apiKey}}
+  key: 
+  value: 
   placement: header
 }
 
@@ -71,7 +67,7 @@ script:pre-request {
 script:post-response {
   const id = res.body.id;
   bru.setEnvVar("userId", id);
-  
+  // Note: full payload `mentor_payload` is already stored in pre-request; no extra fields required here
 }
 
 tests {
@@ -98,7 +94,7 @@ tests {
   )
     expect(body.menteeSection.longTerm)
     .to.deep.equal(payload.menteeSection.longTerm)
-
+  
     // Uncomment once the bug will be resolved: https://github.com/Women-Coding-Community/wcc-backend/issues/505
     /* const monthMap = {
     7: "JULY",
@@ -114,6 +110,7 @@ tests {
       month: monthMap[item.month],
       hours: item.hours
     })
-  }) */
+    */
+  }) 
   
 }

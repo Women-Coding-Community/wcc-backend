@@ -14,10 +14,6 @@ params:path {
   mentorId: {{userId}}
 }
 
-headers {
-  X-API-KEY: {{apiKey}}
-}
-
 auth:apikey {
   key: X-API-KEY
   value: {{apiKey}}
@@ -29,23 +25,29 @@ body:json {
 }
 
 script:pre-request {
-  const original = bru.getVar("payload"); 
-  const userId = bru.getVar("userId"); 
+  const { faker } = require('@faker-js/faker');
   
-  const putPayload = {
-    id: userId,
-    fullName: original.fullName,
-    position: bru.interpolate('{{$randomJobTitle}}'), 
-    email: original.email,
-    slackDisplayName: original.slackDisplayName,
-    country: {
-      countryCode: original.country.countryCode,
-      countryName: original.country.countryName
-    },
-    city: original.city,
-    companyName: original.companyName,
-    //memberTypes: original.memberTypes 
-  };
+  const original = bru.getEnvVar("mentor_payload"); 
+  const userId = bru.getEnvVar("userId"); 
   
-  bru.setVar("PUTpayload", putPayload);
+  const putPayload = original;
+  const newJob = faker.person.jobTitle();
+  putPayload.position = newJob;
+  
+  bru.setEnvVar("newJob", newJob)
+  req.setBody(putPayload)
+  
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response body should contain fiedls from payload", function() {
+    const body = res.getBody()
+    const newJob = bru.getEnvVar("newJob");
+    expect(body.position).to.equal(newJob)
+  }) 
+  
 }
