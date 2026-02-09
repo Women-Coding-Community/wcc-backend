@@ -8,16 +8,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.util.CollectionUtils;
 
 /** Domain object representing an application user linked to a Member. */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class UserAccount {
   private Integer id;
   private Long memberId;
@@ -25,6 +21,14 @@ public class UserAccount {
   private String passwordHash;
   private List<RoleType> roles;
   private boolean enabled;
+
+  public UserAccount(final Long memberId, final String email, RoleType... roles) {
+    this.memberId = memberId;
+    this.email = email;
+    this.passwordHash = PasswordGenerator.generateRandomPassword();
+    this.roles = Arrays.asList(roles);
+    this.enabled = true;
+  }
 
   /** Get all permissions from all assigned roles in UserAccount. */
   public Set<Permission> getPermissions() {

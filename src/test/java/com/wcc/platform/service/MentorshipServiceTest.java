@@ -5,10 +5,12 @@ import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTes
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createResourceTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static com.wcc.platform.service.MentorshipService.CYCLE_CLOSED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -33,9 +36,11 @@ import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.repository.UserAccountRepository;
 import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -54,11 +59,13 @@ class MentorshipServiceTest {
 
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
+  @Mock private UserAccountRepository userAccountRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   private Integer daysOpen = 10;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
+  private UserAccount userAccount;
   private MentorshipService service;
 
   public MentorshipServiceTest() {
@@ -71,8 +78,15 @@ class MentorshipServiceTest {
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
     updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
+    userAccount = createUserAccountTest(mentor);
     service =
-        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
+        spy(
+            new MentorshipService(
+                mentorRepository,
+                memberRepository,
+                userAccountRepository,
+                profilePicRepo,
+                daysOpen));
   }
 
   @Test
@@ -101,6 +115,7 @@ class MentorshipServiceTest {
     var result = service.create(mentor);
 
     assertEquals(mentor, result);
+    assertTrue(userAccount.getRoles().contains(RoleType.MENTOR));
     verify(memberRepository).findByEmail("newmentor@test.com");
     verify(mentorRepository).create(mentor);
   }
@@ -247,7 +262,13 @@ class MentorshipServiceTest {
   void testGetCurrentCycleReturnsAdHocFromMayWithinOpenDays() {
     daysOpen = 7;
     service =
-        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
+        spy(
+            new MentorshipService(
+                mentorRepository,
+                memberRepository,
+                userAccountRepository,
+                profilePicRepo,
+                daysOpen));
     var may2 = ZonedDateTime.of(2025, 5, 2, 9, 0, 0, 0, ZoneId.of("Europe/London"));
     doReturn(may2).when(service).nowLondon();
 
@@ -260,7 +281,13 @@ class MentorshipServiceTest {
   void testGetCurrentCycleReturnsClosedOutsideWindows() {
     daysOpen = 5;
     service =
-        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
+        spy(
+            new MentorshipService(
+                mentorRepository,
+                memberRepository,
+                userAccountRepository,
+                profilePicRepo,
+                daysOpen));
 
     // April -> closed
     var april10 = ZonedDateTime.of(2025, 4, 10, 12, 0, 0, 0, ZoneId.of("Europe/London"));

@@ -102,18 +102,25 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
     return jdbc.query(SQL_SELECT_ALL, (rs, rowNum) -> mapUser(rs));
   }
 
+  @Override
+  public void updateRole(final Integer userId, final List<RoleType> roles) {
+    jdbc.update(SQL_DELETE_ROLES, userId);
+    for (final RoleType role : roles) {
+      jdbc.update(SQL_INSERT_ROLE, userId, role.getTypeId());
+    }
+  }
+
   private UserAccount mapUser(final ResultSet rs) throws SQLException {
     final Integer userId = rs.getInt("id");
     final List<RoleType> roles =
         jdbc.query(SQL_SELECT_ROLES, (r, i) -> RoleType.fromId(r.getInt("role_id")), userId);
 
-    return UserAccount.builder()
-        .id(userId)
-        .memberId(rs.getLong("member_id"))
-        .email(rs.getString("email"))
-        .passwordHash(rs.getString("password_hash"))
-        .roles(roles)
-        .enabled(rs.getBoolean("enabled"))
-        .build();
+    return new UserAccount(
+        userId,
+        rs.getLong("member_id"),
+        rs.getString("email"),
+        rs.getString("password_hash"),
+        roles,
+        rs.getBoolean("enabled"));
   }
 }

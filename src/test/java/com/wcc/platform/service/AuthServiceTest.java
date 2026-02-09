@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupUserAccountFactories.createAdminUserTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,15 +61,7 @@ class AuthServiceTest {
   @Test
   void testFindUserByEmail_userExists_returnsUserAccount() {
     var email = "user@example.com";
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .email(email)
-            .memberId(1L)
-            .enabled(true)
-            .roles(List.of(RoleType.ADMIN))
-            .build();
-
+    UserAccount userAccount = createAdminUserTest();
     when(userAccountRepository.findByEmail(email)).thenReturn(Optional.of(userAccount));
 
     Optional<UserAccount> result = authService.findUserByEmail(email);
@@ -131,13 +124,7 @@ class AuthServiceTest {
     String passwordHash = "hashed_password";
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .email(email)
-            .passwordHash(passwordHash)
-            .enabled(true)
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+        new UserAccount(1, 1L, email, passwordHash, List.of(RoleType.ADMIN), true);
 
     when(userAccountRepository.findByEmail(email)).thenReturn(Optional.of(userAccount));
     when(passwordEncoder.matches(password, passwordHash)).thenReturn(true);
@@ -168,8 +155,7 @@ class AuthServiceTest {
     String email = "user@example.com";
     String password = "password123";
 
-    UserAccount userAccount =
-        UserAccount.builder().id(1).email(email).passwordHash("hash").enabled(false).build();
+    UserAccount userAccount = new UserAccount(1, 1L, email, "hash", List.of(RoleType.ADMIN), false);
 
     when(userAccountRepository.findByEmail(email)).thenReturn(Optional.of(userAccount));
 
@@ -185,7 +171,7 @@ class AuthServiceTest {
     String passwordHash = "hashed_password";
 
     UserAccount userAccount =
-        UserAccount.builder().id(1).email(email).passwordHash(passwordHash).enabled(true).build();
+        new UserAccount(1, 1L, email, passwordHash, List.of(RoleType.ADMIN), true);
 
     when(userAccountRepository.findByEmail(email)).thenReturn(Optional.of(userAccount));
     when(passwordEncoder.matches(password, passwordHash)).thenReturn(false);
@@ -211,13 +197,7 @@ class AuthServiceTest {
             .revoked(false)
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .email("user@example.com")
-            .enabled(true)
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     when(userTokenRepository.findValidByToken(eq(token), any(OffsetDateTime.class)))
         .thenReturn(Optional.of(userToken));
@@ -271,13 +251,7 @@ class AuthServiceTest {
     Integer userId = 1;
     Long memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member =
         Member.builder()
@@ -300,7 +274,10 @@ class AuthServiceTest {
   void testGetUserWithMember_userHasNoMemberId_returnsEmpty() {
     Integer userId = 1;
 
-    UserAccount userAccount = UserAccount.builder().id(userId).memberId(null).build();
+    UserAccount userAccount =
+        new UserAccount(userId, null, "user@example.com", "hash", List.of(RoleType.ADMIN), true);
+
+    when(userAccountRepository.findById(userId)).thenReturn(Optional.of(userAccount));
 
     when(userAccountRepository.findById(userId)).thenReturn(Optional.of(userAccount));
 
@@ -326,13 +303,7 @@ class AuthServiceTest {
             .revoked(false)
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
 
@@ -365,13 +336,7 @@ class AuthServiceTest {
     var userId = 1;
     var memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -411,13 +376,7 @@ class AuthServiceTest {
     Integer userId = 1;
     Long memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -439,12 +398,8 @@ class AuthServiceTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "passwordHash", List.of(RoleType.VIEWER), true);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -466,13 +421,7 @@ class AuthServiceTest {
     Integer userId = 1;
     Long memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -494,12 +443,8 @@ class AuthServiceTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "passwordHash", List.of(RoleType.VIEWER), true);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -523,13 +468,7 @@ class AuthServiceTest {
     Integer userId = 1;
     Long memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -548,12 +487,8 @@ class AuthServiceTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "passwordHash", List.of(RoleType.VIEWER), true);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -572,12 +507,8 @@ class AuthServiceTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.MENTOR))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "passwordHash", List.of(RoleType.MENTOR), true);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);

@@ -1,15 +1,18 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.configuration.MentorshipConfig;
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
@@ -22,10 +25,12 @@ import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import com.wcc.platform.repository.UserAccountRepository;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +42,6 @@ import org.mockito.MockitoAnnotations;
 
 class MenteeServiceTest {
 
-  
   @Mock private MenteeApplicationRepository applicationRepository;
   @Mock private MenteeRepository menteeRepository;
   @Mock private MentorshipService mentorshipService;
@@ -45,9 +49,11 @@ class MenteeServiceTest {
   @Mock private MentorshipConfig.Validation validation;
   @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MemberRepository memberRepository;
+  @Mock private UserAccountRepository userAccountRepository;
 
   private MenteeService menteeService;
   private Mentee mentee;
+  private UserAccount userAccount;
 
   @BeforeEach
   void setUp() {
@@ -61,8 +67,10 @@ class MenteeServiceTest {
             cycleRepository,
             applicationRepository,
             menteeRepository,
-            memberRepository);
+            memberRepository,
+            userAccountRepository);
     mentee = createMenteeTest();
+    userAccount = createUserAccountTest(mentee);
   }
 
   @Test
@@ -90,10 +98,12 @@ class MenteeServiceTest {
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(userAccountRepository.findByEmail(mentee.getEmail())).thenReturn(Optional.of(userAccount));
 
     Mentee result = menteeService.saveRegistration(registration);
 
     assertEquals(mentee, result);
+    assertTrue(userAccount.getRoles().contains(RoleType.MENTEE));
     verify(memberRepository).findByEmail(anyString());
     verify(menteeRepository).create(any(Mentee.class));
     verify(applicationRepository).create(any());

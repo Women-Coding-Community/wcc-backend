@@ -1,7 +1,5 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.domain.auth.PasswordGenerator;
-import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
@@ -106,15 +104,15 @@ public class MentorshipService {
     validateMentorCommitment(mentor);
     final var mentorCreated = mentorRepository.create(mentor);
     if (mentorRepository.findById(mentorCreated.getId()).isPresent()) {
-      UserAccount userAccount =
-          UserAccount.builder()
-              .memberId(mentorCreated.getId())
-              .email(mentorCreated.getEmail())
-              .passwordHash(PasswordGenerator.generateRandomPassword(12))
-              .roles(List.of(RoleType.MENTOR))
-              .enabled(true)
-              .build();
-      userRepository.create(userAccount);
+      userRepository
+          .findByEmail(mentorCreated.getEmail())
+          .ifPresent(
+              userAccount -> {
+                if (userAccount.getRoles().stream()
+                    .noneMatch(roleType -> roleType.equals(RoleType.MENTOR))) {
+                  userAccount.getRoles().add(RoleType.MENTOR);
+                }
+              });
     }
 
     return mentorCreated;

@@ -26,6 +26,7 @@ import com.wcc.platform.factories.SetupMentorshipPagesFactories;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.repository.UserAccountRepository;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,7 @@ class MentorshipServiceFilteringTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
+  @Mock private UserAccountRepository userAccountRepository;
 
   private MentorshipService service;
   private Mentor mentor1;
@@ -48,7 +50,10 @@ class MentorshipServiceFilteringTest {
 
   @BeforeEach
   void setUp() {
-    service = spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, 10));
+    service =
+        spy(
+            new MentorshipService(
+                mentorRepository, memberRepository, userAccountRepository, profilePicRepo, 10));
     doReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY)).when(service).getCurrentCycle();
     mentorsPage = SetupMentorshipPagesFactories.createMentorPageTest();
     mentor1 =
