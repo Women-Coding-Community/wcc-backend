@@ -17,7 +17,7 @@ public enum PageType {
   MENTORSHIP_FAQ("init-data/mentorshipFaqPage.json", "page:MENTORSHIP_FAQ"),
   MENTORSHIP_CONDUCT("init-data/mentorshipConductPage.json", "page:MENTORSHIP_CODE_OF_CONDUCT"),
   MENTORSHIP_RESOURCES("init-data/mentorshipResourcesPage.json", "page:MENTORSHIP_RESOURCES"),
-  TIMELINE_LONG_TERM("init-data/timelinePage.json", "page:MENTORSHIP_LONG_TIMELINE"),
+  TIMELINE_LONG_TERM("init-data/timelineLongTermPage.json", "page:MENTORSHIP_LONG_TIMELINE"),
   TIMELINE_AD_HOC("init-data/timelineAdHocPage.json", "page:AD_HOC_TIMELINE"),
   STUDY_GROUPS("init-data/mentorshipStudyGroupsPage.json", "page:STUDY_GROUPS"),
 
