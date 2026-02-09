@@ -23,3 +23,7 @@ auth:apikey {
   value: {{apiKey}}
   placement: header
 }
+
+assert {
+  res.status: eq 204
+}
