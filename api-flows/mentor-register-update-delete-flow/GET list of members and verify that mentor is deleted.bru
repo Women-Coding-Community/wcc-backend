@@ -21,15 +21,18 @@ tests {
       expect(res.getStatus()).to.equal(200);
   });
   
-  const mentors = res.body;
-  const userId = Number(bru.getEnvVar("userId"));
-  
-  expect(mentors, "Mentors response should be an array").to.be.an('array');
-  
-  const mentor = mentors.find(m => m.id === userId);
-  
-  expect(
-    mentor,
-    `Mentor with id ${userId} should be present in mentors list`
-  ).to.not.exist;
+  test("Deleted mentor must not be present in members list", function() {
+    const mentors = res.body;
+    const rawUserId = bru.getEnvVar("userId");
+    const userId = rawUserId ? parseInt(rawUserId, 10) : null;
+
+    expect(mentors, 'Members response should be an array').to.be.an('array');
+
+    if (!userId) {
+      throw new Error('userId environment variable is missing or invalid');
+    }
+
+    const mentor = mentors.find(m => Number(m.id) === userId);
+    expect(mentor, `Mentor with id ${userId} should NOT be present in members list`).to.not.exist;
+  });
 }

@@ -30,6 +30,8 @@ tests {
     if (userId) {
       mentor = mentors.find(m => Number(m.id) === userId);
     }
+    expect(mentors, 'mentors response should be an array').to.be.an('array');
+    expect(mentor, `created mentor with id ${userId} should be present`).to.exist;
     expect(mentor.fullName).to.equal(mentorPayload.fullName);
     expect(mentor.position).to.equal(mentorPayload.position);
     expect(mentor.email).to.equal(mentorPayload.email);

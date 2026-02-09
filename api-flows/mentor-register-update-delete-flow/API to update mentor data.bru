@@ -44,7 +44,7 @@ tests {
     expect(res.getStatus()).to.equal(200);
   });
   
-  test("Response body should contain fiedls from payload", function() {
+  test("Response body should contain updated position", function() {
     const body = res.getBody()
     const newJob = bru.getEnvVar("newJob");
     expect(body.position).to.equal(newJob)
