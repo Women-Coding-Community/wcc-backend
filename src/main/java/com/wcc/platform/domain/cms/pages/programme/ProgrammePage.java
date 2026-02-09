@@ -3,9 +3,9 @@ package com.wcc.platform.domain.cms.pages.programme;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
 import com.wcc.platform.domain.cms.pages.events.EventSection;
-import com.wcc.platform.domain.platform.Programme;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +29,7 @@ public class ProgrammePage {
   @NotNull private HeroSection heroSection;
   @NotNull private CommonSection section;
   @NotNull private Contact contact;
-  @NotEmpty private List<Programme> programmeDetails;
-  @NotNull private EventSection eventSection;
+  @NotEmpty private List<ListSection<String>> programmeDetails;
+  private EventSection eventSection;
   @NotNull private CustomStyle customStyle;
 }

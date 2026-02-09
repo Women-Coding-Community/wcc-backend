@@ -1,0 +1,89 @@
+{
+  "id": "page:LEETCODE",
+  "heroSection": {
+    "title": "Leetcode Programme",
+    "images": [
+      {
+        "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+        "alt": "There is a group of women showing WCC logo",
+        "type": "desktop"
+      }
+    ],
+    "customStyle": {
+      "backgroundColour": {
+        "color": "PRIMARY",
+        "shade": {
+          "name": "LIGHT",
+          "value": 90
+        }
+      }
+    }
+  },
+  "section": {
+    "description": "Ready to supercharge your problem-solving skills and master algorithms and data structures? Join our LeetCode community group and elevate your coding skills to new heights with collaborative support and expert guidance! We offer a structured environment to learn, practice your coding skills and discuss strategies to tackle problems."
+  },
+  "contact": {
+    "title": "Join us in our Leetcode Slack channel",
+    "links": [
+      {
+        "type": "SLACK",
+        "link": "https://womencodingcommunity.slack.com/archives/C0715E7E5T2"
+      }
+    ]
+  },
+  "programmeDetails": [
+    {
+      "title": "Benefits of Joining",
+      "description": "",
+      "items": [
+        "Collaborative learning: Practice problems, share solutions and strategies.",
+        "Accountability and motivation: Set goals, track progress and engage with peers.",
+        "Gain confidence: Build confidence to approach a problem in a structured manner.",
+        "Different perspectives: Exchange different problem solving approaches."
+      ]
+    },
+    {
+      "title": "CS50 2020 - Lecture 3",
+      "description": "Algorithms: is a comprehensive lecture from Harvard's CS50 course that covers fundamental algorithms, essential for coding interview preparation.",
+      "card": {
+        "link": {
+          "label": "CS50",
+          "uri": "https://www.youtube.com/watch?v=gR6nycuZKlM"
+        }
+      }
+    },
+    {
+      "title": "Grind 75 Practice Questions",
+      "description": "Offers a curated list of 75 essential coding interview questions to practice and master, helping you efficiently prepare for technical interviews.",
+      "card": {
+        "link": {
+          "label": "Grind 75",
+          "uri": "https://www.techinterviewhandbook.org/grind75"
+        }
+      }
+    },
+    {
+      "title": "Awesome Leetcode Resources",
+      "description": "It is a GitHub repository that compiles a wide range of Leetcode resources to aid your coding interview practice.",
+      "card": {
+        "items": [
+          "Tech Interview Handbook: provides a comprehensive guide to technical interviews, covering coding, system design, and behavioral aspects. https://www.techinterviewhandbook.org/"
+        ],
+        "link": {
+          "label": "Awesome LeetCode - Github",
+          "uri": "https://github.com/ashishps1/awesome-leetcode-resources"
+        }
+      }
+    },
+    {
+      "title": "Tech Interview Handbook",
+      "description": "Provides a comprehensive guide to technical interviews, covering coding, system design, and behavioral aspects.",
+      "card": {
+        "link": {
+          "label": "Handbook",
+          "uri": "https://www.techinterviewhandbook.org"
+        }
+      }
+    }
+  ]
+}

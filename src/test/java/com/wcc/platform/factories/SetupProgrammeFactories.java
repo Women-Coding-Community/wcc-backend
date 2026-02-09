@@ -4,15 +4,12 @@ import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTe
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
-import com.wcc.platform.domain.cms.attributes.CommonSection;
-import com.wcc.platform.domain.cms.attributes.LabelLink;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammeItem;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
-import com.wcc.platform.domain.platform.Programme;
 import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
-import java.util.List;
 
 /** Test factories for Programme. */
 public class SetupProgrammeFactories {
@@ -49,7 +46,7 @@ public class SetupProgrammeFactories {
   }
 
   /** Create Factory. */
-  public static Programme createProgrammeByType(final ProgramType type) {
+  public static ListSection<String> createProgrammeByType(final ProgramType type) {
     if (ProgramType.BOOK_CLUB.equals(type)) {
       createProgramme();
     } else {
@@ -58,24 +55,12 @@ public class SetupProgrammeFactories {
     return null;
   }
 
-  /**
-   * Create Programme object with test data.
-   *
-   * @return Programme object
-   */
-  public static Programme createProgramme() {
-    return Programme.builder()
-        .title("What We Are Reading")
-        .description("Every month we vote we read a book this is current month book.")
-        .card(
-            new CommonSection(
-                "Test book title",
-                "Author of the book",
-                "test book description",
-                new LabelLink("Title Link", "Good read", "http://link"),
-                List.of(),
-                null))
-        .build();
+  public static ListSection<String> createProgramme() {
+    return new ListSection<>(
+        "What We Are Reading",
+        "Every month we vote we read a book this is current month book.",
+        null,
+        java.util.List.of("some value"));
   }
 
   /**
@@ -83,11 +68,12 @@ public class SetupProgrammeFactories {
    *
    * @return Programme object
    */
-  public static Programme createProgrammeWithoutCard() {
-    return Programme.builder()
-        .title("What We Are Reading")
-        .description("Every month we vote we read a book this is current month book.")
-        .build();
+  public static ListSection<String> createProgrammeWithoutCard() {
+    return new ListSection<String>(
+        "What We Are Reading",
+        "Every month we vote we read a book this is current month book.",
+        null,
+        java.util.List.of());
   }
 
   /** Test factory. * */

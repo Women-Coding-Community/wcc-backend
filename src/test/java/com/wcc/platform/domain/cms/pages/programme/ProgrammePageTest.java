@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import com.wcc.platform.domain.cms.attributes.style.CustomStyle;
 import com.wcc.platform.domain.cms.pages.events.EventSection;
-import com.wcc.platform.domain.platform.Programme;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,10 @@ class ProgrammePageTest {
   private final HeroSection heroSection = createHeroSectionTest();
   private final CommonSection section = new CommonSection();
   private final Contact contact = createContactTest();
-  private final List<Programme> programmeDetails = List.of(new Programme());
+  private final List<ListSection<String>> programmeDetails =
+      List.of(
+          new ListSection<>(
+              "title", "description", null, java.util.List.of("item1", "item2")));
   private final EventSection eventSection = new EventSection();
   private final CustomStyle customStyle = createCustomStyleTest();
 

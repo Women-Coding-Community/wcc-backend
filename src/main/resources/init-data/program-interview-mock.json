@@ -27,7 +27,7 @@
     "links": [
       {
         "type": "SLACK",
-        "link": "http://shortlink_to_slack.com/#prog_mock_interviews"
+        "link": "https://womencodingcommunity.slack.com/archives/C06VDMVGTDL"
       }
     ]
   },
@@ -39,15 +39,14 @@
         "title": "Pramp",
         "subtitle": "is a platform that offers free, live peer-to-peer practice interviews for various technical and behavioral roles.",
         "link": {
-          "label": "Intreview Practice",
+          "label": "Interview Practice",
           "uri": "https://www.pramp.com/"
         }
       }
     },
     {
       "title": "Join us on Slack in the Mock interviews",
-      "description": "channel to indicate your interest and connect with others seeking practice. Pair up with fellow members and start honing your interview skills today!",
-      "card": null
+      "description": "channel to indicate your interest and connect with others seeking practice. Pair up with fellow members and start honing your interview skills today!"
     }
   ]
 }

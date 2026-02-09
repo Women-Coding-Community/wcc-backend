@@ -59,6 +59,9 @@ public class MenteeService {
     final var cycle =
         getMentorshipCycle(registrationRequest.mentorshipType(), registrationRequest.cycleYear());
 
+    // fister by applications existent by themente
+    // TODO check if the mentee exist 
+
     final var filteredRegistrations = ignoreDuplicateApplications(registrationRequest, cycle);
     final var registrationCount =
         registrationsRepo.countMenteeApplications(mentee.getId(), cycle.getCycleId());
@@ -111,6 +114,8 @@ public class MenteeService {
 
   private Mentee createMenteeRegistrations(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    // TODO check if the mentee was already registered to the mentor.
+
     final var applications =
         menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
     applications.forEach(registrationsRepo::create);
