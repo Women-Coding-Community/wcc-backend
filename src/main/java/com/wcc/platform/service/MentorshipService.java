@@ -180,7 +180,6 @@ public class MentorshipService {
         .companyName(dto.getCompanyName())
         .images(List.of(profilePicture.get()))
         .network(dto.getNetwork())
-        .availability(dto.getAvailability())
         .skills(dto.getSkills())
         .spokenLanguages(dto.getSpokenLanguages())
         .bio(dto.getBio())

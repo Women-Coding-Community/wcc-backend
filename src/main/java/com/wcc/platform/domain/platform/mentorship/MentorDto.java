@@ -31,7 +31,6 @@ import org.springframework.util.CollectionUtils;
 public class MentorDto extends MemberDto {
 
   private ProfileStatus profileStatus;
-  private MentorAvailability availability;
   private Skills skills;
   private List<String> spokenLanguages;
   private String bio;
@@ -59,8 +58,7 @@ public class MentorDto extends MemberDto {
       @NotNull final Skills skills,
       @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resources,
-      final MentorAvailability availability) {
+      final MentorResource resources) {
     super(
         id,
         fullName,
@@ -73,7 +71,6 @@ public class MentorDto extends MemberDto {
         null, // TODO to be fixe this will cleanup member types
         images,
         network);
-    this.availability = availability;
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
