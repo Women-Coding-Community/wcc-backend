@@ -83,15 +83,13 @@ class MentorDtoTest {
     MentorDto mentor =
         MentorDto.mentorDtoBuilder()
             .bio("bio info")
-            .availability(new MentorAvailability(MentorshipType.AD_HOC, true))
             .spokenLanguages(List.of("English", "Spanish"))
             .fullName("Jane Doe")
             .id(1L)
             .profileStatus(ProfileStatus.PENDING)
             .build();
     var expected =
-        "MentorDto(profileStatus=PENDING, availability=MentorAvailability[mentorshipType=Ad-Hoc, available=true]"
-            + ", skills=null, spokenLanguages=[English, Spanish], bio=bio info, menteeSection=null,"
+        "MentorDto(profileStatus=PENDING, skills=null, spokenLanguages=[English, Spanish], bio=bio info, menteeSection=null,"
             + " feedbackSection=null, resources=null)";
 
     assertEquals(expected, mentor.toString());
