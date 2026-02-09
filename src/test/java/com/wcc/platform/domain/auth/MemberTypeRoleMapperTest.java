@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class MemberTypeRoleMapperTest {
 
   @Test
-  void getRoleForMemberType_returnsMappedRole() {
+  void testGetRoleForMemberTypeReturnsMappedRole() {
     assertEquals(RoleType.ADMIN, MemberTypeRoleMapper.getRoleForMemberType(MemberType.DIRECTOR));
     assertEquals(RoleType.LEADER, MemberTypeRoleMapper.getRoleForMemberType(MemberType.LEADER));
     assertEquals(RoleType.MENTOR, MemberTypeRoleMapper.getRoleForMemberType(MemberType.MENTOR));
@@ -25,13 +25,13 @@ class MemberTypeRoleMapperTest {
   }
 
   @Test
-  void getRoleForMemberType_null_throwsIllegalArgumentException() {
+  void testGetRoleForMemberTypeNullThrowsIllegalArgumentException() {
     assertThrows(
         IllegalArgumentException.class, () -> MemberTypeRoleMapper.getRoleForMemberType(null));
   }
 
   @Test
-  void getRolesForMemberTypes_nullOrEmpty_returnsViewer() {
+  void testGetRolesForMemberTypesNullOrEmptyReturnsViewer() {
     Set<RoleType> fromNull = MemberTypeRoleMapper.getRolesForMemberTypes(null);
     assertEquals(1, fromNull.size());
     assertTrue(fromNull.contains(RoleType.VIEWER));
@@ -42,7 +42,7 @@ class MemberTypeRoleMapperTest {
   }
 
   @Test
-  void getRolesForMemberTypes_collectsRoles() {
+  void testGetRolesForMemberTypesCollectsRoles() {
     Set<RoleType> roles =
         MemberTypeRoleMapper.getRolesForMemberTypes(
             List.of(MemberType.LEADER, MemberType.MENTEE, MemberType.SPEAKER));
@@ -52,7 +52,7 @@ class MemberTypeRoleMapperTest {
   }
 
   @Test
-  void getHighestRole_returnsMostPrivileged() {
+  void testGetHighestRoleReturnsMostPrivileged() {
     // Director maps to SUPER_ADMIN (highest), Member maps to VIEWER (low)
     RoleType highest =
         MemberTypeRoleMapper.getHighestRole(List.of(MemberType.MEMBER, MemberType.DIRECTOR));
@@ -64,13 +64,13 @@ class MemberTypeRoleMapperTest {
   }
 
   @Test
-  void getHighestRole_nullOrEmpty_returnsViewer() {
+  void testGetHighestRoleNullOrEmptyReturnsViewer() {
     assertEquals(RoleType.VIEWER, MemberTypeRoleMapper.getHighestRole(null));
     assertEquals(RoleType.VIEWER, MemberTypeRoleMapper.getHighestRole(List.of()));
   }
 
   @Test
-  void getAllPermissionsForMemberTypes_nullOrEmpty_returnsViewerPermissions() {
+  void testGetAllPermissionsForMemberTypesNullOrEmptyReturnsViewerPermissions() {
     Set<Permission> viewerPerms = RoleType.VIEWER.getPermissions();
 
     Set<Permission> fromNull = MemberTypeRoleMapper.getAllPermissionsForMemberTypes(null);
@@ -81,14 +81,14 @@ class MemberTypeRoleMapperTest {
   }
 
   @Test
-  void isSuperAdmin_checksCorrectly() {
+  void testIsSuperAdminChecksCorrectly() {
     assertTrue(MemberTypeRoleMapper.isSuperAdmin(List.of(MemberType.DIRECTOR)));
     assertFalse(MemberTypeRoleMapper.isSuperAdmin(List.of(MemberType.MEMBER, MemberType.MENTEE)));
     assertFalse(MemberTypeRoleMapper.isSuperAdmin(null));
   }
 
   @Test
-  void isAdmin_checksCorrectly() {
+  void testIsAdminChecksCorrectly() {
     assertTrue(MemberTypeRoleMapper.isAdmin(List.of(MemberType.LEADER)));
     // Director (SUPER_ADMIN) should also count as admin
     assertTrue(MemberTypeRoleMapper.isAdmin(List.of(MemberType.DIRECTOR)));
@@ -97,7 +97,7 @@ class MemberTypeRoleMapperTest {
   }
 
   @Test
-  void hasRole_checksCorrectly() {
+  void testHasRoleChecksCorrectly() {
     assertTrue(
         MemberTypeRoleMapper.hasRole(
             List.of(MemberType.LEADER, MemberType.MEMBER), RoleType.LEADER));

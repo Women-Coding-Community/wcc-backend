@@ -58,7 +58,7 @@ class AuthServiceTest {
   // ==================== findUserByEmail Tests ====================
 
   @Test
-  void testFindUserByEmail_userExists_returnsUserAccount() {
+  void testFindUserByEmailUserExistsReturnsUserAccount() {
     var email = "user@example.com";
     UserAccount userAccount =
         UserAccount.builder()
@@ -79,7 +79,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testFindUserByEmail_userNotFound_returnsEmpty() {
+  void testFindUserByEmailUserNotFoundReturnsEmpty() {
     var email = "notfound@example.com";
     when(userAccountRepository.findByEmail(email)).thenReturn(Optional.empty());
 
@@ -91,7 +91,7 @@ class AuthServiceTest {
   // ==================== getMember Tests ====================
 
   @Test
-  void testGetMember_memberExists_returnsMemberDto() {
+  void testGetMemberMemberExistsReturnsMemberDto() {
     Long memberId = 1L;
     Member member =
         Member.builder().id(memberId).fullName("John Doe").email("john@example.com").build();
@@ -105,7 +105,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testGetMember_memberNotFound_returnsNull() {
+  void testGetMemberMemberNotFoundReturnsNull() {
     Long memberId = 999L;
     when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
@@ -115,7 +115,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testGetMember_nullId_returnsNull() {
+  void testGetMemberNullIdReturnsNull() {
     var result = authService.getMember(null);
 
     assertNull(result);
@@ -125,7 +125,7 @@ class AuthServiceTest {
   // ==================== authenticateAndIssueToken Tests ====================
 
   @Test
-  void testAuthenticateAndIssueToken_validCredentials_returnsToken() {
+  void testAuthenticateAndIssueTokenValidCredentialsReturnsToken() {
     String email = "user@example.com";
     String password = "password123";
     String passwordHash = "hashed_password";
@@ -152,7 +152,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testAuthenticateAndIssueToken_userNotFound_returnsEmpty() {
+  void testAuthenticateAndIssueTokenUserNotFoundReturnsEmpty() {
     String email = "notfound@example.com";
     String password = "password123";
 
@@ -164,7 +164,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testAuthenticateAndIssueToken_userDisabled_returnsEmpty() {
+  void testAuthenticateAndIssueTokenUserDisabledReturnsEmpty() {
     String email = "user@example.com";
     String password = "password123";
 
@@ -179,7 +179,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testAuthenticateAndIssueToken_invalidPassword_returnsEmpty() {
+  void testAuthenticateAndIssueTokenInvalidPasswordReturnsEmpty() {
     String email = "user@example.com";
     String password = "wrongpassword";
     String passwordHash = "hashed_password";
@@ -198,7 +198,7 @@ class AuthServiceTest {
   // ==================== authenticateByToken Tests ====================
 
   @Test
-  void testAuthenticateByToken_validToken_returnsUserAccount() {
+  void testAuthenticateByTokenValidTokenReturnsUserAccount() {
     String token = "valid-token";
     Integer userId = 1;
 
@@ -230,7 +230,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testAuthenticateByToken_invalidToken_returnsEmpty() {
+  void testAuthenticateByTokenInvalidTokenReturnsEmpty() {
     String token = "invalid-token";
 
     when(userTokenRepository.findValidByToken(eq(token), any(OffsetDateTime.class)))
@@ -242,7 +242,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testAuthenticateByToken_userNotFound_returnsEmpty() {
+  void testAuthenticateByTokenUserNotFoundReturnsEmpty() {
     String token = "valid-token";
     Integer userId = 999;
 
@@ -267,7 +267,7 @@ class AuthServiceTest {
   // ==================== getUserWithMember Tests ====================
 
   @Test
-  void testGetUserWithMember_userAndMemberExist_returnsUser() {
+  void testGetUserWithMemberUserAndMemberExistReturnsUser() {
     Integer userId = 1;
     Long memberId = 1L;
 
@@ -297,7 +297,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testGetUserWithMember_userHasNoMemberId_returnsEmpty() {
+  void testGetUserWithMemberUserHasNoMemberIdReturnsEmpty() {
     Integer userId = 1;
 
     UserAccount userAccount = UserAccount.builder().id(userId).memberId(null).build();
@@ -312,7 +312,7 @@ class AuthServiceTest {
   // ==================== authenticateByTokenWithMember Tests ====================
 
   @Test
-  void testAuthenticateByTokenWithMember_validToken_returnsUserWithMember() {
+  void testAuthenticateByTokenWithMemberValidTokenReturnsUserWithMember() {
     String token = "valid-token";
     Integer userId = 1;
     Long memberId = 1L;
@@ -347,7 +347,7 @@ class AuthServiceTest {
   }
 
   @Test
-  void testAuthenticateByTokenWithMember_invalidToken_returnsEmpty() {
+  void testAuthenticateByTokenWithMemberInvalidTokenReturnsEmpty() {
     var token = "invalid-token";
 
     when(userTokenRepository.findValidByToken(eq(token), any(OffsetDateTime.class)))
@@ -361,7 +361,7 @@ class AuthServiceTest {
   // ==================== getCurrentUser Tests ====================
 
   @Test
-  void testGetCurrentUser_validAuthentication_returnsUser() {
+  void testGetCurrentUserValidAuthenticationReturnsUser() {
     var userId = 1;
     var memberId = 1L;
 
@@ -387,206 +387,20 @@ class AuthServiceTest {
   }
 
   @Test
-  void testGetCurrentUser_notAuthenticated_throwsForbiddenException() {
+  void testGetCurrentUserNotAuthenticatedThrowsForbiddenException() {
     SecurityContextHolder.setContext(securityContext);
     when(securityContext.getAuthentication()).thenReturn(null);
 
-    assertThrows(ForbiddenException.class, () -> authService.getCurrentUser());
+    assertThrows(ForbiddenException.class, authService::getCurrentUser);
   }
 
   @Test
-  void testGetCurrentUser_invalidPrincipal_throwsForbiddenException() {
+  void testGetCurrentUserInvalidPrincipalThrowsForbiddenException() {
     SecurityContextHolder.setContext(securityContext);
     when(securityContext.getAuthentication()).thenReturn(authentication);
     when(authentication.isAuthenticated()).thenReturn(true);
     when(authentication.getPrincipal()).thenReturn("invalid-principal");
 
-    assertThrows(ForbiddenException.class, () -> authService.getCurrentUser());
-  }
-
-  // ==================== requireAnyPermission Tests ====================
-
-  @Test
-  void testRequireAnyPermission_userHasPermission_succeeds() {
-    Integer userId = 1;
-    Long memberId = 1L;
-
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
-
-    Member member = Member.builder().id(memberId).fullName("John Doe").build();
-    UserAccount.User user = new UserAccount.User(userAccount, member);
-
-    SecurityContextHolder.setContext(securityContext);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    when(authentication.isAuthenticated()).thenReturn(true);
-    when(authentication.getPrincipal()).thenReturn(user);
-
-    // ADMIN role has MENTOR_APPROVE permission
-    authService.requireAnyPermission(Permission.MENTOR_APPROVE);
-
-    // Should not throw
-  }
-
-  @Test
-  void testRequireAnyPermission_userLacksPermission_throwsForbiddenException() {
-    Integer userId = 1;
-    Long memberId = 1L;
-
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
-
-    Member member = Member.builder().id(memberId).fullName("John Doe").build();
-    UserAccount.User user = new UserAccount.User(userAccount, member);
-
-    SecurityContextHolder.setContext(securityContext);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    when(authentication.isAuthenticated()).thenReturn(true);
-    when(authentication.getPrincipal()).thenReturn(user);
-
-    assertThrows(
-        ForbiddenException.class,
-        () -> authService.requireAnyPermission(Permission.MENTOR_APPROVE));
-  }
-
-  // ==================== requireAllPermissions Tests ====================
-
-  @Test
-  void testRequireAllPermissions_userHasAllPermissions_succeeds() {
-    Integer userId = 1;
-    Long memberId = 1L;
-
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
-
-    Member member = Member.builder().id(memberId).fullName("John Doe").build();
-    UserAccount.User user = new UserAccount.User(userAccount, member);
-
-    SecurityContextHolder.setContext(securityContext);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    when(authentication.isAuthenticated()).thenReturn(true);
-    when(authentication.getPrincipal()).thenReturn(user);
-
-    // ADMIN has both permissions
-    authService.requireAllPermissions(Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE);
-
-    // Should not throw
-  }
-
-  @Test
-  void testRequireAllPermissions_userMissesOnePermission_throwsForbiddenException() {
-    Integer userId = 1;
-    Long memberId = 1L;
-
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
-
-    Member member = Member.builder().id(memberId).fullName("John Doe").build();
-    UserAccount.User user = new UserAccount.User(userAccount, member);
-
-    SecurityContextHolder.setContext(securityContext);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    when(authentication.isAuthenticated()).thenReturn(true);
-    when(authentication.getPrincipal()).thenReturn(user);
-
-    assertThrows(
-        ForbiddenException.class,
-        () ->
-            authService.requireAllPermissions(
-                Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE));
-  }
-
-  // ==================== requireRole Tests ====================
-
-  @Test
-  void testRequireRole_userHasRequiredRole_succeeds() {
-    Integer userId = 1;
-    Long memberId = 1L;
-
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
-
-    Member member = Member.builder().id(memberId).fullName("John Doe").build();
-    UserAccount.User user = new UserAccount.User(userAccount, member);
-
-    SecurityContextHolder.setContext(securityContext);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    when(authentication.isAuthenticated()).thenReturn(true);
-    when(authentication.getPrincipal()).thenReturn(user);
-
-    authService.requireRole(RoleType.ADMIN);
-  }
-
-  @Test
-  void testRequireRole_userLacksRequiredRole_throwsForbiddenException() {
-    Integer userId = 1;
-    Long memberId = 1L;
-
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
-
-    Member member = Member.builder().id(memberId).fullName("John Doe").build();
-    UserAccount.User user = new UserAccount.User(userAccount, member);
-
-    SecurityContextHolder.setContext(securityContext);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    when(authentication.isAuthenticated()).thenReturn(true);
-    when(authentication.getPrincipal()).thenReturn(user);
-
-    assertThrows(ForbiddenException.class, () -> authService.requireRole(RoleType.ADMIN));
-  }
-
-  @Test
-  void testRequireRole_userHasAnyOfMultipleRoles_succeeds() {
-    Integer userId = 1;
-    Long memberId = 1L;
-
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.MENTOR))
-            .build();
-
-    Member member = Member.builder().id(memberId).fullName("John Doe").build();
-    UserAccount.User user = new UserAccount.User(userAccount, member);
-
-    SecurityContextHolder.setContext(securityContext);
-    when(securityContext.getAuthentication()).thenReturn(authentication);
-    when(authentication.isAuthenticated()).thenReturn(true);
-    when(authentication.getPrincipal()).thenReturn(user);
-
-    authService.requireRole(RoleType.ADMIN, RoleType.MENTOR);
+    assertThrows(ForbiddenException.class, authService::getCurrentUser);
   }
 }

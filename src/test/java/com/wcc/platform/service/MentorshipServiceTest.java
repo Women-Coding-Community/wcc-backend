@@ -329,7 +329,7 @@ class MentorshipServiceTest {
       "Given mentor with long-term mentorship and 4+ hours per mentee When updating the mentor"
           + " Then update and return it")
   void testUpdateLongTermMentorAvailableHours() {
-    final var updatedMentorWithAvailabilities =
+    final var updatedMentor =
         createUpdatedMentorTest(
             mentor,
             mentorDto,
@@ -337,10 +337,10 @@ class MentorshipServiceTest {
             List.of(new MentorMonthAvailability(Month.JANUARY, 2)));
     long mentorId = 1L;
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
-    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentor);
     Member result = service.updateMentor(mentorId, mentorDto);
 
-    assertEquals(updatedMentorWithAvailabilities, result);
+    assertEquals(updatedMentor, result);
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository).update(anyLong(), any());
   }
@@ -349,7 +349,7 @@ class MentorshipServiceTest {
   @DisplayName(
       "Given mentor with ad-hoc mentorship only When updating the mentor Then update and return it")
   void testUpdateAdHocOnlyMentor() {
-    final var updatedMentorWithAvailabilities =
+    final var updatedMentor =
         createUpdatedMentorTest(
             mentor,
             mentorDto,
@@ -359,11 +359,11 @@ class MentorshipServiceTest {
                 new MentorMonthAvailability(Month.FEBRUARY, 0)));
     long mentorId = 1L;
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
-    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentorWithAvailabilities);
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentor);
 
     Member result = service.updateMentor(mentorId, mentorDto);
 
-    assertEquals(updatedMentorWithAvailabilities, result);
+    assertEquals(updatedMentor, result);
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository).update(anyLong(), any());
   }
@@ -483,8 +483,7 @@ class MentorshipServiceTest {
         .thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
     when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
     when(mentor.getBio()).thenReturn("Bio");
-    when(mentor.getMenteeSection())
-        .thenReturn(mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
+    when(mentor.getMenteeSection()).thenReturn(mock(MenteeSection.class));
     when(mentor.getFeedbackSection()).thenReturn(null);
     when(mentor.getResources()).thenReturn(null);
 

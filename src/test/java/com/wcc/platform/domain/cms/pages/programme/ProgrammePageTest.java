@@ -23,9 +23,7 @@ class ProgrammePageTest {
   private final CommonSection section = new CommonSection();
   private final Contact contact = createContactTest();
   private final List<ListSection<String>> programmeDetails =
-      List.of(
-          new ListSection<>(
-              "title", "description", null, java.util.List.of("item1", "item2")));
+      List.of(new ListSection<>("title", "description", null, List.of("item1", "item2")));
   private final EventSection eventSection = new EventSection();
   private final CustomStyle customStyle = createCustomStyleTest();
 
