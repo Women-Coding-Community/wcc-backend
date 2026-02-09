@@ -1,5 +1,5 @@
 {
-  "id": "page:BOOK_CLUB",
+  "id": "page:INTERVIEW_PREP",
   "heroSection": {
     "title": "Interview Prep",
     "images": [
@@ -43,7 +43,17 @@
     },
     {
       "title": "Resources to Build Your Resume",
-      "description": ""
+      "description": "",
+      "details": [
+        {
+          "title": "Teal",
+          "subtitle": "offers a user-friendly resume builder tool to help you create polished and professional resumes tailored to your job search.",
+          "link": {
+            "label": "Resume builder",
+            "uri": "https://www.tealhq.com/tools/resume-builder"
+          }
+        }
+      ]
     },
     {
       "title": "Ready to Elevate Your CV?",
