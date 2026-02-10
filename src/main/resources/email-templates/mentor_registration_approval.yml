@@ -1,0 +1,9 @@
+MENTOR_APPROVAL:
+  subject: "Congratulations! Your WCC Mentor Application Has Been Approved"
+  body: |
+    <p>Hi {{mentorName}},</p>
+    <p>Great news! Your application to become a mentor with Women Coding Community has been <strong>approved</strong>! 🎉</p>
+    <p>Your profile is now active, and mentees will be able to see you in the mentor directory.</p>
+    <p>If you have any questions, feel free to reach out to us.</p>
+    <p>Thank you for joining our mentorship program!</p>
+    <p>Best,<br/>WCC Mentorship Team</p>

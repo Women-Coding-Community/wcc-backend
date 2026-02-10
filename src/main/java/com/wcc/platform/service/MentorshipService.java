@@ -13,6 +13,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
+import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -22,6 +23,7 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +46,20 @@ public class MentorshipService {
   private final MemberRepository memberRepository;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
+  private final NotificationService notificationService;
 
   @Autowired
   public MentorshipService(
       final MentorRepository mentorRepository,
       final MemberRepository memberRepository,
       final MemberProfilePictureRepository profilePicRepo,
-      final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
+      final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen,
+      NotificationService notificationService) {
     this.mentorRepository = mentorRepository;
     this.memberRepository = memberRepository;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
+    this.notificationService = notificationService;
   }
 
   /**
@@ -249,7 +254,11 @@ public class MentorshipService {
       throw new IllegalStateException("Mentor with ID " + mentorId + " is already active");
     }
 
-    return mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+    Mentor activatedMentor = mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+
+    sendApprovalEmail(activatedMentor);
+
+    return activatedMentor;
   }
 
   private void validateMentorCommitment(final Mentor mentor) {
@@ -262,6 +271,19 @@ public class MentorshipService {
         throw new IllegalArgumentException(
             "Long-term mentorship requires at least 2 hours per mentee.");
       }
+    }
+  }
+
+  private void sendApprovalEmail(final Mentor mentor) {
+    try {
+      notificationService.sendNotification(
+          mentor.getEmail(),
+          TemplateType.MENTOR_APPROVAL,
+          Map.of("mentorName", mentor.getFullName()));
+      log.info("Approval email sent successfully to mentor: {}", mentor.getEmail());
+    } catch (Exception e) {
+      log.error(
+          "Failed to send approval email to mentor {}: {}", mentor.getEmail(), e.getMessage(), e);
     }
   }
 }
