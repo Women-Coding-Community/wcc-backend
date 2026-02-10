@@ -50,7 +50,7 @@ public class SetupMentorFactories {
             .slackDisplayName(member.getSlackDisplayName())
             .country(member.getCountry())
             .images(member.getImages())
-            .profileStatus(ProfileStatus.ACTIVE)
+            .profileStatus(ProfileStatus.PENDING)
             .bio("Mentor bio")
             .spokenLanguages(List.of("english", "spanish", "german"))
             .skills(
@@ -135,7 +135,8 @@ public class SetupMentorFactories {
                 List.of(Languages.JAVASCRIPT),
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
-            new MenteeSection("ideal mentee description", "additional", longTerm, adHocAvailability))
+            new MenteeSection(
+                "ideal mentee description", "additional", longTerm, adHocAvailability))
         .build();
   }
 
@@ -194,7 +195,10 @@ public class SetupMentorFactories {
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(
-                "ideal mentee description UPDATED", "additional UPDATED", longTerm, adHocAvailability))
+                "ideal mentee description UPDATED",
+                "additional UPDATED",
+                longTerm,
+                adHocAvailability))
         .build();
   }
 

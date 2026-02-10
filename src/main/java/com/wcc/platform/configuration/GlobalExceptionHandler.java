@@ -14,6 +14,7 @@ import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
@@ -94,6 +95,17 @@ public class GlobalExceptionHandler {
             HttpStatus.CONFLICT.value(),
             "Record already exists: " + ex.getMessage(),
             request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+  }
+
+  /** Receive MentorStatusException and return {@link HttpStatus#CONFLICT}. */
+  @ExceptionHandler(MentorStatusException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ResponseEntity<ErrorDetails> handleMentorStatus(
+      final MentorStatusException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 

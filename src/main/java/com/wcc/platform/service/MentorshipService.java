@@ -6,6 +6,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
@@ -244,14 +245,14 @@ public class MentorshipService {
    * @param mentorId mentor's unique identifier
    * @return mentor with active status
    * @throws MemberNotFoundException if mentor is not found
-   * @throws IllegalStateException if mentor is already active
+   * @throws MentorStatusException if mentor is already active
    */
   public Mentor activateMentor(final Long mentorId) {
     final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
     final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
 
     if (mentor.getProfileStatus() == ProfileStatus.ACTIVE) {
-      throw new IllegalStateException("Mentor with ID " + mentorId + " is already active");
+      throw new MentorStatusException("Mentor with ID " + mentorId + " is already active");
     }
 
     Mentor activatedMentor = mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);

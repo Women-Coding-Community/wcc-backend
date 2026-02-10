@@ -2,7 +2,6 @@ package com.wcc.platform.domain.platform.mentorship;
 
 import static com.wcc.platform.domain.platform.SocialNetworkType.GITHUB;
 import static com.wcc.platform.domain.platform.SocialNetworkType.LINKEDIN;
-import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +17,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
-import com.wcc.platform.domain.platform.type.MemberType;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,17 +88,15 @@ class MentorDtoTest {
             .profileStatus(ProfileStatus.PENDING)
             .build();
     var expected =
-        "MentorDto(profileStatus=PENDING, availability=MentorAvailability[mentorshipType=Ad-Hoc, available=true]"
-            + ", skills=null, spokenLanguages=[English, Spanish], bio=bio info, menteeSection=null,"
-            + " feedbackSection=null, resources=null)";
+        "MentorDto(profileStatus=PENDING, availability=MentorAvailability[mentorshipType=Ad-Hoc,"
+            + " available=true], skills=null, spokenLanguages=[English, Spanish], bio=bio info,"
+            + " menteeSection=null, feedbackSection=null, resources=null)";
 
     assertEquals(expected, mentor.toString());
   }
 
   @Test
   void testMergeShouldUpdateAllFields() {
-    MentorDto template = createMentorDtoTest(null, MemberType.MENTOR);
-
     mentorDto =
         MentorDto.mentorDtoBuilder()
             .id(1L)
@@ -113,7 +109,6 @@ class MentorDtoTest {
             .companyName("Updated Company")
             .images(List.of(new Image("new.jpg", "New Image", ImageType.DESKTOP)))
             .network(List.of(new SocialNetwork(GITHUB, "https://github.com/new")))
-            .profileStatus(ProfileStatus.ACTIVE)
             .spokenLanguages(List.of("French", "German"))
             .bio("Updated bio")
             .skills(
@@ -140,7 +135,7 @@ class MentorDtoTest {
     assertEquals("CA", result.getCountry().countryCode());
     assertEquals("Updated City", result.getCity());
     assertEquals("Updated Company", result.getCompanyName());
-    assertEquals(ProfileStatus.ACTIVE, result.getProfileStatus());
+    assertEquals(ProfileStatus.PENDING, result.getProfileStatus());
     assertEquals("Updated bio", result.getBio());
     assertEquals(List.of("French", "German"), result.getSpokenLanguages());
     assertEquals(5, result.getSkills().yearsExperience());

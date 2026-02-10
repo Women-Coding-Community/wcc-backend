@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -27,12 +28,15 @@ import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -40,6 +44,7 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,6 +60,7 @@ class MentorshipServiceTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
+  @Mock private NotificationService notificationService;
   private Integer daysOpen = 10;
   private Mentor mentor;
   private Mentor updatedMentor;
@@ -72,7 +78,9 @@ class MentorshipServiceTest {
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
     updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
     service =
-        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
+        spy(
+            new MentorshipService(
+                mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
   }
 
   @Test
@@ -247,7 +255,9 @@ class MentorshipServiceTest {
   void testGetCurrentCycleReturnsAdHocFromMayWithinOpenDays() {
     daysOpen = 7;
     service =
-        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
+        spy(
+            new MentorshipService(
+                mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
     var may2 = ZonedDateTime.of(2025, 5, 2, 9, 0, 0, 0, ZoneId.of("Europe/London"));
     doReturn(may2).when(service).nowLondon();
 
@@ -260,7 +270,9 @@ class MentorshipServiceTest {
   void testGetCurrentCycleReturnsClosedOutsideWindows() {
     daysOpen = 5;
     service =
-        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
+        spy(
+            new MentorshipService(
+                mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
 
     // April -> closed
     var april10 = ZonedDateTime.of(2025, 4, 10, 12, 0, 0, 0, ZoneId.of("Europe/London"));
@@ -477,8 +489,6 @@ class MentorshipServiceTest {
     when(mentor.getCompanyName()).thenReturn("Tech Corp");
     when(mentor.getImages()).thenReturn(List.of());
     when(mentor.getNetwork()).thenReturn(List.of());
-    when(mentor.getProfileStatus())
-        .thenReturn(com.wcc.platform.domain.platform.member.ProfileStatus.ACTIVE);
     when(mentor.getSkills())
         .thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
     when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
@@ -501,5 +511,60 @@ class MentorshipServiceTest {
     assertThat(result.getId()).isEqualTo(999L);
     verify(memberRepository).findByEmail("existing@test.com");
     verify(mentorRepository).create(any(Mentor.class));
+  }
+
+  @Test
+  @DisplayName(
+      "Given pending mentor, when activateMentor, then update status to ACTIVE and return mentor")
+  void activateMentorWhenPendingThenActivatesAndReturnsMentor() {
+    Long mentorId = 1L;
+    Mentor pendingMentor = createMentorTest("Jane");
+    Mentor activatedMentor =
+        createUpdatedMentorTest(pendingMentor, createMentorDtoTest(mentorId, MemberType.MENTOR));
+
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(pendingMentor));
+    when(mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE))
+        .thenReturn(activatedMentor);
+
+    Mentor result = service.activateMentor(mentorId);
+
+    assertThat(result).isEqualTo(activatedMentor);
+    assertThat(result.getProfileStatus()).isEqualTo(ProfileStatus.ACTIVE);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+    verify(notificationService)
+        .sendNotification(
+            eq(activatedMentor.getEmail()),
+            eq(TemplateType.MENTOR_APPROVAL),
+            eq(Map.of("mentorName", activatedMentor.getFullName())));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor already ACTIVE, when activateMentor, then" + " throw MentorStatusException")
+  void activateMentorWhenAlreadyActiveThenThrowsMentorStatusException() {
+    Long mentorId = 1L;
+    Mentor activeMentor =
+        createUpdatedMentorTest(
+            createMentorTest("Jane"), createMentorDtoTest(mentorId, MemberType.MENTOR));
+
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(activeMentor));
+
+    assertThrows(MentorStatusException.class, () -> service.activateMentor(mentorId));
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
+    verify(notificationService, never()).sendNotification(any(), any(), any());
+  }
+
+  @Test
+  @DisplayName("Given mentor not found, when activateMentor, then throw MemberNotFoundException")
+  void activateMentorWhenNotFoundThenThrowsMemberNotFoundException() {
+    Long mentorId = 999L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.empty());
+
+    assertThrows(MemberNotFoundException.class, () -> service.activateMentor(mentorId));
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
+    verify(notificationService, never()).sendNotification(any(), any(), any());
   }
 }

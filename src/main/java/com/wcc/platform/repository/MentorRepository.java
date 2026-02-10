@@ -28,6 +28,10 @@ public interface MentorRepository extends CrudRepository<Mentor, Long> {
    */
   Long findIdByEmail(String email);
 
-  /** Update mentor profile status. */
+  /**
+   * Update mentor profile status.
+   *
+   * @return mentor with updated profile status
+   */
   Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus);
 }

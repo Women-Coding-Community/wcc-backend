@@ -51,15 +51,17 @@ public class MentorshipController {
   }
 
   /**
-   * API to create mentor.
+   * API to create mentor. Profile status is set by the server to PENDING; any value in the request
+   * is ignored.
    *
-   * @return Create a new mentor.
+   * @param mentorDto mentor registration data
+   * @return Created mentor with status PENDING.
    */
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final Mentor mentor) {
-    return new ResponseEntity<>(mentorshipService.create(mentor), HttpStatus.CREATED);
+  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final MentorDto mentorDto) {
+    return new ResponseEntity<>(mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
   }
 
   /**
