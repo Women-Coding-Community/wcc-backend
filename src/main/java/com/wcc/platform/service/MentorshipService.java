@@ -105,19 +105,21 @@ public class MentorshipService {
     validateMentorCommitment(mentor);
     final var mentorCreated = mentorRepository.create(mentor);
     if (mentorRepository.findById(mentorCreated.getId()).isPresent()) {
-      final var userMentor = userRepository.findByEmail(mentorCreated.getEmail());
-      userMentor.ifPresentOrElse(
-          userAccount -> {
-            if (userAccount.getRoles().stream()
-                .noneMatch(roleType -> roleType.equals(RoleType.MENTOR))) {
-              userAccount.getRoles().add(RoleType.MENTOR);
-            }
-          },
-          () -> {
-            final var mentorUserAccount =
-                new UserAccount(mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
-            userRepository.create(mentorUserAccount);
-          });
+      userRepository
+          .findByEmail(mentorCreated.getEmail())
+          .ifPresentOrElse(
+              userAccount -> {
+                if (userAccount.getRoles().stream()
+                    .noneMatch(roleType -> roleType.equals(RoleType.MENTOR))) {
+                  userAccount.getRoles().add(RoleType.MENTOR);
+                }
+              },
+              () -> {
+                final var mentorUserAccount =
+                    new UserAccount(
+                        mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
+                userRepository.create(mentorUserAccount);
+              });
     }
     return mentorCreated;
   }
