@@ -6,6 +6,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
@@ -78,7 +79,7 @@ public class MentorshipService {
               .companyName(mentor.getCompanyName())
               .images(mentor.getImages())
               .network(mentor.getNetwork())
-              .profileStatus(mentor.getProfileStatus())
+              .profileStatus(ProfileStatus.PENDING)
               .skills(mentor.getSkills())
               .spokenLanguages(mentor.getSpokenLanguages())
               .bio(mentor.getBio())
@@ -230,6 +231,25 @@ public class MentorshipService {
     final Mentor updatedMentor = mentorDto.merge(mentor);
     validateMentorCommitment(updatedMentor);
     return mentorRepository.update(mentorId, updatedMentor);
+  }
+
+  /**
+   * Activate a pending mentor by setting their status to ACTIVE.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return mentor with active status
+   * @throws MemberNotFoundException if mentor is not found
+   * @throws IllegalStateException if mentor is already active
+   */
+  public Mentor activateMentor(final Long mentorId) {
+    final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
+    final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
+
+    if (mentor.getProfileStatus() == ProfileStatus.ACTIVE) {
+      throw new IllegalStateException("Mentor with ID " + mentorId + " is already active");
+    }
+
+    return mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
   }
 
   private void validateMentorCommitment(final Mentor mentor) {

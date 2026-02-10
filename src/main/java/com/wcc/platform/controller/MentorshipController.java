@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -74,6 +75,19 @@ public class MentorshipController {
   public ResponseEntity<Mentor> updateMentor(
       @Valid @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
     return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
+  }
+
+  /**
+   * API to accept mentor registration.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return updated mentor with active status.
+   */
+  @PatchMapping("/mentors/{mentorId}/accept")
+  @Operation(summary = "API to accept mentor registration")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<Mentor> acceptMentor(@Valid @PathVariable final Long mentorId) {
+    return new ResponseEntity<>(mentorshipService.activateMentor(mentorId), HttpStatus.OK);
   }
 
   /**
