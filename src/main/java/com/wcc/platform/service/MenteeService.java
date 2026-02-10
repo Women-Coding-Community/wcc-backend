@@ -1,6 +1,7 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.MentorshipConfig;
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
@@ -112,11 +113,16 @@ public class MenteeService {
     }
     userAccountRepository
         .findByEmail(mentee.getEmail())
-        .ifPresent(
+        .ifPresentOrElse(
             userAccount -> {
               if (userAccount.getRoles().stream().noneMatch(role -> role.equals(RoleType.MENTEE))) {
                 userAccount.getRoles().add(RoleType.MENTEE);
               }
+            },
+            () -> {
+              final var menteeUserAccount =
+                  new UserAccount(mentee.getId(), mentee.getEmail(), RoleType.MENTEE);
+              userAccountRepository.create(menteeUserAccount);
             });
 
     final var registration = menteeRegistration.withMentee(mentee);

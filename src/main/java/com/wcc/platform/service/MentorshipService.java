@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
@@ -104,17 +105,20 @@ public class MentorshipService {
     validateMentorCommitment(mentor);
     final var mentorCreated = mentorRepository.create(mentor);
     if (mentorRepository.findById(mentorCreated.getId()).isPresent()) {
-      userRepository
-          .findByEmail(mentorCreated.getEmail())
-          .ifPresent(
-              userAccount -> {
-                if (userAccount.getRoles().stream()
-                    .noneMatch(roleType -> roleType.equals(RoleType.MENTOR))) {
-                  userAccount.getRoles().add(RoleType.MENTOR);
-                }
-              });
+      final var userMentor = userRepository.findByEmail(mentorCreated.getEmail());
+      userMentor.ifPresentOrElse(
+          userAccount -> {
+            if (userAccount.getRoles().stream()
+                .noneMatch(roleType -> roleType.equals(RoleType.MENTOR))) {
+              userAccount.getRoles().add(RoleType.MENTOR);
+            }
+          },
+          () -> {
+            final var mentorUserAccount =
+                new UserAccount(mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
+            userRepository.create(mentorUserAccount);
+          });
     }
-
     return mentorCreated;
   }
 

@@ -22,7 +22,7 @@ public class UserAccount {
   private List<RoleType> roles;
   private boolean enabled;
 
-  public UserAccount(final Long memberId, final String email, RoleType... roles) {
+  public UserAccount(final Long memberId, final String email, final RoleType... roles) {
     this.memberId = memberId;
     this.email = email;
     this.passwordHash = PasswordGenerator.generateRandomPassword();
