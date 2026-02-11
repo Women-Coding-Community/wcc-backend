@@ -31,7 +31,6 @@ import org.springframework.util.CollectionUtils;
 public class MentorDto extends MemberDto {
 
   private @Getter ProfileStatus profileStatus;
-  private MentorAvailability availability;
   private Skills skills;
   private List<String> spokenLanguages;
   private String bio;
@@ -59,8 +58,7 @@ public class MentorDto extends MemberDto {
       @NotNull final Skills skills,
       @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resources,
-      final MentorAvailability availability) {
+      final MentorResource resources) {
     super(
         id,
         fullName,
@@ -73,7 +71,6 @@ public class MentorDto extends MemberDto {
         null, // TODO to be fixe this will cleanup member types
         images,
         network);
-    this.availability = availability;
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
@@ -133,7 +130,7 @@ public class MentorDto extends MemberDto {
         .city(mergeString(this.getCity(), mentor.getCity()))
         .companyName(mergeString(this.getCompanyName(), mentor.getCompanyName()))
         .country(mergeNullable(this.getCountry(), mentor.getCountry()))
-        .profileStatus(mentor.getProfileStatus())
+        .profileStatus(mergeNullable(this.getProfileStatus(), mentor.getProfileStatus()))
         .bio(mergeString(this.getBio(), mentor.getBio()))
         .skills(mergeNullable(this.getSkills(), mentor.getSkills()))
         .menteeSection(mergeNullable(this.getMenteeSection(), mentor.getMenteeSection()))

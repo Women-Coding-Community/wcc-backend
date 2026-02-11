@@ -98,23 +98,7 @@ public class Mentor extends Member {
    * @return a MentorDto containing the mentor's details and availability information
    */
   public MentorDto toDto(final MentorshipCycle mentorshipCycle) {
-    final var mentor = this;
-    final var mentorBuilder = buildFromMentor(mentor);
-    final var menteeSection = mentor.getMenteeSection();
-
-    if (mentorshipCycle.cycle() == MentorshipType.LONG_TERM) {
-      final boolean isAvailable = menteeSection.longTerm() != null;
-      mentorBuilder.availability(new MentorAvailability(mentorshipCycle.cycle(), isAvailable));
-    } else if (mentorshipCycle.cycle() == MentorshipType.AD_HOC) {
-      final var adHoc = menteeSection.adHoc();
-      final boolean isAvailable =
-          adHoc != null
-              && adHoc.stream()
-                  .anyMatch(availability -> availability.month() == mentorshipCycle.month());
-      mentorBuilder.availability(new MentorAvailability(mentorshipCycle.cycle(), isAvailable));
-    }
-
-    return mentorBuilder.build();
+    return buildFromMentor(this).build();
   }
 
   /**
@@ -130,7 +114,6 @@ public class Mentor extends Member {
   private MentorDtoBuilder buildFromMentor(final Mentor mentor) {
     return MentorDto.mentorDtoBuilder()
         .id(mentor.getId())
-        .availability(null)
         .fullName(mentor.getFullName())
         .position(mentor.getPosition())
         .email(mentor.getEmail())
