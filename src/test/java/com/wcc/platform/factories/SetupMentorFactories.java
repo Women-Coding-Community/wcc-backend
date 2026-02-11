@@ -15,6 +15,7 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.CreateMentorRequest;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
@@ -108,7 +109,7 @@ public class SetupMentorFactories {
         .build();
   }
 
-  /** Factory test to create MemberDto object with long-term and ad-hoc availability params. */
+  /** Factory test to create MentorDto object with long-term and ad-hoc availability params. */
   public static MentorDto createMentorDtoTest(
       final Long mentorId,
       final MemberType type,
@@ -137,6 +138,36 @@ public class SetupMentorFactories {
         .menteeSection(
             new MenteeSection(
                 "ideal mentee description", "additional", longTerm, adHocAvailability))
+        .build();
+  }
+
+  /** Factory test to create Mentor for POST body (excl. profile status). */
+  public static CreateMentorRequest createMentorRequestTest(final String mentorName) {
+    return CreateMentorRequest.createMentorRequestBuilder()
+        .fullName(mentorName)
+        .position("position " + MemberType.MENTOR)
+        .email("email@mentor.com")
+        .slackDisplayName("slackDisplayName")
+        .country(new Country("ES", "Spain"))
+        .city("City")
+        .companyName("Company name")
+        .memberTypes(List.of(MemberType.MENTOR))
+        .images(List.of(new Image("image.png", "alt image", ImageType.MOBILE)))
+        .network(List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")))
+        .bio("Mentor bio")
+        .spokenLanguages(List.of("English"))
+        .skills(
+            new Skills(
+                2,
+                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
+                List.of(Languages.JAVASCRIPT),
+                List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
+        .menteeSection(
+            new MenteeSection(
+                "ideal mentee description",
+                "additional",
+                new LongTermMentorship(1, 4),
+                List.of(new MentorMonthAvailability(Month.MARCH, 2))))
         .build();
   }
 
