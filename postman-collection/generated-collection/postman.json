@@ -2206,7 +2206,7 @@
                                     ],
                                     "body": {
                                         "mode": "raw",
-                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"profileStatus\": \"<string>\",\n \"availability\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
+                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
                                         "options": {
                                             "raw": {
                                                 "language": "json"
@@ -2304,7 +2304,7 @@
                                     ],
                                     "body": {
                                         "mode": "raw",
-                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"profileStatus\": \"<string>\",\n \"availability\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
+                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"profileStatus\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
                                         "options": {
                                             "raw": {
                                                 "language": "json"
