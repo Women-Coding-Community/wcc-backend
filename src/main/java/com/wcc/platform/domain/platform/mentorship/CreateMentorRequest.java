@@ -52,8 +52,7 @@ public class CreateMentorRequest extends MemberDto {
       @NotNull final Skills skills,
       @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resources,
-      final MentorAvailability availability) {
+      final MentorResource resources) {
     super(
         id,
         fullName,
