@@ -6,6 +6,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.resource.MentorResource;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,7 @@ import lombok.ToString;
 @SuppressWarnings("PMD.ImmutableField")
 public class CreateMentorRequest {
 
-  // Member-like fields
+  private Long id;
   @NotBlank private String fullName;
   @NotBlank private String position;
   @NotBlank @Email private String email;
@@ -33,13 +34,13 @@ public class CreateMentorRequest {
   @NotBlank private String city;
 
   private String companyName;
+  @NotEmpty private List<MemberType> memberTypes;
   private List<Image> images;
   private List<SocialNetwork> network;
 
-  // Mentor-specific fields
+  @NotNull private Skills skills;
   @NotEmpty private List<String> spokenLanguages;
   @NotBlank private String bio;
-  @NotNull private Skills skills;
   @NotNull private MenteeSection menteeSection;
 
   private FeedbackSection feedbackSection;
@@ -48,6 +49,7 @@ public class CreateMentorRequest {
   @Builder(builderMethodName = "createMentorRequestBuilder")
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public CreateMentorRequest(
+      final Long id,
       final String fullName,
       final String position,
       final String email,
@@ -55,14 +57,16 @@ public class CreateMentorRequest {
       final Country country,
       final String city,
       final String companyName,
+      final List<MemberType> memberTypes,
       final List<Image> images,
       final List<SocialNetwork> network,
+      final Skills skills,
       final List<String> spokenLanguages,
       final String bio,
-      final Skills skills,
       final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources) {
+    this.id = id;
     this.fullName = fullName;
     this.position = position;
     this.email = email;
@@ -70,11 +74,12 @@ public class CreateMentorRequest {
     this.country = country;
     this.city = city;
     this.companyName = companyName;
+    this.memberTypes = memberTypes;
     this.images = images;
     this.network = network;
+    this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
-    this.skills = skills;
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
@@ -93,9 +98,9 @@ public class CreateMentorRequest {
         .images(getImages() != null ? getImages() : List.of())
         .network(getNetwork() != null ? getNetwork() : List.of())
         .profileStatus(ProfileStatus.PENDING)
+        .skills(getSkills())
         .spokenLanguages(getSpokenLanguages() != null ? getSpokenLanguages() : List.of())
         .bio(getBio())
-        .skills(getSkills())
         .menteeSection(getMenteeSection())
         .feedbackSection(getFeedbackSection())
         .resources(getResources())
