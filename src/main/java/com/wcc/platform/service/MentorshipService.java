@@ -55,7 +55,7 @@ public class MentorshipService {
       final MemberRepository memberRepository,
       final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen,
-      NotificationService notificationService) {
+      final NotificationService notificationService) {
     this.mentorRepository = mentorRepository;
     this.memberRepository = memberRepository;
     this.profilePicRepo = profilePicRepo;

@@ -123,7 +123,7 @@ public class PostgresMentorRepository implements MentorRepository {
   @Override
   @Transactional
   public Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus) {
-    jdbc.update(UPDATE_MENTOR_STATUS, mentorId, profileStatus);
+    jdbc.update(UPDATE_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
     return findById(mentorId).orElse(null);
   }
 

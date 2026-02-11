@@ -90,7 +90,7 @@ public class SetupMentorFactories {
         .companyName("Company name")
         .images(List.of(new Image("image.png", "alt image", ImageType.MOBILE)))
         .network(List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")))
-        .profileStatus(ProfileStatus.ACTIVE)
+        .profileStatus(ProfileStatus.PENDING)
         .bio("Mentor bio")
         .spokenLanguages(List.of("English"))
         .skills(
