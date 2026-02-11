@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 /** Platform Service. */
 @Slf4j
 @Service
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyMethods"})
 public class MentorshipService {
 
   /* package */ static final MentorshipCycle CYCLE_CLOSED = new MentorshipCycle(null, null);
@@ -254,7 +255,8 @@ public class MentorshipService {
       throw new MentorStatusException("Mentor with ID " + mentorId + " is already active");
     }
 
-    Mentor activatedMentor = mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+    final Mentor activatedMentor =
+        mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
 
     sendApprovalEmail(activatedMentor);
 
@@ -274,6 +276,7 @@ public class MentorshipService {
     }
   }
 
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private void sendApprovalEmail(final Mentor mentor) {
     try {
       notificationService.sendNotification(

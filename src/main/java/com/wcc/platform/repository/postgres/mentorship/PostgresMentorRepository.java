@@ -41,7 +41,7 @@ public class PostgresMentorRepository implements MentorRepository {
           + "spoken_languages = ?, "
           + "is_available = ? "
           + "WHERE mentor_id = ?";
-  static final String UPDATE_MENTOR_STATUS =
+  private static final String UPDATE_MENTOR_STATUS =
       "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?";
   private static final String SQL_INSERT_MENTOR =
       "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "

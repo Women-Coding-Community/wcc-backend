@@ -15,6 +15,7 @@ public class NotificationService {
   private final EmailTemplateService emailTemplateService;
   private final EmailService emailService;
 
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   public void sendNotification(
       final String recipientEmail,
       final TemplateType templateType,

@@ -22,7 +22,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
-@SuppressWarnings("PMD.ImmutableField")
+@SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField", "PMD.TooManyFields"})
 public class CreateMentorRequest {
 
   private Long id;
@@ -47,7 +47,6 @@ public class CreateMentorRequest {
   private MentorResource resources;
 
   @Builder(builderMethodName = "createMentorRequestBuilder")
-  @SuppressWarnings("PMD.ExcessiveParameterList")
   public CreateMentorRequest(
       final Long id,
       final String fullName,

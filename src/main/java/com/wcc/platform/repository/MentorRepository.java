@@ -33,5 +33,5 @@ public interface MentorRepository extends CrudRepository<Mentor, Long> {
    *
    * @return mentor with updated profile status
    */
-  Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus);
+  Mentor updateProfileStatus(Long mentorId, ProfileStatus profileStatus);
 }
