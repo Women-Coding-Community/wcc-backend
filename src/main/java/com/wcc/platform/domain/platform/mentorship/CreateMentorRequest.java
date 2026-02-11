@@ -5,8 +5,8 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.platform.SocialNetwork;
+import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
-import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.resource.MentorResource;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,66 +14,61 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/** Request body for the Mentor members of the community. */
 @Getter
+@EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
 @SuppressWarnings("PMD.ImmutableField")
-public class CreateMentorRequest {
+public class CreateMentorRequest extends MemberDto {
 
-  @NotBlank private String fullName;
-  @NotBlank private String position;
-  @NotBlank @Email private String email;
-  @NotBlank private String slackDisplayName;
-  @NotNull private Country country;
-  @NotBlank private String city;
-  private String companyName;
-  @NotEmpty private List<MemberType> memberTypes;
-  private List<Image> images;
-  private List<SocialNetwork> network;
-
-  @NotEmpty private List<String> spokenLanguages;
-  @NotBlank private String bio;
-  @NotNull private Skills skills;
-  @NotNull private MenteeSection menteeSection;
+  private Skills skills;
+  private List<String> spokenLanguages;
+  private String bio;
+  private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
 
   @Builder(builderMethodName = "createMentorRequestBuilder")
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public CreateMentorRequest(
-      final String fullName,
-      final String position,
-      final String email,
-      final String slackDisplayName,
-      final Country country,
-      final String city,
+      final Long id,
+      @NotBlank final String fullName,
+      @NotBlank final String position,
+      @NotBlank @Email final String email,
+      @NotBlank final String slackDisplayName,
+      @NotNull final Country country,
+      @NotBlank final String city,
       final String companyName,
-      final List<MemberType> memberTypes,
       final List<Image> images,
       final List<SocialNetwork> network,
-      final List<String> spokenLanguages,
-      final String bio,
-      final Skills skills,
-      final MenteeSection menteeSection,
+      @NotEmpty final List<String> spokenLanguages,
+      @NotBlank final String bio,
+      @NotNull final Skills skills,
+      @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resources) {
-    this.fullName = fullName;
-    this.position = position;
-    this.email = email;
-    this.slackDisplayName = slackDisplayName;
-    this.country = country;
-    this.city = city;
-    this.companyName = companyName;
-    this.memberTypes = memberTypes;
-    this.images = images;
-    this.network = network;
+      final MentorResource resources,
+      final MentorAvailability availability) {
+    super(
+        id,
+        fullName,
+        position,
+        email,
+        slackDisplayName,
+        country,
+        city,
+        companyName,
+        null, // TODO to be fixe this will cleanup member types
+        images,
+        network);
+    this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
-    this.skills = skills;
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
@@ -82,22 +77,22 @@ public class CreateMentorRequest {
   public Mentor toMentor() {
     return Mentor.mentorBuilder()
         .id(null)
-        .fullName(fullName)
-        .position(position)
-        .email(email)
-        .slackDisplayName(slackDisplayName)
-        .country(country)
-        .city(city)
-        .companyName(companyName)
-        .images(images != null ? images : List.of())
-        .network(network != null ? network : List.of())
+        .fullName(getFullName())
+        .position(getPosition())
+        .email(getEmail())
+        .slackDisplayName(getSlackDisplayName())
+        .country(getCountry())
+        .city(getCity())
+        .companyName(getCompanyName())
+        .images(getImages() != null ? getImages() : List.of())
+        .network(getNetwork() != null ? getNetwork() : List.of())
         .profileStatus(ProfileStatus.PENDING)
-        .spokenLanguages(spokenLanguages != null ? spokenLanguages : List.of())
-        .bio(bio)
-        .skills(skills)
-        .menteeSection(menteeSection)
-        .feedbackSection(feedbackSection)
-        .resources(resources)
+        .spokenLanguages(getSpokenLanguages() != null ? getSpokenLanguages() : List.of())
+        .bio(getBio())
+        .skills(getSkills())
+        .menteeSection(getMenteeSection())
+        .feedbackSection(getFeedbackSection())
+        .resources(getResources())
         .build();
   }
 }

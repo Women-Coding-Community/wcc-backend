@@ -151,7 +151,6 @@ public class SetupMentorFactories {
         .country(new Country("ES", "Spain"))
         .city("City")
         .companyName("Company name")
-        .memberTypes(List.of(MemberType.MENTOR))
         .images(List.of(new Image("image.png", "alt image", ImageType.MOBILE)))
         .network(List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")))
         .bio("Mentor bio")
