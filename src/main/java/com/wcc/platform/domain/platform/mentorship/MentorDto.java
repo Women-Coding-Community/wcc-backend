@@ -30,7 +30,7 @@ import org.springframework.util.CollectionUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
-  private @Getter ProfileStatus profileStatus;
+  private ProfileStatus profileStatus;
   private Skills skills;
   private List<String> spokenLanguages;
   private String bio;
