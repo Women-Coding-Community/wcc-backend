@@ -12,7 +12,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.auth.UserToken;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
