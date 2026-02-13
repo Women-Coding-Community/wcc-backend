@@ -69,7 +69,7 @@ public class SetupProgrammeFactories {
    * @return Programme object
    */
   public static ListSection<String> createProgrammeWithoutCard() {
-    return new ListSection<String>(
+    return new ListSection<>(
         "What We Are Reading",
         "Every month we vote we read a book this is current month book.",
         null,
