@@ -19,9 +19,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
-import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.Member;
-import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
@@ -42,11 +40,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MentorshipServiceTest {
 
+  private final Integer daysOpen = 10;
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private NotificationService notificationService;
-  private Integer daysOpen = 10;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
@@ -191,8 +189,6 @@ class MentorshipServiceTest {
     when(mentor.getCompanyName()).thenReturn("Tech Corp");
     when(mentor.getImages()).thenReturn(List.of());
     when(mentor.getNetwork()).thenReturn(List.of());
-    when(mentor.getProfileStatus())
-        .thenReturn(com.wcc.platform.domain.platform.member.ProfileStatus.ACTIVE);
     when(mentor.getSkills())
         .thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
     when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));

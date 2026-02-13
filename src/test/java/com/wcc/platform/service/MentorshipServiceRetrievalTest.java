@@ -39,6 +39,7 @@ class MentorshipServiceRetrievalTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
+  @Mock private NotificationService notificationService;
   private MentorshipService service;
 
   @BeforeEach
@@ -47,7 +48,7 @@ class MentorshipServiceRetrievalTest {
 
     MockitoAnnotations.openMocks(this);
     service =
-        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen));
+        spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
   }
 
   @Test
@@ -186,8 +187,8 @@ class MentorshipServiceRetrievalTest {
     var result = service.getAllMentors();
 
     assertThat(result).hasSize(1);
-    var mentorDtoResult = result.getFirst();
-    assertThat(mentorDtoResult.getImages()).isNullOrEmpty();
+    var mentorDto = result.getFirst();
+    assertThat(mentorDto.getImages()).isNullOrEmpty();
   }
 
   @Test
