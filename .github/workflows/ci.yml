@@ -45,7 +45,6 @@ jobs:
       - name: Run Integration tests
         run: ./gradlew testIntegration jacocoIntegrationReport
         env:
-          DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Pmd Check
