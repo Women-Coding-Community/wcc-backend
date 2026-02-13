@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class UserAccountTest {
 
   @Test
-  void testGetPermissions_withMultipleRoles_returnsAggregatedPermissions() {
+  void testGetPermissionsWithMultipleRolesReturnsAggregatedPermissions() {
     UserAccount userAccount =
         UserAccount.builder()
             .id(1)
@@ -31,7 +31,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetPermissions_withSingleRole_returnsRolePermissions() {
+  void testGetPermissionsWithSingleRoleReturnsRolePermissions() {
     UserAccount userAccount =
         UserAccount.builder()
             .id(1)
@@ -48,7 +48,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetPermissions_withNullRoles_returnsEmptySet() {
+  void testGetPermissionsWithNullRolesReturnsEmptySet() {
     UserAccount userAccount =
         UserAccount.builder().id(1).email("user@example.com").roles(null).enabled(true).build();
 
@@ -59,7 +59,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetPrimaryRole_memberWithSingleType_returnsCorrespondingRole() {
+  void testGetPrimaryRoleMemberWithSingleTypeReturnsCorrespondingRole() {
     Member member =
         Member.builder()
             .id(1L)
@@ -76,7 +76,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetPrimaryRole_memberWithMultipleTypes_returnsHighestPrivilegeRole() {
+  void testGetPrimaryRoleMemberWithMultipleTypesReturnsHighestPrivilegeRole() {
     // DIRECTOR is higher privilege than MENTEE
     Member member =
         Member.builder()
@@ -94,7 +94,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllMemberRoles_memberWithSingleType_returnsSingleRole() {
+  void testGetAllMemberRolesMemberWithSingleTypeReturnsSingleRole() {
     Member member =
         Member.builder()
             .id(1L)
@@ -113,7 +113,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllMemberRoles_memberWithMultipleTypes_returnsMultipleRoles() {
+  void testGetAllMemberRolesMemberWithMultipleTypesReturnsMultipleRoles() {
     Member member =
         Member.builder()
             .id(1L)
@@ -133,7 +133,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllRoles_onlyMemberRoles_returnsOnlyMemberRoles() {
+  void testGetAllRolesOnlyMemberRolesReturnsOnlyMemberRoles() {
     Member member =
         Member.builder()
             .id(1L)
@@ -152,7 +152,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllRoles_onlyUserRoles_returnsOnlyUserRoles() {
+  void testGetAllRolesOnlyUserRolesReturnsOnlyUserRoles() {
     Member member = Member.builder().id(1L).fullName("John Doe").memberTypes(List.of()).build();
 
     UserAccount userAccount =
@@ -171,7 +171,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllRoles_combinedMemberAndUserRoles_returnsAggregatedRoles() {
+  void testGetAllRolesCombinedMemberAndUserRolesReturnsAggregatedRoles() {
     Member member =
         Member.builder()
             .id(1L)
@@ -196,7 +196,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllPermissions_fromMemberTypes_includesMemberTypePermissions() {
+  void testGetAllPermissionsFromMemberTypesIncludesMemberTypePermissions() {
     Member member =
         Member.builder()
             .id(1L)
@@ -215,7 +215,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllPermissions_fromUserRoles_includesUserRolePermissions() {
+  void testGetAllPermissionsFromUserRolesIncludesUserRolePermissions() {
     Member member = Member.builder().id(1L).fullName("John Doe").memberTypes(List.of()).build();
 
     UserAccount userAccount =
@@ -234,7 +234,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testGetAllPermissions_combinedPermissions_aggregatesFromBothSources() {
+  void testGetAllPermissionsCombinedPermissionsAggregatesFromBothSources() {
     Member member =
         Member.builder()
             .id(1L)
@@ -260,7 +260,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testHasAnyRole_userHasOneOfRequiredRoles_returnsTrue() {
+  void testHasAnyRoleUserHasOneOfRequiredRolesReturnsTrue() {
     Member member =
         Member.builder()
             .id(1L)
@@ -282,7 +282,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testHasAnyRole_userHasMultipleRequiredRoles_returnsTrue() {
+  void testHasAnyRoleUserHasMultipleRequiredRolesReturnsTrue() {
     Member member =
         Member.builder()
             .id(1L)
@@ -304,7 +304,7 @@ class UserAccountTest {
   }
 
   @Test
-  void testHasAnyRole_userHasNoneOfRequiredRoles_returnsFalse() {
+  void testHasAnyRoleUserHasNoneOfRequiredRolesReturnsFalse() {
     Member member =
         Member.builder()
             .id(1L)
