@@ -39,6 +39,9 @@ jobs:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
+      - name: Check Docker version
+        run: docker version
+
       - name: Run Integration tests
         run: ./gradlew testIntegration jacocoIntegrationReport
         env:
