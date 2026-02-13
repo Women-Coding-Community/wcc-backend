@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.configuration.NotificationTemplateConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -28,6 +29,7 @@ class NotificationServiceTest {
 
   @Mock private EmailTemplateService emailTemplateService;
   @Mock private EmailService emailService;
+  @Mock private NotificationTemplateConfig notificationTemplateConfig;
   private Mentor mentor;
 
   @InjectMocks private NotificationService notificationService;
@@ -42,19 +44,30 @@ class NotificationServiceTest {
       "Given recipient, template type and params, when sendNotification,"
           + " then renders template and sends email")
   void sendNotificationRendersTemplateAndSendsEmail() {
-    String recipient = mentor.getEmail();
-    String mentorName = mentor.getFullName();
-    TemplateType templateType = TemplateType.MENTOR_APPROVAL;
-    Map<String, String> params = Map.of("mentorName", mentorName);
-    RenderedTemplate rendered =
-        new RenderedTemplate(
-            "You are approved", "<p>Hello " + mentorName + ", you are approved.</p>");
+    var websiteLink = "https://www.womencodingcommunity.com/";
+    var mentorProfilePath = websiteLink + "mentors/";
+    var recipient = mentor.getEmail();
+    var mentorName = mentor.getFullName();
+    var templateType = TemplateType.MENTOR_APPROVAL;
+    var expectedBody =
+        "<p>Dear "
+            + mentorName
+            + ",</p>"
+            + "<p>Your profile is available here "
+            + mentorProfilePath
+            + mentor.getId()
+            + ".</p>";
+    var rendered = new RenderedTemplate("WCC: Mentor Profile Approval Confirmation", expectedBody);
 
-    when(emailTemplateService.renderTemplate(templateType, params)).thenReturn(rendered);
+    when(notificationTemplateConfig.getWebsiteLink()).thenReturn(websiteLink);
+    when(notificationTemplateConfig.getMentorProfilePath()).thenReturn("mentors/");
+
+    when(emailTemplateService.renderTemplate(eq(templateType), any(Map.class)))
+        .thenReturn(rendered);
 
     notificationService.sendMentorApprovalEmail(mentor);
 
-    verify(emailTemplateService).renderTemplate(eq(templateType), eq(params));
+    verify(emailTemplateService).renderTemplate(eq(templateType), any(Map.class));
 
     ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
     verify(emailService).sendEmail(emailCaptor.capture());
@@ -71,6 +84,9 @@ class NotificationServiceTest {
       "Given renderTemplate throws, when sendNotification,"
           + " then exception is caught and sendEmail is not called")
   void sendNotificationWhenRenderFailsThenDoesNotSendEmail() {
+    when(notificationTemplateConfig.getWebsiteLink())
+        .thenReturn("https://www.womencodingcommunity.com/");
+    when(notificationTemplateConfig.getMentorProfilePath()).thenReturn("mentors/");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new EmailSendException("Template not found"));
 
