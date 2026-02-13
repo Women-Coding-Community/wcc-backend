@@ -71,7 +71,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
     testImplementation("org.testcontainers:testcontainers:${testContainer}")
-    testImplementation("org.testcontainers:junit-jupiter:$testContainer")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter:$testContainer")
 
     testImplementation("org.testcontainers:testcontainers-postgresql:${testContainer}")
     testImplementation("org.apiguardian:apiguardian-api:1.1.2")
