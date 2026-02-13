@@ -34,7 +34,13 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build and run unit tests
-        run: ./gradlew clean test testIntegration jacocoTestReport jacocoIntegrationReport
+        run: ./gradlew test jacocoTestReport
+        env:
+          DOCKER_HOST: "unix:///var/run/docker.sock"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+
+      - name: Run Integration tests
+        run: ./gradlew testIntegration jacocoIntegrationReport
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
