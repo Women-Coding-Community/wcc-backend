@@ -73,7 +73,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:${testContainer}")
     testImplementation("org.testcontainers:junit-jupiter:$testContainer")
 
-    testImplementation("org.testcontainers:postgresql:${testContainer}")
+    testImplementation("org.testcontainers:testcontainers-postgresql:${testContainer}")
     testImplementation("org.apiguardian:apiguardian-api:1.1.2")
     testImplementation("com.icegreen:greenmail-spring:2.0.1")
     testImplementation("com.icegreen:greenmail-junit5:2.0.1")
