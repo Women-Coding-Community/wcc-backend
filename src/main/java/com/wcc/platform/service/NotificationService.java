@@ -1,7 +1,8 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.domain.email.EmailRequest;
-import com.wcc.platform.domain.template.RenderedTemplate;
+import com.wcc.platform.domain.exceptions.EmailSendException;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.template.TemplateType;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +16,33 @@ public class NotificationService {
   private final EmailTemplateService emailTemplateService;
   private final EmailService emailService;
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  public void sendNotification(
+  /**
+   * Sends a mentor approval notification email to the specified mentor.
+   *
+   * @param mentor the mentor to notify
+   */
+  public void sendMentorApprovalEmail(final Mentor mentor) {
+    sendNotification(
+        mentor.getEmail(),
+        TemplateType.MENTOR_APPROVAL,
+        Map.of("mentorName", mentor.getFullName()));
+  }
+
+  /**
+   * Renders an email template and sends a notification email to the specified recipient.
+   *
+   * @param recipientEmail the recipient's email address
+   * @param templateType the type of template to render
+   * @param templateParams the parameters to use for rendering the template
+   */
+  private void sendNotification(
       final String recipientEmail,
       final TemplateType templateType,
       final Map<String, String> templateParams) {
     try {
-      final RenderedTemplate template =
-          emailTemplateService.renderTemplate(templateType, templateParams);
+      final var template = emailTemplateService.renderTemplate(templateType, templateParams);
 
-      final EmailRequest emailRequest =
+      final var emailRequest =
           EmailRequest.builder()
               .to(recipientEmail)
               .subject(template.subject())
@@ -34,8 +52,7 @@ public class NotificationService {
 
       emailService.sendEmail(emailRequest);
       log.info("{} notification successfully sent to {}", templateType, recipientEmail);
-
-    } catch (Exception e) {
+    } catch (EmailSendException e) {
       log.error("Failed to send {} notification to {}", templateType, recipientEmail, e);
     }
   }

@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -36,7 +35,6 @@ import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -44,7 +42,6 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -533,10 +530,7 @@ class MentorshipServiceTest {
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository).updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
     verify(notificationService)
-        .sendNotification(
-            eq(activatedMentor.getEmail()),
-            eq(TemplateType.MENTOR_APPROVAL),
-            eq(Map.of("mentorName", activatedMentor.getFullName())));
+        .sendMentorApprovalEmail(activatedMentor);
   }
 
   @Test
@@ -553,7 +547,7 @@ class MentorshipServiceTest {
     assertThrows(MentorStatusException.class, () -> service.activateMentor(mentorId));
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
-    verify(notificationService, never()).sendNotification(any(), any(), any());
+    verify(notificationService, never()).sendMentorApprovalEmail(any());
   }
 
   @Test
@@ -565,6 +559,6 @@ class MentorshipServiceTest {
     assertThrows(MemberNotFoundException.class, () -> service.activateMentor(mentorId));
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
-    verify(notificationService, never()).sendNotification(any(), any(), any());
+    verify(notificationService, never()).sendMentorApprovalEmail(any());
   }
 }

@@ -14,7 +14,6 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
-import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -24,7 +23,6 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,7 @@ import org.springframework.stereotype.Service;
 /** Platform Service. */
 @Slf4j
 @Service
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyMethods"})
+@SuppressWarnings("PMD.ExcessiveImports")
 public class MentorshipService {
 
   /* package */ static final MentorshipCycle CYCLE_CLOSED = new MentorshipCycle(null, null);
@@ -258,7 +256,7 @@ public class MentorshipService {
     final Mentor activatedMentor =
         mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
 
-    sendApprovalEmail(activatedMentor);
+    notificationService.sendMentorApprovalEmail(activatedMentor);
 
     return activatedMentor;
   }
@@ -273,20 +271,6 @@ public class MentorshipService {
         throw new IllegalArgumentException(
             "Long-term mentorship requires at least 2 hours per mentee.");
       }
-    }
-  }
-
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void sendApprovalEmail(final Mentor mentor) {
-    try {
-      notificationService.sendNotification(
-          mentor.getEmail(),
-          TemplateType.MENTOR_APPROVAL,
-          Map.of("mentorName", mentor.getFullName()));
-      log.info("Approval email sent successfully to mentor: {}", mentor.getEmail());
-    } catch (Exception e) {
-      log.error(
-          "Failed to send approval email to mentor {}: {}", mentor.getEmail(), e.getMessage(), e);
     }
   }
 }
