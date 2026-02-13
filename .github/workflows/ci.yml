@@ -36,13 +36,8 @@ jobs:
       - name: Build and run unit tests
         run: ./gradlew test jacocoTestReport
         env:
+          DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
-
-      - name: Re-enable Docker socket for Testcontainers
-        run: |
-          sudo mkdir -p /etc/docker
-          echo '{"features":{"containerd-snapshotter":false}}' | sudo tee /etc/docker/daemon.json
-          sudo systemctl restart docker
 
       - name: Check Docker version
         run: docker version
@@ -50,6 +45,7 @@ jobs:
       - name: Run Integration tests
         run: ./gradlew testIntegration jacocoIntegrationReport
         env:
+          DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Pmd Check
