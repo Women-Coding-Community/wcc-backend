@@ -41,6 +41,10 @@ mentorship:
   validation:
     enabled: false
 
+notification:
+  website-link: https://www.womencodingcommunity.com/
+  mentor-link-base: https://www.womencodingcommunity.com/mentors?keywords=
+
 logging:
   level:
     org:

@@ -4,7 +4,6 @@ import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
 import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
-import static com.wcc.platform.factories.SetupMentorFactories.createMentorRequestTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
 import static org.hamcrest.Matchers.hasSize;
@@ -69,7 +68,7 @@ class MentorshipControllerTest {
 
   @Test
   void testCreateMentorReturnsCreated() throws Exception {
-    var mentorRequestBody = createMentorRequestTest("Jane");
+    var mentorRequestBody = createMentorDtoTest(1L, MemberType.MENTOR);
     var returnedMentor = createMentorTest("Jane");
     when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor);
 

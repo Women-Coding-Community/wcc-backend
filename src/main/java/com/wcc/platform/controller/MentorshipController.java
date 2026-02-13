@@ -1,6 +1,5 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.platform.mentorship.CreateMentorRequest;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -55,16 +54,16 @@ public class MentorshipController {
    * API to create mentor. Profile status is set by the server to PENDING; any value in the request
    * is ignored.
    *
-   * @param createMentorRequest mentor registration payload for request
+   * @param mentorDto mentor registration payload for request
    * @return Created mentor with status PENDING.
    */
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Mentor> createMentor(
-      @Valid @RequestBody final CreateMentorRequest createMentorRequest) {
+      @Valid @RequestBody final MentorDto mentorDto) {
     return new ResponseEntity<>(
-        mentorshipService.create(createMentorRequest.toMentor()), HttpStatus.CREATED);
+        mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
   }
 
   /**

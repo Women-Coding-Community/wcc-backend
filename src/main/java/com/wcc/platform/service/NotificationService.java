@@ -5,6 +5,8 @@ import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.template.TemplateType;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +26,18 @@ public class NotificationService {
    * @param mentor the mentor to notify
    */
   public void sendMentorApprovalEmail(final Mentor mentor) {
-    String websiteLink = notificationTemplateConfig.getWebsiteLink();
-    String mentorLink =
-        websiteLink + notificationTemplateConfig.getMentorProfilePath() + mentor.getId();
+    String websiteBaseUrl = notificationTemplateConfig.getWebsiteLink();
+    String mentorBaseUrl =
+        notificationTemplateConfig.getMentorLinkBase()
+            + URLEncoder.encode(mentor.getFullName(), StandardCharsets.UTF_8);
+
     sendNotification(
         mentor.getEmail(),
         TemplateType.MENTOR_APPROVAL,
         Map.of(
             "mentorName", mentor.getFullName(),
-            "websiteLink", websiteLink,
-            "mentorLink", mentorLink));
+            "websiteLink", websiteBaseUrl,
+            "mentorLink", mentorBaseUrl));
   }
 
   /**

@@ -60,7 +60,7 @@ class NotificationServiceTest {
     var rendered = new RenderedTemplate("WCC: Mentor Profile Approval Confirmation", expectedBody);
 
     when(notificationTemplateConfig.getWebsiteLink()).thenReturn(websiteLink);
-    when(notificationTemplateConfig.getMentorProfilePath()).thenReturn("mentors/");
+    when(notificationTemplateConfig.getMentorLinkBase()).thenReturn("mentors/");
 
     when(emailTemplateService.renderTemplate(eq(templateType), any(Map.class)))
         .thenReturn(rendered);
@@ -86,7 +86,7 @@ class NotificationServiceTest {
   void sendNotificationWhenRenderFailsThenDoesNotSendEmail() {
     when(notificationTemplateConfig.getWebsiteLink())
         .thenReturn("https://www.womencodingcommunity.com/");
-    when(notificationTemplateConfig.getMentorProfilePath()).thenReturn("mentors/");
+    when(notificationTemplateConfig.getMentorLinkBase()).thenReturn("mentors/");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new EmailSendException("Template not found"));
 

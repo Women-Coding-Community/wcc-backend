@@ -9,6 +9,7 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.resource.MentorResource;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +31,8 @@ import org.springframework.util.CollectionUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
+  /** Read-only for API: client cannot set this; server always uses PENDING on create/retains on update. */
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private ProfileStatus profileStatus;
   private Skills skills;
   private List<String> spokenLanguages;
@@ -130,7 +133,7 @@ public class MentorDto extends MemberDto {
         .city(mergeString(this.getCity(), mentor.getCity()))
         .companyName(mergeString(this.getCompanyName(), mentor.getCompanyName()))
         .country(mergeNullable(this.getCountry(), mentor.getCountry()))
-        .profileStatus(mergeNullable(this.getProfileStatus(), mentor.getProfileStatus()))
+        .profileStatus(mentor.getProfileStatus())
         .bio(mergeString(this.getBio(), mentor.getBio()))
         .skills(mergeNullable(this.getSkills(), mentor.getSkills()))
         .menteeSection(mergeNullable(this.getMenteeSection(), mentor.getMenteeSection()))
