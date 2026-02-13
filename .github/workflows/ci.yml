@@ -36,7 +36,6 @@ jobs:
       - name: Build and run unit tests
         run: ./gradlew test jacocoTestReport
         env:
-          DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Check Docker version
