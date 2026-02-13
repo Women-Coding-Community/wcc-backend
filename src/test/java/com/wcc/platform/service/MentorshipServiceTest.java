@@ -54,7 +54,7 @@ class MentorshipServiceTest {
 
   @BeforeEach
   void setUp() {
-    final Integer daysOpen = 10;
+    final int daysOpen = 10;
     MockitoAnnotations.openMocks(this);
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
@@ -121,8 +121,6 @@ class MentorshipServiceTest {
     when(mentor.getId()).thenReturn(2L);
     when(mentor.getMenteeSection()).thenReturn(menteeSection);
     when(menteeSection.longTerm()).thenReturn(null);
-    // when(menteeSection.adHoc()).thenReturn(List.of(new MentorMonthAvailability(Month.JANUARY,
-    // 1)));
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 

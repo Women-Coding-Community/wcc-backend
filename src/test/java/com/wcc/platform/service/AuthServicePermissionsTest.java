@@ -1,9 +1,11 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.domain.auth.Permission.MENTEE_APPROVE;
+import static com.wcc.platform.domain.auth.Permission.MENTOR_APPROVE;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.platform.member.Member;
@@ -61,10 +63,9 @@ class AuthServicePermissionsTest {
     when(authentication.isAuthenticated()).thenReturn(true);
     when(authentication.getPrincipal()).thenReturn(user);
 
-    // ADMIN role has MENTOR_APPROVE permission
-    authService.requireAnyPermission(Permission.MENTOR_APPROVE);
+    authService.requireAnyPermission(MENTOR_APPROVE);
 
-    // Should not throw
+    assertDoesNotThrow(() -> authService.requireAnyPermission(MENTOR_APPROVE));
   }
 
   @Test
@@ -88,9 +89,7 @@ class AuthServicePermissionsTest {
     when(authentication.isAuthenticated()).thenReturn(true);
     when(authentication.getPrincipal()).thenReturn(user);
 
-    assertThrows(
-        ForbiddenException.class,
-        () -> authService.requireAnyPermission(Permission.MENTOR_APPROVE));
+    assertThrows(ForbiddenException.class, () -> authService.requireAnyPermission(MENTOR_APPROVE));
   }
 
   @Test
@@ -114,10 +113,9 @@ class AuthServicePermissionsTest {
     when(authentication.isAuthenticated()).thenReturn(true);
     when(authentication.getPrincipal()).thenReturn(user);
 
-    // ADMIN has both permissions
-    authService.requireAllPermissions(Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE);
+    authService.requireAllPermissions(MENTOR_APPROVE, MENTEE_APPROVE);
 
-    // Should not throw
+    assertDoesNotThrow(() -> authService.requireAllPermissions(MENTOR_APPROVE, MENTEE_APPROVE));
   }
 
   @Test
@@ -143,9 +141,7 @@ class AuthServicePermissionsTest {
 
     assertThrows(
         ForbiddenException.class,
-        () ->
-            authService.requireAllPermissions(
-                Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE));
+        () -> authService.requireAllPermissions(MENTOR_APPROVE, MENTEE_APPROVE));
   }
 
   @Test
