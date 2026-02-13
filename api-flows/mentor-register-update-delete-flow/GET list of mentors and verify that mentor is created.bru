@@ -10,10 +10,6 @@ get {
   auth: apikey
 }
 
-headers {
-  X-API-KEY: {{apiKey}}
-}
-
 auth:apikey {
   key: X-API-KEY
   value: {{apiKey}}
@@ -25,15 +21,24 @@ tests {
       expect(res.getStatus()).to.equal(200);
   });
   
-  const mentors = res.body;
-  const userId = Number(bru.getEnvVar("userId"));
-  
-  expect(mentors, "Mentors response should be an array").to.be.an('array');
-  
-  const mentor = mentors.find(m => m.id === userId);
-  
-  expect(
-    mentor,
-    `Mentor with id ${userId} should be present in mentors list`
-  ).to.exist;
+  test("Response body should contain fiedls from payload", function() {
+    const mentors = res.body;
+    const rawUserId = bru.getEnvVar("userId");
+    const userId = rawUserId ? parseInt(rawUserId, 10) : null;
+    const mentorPayload = bru.getEnvVar("mentor_payload") || {};
+    let mentor = null;
+    if (userId) {
+      mentor = mentors.find(m => Number(m.id) === userId);
+    }
+    expect(mentors, 'mentors response should be an array').to.be.an('array');
+    expect(mentor, `created mentor with id ${userId} should be present`).to.exist;
+    expect(mentor.fullName).to.equal(mentorPayload.fullName);
+    expect(mentor.position).to.equal(mentorPayload.position);
+    expect(mentor.email).to.equal(mentorPayload.email);
+    expect(mentor.slackDisplayName).to.equal(mentorPayload.slackDisplayName);
+    expect(mentor.city).to.equal(mentorPayload.city);
+    expect(mentor.companyName).to.equal(mentorPayload.companyName);
+    expect(mentor.profileStatus).to.equal(mentorPayload.profileStatus);
+    expect(mentor).to.have.property("skills");
+  }) 
 }
