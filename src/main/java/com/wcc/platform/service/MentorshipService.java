@@ -1,6 +1,5 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
@@ -17,7 +16,6 @@ import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
-import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.utils.FiltersUtil;
 import java.time.LocalDate;
 import java.time.Month;
@@ -44,7 +42,7 @@ public class MentorshipService {
 
   private final MentorRepository mentorRepository;
   private final MemberRepository memberRepository;
-  private final UserAccountRepository userRepository;
+  private final UserProvisionService userProvisionService;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
 
@@ -52,12 +50,12 @@ public class MentorshipService {
   public MentorshipService(
       final MentorRepository mentorRepository,
       final MemberRepository memberRepository,
-      final UserAccountRepository userRepository,
+      final UserProvisionService userProvisionService,
       final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
     this.mentorRepository = mentorRepository;
     this.memberRepository = memberRepository;
-    this.userRepository = userRepository;
+    this.userProvisionService = userProvisionService;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
   }
@@ -105,21 +103,8 @@ public class MentorshipService {
     validateMentorCommitment(mentor);
     final var mentorCreated = mentorRepository.create(mentor);
     if (mentorRepository.findById(mentorCreated.getId()).isPresent()) {
-      userRepository
-          .findByEmail(mentorCreated.getEmail())
-          .ifPresentOrElse(
-              userAccount -> {
-                if (userAccount.getRoles().stream()
-                    .noneMatch(roleType -> roleType.equals(RoleType.MENTOR))) {
-                  userAccount.getRoles().add(RoleType.MENTOR);
-                }
-              },
-              () -> {
-                final var mentorUserAccount =
-                    new UserAccount(
-                        mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
-                userRepository.create(mentorUserAccount);
-              });
+      userProvisionService.provisionUserRole(
+          mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
     }
     return mentorCreated;
   }

@@ -1,7 +1,6 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.MentorshipConfig;
-import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
@@ -18,7 +17,6 @@ import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
-import com.wcc.platform.repository.UserAccountRepository;
 import java.time.Year;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +35,7 @@ public class MenteeService {
   private final MenteeApplicationRepository registrationsRepo;
   private final MenteeRepository menteeRepository;
   private final MemberRepository memberRepository;
-  private final UserAccountRepository userAccountRepository;
+  private final UserProvisionService userProvisionService;
 
   /**
    * Return all stored mentees.
@@ -111,19 +109,7 @@ public class MenteeService {
       menteeToBeSaved.setMemberTypes(List.of(MemberType.MENTEE));
       mentee = menteeRepository.create(menteeToBeSaved);
     }
-    userAccountRepository
-        .findByEmail(mentee.getEmail())
-        .ifPresentOrElse(
-            userAccount -> {
-              if (userAccount.getRoles().stream().noneMatch(role -> role.equals(RoleType.MENTEE))) {
-                userAccount.getRoles().add(RoleType.MENTEE);
-              }
-            },
-            () -> {
-              final var menteeUserAccount =
-                  new UserAccount(mentee.getId(), mentee.getEmail(), RoleType.MENTEE);
-              userAccountRepository.create(menteeUserAccount);
-            });
+    userProvisionService.provisionUserRole(mentee.getId(), mentee.getEmail(), RoleType.MENTEE);
 
     final var registration = menteeRegistration.withMentee(mentee);
     return createMenteeRegistrations(registration, cycle);

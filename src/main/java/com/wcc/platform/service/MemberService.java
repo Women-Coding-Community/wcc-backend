@@ -28,6 +28,7 @@ public class MemberService {
   private final MemberRepository memberRepository;
   private final UserAccountRepository userRepository;
   private final MemberProfilePictureRepository profilePicRepo;
+  private final UserProvisionService userProvisionService;
 
   /** Save Member into storage. */
   public Member createMember(final Member member) {
@@ -38,9 +39,8 @@ public class MemberService {
     }
     final var createdMember = memberRepository.create(member);
     if (!userExists) {
-      final var memberUserAccount =
-          new UserAccount(createdMember.getId(), createdMember.getEmail(), RoleType.VIEWER);
-      userRepository.create(memberUserAccount);
+      userProvisionService.provisionUserRole(
+          createdMember.getId(), createdMember.getEmail(), RoleType.VIEWER);
     }
     return createdMember;
   }

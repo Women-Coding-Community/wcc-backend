@@ -5,9 +5,9 @@ import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAcc
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,7 +30,6 @@ import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
-import com.wcc.platform.repository.UserAccountRepository;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +48,7 @@ class MenteeServiceTest {
   @Mock private MentorshipConfig.Validation validation;
   @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MemberRepository memberRepository;
-  @Mock private UserAccountRepository userAccountRepository;
+  @Mock private UserProvisionService userProvisionService;
 
   private MenteeService menteeService;
   private Mentee mentee;
@@ -68,7 +67,7 @@ class MenteeServiceTest {
             applicationRepository,
             menteeRepository,
             memberRepository,
-            userAccountRepository);
+            userProvisionService);
     mentee = createMenteeTest();
     userAccount = createUserAccountTest(mentee);
   }
@@ -98,12 +97,11 @@ class MenteeServiceTest {
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
-    when(userAccountRepository.findByEmail(mentee.getEmail())).thenReturn(Optional.of(userAccount));
 
     Mentee result = menteeService.saveRegistration(registration);
 
     assertEquals(mentee, result);
-    assertTrue(userAccount.getRoles().contains(RoleType.MENTEE));
+    verify(userProvisionService).provisionUserRole(any(), anyString(), eq(RoleType.MENTEE));
     verify(memberRepository).findByEmail(anyString());
     verify(menteeRepository).create(any(Mentee.class));
     verify(applicationRepository).create(any());
@@ -232,7 +230,7 @@ class MenteeServiceTest {
     when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
-    Member result = menteeService.saveRegistration(registration);
+    Mentee result = menteeService.saveRegistration(registration);
 
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));
@@ -261,7 +259,7 @@ class MenteeServiceTest {
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
 
-    Member result = menteeService.saveRegistration(registration);
+    Mentee result = menteeService.saveRegistration(registration);
 
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));

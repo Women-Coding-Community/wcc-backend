@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,7 +34,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -42,6 +42,7 @@ class MemberServiceTest {
   @Mock private MemberRepository memberRepository;
   @Mock private UserAccountRepository userRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
+  @Mock private UserProvisionService userProvisionService;
 
   private MemberService service;
 
@@ -53,7 +54,8 @@ class MemberServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    service = new MemberService(memberRepository, userRepository, profilePicRepo);
+    service =
+        new MemberService(memberRepository, userRepository, profilePicRepo, userProvisionService);
     member = createMemberTest(MemberType.DIRECTOR);
     memberDto = createMemberDtoTest(MemberType.DIRECTOR);
     updatedMember = createUpdatedMemberTest(member, memberDto);
@@ -68,18 +70,12 @@ class MemberServiceTest {
     when(userRepository.findByEmail(member.getEmail())).thenReturn(Optional.empty());
     when(memberRepository.create(any(Member.class))).thenReturn(member);
 
-    ArgumentCaptor<UserAccount> userAccountCaptor = ArgumentCaptor.forClass(UserAccount.class);
-
     Member result = service.createMember(member);
 
     assertEquals(member, result);
     verify(memberRepository).create(member);
-    verify(userRepository).create(userAccountCaptor.capture());
-
-    UserAccount capturedUserAccount = userAccountCaptor.getValue();
-    assertEquals(result.getId(), capturedUserAccount.getMemberId());
-    assertEquals(result.getEmail(), capturedUserAccount.getEmail());
-    assertTrue(capturedUserAccount.getRoles().contains(RoleType.VIEWER));
+    verify(userProvisionService)
+        .provisionUserRole(eq(result.getId()), eq(result.getEmail()), eq(RoleType.VIEWER));
   }
 
   @Test

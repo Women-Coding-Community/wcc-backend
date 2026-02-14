@@ -10,10 +10,11 @@ import static com.wcc.platform.service.MentorshipService.CYCLE_CLOSED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -40,7 +41,6 @@ import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
-import com.wcc.platform.repository.UserAccountRepository;
 import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -59,7 +59,7 @@ class MentorshipServiceTest {
 
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
-  @Mock private UserAccountRepository userAccountRepository;
+  @Mock private UserProvisionService userProvisionService;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   private Integer daysOpen = 10;
   private Mentor mentor;
@@ -84,7 +84,7 @@ class MentorshipServiceTest {
             new MentorshipService(
                 mentorRepository,
                 memberRepository,
-                userAccountRepository,
+                userProvisionService,
                 profilePicRepo,
                 daysOpen));
   }
@@ -109,13 +109,13 @@ class MentorshipServiceTest {
     when(mentor.getMenteeSection()).thenReturn(menteeSection);
     when(mentor.getEmail()).thenReturn("newmentor@test.com");
     when(memberRepository.findByEmail("newmentor@test.com")).thenReturn(Optional.empty());
-    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty(), Optional.of(mentor));
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
     var result = service.create(mentor);
 
     assertEquals(mentor, result);
-    assertTrue(userAccount.getRoles().contains(RoleType.MENTOR));
+    verify(userProvisionService).provisionUserRole(anyLong(), anyString(), eq(RoleType.MENTOR));
     verify(memberRepository).findByEmail("newmentor@test.com");
     verify(mentorRepository).create(mentor);
   }
@@ -266,7 +266,7 @@ class MentorshipServiceTest {
             new MentorshipService(
                 mentorRepository,
                 memberRepository,
-                userAccountRepository,
+                userProvisionService,
                 profilePicRepo,
                 daysOpen));
     var may2 = ZonedDateTime.of(2025, 5, 2, 9, 0, 0, 0, ZoneId.of("Europe/London"));
@@ -285,7 +285,7 @@ class MentorshipServiceTest {
             new MentorshipService(
                 mentorRepository,
                 memberRepository,
-                userAccountRepository,
+                userProvisionService,
                 profilePicRepo,
                 daysOpen));
 
@@ -510,8 +510,7 @@ class MentorshipServiceTest {
         .thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
     when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
     when(mentor.getBio()).thenReturn("Bio");
-    when(mentor.getMenteeSection())
-        .thenReturn(mock(com.wcc.platform.domain.cms.pages.mentorship.MenteeSection.class));
+    when(mentor.getMenteeSection()).thenReturn(mock(MenteeSection.class));
     when(mentor.getFeedbackSection()).thenReturn(null);
     when(mentor.getResources()).thenReturn(null);
 
@@ -528,5 +527,8 @@ class MentorshipServiceTest {
     assertThat(result.getId()).isEqualTo(999L);
     verify(memberRepository).findByEmail("existing@test.com");
     verify(mentorRepository).create(any(Mentor.class));
+    // When using existing member branch, provisioning should NOT be called (service returns early)
+    verify(userProvisionService, never())
+        .provisionUserRole(anyLong(), anyString(), eq(RoleType.MENTOR));
   }
 }
