@@ -36,6 +36,15 @@ public class EmailTemplateService {
     return RenderedTemplate.from(replacePlaceholders(template, params));
   }
 
+  public Template getEmailTemplate(
+      final TemplateType templateType, final Map<String, String> params) {
+    final Template template = loadTemplate(templateType);
+    validateTemplateParams(template, params);
+    final Template emailTemplate = replacePlaceholders(template, params);
+
+    return emailTemplate;
+  }
+
   private Template loadTemplate(final TemplateType templateType) {
     try {
       final ClassPathResource resource =

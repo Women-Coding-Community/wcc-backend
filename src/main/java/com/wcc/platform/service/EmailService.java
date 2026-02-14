@@ -2,7 +2,10 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
+import com.wcc.platform.domain.template.RenderedTemplate;
+import com.wcc.platform.domain.template.Template;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import com.wcc.platform.service.EmailTemplateService;
 
 /**
  * Service class for handling email operations. Provides functionality to send emails using
@@ -28,6 +32,7 @@ public class EmailService {
   private final JavaMailSender javaMailSender;
 
   private final String fromEmail;
+  private final EmailTemplateService emailTemplateService = null;
 
   @Autowired
   public EmailService(
@@ -83,6 +88,23 @@ public class EmailService {
       log.error("Failed to send email to: {}. Error: {}", emailRequest.getTo(), e.getMessage(), e);
       throw new EmailSendException("Failed to send email to: " + emailRequest.getTo(), e);
     }
+  }
+
+  public EmailResponse sendTemplateEmail(TemplateEmailRequest request) {
+
+    final Template renderedRequest = emailTemplateService.getEmailTemplate(
+            request.getTemplateType(), request.getTemplateParameters());
+
+    EmailRequest emailRequest = EmailRequest.builder()
+        .to(request.getTo())
+        .cc(request.getCc())
+        .bcc(request.getBcc())
+        .subject(renderedRequest.subject())
+        .body(renderedRequest.body())
+        .html(true)
+        .replyTo(request.getReplyTo())
+        .build();
+    return sendEmail(emailRequest);
   }
 
   /**
