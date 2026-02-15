@@ -34,7 +34,7 @@ class AuthorizationAspectTest {
   }
 
   @Test
-  void testCheckPermission_andOperator_allPermissionsGranted_proceedsWithMethod() throws Throwable {
+  void testCheckPermissionAndOperatorAllPermissionsGrantedProceedsWithMethod() throws Throwable {
     Permission[] permissions = {Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE};
     when(requiresPermission.value()).thenReturn(permissions);
     when(requiresPermission.operator()).thenReturn(LogicalOperator.AND);
@@ -48,8 +48,7 @@ class AuthorizationAspectTest {
   }
 
   @Test
-  void testCheckPermission_andOperator_permissionDenied_throwsForbiddenException()
-      throws Throwable {
+  void testCheckPermissionAndOperatorPermissionDeniedThrowsForbiddenException() throws Throwable {
     Permission[] permissions = {Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE};
     when(requiresPermission.value()).thenReturn(permissions);
     when(requiresPermission.operator()).thenReturn(LogicalOperator.AND);
@@ -66,7 +65,7 @@ class AuthorizationAspectTest {
   }
 
   @Test
-  void testCheckPermission_orOperator_anyPermissionGranted_proceedsWithMethod() throws Throwable {
+  void testCheckPermissionOrOperatorAnyPermissionGrantedProceedsWithMethod() throws Throwable {
     Permission[] permissions = {Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE};
     when(requiresPermission.value()).thenReturn(permissions);
     when(requiresPermission.operator()).thenReturn(LogicalOperator.OR);
@@ -80,7 +79,7 @@ class AuthorizationAspectTest {
   }
 
   @Test
-  void testCheckRole_singleRoleGranted_proceedsWithMethod() throws Throwable {
+  void testCheckRoleSingleRoleGrantedProceedsWithMethod() throws Throwable {
     RoleType[] roles = {RoleType.ADMIN};
     when(requiresRole.value()).thenReturn(roles);
     when(joinPoint.proceed()).thenReturn("success");
@@ -93,7 +92,7 @@ class AuthorizationAspectTest {
   }
 
   @Test
-  void testCheckRole_multipleRolesGranted_proceedsWithMethod() throws Throwable {
+  void testCheckRoleMultipleRolesGrantedProceedsWithMethod() throws Throwable {
     RoleType[] roles = {RoleType.ADMIN, RoleType.LEADER, RoleType.MENTOR};
     when(requiresRole.value()).thenReturn(roles);
     when(joinPoint.proceed()).thenReturn("success");
@@ -106,7 +105,7 @@ class AuthorizationAspectTest {
   }
 
   @Test
-  void testCheckRole_roleDenied_throwsForbiddenException() throws Throwable {
+  void testCheckRoleRoleDeniedThrowsForbiddenException() throws Throwable {
     RoleType[] roles = {RoleType.ADMIN};
     when(requiresRole.value()).thenReturn(roles);
     doThrow(new ForbiddenException("Role not granted")).when(authService).requireRole(roles);
