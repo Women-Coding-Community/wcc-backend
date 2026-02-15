@@ -61,8 +61,13 @@ public class SetupMentorFactories {
             .skills(
                 new Skills(
                     2,
-                    List.of(new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER), new TechnicalAreaProficiency(TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
-                    List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
+                    List.of(
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                    List.of(
+                        new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
             .menteeSection(
                 new MenteeSection(
@@ -101,7 +106,10 @@ public class SetupMentorFactories {
         .skills(
             new Skills(
                 2,
-                List.of(new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER), new TechnicalAreaProficiency(TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                    new TechnicalAreaProficiency(
+                        TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
                 List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
@@ -136,7 +144,10 @@ public class SetupMentorFactories {
         .skills(
             new Skills(
                 2,
-                List.of(new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER), new TechnicalAreaProficiency(TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                    new TechnicalAreaProficiency(
+                        TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
                 List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
@@ -158,14 +169,17 @@ public class SetupMentorFactories {
         .images(mentorDto.getImages())
         .pronouns(null)
         .pronounCategory(null)
-        .profileStatus(ProfileStatus.PENDING)
+        .profileStatus(mentorDto.getProfileStatus())
         .bio("Mentor bio UPDATED")
         .spokenLanguages(List.of("English", "German"))
         .skills(
             new Skills(
                 5,
-                List.of(new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER)),
-                List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER), new LanguageProficiency(Languages.C_LANGUAGE, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER),
+                    new LanguageProficiency(Languages.C_LANGUAGE, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(
@@ -193,14 +207,17 @@ public class SetupMentorFactories {
         .images(mentorDto.getImages())
         .pronouns(null)
         .pronounCategory(null)
-        .profileStatus(ProfileStatus.PENDING)
+        .profileStatus(mentorDto.getProfileStatus())
         .bio("Mentor bio UPDATED")
         .spokenLanguages(List.of("English", "German"))
         .skills(
             new Skills(
                 5,
-                List.of(new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER)),
-                List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER), new LanguageProficiency(Languages.C_LANGUAGE, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER),
+                    new LanguageProficiency(Languages.C_LANGUAGE, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(

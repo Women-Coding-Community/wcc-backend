@@ -3,6 +3,7 @@ package com.wcc.platform.domain.platform.mentorship;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.exceptions.InvalidMentorException;
@@ -31,10 +32,15 @@ import org.springframework.util.CollectionUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
-  /** Read-only for API: client cannot set this;
-   * server always uses PENDING on create/retains on update. */
+  /**
+   * Read-only for API: client cannot set this; server always uses PENDING on create/retains on
+   * update.
+   */
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private ProfileStatus profileStatus;
+
+  private String pronouns;
+  private PronounCategory pronounCategory;
   private Skills skills;
   private List<String> spokenLanguages;
   private String bio;
@@ -56,6 +62,8 @@ public class MentorDto extends MemberDto {
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
+      final String pronouns,
+      final PronounCategory pronounCategory,
       final ProfileStatus profileStatus,
       @NotEmpty final List<String> spokenLanguages,
       @NotBlank final String bio,
@@ -75,8 +83,8 @@ public class MentorDto extends MemberDto {
         null, // TODO to be fixe this will cleanup member types
         images,
         network,
-        null,
-        null);
+        pronouns,
+        pronounCategory);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
@@ -84,6 +92,8 @@ public class MentorDto extends MemberDto {
     this.feedbackSection = feedbackSection;
     this.resources = resources;
     this.profileStatus = profileStatus;
+    this.pronouns = pronouns;
+    this.pronounCategory = pronounCategory;
   }
 
   /**
@@ -105,6 +115,8 @@ public class MentorDto extends MemberDto {
         .images(getImages() != null ? getImages() : List.of())
         .network(getNetwork() != null ? getNetwork() : List.of())
         .profileStatus(ProfileStatus.PENDING)
+        .pronouns(getPronouns())
+        .pronounCategory(getPronounCategory())
         .spokenLanguages(getSpokenLanguages() != null ? getSpokenLanguages() : List.of())
         .bio(getBio())
         .skills(getSkills())
@@ -137,6 +149,8 @@ public class MentorDto extends MemberDto {
         .companyName(mergeString(this.getCompanyName(), mentor.getCompanyName()))
         .country(mergeNullable(this.getCountry(), mentor.getCountry()))
         .profileStatus(mentor.getProfileStatus())
+        .pronouns(mergeString(this.getPronouns(), mentor.getPronouns()))
+        .pronounCategory(mergeNullable(this.getPronounCategory(), mentor.getPronounCategory()))
         .bio(mergeString(this.getBio(), mentor.getBio()))
         .skills(mergeNullable(this.getSkills(), mentor.getSkills()))
         .menteeSection(mergeNullable(this.getMenteeSection(), mentor.getMenteeSection()))

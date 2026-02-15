@@ -129,6 +129,8 @@ public class Mentor extends Member {
         .images(mentor.getImages())
         .network(mentor.getNetwork())
         .profileStatus(mentor.getProfileStatus())
+        .pronouns(mentor.getPronouns())
+        .pronounCategory(mentor.getPronounCategory())
         .spokenLanguages(mentor.getSpokenLanguages())
         .bio(mentor.getBio())
         .skills(mentor.getSkills())

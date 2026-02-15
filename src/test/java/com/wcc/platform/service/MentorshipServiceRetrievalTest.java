@@ -213,4 +213,32 @@ class MentorshipServiceRetrievalTest {
     var mentorDtoResult = result.getFirst();
     assertThat(mentorDtoResult.getImages()).isNullOrEmpty();
   }
+
+  @Test
+  @DisplayName(
+      "Given mentor with pronouns, when enriched with profile picture, then pronouns should be preserved")
+  void shouldPreservePronounsWhenEnrichedWithProfilePicture() {
+    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
+    var dto = mock(MentorDto.class);
+    when(mentor.toDto()).thenReturn(dto);
+    when(dto.getId()).thenReturn(1L);
+    when(dto.getPronouns()).thenReturn("they/them");
+    when(dto.getPronounCategory())
+        .thenReturn(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL);
+    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
+
+    var resource = createResourceTest();
+    var profilePicture = createMemberProfilePictureTest(1L).toBuilder().resource(resource).build();
+    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.of(profilePicture));
+
+    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+
+    var result = service.getAllMentors();
+
+    assertThat(result).hasSize(1);
+    var mentorDtoResult = result.getFirst();
+    assertThat(mentorDtoResult.getPronouns()).isEqualTo("they/them");
+    assertThat(mentorDtoResult.getPronounCategory())
+        .isEqualTo(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL);
+  }
 }

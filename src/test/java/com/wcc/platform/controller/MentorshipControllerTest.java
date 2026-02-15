@@ -20,6 +20,7 @@ import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
@@ -191,8 +192,30 @@ class MentorshipControllerTest {
   void testAcceptMentorReturnsOk() throws Exception {
     Long mentorId = 1L;
     Mentor pendingMentor = createMentorTest("Jane");
-    Mentor acceptedMentor =
-        createUpdatedMentorTest(pendingMentor, createMentorDtoTest(mentorId, MemberType.MENTOR));
+    MentorDto mentorDto = createMentorDtoTest(mentorId, MemberType.MENTOR);
+    // Explicitly set the status to ACTIVE in the DTO, which is now respected by the factory
+    mentorDto =
+        MentorDto.mentorDtoBuilder()
+            .id(mentorDto.getId())
+            .fullName(mentorDto.getFullName())
+            .position(mentorDto.getPosition())
+            .email(mentorDto.getEmail())
+            .slackDisplayName(mentorDto.getSlackDisplayName())
+            .country(mentorDto.getCountry())
+            .city(mentorDto.getCity())
+            .companyName(mentorDto.getCompanyName())
+            .images(mentorDto.getImages())
+            .network(mentorDto.getNetwork())
+            .profileStatus(ProfileStatus.ACTIVE)
+            .spokenLanguages(mentorDto.getSpokenLanguages())
+            .bio(mentorDto.getBio())
+            .skills(mentorDto.getSkills())
+            .menteeSection(mentorDto.getMenteeSection())
+            .feedbackSection(mentorDto.getFeedbackSection())
+            .resources(mentorDto.getResources())
+            .build();
+
+    Mentor acceptedMentor = createUpdatedMentorTest(pendingMentor, mentorDto);
 
     when(mentorshipService.activateMentor(eq(mentorId))).thenReturn(acceptedMentor);
 
