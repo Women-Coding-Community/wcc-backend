@@ -10,9 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit tests for MenteeRegistration deserialization with custom YearDeserializer.
- */
+/** Unit tests for MenteeRegistration deserialization with custom YearDeserializer. */
 class MenteeRegistrationDeserializationTest {
 
   private ObjectMapper objectMapper;
@@ -23,9 +21,11 @@ class MenteeRegistrationDeserializationTest {
   }
 
   @Test
-  @DisplayName("Given JSON with cycleYear as integer, when deserializing, then should parse Year correctly")
+  @DisplayName(
+      "Given JSON with cycleYear as integer, when deserializing, then should parse Year correctly")
   void shouldDeserializeCycleYearFromInteger() throws Exception {
-    String json = """
+    String json =
+        """
         {
           "mentee": {
             "fullName": "John Doe",
@@ -68,9 +68,11 @@ class MenteeRegistrationDeserializationTest {
   }
 
   @Test
-  @DisplayName("Given JSON with cycleYear as string, when deserializing, then should parse Year correctly")
+  @DisplayName(
+      "Given JSON with cycleYear as string, when deserializing, then should parse Year correctly")
   void shouldDeserializeCycleYearFromString() throws Exception {
-    String json = """
+    String json =
+        """
         {
           "mentee": {
             "fullName": "Jane Doe",

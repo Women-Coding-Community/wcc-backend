@@ -4,12 +4,15 @@ import static java.util.Locale.ENGLISH;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -21,8 +24,17 @@ public final class FiltersUtil {
 
   /** Returns a MentorFilterSection object with all mentorship types and skills. */
   public static MentorFilterSection mentorshipAllFilters() {
-    final var skills =
-        new Skills(0, TechnicalArea.getAll(), Languages.getAll(), MentorshipFocusArea.getAll());
+    final var areas =
+        TechnicalArea.getAll().stream()
+            .map(area -> new TechnicalAreaProficiency(area, ProficiencyLevel.BEGINNER))
+            .toList();
+
+    final var languages =
+        Languages.getAll().stream()
+            .map(lang -> new LanguageProficiency(lang, ProficiencyLevel.BEGINNER))
+            .toList();
+
+    final var skills = new Skills(0, areas, languages, MentorshipFocusArea.getAll());
 
     return MentorFilterSection.builder()
         .types(List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC))
@@ -113,7 +125,9 @@ public final class FiltersUtil {
     final var skills = mentorDto.getSkills();
     return skills != null
         && skills.areas() != null
-        && skills.areas().stream().anyMatch(wantedAreas::contains);
+        && skills.areas().stream()
+            .map(TechnicalAreaProficiency::technicalArea)
+            .anyMatch(wantedAreas::contains);
   }
 
   private static boolean matchesLanguages(
@@ -125,7 +139,9 @@ public final class FiltersUtil {
     final var skills = mentorDto.getSkills();
     return skills != null
         && skills.languages() != null
-        && skills.languages().stream().anyMatch(wantedLangs::contains);
+        && skills.languages().stream()
+            .map(LanguageProficiency::language)
+            .anyMatch(wantedLangs::contains);
   }
 
   private static boolean matchesFocus(

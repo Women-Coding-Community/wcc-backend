@@ -60,11 +60,21 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
             "link": "https://www.linkedin.com/in/sonali-goel-6b611522/"
           }
         ],
+        "pronouns": "she/her",
+        "pronounCategory": "FEMININE",
         "profileStatus": "ACTIVE",
         "skills": {
           "yearsExperience": 10,
-          "areas": [ "BACKEND", "DISTRIBUTED_SYSTEMS", "Machine Learning"],
-          "languages": [ "java", "javascript", "Python", "C++" ],
+          "areas": [
+            { "technicalArea": "BACKEND", "proficiencyLevel": "EXPERT" },
+            { "technicalArea": "DISTRIBUTED_SYSTEMS", "proficiencyLevel": "ADVANCED" }
+          ],
+          "languages": [
+            { "language": "JAVA", "proficiencyLevel": "EXPERT" },
+            { "language": "JAVASCRIPT", "proficiencyLevel": "ADVANCED" },
+            { "language": "PYTHON", "proficiencyLevel": "INTERMEDIATE" },
+            { "language": "C_PLUS_PLUS", "proficiencyLevel": "INTERMEDIATE" }
+          ],
           "mentorshipFocus": [
             "Switch career to IT",
             "Grow from beginner to mid-level",
@@ -111,11 +121,21 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
           { "type": "LINKEDIN", "link": "https://www.linkedin.com/in/dricazenck/" },
           { "type": "GITHUB", "link": "https://github.com/dricazenck" }
         ],
+        "pronouns": "she/her",
+        "pronounCategory": "FEMININE",
         "profileStatus": "ACTIVE",
         "skills": {
           "yearsExperience": 15,
-          "areas": [ "BACKEND", "FULLSTACK", "DISTRIBUTED_SYSTEMS" ],
-          "languages": [ "java", "javascript", "Kotlin" ],
+          "areas": [
+            { "technicalArea": "BACKEND", "proficiencyLevel": "EXPERT" },
+            { "technicalArea": "FULLSTACK", "proficiencyLevel": "ADVANCED" },
+            { "technicalArea": "DISTRIBUTED_SYSTEMS", "proficiencyLevel": "ADVANCED" }
+          ],
+          "languages": [
+            { "language": "JAVA", "proficiencyLevel": "EXPERT" },
+            { "language": "JAVASCRIPT", "proficiencyLevel": "ADVANCED" },
+            { "language": "KOTLIN", "proficiencyLevel": "INTERMEDIATE" }
+          ],
           "mentorshipFocus": [
             "Grow from beginner to mid-level",
             "Grow beyond senior level"
@@ -172,6 +192,8 @@ curl -s -X POST "${API_BASE}/platform/v1/members" \
   "memberTypes": [
     "MEMBER", "VOLUNTEER", "COLLABORATOR"
   ],
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
   "network": [
     {
       "type": "LINKEDIN",
@@ -211,11 +233,20 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
               "link": "https://github.com/mariasilva"
             }
           ],
+          "pronouns": "she/her",
+          "pronounCategory": "FEMININE",
           "profileStatus": "ACTIVE",
           "skills": {
             "yearsExperience": 2,
-            "areas": [ "BACKEND", "FULLSTACK" ],
-            "languages": [ "Java", "Javascript", "Python" ],
+            "areas": [
+              { "technicalArea": "BACKEND", "proficiencyLevel": "INTERMEDIATE" },
+              { "technicalArea": "FULLSTACK", "proficiencyLevel": "BEGINNER" }
+            ],
+            "languages": [
+              { "language": "JAVA", "proficiencyLevel": "INTERMEDIATE" },
+              { "language": "JAVASCRIPT", "proficiencyLevel": "INTERMEDIATE" },
+              { "language": "PYTHON", "proficiencyLevel": "BEGINNER" }
+            ],
             "mentorshipFocus": [
               "Grow from beginner to mid-level",
               "Grow beyond senior level"
@@ -266,11 +297,19 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                     "link": "https://www.linkedin.com/in/emma-schmidt/"
                   }
                 ],
+                "pronouns": "she/her",
+                "pronounCategory": "FEMININE",
                 "profileStatus": "ACTIVE",
                 "skills": {
                   "yearsExperience": 3,
-                  "areas": [ "FRONTEND", "DEVOPS" ],
-                  "languages": [ "Javascript", "Python" ],
+                  "areas": [
+                    { "technicalArea": "FRONTEND", "proficiencyLevel": "ADVANCED" },
+                    { "technicalArea": "DEVOPS", "proficiencyLevel": "BEGINNER" }
+                  ],
+                  "languages": [
+                    { "language": "JAVASCRIPT", "proficiencyLevel": "ADVANCED" },
+                    { "language": "PYTHON", "proficiencyLevel": "INTERMEDIATE" }
+                  ],
                   "mentorshipFocus": [
                     "Switch career to IT",
                     "Grow from beginner to mid-level"

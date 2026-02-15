@@ -70,7 +70,9 @@ public class MentorDto extends MemberDto {
         companyName,
         null, // TODO to be fixe this will cleanup member types
         images,
-        network);
+        network,
+        null,
+        null);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;

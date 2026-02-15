@@ -87,7 +87,7 @@ class MentorshipControllerTest {
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(APPLICATION_JSON)
                 .content(
-                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[\"BACKEND\"],\"languages\":[\"JAVASCRIPT\"],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
+                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[{\"technicalArea\":\"BACKEND\",\"proficiencyLevel\":\"BEGINNER\"}],\"languages\":[{\"language\":\"JAVASCRIPT\",\"proficiencyLevel\":\"BEGINNER\"}],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
                         + currentYear
                         + "\",\"applications\":[{\"menteeId\":null,\"mentorId\":1,\"priorityOrder\":1}]}"))
         .andExpect(status().isCreated())
@@ -139,16 +139,18 @@ class MentorshipControllerTest {
             jsonPath("$.skills.yearsExperience", is(updatedMentor.getSkills().yearsExperience())))
         .andExpect(jsonPath("$.skills.areas", hasSize(1)))
         .andExpect(
-            jsonPath("$.skills.areas[0]", is(updatedMentor.getSkills().areas().get(0).toString())))
+            jsonPath(
+                "$.skills.areas[0].technicalArea",
+                is(updatedMentor.getSkills().areas().get(0).technicalArea().toString())))
         .andExpect(jsonPath("$.skills.languages", hasSize(2)))
         .andExpect(
             jsonPath(
-                "$.skills.languages[0]",
-                is(updatedMentor.getSkills().languages().get(0).toString())))
+                "$.skills.languages[0].language",
+                is(updatedMentor.getSkills().languages().get(0).language().toString())))
         .andExpect(
             jsonPath(
-                "$.skills.languages[1]",
-                is(updatedMentor.getSkills().languages().get(1).toString())))
+                "$.skills.languages[1].language",
+                is(updatedMentor.getSkills().languages().get(1).language().toString())))
         .andExpect(
             jsonPath(
                 "$.menteeSection.idealMentee", is(updatedMentor.getMenteeSection().idealMentee())))

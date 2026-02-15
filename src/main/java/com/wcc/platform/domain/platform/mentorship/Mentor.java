@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.platform.SocialNetwork;
@@ -52,6 +53,8 @@ public class Mentor extends Member {
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
+      final String pronouns,
+      final PronounCategory pronounCategory,
       final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
       final String bio,
@@ -70,7 +73,9 @@ public class Mentor extends Member {
         companyName,
         Collections.singletonList(MemberType.MENTOR),
         images,
-        network);
+        network,
+        pronouns,
+        pronounCategory);
 
     this.profileStatus = profileStatus;
     this.skills = skills;

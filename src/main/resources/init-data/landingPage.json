@@ -3,6 +3,13 @@
   "heroSection": {
     "title": "Women Coding Community",
     "subtitle": "Empowering Women in Their Tech Careers",
+    "images": [
+      {
+        "path": "https://drive.google.com/uc?id=1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF&export=download",
+        "alt": "There are two women talking during a productive mentoring session",
+        "type": "desktop"
+      }
+    ],
     "customStyle": {
       "backgroundColour": {
         "color": "primary",
@@ -11,36 +18,29 @@
           "value": 90
         }
       }
-    },
-    "images": [
-      {
-        "path": "https://drive.google.com/uc?id=1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF&export=download",
-        "alt": "There are two women talking during a productive mentoring session",
-        "type": "desktop"
-      }
-    ]
+    }
   },
   "fullBannerSection": {
     "title": "Become a Mentor",
     "description": "Ready to empower and be empowered in tech? Become a mentor! Expand your network, give back, share expertise, and discover new perspectives.\n",
+    "link": {
+      "label": "Join as a mentor",
+      "uri": "/mentorship/mentor-registration"
+    },
     "images": [
       {
         "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
         "alt": "There are two women talking during a productive mentoring session",
         "type": "desktop"
       }
-    ],
-    "link": {
-      "label": "Join as a mentor",
-      "uri": "/mentorship/mentor-registration"
-    }
+    ]
   },
   "programmes": {
     "title": "Opportunities and Programmes",
     "description": "Join our community and unlock endless opportunities. Network, find mentors, and access leadership programs. Whether you're aiming to enhance your skills, grow your professional network, or advance your career, we have what you need. We offer a wide range of opportunities to help you achieve your goals.",
     "items": [
       {
-        "name": "Mentorship",
+        "name": "Others",
         "link": {
           "label": "mentorship link",
           "uri": "/mentorship"
@@ -48,7 +48,7 @@
         "icon": "diversity_2"
       },
       {
-        "name": "Online and in-person Events",
+        "name": "Others",
         "link": {
           "label": "events",
           "uri": "/events"
@@ -63,14 +63,14 @@
         "icon": "book_2"
       },
       {
-        "name": "CV clinic",
+        "name": "CV Clinic",
         "link": {
           "uri": "/programmes/cv-clinic"
         },
         "icon": "work"
       },
       {
-        "name": "Mock interviews",
+        "name": "Others",
         "link": {
           "uri": "/programmes/interviews"
         },
@@ -89,11 +89,19 @@
     "title": "Announcements",
     "items": [
       {
-        "topics": "BOOK CLUB",
+        "title": "Book Club: The Pragmatic Programmer",
+        "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!",
         "eventType": "IN_PERSON",
         "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
         "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
-        "title": "Book Club: The Pragmatic Programmer",
+        "topics": "Book Club",
+        "images": [
+          {
+            "path": "https://secure.meetupstatic.com/photos/event/7/d/a/6/600_520892166.webp",
+            "alt": "Pragmatic programmer book cover",
+            "type": "desktop"
+          }
+        ],
         "speakerProfile": {
           "label": "Jane Doe Profile",
           "uri": "https://linkedin"
@@ -102,14 +110,6 @@
           "label": "Host Profile",
           "uri": "https://linkedin.host"
         },
-        "description": "Join us for a discussion of this essential guide to writing clear and maintainable code!",
-        "images": [
-          {
-            "path": "https://secure.meetupstatic.com/photos/event/7/d/a/6/600_520892166.webp",
-            "alt": "Pragmatic programmer book cover",
-            "type": "desktop"
-          }
-        ],
         "eventLink": {
           "label": "Go to Meetup Event",
           "uri": "https://meetup.com/event1"
@@ -125,20 +125,12 @@
     },
     "items": [
       {
-        "topics": "BOOK CLUB",
+        "title": "Kedro: An open-source project for building maintainable data science pipelines",
+        "description": "Kedro is an open-source Python framework to create reproducible, maintainable, and modular data science code. It uses software engineering best practices to help you build production-ready data science pipelines. This presentation introduces Kedro's core features, including its application of software engineering principles to machine learning projects, seamless transition from development to production, and standardisation for efficient collaboration. We'll also look at a demo of what a Kedro project looks like through our visualisation plugin Kedro-Viz.",
         "eventType": "IN_PERSON",
         "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
         "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
-        "title": "Kedro: An open-source project for building maintainable data science pipelines",
-        "hostProfile": {
-          "label": "Silke Nodwell",
-          "uri": "https://www.linkedin.com/in/silke-nodwell-763681172/"
-        },
-        "speakerProfile": {
-          "label": "Merel Theisen",
-          "uri": "https://www.linkedin.com/in/merel-theisen/"
-        },
-        "description": "Kedro is an open-source Python framework to create reproducible, maintainable, and modular data science code. It uses software engineering best practices to help you build production-ready data science pipelines. This presentation introduces Kedro's core features, including its application of software engineering principles to machine learning projects, seamless transition from development to production, and standardisation for efficient collaboration. We'll also look at a demo of what a Kedro project looks like through our visualisation plugin Kedro-Viz.",
+        "topics": "Book Club",
         "images": [
           {
             "path": "https://secure.meetupstatic.com/photos/event/6/4/c/e/600_522085806.webp",
@@ -146,26 +138,26 @@
             "type": "desktop"
           }
         ],
+        "speakerProfile": {
+          "label": "Merel Theisen",
+          "uri": "https://www.linkedin.com/in/merel-theisen/"
+        },
+        "hostProfile": {
+          "label": "Silke Nodwell",
+          "uri": "https://www.linkedin.com/in/silke-nodwell-763681172/"
+        },
         "eventLink": {
           "label": "Send us a report on Github",
           "uri": "https://github.com/Women-Coding-Community/wcc-frontend/issues"
         }
       },
       {
-        "topics": "TECH_TALK",
+        "title": "Coding Club with Women Coding Community",
+        "description": "We are excited to announce our next Coding Club session as a part of Women Coding Community!",
         "eventType": "ONLINE_MEETUP",
         "startDate": "Sun, Jun 30, 2024, 8:00 PM CEST",
         "endDate": "Sun, Jun 30, 2024, 9:30 PM CEST",
-        "title": "Coding Club with Women Coding Community",
-        "hostProfile": {
-          "label": "Irina Kamalova",
-          "uri": "https://linkedin.com/in/irina-kamalova"
-        },
-        "speakerProfile": {
-          "label": "Nonna Shakhova",
-          "uri": "https://www.linkedin.com/in/nonna-shakhova"
-        },
-        "description": "We are excited to announce our next Coding Club session as a part of Women Coding Community!",
+        "topics": "Tech Talk",
         "images": [
           {
             "path": "https://secure.meetupstatic.com/photos/event/1/7/b/a/600_522666074.webp?w=750",
@@ -173,6 +165,14 @@
             "type": "desktop"
           }
         ],
+        "speakerProfile": {
+          "label": "Nonna Shakhova",
+          "uri": "https://www.linkedin.com/in/nonna-shakhova"
+        },
+        "hostProfile": {
+          "label": "Irina Kamalova",
+          "uri": "https://linkedin.com/in/irina-kamalova"
+        },
         "eventLink": {
           "label": "Go to Meetup event",
           "uri": "https://www.meetup.com/women-coding-community/events/302579035/"
@@ -187,25 +187,25 @@
         "name": "Lucy Mentor",
         "feedback": "It is great to be able to share my experience as a newbie in Tech with someone that has more years and experience in the industry. It has definitely made me feel more comfortable with been a completely beginner again and confident that, if a put the hours in, one day it will be pay off.",
         "memberType": "Mentor",
-        "year": "2024"
+        "year": 2024
       },
       {
         "name": "Ana Mentee",
         "feedback": "I am exciting with this mentorship program. This is really help me to pursue my goals. I got encouragement, insights, knowledge from my mentor that makes me back on the track and focus to what I have now, upgrade it, then reach out my goals.",
         "memberType": "Mentee",
-        "year": "2024"
+        "year": 2024
       },
       {
         "name": "Jane from SurrealDB",
         "feedback": "Add text ...",
         "memberType": "Partner",
-        "year": "2025"
+        "year": 2025
       },
       {
         "name": "JetBrains",
         "feedback": "Add text ...",
         "memberType": "Partner",
-        "year": "2025"
+        "year": 2025
       }
     ]
   },
@@ -213,8 +213,8 @@
     "title": "Do you want to volunteer with us?",
     "description": "Empowering women in their tech careers through education, mentorship, community building, and career services is our mission. We provide workshops and events, connect members with industry mentors, foster a supportive community through meetups and conferences, and raise awareness for more inclusive industry practices.",
     "link": {
-      "uri": "/about-us/volunteer",
-      "title": "Learn more about volunteering"
+      "title": "Learn more about volunteering",
+      "uri": "/about-us/volunteer"
     },
     "images": [
       {
