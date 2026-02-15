@@ -198,6 +198,8 @@ public class MentorshipService {
         .companyName(dto.getCompanyName())
         .images(List.of(profilePicture.get()))
         .network(dto.getNetwork())
+        .pronouns(dto.getPronouns())
+        .pronounCategory(dto.getPronounCategory())
         .skills(dto.getSkills())
         .spokenLanguages(dto.getSpokenLanguages())
         .bio(dto.getBio())

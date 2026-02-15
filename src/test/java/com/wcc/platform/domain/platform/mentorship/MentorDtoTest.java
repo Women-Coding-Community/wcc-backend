@@ -10,6 +10,7 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -45,11 +46,19 @@ class MentorDtoTest {
             .profileStatus(ProfileStatus.PENDING)
             .spokenLanguages(List.of("English", "Spanish"))
             .bio("Original bio")
+            .pronouns(null)
+            .pronounCategory(null)
             .skills(
                 new Skills(
                     10,
-                    List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                    List.of(Languages.JAVA, Languages.PYTHON),
+                    List.of(
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                    List.of(
+                        new LanguageProficiency(Languages.JAVA, ProficiencyLevel.BEGINNER),
+                        new LanguageProficiency(Languages.PYTHON, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
             .menteeSection(
                 new MenteeSection(
@@ -87,8 +96,9 @@ class MentorDtoTest {
             .profileStatus(ProfileStatus.PENDING)
             .build();
     var expected =
-        "MentorDto(profileStatus=PENDING, skills=null, spokenLanguages=[English, Spanish], bio=bio info, menteeSection=null,"
-            + " feedbackSection=null, resources=null)";
+        "MentorDto(profileStatus=PENDING, pronouns=null, pronounCategory=null, "
+            + "skills=null, spokenLanguages=[English, Spanish], bio=bio info,"
+            + " menteeSection=null, feedbackSection=null, resources=null)";
 
     assertEquals(expected, mentor.toString());
   }
@@ -112,8 +122,11 @@ class MentorDtoTest {
             .skills(
                 new Skills(
                     5,
-                    List.of(TechnicalArea.FULLSTACK),
-                    List.of(Languages.JAVASCRIPT),
+                    List.of(
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.FULLSTACK, ProficiencyLevel.BEGINNER)),
+                    List.of(
+                        new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
             .menteeSection(
                 new MenteeSection(
@@ -244,8 +257,10 @@ class MentorDtoTest {
     Skills newSkills =
         new Skills(
             15,
-            List.of(TechnicalArea.DISTRIBUTED_SYSTEMS),
-            List.of(Languages.KOTLIN),
+            List.of(
+                new TechnicalAreaProficiency(
+                    TechnicalArea.DISTRIBUTED_SYSTEMS, ProficiencyLevel.BEGINNER)),
+            List.of(new LanguageProficiency(Languages.KOTLIN, ProficiencyLevel.BEGINNER)),
             List.of(MentorshipFocusArea.GROW_BEYOND_SENIOR));
 
     mentorDto = MentorDto.mentorDtoBuilder().skills(newSkills).build();
@@ -254,9 +269,10 @@ class MentorDtoTest {
 
     assertEquals(15, result.getSkills().yearsExperience());
     assertEquals(1, result.getSkills().areas().size());
-    assertEquals(TechnicalArea.DISTRIBUTED_SYSTEMS, result.getSkills().areas().getFirst());
+    assertEquals(
+        TechnicalArea.DISTRIBUTED_SYSTEMS, result.getSkills().areas().getFirst().technicalArea());
     assertEquals(1, result.getSkills().languages().size());
-    assertEquals(Languages.KOTLIN, result.getSkills().languages().getFirst());
+    assertEquals(Languages.KOTLIN, result.getSkills().languages().getFirst().language());
   }
 
   @Test

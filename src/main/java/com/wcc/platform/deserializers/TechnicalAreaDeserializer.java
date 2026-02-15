@@ -22,10 +22,11 @@ public class TechnicalAreaDeserializer extends JsonDeserializer<TechnicalArea> {
                   area.getDescription().equalsIgnoreCase(value)
                       || area.name().equalsIgnoreCase(value))
           .findFirst()
-          .orElse(TechnicalArea.OTHER);
+          .orElseThrow(
+              () -> new IllegalArgumentException("Invalid technical area with value: " + value));
 
     } catch (IOException ex) {
-      return TechnicalArea.OTHER;
+      throw new IllegalArgumentException("Invalid Technical area {}" + ex.getMessage(), ex);
     }
   }
 }

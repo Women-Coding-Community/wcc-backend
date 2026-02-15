@@ -1,20 +1,24 @@
 package com.wcc.platform.controller.mentorship;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORS;
+import static com.wcc.platform.domain.cms.attributes.ProficiencyLevel.BEGINNER;
+import static com.wcc.platform.domain.cms.attributes.TechnicalArea.BACKEND;
+import static com.wcc.platform.domain.cms.attributes.TechnicalArea.FRONTEND;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorsPageTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
-import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.repository.MentorRepository;
@@ -84,8 +88,8 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
             .skills(
                 new Skills(
                     5,
-                    List.of(TechnicalArea.BACKEND),
-                    List.of(Languages.JAVA),
+                    List.of(new TechnicalAreaProficiency(BACKEND, BEGINNER)),
+                    List.of(new LanguageProficiency(Languages.JAVA, BEGINNER)),
                     List.of(MentorshipFocusArea.GROW_MID_TO_SENIOR)))
             .menteeSection(
                 new MenteeSection(
@@ -118,8 +122,8 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
             .skills(
                 new Skills(
                     1,
-                    List.of(TechnicalArea.FRONTEND),
-                    List.of(Languages.JAVASCRIPT),
+                    List.of(new TechnicalAreaProficiency(FRONTEND, BEGINNER)),
+                    List.of(new LanguageProficiency(Languages.JAVA, BEGINNER)),
                     List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT)))
             .menteeSection(
                 new MenteeSection("ideal", "additional", new LongTermMentorship(1, 4), List.of()))

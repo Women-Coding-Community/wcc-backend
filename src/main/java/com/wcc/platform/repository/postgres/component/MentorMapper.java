@@ -42,6 +42,8 @@ public class MentorMapper {
                 .slackDisplayName(member.getSlackDisplayName())
                 .country(member.getCountry())
                 .city(member.getCity())
+                .pronouns(member.getPronouns())
+                .pronounCategory(member.getPronounCategory())
                 .companyName(member.getCompanyName())
                 .images(member.getImages())
                 .network(member.getNetwork()));

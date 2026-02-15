@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -16,10 +17,12 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.factories.SetupMentorshipPagesFactories;
@@ -166,7 +169,9 @@ class MentorshipServiceFilteringTest {
         .profileStatus(ProfileStatus.ACTIVE)
         .bio("Bio for " + name)
         .spokenLanguages(List.of("English"))
-        .skills(new Skills(years, areas, languages, focus))
+        .pronouns(null)
+        .pronounCategory(null)
+        .skills(new Skills(years, areas.stream().map(area -> new TechnicalAreaProficiency(area, ProficiencyLevel.BEGINNER)).toList(), languages.stream().map(lang -> new LanguageProficiency(lang, ProficiencyLevel.BEGINNER)).toList(), focus))
         .menteeSection(new MenteeSection("ideal", "additional", longTerm, adHoc))
         .build();
   }

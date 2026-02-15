@@ -7,6 +7,7 @@ import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -15,10 +16,12 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
@@ -50,14 +53,21 @@ public class SetupMentorFactories {
             .slackDisplayName(member.getSlackDisplayName())
             .country(member.getCountry())
             .images(member.getImages())
+            .pronouns(null)
+            .pronounCategory(null)
             .profileStatus(ProfileStatus.PENDING)
             .bio("Mentor bio")
             .spokenLanguages(List.of("english", "spanish", "german"))
             .skills(
                 new Skills(
                     2,
-                    List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                    List.of(Languages.JAVASCRIPT),
+                    List.of(
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                    List.of(
+                        new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
             .menteeSection(
                 new MenteeSection(
@@ -96,8 +106,11 @@ public class SetupMentorFactories {
         .skills(
             new Skills(
                 2,
-                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                List.of(Languages.JAVASCRIPT),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                    new TechnicalAreaProficiency(
+                        TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
             new MenteeSection(
@@ -131,8 +144,11 @@ public class SetupMentorFactories {
         .skills(
             new Skills(
                 2,
-                List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
-                List.of(Languages.JAVASCRIPT),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                    new TechnicalAreaProficiency(
+                        TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
             new MenteeSection(
@@ -151,14 +167,19 @@ public class SetupMentorFactories {
         .slackDisplayName(mentorDto.getSlackDisplayName())
         .country(mentorDto.getCountry())
         .images(mentorDto.getImages())
-        .profileStatus(ProfileStatus.ACTIVE)
+        .pronouns(null)
+        .pronounCategory(null)
+        .profileStatus(mentorDto.getProfileStatus())
         .bio("Mentor bio UPDATED")
         .spokenLanguages(List.of("English", "German"))
         .skills(
             new Skills(
                 5,
-                List.of(TechnicalArea.BACKEND),
-                List.of(Languages.JAVASCRIPT, Languages.C_LANGUAGE),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER),
+                    new LanguageProficiency(Languages.C_LANGUAGE, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(
@@ -184,14 +205,19 @@ public class SetupMentorFactories {
         .slackDisplayName(mentorDto.getSlackDisplayName())
         .country(mentorDto.getCountry())
         .images(mentorDto.getImages())
-        .profileStatus(ProfileStatus.ACTIVE)
+        .pronouns(null)
+        .pronounCategory(null)
+        .profileStatus(mentorDto.getProfileStatus())
         .bio("Mentor bio UPDATED")
         .spokenLanguages(List.of("English", "German"))
         .skills(
             new Skills(
                 5,
-                List.of(TechnicalArea.BACKEND),
-                List.of(Languages.JAVASCRIPT, Languages.C_LANGUAGE),
+                List.of(
+                    new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER)),
+                List.of(
+                    new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER),
+                    new LanguageProficiency(Languages.C_LANGUAGE, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(
