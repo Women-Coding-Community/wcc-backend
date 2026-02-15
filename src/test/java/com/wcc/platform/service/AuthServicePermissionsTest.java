@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import static com.wcc.platform.domain.auth.Permission.MENTEE_APPROVE;
 import static com.wcc.platform.domain.auth.Permission.MENTOR_APPROVE;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createAdminUserTest;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -47,13 +48,7 @@ class AuthServicePermissionsTest {
     Integer userId = 1;
     Long memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -74,12 +69,8 @@ class AuthServicePermissionsTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "hash", List.of(RoleType.VIEWER), false);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -97,13 +88,7 @@ class AuthServicePermissionsTest {
     Integer userId = 1;
     Long memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -124,12 +109,8 @@ class AuthServicePermissionsTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "hash", List.of(RoleType.VIEWER), false);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -149,13 +130,7 @@ class AuthServicePermissionsTest {
     Integer userId = 1;
     Long memberId = 1L;
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -174,12 +149,8 @@ class AuthServicePermissionsTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.VIEWER))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "hash", List.of(RoleType.VIEWER), false);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);
@@ -198,12 +169,8 @@ class AuthServicePermissionsTest {
     Long memberId = 1L;
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(userId)
-            .memberId(memberId)
-            .email("user@example.com")
-            .roles(List.of(RoleType.MENTOR))
-            .build();
+        new UserAccount(
+            userId, memberId, "user@example.com", "hash", List.of(RoleType.MENTOR), false);
 
     Member member = Member.builder().id(memberId).fullName("John Doe").build();
     UserAccount.User user = new UserAccount.User(userAccount, member);

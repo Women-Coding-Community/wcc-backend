@@ -1,5 +1,6 @@
 package com.wcc.platform.configuration;
 
+import static com.wcc.platform.factories.SetupUserAccountFactories.createAdminUserTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,7 +12,6 @@ import static org.mockito.Mockito.when;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,8 +54,7 @@ class TokenAuthFilterTest {
 
     when(request.getHeader("Authorization")).thenReturn(authHeader);
 
-    UserAccount mockUser =
-        UserAccount.builder().email("admin@wcc.dev").roles(List.of(RoleType.ADMIN)).build();
+    UserAccount mockUser = createAdminUserTest();
     Member member =
         Member.builder()
             .id(1L)

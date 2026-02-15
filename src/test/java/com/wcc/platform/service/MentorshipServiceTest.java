@@ -3,17 +3,21 @@ package com.wcc.platform.service;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
@@ -23,6 +27,7 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -42,11 +47,13 @@ class MentorshipServiceTest {
 
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
+  @Mock private UserProvisionService userProvisionService;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
+  private UserAccount userAccount;
   private MentorshipService service;
 
   public MentorshipServiceTest() {
@@ -60,10 +67,16 @@ class MentorshipServiceTest {
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
     updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
+    userAccount = createUserAccountTest(mentor);
     service =
         spy(
             new MentorshipService(
-                mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
+                mentorRepository,
+                memberRepository,
+                userProvisionService,
+                profilePicRepo,
+                daysOpen,
+                notificationService));
   }
 
   @Test
@@ -86,12 +99,13 @@ class MentorshipServiceTest {
     when(mentor.getMenteeSection()).thenReturn(menteeSection);
     when(mentor.getEmail()).thenReturn("newmentor@test.com");
     when(memberRepository.findByEmail("newmentor@test.com")).thenReturn(Optional.empty());
-    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty(), Optional.of(mentor));
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
     var result = service.create(mentor);
 
     assertEquals(mentor, result);
+    verify(userProvisionService).provisionUserRole(anyLong(), anyString(), eq(RoleType.MENTOR));
     verify(memberRepository).findByEmail("newmentor@test.com");
     verify(mentorRepository).create(mentor);
   }

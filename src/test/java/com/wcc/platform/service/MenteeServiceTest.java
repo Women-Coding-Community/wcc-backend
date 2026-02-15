@@ -1,15 +1,18 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.configuration.MentorshipConfig;
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
@@ -22,6 +25,7 @@ import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
@@ -37,7 +41,6 @@ import org.mockito.MockitoAnnotations;
 
 class MenteeServiceTest {
 
-  
   @Mock private MenteeApplicationRepository applicationRepository;
   @Mock private MenteeRepository menteeRepository;
   @Mock private MentorshipService mentorshipService;
@@ -45,9 +48,11 @@ class MenteeServiceTest {
   @Mock private MentorshipConfig.Validation validation;
   @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MemberRepository memberRepository;
+  @Mock private UserProvisionService userProvisionService;
 
   private MenteeService menteeService;
   private Mentee mentee;
+  private UserAccount userAccount;
 
   @BeforeEach
   void setUp() {
@@ -61,8 +66,10 @@ class MenteeServiceTest {
             cycleRepository,
             applicationRepository,
             menteeRepository,
-            memberRepository);
+            memberRepository,
+            userProvisionService);
     mentee = createMenteeTest();
+    userAccount = createUserAccountTest(mentee);
   }
 
   @Test
@@ -94,6 +101,7 @@ class MenteeServiceTest {
     Mentee result = menteeService.saveRegistration(registration);
 
     assertEquals(mentee, result);
+    verify(userProvisionService).provisionUserRole(any(), anyString(), eq(RoleType.MENTEE));
     verify(memberRepository).findByEmail(anyString());
     verify(menteeRepository).create(any(Mentee.class));
     verify(applicationRepository).create(any());
@@ -222,7 +230,7 @@ class MenteeServiceTest {
     when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
-    Member result = menteeService.saveRegistration(registration);
+    Mentee result = menteeService.saveRegistration(registration);
 
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));
@@ -251,7 +259,7 @@ class MenteeServiceTest {
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
 
-    Member result = menteeService.saveRegistration(registration);
+    Mentee result = menteeService.saveRegistration(registration);
 
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));

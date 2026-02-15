@@ -12,6 +12,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
@@ -47,6 +48,7 @@ public class MentorshipService {
 
   private final MentorRepository mentorRepository;
   private final MemberRepository memberRepository;
+  private final UserProvisionService userProvisionService;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
   private final MentorshipNotificationService notificationService;
@@ -55,11 +57,13 @@ public class MentorshipService {
   public MentorshipService(
       final MentorRepository mentorRepository,
       final MemberRepository memberRepository,
+      final UserProvisionService userProvisionService,
       final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen,
       final MentorshipNotificationService notificationService) {
     this.mentorRepository = mentorRepository;
     this.memberRepository = memberRepository;
+    this.userProvisionService = userProvisionService;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
     this.notificationService = notificationService;
@@ -106,7 +110,12 @@ public class MentorshipService {
       }
     }
     validateMentorCommitment(mentor);
-    return mentorRepository.create(mentor);
+    final var mentorCreated = mentorRepository.create(mentor);
+    if (mentorRepository.findById(mentorCreated.getId()).isPresent()) {
+      userProvisionService.provisionUserRole(
+          mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
+    }
+    return mentorCreated;
   }
 
   /**

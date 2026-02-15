@@ -7,6 +7,7 @@ import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
@@ -27,16 +28,21 @@ public class MemberService {
   private final MemberRepository memberRepository;
   private final UserAccountRepository userRepository;
   private final MemberProfilePictureRepository profilePicRepo;
+  private final UserProvisionService userProvisionService;
 
   /** Save Member into storage. */
   public Member createMember(final Member member) {
     final Optional<Member> memberOptional = emailExists(member.getEmail());
-
+    final var userExists = userRepository.findByEmail(member.getEmail()).isPresent();
     if (memberOptional.isPresent()) {
       throw new DuplicatedMemberException(member.getEmail());
     }
-
-    return memberRepository.create(member);
+    final var createdMember = memberRepository.create(member);
+    if (!userExists) {
+      userProvisionService.provisionUserRole(
+          createdMember.getId(), createdMember.getEmail(), RoleType.VIEWER);
+    }
+    return createdMember;
   }
 
   /**
@@ -117,7 +123,8 @@ public class MemberService {
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private Optional<Image> fetchProfilePicture(final Long memberId) {
     try {
-      return profilePicRepo.findByMemberId(memberId)
+      return profilePicRepo
+          .findByMemberId(memberId)
           .map(MemberProfilePicture::getResource)
           .map(this::convertResourceToImage);
     } catch (Exception e) {

@@ -63,12 +63,7 @@ public class DevAdminSeeder implements ApplicationRunner {
     final var hash = passwordEncoder.encode(seedProperties.getPassword());
 
     final UserAccount user =
-        UserAccount.builder()
-            .email(seedProperties.getEmail())
-            .passwordHash(hash)
-            .roles(List.of(RoleType.ADMIN))
-            .enabled(true)
-            .build();
+        new UserAccount(1, 1L, seedProperties.getEmail(), hash, List.of(RoleType.ADMIN), true);
     userAccountRepository.create(user);
     LOG.info(
         "Seeded default admin user: {} (roles: {})", seedProperties.getEmail(), user.getRoles());

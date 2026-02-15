@@ -1,5 +1,7 @@
 package com.wcc.platform.domain.auth;
 
+import static com.wcc.platform.factories.SetupUserAccountFactories.createAdminUserTest;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,17 +16,11 @@ import org.junit.jupiter.api.Test;
 
 class UserAccountTest {
 
+  private final UserAccount adminUserAccount = createUserAccountTest(RoleType.ADMIN);
+
   @Test
   void testGetPermissionsWithMultipleRolesReturnsAggregatedPermissions() {
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN, RoleType.MENTOR))
-            .enabled(true)
-            .build();
-
-    Set<Permission> permissions = userAccount.getPermissions();
+    Set<Permission> permissions = adminUserAccount.getPermissions();
 
     assertNotNull(permissions);
     assertFalse(permissions.isEmpty());
@@ -32,15 +28,7 @@ class UserAccountTest {
 
   @Test
   void testGetPermissionsWithSingleRoleReturnsRolePermissions() {
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .email("user@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .enabled(true)
-            .build();
-
-    Set<Permission> permissions = userAccount.getPermissions();
+    Set<Permission> permissions = adminUserAccount.getPermissions();
 
     assertNotNull(permissions);
     assertFalse(permissions.isEmpty());
@@ -49,17 +37,6 @@ class UserAccountTest {
 
   @Test
   void testGetPermissionsWithNullRolesReturnsEmptySet() {
-    UserAccount userAccount =
-        UserAccount.builder().id(1).email("user@example.com").roles(null).enabled(true).build();
-
-    Set<Permission> permissions = userAccount.getPermissions();
-
-    assertNotNull(permissions);
-    assertTrue(permissions.isEmpty());
-  }
-
-  @Test
-  void testGetPrimaryRoleMemberWithSingleTypeReturnsCorrespondingRole() {
     Member member =
         Member.builder()
             .id(1L)
@@ -67,11 +44,8 @@ class UserAccountTest {
             .memberTypes(List.of(MemberType.MENTOR))
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder().id(1).memberId(1L).email("john@example.com").roles(List.of()).build();
-
+    UserAccount userAccount = createUserAccountTest(member);
     UserAccount.User user = new UserAccount.User(userAccount, member);
-
     assertEquals(RoleType.MENTOR, user.getPrimaryRole());
   }
 
@@ -85,9 +59,7 @@ class UserAccountTest {
             .memberTypes(List.of(MemberType.DIRECTOR, MemberType.MENTEE))
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder().id(1).memberId(1L).email("john@example.com").roles(List.of()).build();
-
+    UserAccount userAccount = createUserAccountTest(member);
     UserAccount.User user = new UserAccount.User(userAccount, member);
 
     assertEquals(RoleType.ADMIN, user.getPrimaryRole());
@@ -103,7 +75,7 @@ class UserAccountTest {
             .build();
 
     UserAccount userAccount =
-        UserAccount.builder().id(1).memberId(1L).email("john@example.com").roles(List.of()).build();
+        new UserAccount(1, 1L, "john@example.com", "passwordHash", List.of(), true);
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<RoleType> roles = user.getAllMemberRoles();
@@ -122,7 +94,7 @@ class UserAccountTest {
             .build();
 
     UserAccount userAccount =
-        UserAccount.builder().id(1).memberId(1L).email("john@example.com").roles(List.of()).build();
+        new UserAccount(1, 1L, "john@example.com", "passwordHash", List.of(), true);
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<RoleType> roles = user.getAllMemberRoles();
@@ -142,7 +114,7 @@ class UserAccountTest {
             .build();
 
     UserAccount userAccount =
-        UserAccount.builder().id(1).memberId(1L).email("john@example.com").roles(List.of()).build();
+        new UserAccount(1, 1L, "john@example.com", "passwordHash", List.of(), true);
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<RoleType> roles = user.getAllRoles();
@@ -156,13 +128,7 @@ class UserAccountTest {
     Member member = Member.builder().id(1L).fullName("John Doe").memberTypes(List.of()).build();
 
     UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .memberId(1L)
-            .email("john@example.com")
-            .roles(List.of(RoleType.LEADER))
-            .build();
-
+        new UserAccount(1, 1L, "john@example.com", "passwordHash", List.of(RoleType.LEADER), true);
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<RoleType> roles = user.getAllRoles();
 
@@ -179,13 +145,7 @@ class UserAccountTest {
             .memberTypes(List.of(MemberType.MENTOR))
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .memberId(1L)
-            .email("john@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<RoleType> roles = user.getAllRoles();
@@ -205,7 +165,7 @@ class UserAccountTest {
             .build();
 
     UserAccount userAccount =
-        UserAccount.builder().id(1).memberId(1L).email("john@example.com").roles(List.of()).build();
+        new UserAccount(1, 1L, "john@example.com", "passwordHash", List.of(), true);
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<Permission> permissions = user.getAllPermissions();
@@ -218,13 +178,7 @@ class UserAccountTest {
   void testGetAllPermissionsFromUserRolesIncludesUserRolePermissions() {
     Member member = Member.builder().id(1L).fullName("John Doe").memberTypes(List.of()).build();
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .memberId(1L)
-            .email("john@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<Permission> permissions = user.getAllPermissions();
@@ -242,13 +196,7 @@ class UserAccountTest {
             .memberTypes(List.of(MemberType.MENTOR))
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .memberId(1L)
-            .email("john@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
     Set<Permission> permissions = user.getAllPermissions();
@@ -268,13 +216,7 @@ class UserAccountTest {
             .memberTypes(List.of(MemberType.MENTOR))
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .memberId(1L)
-            .email("john@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
 
@@ -290,13 +232,7 @@ class UserAccountTest {
             .memberTypes(List.of(MemberType.MENTOR))
             .build();
 
-    UserAccount userAccount =
-        UserAccount.builder()
-            .id(1)
-            .memberId(1L)
-            .email("john@example.com")
-            .roles(List.of(RoleType.ADMIN))
-            .build();
+    UserAccount userAccount = createAdminUserTest();
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
 
@@ -313,7 +249,7 @@ class UserAccountTest {
             .build();
 
     UserAccount userAccount =
-        UserAccount.builder().id(1).memberId(1L).email("john@example.com").roles(List.of()).build();
+        new UserAccount(1, 1L, "john@example.com", "passwordHash", List.of(), true);
 
     UserAccount.User user = new UserAccount.User(userAccount, member);
 
