@@ -23,10 +23,11 @@ public class ProficiencyLevelDeserializer extends JsonDeserializer<ProficiencyLe
                       || level.name().equalsIgnoreCase(value)
                       || level.getLevelId().toString().equals(value))
           .findFirst()
-          .orElse(ProficiencyLevel.UNDEFINED);
+          .orElseThrow(
+              () -> new IllegalArgumentException("Invalid Proficiency level with value: " + value));
 
     } catch (IOException ex) {
-      return ProficiencyLevel.UNDEFINED;
+      throw new IllegalArgumentException("Invalid Proficiency level {}" + ex.getMessage(), ex);
     }
   }
 }

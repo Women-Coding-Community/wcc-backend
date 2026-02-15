@@ -18,7 +18,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ProficiencyLevel {
-  UNDEFINED("N/A", 0),
   BEGINNER("Beginner", 1),
   INTERMEDIATE("Intermediate", 2),
   ADVANCED("Advanced", 3),
@@ -34,7 +33,7 @@ public enum ProficiencyLevel {
         return level;
       }
     }
-    return BEGINNER;
+    throw new IllegalArgumentException("Invalid level id: " + levelId);
   }
 
   public static List<ProficiencyLevel> getAll() {

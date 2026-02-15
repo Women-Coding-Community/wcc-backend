@@ -21,10 +21,12 @@ public class LanguageDeserializer extends JsonDeserializer<Languages> {
                   language.getName().equalsIgnoreCase(value)
                       || language.name().equalsIgnoreCase(value))
           .findFirst()
-          .orElse(Languages.OTHER);
+          .orElseThrow(
+              () ->
+                  new IllegalArgumentException("Invalid technical language with value: " + value));
 
     } catch (IOException ex) {
-      return Languages.OTHER;
+      throw new IllegalArgumentException("Invalid technical language {}" + ex.getMessage(), ex);
     }
   }
 }

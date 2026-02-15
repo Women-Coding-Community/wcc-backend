@@ -41,8 +41,7 @@ class LanguageDeserializerTest {
   void testDeserializeInvalid() throws IOException {
     when(jsonParser.getText()).thenReturn("UNDEFINED");
 
-    var response = deserializer.deserialize(jsonParser, context);
-
-    assertEquals(Languages.OTHER, response);
+    assertThrows(
+        IllegalArgumentException.class, () -> deserializer.deserialize(jsonParser, context));
   }
 }

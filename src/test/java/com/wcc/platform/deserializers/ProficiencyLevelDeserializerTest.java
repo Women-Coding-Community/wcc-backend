@@ -54,28 +54,28 @@ class ProficiencyLevelDeserializerTest {
   @Test
   void testDeserializeInvalidValueReturnsUndefined() throws IOException {
     Mockito.when(jsonParser.getText()).thenReturn("INVALID");
-    ProficiencyLevel result = deserializer.deserialize(jsonParser, context);
-    assertEquals(ProficiencyLevel.UNDEFINED, result);
+    assertThrows(
+        IllegalArgumentException.class, () -> deserializer.deserialize(jsonParser, context));
   }
 
   @Test
   void testDeserializeNullValueReturnsUndefined() throws IOException {
     Mockito.when(jsonParser.getText()).thenReturn(null);
-    ProficiencyLevel result = deserializer.deserialize(jsonParser, context);
-    assertEquals(ProficiencyLevel.UNDEFINED, result);
+    assertThrows(
+        IllegalArgumentException.class, () -> deserializer.deserialize(jsonParser, context));
   }
 
   @Test
   void testDeserializeEmptyStringReturnsUndefined() throws IOException {
     Mockito.when(jsonParser.getText()).thenReturn("");
-    ProficiencyLevel result = deserializer.deserialize(jsonParser, context);
-    assertEquals(ProficiencyLevel.UNDEFINED, result);
+    assertThrows(
+        IllegalArgumentException.class, () -> deserializer.deserialize(jsonParser, context));
   }
 
   @Test
   void testDeserializeIOExceptionReturnsUndefined() throws IOException {
     Mockito.when(jsonParser.getText()).thenThrow(new IOException("Test exception"));
-    ProficiencyLevel result = deserializer.deserialize(jsonParser, context);
-    assertEquals(ProficiencyLevel.UNDEFINED, result);
+    assertThrows(
+        IllegalArgumentException.class, () -> deserializer.deserialize(jsonParser, context));
   }
 }
