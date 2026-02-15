@@ -1,4 +1,4 @@
-MENTOR_APPROVED:
+PROFILE_APPROVED_MENTOR:
   subject: "Mentor Profile Approval Confirmation"
   body: |
     <p>Dear {{mentorName}},</p>
