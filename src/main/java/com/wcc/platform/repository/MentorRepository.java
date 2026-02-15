@@ -1,5 +1,6 @@
 package com.wcc.platform.repository;
 
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +27,11 @@ public interface MentorRepository extends CrudRepository<Mentor, Long> {
    * @return mentor's Id
    */
   Long findIdByEmail(String email);
+
+  /**
+   * Update mentor profile status.
+   *
+   * @return mentor with updated profile status
+   */
+  Mentor updateProfileStatus(Long mentorId, ProfileStatus profileStatus);
 }

@@ -6,6 +6,8 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
@@ -31,6 +33,10 @@ import org.springframework.stereotype.Service;
 /** Platform Service. */
 @Slf4j
 @Service
+@SuppressWarnings({
+  "PMD.ExcessiveImports",
+  "PMD.TooManyMethods"
+}) // TODO: https://github.com/Women-Coding-Community/wcc-backend/issues/520
 public class MentorshipService {
 
   /* package */ static final MentorshipCycle CYCLE_CLOSED = new MentorshipCycle(null, null);
@@ -45,6 +51,7 @@ public class MentorshipService {
   private final UserProvisionService userProvisionService;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
+  private final MentorshipNotificationService notificationService;
 
   @Autowired
   public MentorshipService(
@@ -52,12 +59,14 @@ public class MentorshipService {
       final MemberRepository memberRepository,
       final UserProvisionService userProvisionService,
       final MemberProfilePictureRepository profilePicRepo,
-      final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen) {
+      final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen,
+      final MentorshipNotificationService notificationService) {
     this.mentorRepository = mentorRepository;
     this.memberRepository = memberRepository;
     this.userProvisionService = userProvisionService;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
+    this.notificationService = notificationService;
   }
 
   /**
@@ -82,7 +91,7 @@ public class MentorshipService {
               .companyName(mentor.getCompanyName())
               .images(mentor.getImages())
               .network(mentor.getNetwork())
-              .profileStatus(mentor.getProfileStatus())
+              .profileStatus(ProfileStatus.PENDING)
               .skills(mentor.getSkills())
               .spokenLanguages(mentor.getSpokenLanguages())
               .bio(mentor.getBio())
@@ -189,7 +198,6 @@ public class MentorshipService {
         .companyName(dto.getCompanyName())
         .images(List.of(profilePicture.get()))
         .network(dto.getNetwork())
-        .availability(dto.getAvailability())
         .skills(dto.getSkills())
         .spokenLanguages(dto.getSpokenLanguages())
         .bio(dto.getBio())
@@ -239,6 +247,30 @@ public class MentorshipService {
     final Mentor updatedMentor = mentorDto.merge(mentor);
     validateMentorCommitment(updatedMentor);
     return mentorRepository.update(mentorId, updatedMentor);
+  }
+
+  /**
+   * Activate a pending mentor by setting their status to ACTIVE.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return mentor with active status
+   * @throws MemberNotFoundException if mentor is not found
+   * @throws MentorStatusException if mentor is already active
+   */
+  public Mentor activateMentor(final Long mentorId) {
+    final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
+    final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
+
+    if (mentor.getProfileStatus() == ProfileStatus.ACTIVE) {
+      throw new MentorStatusException("Mentor with ID " + mentorId + " is already active");
+    }
+
+    final Mentor activatedMentor =
+        mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+
+    notificationService.sendMentorApprovalEmail(activatedMentor);
+
+    return activatedMentor;
   }
 
   private void validateMentorCommitment(final Mentor mentor) {

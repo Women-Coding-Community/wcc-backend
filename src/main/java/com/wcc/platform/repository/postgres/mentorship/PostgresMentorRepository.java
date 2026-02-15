@@ -2,6 +2,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -40,6 +41,8 @@ public class PostgresMentorRepository implements MentorRepository {
           + "spoken_languages = ?, "
           + "is_available = ? "
           + "WHERE mentor_id = ?";
+  private static final String UPDATE_MENTOR_STATUS =
+      "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?";
   private static final String SQL_INSERT_MENTOR =
       "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "
           + " spoken_languages, is_available) VALUES (?, ?, ?, ?, ?, ?)";
@@ -114,6 +117,13 @@ public class PostgresMentorRepository implements MentorRepository {
     validate(mentor);
     memberMapper.updateMember(mentor, mentorId);
     updateMentor(mentor, mentorId);
+    return findById(mentorId).orElse(null);
+  }
+
+  @Override
+  @Transactional
+  public Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus) {
+    jdbc.update(UPDATE_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
     return findById(mentorId).orElse(null);
   }
 

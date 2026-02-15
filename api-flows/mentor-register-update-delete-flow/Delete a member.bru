@@ -14,12 +14,12 @@ params:path {
   memberId: {{userId}}
 }
 
-headers {
-  X-API-KEY: {{apiKey}}
-}
-
 auth:apikey {
   key: X-API-KEY
   value: {{apiKey}}
   placement: header
+}
+
+assert {
+  res.status: eq 204
 }
