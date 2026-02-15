@@ -40,7 +40,7 @@
     "description": "Join our community and unlock endless opportunities. Network, find mentors, and access leadership programs. Whether you're aiming to enhance your skills, grow your professional network, or advance your career, we have what you need. We offer a wide range of opportunities to help you achieve your goals.",
     "items": [
       {
-        "name": "Others",
+        "name": "Mentorship",
         "link": {
           "label": "mentorship link",
           "uri": "/mentorship"
@@ -48,7 +48,7 @@
         "icon": "diversity_2"
       },
       {
-        "name": "Others",
+        "name": "Online and in-person Events",
         "link": {
           "label": "events",
           "uri": "/events"
@@ -70,7 +70,7 @@
         "icon": "work"
       },
       {
-        "name": "Others",
+        "name": "Mock interview",
         "link": {
           "uri": "/programmes/interviews"
         },
