@@ -44,23 +44,22 @@ class NotificationServiceTest {
       "Given recipient, template type and params, when sendNotification,"
           + " then renders template and sends email")
   void sendNotificationRendersTemplateAndSendsEmail() {
-    var websiteLink = "https://www.womencodingcommunity.com/";
-    var mentorProfilePath = websiteLink + "mentors/";
+    var mentorProfilePath = "https://www.womencodingcommunity.com/mentors?keywords=Jane+Doe";
     var recipient = mentor.getEmail();
     var mentorName = mentor.getFullName();
-    var templateType = TemplateType.MENTOR_APPROVAL;
+    var templateType = TemplateType.PROFILE_APPROVED_MENTOR;
     var expectedBody =
         "<p>Dear "
             + mentorName
             + ",</p>"
             + "<p>Your profile is available here "
             + mentorProfilePath
-            + mentor.getId()
+            + mentorName
             + ".</p>";
-    var rendered = new RenderedTemplate("WCC: Mentor Profile Approval Confirmation", expectedBody);
+    var rendered = new RenderedTemplate("Mentor Profile Approval Confirmation", expectedBody);
 
-    when(notificationConfig.getWebsiteLink()).thenReturn(websiteLink);
-    when(notificationConfig.getMentorLinkBase()).thenReturn("mentors/");
+    when(notificationConfig.getMentorProfileUrl())
+        .thenReturn("https://www.womencodingcommunity.com/mentors?keywords=Jane+Doe");
 
     when(emailTemplateService.renderTemplate(eq(templateType), any(Map.class)))
         .thenReturn(rendered);
@@ -84,8 +83,8 @@ class NotificationServiceTest {
       "Given renderTemplate throws, when sendNotification,"
           + " then exception is caught and sendEmail is not called")
   void sendNotificationWhenRenderFailsThenDoesNotSendEmail() {
-    when(notificationConfig.getWebsiteLink()).thenReturn("https://www.womencodingcommunity.com/");
-    when(notificationConfig.getMentorLinkBase()).thenReturn("mentors/");
+    when(notificationConfig.getMentorProfileUrl())
+        .thenReturn("https://www.womencodingcommunity.com/mentors?keywords=Jane+Doe");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new EmailSendException("Template not found"));
 

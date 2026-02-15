@@ -26,18 +26,14 @@ public class NotificationService {
    * @param mentor the mentor to notify
    */
   public void sendMentorApprovalEmail(final Mentor mentor) {
-    final String websiteBaseUrl = notificationConfig.getWebsiteLink();
     final String mentorBaseUrl =
-        notificationConfig.getMentorLinkBase()
+        notificationConfig.getMentorProfileUrl()
             + URLEncoder.encode(mentor.getFullName(), StandardCharsets.UTF_8);
 
     sendNotification(
         mentor.getEmail(),
-        TemplateType.MENTOR_APPROVAL,
-        Map.of(
-            "mentorName", mentor.getFullName(),
-            "websiteLink", websiteBaseUrl,
-            "mentorLink", mentorBaseUrl));
+        TemplateType.PROFILE_APPROVED_MENTOR,
+        Map.of("mentorName", mentor.getFullName(), "mentorLink", mentorBaseUrl));
   }
 
   /**

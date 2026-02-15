@@ -10,6 +10,5 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class NotificationConfig {
-  private String websiteLink;
-  private String mentorLinkBase;
+  private String mentorProfileUrl;
 }
