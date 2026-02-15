@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "notification")
 @Getter
 @Setter
-public class NotificationTemplateConfig {
+public class NotificationConfig {
   private String websiteLink;
   private String mentorLinkBase;
 }

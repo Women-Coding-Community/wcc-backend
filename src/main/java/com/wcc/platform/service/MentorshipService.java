@@ -32,7 +32,10 @@ import org.springframework.stereotype.Service;
 /** Platform Service. */
 @Slf4j
 @Service
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({
+  "PMD.ExcessiveImports",
+  "PMD.TooManyMethods"
+}) // TODO: https://github.com/Women-Coding-Community/wcc-backend/issues/520
 public class MentorshipService {
 
   /* package */ static final MentorshipCycle CYCLE_CLOSED = new MentorshipCycle(null, null);

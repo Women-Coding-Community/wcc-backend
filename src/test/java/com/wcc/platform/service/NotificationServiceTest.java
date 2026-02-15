@@ -8,7 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.configuration.NotificationTemplateConfig;
+import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -29,7 +29,7 @@ class NotificationServiceTest {
 
   @Mock private EmailTemplateService emailTemplateService;
   @Mock private EmailService emailService;
-  @Mock private NotificationTemplateConfig notificationTemplateConfig;
+  @Mock private NotificationConfig notificationConfig;
   private Mentor mentor;
 
   @InjectMocks private NotificationService notificationService;
@@ -59,8 +59,8 @@ class NotificationServiceTest {
             + ".</p>";
     var rendered = new RenderedTemplate("WCC: Mentor Profile Approval Confirmation", expectedBody);
 
-    when(notificationTemplateConfig.getWebsiteLink()).thenReturn(websiteLink);
-    when(notificationTemplateConfig.getMentorLinkBase()).thenReturn("mentors/");
+    when(notificationConfig.getWebsiteLink()).thenReturn(websiteLink);
+    when(notificationConfig.getMentorLinkBase()).thenReturn("mentors/");
 
     when(emailTemplateService.renderTemplate(eq(templateType), any(Map.class)))
         .thenReturn(rendered);
@@ -84,9 +84,8 @@ class NotificationServiceTest {
       "Given renderTemplate throws, when sendNotification,"
           + " then exception is caught and sendEmail is not called")
   void sendNotificationWhenRenderFailsThenDoesNotSendEmail() {
-    when(notificationTemplateConfig.getWebsiteLink())
-        .thenReturn("https://www.womencodingcommunity.com/");
-    when(notificationTemplateConfig.getMentorLinkBase()).thenReturn("mentors/");
+    when(notificationConfig.getWebsiteLink()).thenReturn("https://www.womencodingcommunity.com/");
+    when(notificationConfig.getMentorLinkBase()).thenReturn("mentors/");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new EmailSendException("Template not found"));
 

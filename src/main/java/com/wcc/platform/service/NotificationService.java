@@ -1,6 +1,6 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.configuration.NotificationTemplateConfig;
+import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
   private final EmailTemplateService emailTemplateService;
   private final EmailService emailService;
-  private final NotificationTemplateConfig notificationTemplateConfig;
+  private final NotificationConfig notificationConfig;
 
   /**
    * Sends a mentor approval notification email to the specified mentor.
@@ -26,9 +26,9 @@ public class NotificationService {
    * @param mentor the mentor to notify
    */
   public void sendMentorApprovalEmail(final Mentor mentor) {
-    String websiteBaseUrl = notificationTemplateConfig.getWebsiteLink();
-    String mentorBaseUrl =
-        notificationTemplateConfig.getMentorLinkBase()
+    final String websiteBaseUrl = notificationConfig.getWebsiteLink();
+    final String mentorBaseUrl =
+        notificationConfig.getMentorLinkBase()
             + URLEncoder.encode(mentor.getFullName(), StandardCharsets.UTF_8);
 
     sendNotification(

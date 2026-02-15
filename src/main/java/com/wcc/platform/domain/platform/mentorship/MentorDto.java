@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
@@ -9,7 +10,6 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.resource.MentorResource;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +31,8 @@ import org.springframework.util.CollectionUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
-  /** Read-only for API: client cannot set this; server always uses PENDING on create/retains on update. */
+  /** Read-only for API: client cannot set this;
+   * server always uses PENDING on create/retains on update. */
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private ProfileStatus profileStatus;
   private Skills skills;
