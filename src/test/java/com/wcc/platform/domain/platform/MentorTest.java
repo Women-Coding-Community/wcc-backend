@@ -42,7 +42,7 @@ class MentorTest {
   @Test
   void testToString() {
     final var expected =
-        "Mentor(profileStatus=ACTIVE, skills=Skills[yearsExperience=2, areas=[TechnicalAreaProficiency[technicalArea=Backend, proficiencyLevel=Beginner], TechnicalAreaProficiency[technicalArea=Frontend, proficiencyLevel=Beginner]], "
+        "Mentor(profileStatus=PENDING, skills=Skills[yearsExperience=2, areas=[TechnicalAreaProficiency[technicalArea=Backend, proficiencyLevel=Beginner], TechnicalAreaProficiency[technicalArea=Frontend, proficiencyLevel=Beginner]], "
             + "languages=[LanguageProficiency[language=Javascript, proficiencyLevel=Beginner]], mentorshipFocus=[Grow from beginner to mid-level]], "
             + "spokenLanguages=[English, Spanish, German], bio=Mentor bio, "
             + "menteeSection=MenteeSection[idealMentee=ideal mentee description, "

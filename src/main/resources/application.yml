@@ -41,6 +41,9 @@ mentorship:
   validation:
     enabled: false
 
+notification:
+  mentor-profile-url: https://www.womencodingcommunity.com/mentors?keywords=
+
 logging:
   level:
     org:

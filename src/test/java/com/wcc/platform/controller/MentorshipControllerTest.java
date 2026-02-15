@@ -3,6 +3,7 @@ package com.wcc.platform.controller;
 import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
 import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
 import static org.hamcrest.Matchers.hasSize;
@@ -18,12 +19,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -64,14 +68,16 @@ class MentorshipControllerTest {
 
   @Test
   void testCreateMentorReturnsCreated() throws Exception {
-    var mentor = createMentorTest("Jane");
-    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
+    var mentorRequestBody = createMentorDtoTest(1L, MemberType.MENTOR);
+    var returnedMentor = createMentorTest("Jane");
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor);
 
     mockMvc
-        .perform(postRequest(API_MENTORS, mentor))
+        .perform(postRequest(API_MENTORS, mentorRequestBody))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(1)))
-        .andExpect(jsonPath("$.fullName", is("Jane")));
+        .andExpect(jsonPath("$.fullName", is("Jane")))
+        .andExpect(jsonPath("$.profileStatus", is("PENDING")));
   }
 
   @Test
@@ -178,6 +184,57 @@ class MentorshipControllerTest {
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(mentorDto)))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void testAcceptMentorReturnsOk() throws Exception {
+    Long mentorId = 1L;
+    Mentor pendingMentor = createMentorTest("Jane");
+    Mentor acceptedMentor =
+        createUpdatedMentorTest(pendingMentor, createMentorDtoTest(mentorId, MemberType.MENTOR));
+
+    when(mentorshipService.activateMentor(eq(mentorId))).thenReturn(acceptedMentor);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/accept")
+                .header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.fullName", is(acceptedMentor.getFullName())))
+        .andExpect(jsonPath("$.profileStatus", is("ACTIVE")));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor already accepted (ACTIVE), when accept is called again, then"
+          + " returns 409 Conflict")
+  void testAcceptAlreadyAcceptedMentorReturnsConflict() throws Exception {
+    Long mentorId = 1L;
+
+    when(mentorshipService.activateMentor(eq(mentorId)))
+        .thenThrow(new MentorStatusException("Mentor with ID " + mentorId + " is already active"));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/accept")
+                .header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message", is("Mentor with ID " + mentorId + " is already active")));
+  }
+
+  @Test
+  void testAcceptNonExistentMentorReturnsNotFound() throws Exception {
+    Long nonExistentMentorId = 999L;
+
+    when(mentorshipService.activateMentor(eq(nonExistentMentorId)))
+        .thenThrow(new MemberNotFoundException(nonExistentMentorId));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + nonExistentMentorId + "/accept")
+                .header(API_KEY_HEADER, API_KEY_VALUE))
         .andExpect(status().isNotFound());
   }
 }

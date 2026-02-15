@@ -55,7 +55,7 @@ public class SetupMentorFactories {
             .images(member.getImages())
             .pronouns(null)
             .pronounCategory(null)
-            .profileStatus(ProfileStatus.ACTIVE)
+            .profileStatus(ProfileStatus.PENDING)
             .bio("Mentor bio")
             .spokenLanguages(List.of("english", "spanish", "german"))
             .skills(
@@ -95,7 +95,7 @@ public class SetupMentorFactories {
         .companyName("Company name")
         .images(List.of(new Image("image.png", "alt image", ImageType.MOBILE)))
         .network(List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")))
-        .profileStatus(ProfileStatus.ACTIVE)
+        .profileStatus(ProfileStatus.PENDING)
         .bio("Mentor bio")
         .spokenLanguages(List.of("English"))
         .skills(
@@ -113,7 +113,7 @@ public class SetupMentorFactories {
         .build();
   }
 
-  /** Factory test to create MemberDto object with long-term and ad-hoc availability params. */
+  /** Factory test to create MentorDto object with long-term and ad-hoc availability params. */
   public static MentorDto createMentorDtoTest(
       final Long mentorId,
       final MemberType type,
@@ -140,7 +140,8 @@ public class SetupMentorFactories {
                 List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                 List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
         .menteeSection(
-            new MenteeSection("ideal mentee description", "additional", longTerm, adHocAvailability))
+            new MenteeSection(
+                "ideal mentee description", "additional", longTerm, adHocAvailability))
         .build();
   }
 
@@ -157,7 +158,7 @@ public class SetupMentorFactories {
         .images(mentorDto.getImages())
         .pronouns(null)
         .pronounCategory(null)
-        .profileStatus(ProfileStatus.ACTIVE)
+        .profileStatus(ProfileStatus.PENDING)
         .bio("Mentor bio UPDATED")
         .spokenLanguages(List.of("English", "German"))
         .skills(
@@ -192,7 +193,7 @@ public class SetupMentorFactories {
         .images(mentorDto.getImages())
         .pronouns(null)
         .pronounCategory(null)
-        .profileStatus(ProfileStatus.ACTIVE)
+        .profileStatus(ProfileStatus.PENDING)
         .bio("Mentor bio UPDATED")
         .spokenLanguages(List.of("English", "German"))
         .skills(
@@ -203,7 +204,10 @@ public class SetupMentorFactories {
                 List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
         .menteeSection(
             new MenteeSection(
-                "ideal mentee description UPDATED", "additional UPDATED", longTerm, adHocAvailability))
+                "ideal mentee description UPDATED",
+                "additional UPDATED",
+                longTerm,
+                adHocAvailability))
         .build();
   }
 

@@ -44,14 +44,17 @@ class MentorshipServiceFilteringTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
-
+  @Mock private MentorshipNotificationService notificationService;
   private MentorshipService service;
   private Mentor mentor1;
   private MentorsPage mentorsPage;
 
   @BeforeEach
   void setUp() {
-    service = spy(new MentorshipService(mentorRepository, memberRepository, profilePicRepo, 10));
+    service =
+        spy(
+            new MentorshipService(
+                mentorRepository, memberRepository, profilePicRepo, 10, notificationService));
     doReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY)).when(service).getCurrentCycle();
     mentorsPage = SetupMentorshipPagesFactories.createMentorPageTest();
     mentor1 =

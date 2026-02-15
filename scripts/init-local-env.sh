@@ -62,7 +62,6 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         ],
         "pronouns": "she/her",
         "pronounCategory": "FEMININE",
-        "profileStatus": "ACTIVE",
         "skills": {
           "yearsExperience": 10,
           "areas": [
@@ -123,7 +122,6 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         ],
         "pronouns": "she/her",
         "pronounCategory": "FEMININE",
-        "profileStatus": "ACTIVE",
         "skills": {
           "yearsExperience": 15,
           "areas": [
@@ -299,7 +297,6 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                 ],
                 "pronouns": "she/her",
                 "pronounCategory": "FEMININE",
-                "profileStatus": "ACTIVE",
                 "skills": {
                   "yearsExperience": 3,
                   "areas": [

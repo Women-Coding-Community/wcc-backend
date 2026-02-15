@@ -2035,7 +2035,7 @@
                                     ],
                                     "body": {
                                         "mode": "raw",
-                                        "raw": "{\n \"mentee\": \"<string>\",\n \"mentorshipType\": \"<string>\",\n \"cycleYear\": \"<string>\",\n \"applications\": \"<string>\"\n}",
+                                        "raw": "{\n \"mentee\": \"<string>\",\n \"mentorshipType\": \"<string>\",\n \"cycleYear\": \"<number>\",\n \"applications\": \"<string>\"\n}",
                                         "options": {
                                             "raw": {
                                                 "language": "json"
@@ -2304,7 +2304,7 @@
                                     ],
                                     "body": {
                                         "mode": "raw",
-                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"profileStatus\": \"<string>\",\n \"availability\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
+                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"profileStatus\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
                                         "options": {
                                             "raw": {
                                                 "language": "json"
@@ -2322,6 +2322,59 @@
                                             "v1",
                                             "mentors",
                                             ":mentorId"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "mentorId",
+                                                "value": "",
+                                                "description": ""
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors/:mentorId/accept",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to accept mentor registration",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors/:mentorId/accept",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors",
+                                            ":mentorId",
+                                            "accept"
                                         ],
                                         "variable": [
                                             {
