@@ -3,6 +3,8 @@ package com.wcc.platform.service;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.UserAccountRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,17 @@ public class UserProvisionService {
         .findByEmail(email)
         .ifPresentOrElse(
             userAccount -> {
-              if (userAccount.getRoles().stream().noneMatch(role -> role.equals(roleType))) {
-                userAccount.getRoles().add(roleType);
+              final List<RoleType> currentRoles =
+                  userAccount.getRoles() == null
+                      ? new ArrayList<>()
+                      : new ArrayList<>(userAccount.getRoles());
+
+              if (currentRoles.stream().noneMatch(role -> role.equals(roleType))) {
+                currentRoles.add(roleType);
+                userAccount.setRoles(currentRoles);
+                if (userAccount.getId() != null) {
+                  userAccountRepository.updateRole(userAccount.getId(), currentRoles);
+                }
               }
             },
             () -> {

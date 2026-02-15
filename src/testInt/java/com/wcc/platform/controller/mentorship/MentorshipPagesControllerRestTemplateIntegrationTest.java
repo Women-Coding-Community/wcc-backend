@@ -14,7 +14,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.factories.SetupFactories;
@@ -123,11 +122,7 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
                     List.of(Languages.JAVASCRIPT),
                     List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT)))
             .menteeSection(
-                new MenteeSection(
-                    "ideal",
-                    "additional",
-                    new LongTermMentorship(1, 4),
-                    List.of()))
+                new MenteeSection("ideal", "additional", new LongTermMentorship(1, 4), List.of()))
             .build();
 
     var persistedBob = mentorRepository.findByEmail(bob.getEmail()).orElse(null);
