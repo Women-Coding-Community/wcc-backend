@@ -39,7 +39,7 @@ class MentorshipServiceRetrievalTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
-  @Mock private MentorshipNotificationService mentorshipNotificationService;
+  @Mock private MentorshipNotificationService notificationService;
   private MentorshipService service;
 
   @BeforeEach
@@ -50,11 +50,7 @@ class MentorshipServiceRetrievalTest {
     service =
         spy(
             new MentorshipService(
-                mentorRepository,
-                memberRepository,
-                profilePicRepo,
-                daysOpen,
-                mentorshipNotificationService));
+                mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
   }
 
   @Test

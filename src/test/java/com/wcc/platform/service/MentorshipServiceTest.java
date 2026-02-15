@@ -40,11 +40,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MentorshipServiceTest {
 
-  private final Integer daysOpen = 10;
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
-  @Mock private MentorshipNotificationService mentorshipNotificationService;
+  @Mock private MentorshipNotificationService notificationService;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
@@ -64,11 +63,7 @@ class MentorshipServiceTest {
     service =
         spy(
             new MentorshipService(
-                mentorRepository,
-                memberRepository,
-                profilePicRepo,
-                daysOpen,
-                mentorshipNotificationService));
+                mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
   }
 
   @Test

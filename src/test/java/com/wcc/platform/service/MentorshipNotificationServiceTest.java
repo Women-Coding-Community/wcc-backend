@@ -32,7 +32,7 @@ class MentorshipNotificationServiceTest {
   @Mock private NotificationConfig notificationConfig;
   private Mentor mentor;
 
-  @InjectMocks private MentorshipNotificationService mentorshipNotificationService;
+  @InjectMocks private MentorshipNotificationService notificationService;
 
   @BeforeEach
   void setUp() {
@@ -64,7 +64,7 @@ class MentorshipNotificationServiceTest {
     when(emailTemplateService.renderTemplate(eq(templateType), any(Map.class)))
         .thenReturn(rendered);
 
-    mentorshipNotificationService.sendMentorApprovalEmail(mentor);
+    notificationService.sendMentorApprovalEmail(mentor);
 
     verify(emailTemplateService).renderTemplate(eq(templateType), any(Map.class));
 
@@ -88,7 +88,7 @@ class MentorshipNotificationServiceTest {
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new EmailSendException("Template not found"));
 
-    mentorshipNotificationService.sendMentorApprovalEmail(mentor);
+    notificationService.sendMentorApprovalEmail(mentor);
 
     verify(emailService, never()).sendEmail(any());
   }
