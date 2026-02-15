@@ -27,8 +27,11 @@ public enum ProgramType {
   MOCK_INTERVIEW("Mock Interview", false),
   LEETCODE("Leetcode", false),
 
+  MENTORSHIP("Mentorship", false),
+
   /** It is not a program, but an event category. */
   OTHERS("Others", true),
+  EVENTS("Online and in-person Events", true),
   TECH_TALK("Tech Talk", true);
 
   private final String description;

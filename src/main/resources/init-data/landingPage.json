@@ -3,6 +3,13 @@
   "heroSection": {
     "title": "Women Coding Community",
     "subtitle": "Empowering Women in Their Tech Careers",
+    "images": [
+      {
+        "path": "https://drive.google.com/uc?id=1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF&export=download",
+        "alt": "There are two women talking during a productive mentoring session",
+        "type": "desktop"
+      }
+    ],
     "customStyle": {
       "backgroundColour": {
         "color": "primary",
@@ -11,29 +18,22 @@
           "value": 90
         }
       }
-    },
-    "images": [
-      {
-        "path": "https://drive.google.com/uc?id=1rzQtZnlyPHxdWHI6lS8bd0UeMkJnh7HF&export=download",
-        "alt": "There are two women talking during a productive mentoring session",
-        "type": "desktop"
-      }
-    ]
+    }
   },
   "fullBannerSection": {
     "title": "Become a Mentor",
     "description": "Ready to empower and be empowered in tech? Become a mentor! Expand your network, give back, share expertise, and discover new perspectives.\n",
+    "link": {
+      "label": "Join as a mentor",
+      "uri": "/mentorship/mentor-registration"
+    },
     "images": [
       {
         "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
         "alt": "There are two women talking during a productive mentoring session",
         "type": "desktop"
       }
-    ],
-    "link": {
-      "label": "Join as a mentor",
-      "uri": "/mentorship/mentor-registration"
-    }
+    ]
   },
   "programmes": {
     "title": "Opportunities and Programmes",
@@ -63,14 +63,14 @@
         "icon": "book_2"
       },
       {
-        "name": "CV clinic",
+        "name": "CV Clinic",
         "link": {
           "uri": "/programmes/cv-clinic"
         },
         "icon": "work"
       },
       {
-        "name": "Mock interviews",
+        "name": "Mock interview",
         "link": {
           "uri": "/programmes/interviews"
         },
