@@ -49,7 +49,7 @@ public class MentorshipService {
   private final MemberRepository memberRepository;
   private final MemberProfilePictureRepository profilePicRepo;
   private final int daysCycleOpen;
-  private final NotificationService notificationService;
+  private final MentorshipNotificationService mentorshipNotificationService;
 
   @Autowired
   public MentorshipService(
@@ -57,12 +57,12 @@ public class MentorshipService {
       final MemberRepository memberRepository,
       final MemberProfilePictureRepository profilePicRepo,
       final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen,
-      final NotificationService notificationService) {
+      final MentorshipNotificationService mentorshipNotificationService) {
     this.mentorRepository = mentorRepository;
     this.memberRepository = memberRepository;
     this.profilePicRepo = profilePicRepo;
     this.daysCycleOpen = daysCycleOpen;
-    this.notificationService = notificationService;
+    this.mentorshipNotificationService = mentorshipNotificationService;
   }
 
   /**
@@ -259,7 +259,7 @@ public class MentorshipService {
     final Mentor activatedMentor =
         mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
 
-    notificationService.sendMentorApprovalEmail(activatedMentor);
+    mentorshipNotificationService.sendMentorApprovalEmail(activatedMentor);
 
     return activatedMentor;
   }

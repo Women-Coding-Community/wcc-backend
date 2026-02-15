@@ -25,14 +25,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class NotificationServiceTest {
+class MentorshipNotificationServiceTest {
 
   @Mock private EmailTemplateService emailTemplateService;
   @Mock private EmailService emailService;
   @Mock private NotificationConfig notificationConfig;
   private Mentor mentor;
 
-  @InjectMocks private NotificationService notificationService;
+  @InjectMocks private MentorshipNotificationService mentorshipNotificationService;
 
   @BeforeEach
   void setUp() {
@@ -64,7 +64,7 @@ class NotificationServiceTest {
     when(emailTemplateService.renderTemplate(eq(templateType), any(Map.class)))
         .thenReturn(rendered);
 
-    notificationService.sendMentorApprovalEmail(mentor);
+    mentorshipNotificationService.sendMentorApprovalEmail(mentor);
 
     verify(emailTemplateService).renderTemplate(eq(templateType), any(Map.class));
 
@@ -88,7 +88,7 @@ class NotificationServiceTest {
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new EmailSendException("Template not found"));
 
-    notificationService.sendMentorApprovalEmail(mentor);
+    mentorshipNotificationService.sendMentorApprovalEmail(mentor);
 
     verify(emailService, never()).sendEmail(any());
   }

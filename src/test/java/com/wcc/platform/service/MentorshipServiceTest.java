@@ -44,7 +44,7 @@ class MentorshipServiceTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
-  @Mock private NotificationService notificationService;
+  @Mock private MentorshipNotificationService mentorshipNotificationService;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
@@ -64,7 +64,11 @@ class MentorshipServiceTest {
     service =
         spy(
             new MentorshipService(
-                mentorRepository, memberRepository, profilePicRepo, daysOpen, notificationService));
+                mentorRepository,
+                memberRepository,
+                profilePicRepo,
+                daysOpen,
+                mentorshipNotificationService));
   }
 
   @Test
