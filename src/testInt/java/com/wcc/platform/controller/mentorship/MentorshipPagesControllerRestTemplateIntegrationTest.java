@@ -122,11 +122,7 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
                     List.of(Languages.JAVASCRIPT),
                     List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT)))
             .menteeSection(
-                new MenteeSection(
-                    "ideal",
-                    "additional",
-                    new LongTermMentorship(1, 4),
-                    List.of()))
+                new MenteeSection("ideal", "additional", new LongTermMentorship(1, 4), List.of()))
             .build();
 
     var persistedBob = mentorRepository.findByEmail(bob.getEmail()).orElse(null);

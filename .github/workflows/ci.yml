@@ -46,7 +46,7 @@ jobs:
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Pmd Check
-        run: ./gradlew pmdMain
+        run: ./gradlew pmdAll
 
       - name: Jacoco Test Coverage Verification
         run: ./gradlew jacocoTestCoverageVerification
