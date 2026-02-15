@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
@@ -30,6 +31,9 @@ import org.springframework.util.CollectionUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
+  /** Read-only for API: client cannot set this;
+   * server always uses PENDING on create/retains on update. */
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private ProfileStatus profileStatus;
   private Skills skills;
   private List<String> spokenLanguages;
@@ -81,8 +85,37 @@ public class MentorDto extends MemberDto {
   }
 
   /**
+   * Converts this DTO to a Mentor for create. Id is null; profile status is set to PENDING (any
+   * value in the DTO is ignored).
+   *
+   * @return Mentor for create, with profileStatus PENDING
+   */
+  public Mentor toMentor() {
+    return Mentor.mentorBuilder()
+        .id(null)
+        .fullName(getFullName())
+        .position(getPosition())
+        .email(getEmail())
+        .slackDisplayName(getSlackDisplayName())
+        .country(getCountry())
+        .city(getCity())
+        .companyName(getCompanyName())
+        .images(getImages() != null ? getImages() : List.of())
+        .network(getNetwork() != null ? getNetwork() : List.of())
+        .profileStatus(ProfileStatus.PENDING)
+        .spokenLanguages(getSpokenLanguages() != null ? getSpokenLanguages() : List.of())
+        .bio(getBio())
+        .skills(getSkills())
+        .menteeSection(getMenteeSection())
+        .feedbackSection(getFeedbackSection())
+        .resources(getResources())
+        .build();
+  }
+
+  /**
    * Merges this DTO with an existing Mentor entity. Non-null/non-blank DTO values override existing
-   * values; otherwise existing values are retained.
+   * values; otherwise existing values are retained. Profile status is never taken from the DTO so
+   * clients cannot change it via update; only the accept (or other status) endpoints can change it.
    *
    * @param mentor the existing mentor to merge with
    * @return merged Mentor with updated fields
@@ -101,7 +134,7 @@ public class MentorDto extends MemberDto {
         .city(mergeString(this.getCity(), mentor.getCity()))
         .companyName(mergeString(this.getCompanyName(), mentor.getCompanyName()))
         .country(mergeNullable(this.getCountry(), mentor.getCountry()))
-        .profileStatus(mergeNullable(this.getProfileStatus(), mentor.getProfileStatus()))
+        .profileStatus(mentor.getProfileStatus())
         .bio(mergeString(this.getBio(), mentor.getBio()))
         .skills(mergeNullable(this.getSkills(), mentor.getSkills()))
         .menteeSection(mergeNullable(this.getMenteeSection(), mentor.getMenteeSection()))

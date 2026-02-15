@@ -60,7 +60,6 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
             "link": "https://www.linkedin.com/in/sonali-goel-6b611522/"
           }
         ],
-        "profileStatus": "ACTIVE",
         "skills": {
           "yearsExperience": 10,
           "areas": [ "BACKEND", "DISTRIBUTED_SYSTEMS", "Machine Learning"],
@@ -111,7 +110,6 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
           { "type": "LINKEDIN", "link": "https://www.linkedin.com/in/dricazenck/" },
           { "type": "GITHUB", "link": "https://github.com/dricazenck" }
         ],
-        "profileStatus": "ACTIVE",
         "skills": {
           "yearsExperience": 15,
           "areas": [ "BACKEND", "FULLSTACK", "DISTRIBUTED_SYSTEMS" ],
