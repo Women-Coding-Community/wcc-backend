@@ -210,7 +210,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
     var resource =
         createResourceTest().toBuilder()
-            .resourceType(com.wcc.platform.domain.platform.type.ResourceType.PROFILE_PICTURE)
+            .resourceType(ResourceType.PROFILE_PICTURE)
             .driveFileLink("https://drive.google.com/file/d/pronouns-test-file/view")
             .build();
     var createdResource = resourceRepository.create(resource);
