@@ -47,7 +47,7 @@ class MentorshipNotificationServiceTest {
     var mentorProfilePath = "https://www.womencodingcommunity.com/mentors?keywords=Jane+Doe";
     var recipient = mentor.getEmail();
     var mentorName = mentor.getFullName();
-    var templateType = TemplateType.PROFILE_APPROVED_MENTOR;
+    var templateType = TemplateType.MENTOR_APPROVED;
     var expectedBody =
         "<p>Dear "
             + mentorName

@@ -32,7 +32,7 @@ public class MentorshipNotificationService {
 
     sendNotification(
         mentor.getEmail(),
-        TemplateType.PROFILE_APPROVED_MENTOR,
+        TemplateType.MENTOR_APPROVED,
         Map.of("mentorName", mentor.getFullName(), "mentorLink", mentorBaseUrl));
   }
 
