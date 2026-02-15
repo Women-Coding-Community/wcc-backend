@@ -142,7 +142,7 @@ tasks {
     }
 
     check {
-        dependsOn(jacocoTestCoverageVerification)
+        dependsOn("pmdAll", jacocoTestCoverageVerification)
     }
 }
 
