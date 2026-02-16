@@ -7,7 +7,7 @@ import static com.wcc.platform.domain.cms.attributes.TechnicalArea.FRONTEND;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorsPageTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -89,7 +89,7 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
                 new Skills(
                     5,
                     List.of(new TechnicalAreaProficiency(BACKEND, BEGINNER)),
-                    List.of(new LanguageProficiency(Languages.JAVA, BEGINNER)),
+                    List.of(new LanguageProficiency(CodeLanguage.JAVA, BEGINNER)),
                     List.of(MentorshipFocusArea.GROW_MID_TO_SENIOR)))
             .menteeSection(
                 new MenteeSection(
@@ -123,7 +123,7 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
                 new Skills(
                     1,
                     List.of(new TechnicalAreaProficiency(FRONTEND, BEGINNER)),
-                    List.of(new LanguageProficiency(Languages.JAVA, BEGINNER)),
+                    List.of(new LanguageProficiency(CodeLanguage.JAVA, BEGINNER)),
                     List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT)))
             .menteeSection(
                 new MenteeSection("ideal", "additional", new LongTermMentorship(1, 4), List.of()))

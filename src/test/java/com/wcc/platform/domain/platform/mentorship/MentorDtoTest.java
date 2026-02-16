@@ -5,10 +5,10 @@ import static com.wcc.platform.domain.platform.SocialNetworkType.LINKEDIN;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
-import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
@@ -57,8 +57,8 @@ class MentorDtoTest {
                         new TechnicalAreaProficiency(
                             TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
                     List.of(
-                        new LanguageProficiency(Languages.JAVA, ProficiencyLevel.BEGINNER),
-                        new LanguageProficiency(Languages.PYTHON, ProficiencyLevel.BEGINNER)),
+                        new LanguageProficiency(CodeLanguage.JAVA, ProficiencyLevel.BEGINNER),
+                        new LanguageProficiency(CodeLanguage.PYTHON, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
             .menteeSection(
                 new MenteeSection(
@@ -126,7 +126,7 @@ class MentorDtoTest {
                         new TechnicalAreaProficiency(
                             TechnicalArea.FULLSTACK, ProficiencyLevel.BEGINNER)),
                     List.of(
-                        new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
+                        new LanguageProficiency(CodeLanguage.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
             .menteeSection(
                 new MenteeSection(
@@ -260,7 +260,7 @@ class MentorDtoTest {
             List.of(
                 new TechnicalAreaProficiency(
                     TechnicalArea.DISTRIBUTED_SYSTEMS, ProficiencyLevel.BEGINNER)),
-            List.of(new LanguageProficiency(Languages.KOTLIN, ProficiencyLevel.BEGINNER)),
+            List.of(new LanguageProficiency(CodeLanguage.KOTLIN, ProficiencyLevel.BEGINNER)),
             List.of(MentorshipFocusArea.GROW_BEYOND_SENIOR));
 
     mentorDto = MentorDto.mentorDtoBuilder().skills(newSkills).build();
@@ -272,7 +272,7 @@ class MentorDtoTest {
     assertEquals(
         TechnicalArea.DISTRIBUTED_SYSTEMS, result.getSkills().areas().getFirst().technicalArea());
     assertEquals(1, result.getSkills().languages().size());
-    assertEquals(Languages.KOTLIN, result.getSkills().languages().getFirst().language());
+    assertEquals(CodeLanguage.KOTLIN, result.getSkills().languages().getFirst().language());
   }
 
   @Test

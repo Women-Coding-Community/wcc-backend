@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum Languages {
+public enum CodeLanguage {
   C_LANGUAGE("C", 1),
   C_PLUS_PLUS("C++", 2),
   C_SHARP("C#", 3),
@@ -31,8 +31,8 @@ public enum Languages {
   private final int langId;
 
   /** Find Language by name. */
-  public static Languages fromId(final int languageId) {
-    for (final Languages lang : values()) {
+  public static CodeLanguage fromId(final int languageId) {
+    for (final CodeLanguage lang : values()) {
       if (lang.langId == languageId) {
         return lang;
       }
@@ -40,7 +40,7 @@ public enum Languages {
     return OTHER;
   }
 
-  public static List<Languages> getAll() {
+  public static List<CodeLanguage> getAll() {
     return List.of(values());
   }
 

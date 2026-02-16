@@ -6,7 +6,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
@@ -66,7 +66,7 @@ class MentorshipServiceFilteringTest {
             "Acme",
             5,
             List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND, TechnicalArea.FRONTEND),
-            List.of(Languages.JAVA, Languages.PYTHON, Languages.KOTLIN),
+            List.of(CodeLanguage.JAVA, CodeLanguage.PYTHON, CodeLanguage.KOTLIN),
             List.of(
                 MentorshipFocusArea.GROW_MID_TO_SENIOR, MentorshipFocusArea.SWITCH_CAREER_TO_IT),
             List.of(MentorshipType.LONG_TERM),
@@ -79,7 +79,7 @@ class MentorshipServiceFilteringTest {
             "Globex",
             1,
             List.of(TechnicalArea.FRONTEND),
-            List.of(Languages.JAVASCRIPT),
+            List.of(CodeLanguage.JAVASCRIPT),
             List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT),
             List.of(MentorshipType.LONG_TERM),
             Month.MARCH);
@@ -98,7 +98,7 @@ class MentorshipServiceFilteringTest {
             List.of(MentorshipType.LONG_TERM),
             3,
             List.of(TechnicalArea.BACKEND),
-            List.of(Languages.JAVA),
+            List.of(CodeLanguage.JAVA),
             List.of(MentorshipFocusArea.GROW_MID_TO_SENIOR));
 
     var result = service.getMentorsPage(mentorsPage, filters);
@@ -140,7 +140,7 @@ class MentorshipServiceFilteringTest {
       final String company,
       final int years,
       final List<TechnicalArea> areas,
-      final List<Languages> languages,
+      final List<CodeLanguage> languages,
       final List<MentorshipFocusArea> focus,
       final List<MentorshipType> types,
       final Month availableMonth) {
@@ -171,7 +171,16 @@ class MentorshipServiceFilteringTest {
         .spokenLanguages(List.of("English"))
         .pronouns(null)
         .pronounCategory(null)
-        .skills(new Skills(years, areas.stream().map(area -> new TechnicalAreaProficiency(area, ProficiencyLevel.BEGINNER)).toList(), languages.stream().map(lang -> new LanguageProficiency(lang, ProficiencyLevel.BEGINNER)).toList(), focus))
+        .skills(
+            new Skills(
+                years,
+                areas.stream()
+                    .map(area -> new TechnicalAreaProficiency(area, ProficiencyLevel.BEGINNER))
+                    .toList(),
+                languages.stream()
+                    .map(lang -> new LanguageProficiency(lang, ProficiencyLevel.BEGINNER))
+                    .toList(),
+                focus))
         .menteeSection(new MenteeSection("ideal", "additional", longTerm, adHoc))
         .build();
   }
