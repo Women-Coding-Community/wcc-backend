@@ -59,6 +59,9 @@ public class MentorMapper {
         .profileStatus(ProfileStatus.fromId(rs.getInt(COLUMN_PROFILE_STATUS)))
         .spokenLanguages(List.of(rs.getString(COLUMN_SPOKEN_LANG).split(COMMA)))
         .bio(rs.getString(COLUMN_BIO))
+        .isWomenNonBinary(rs.getBoolean(COL_WOMEN_NON_BINARY))
+        .acceptMale(rs.getBoolean(COL_ACCEPT_MALE))
+        .acceptPromotion(rs.getBoolean(COL_ACCEPT_PROMO))
         .build();
   }
 

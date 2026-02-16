@@ -98,7 +98,9 @@ class MentorDtoTest {
     var expected =
         "MentorDto(profileStatus=PENDING, pronouns=null, pronounCategory=null, "
             + "skills=null, spokenLanguages=[English, Spanish], bio=bio info,"
-            + " menteeSection=null, feedbackSection=null, resources=null)";
+            + " menteeSection=null, feedbackSection=null, resources=null, "
+            + "isWomenNonBinary=null, acceptMale=null, "
+            + "acceptPromotion=null)";
 
     assertEquals(expected, mentor.toString());
   }

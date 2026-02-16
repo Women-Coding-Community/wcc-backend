@@ -47,6 +47,9 @@ public class MentorDto extends MemberDto {
   private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
+  private Boolean isWomenNonBinary;
+  private Boolean acceptMale;
+  private Boolean acceptPromotion;
 
   /** Mentor Builder. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -70,7 +73,10 @@ public class MentorDto extends MemberDto {
       @NotNull final Skills skills,
       @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resources) {
+      final MentorResource resources,
+      final Boolean isWomenNonBinary,
+      final Boolean acceptMale,
+      final Boolean acceptPromotion) {
     super(
         id,
         fullName,
@@ -94,6 +100,9 @@ public class MentorDto extends MemberDto {
     this.profileStatus = profileStatus;
     this.pronouns = pronouns;
     this.pronounCategory = pronounCategory;
+    this.isWomenNonBinary = isWomenNonBinary;
+    this.acceptMale = acceptMale;
+    this.acceptPromotion = acceptPromotion;
   }
 
   /**
@@ -123,6 +132,9 @@ public class MentorDto extends MemberDto {
         .menteeSection(getMenteeSection())
         .feedbackSection(getFeedbackSection())
         .resources(getResources())
+        .isWomenNonBinary(getIsWomenNonBinary())
+        .acceptMale(getAcceptMale())
+        .acceptPromotion(getAcceptPromotion())
         .build();
   }
 
@@ -159,6 +171,10 @@ public class MentorDto extends MemberDto {
         .network(mergeCollection(this.getNetwork(), mentor.getNetwork()))
         .spokenLanguages(mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()))
         .images(mergeCollection(this.getImages(), mentor.getImages()))
+        .isWomenNonBinary(
+            mergeNullable(this.getIsWomenNonBinary(), mentor.getIsWomenNonBinary()))
+        .acceptMale(mergeNullable(this.getAcceptMale(), mentor.getAcceptMale()))
+        .acceptPromotion(mergeNullable(this.getAcceptPromotion(), mentor.getAcceptPromotion()))
         .build();
   }
 
