@@ -9,7 +9,7 @@ public final class MentorConstants {
   public static final String COLUMN_PROFILE_STATUS = "profile_status";
   public static final String COLUMN_BIO = "bio";
   public static final String COLUMN_SPOKEN_LANG = "spoken_languages";
-  public static final String COL_WOMEN_NON_BINARY = "indentify_as_women_or_non_binary";
+  public static final String COL_CALENDLY_LINK = "calendly_link";
   public static final String COL_ACCEPT_MALE = "accept_male_mentee";
   public static final String COL_ACCEPT_PROMO = "accept_promote_social_media";
 

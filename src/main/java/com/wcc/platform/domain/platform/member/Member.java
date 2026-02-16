@@ -38,6 +38,7 @@ public class Member {
   private List<SocialNetwork> network;
   private String pronouns;
   private PronounCategory pronounCategory;
+  private Boolean isWomenNonBinary;
 
   public MemberDto toDto() {
     return new MemberDto(
@@ -53,6 +54,7 @@ public class Member {
         images,
         network,
         pronouns,
-        pronounCategory);
+        pronounCategory,
+        isWomenNonBinary);
   }
 }

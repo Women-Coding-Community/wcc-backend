@@ -47,9 +47,10 @@ public class MentorDto extends MemberDto {
   private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
-  private Boolean isWomenNonBinary;
+  private String calendlyLink;
   private Boolean acceptMale;
   private Boolean acceptPromotion;
+  private Boolean isWomenNonBinary;
 
   /** Mentor Builder. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -75,6 +76,7 @@ public class MentorDto extends MemberDto {
       final FeedbackSection feedbackSection,
       final MentorResource resources,
       final Boolean isWomenNonBinary,
+      final String calendlyLink,
       final Boolean acceptMale,
       final Boolean acceptPromotion) {
     super(
@@ -90,7 +92,8 @@ public class MentorDto extends MemberDto {
         images,
         network,
         pronouns,
-        pronounCategory);
+        pronounCategory,
+        isWomenNonBinary);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
@@ -100,9 +103,10 @@ public class MentorDto extends MemberDto {
     this.profileStatus = profileStatus;
     this.pronouns = pronouns;
     this.pronounCategory = pronounCategory;
-    this.isWomenNonBinary = isWomenNonBinary;
+    this.calendlyLink = calendlyLink;
     this.acceptMale = acceptMale;
     this.acceptPromotion = acceptPromotion;
+    this.isWomenNonBinary = isWomenNonBinary;
   }
 
   /**
@@ -133,6 +137,7 @@ public class MentorDto extends MemberDto {
         .feedbackSection(getFeedbackSection())
         .resources(getResources())
         .isWomenNonBinary(getIsWomenNonBinary())
+        .calendlyLink(getCalendlyLink())
         .acceptMale(getAcceptMale())
         .acceptPromotion(getAcceptPromotion())
         .build();
@@ -171,8 +176,8 @@ public class MentorDto extends MemberDto {
         .network(mergeCollection(this.getNetwork(), mentor.getNetwork()))
         .spokenLanguages(mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()))
         .images(mergeCollection(this.getImages(), mentor.getImages()))
-        .isWomenNonBinary(
-            mergeNullable(this.getIsWomenNonBinary(), mentor.getIsWomenNonBinary()))
+        .isWomenNonBinary(mergeNullable(this.getIsWomenNonBinary(), mentor.getIsWomenNonBinary()))
+        .calendlyLink(mergeString(this.getCalendlyLink(), mentor.getCalendlyLink()))
         .acceptMale(mergeNullable(this.getAcceptMale(), mentor.getAcceptMale()))
         .acceptPromotion(mergeNullable(this.getAcceptPromotion(), mentor.getAcceptPromotion()))
         .build();

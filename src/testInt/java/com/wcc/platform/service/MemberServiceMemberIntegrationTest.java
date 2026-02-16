@@ -59,6 +59,7 @@ class MemberServiceMemberIntegrationTest extends DefaultDatabaseSetup {
         .country(new Country("GB", "United Kingdom"))
         .memberTypes(List.of(type))
         .images(List.of())
+        .isWomenNonBinary(true)
         .network(List.of(new SocialNetwork(SocialNetworkType.EMAIL, MEMBER_EMAIL)))
         .build();
   }

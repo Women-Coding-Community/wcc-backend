@@ -56,6 +56,7 @@ public class LeadershipMember extends Member {
         images,
         network,
         null,
+        null,
         null);
 
     this.memberTypes = memberTypes;

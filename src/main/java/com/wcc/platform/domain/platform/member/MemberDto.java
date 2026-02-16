@@ -34,6 +34,7 @@ public class MemberDto {
   private List<SocialNetwork> network;
   private String pronouns;
   private PronounCategory pronounCategory;
+  private Boolean isWomenNonBinary;
 
   /**
    * Update member using attributes from his DTO.
@@ -56,6 +57,7 @@ public class MemberDto {
         .network(getNetwork())
         .pronouns(getPronouns())
         .pronounCategory(getPronounCategory())
+        .isWomenNonBinary(getIsWomenNonBinary())
         .build();
   }
 }

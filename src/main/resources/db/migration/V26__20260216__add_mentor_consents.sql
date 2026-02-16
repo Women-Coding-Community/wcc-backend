@@ -1,6 +1,6 @@
 -- Update mentors identification and consent preferences
 ALTER TABLE members
-    ADD COLUMN IF NOT EXISTS indentify_as_women_or_non_binary BOOLEAN DEFAULT TRUE;
+    ADD COLUMN IF NOT EXISTS women_or_non_binary BOOLEAN DEFAULT TRUE;
 
 -- Update mentors identification and consent preferences
 ALTER TABLE mentors

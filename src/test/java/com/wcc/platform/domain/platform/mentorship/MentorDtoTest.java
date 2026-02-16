@@ -99,8 +99,8 @@ class MentorDtoTest {
         "MentorDto(profileStatus=PENDING, pronouns=null, pronounCategory=null, "
             + "skills=null, spokenLanguages=[English, Spanish], bio=bio info,"
             + " menteeSection=null, feedbackSection=null, resources=null, "
-            + "isWomenNonBinary=null, acceptMale=null, "
-            + "acceptPromotion=null)";
+            + "calendlyLink=null, acceptMale=null, acceptPromotion=null, "
+            + "isWomenNonBinary=null)";
 
     assertEquals(expected, mentor.toString());
   }
@@ -309,5 +309,74 @@ class MentorDtoTest {
         assertThrows(InvalidMentorException.class, () -> mentorDto.merge(null));
 
     assertEquals("Cannot merge with null mentor", exception.getMessage());
+  }
+
+  @Test
+  void testIsWomenNonBinaryFieldIsIncludedInDto() {
+    MentorDto mentor =
+        MentorDto.mentorDtoBuilder()
+            .id(1L)
+            .fullName("Jane Doe")
+            .position("Developer")
+            .email("jane@example.com")
+            .slackDisplayName("@jane")
+            .country(new Country("US", "United States"))
+            .city("New York")
+            .spokenLanguages(List.of("English"))
+            .bio("Bio text")
+            .skills(
+                new Skills(
+                    5,
+                    List.of(),
+                    List.of(),
+                    List.of()))
+            .menteeSection(new MenteeSection("ideal", "additional", null, List.of()))
+            .isWomenNonBinary(true)
+            .build();
+
+    assertEquals(true, mentor.getIsWomenNonBinary());
+  }
+
+  @Test
+  void testIsWomenNonBinaryCanBeNull() {
+    MentorDto mentor = MentorDto.mentorDtoBuilder().isWomenNonBinary(null).build();
+
+    assertNull(mentor.getIsWomenNonBinary());
+  }
+
+  @Test
+  void testIsWomenNonBinaryIsMergedCorrectly() {
+    mentorDto = MentorDto.mentorDtoBuilder().isWomenNonBinary(false).build();
+
+    Mentor result = mentorDto.merge(existingMentor);
+
+    assertEquals(false, result.getIsWomenNonBinary());
+  }
+
+  @Test
+  void testIsWomenNonBinaryRetainedWhenDtoValueIsNull() {
+    Mentor mentorWithValue =
+        Mentor.mentorBuilder()
+            .id(1L)
+            .fullName("Name")
+            .position("Position")
+            .email("email@test.com")
+            .slackDisplayName("@slack")
+            .country(new Country("US", "United States"))
+            .city("City")
+            .images(List.of(new Image("img.jpg", "Image", ImageType.DESKTOP)))
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("Bio")
+            .skills(new Skills(5, List.of(), List.of(), List.of()))
+            .menteeSection(new MenteeSection("ideal", "additional", null, List.of()))
+            .spokenLanguages(List.of("English"))
+            .isWomenNonBinary(true)
+            .build();
+
+    mentorDto = MentorDto.mentorDtoBuilder().fullName("Updated Name").build();
+
+    Mentor result = mentorDto.merge(mentorWithValue);
+
+    assertEquals(true, result.getIsWomenNonBinary());
   }
 }

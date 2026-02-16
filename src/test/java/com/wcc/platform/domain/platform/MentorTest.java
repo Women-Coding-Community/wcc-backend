@@ -48,7 +48,7 @@ class MentorTest {
             + "menteeSection=MenteeSection[idealMentee=ideal mentee description, "
             + "additional=additional, longTerm=LongTermMentorship[numMentee=1, hours=4], "
             + "adHoc=[MentorMonthAvailability[month=APRIL, hours=2]]], "
-            + "feedbackSection=null, resources=null, isWomenNonBinary=null, "
+            + "feedbackSection=null, resources=null, calendlyLink=null, "
             + "acceptMale=null, acceptPromotion=null)";
     assertEquals(expected, mentor.toString());
   }

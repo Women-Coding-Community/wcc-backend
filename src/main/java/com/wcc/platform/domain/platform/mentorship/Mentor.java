@@ -38,7 +38,7 @@ public class Mentor extends Member {
   @NotNull private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
-  private Boolean isWomenNonBinary;
+  private String calendlyLink;
   private Boolean acceptMale;
   private Boolean acceptPromotion;
 
@@ -66,6 +66,7 @@ public class Mentor extends Member {
       final FeedbackSection feedbackSection,
       final MentorResource resources,
       final Boolean isWomenNonBinary,
+      final String calendlyLink,
       final Boolean acceptMale,
       final Boolean acceptPromotion) {
     super(
@@ -81,7 +82,8 @@ public class Mentor extends Member {
         images,
         network,
         pronouns,
-        pronounCategory);
+        pronounCategory,
+        isWomenNonBinary);
 
     this.profileStatus = profileStatus;
     this.skills = skills;
@@ -90,7 +92,7 @@ public class Mentor extends Member {
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
-    this.isWomenNonBinary = isWomenNonBinary;
+    this.calendlyLink = calendlyLink;
     this.acceptMale = acceptMale;
     this.acceptPromotion = acceptPromotion;
   }
@@ -147,6 +149,7 @@ public class Mentor extends Member {
         .feedbackSection(mentor.getFeedbackSection())
         .resources(mentor.getResources())
         .isWomenNonBinary(mentor.getIsWomenNonBinary())
+        .calendlyLink(mentor.getCalendlyLink())
         .acceptMale(mentor.getAcceptMale())
         .acceptPromotion(mentor.getAcceptPromotion());
   }

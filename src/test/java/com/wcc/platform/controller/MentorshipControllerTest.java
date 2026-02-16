@@ -260,4 +260,83 @@ class MentorshipControllerTest {
                 .header(API_KEY_HEADER, API_KEY_VALUE))
         .andExpect(status().isNotFound());
   }
+
+  @Test
+  @DisplayName(
+      "Given mentor with isWomenNonBinary=true, when creating mentor, then response includes the field")
+  void testCreateMentorWithIsWomenNonBinaryReturnsFieldInResponse() throws Exception {
+    Mentor mentor = createMentorTest("Test Mentor");
+    mentor =
+        Mentor.mentorBuilder()
+            .id(1L)
+            .fullName(mentor.getFullName())
+            .position(mentor.getPosition())
+            .email(mentor.getEmail())
+            .slackDisplayName(mentor.getSlackDisplayName())
+            .country(mentor.getCountry())
+            .city(mentor.getCity())
+            .spokenLanguages(mentor.getSpokenLanguages())
+            .bio(mentor.getBio())
+            .skills(mentor.getSkills())
+            .menteeSection(mentor.getMenteeSection())
+            .profileStatus(ProfileStatus.PENDING)
+            .isWomenNonBinary(true)
+            .build();
+
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
+
+    mockMvc
+        .perform(postRequest(API_MENTORS, mentor))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.isWomenNonBinary", is(true)));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentors exist, when getting all mentors, then response includes isWomenNonBinary field")
+  void testGetAllMentorsIncludesIsWomenNonBinaryField() throws Exception {
+    MentorDto mentorDto1 = createMentorDtoTest(1L, MemberType.MENTOR);
+    mentorDto1 =
+        MentorDto.mentorDtoBuilder()
+            .id(mentorDto1.getId())
+            .fullName(mentorDto1.getFullName())
+            .position(mentorDto1.getPosition())
+            .email(mentorDto1.getEmail())
+            .slackDisplayName(mentorDto1.getSlackDisplayName())
+            .country(mentorDto1.getCountry())
+            .city(mentorDto1.getCity())
+            .spokenLanguages(mentorDto1.getSpokenLanguages())
+            .bio(mentorDto1.getBio())
+            .skills(mentorDto1.getSkills())
+            .menteeSection(mentorDto1.getMenteeSection())
+            .profileStatus(mentorDto1.getProfileStatus())
+            .isWomenNonBinary(true)
+            .build();
+
+    MentorDto mentorDto2 = createMentorDtoTest(2L, MemberType.MENTOR);
+    mentorDto2 =
+        MentorDto.mentorDtoBuilder()
+            .id(mentorDto2.getId())
+            .fullName(mentorDto2.getFullName())
+            .position(mentorDto2.getPosition())
+            .email(mentorDto2.getEmail())
+            .slackDisplayName(mentorDto2.getSlackDisplayName())
+            .country(mentorDto2.getCountry())
+            .city(mentorDto2.getCity())
+            .spokenLanguages(mentorDto2.getSpokenLanguages())
+            .bio(mentorDto2.getBio())
+            .skills(mentorDto2.getSkills())
+            .menteeSection(mentorDto2.getMenteeSection())
+            .profileStatus(mentorDto2.getProfileStatus())
+            .isWomenNonBinary(false)
+            .build();
+
+    when(mentorshipService.getAllMentors()).thenReturn(List.of(mentorDto1, mentorDto2));
+
+    mockMvc
+        .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].isWomenNonBinary", is(true)))
+        .andExpect(jsonPath("$[1].isWomenNonBinary", is(false)));
+  }
 }
