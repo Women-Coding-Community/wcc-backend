@@ -1,6 +1,6 @@
 package com.wcc.platform.repository.postgres.mentorship;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
@@ -149,7 +149,7 @@ public class PostgresSkillRepository implements SkillRepository {
               final int languageId = rs.getInt("language_id");
               final int proficiencyLevelId = rs.getInt("proficiency_level_id");
               return new LanguageProficiency(
-                  Languages.fromId(languageId), ProficiencyLevel.fromId(proficiencyLevelId));
+                  CodeLanguage.fromId(languageId), ProficiencyLevel.fromId(proficiencyLevelId));
             },
             mentorId)
         .stream()

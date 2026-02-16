@@ -2,7 +2,7 @@ package com.wcc.platform.factories;
 
 import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
@@ -46,8 +46,14 @@ public class SetupMenteeFactories {
             .skills(
                 new Skills(
                     2,
-                    List.of(new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER), new TechnicalAreaProficiency(TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
-                    List.of(new LanguageProficiency(Languages.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
+                    List.of(
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                        new TechnicalAreaProficiency(
+                            TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                    List.of(
+                        new LanguageProficiency(
+                            CodeLanguage.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)));
     if (menteeId != null) {
       menteeBuilder.id(menteeId);

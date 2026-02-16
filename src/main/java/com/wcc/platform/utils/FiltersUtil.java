@@ -2,16 +2,15 @@ package com.wcc.platform.utils;
 
 import static java.util.Locale.ENGLISH;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
-import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
 import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
-import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.SkillsFilter;
 import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -24,17 +23,9 @@ public final class FiltersUtil {
 
   /** Returns a MentorFilterSection object with all mentorship types and skills. */
   public static MentorFilterSection mentorshipAllFilters() {
-    final var areas =
-        TechnicalArea.getAll().stream()
-            .map(area -> new TechnicalAreaProficiency(area, ProficiencyLevel.BEGINNER))
-            .toList();
-
-    final var languages =
-        Languages.getAll().stream()
-            .map(lang -> new LanguageProficiency(lang, ProficiencyLevel.BEGINNER))
-            .toList();
-
-    final var skills = new Skills(0, areas, languages, MentorshipFocusArea.getAll());
+    final var areas = TechnicalArea.getAll().stream().toList();
+    final var languages = CodeLanguage.getAll().stream().toList();
+    final var skills = new SkillsFilter(0, areas, languages, MentorshipFocusArea.getAll());
 
     return MentorFilterSection.builder()
         .types(List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC))

@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,4 +11,4 @@ import jakarta.validation.constraints.NotNull;
  * @param proficiencyLevel the proficiency level in the language
  */
 public record LanguageProficiency(
-    @NotNull Languages language, @NotNull ProficiencyLevel proficiencyLevel) {}
+    @NotNull CodeLanguage language, @NotNull ProficiencyLevel proficiencyLevel) {}

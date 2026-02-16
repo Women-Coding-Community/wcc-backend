@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
@@ -96,7 +96,7 @@ public class MentorshipPagesController {
       final @RequestParam(required = false) List<MentorshipType> mentorshipTypes,
       final @RequestParam(required = false) Integer yearsExperience,
       final @RequestParam(required = false) List<TechnicalArea> areas,
-      final @RequestParam(required = false) List<Languages> languages,
+      final @RequestParam(required = false) List<CodeLanguage> languages,
       final @RequestParam(required = false) List<MentorshipFocusArea> focus) {
     final var filters =
         new MentorAppliedFilters(

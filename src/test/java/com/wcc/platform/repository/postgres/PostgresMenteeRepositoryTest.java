@@ -13,7 +13,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
@@ -78,7 +78,7 @@ class PostgresMenteeRepositoryTest {
         List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
         result.getSkills().areas().stream().map(TechnicalAreaProficiency::technicalArea).toList());
     assertEquals(
-        List.of(Languages.JAVASCRIPT),
+        List.of(CodeLanguage.JAVASCRIPT),
         result.getSkills().languages().stream().map(LanguageProficiency::language).toList());
     assertEquals(
         List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID), result.getSkills().mentorshipFocus());
