@@ -1,7 +1,7 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
-import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.SkillsFilter;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,5 +20,5 @@ import lombok.ToString;
 public class MentorFilterSection {
   private String keyword;
   private List<MentorshipType> types;
-  private Skills skills;
+  private SkillsFilter skills;
 }
