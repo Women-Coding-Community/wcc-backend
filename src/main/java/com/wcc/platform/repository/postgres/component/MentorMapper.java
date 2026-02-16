@@ -46,6 +46,7 @@ public class MentorMapper {
                 .pronounCategory(member.getPronounCategory())
                 .companyName(member.getCompanyName())
                 .images(member.getImages())
+                .isWomenNonBinary(member.getIsWomenNonBinary())
                 .network(member.getNetwork()));
 
     final var skillsMentor = skillsRepository.findSkills(mentorId);
@@ -59,6 +60,9 @@ public class MentorMapper {
         .profileStatus(ProfileStatus.fromId(rs.getInt(COLUMN_PROFILE_STATUS)))
         .spokenLanguages(List.of(rs.getString(COLUMN_SPOKEN_LANG).split(COMMA)))
         .bio(rs.getString(COLUMN_BIO))
+        .calendlyLink(rs.getString(COL_CALENDLY_LINK))
+        .acceptMale(rs.getBoolean(COL_ACCEPT_MALE))
+        .acceptPromotion(rs.getBoolean(COL_ACCEPT_PROMO))
         .build();
   }
 

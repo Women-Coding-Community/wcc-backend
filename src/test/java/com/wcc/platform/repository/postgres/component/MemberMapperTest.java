@@ -133,7 +133,7 @@ class MemberMapperTest {
 
     verify(jdbc)
         .update(
-            anyString(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+            anyString(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
     verify(memberTypeRepo).deleteByMemberId(20L);
     verify(socialNetworkRepo).deleteByMemberId(20L);
   }

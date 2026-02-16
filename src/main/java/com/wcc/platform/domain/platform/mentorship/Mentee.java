@@ -40,6 +40,7 @@ public class Mentee extends Member {
       final List<SocialNetwork> network,
       final String pronouns,
       final PronounCategory pronounCategory,
+      final Boolean isWomenNonBinary,
       final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
       final String bio,
@@ -57,7 +58,8 @@ public class Mentee extends Member {
         images,
         network,
         pronouns,
-        pronounCategory);
+        pronounCategory,
+        isWomenNonBinary);
 
     this.profileStatus = profileStatus;
     this.skills = skills;

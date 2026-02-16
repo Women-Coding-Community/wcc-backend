@@ -38,6 +38,9 @@ public class Mentor extends Member {
   @NotNull private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
+  private String calendlyLink;
+  private Boolean acceptMale;
+  private Boolean acceptPromotion;
 
   /** Mentor Builder. */
   @Builder(builderMethodName = "mentorBuilder")
@@ -61,7 +64,11 @@ public class Mentor extends Member {
       final Skills skills,
       final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resources) {
+      final MentorResource resources,
+      final Boolean isWomenNonBinary,
+      final String calendlyLink,
+      final Boolean acceptMale,
+      final Boolean acceptPromotion) {
     super(
         id,
         fullName,
@@ -75,7 +82,8 @@ public class Mentor extends Member {
         images,
         network,
         pronouns,
-        pronounCategory);
+        pronounCategory,
+        isWomenNonBinary);
 
     this.profileStatus = profileStatus;
     this.skills = skills;
@@ -84,6 +92,9 @@ public class Mentor extends Member {
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
+    this.calendlyLink = calendlyLink;
+    this.acceptMale = acceptMale;
+    this.acceptPromotion = acceptPromotion;
   }
 
   /** Checks for empty or null and returns capitalized list of string. */
@@ -136,7 +147,11 @@ public class Mentor extends Member {
         .skills(mentor.getSkills())
         .menteeSection(mentor.getMenteeSection().toDto())
         .feedbackSection(mentor.getFeedbackSection())
-        .resources(mentor.getResources());
+        .resources(mentor.getResources())
+        .isWomenNonBinary(mentor.getIsWomenNonBinary())
+        .calendlyLink(mentor.getCalendlyLink())
+        .acceptMale(mentor.getAcceptMale())
+        .acceptPromotion(mentor.getAcceptPromotion());
   }
 
   /** Lombok builder hook to enforce normalization. */
