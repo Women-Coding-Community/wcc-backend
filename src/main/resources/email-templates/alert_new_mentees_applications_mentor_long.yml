@@ -2,7 +2,6 @@ NEW_MENTEES_ALERT_MENTOR_LONG:
   subject: "[Action Required] New Mentee Applications for WCC Mentorship Programme"
   body: |
     <p>Dear {{mentorName}},</p>
-
     <p>
     Thank you for being part of the <strong>Women Coding Community</strong> <strong>{{year}}</strong>
     Long-Term Mentorship Programme!
