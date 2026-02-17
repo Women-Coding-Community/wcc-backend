@@ -35,7 +35,5 @@ STUDY_GROUPS_MENTEE:
     </p>
 
     <p>
-    Warm regards,<br/>
-    The Mentorship Team<br/>
-    Women Coding Community
+    {{teamEmailSignature}}
     </p>

@@ -67,7 +67,5 @@ WELCOME_MENTORSHIP_MENTEE_MENTOR_LONG:
     </p>
     
     <p>
-    Best regards,<br/>
-    Mentorship Programme Team<br/>
-    Women Coding Community
+    {{teamEmailSignature}}
     </p>

@@ -28,7 +28,5 @@ KICK_OFF_MEETING_LONG:
     </p>
 
     <p>
-    Best regards,<br/>
-    Mentorship Programme Team<br/>
-    Women Coding Community
+    {{teamEmailSignature}}
     </p>
