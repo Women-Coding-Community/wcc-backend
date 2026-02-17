@@ -32,14 +32,16 @@ public class EmailService {
   private final JavaMailSender javaMailSender;
 
   private final String fromEmail;
-  private final EmailTemplateService emailTemplateService = null;
+  private final EmailTemplateService emailTemplateService;
 
   @Autowired
   public EmailService(
       final JavaMailSender javaMailSender,
-      final @Value("${spring.mail.username}") String fromEmail) {
+      final @Value("${spring.mail.username}") String fromEmail,
+      final EmailTemplateService emailTemplateService) {
     this.javaMailSender = javaMailSender;
     this.fromEmail = fromEmail;
+    this.emailTemplateService = emailTemplateService;
   }
 
   /**
