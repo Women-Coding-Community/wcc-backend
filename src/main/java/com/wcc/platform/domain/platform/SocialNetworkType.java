@@ -1,6 +1,5 @@
 package com.wcc.platform.domain.platform;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
