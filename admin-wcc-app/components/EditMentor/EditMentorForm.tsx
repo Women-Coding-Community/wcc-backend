@@ -114,7 +114,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
         : [],
     },
     resources: {
-      books: data.books
+      books: (data.books ?? '')
         .split('\n')
         .map((b) => b.trim())
         .filter(Boolean),
