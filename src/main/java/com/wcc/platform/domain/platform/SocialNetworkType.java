@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,5 +30,11 @@ public enum SocialNetworkType {
         .filter(type -> type.typeId == typeId)
         .findFirst()
         .orElse(UNKNOWN);
+  }
+
+  /** Always serialize to lowercase JSON. */
+  @JsonValue
+  public String toJson() {
+    return name().toLowerCase();
   }
 }
