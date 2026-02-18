@@ -13,6 +13,7 @@ export const socialNetworkSchema = {
             'instagram',
             'facebook',
             'twitter',
+            'website',
             'medium',
             'slack',
             'meetup',

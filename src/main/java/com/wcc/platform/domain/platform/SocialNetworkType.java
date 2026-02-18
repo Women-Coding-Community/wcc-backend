@@ -31,10 +31,4 @@ public enum SocialNetworkType {
         .findFirst()
         .orElse(UNKNOWN);
   }
-
-  /** Always serialize to lowercase JSON. */
-  @JsonValue
-  public String toJson() {
-    return name().toLowerCase();
-  }
 }
