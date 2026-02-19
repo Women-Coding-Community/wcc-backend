@@ -94,18 +94,29 @@ public class EmailService {
 
   public EmailResponse sendTemplateEmail(TemplateEmailRequest request) {
 
-    final Template renderedRequest = emailTemplateService.getEmailTemplate(
+    final RenderedTemplate renderedTemplate = emailTemplateService.renderTemplate(
             request.getTemplateType(), request.getTemplateParameters());
 
-    EmailRequest emailRequest = EmailRequest.builder()
+    EmailRequest.EmailRequestBuilder emailBuilder = EmailRequest.builder()
         .to(request.getTo())
-        .cc(request.getCc())
-        .bcc(request.getBcc())
-        .subject(renderedRequest.subject())
-        .body(renderedRequest.body())
-        .html(true)
-        .replyTo(request.getReplyTo())
-        .build();
+        .subject(renderedTemplate.subject())
+        .body(renderedTemplate.body())
+        .html(request.isHtml());
+
+    if (request.getCc() != null && !request.getCc().isEmpty()) {
+      emailBuilder.cc(request.getCc());
+    }
+
+    if (request.getBcc() != null && !request.getBcc().isEmpty()) {
+      emailBuilder.bcc(request.getBcc());
+    }
+
+    if (request.getReplyTo() != null && !request.getReplyTo().isEmpty()) {
+      emailBuilder.replyTo(request.getReplyTo());
+    }
+
+    EmailRequest emailRequest = emailBuilder.build();
+
     return sendEmail(emailRequest);
   }
 
