@@ -21,7 +21,7 @@ public enum TemplateType {
     STUDY_GROUP_INTRODUCTION_MENTEE("study_group_introduction_email_mentee.yml"),
     NOT_ON_SLACK_MENTOR("not_on_slack_mentor_applicant.yml"),
     PROFILE_NOT_APPROVED_MENTOR("mentorship_profile_not_approved_mentor.yml"),
-    PROFILE_APPROVED_MENTOR("mentorship_profile_approved_mentor.yml"),
+    MENTOR_APPROVED("mentorship_profile_approved_mentor.yml"),
     MENTORSHIP_FEEDBACK_MENTOR("mentorship_programme_feedback_mentor.yml"),
     MENTORSHIP_FEEDBACK_MENTEE("mentorship_programme_feedback_mentee.yml"),
     FINAL_UPDATES_MENTORSHIP_MENTOR("final_updates_mentorship_cycle_mentor.yml"),

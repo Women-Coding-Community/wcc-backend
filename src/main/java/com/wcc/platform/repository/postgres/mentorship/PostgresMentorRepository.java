@@ -2,6 +2,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -38,11 +39,17 @@ public class PostgresMentorRepository implements MentorRepository {
           + "bio = ?, "
           + "years_experience = ?, "
           + "spoken_languages = ?, "
-          + "is_available = ? "
+          + "is_available = ?, "
+          + "calendly_link = ?, "
+          + "accept_male_mentee = ?, "
+          + "accept_promote_social_media = ? "
           + "WHERE mentor_id = ?";
+  private static final String UPDATE_MENTOR_STATUS =
+      "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?";
   private static final String SQL_INSERT_MENTOR =
       "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "
-          + " spoken_languages, is_available) VALUES (?, ?, ?, ?, ?, ?)";
+          + " spoken_languages, is_available, calendly_link, "
+          + " accept_male_mentee, accept_promote_social_media) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentors WHERE mentor_id = ?";
   private static final String SQL_DELETE_BY_ID = "DELETE FROM mentors WHERE mentor_id = ?";
   private static final String SQL_GET_BY_EMAIL =
@@ -117,6 +124,13 @@ public class PostgresMentorRepository implements MentorRepository {
     return findById(mentorId).orElse(null);
   }
 
+  @Override
+  @Transactional
+  public Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus) {
+    jdbc.update(UPDATE_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
+    return findById(mentorId).orElse(null);
+  }
+
   private void validate(final Mentor mentor) {
     final var violations = validator.validate(mentor);
     if (!violations.isEmpty()) {
@@ -159,7 +173,10 @@ public class PostgresMentorRepository implements MentorRepository {
         mentor.getBio(),
         skills.yearsExperience(),
         String.join(",", mentor.getSpokenLanguages()),
-        true);
+        true,
+        mentor.getCalendlyLink(),
+        mentor.getAcceptMale(),
+        mentor.getAcceptPromotion());
   }
 
   /**
@@ -180,6 +197,9 @@ public class PostgresMentorRepository implements MentorRepository {
         skills.yearsExperience(),
         String.join(",", mentor.getSpokenLanguages()),
         true,
+        mentor.getCalendlyLink(),
+        mentor.getAcceptMale(),
+        mentor.getAcceptPromotion(),
         mentorId);
   }
 }

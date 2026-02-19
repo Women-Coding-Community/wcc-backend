@@ -45,11 +45,13 @@
   ],
   "bio": "I am a mother, a wife, and a Software Engineer. I graduated in Computer Science and have over 14 years of experience working in tech companies in Brazil, Germany, and Spain. As Backend Engineer, I found this to be my passion which I focused on in the last six years of my career. I am always excited to help others, and my goal is to empower women and support them with the difficulties I had as an engineer, and I still have from time to time.",
   "menteeSection": {
-    "mentorshipType": [
-      "LONG_TERM",
-      "AD_HOC"
-    ],
-    "availability": [
+    "idealMentee": "Someone willing to learn new technologies or to improve current skills",
+    "additional": "Spring Boot and Best Practices",
+    "longTerm": {
+      "numMentee": 2,
+      "hours": 8
+    },
+    "adHoc": [
       {
         "month": 6,
         "hours": 2
@@ -74,8 +76,6 @@
         "month": 11,
         "hours": 2
       }
-    ],
-    "idealMentee": "Someone willing to learn new technologies or to improve current skills",
-    "additional": "Spring Boot and Best Practices"
+    ]
   }
 }

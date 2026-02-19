@@ -2,21 +2,35 @@
 
 <!-- TOC -->
 
-* [WCC: Platform Backend Service](#wcc-platform-backend-service)
-    * [How to start?](#how-to-start)
-    * [Setup locally](#setup-locally)
-        * [JAVA 21 with SDKMAN](#java-21-with-sdkman)
-        * [Setup IntelliJ](#setup-intellij)
-            * [Lombok](#lombok)
-            * [Enable Save Actions](#enable-save-actions)
-            * [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
-            * [Google Format](#google-format)
-                * [IntelliJ JRE Config](#intellij-jre-config)
-        * [Setup PostgreSQL database](#setup-postgresql-database)
-    * [Run Locally](#run-locally)
-    * [Open API Documentation](#open-api-documentation)
-    * [Quality Checks](#quality-checks)
-    * [Deploy](#deploy)
+- [WCC: Platform Backend Service](#wcc-platform-backend-service)
+  - [How to start?](#how-to-start)
+  - [Setup locally](#setup-locally)
+    - [JAVA 21 with SDKMAN](#java-21-with-sdkman)
+    - [Setup IntelliJ](#setup-intellij)
+      - [Lombok](#lombok)
+      - [Enable Save Actions](#enable-save-actions)
+      - [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
+      - [Google Format](#google-format)
+        - [IntelliJ JRE Config](#intellij-jre-config)
+    - [Setup PostgreSQL database](#setup-postgresql-database)
+  - [Run Locally](#run-locally)
+    - [Run Locally without Authentication](#run-locally-without-authentication)
+  - [Generate Postman Collection](#generate-postman-collection)
+  - [Open API Documentation](#open-api-documentation)
+  - [API Documentation](#api-documentation)
+  - [Quality Checks](#quality-checks)
+  - [Deploy](#deploy)
+  - [Frontend (Administration Platform)](#frontend-administration-platform)
+    - [Run frontend locally](#run-frontend-locally)
+      - [Test credentials (seeded)](#test-credentials-seeded)
+    - [Frontend tests](#frontend-tests)
+    - [CORS configuration (backend)](#cors-configuration-backend)
+    - [CI/CD and deploy (Vercel)](#cicd-and-deploy-vercel)
+  - [API Testing Collection with Bruno](#api-testing-collection-with-bruno)
+    - [Prerequisites](#prerequisites)
+    - [Open the Collection in Bruno](#open-the-collection-in-bruno)
+    - [Running Requests](#running-requests)
+    - [How to Add New Flows / Requests](#how-to-add-new-flows--requests)
 
 <!-- TOC -->
 
@@ -146,9 +160,7 @@ docker --version
 
 ### Setup PostgreSQL database
 
-PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running
-the docker compose -f docker/docker-compose.yml up --build as explained
-in [Run Locally](#run-locally) section.
+PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running the `./scripts/docker-up.sh` as explained in [Run Locally](#run-locally) section.
 
 Setup Data source in the IntelliJ.
 
@@ -178,8 +190,7 @@ execute
 * Build containers
 
 ```shell
-./gradlew clean bootJar
-docker compose -f docker/docker-compose.yml up --build
+./scripts/docker-up.sh
 ```
 
 Now you have the application running connected to the postgres database.
@@ -235,7 +246,7 @@ You can generate a Postman collection from the application’s OpenAPI specifica
 1. Start the application (e.g. via Docker Compose):
 
 ```shell
-   docker compose -f docker/docker-compose.yml up --build
+   ./scripts/docker-up.sh
 ```
 
 2. In the root directory of the repository, there is a folder called `postman-collection` which
@@ -344,8 +355,7 @@ avoid CORS issues.
 
 ### CI/CD and deploy (Vercel)
 
-A GitHub Actions workflow is provided at `.github/workflows/deploy-frontend.yml` to deploy the
-frontend to Vercel on pushes to `main`. Configure the following repository secrets:
+A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-frontend-dev.yml` to deploy the frontend to Vercel Dev environment on pushes to `main`. Configure the following repository secrets:
 
 - VERCEL_TOKEN
 - VERCEL_ORG_ID
@@ -355,3 +365,65 @@ frontend to Vercel on pushes to `main`. Configure the following repository secre
 - NEXT_PUBLIC_APP_URL (optional)
 
 Alternatively, you can connect the repository directly in Vercel dashboard and set env vars there.
+
+## API Testing Collection with Bruno
+
+`api-flows` folder contains a Bruno API flow used for testing, and validating our backend APIs in a consistent, shareable way.
+
+Bruno is a fast, Git-friendly API client (think Postman, but local-first and text-based). This flow is designed so the whole team can run the same requests with minimal setup and predictable results.
+
+### Prerequisites
+Before using this flow, make sure you have:
+1. Bruno installed: https://www.usebruno.com/
+2. Access to the target API environment (local/dev/staging) by running docker locally.
+
+### Open the Collection in Bruno
+
+1. Open Bruno
+2. Click Open Collection
+3. Select the `api-flows` folder of this repository
+4. Bruno will automatically load all requests and local environment variables. Make sure to select the environment `local` that was loaded alongside the collection
+
+### Running Requests
+**Run a Single Request**
+1. Select a request
+2. Choose the correct environment (top-right)
+3. Click Send
+
+**Run a Folder / Flow**
+1. Right-click a folder
+2. Select Run Folder
+3. Bruno will execute requests in order
+
+This is useful for end-to-end flows like:
+
+Mentor creation → Get Mentors and validate if the mentor was created → Update Mentor data → Get Mentors and validate if the mentor was updated → Delete Mentor → Get Mentors and validate if the mentor was deleted
+
+**Run a Folder and Generate HTML Report**
+
+1. Navigate to the root of the collection: `cd api-flows`
+2. Install necessary dependencies: `npm install`
+3. Create `.env` file based on the `.env.example` 
+4. Execute Flow using this command: `npm run test:local`. 
+5. Execute Flow using this command with HTML report generated: `npm run test:local:report`. Open HTML report in browser
+
+### How to Add New Flows / Requests
+
+Follow these guidelines to keep the collection consistent and easy to maintain.
+
+**Adding a New Request**
+1. In Bruno, right-click the target folder
+2. Select New Request
+3. Give the request a clear, descriptive name
+4. Select the HTTP method and configure the endpoint, headers, and body
+5. Use environment variables (e.g. {{baseUrl}}, {{mentorId}}) instead of hardcoded values
+6. Use [dynamic variables](https://docs.usebruno.com/testing/script/dynamic-variables) in scripts to generate realistic data for payloads
+
+**Adding a New Flow (Folder)**
+
+1. Right-click in the collection root or relevant parent folder
+2. Select New Folder
+3. Name the folder after the business flow or feature
+4. Example: `mentee-registration-approval-flow`, `matching-flow`
+5. Add requests in the order they should be executed
+6. Ensure each request can be run sequentially as part of a folder execution by running the whole folder and making sure the HTML report is generated

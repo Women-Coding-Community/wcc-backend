@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform.member;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
 import jakarta.validation.constraints.Email;
@@ -35,6 +36,9 @@ public class Member {
   @Setter @NotNull private List<MemberType> memberTypes;
   private List<Image> images;
   private List<SocialNetwork> network;
+  private String pronouns;
+  private PronounCategory pronounCategory;
+  private Boolean isWomenNonBinary;
 
   public MemberDto toDto() {
     return new MemberDto(
@@ -48,6 +52,9 @@ public class Member {
         companyName,
         memberTypes,
         images,
-        network);
+        network,
+        pronouns,
+        pronounCategory,
+        isWomenNonBinary);
   }
 }

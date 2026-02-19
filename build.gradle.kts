@@ -37,11 +37,11 @@ configurations {
     }
 }
 
+val testContainer = "1.21.4"
+
 repositories {
     mavenCentral()
 }
-
-val testContainer = "1.21.3"
 
 dependencies {
 
@@ -57,6 +57,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("org.flywaydb:flyway-core")
@@ -69,10 +70,9 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
-    testImplementation("org.testcontainers:testcontainers:${testContainer}")
+    testImplementation("org.testcontainers:testcontainers:$testContainer")
     testImplementation("org.testcontainers:junit-jupiter:$testContainer")
-
-    testImplementation("org.testcontainers:postgresql:${testContainer}")
+    testImplementation("org.testcontainers:postgresql:$testContainer")
     testImplementation("org.apiguardian:apiguardian-api:1.1.2")
     testImplementation("com.icegreen:greenmail-spring:2.0.1")
     testImplementation("com.icegreen:greenmail-junit5:2.0.1")
@@ -142,7 +142,7 @@ tasks {
     }
 
     check {
-        dependsOn(jacocoTestCoverageVerification)
+        dependsOn("pmdAll", jacocoTestCoverageVerification)
     }
 }
 

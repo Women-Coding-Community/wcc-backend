@@ -1,86 +1,60 @@
 {
   "id": "page:BOOK_CLUB",
   "heroSection": {
-    "title": "WCC Book Club",
+    "title": "Interview Prep",
     "images": [
       {
-        "path": "https://cloudprovider.com/image.png",
-        "alt": "Books on the shelf",
+        "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+        "alt": "There is a group of women showing WCC logo",
         "type": "desktop"
       }
     ]
   },
   "section": {
-    "description": "What sets our book club apart are the lively conversations, valuable insights and an opportunity to connect with like-minded individuals. The books we read are selected by the community, offering a diverse selection of tech books and essential soft skills topics.The book club meets monthly to share views, exchange ideas, and inspire personal and professional growth."
+    "description": "Are you ready to take your CV to the next level? \n\nJoin us for an exciting opportunity to elevate your professional profile with our CV Clinic! \n\nAt the Women Coding Community, we believe in the power of collaboration and support. That's why we're thrilled to offer our members a unique chance to receive personalized feedback and guidance on their CVs from their peers. \n\nOur CV Clinic is designed to provide you with valuable insights, expert tips, and constructive feedback to help you craft a standout CV that showcases your true potential."
   },
   "contact": {
-    "title": "Join us in our Study Group Slack channel",
+    "title": "Join us in our CV Clinic Slack channel",
     "links": [
       {
-        "type": "slack",
-        "link": "http://shortlink_to_slack.com/#prog_book_club"
+        "type": "SLACK",
+        "link": "https://womencodingcommunity.slack.com/archives/C0703P2RUTV"
       }
     ]
   },
   "programmeDetails": [
     {
-      "title": "What We Are Reading",
+      "title": "How It Works",
+      "description": "Participating in our Peer CV Clinic is easy and fun!",
+      "items": [
+        "Simply join our Slack CV Slack channel and submit your CV (PDF or Google Docs), alongside a brief description of the role you’re applying for.",
+        "Our fellow members review each other's CVs, exchange feedback, and brainstorm ideas for improvement.",
+        "Whether you're a seasoned professional or just starting out in your career, our CV Clinic is the perfect chance to refine your CV and take your CV to the next level."
+      ]
+    },
+    {
+      "title": "Benefits of Joining",
       "description": "",
-      "card": {
-        "title": "The Pragmatic Programmer From Journeyman to Master",
-        "subtitle": "Andrew Hunt & David Thomas",
-        "description": "Essential guide for creating working and maintainable code amidst the complexities of modern software development.",
-        "link": {
-          "label": "View Book On GoodReads",
-          "uri": "http://goodread/book_link"
-        }
-      }
+      "items": [
+        "Expert Feedback: Receive personalized feedback and tips from peers who understand the nuances of your industry and role.",
+        "New Strategies: Sharpen your resume-writing skills and learn new techniques to make your resume stand out to potential employers.",
+        "Confidence Boost: Gain confidence in your professional profile and feel empowered to take the next step in your career journey."
+      ]
+    },
+    {
+      "title": "Resources to Build Your Resume",
+      "description": ""
+    },
+    {
+      "title": "Ready to Elevate Your CV?",
+      "description": "Don't miss out on this exciting opportunity to take your resume to new heights! Join us in our CV Clinic Slack channel"
     }
   ],
-  "eventSection": {
-    "title": "Upcoming events",
-    "link": {
-      "label": "View past events",
-      "uri": "/eventsPage_link"
-    },
-    "events": [
-      {
-        "topics": "Book Club",
-        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
-        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
-        "title": "BOOK MONTH AUG",
-        "description": "Book description",
-        "hostProfile": {
-          "label": "Jane Doe",
-          "uri": "https://linkedIn/host"
-        },
-        "eventLink": {
-          "label": "Go to Meetup Event",
-          "uri": "https://meetup.com/event1"
-        }
-      },
-      {
-        "topics": "Book Club",
-        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
-        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
-        "title": "BOOK MONTH SEP",
-        "description": "Book description",
-        "speakerProfile": {
-          "label": "Jane Doe",
-          "uri": "https://linkedIn/host"
-        },
-        "eventLink": {
-          "label": "Go to Meetup Event",
-          "uri": "https://meetup.com/event1"
-        }
-      }
-    ]
-  },
   "customStyle": {
     "backgroundColour": {
-      "color": "primary",
+      "color": "PRIMARY",
       "shade": {
-        "name": "light",
+        "name": "LIGHT",
         "value": 90
       }
     }

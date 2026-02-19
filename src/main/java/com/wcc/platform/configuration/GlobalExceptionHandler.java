@@ -9,10 +9,12 @@ import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
+import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
@@ -96,6 +98,17 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
+  /** Receive MentorStatusException and return {@link HttpStatus#CONFLICT}. */
+  @ExceptionHandler(MentorStatusException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ResponseEntity<ErrorDetails> handleMentorStatus(
+      final MentorStatusException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+  }
+
   /** Receive Constraints violations and return {@link HttpStatus#NOT_ACCEPTABLE}. */
   @ExceptionHandler({
     ApplicationMenteeWorkflowException.class,
@@ -128,5 +141,16 @@ public class GlobalExceptionHandler {
         new ErrorDetails(
             HttpStatus.BAD_REQUEST.value(), errorMessage, request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+  }
+
+  /** Return 403 Forbidden for ForbiddenException. */
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<ErrorDetails> handleForbiddenException(
+      final ForbiddenException ex, final WebRequest request) {
+    final var errorResponse =
+        new ErrorDetails(
+            HttpStatus.FORBIDDEN.value(), ex.getMessage(), request.getDescription(false));
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
   }
 }

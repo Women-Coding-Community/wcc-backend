@@ -13,16 +13,21 @@ class OpenApiConfigTest {
   private OpenApiConfig config;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     config = new OpenApiConfig();
     // set the private appBaseUrl field used by customOpenApi()
-    Field f = OpenApiConfig.class.getDeclaredField("appBaseUrl");
-    f.setAccessible(true);
-    f.set(config, "https://example.com/base");
+    Field field = null;
+    try {
+      field = OpenApiConfig.class.getDeclaredField("appBaseUrl");
+      field.setAccessible(true);
+      field.set(config, "https://example.com/base");
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      // do nothing
+    }
   }
 
   @Test
-  void customOpenApi_setsServerUrlFromAppBaseUrl() {
+  void customOpenApiSetsServerUrlFromAppBaseUrl() {
     OpenAPI openAPI = config.customOpenApi();
     assertNotNull(openAPI);
 

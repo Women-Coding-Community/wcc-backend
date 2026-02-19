@@ -10,6 +10,155 @@
 	},
 	"item": [
 	        {
+	            "name": "Pages: General",
+	            "item": [
+	                        {
+    "name": "/api/cms/v1/footer",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to retrieve footer section details",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/cms/v1/footer",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "cms",
+                                            "v1",
+                                            "footer"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/cms/v1/landingPage",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to retrieve landing page sections",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/cms/v1/landingPage",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "cms",
+                                            "v1",
+                                            "landingPage"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/cms/v1/program",
+                "description": "Select each programme by type",
+                 "item": [
+                            {
+                                "name": "API to retrieve programme page",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/cms/v1/program",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "cms",
+                                            "v1",
+                                            "program"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "type",
+                                                "value": "type_example",
+                                                "description": "Program Type, for example: BOOK_CLUB",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": "Select each programme by type"
+                                }
+                            }
+                            ]
+                        }
+	                    ]
+	        },
+	        {
 	            "name": "Pages: Mentorship",
 	            "item": [
 	                        {
@@ -240,6 +389,42 @@
                                         "variable": [
                                         ],
                                         "query": [
+                                            {
+                                                "key": "keyword",
+                                                "value": "keyword_example",
+                                                "description": "",
+                                                "disabled": true
+                                            },
+                                            {
+                                                "key": "mentorshipTypes",
+                                                "value": "",
+                                                "description": "",
+                                                "disabled": true
+                                            },
+                                            {
+                                                "key": "yearsExperience",
+                                                "value": "56",
+                                                "description": "",
+                                                "disabled": true
+                                            },
+                                            {
+                                                "key": "areas",
+                                                "value": "",
+                                                "description": "",
+                                                "disabled": true
+                                            },
+                                            {
+                                                "key": "languages",
+                                                "value": "",
+                                                "description": "",
+                                                "disabled": true
+                                            },
+                                            {
+                                                "key": "focus",
+                                                "value": "",
+                                                "description": "",
+                                                "disabled": true
+                                            }
                                         ]
                                     },
                                     "description": ""
@@ -295,6 +480,53 @@
                             ]
                         },
 	                        {
+    "name": "/api/cms/v1/mentorship/resources",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to retrieve mentorship resources page",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/cms/v1/mentorship/resources",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "cms",
+                                            "v1",
+                                            "mentorship",
+                                            "resources"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
     "name": "/api/cms/v1/mentorship/study-groups",
                 "description": "",
                  "item": [
@@ -330,6 +562,107 @@
                                             "v1",
                                             "mentorship",
                                             "study-groups"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        }
+	                    ]
+	        },
+	        {
+	            "name": "Platform: Authentication",
+	            "item": [
+	                        {
+    "name": "/api/auth/login",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Authenticate with email/password and receive an access token",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"email\": \"<string>\",\n \"password\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/auth/login",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "auth",
+                                            "login"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/auth/me",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get current authenticated user and member info",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/auth/me",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "auth",
+                                            "me"
                                         ],
                                         "variable": [
                                         ],
@@ -465,7 +798,7 @@
 	                    ]
 	        },
 	        {
-	            "name": "Platform",
+	            "name": "Platform: Members",
 	            "item": [
 	                        {
     "name": "/api/platform/v1/members",
@@ -566,7 +899,59 @@
                             ]
                         },
 	                        {
-    "name": "/api/platform/v1/members/:email",
+    "name": "/api/platform/v1/members/:memberId",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Delete a member",
+                                "request": {
+                                    "method": "DELETE",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/members/:memberId",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "members",
+                                            ":memberId"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "memberId",
+                                                "value": "",
+                                                "description": "ID of the member to delete"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/members/:memberId",
                 "description": "",
                  "item": [
                             {
@@ -589,7 +974,7 @@
                                     ],
                                     "body": {
                                         "mode": "raw",
-                                        "raw": "{\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"network\": \"<string>\",\n \"images\": \"<string>\"\n}",
+                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\"\n}",
                                         "options": {
                                             "raw": {
                                                 "language": "json"
@@ -597,7 +982,7 @@
                                         }
                                     },
                                     "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/members/:email",
+                                        "raw": "{{baseUrl}}/api/platform/v1/members/:memberId",
                                         "host": [
                                             "{{baseUrl}}"
                                         ],
@@ -606,11 +991,11 @@
                                             "platform",
                                             "v1",
                                             "members",
-                                            ":email"
+                                            ":memberId"
                                         ],
                                         "variable": [
                                             {
-                                                "key": "email",
+                                                "key": "memberId",
                                                 "value": "",
                                                 "description": ""
                                             }
@@ -622,18 +1007,13 @@
                                 }
                             }
                             ]
-                        }
-	                    ]
-	        },
-	        {
-	            "name": "Pages: Event",
-	            "item": [
+                        },
 	                        {
-    "name": "/api/cms/v1/events",
+    "name": "/api/platform/v1/users",
                 "description": "",
                  "item": [
                             {
-                                "name": "API to retrieve information about events page",
+                                "name": "API to retrieve users with access to restrict area",
                                 "request": {
                                     "method": "GET",
                                     "header": [
@@ -654,272 +1034,7 @@
                                         }
                                     },
                                     "url": {
-                                        "raw": "{{baseUrl}}/api/cms/v1/events",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "cms",
-                                            "v1",
-                                            "events"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "currentPage",
-                                                "value": "56",
-                                                "description": "",
-                                                "disabled": true
-                                            },
-                                            {
-                                                "key": "pageSize",
-                                                "value": "56",
-                                                "description": "",
-                                                "disabled": true
-                                            }
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/cms/v1/events/filters",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "API to retrieve information about filters on event page",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/cms/v1/events/filters",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "cms",
-                                            "v1",
-                                            "events",
-                                            "filters"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        }
-	                    ]
-	        },
-	        {
-	            "name": "Pages and Sections",
-	            "item": [
-	                        {
-    "name": "/api/cms/v1/footer",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "API to retrieve footer section details",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/cms/v1/footer",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "cms",
-                                            "v1",
-                                            "footer"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/cms/v1/landingPage",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "API to retrieve landing page sections",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/cms/v1/landingPage",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "cms",
-                                            "v1",
-                                            "landingPage"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/cms/v1/program",
-                "description": "Select each programme by type",
-                 "item": [
-                            {
-                                "name": "API to retrieve programme page",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/cms/v1/program",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "cms",
-                                            "v1",
-                                            "program"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "type",
-                                                "value": "type_example",
-                                                "description": "Program Type, for example: BOOK_CLUB",
-                                                "disabled": false
-                                            }
-                                        ]
-                                    },
-                                    "description": "Select each programme by type"
-                                }
-                            }
-                            ]
-                        }
-	                    ]
-	        },
-	        {
-	            "name": "Platform: Pages",
-	            "item": [
-	                        {
-    "name": "/api/platform/v1/page",
-                "description": "Create new page with any content type.",
-                 "item": [
-                            {
-                                "name": "Create page content by page type",
-                                "request": {
-                                    "method": "POST",
-                                    "header": [
-                                        {
-                                            "key": "Content-Type",
-                                            "value": "application/json",
-                                            "description": "",
-                                            "disabled": false
-                                        },
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/page",
+                                        "raw": "{{baseUrl}}/api/platform/v1/users",
                                         "host": [
                                             "{{baseUrl}}"
                                         ],
@@ -927,576 +1042,11 @@
                                             "api",
                                             "platform",
                                             "v1",
-                                            "page"
+                                            "users"
                                         ],
                                         "variable": [
                                         ],
                                         "query": [
-                                            {
-                                                "key": "pageType",
-                                                "value": "pageType_example",
-                                                "description": "Page Type, for example: ABOUT_US",
-                                                "disabled": false
-                                            }
-                                        ]
-                                    },
-                                    "description": "Create new page with any content type."
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/page",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Delete page by id",
-                                "request": {
-                                    "method": "DELETE",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/page",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "page"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "id",
-                                                "value": "id_example",
-                                                "description": "",
-                                                "disabled": false
-                                            }
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/page",
-                "description": "Update the content of existent page.",
-                 "item": [
-                            {
-                                "name": "Update page content by page type",
-                                "request": {
-                                    "method": "PUT",
-                                    "header": [
-                                        {
-                                            "key": "Content-Type",
-                                            "value": "application/json",
-                                            "description": "",
-                                            "disabled": false
-                                        },
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/page",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "page"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "pageType",
-                                                "value": "pageType_example",
-                                                "description": "Page Type, for example: ABOUT_US",
-                                                "disabled": false
-                                            }
-                                        ]
-                                    },
-                                    "description": "Update the content of existent page."
-                                }
-                            }
-                            ]
-                        }
-	                    ]
-	        },
-	        {
-	            "name": "Resources",
-	            "item": [
-	                        {
-    "name": "/api/platform/v1/resources",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Get resources by type",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "resourceType",
-                                                "value": "resourceType_example",
-                                                "description": "Type of resources to get",
-                                                "disabled": false
-                                            }
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/resources",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Upload a resource",
-                                "request": {
-                                    "method": "POST",
-                                    "header": [
-                                        {
-                                            "key": "Content-Type",
-                                            "value": "multipart/form-data",
-                                            "description": "",
-                                            "disabled": false
-                                        },
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "name",
-                                                "value": "name_example",
-                                                "description": "Name of the resource",
-                                                "disabled": false
-                                            },
-                                            {
-                                                "key": "description",
-                                                "value": "description_example",
-                                                "description": "Description of the resource",
-                                                "disabled": true
-                                            },
-                                            {
-                                                "key": "resourceType",
-                                                "value": "resourceType_example",
-                                                "description": "Type of resource",
-                                                "disabled": false
-                                            }
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/resources/:id",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Delete a resource",
-                                "request": {
-                                    "method": "DELETE",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources/:id",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources",
-                                            ":id"
-                                        ],
-                                        "variable": [
-                                            {
-                                                "key": "id",
-                                                "value": "",
-                                                "description": "ID of the resource to delete"
-                                            }
-                                        ],
-                                        "query": [
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/resources/:id",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Get a resource by ID",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources/:id",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources",
-                                            ":id"
-                                        ],
-                                        "variable": [
-                                            {
-                                                "key": "id",
-                                                "value": "",
-                                                "description": "ID of the resource"
-                                            }
-                                        ],
-                                        "query": [
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/resources/mentor-profile-picture",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Upload a mentor's profile picture",
-                                "request": {
-                                    "method": "POST",
-                                    "header": [
-                                        {
-                                            "key": "Content-Type",
-                                            "value": "multipart/form-data",
-                                            "description": "",
-                                            "disabled": false
-                                        },
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources/mentor-profile-picture",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources",
-                                            "mentor-profile-picture"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "mentorEmail",
-                                                "value": "mentorEmail_example",
-                                                "description": "Email of the mentor",
-                                                "disabled": false
-                                            }
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/resources/mentor-profile-picture/:mentorEmail",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Delete a mentor's profile picture",
-                                "request": {
-                                    "method": "DELETE",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources/mentor-profile-picture/:mentorEmail",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources",
-                                            "mentor-profile-picture",
-                                            ":mentorEmail"
-                                        ],
-                                        "variable": [
-                                            {
-                                                "key": "mentorEmail",
-                                                "value": "",
-                                                "description": "Email of the mentor"
-                                            }
-                                        ],
-                                        "query": [
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/resources/mentor-profile-picture/:mentorEmail",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Get a mentor's profile picture",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources/mentor-profile-picture/:mentorEmail",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources",
-                                            "mentor-profile-picture",
-                                            ":mentorEmail"
-                                        ],
-                                        "variable": [
-                                            {
-                                                "key": "mentorEmail",
-                                                "value": "",
-                                                "description": "Email of the mentor"
-                                            }
-                                        ],
-                                        "query": [
-                                        ]
-                                    },
-                                    "description": ""
-                                }
-                            }
-                            ]
-                        },
-	                        {
-    "name": "/api/platform/v1/resources/search",
-                "description": "",
-                 "item": [
-                            {
-                                "name": "Search for resources by name",
-                                "request": {
-                                    "method": "GET",
-                                    "header": [
-                                        {
-                                            "key": "Accept",
-                                            "value": "*/*",
-                                            "description": "",
-                                            "disabled": false
-                                        }
-                                    ],
-                                    "body": {
-                                        "mode": "raw",
-                                        "raw": "",
-                                        "options": {
-                                            "raw": {
-                                                "language": "json"
-                                            }
-                                        }
-                                    },
-                                    "url": {
-                                        "raw": "{{baseUrl}}/api/platform/v1/resources/search",
-                                        "host": [
-                                            "{{baseUrl}}"
-                                        ],
-                                        "path": [
-                                            "api",
-                                            "platform",
-                                            "v1",
-                                            "resources",
-                                            "search"
-                                        ],
-                                        "variable": [
-                                        ],
-                                        "query": [
-                                            {
-                                                "key": "name",
-                                                "value": "name_example",
-                                                "description": "Name to search for",
-                                                "disabled": false
-                                            }
                                         ]
                                     },
                                     "description": ""
@@ -1790,6 +1340,1851 @@
                                         "variable": [
                                         ],
                                         "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        }
+	                    ]
+	        },
+	        {
+	            "name": "Platform: Mentorship Admin",
+	            "item": [
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/cycles",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get cycles by status",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/cycles",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "cycles"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "status",
+                                                "value": "status_example",
+                                                "description": "Cycle status",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/cycles/:cycleId",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get a cycle by ID",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/cycles/:cycleId",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "cycles",
+                                            ":cycleId"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "cycleId",
+                                                "value": "",
+                                                "description": "Cycle ID"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/cycles/all",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get all mentorship cycles",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/cycles/all",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "cycles",
+                                            "all"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/cycles/current",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get the currently open mentorship cycle",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/cycles/current",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "cycles",
+                                            "current"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/matches",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get all matches for a cycle",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/matches",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "matches"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "cycleId",
+                                                "value": "789",
+                                                "description": "Cycle ID",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/matches/:matchId/cancel",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Cancel a mentorship match",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"reason\": \"<string>\",\n \"cancelledBy\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/matches/:matchId/cancel",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "matches",
+                                            ":matchId",
+                                            "cancel"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "matchId",
+                                                "value": "",
+                                                "description": "Match ID"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/matches/:matchId/complete",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Complete a mentorship match",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/matches/:matchId/complete",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "matches",
+                                            ":matchId",
+                                            "complete"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "matchId",
+                                                "value": "",
+                                                "description": "Match ID"
+                                            }
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "notes",
+                                                "value": "notes_example",
+                                                "description": "Completion notes",
+                                                "disabled": true
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/matches/:matchId/increment-session",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Increment session count for a match",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/matches/:matchId/increment-session",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "matches",
+                                            ":matchId",
+                                            "increment-session"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "matchId",
+                                                "value": "",
+                                                "description": "Match ID"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/admin/mentorship/matches/confirm/:applicationId",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Admin confirms a mentorship match from accepted application",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/admin/mentorship/matches/confirm/:applicationId",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "admin",
+                                            "mentorship",
+                                            "matches",
+                                            "confirm",
+                                            ":applicationId"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "applicationId",
+                                                "value": "",
+                                                "description": "Application ID to confirm as match"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        }
+	                    ]
+	        },
+	        {
+	            "name": "Pages: Event",
+	            "item": [
+	                        {
+    "name": "/api/cms/v1/events",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to retrieve information about events page",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/cms/v1/events",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "cms",
+                                            "v1",
+                                            "events"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "currentPage",
+                                                "value": "56",
+                                                "description": "",
+                                                "disabled": true
+                                            },
+                                            {
+                                                "key": "pageSize",
+                                                "value": "56",
+                                                "description": "",
+                                                "disabled": true
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/cms/v1/events/filters",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to retrieve information about filters on event page",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/cms/v1/events/filters",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "cms",
+                                            "v1",
+                                            "events",
+                                            "filters"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        }
+	                    ]
+	        },
+	        {
+	            "name": "Platform: Mentors &amp; Mentees",
+	            "item": [
+	                        {
+    "name": "/api/platform/v1/applications",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get all applications by status",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/applications",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "applications"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "status",
+                                                "value": "status_example",
+                                                "description": "Application status",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentees",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to submit mentee registration",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"mentee\": \"<string>\",\n \"mentorshipType\": \"<string>\",\n \"cycleYear\": \"<number>\",\n \"applications\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentees",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentees"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentees/:menteeId/applications",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get mentee applications for a cycle",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentees/:menteeId/applications",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentees",
+                                            ":menteeId",
+                                            "applications"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "menteeId",
+                                                "value": "",
+                                                "description": "ID of the mentee"
+                                            }
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "cycleId",
+                                                "value": "789",
+                                                "description": "Cycle ID",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentees/applications/:applicationId/withdraw",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Mentee withdraws an application",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"reason\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentees/applications/:applicationId/withdraw",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentees",
+                                            "applications",
+                                            ":applicationId",
+                                            "withdraw"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "applicationId",
+                                                "value": "",
+                                                "description": "Application ID"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to submit mentor registration",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"profileStatus\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to retrieve a list of all members",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors/:mentorId",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to update mentor data",
+                                "request": {
+                                    "method": "PUT",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"id\": \"<number>\",\n \"fullName\": \"<string>\",\n \"position\": \"<string>\",\n \"email\": \"<string>\",\n \"slackDisplayName\": \"<string>\",\n \"country\": \"<string>\",\n \"city\": \"<string>\",\n \"companyName\": \"<string>\",\n \"memberTypes\": \"<string>\",\n \"images\": \"<string>\",\n \"network\": \"<string>\",\n \"profileStatus\": \"<string>\",\n \"skills\": \"<string>\",\n \"spokenLanguages\": \"<string>\",\n \"bio\": \"<string>\",\n \"menteeSection\": \"<string>\",\n \"feedbackSection\": \"<string>\",\n \"resources\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors/:mentorId",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors",
+                                            ":mentorId"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "mentorId",
+                                                "value": "",
+                                                "description": ""
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors/:mentorId/accept",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "API to accept mentor registration",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors/:mentorId/accept",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors",
+                                            ":mentorId",
+                                            "accept"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "mentorId",
+                                                "value": "",
+                                                "description": ""
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors/:mentorId/applications",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get applications received by a mentor",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors/:mentorId/applications",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors",
+                                            ":mentorId",
+                                            "applications"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "mentorId",
+                                                "value": "",
+                                                "description": "ID of the mentor"
+                                            }
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "status",
+                                                "value": "status_example",
+                                                "description": "Filter by status (optional)",
+                                                "disabled": true
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors/applications/:applicationId/accept",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Mentor accepts an application",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"mentorResponse\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors/applications/:applicationId/accept",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors",
+                                            "applications",
+                                            ":applicationId",
+                                            "accept"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "applicationId",
+                                                "value": "",
+                                                "description": "Application ID"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/mentors/applications/:applicationId/decline",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Mentor declines an application",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"reason\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentors/applications/:applicationId/decline",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentors",
+                                            "applications",
+                                            ":applicationId",
+                                            "decline"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "applicationId",
+                                                "value": "",
+                                                "description": "Application ID"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        }
+	                    ]
+	        },
+	        {
+	            "name": "Platform: Pages",
+	            "item": [
+	                        {
+    "name": "/api/platform/v1/page",
+                "description": "Create new page with any content type.",
+                 "item": [
+                            {
+                                "name": "Create page content by page type",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/page",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "page"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "pageType",
+                                                "value": "pageType_example",
+                                                "description": "Page Type, for example: ABOUT_US",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": "Create new page with any content type."
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/page",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Delete page by id",
+                                "request": {
+                                    "method": "DELETE",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/page",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "page"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "id",
+                                                "value": "id_example",
+                                                "description": "",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/page",
+                "description": "Update the content of existent page.",
+                 "item": [
+                            {
+                                "name": "Update page content by page type",
+                                "request": {
+                                    "method": "PUT",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/page",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "page"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "pageType",
+                                                "value": "pageType_example",
+                                                "description": "Page Type, for example: ABOUT_US",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": "Update the content of existent page."
+                                }
+                            }
+                            ]
+                        }
+	                    ]
+	        },
+	        {
+	            "name": "Platform: Resources",
+	            "item": [
+	                        {
+    "name": "/api/platform/v1/resources",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get resources by type",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "resourceType",
+                                                "value": "resourceType_example",
+                                                "description": "Type of resources to get",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/resources",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Upload a resource",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "multipart/form-data",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "name",
+                                                "value": "name_example",
+                                                "description": "Name of the resource",
+                                                "disabled": false
+                                            },
+                                            {
+                                                "key": "description",
+                                                "value": "description_example",
+                                                "description": "Description of the resource",
+                                                "disabled": true
+                                            },
+                                            {
+                                                "key": "resourceType",
+                                                "value": "resourceType_example",
+                                                "description": "Type of resource",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/resources/:id",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Delete a resource",
+                                "request": {
+                                    "method": "DELETE",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources/:id",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources",
+                                            ":id"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "id",
+                                                "value": "",
+                                                "description": "ID of the resource to delete"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/resources/:id",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get a resource by ID",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources/:id",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources",
+                                            ":id"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "id",
+                                                "value": "",
+                                                "description": "ID of the resource"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/resources/member-profile-picture",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Upload a member's profile picture",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "multipart/form-data",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources/member-profile-picture",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources",
+                                            "member-profile-picture"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "memberId",
+                                                "value": "789",
+                                                "description": "Id of the member",
+                                                "disabled": false
+                                            }
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/resources/member-profile-picture/:memberId",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Delete a member's profile picture",
+                                "request": {
+                                    "method": "DELETE",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources/member-profile-picture/:memberId",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources",
+                                            "member-profile-picture",
+                                            ":memberId"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "memberId",
+                                                "value": "",
+                                                "description": "Id of the member"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/resources/member-profile-picture/:memberId",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Get a member's profile picture",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources/member-profile-picture/:memberId",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources",
+                                            "member-profile-picture",
+                                            ":memberId"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "memberId",
+                                                "value": "",
+                                                "description": "Id of the member"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/resources/search",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Search for resources by name",
+                                "request": {
+                                    "method": "GET",
+                                    "header": [
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/resources/search",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "resources",
+                                            "search"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                            {
+                                                "key": "name",
+                                                "value": "name_example",
+                                                "description": "Name to search for",
+                                                "disabled": false
+                                            }
                                         ]
                                     },
                                     "description": ""
@@ -2317,6 +3712,172 @@
                             ]
                         }
 	                    ]
+	        },
+	        {
+	            "name": "Platform: Emails",
+	            "item": [
+	                        {
+    "name": "/api/platform/v1/email/send",
+                "description": "Sends an email to the specified recipient",
+                 "item": [
+                            {
+                                "name": "Send a single email",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"to\": \"<string>\",\n \"cc\": \"<string>\",\n \"bcc\": \"<string>\",\n \"subject\": \"<string>\",\n \"body\": \"<string>\",\n \"html\": \"<string>\",\n \"replyTo\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/email/send",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "email",
+                                            "send"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": "Sends an email to the specified recipient"
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/email/send/bulk",
+                "description": "Sends multiple emails to different recipients",
+                 "item": [
+                            {
+                                "name": "Send multiple emails in bulk",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/email/send/bulk",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "email",
+                                            "send",
+                                            "bulk"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": "Sends multiple emails to different recipients"
+                                }
+                            }
+                            ]
+                        },
+	                        {
+    "name": "/api/platform/v1/email/template/preview",
+                "description": "Renders an email template",
+                 "item": [
+                            {
+                                "name": "Preview an email template",
+                                "request": {
+                                    "method": "POST",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"templateType\": \"<string>\",\n \"params\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/email/template/preview",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "email",
+                                            "template",
+                                            "preview"
+                                        ],
+                                        "variable": [
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": "Renders an email template"
+                                }
+                            }
+                            ]
+                        }
+	                    ]
 	        }
     ],
     "auth": {
@@ -2337,7 +3898,7 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "https://wcc-backend.fly.dev",
+			"value": "http://localhost:8080",
 			"type": "string"
         },
         {

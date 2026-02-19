@@ -1,0 +1,116 @@
+meta {
+  name: Submit Mentor Registration
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/platform/v1/mentors
+  body: json
+  auth: apikey
+}
+
+auth:apikey {
+  key: 
+  value: 
+  placement: header
+}
+
+script:pre-request {
+  const { faker } = require('@faker-js/faker');
+  
+  const payload = {
+    fullName: faker.person.fullName(),
+    position: faker.person.jobTitle(),
+    email: faker.internet.email(),
+    slackDisplayName: faker.word.adverb(),
+    country: {
+      countryCode: faker.location.countryCode(),
+      countryName: faker.location.country()
+    },
+    city: faker.location.city(),
+    companyName: faker.company.name(),
+    memberTypes: ["MENTOR"],
+    images: [],
+    network: [],
+    profileStatus: "PENDING",
+    skills: {
+      yearsExperience: 10,
+      areas: ["Quality Assurance"],
+      languages: ["Python", "Javascript", "Java"],
+      mentorshipFocus: ["Switch career to IT"]
+    },
+    spokenLanguages: ["English", "Portuguese"],
+    bio: faker.person.bio(),
+    menteeSection: {
+      longTerm: {
+        numMentee: 1,
+        hours: 2
+      },
+      adHoc: [
+        { month: 6, hours: 2 },
+        { month: 7, hours: 2 },
+        { month: 8, hours: 2 },
+        { month: 9, hours: 2 },
+        { month: 10, hours: 2 },
+        { month: 11, hours: 2 }
+      ],
+      idealMentee: faker.lorem.sentence(),
+      additional: "Best practices"
+    }
+  };
+  
+  bru.setEnvVar("mentor_payload", payload)
+  req.setBody(payload)
+}
+
+script:post-response {
+  const id = res.body.id;
+  bru.setEnvVar("userId", id);
+  // Note: full payload `mentor_payload` is already stored in pre-request; no extra fields required here
+}
+
+tests {
+  test("Response Status is OK (201)", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response body should contain fiedls from payload", function() {
+    const body = res.getBody()
+    const payload = bru.getEnvVar("mentor_payload")
+    expect(body.fullName).to.equal(payload.fullName)
+    expect(body.email).to.equal(payload.email)
+    expect(body.position).to.equal(payload.position)
+    expect(body.slackDisplayName).to.equal(payload.slackDisplayName)
+    console.log(body.memberTypes)
+    expect(body.memberTypes).to.deep.equal(["Mentor"])
+  
+    expect(body.profileStatus).to.equal("PENDING")
+    expect(body.menteeSection).to.have.keys(
+    'idealMentee',
+    'additional',
+    'longTerm',
+    'adHoc'
+  )
+    expect(body.menteeSection.longTerm)
+    .to.deep.equal(payload.menteeSection.longTerm)
+  
+    // Uncomment once the bug will be resolved: https://github.com/Women-Coding-Community/wcc-backend/issues/505
+    /* const monthMap = {
+    7: "JULY",
+    8: "AUGUST",
+    9: "SEPTEMBER",
+    10: "OCTOBER",
+    11: "NOVEMBER",
+    12: "DECEMBER"
+  }
+  
+  payload.menteeSection.adHoc.forEach((item, i) => {
+    expect(body.menteeSection.adHoc[i]).to.deep.equal({
+      month: monthMap[item.month],
+      hours: item.hours
+    })
+    */
+  }) 
+  
+}

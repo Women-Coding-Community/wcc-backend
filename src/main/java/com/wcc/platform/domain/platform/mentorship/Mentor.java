@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.platform.SocialNetwork;
@@ -20,6 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /** Represents the mentor members of the community. */
 @Getter
@@ -36,6 +38,9 @@ public class Mentor extends Member {
   @NotNull private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
+  private String calendlyLink;
+  private Boolean acceptMale;
+  private Boolean acceptPromotion;
 
   /** Mentor Builder. */
   @Builder(builderMethodName = "mentorBuilder")
@@ -51,13 +56,19 @@ public class Mentor extends Member {
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
+      final String pronouns,
+      final PronounCategory pronounCategory,
       final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
       final String bio,
       final Skills skills,
       final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
-      final MentorResource resources) {
+      final MentorResource resources,
+      final Boolean isWomenNonBinary,
+      final String calendlyLink,
+      final Boolean acceptMale,
+      final Boolean acceptPromotion) {
     super(
         id,
         fullName,
@@ -69,15 +80,30 @@ public class Mentor extends Member {
         companyName,
         Collections.singletonList(MemberType.MENTOR),
         images,
-        network);
+        network,
+        pronouns,
+        pronounCategory,
+        isWomenNonBinary);
 
     this.profileStatus = profileStatus;
     this.skills = skills;
-    this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
+    this.spokenLanguages = normalizeLanguages(spokenLanguages);
     this.bio = bio;
     this.menteeSection = menteeSection;
     this.feedbackSection = feedbackSection;
     this.resources = resources;
+    this.calendlyLink = calendlyLink;
+    this.acceptMale = acceptMale;
+    this.acceptPromotion = acceptPromotion;
+  }
+
+  /** Checks for empty or null and returns capitalized list of string. */
+  private static List<String> normalizeLanguages(final List<String> languages) {
+    if (CollectionUtils.isEmpty(languages)) {
+      return List.of();
+    }
+
+    return languages.stream().filter(StringUtils::isNotBlank).map(StringUtils::capitalize).toList();
   }
 
   /**
@@ -88,21 +114,7 @@ public class Mentor extends Member {
    * @return a MentorDto containing the mentor's details and availability information
    */
   public MentorDto toDto(final MentorshipCycle mentorshipCycle) {
-    final var mentor = this;
-    final var mentorBuilder = buildFromMentor(mentor);
-
-    if (mentor.getMenteeSection().mentorshipType().contains(mentorshipCycle.cycle())) {
-
-      final var isAvailable =
-          mentor.getMenteeSection().availability().stream()
-              .filter(availability -> availability.month() == mentorshipCycle.month())
-              .findAny();
-
-      mentorBuilder.availability(
-          new MentorAvailability(mentorshipCycle.cycle(), isAvailable.isPresent()));
-    }
-
-    return mentorBuilder.build();
+    return buildFromMentor(this).build();
   }
 
   /**
@@ -118,7 +130,6 @@ public class Mentor extends Member {
   private MentorDtoBuilder buildFromMentor(final Mentor mentor) {
     return MentorDto.mentorDtoBuilder()
         .id(mentor.getId())
-        .availability(null)
         .fullName(mentor.getFullName())
         .position(mentor.getPosition())
         .email(mentor.getEmail())
@@ -129,11 +140,25 @@ public class Mentor extends Member {
         .images(mentor.getImages())
         .network(mentor.getNetwork())
         .profileStatus(mentor.getProfileStatus())
+        .pronouns(mentor.getPronouns())
+        .pronounCategory(mentor.getPronounCategory())
         .spokenLanguages(mentor.getSpokenLanguages())
         .bio(mentor.getBio())
         .skills(mentor.getSkills())
         .menteeSection(mentor.getMenteeSection().toDto())
         .feedbackSection(mentor.getFeedbackSection())
-        .resources(mentor.getResources());
+        .resources(mentor.getResources())
+        .isWomenNonBinary(mentor.getIsWomenNonBinary())
+        .calendlyLink(mentor.getCalendlyLink())
+        .acceptMale(mentor.getAcceptMale())
+        .acceptPromotion(mentor.getAcceptPromotion());
+  }
+
+  /** Lombok builder hook to enforce normalization. */
+  public static class MentorBuilder {
+    public MentorBuilder spokenLanguages(final List<String> spokenLanguages) {
+      this.spokenLanguages = normalizeLanguages(spokenLanguages);
+      return this;
+    }
   }
 }

@@ -1,0 +1,25 @@
+meta {
+  name: Delete a member
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/platform/v1/members/:memberId
+  body: none
+  auth: apikey
+}
+
+params:path {
+  memberId: {{userId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+assert {
+  res.status: eq 204
+}

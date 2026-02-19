@@ -1,8 +1,6 @@
 package com.wcc.platform.repository.postgres.mentorship;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
-import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Skills;
@@ -149,15 +147,15 @@ public class PostgresMenteeRepository implements MenteeRepository {
 
   /** Inserts technical areas for the mentee in mentee_technical_areas table. */
   private void insertTechnicalAreas(final Skills menteeSkills, final Long memberId) {
-    for (final TechnicalArea area : menteeSkills.areas()) {
-      jdbc.update(SQL_TECH_AREAS_INSERT, memberId, area.getTechnicalAreaId());
+    for (final var areaProf : menteeSkills.areas()) {
+      jdbc.update(SQL_TECH_AREAS_INSERT, memberId, areaProf.technicalArea().getTechnicalAreaId());
     }
   }
 
   /** Inserts programming languages for a mentee in mentee_languages table. */
   private void insertLanguages(final Skills menteeSkills, final Long memberId) {
-    for (final Languages lang : menteeSkills.languages()) {
-      jdbc.update(SQL_PROG_LANG_INSERT, memberId, lang.getLangId());
+    for (final var langProf : menteeSkills.languages()) {
+      jdbc.update(SQL_PROG_LANG_INSERT, memberId, langProf.language().getLangId());
     }
   }
 

@@ -1,5 +1,6 @@
 package com.wcc.platform.configuration;
 
+import static com.wcc.platform.factories.SetupUserAccountFactories.createAdminUserTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,7 +10,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.auth.UserAccount;
-import com.wcc.platform.domain.platform.type.RoleType;
+import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,20 +54,26 @@ class TokenAuthFilterTest {
 
     when(request.getHeader("Authorization")).thenReturn(authHeader);
 
-    UserAccount mockUser =
-        UserAccount.builder().email("admin@wcc.dev").roles(List.of(RoleType.ADMIN)).build();
+    UserAccount mockUser = createAdminUserTest();
+    Member member =
+        Member.builder()
+            .id(1L)
+            .fullName("Admin WCC")
+            .memberTypes(List.of(MemberType.DIRECTOR))
+            .build();
+    UserAccount.User user = new UserAccount.User(mockUser, member);
 
-    when(authService.authenticateByToken(token)).thenReturn(Optional.of(mockUser));
+    when(authService.authenticateByTokenWithMember(token)).thenReturn(Optional.of(user));
 
     tokenAuthFilter.doFilterInternal(request, response, filterChain);
 
     var authentication = SecurityContextHolder.getContext().getAuthentication();
-    verify(authService).authenticateByToken(token);
+    verify(authService).authenticateByTokenWithMember(token);
     verify(filterChain).doFilter(request, response);
 
     assertNotNull(authentication);
     assertTrue(authentication.isAuthenticated());
-    assertEquals("admin@wcc.dev", authentication.getName());
+    assertEquals(user, authentication.getPrincipal());
     final var authorities = authentication.getAuthorities();
     assertTrue(authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN")));
   }
@@ -79,7 +87,7 @@ class TokenAuthFilterTest {
 
     tokenAuthFilter.doFilterInternal(request, response, filterChain);
 
-    verify(authService, never()).authenticateByToken(anyString());
+    verify(authService, never()).authenticateByTokenWithMember(anyString());
     verify(filterChain).doFilter(request, response);
     assert SecurityContextHolder.getContext().getAuthentication() == null;
   }
@@ -92,11 +100,11 @@ class TokenAuthFilterTest {
       throws ServletException, IOException {
     final String invalidToken = "invalidToken123";
     when(request.getHeader("Authorization")).thenReturn("Bearer " + invalidToken);
-    when(authService.authenticateByToken(invalidToken)).thenReturn(Optional.empty());
+    when(authService.authenticateByTokenWithMember(invalidToken)).thenReturn(Optional.empty());
 
     tokenAuthFilter.doFilterInternal(request, response, filterChain);
 
-    verify(authService).authenticateByToken(invalidToken);
+    verify(authService).authenticateByTokenWithMember(invalidToken);
     verify(filterChain).doFilter(request, response);
     assert SecurityContextHolder.getContext().getAuthentication() == null;
   }
@@ -111,7 +119,7 @@ class TokenAuthFilterTest {
 
     tokenAuthFilter.doFilterInternal(request, response, filterChain);
 
-    verify(authService, never()).authenticateByToken(anyString());
+    verify(authService, never()).authenticateByTokenWithMember(anyString());
     verify(filterChain).doFilter(request, response);
     assert SecurityContextHolder.getContext().getAuthentication() == null;
   }

@@ -3,6 +3,7 @@ package com.wcc.platform.controller;
 import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
 import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
 import static org.hamcrest.Matchers.hasSize;
@@ -18,12 +19,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -64,14 +69,16 @@ class MentorshipControllerTest {
 
   @Test
   void testCreateMentorReturnsCreated() throws Exception {
-    var mentor = createMentorTest("Jane");
-    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
+    var mentorRequestBody = createMentorDtoTest(1L, MemberType.MENTOR);
+    var returnedMentor = createMentorTest("Jane");
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor);
 
     mockMvc
-        .perform(postRequest(API_MENTORS, mentor))
+        .perform(postRequest(API_MENTORS, mentorRequestBody))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(1)))
-        .andExpect(jsonPath("$.fullName", is("Jane")));
+        .andExpect(jsonPath("$.fullName", is("Jane")))
+        .andExpect(jsonPath("$.profileStatus", is("PENDING")));
   }
 
   @Test
@@ -87,7 +94,7 @@ class MentorshipControllerTest {
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(APPLICATION_JSON)
                 .content(
-                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[\"BACKEND\"],\"languages\":[\"JAVASCRIPT\"],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
+                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[{\"technicalArea\":\"BACKEND\",\"proficiencyLevel\":\"BEGINNER\"}],\"languages\":[{\"language\":\"JAVASCRIPT\",\"proficiencyLevel\":\"BEGINNER\"}],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
                         + currentYear
                         + "\",\"applications\":[{\"menteeId\":null,\"mentorId\":1,\"priorityOrder\":1}]}"))
         .andExpect(status().isCreated())
@@ -139,26 +146,29 @@ class MentorshipControllerTest {
             jsonPath("$.skills.yearsExperience", is(updatedMentor.getSkills().yearsExperience())))
         .andExpect(jsonPath("$.skills.areas", hasSize(1)))
         .andExpect(
-            jsonPath("$.skills.areas[0]", is(updatedMentor.getSkills().areas().get(0).toString())))
+            jsonPath(
+                "$.skills.areas[0].technicalArea",
+                is(updatedMentor.getSkills().areas().get(0).technicalArea().toString())))
         .andExpect(jsonPath("$.skills.languages", hasSize(2)))
         .andExpect(
             jsonPath(
-                "$.skills.languages[0]",
-                is(updatedMentor.getSkills().languages().get(0).toString())))
+                "$.skills.languages[0].language",
+                is(updatedMentor.getSkills().languages().get(0).language().toString())))
         .andExpect(
             jsonPath(
-                "$.skills.languages[1]",
-                is(updatedMentor.getSkills().languages().get(1).toString())))
-        .andExpect(
-            jsonPath(
-                "$.menteeSection.mentorshipType[0]",
-                is(updatedMentor.getMenteeSection().mentorshipType().get(0).toString())))
+                "$.skills.languages[1].language",
+                is(updatedMentor.getSkills().languages().get(1).language().toString())))
         .andExpect(
             jsonPath(
                 "$.menteeSection.idealMentee", is(updatedMentor.getMenteeSection().idealMentee())))
         .andExpect(
             jsonPath(
-                "$.menteeSection.additional", is(updatedMentor.getMenteeSection().additional())));
+                "$.menteeSection.additional", is(updatedMentor.getMenteeSection().additional())))
+        .andExpect(jsonPath("$.menteeSection.adHoc", hasSize(1)))
+        .andExpect(
+            jsonPath(
+                "$.menteeSection.adHoc[0].month",
+                is(updatedMentor.getMenteeSection().adHoc().get(0).month().toString())));
   }
 
   @Test
@@ -176,5 +186,157 @@ class MentorshipControllerTest {
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(mentorDto)))
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void testAcceptMentorReturnsOk() throws Exception {
+    Long mentorId = 1L;
+    Mentor pendingMentor = createMentorTest("Jane");
+    MentorDto mentorDto = createMentorDtoTest(mentorId, MemberType.MENTOR);
+    // Explicitly set the status to ACTIVE in the DTO, which is now respected by the factory
+    mentorDto =
+        MentorDto.mentorDtoBuilder()
+            .id(mentorDto.getId())
+            .fullName(mentorDto.getFullName())
+            .position(mentorDto.getPosition())
+            .email(mentorDto.getEmail())
+            .slackDisplayName(mentorDto.getSlackDisplayName())
+            .country(mentorDto.getCountry())
+            .city(mentorDto.getCity())
+            .companyName(mentorDto.getCompanyName())
+            .images(mentorDto.getImages())
+            .network(mentorDto.getNetwork())
+            .profileStatus(ProfileStatus.ACTIVE)
+            .spokenLanguages(mentorDto.getSpokenLanguages())
+            .bio(mentorDto.getBio())
+            .skills(mentorDto.getSkills())
+            .menteeSection(mentorDto.getMenteeSection())
+            .feedbackSection(mentorDto.getFeedbackSection())
+            .resources(mentorDto.getResources())
+            .build();
+
+    Mentor acceptedMentor = createUpdatedMentorTest(pendingMentor, mentorDto);
+
+    when(mentorshipService.activateMentor(eq(mentorId))).thenReturn(acceptedMentor);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/accept")
+                .header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.fullName", is(acceptedMentor.getFullName())))
+        .andExpect(jsonPath("$.profileStatus", is("ACTIVE")));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor already accepted (ACTIVE), when accept is called again, then"
+          + " returns 409 Conflict")
+  void testAcceptAlreadyAcceptedMentorReturnsConflict() throws Exception {
+    Long mentorId = 1L;
+
+    when(mentorshipService.activateMentor(eq(mentorId)))
+        .thenThrow(new MentorStatusException("Mentor with ID " + mentorId + " is already active"));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/accept")
+                .header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message", is("Mentor with ID " + mentorId + " is already active")));
+  }
+
+  @Test
+  void testAcceptNonExistentMentorReturnsNotFound() throws Exception {
+    Long nonExistentMentorId = 999L;
+
+    when(mentorshipService.activateMentor(eq(nonExistentMentorId)))
+        .thenThrow(new MemberNotFoundException(nonExistentMentorId));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + nonExistentMentorId + "/accept")
+                .header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with isWomenNonBinary=true, when creating mentor, then response includes the field")
+  void testCreateMentorWithIsWomenNonBinaryReturnsFieldInResponse() throws Exception {
+    Mentor mentor = createMentorTest("Test Mentor");
+    mentor =
+        Mentor.mentorBuilder()
+            .id(1L)
+            .fullName(mentor.getFullName())
+            .position(mentor.getPosition())
+            .email(mentor.getEmail())
+            .slackDisplayName(mentor.getSlackDisplayName())
+            .country(mentor.getCountry())
+            .city(mentor.getCity())
+            .spokenLanguages(mentor.getSpokenLanguages())
+            .bio(mentor.getBio())
+            .skills(mentor.getSkills())
+            .menteeSection(mentor.getMenteeSection())
+            .profileStatus(ProfileStatus.PENDING)
+            .isWomenNonBinary(true)
+            .build();
+
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
+
+    mockMvc
+        .perform(postRequest(API_MENTORS, mentor))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.isWomenNonBinary", is(true)));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentors exist, when getting all mentors, then response includes isWomenNonBinary field")
+  void testGetAllMentorsIncludesIsWomenNonBinaryField() throws Exception {
+    MentorDto mentorDto1 = createMentorDtoTest(1L, MemberType.MENTOR);
+    mentorDto1 =
+        MentorDto.mentorDtoBuilder()
+            .id(mentorDto1.getId())
+            .fullName(mentorDto1.getFullName())
+            .position(mentorDto1.getPosition())
+            .email(mentorDto1.getEmail())
+            .slackDisplayName(mentorDto1.getSlackDisplayName())
+            .country(mentorDto1.getCountry())
+            .city(mentorDto1.getCity())
+            .spokenLanguages(mentorDto1.getSpokenLanguages())
+            .bio(mentorDto1.getBio())
+            .skills(mentorDto1.getSkills())
+            .menteeSection(mentorDto1.getMenteeSection())
+            .profileStatus(mentorDto1.getProfileStatus())
+            .isWomenNonBinary(true)
+            .build();
+
+    MentorDto mentorDto2 = createMentorDtoTest(2L, MemberType.MENTOR);
+    mentorDto2 =
+        MentorDto.mentorDtoBuilder()
+            .id(mentorDto2.getId())
+            .fullName(mentorDto2.getFullName())
+            .position(mentorDto2.getPosition())
+            .email(mentorDto2.getEmail())
+            .slackDisplayName(mentorDto2.getSlackDisplayName())
+            .country(mentorDto2.getCountry())
+            .city(mentorDto2.getCity())
+            .spokenLanguages(mentorDto2.getSpokenLanguages())
+            .bio(mentorDto2.getBio())
+            .skills(mentorDto2.getSkills())
+            .menteeSection(mentorDto2.getMenteeSection())
+            .profileStatus(mentorDto2.getProfileStatus())
+            .isWomenNonBinary(false)
+            .build();
+
+    when(mentorshipService.getAllMentors()).thenReturn(List.of(mentorDto1, mentorDto2));
+
+    mockMvc
+        .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].isWomenNonBinary", is(true)))
+        .andExpect(jsonPath("$[1].isWomenNonBinary", is(false)));
   }
 }

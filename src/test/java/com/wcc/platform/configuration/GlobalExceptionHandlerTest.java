@@ -5,9 +5,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
+import com.wcc.platform.domain.exceptions.ForbiddenException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,6 +64,17 @@ class GlobalExceptionHandlerTest {
             "email: must not be blank, name: size must be between 1 and 100",
             DETAILS);
     assertEquals(BAD_REQUEST, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  void shouldReturnForbiddenForAccessDeniedException() {
+    var exception = new ForbiddenException("Error");
+
+    var response = globalExceptionHandler.handleForbiddenException(exception, webRequest);
+
+    var expectation = new ErrorDetails(FORBIDDEN.value(), "Error", DETAILS);
+    assertEquals(FORBIDDEN, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
 }

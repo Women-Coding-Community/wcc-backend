@@ -12,6 +12,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
@@ -34,6 +35,7 @@ public class MenteeService {
   private final MenteeApplicationRepository registrationsRepo;
   private final MenteeRepository menteeRepository;
   private final MemberRepository memberRepository;
+  private final UserProvisionService userProvisionService;
 
   /**
    * Return all stored mentees.
@@ -58,6 +60,9 @@ public class MenteeService {
     final var mentee = registrationRequest.mentee();
     final var cycle =
         getMentorshipCycle(registrationRequest.mentorshipType(), registrationRequest.cycleYear());
+
+    // first applications existent by the mentee
+    // TODO check if the mentee exist
 
     final var filteredRegistrations = ignoreDuplicateApplications(registrationRequest, cycle);
     final var registrationCount =
@@ -104,6 +109,7 @@ public class MenteeService {
       menteeToBeSaved.setMemberTypes(List.of(MemberType.MENTEE));
       mentee = menteeRepository.create(menteeToBeSaved);
     }
+    userProvisionService.provisionUserRole(mentee.getId(), mentee.getEmail(), RoleType.MENTEE);
 
     final var registration = menteeRegistration.withMentee(mentee);
     return createMenteeRegistrations(registration, cycle);
@@ -111,6 +117,8 @@ public class MenteeService {
 
   private Mentee createMenteeRegistrations(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    // TODO check if the mentee was already registered to the mentor.
+
     final var applications =
         menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
     applications.forEach(registrationsRepo::create);

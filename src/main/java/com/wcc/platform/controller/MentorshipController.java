@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -50,15 +51,19 @@ public class MentorshipController {
   }
 
   /**
-   * API to create mentor.
+   * API to create mentor. Profile status is set by the server to PENDING; any value in the request
+   * is ignored.
    *
-   * @return Create a new mentor.
+   * @param mentorDto mentor registration payload for request
+   * @return Created mentor with status PENDING.
    */
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final Mentor mentor) {
-    return new ResponseEntity<>(mentorshipService.create(mentor), HttpStatus.CREATED);
+  public ResponseEntity<Mentor> createMentor(
+      @Valid @RequestBody final MentorDto mentorDto) {
+    return new ResponseEntity<>(
+        mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
   }
 
   /**
@@ -74,6 +79,19 @@ public class MentorshipController {
   public ResponseEntity<Mentor> updateMentor(
       @Valid @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
     return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
+  }
+
+  /**
+   * API to accept mentor registration.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return updated mentor with active status.
+   */
+  @PatchMapping("/mentors/{mentorId}/accept")
+  @Operation(summary = "API to accept mentor registration")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<Mentor> acceptMentor(@Valid @PathVariable final Long mentorId) {
+    return new ResponseEntity<>(mentorshipService.activateMentor(mentorId), HttpStatus.OK);
   }
 
   /**

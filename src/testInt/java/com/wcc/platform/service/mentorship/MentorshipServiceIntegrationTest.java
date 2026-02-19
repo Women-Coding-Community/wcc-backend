@@ -177,6 +177,70 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     memberRepository.deleteById(savedMember.getId());
   }
 
+  @Test
+  @DisplayName(
+      "Given mentor with pronouns in database, when getAllMentors is called, then DTO should"
+          + " contain pronouns and pronoun category")
+  void shouldReturnMentorsWithPronounsFromDatabase() {
+    var mentor = createMentorTest(7L, "mentor with pronouns", "pronouns@domain.com");
+    mentor =
+        Mentor.mentorBuilder()
+            .id(mentor.getId())
+            .fullName(mentor.getFullName())
+            .position(mentor.getPosition())
+            .email(mentor.getEmail())
+            .slackDisplayName(mentor.getSlackDisplayName())
+            .country(mentor.getCountry())
+            .city(mentor.getCity())
+            .companyName(mentor.getCompanyName())
+            .images(mentor.getImages())
+            .network(mentor.getNetwork())
+            .pronouns("they/them")
+            .pronounCategory(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL)
+            .profileStatus(mentor.getProfileStatus())
+            .spokenLanguages(mentor.getSpokenLanguages())
+            .bio(mentor.getBio())
+            .skills(mentor.getSkills())
+            .menteeSection(mentor.getMenteeSection())
+            .build();
+
+    memberRepository.deleteByEmail(mentor.getEmail());
+    repository.deleteById(mentor.getId());
+    var createdMentor = repository.create(mentor);
+
+    var resource =
+        createResourceTest().toBuilder()
+            .resourceType(ResourceType.PROFILE_PICTURE)
+            .driveFileLink("https://drive.google.com/file/d/pronouns-test-file/view")
+            .build();
+    var createdResource = resourceRepository.create(resource);
+
+    var profilePicture =
+        MemberProfilePicture.builder()
+            .memberId(createdMentor.getId())
+            .resourceId(createdResource.getId())
+            .resource(createdResource)
+            .build();
+    profilePicRepository.create(profilePicture);
+
+    var mentors = service.getAllMentors();
+
+    var mentorResult =
+        mentors.stream()
+            .filter(m -> m.getId().equals(createdMentor.getId()))
+            .findFirst()
+            .orElseThrow();
+
+    assertThat(mentorResult.getPronouns()).isEqualTo("they/them");
+    assertThat(mentorResult.getPronounCategory())
+        .isEqualTo(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL);
+
+    profilePicRepository.deleteByMemberId(createdMentor.getId());
+    resourceRepository.deleteById(createdResource.getId());
+    repository.deleteById(createdMentor.getId());
+    memberRepository.deleteById(createdMentor.getId());
+  }
+
   private void cleanupMentor(final Mentor mentor) {
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());

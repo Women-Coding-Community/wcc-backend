@@ -1,9 +1,12 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.cms.pages.mentorship.FeedbackSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
@@ -29,14 +32,25 @@ import org.springframework.util.CollectionUtils;
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
+  /**
+   * Read-only for API: client cannot set this; server always uses PENDING on create/retains on
+   * update.
+   */
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private ProfileStatus profileStatus;
-  private MentorAvailability availability;
+
+  private String pronouns;
+  private PronounCategory pronounCategory;
   private Skills skills;
   private List<String> spokenLanguages;
   private String bio;
   private MenteeSection menteeSection;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
+  private String calendlyLink;
+  private Boolean acceptMale;
+  private Boolean acceptPromotion;
+  private Boolean isWomenNonBinary;
 
   /** Mentor Builder. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -52,6 +66,8 @@ public class MentorDto extends MemberDto {
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
+      final String pronouns,
+      final PronounCategory pronounCategory,
       final ProfileStatus profileStatus,
       @NotEmpty final List<String> spokenLanguages,
       @NotBlank final String bio,
@@ -59,7 +75,10 @@ public class MentorDto extends MemberDto {
       @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources,
-      final MentorAvailability availability) {
+      final Boolean isWomenNonBinary,
+      final String calendlyLink,
+      final Boolean acceptMale,
+      final Boolean acceptPromotion) {
     super(
         id,
         fullName,
@@ -71,8 +90,10 @@ public class MentorDto extends MemberDto {
         companyName,
         null, // TODO to be fixe this will cleanup member types
         images,
-        network);
-    this.availability = availability;
+        network,
+        pronouns,
+        pronounCategory,
+        isWomenNonBinary);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
@@ -80,49 +101,86 @@ public class MentorDto extends MemberDto {
     this.feedbackSection = feedbackSection;
     this.resources = resources;
     this.profileStatus = profileStatus;
+    this.pronouns = pronouns;
+    this.pronounCategory = pronounCategory;
+    this.calendlyLink = calendlyLink;
+    this.acceptMale = acceptMale;
+    this.acceptPromotion = acceptPromotion;
+    this.isWomenNonBinary = isWomenNonBinary;
   }
 
   /**
-   * Merges the current Mentor instance with the attributes of the provided Mentor instance.
-   * Combines properties from both instances into a new Mentor object, giving precedence to non-null
-   * values in the provided Mentor instance while retaining existing values where the provided
-   * values are null or empty.
+   * Converts this DTO to a Mentor for create. Id is null; profile status is set to PENDING (any
+   * value in the DTO is ignored).
    *
-   * @param mentor the Mentor object containing updated attributes to merge with the current
-   *     instance
-   * @return a new Mentor object created by merging attributes from the current instance and the
-   *     provided instance
+   * @return Mentor for create, with profileStatus PENDING
+   */
+  public Mentor toMentor() {
+    return Mentor.mentorBuilder()
+        .id(null)
+        .fullName(getFullName())
+        .position(getPosition())
+        .email(getEmail())
+        .slackDisplayName(getSlackDisplayName())
+        .country(getCountry())
+        .city(getCity())
+        .companyName(getCompanyName())
+        .images(getImages() != null ? getImages() : List.of())
+        .network(getNetwork() != null ? getNetwork() : List.of())
+        .profileStatus(ProfileStatus.PENDING)
+        .pronouns(getPronouns())
+        .pronounCategory(getPronounCategory())
+        .spokenLanguages(getSpokenLanguages() != null ? getSpokenLanguages() : List.of())
+        .bio(getBio())
+        .skills(getSkills())
+        .menteeSection(getMenteeSection())
+        .feedbackSection(getFeedbackSection())
+        .resources(getResources())
+        .isWomenNonBinary(getIsWomenNonBinary())
+        .calendlyLink(getCalendlyLink())
+        .acceptMale(getAcceptMale())
+        .acceptPromotion(getAcceptPromotion())
+        .build();
+  }
+
+  /**
+   * Merges this DTO with an existing Mentor entity. Non-null/non-blank DTO values override existing
+   * values; otherwise existing values are retained. Profile status is never taken from the DTO so
+   * clients cannot change it via update; only the accept (or other status) endpoints can change it.
+   *
+   * @param mentor the existing mentor to merge with
+   * @return merged Mentor with updated fields
    */
   public Mentor merge(final Mentor mentor) {
-    final var member = super.merge(mentor);
+    if (mentor == null) {
+      throw new InvalidMentorException("Cannot merge with null mentor");
+    }
 
-    final Mentor.MentorBuilder builder =
-        Mentor.mentorBuilder()
-            .id(member.getId())
-            .fullName(mergeString(this.getFullName(), member.getFullName()))
-            .position(mergeString(this.getPosition(), member.getPosition()))
-            .email(mergeString(this.getEmail(), member.getEmail()))
-            .slackDisplayName(mergeString(this.getSlackDisplayName(), member.getSlackDisplayName()))
-            .country(mergeNullable(this.getCountry(), member.getCountry()))
-            .profileStatus(mergeNullable(this.profileStatus, mentor.getProfileStatus()))
-            .bio(mergeString(this.bio, mentor.getBio()))
-            .skills(mergeNullable(this.skills, mentor.getSkills()))
-            .menteeSection(mergeNullable(this.menteeSection, mentor.getMenteeSection()));
-
-    mergeOptionalString(this.getCity(), member.getCity(), builder::city);
-
-    mergeOptionalString(this.getCompanyName(), member.getCompanyName(), builder::companyName);
-
-    builder.network(mergeCollection(this.getNetwork(), member.getNetwork()));
-    builder.spokenLanguages(
-        mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()));
-    builder.images(mergeCollection(this.getImages(), member.getImages()));
-
-    mergeOptional(this.feedbackSection, mentor.getFeedbackSection(), builder::feedbackSection);
-
-    mergeOptional(this.resources, mentor.getResources(), builder::resources);
-
-    return builder.build();
+    return Mentor.mentorBuilder()
+        .id(mentor.getId())
+        .fullName(mergeString(this.getFullName(), mentor.getFullName()))
+        .position(mergeString(this.getPosition(), mentor.getPosition()))
+        .email(mergeString(this.getEmail(), mentor.getEmail()))
+        .slackDisplayName(mergeString(this.getSlackDisplayName(), mentor.getSlackDisplayName()))
+        .city(mergeString(this.getCity(), mentor.getCity()))
+        .companyName(mergeString(this.getCompanyName(), mentor.getCompanyName()))
+        .country(mergeNullable(this.getCountry(), mentor.getCountry()))
+        .profileStatus(mentor.getProfileStatus())
+        .pronouns(mergeString(this.getPronouns(), mentor.getPronouns()))
+        .pronounCategory(mergeNullable(this.getPronounCategory(), mentor.getPronounCategory()))
+        .bio(mergeString(this.getBio(), mentor.getBio()))
+        .skills(mergeNullable(this.getSkills(), mentor.getSkills()))
+        .menteeSection(mergeNullable(this.getMenteeSection(), mentor.getMenteeSection()))
+        .feedbackSection(mergeNullable(this.getFeedbackSection(), mentor.getFeedbackSection()))
+        .resources(mergeNullable(this.getResources(), mentor.getResources()))
+        .network(mergeCollection(this.getNetwork(), mentor.getNetwork()))
+        .spokenLanguages(mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()))
+        .images(mergeCollection(this.getImages(), mentor.getImages()))
+        .isWomenNonBinary(mergeNullable(this.getIsWomenNonBinary(), mentor.getIsWomenNonBinary()))
+        .calendlyLink(mergeString(this.getCalendlyLink(), mentor.getCalendlyLink()))
+        .acceptMale(mergeNullable(this.getAcceptMale(), mentor.getAcceptMale()))
+        .acceptPromotion(mergeNullable(this.getAcceptPromotion(), mentor.getAcceptPromotion()))
+        .build();
   }
 
   private String mergeString(final String candidate, final String existing) {
@@ -134,24 +192,9 @@ public class MentorDto extends MemberDto {
   }
 
   private <T> List<T> mergeCollection(final List<T> candidate, final List<T> existing) {
-    return CollectionUtils.isEmpty(candidate) ? existing : candidate;
-  }
-
-  private void mergeOptionalString(
-      final String candidate,
-      final String existing,
-      final java.util.function.Consumer<String> setter) {
-
-    if (StringUtils.isNotBlank(candidate) || StringUtils.isNotBlank(existing)) {
-      setter.accept(mergeString(candidate, existing));
+    if (!CollectionUtils.isEmpty(candidate)) {
+      return candidate;
     }
-  }
-
-  private <T> void mergeOptional(
-      final T candidate, final T existing, final java.util.function.Consumer<T> setter) {
-
-    if (candidate != null || existing != null) {
-      setter.accept(mergeNullable(candidate, existing));
-    }
+    return existing != null ? existing : List.of();
   }
 }

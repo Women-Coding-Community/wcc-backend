@@ -13,10 +13,12 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MenteeMapper;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeRepository;
@@ -49,7 +51,11 @@ class PostgresMenteeRepositoryTest {
     repository =
         spy(
             new PostgresMenteeRepository(
-                jdbc, menteeMapper, memberMapper, mock(com.wcc.platform.repository.MemberRepository.class), validator));
+                jdbc,
+                menteeMapper,
+                memberMapper,
+                mock(com.wcc.platform.repository.MemberRepository.class),
+                validator));
   }
 
   @Test
@@ -69,8 +75,11 @@ class PostgresMenteeRepositoryTest {
     assertEquals(2, result.getSkills().yearsExperience());
     assertEquals("Spain", result.getCountry().countryName());
     assertEquals(
-        List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND), result.getSkills().areas());
-    assertEquals(List.of(Languages.JAVASCRIPT), result.getSkills().languages());
+        List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND),
+        result.getSkills().areas().stream().map(TechnicalAreaProficiency::technicalArea).toList());
+    assertEquals(
+        List.of(CodeLanguage.JAVASCRIPT),
+        result.getSkills().languages().stream().map(LanguageProficiency::language).toList());
     assertEquals(
         List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID), result.getSkills().mentorshipFocus());
   }

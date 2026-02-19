@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,8 +28,8 @@ class LanguageDeserializerTest {
   }
 
   @ParameterizedTest
-  @EnumSource(Languages.class)
-  void testDeserialize(final Languages type) throws IOException {
+  @EnumSource(CodeLanguage.class)
+  void testDeserialize(final CodeLanguage type) throws IOException {
     when(jsonParser.getText()).thenReturn(type.getName());
 
     var response = deserializer.deserialize(jsonParser, context);
@@ -41,8 +41,7 @@ class LanguageDeserializerTest {
   void testDeserializeInvalid() throws IOException {
     when(jsonParser.getText()).thenReturn("UNDEFINED");
 
-    var response = deserializer.deserialize(jsonParser, context);
-
-    assertEquals(Languages.OTHER, response);
+    assertThrows(
+        IllegalArgumentException.class, () -> deserializer.deserialize(jsonParser, context));
   }
 }

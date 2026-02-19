@@ -8,8 +8,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.wcc.platform.deserializers.*;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.ImageType;
-import com.wcc.platform.domain.cms.attributes.Languages;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.attributes.style.ColorShadeType;
@@ -21,6 +21,8 @@ import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.serializer.CapitalizeEnumFromStringSerializer;
 import com.wcc.platform.serializer.CapitalizeEnumSerializer;
 import com.wcc.platform.serializer.LowerCaseEnumSerializer;
+import com.wcc.platform.serializer.YearSerializer;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -55,13 +57,15 @@ public class ObjectMapperConfig {
         .registerModule(
             new JavaTimeModule()
                 .addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(formatter))
-                .addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(formatter)))
+                .addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(formatter))
+                .addDeserializer(Year.class, new YearDeserializer())
+                .addSerializer(Year.class, new YearSerializer()))
         .registerModule(
             new SimpleModule()
                 .addSerializer(ImageType.class, new LowerCaseEnumSerializer())
                 .addSerializer(ColorType.class, new LowerCaseEnumSerializer())
                 .addSerializer(ColorShadeType.class, new LowerCaseEnumSerializer())
-                .addSerializer(Languages.class, new CapitalizeEnumFromStringSerializer())
+                .addSerializer(CodeLanguage.class, new CapitalizeEnumFromStringSerializer())
                 .addSerializer(TechnicalArea.class, new CapitalizeEnumFromStringSerializer())
                 .addSerializer(MentorshipFocusArea.class, new CapitalizeEnumFromStringSerializer())
                 .addSerializer(MentorshipType.class, new CapitalizeEnumFromStringSerializer())
@@ -72,7 +76,7 @@ public class ObjectMapperConfig {
                 .addDeserializer(ColorType.class, new ColorTypeDeserializer())
                 .addDeserializer(ColorShadeType.class, new ColorShadeTypeDeserializer())
                 .addDeserializer(ImageType.class, new ImageTypeDeserializer())
-                .addDeserializer(Languages.class, new LanguageDeserializer())
+                .addDeserializer(CodeLanguage.class, new LanguageDeserializer())
                 .addDeserializer(TechnicalArea.class, new TechnicalAreaDeserializer())
                 .addDeserializer(MentorshipFocusArea.class, new MentorshipFocusAreaDeserializer())
                 .addDeserializer(MentorshipType.class, new MentorshipTypeDeserializer())

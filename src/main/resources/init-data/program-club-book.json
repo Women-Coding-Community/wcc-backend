@@ -1,0 +1,96 @@
+{
+  "id": "page:BOOK_CLUB",
+  "heroSection": {
+    "title": "WCC Book Club",
+    "images": [
+      {
+        "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+        "alt": "Books on the shelf",
+        "type": "desktop"
+      }
+    ]
+  },
+  "section": {
+    "description": "What sets our book club apart are the lively conversations, valuable insights and an opportunity to connect with like-minded individuals. The books we read are selected by the community, offering a diverse selection of tech books and essential soft skills topics.The book club meets monthly to share views, exchange ideas, and inspire personal and professional growth."
+  },
+  "contact": {
+    "title": "Join Study Group Slack channel",
+    "links": [
+      {
+        "type": "SLACK",
+        "link": "http://shortlink_to_slack.com/#prog_book_club"
+      }
+    ]
+  },
+  "programmeDetails": [
+    {
+      "title": "How It Works",
+      "description": "Every month we vote for a book to read, and at the end of the month we review the book together in our bookclub. In order to participate join us n slack."
+    },
+    {
+      "title": "Benefits of Joining",
+      "description": "Dedication, networking and always knowing what is happening in tech market."
+    },
+    {
+      "title": "What We Are Reading",
+      "description": "",
+      "card": {
+        "title": "The Pragmatic Programmer From Journeyman to Master",
+        "subtitle": "Andrew Hunt & David Thomas",
+        "description": "Essential guide for creating working and maintainable code amidst the complexities of modern software development.",
+        "link": {
+          "label": "View Book On GoodReads",
+          "uri": "http://goodread/book_link"
+        }
+      }
+    }
+  ],
+  "eventSection": {
+    "title": "Upcoming events",
+    "link": {
+      "label": "View past events",
+      "uri": "/eventsPage_link"
+    },
+    "events": [
+      {
+        "topics": "BOOK_CLUB",
+        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
+        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
+        "title": "BOOK MONTH AUG",
+        "description": "Book description",
+        "hostProfile": {
+          "label": "Jane Doe",
+          "uri": "https://linkedIn/host"
+        },
+        "eventLink": {
+          "label": "Go to Meetup Event",
+          "uri": "https://meetup.com/event1"
+        }
+      },
+      {
+        "topics": "BOOK_CLUB",
+        "startDate": "Thu, May 30, 2024, 8:00 PM CEST",
+        "endDate": "Thu, May 30, 2024, 9:30 PM CEST",
+        "title": "BOOK MONTH SEP",
+        "description": "Book description",
+        "speakerProfile": {
+          "label": "Jane Doe",
+          "uri": "https://linkedIn/host"
+        },
+        "eventLink": {
+          "label": "Go to Meetup Event",
+          "uri": "https://meetup.com/event1"
+        }
+      }
+    ]
+  },
+  "customStyle": {
+    "backgroundColour": {
+      "color": "PRIMARY",
+      "shade": {
+        "name": "LIGHT",
+        "value": 90
+      }
+    }
+  }
+}

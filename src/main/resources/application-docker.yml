@@ -2,6 +2,14 @@ spring:
   config:
     activate:
       on-profile: docker
+  mail:
+    properties:
+      mail:
+        smtp:
+          enable: false
+          auth: false
+          starttls:
+            enable: false
 
 file:
   storage:
