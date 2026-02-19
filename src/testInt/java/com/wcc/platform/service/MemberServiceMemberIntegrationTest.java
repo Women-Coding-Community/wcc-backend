@@ -60,7 +60,7 @@ class MemberServiceMemberIntegrationTest extends DefaultDatabaseSetup {
         .memberTypes(List.of(type))
         .images(List.of())
         .isWomenNonBinary(true)
-        .network(List.of(new SocialNetwork(SocialNetworkType.EMAIL, MEMBER_EMAIL)))
+        .network(List.of(new SocialNetwork(SocialNetworkType.email, MEMBER_EMAIL)))
         .build();
   }
 }

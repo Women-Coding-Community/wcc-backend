@@ -5,7 +5,7 @@ export const footerData = {
   description: 'Women Coding Community is a not-for-profit organisation. © 2024 Women Coding Community',
   network: [
     {
-      type: 'linkedIn',
+      type: 'linkedin',
       link: 'https://www.linkedin.com/company/womencodingcommunity',
     },
     {

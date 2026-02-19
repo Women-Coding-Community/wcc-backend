@@ -8,18 +8,18 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum SocialNetworkType {
-  DEFAULT_LINK(1),
-  EMAIL(2),
-  FACEBOOK(3),
-  GITHUB(4),
-  INSTAGRAM(5),
-  LINKEDIN(6),
-  MEETUP(7),
-  MEDIUM(8),
-  SLACK(9),
-  UNKNOWN(10),
-  WEBSITE(11),
-  YOUTUBE(12);
+  default_link(1),
+  email(2),
+  facebook(3),
+  github(4),
+  instagram(5),
+  linkedin(6),
+  meetup(7),
+  medium(8),
+  slack(9),
+  unknown(10),
+  website(11),
+  youtube(12);
 
   private final int typeId;
 
@@ -28,6 +28,6 @@ public enum SocialNetworkType {
     return Arrays.stream(values())
         .filter(type -> type.typeId == typeId)
         .findFirst()
-        .orElse(UNKNOWN);
+        .orElse(unknown);
   }
 }

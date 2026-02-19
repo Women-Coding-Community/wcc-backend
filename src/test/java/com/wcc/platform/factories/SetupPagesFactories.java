@@ -48,7 +48,7 @@ public class SetupPagesFactories {
     return new Contact(
         "Contact Us",
         "Contact description",
-        List.of(new SocialNetwork(SocialNetworkType.EMAIL, "test@test.com")));
+        List.of(new SocialNetwork(SocialNetworkType.email, "test@test.com")));
   }
 
   /**
@@ -97,7 +97,7 @@ public class SetupPagesFactories {
                 .memberTypes(List.of(MemberType.MEMBER))
                 .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
                 .network(
-                    List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
+                    List.of(new SocialNetwork(SocialNetworkType.linkedin, "collaborator_link")))
                 .build()));
   }
 

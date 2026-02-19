@@ -1,6 +1,6 @@
 package com.wcc.platform.controller;
 
-import static com.wcc.platform.domain.platform.SocialNetworkType.SLACK;
+import static com.wcc.platform.domain.platform.SocialNetworkType.slack;
 import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -69,7 +69,7 @@ class DefaultControllerTest {
                 "footer_title",
                 "footer_subtitle",
                 "footer_desc",
-                List.of(new SocialNetwork(SLACK, "slack_link")),
+                List.of(new SocialNetwork(slack, "slack_link")),
                 new LabelLink("label_title", "label", "label_uri")));
 
     mockMvc

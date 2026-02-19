@@ -43,7 +43,7 @@ public class SetupFactories {
     return new Contact(
         "Contact Us",
         "Contact description",
-        List.of(new SocialNetwork(SocialNetworkType.EMAIL, "test@test.com")));
+        List.of(new SocialNetwork(SocialNetworkType.email, "test@test.com")));
   }
 
   /** Factory test. */
@@ -135,7 +135,7 @@ public class SetupFactories {
         .companyName("Company name")
         .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
-        .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
+        .network(List.of(new SocialNetwork(SocialNetworkType.linkedin, "collaborator_link")))
         .build();
   }
 
@@ -152,7 +152,7 @@ public class SetupFactories {
         .companyName("Company name updated")
         .memberTypes(List.of(type))
         .images(List.of(new Image("image_updated.png", "alt image updated", ImageType.MOBILE)))
-        .network(List.of(new SocialNetwork(SocialNetworkType.GITHUB, "collaborator_link_updated")))
+        .network(List.of(new SocialNetwork(SocialNetworkType.github, "collaborator_link_updated")))
         .build();
   }
 
@@ -193,7 +193,7 @@ public class SetupFactories {
         .companyName("Company name")
         .memberTypes(List.of(type))
         .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
-        .network(List.of(new SocialNetwork(SocialNetworkType.LINKEDIN, "collaborator_link")))
+        .network(List.of(new SocialNetwork(SocialNetworkType.linkedin, "collaborator_link")))
         .build();
   }
 

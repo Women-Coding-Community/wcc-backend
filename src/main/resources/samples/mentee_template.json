@@ -37,7 +37,7 @@
           "link": "https://xyz.com/"
         },
         {
-          "type": "DEFAULT_LINK",
+          "type": "default_link",
           "link": "https://xyz.com/"
         }
       ],

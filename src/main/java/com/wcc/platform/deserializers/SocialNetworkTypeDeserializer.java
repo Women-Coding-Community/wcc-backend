@@ -19,10 +19,10 @@ public class SocialNetworkTypeDeserializer extends JsonDeserializer<SocialNetwor
       return Arrays.stream(SocialNetworkType.values())
           .filter(memberType -> memberType.name().equalsIgnoreCase(value))
           .findFirst()
-          .orElse(SocialNetworkType.UNKNOWN);
+          .orElse(SocialNetworkType.unknown);
 
     } catch (IOException ex) {
-      return SocialNetworkType.UNKNOWN;
+      return SocialNetworkType.unknown;
     }
   }
 }
