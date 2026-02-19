@@ -29,20 +29,20 @@ public class EmailTemplateService {
     this.yamlObjectMapper = yamlObjectMapper;
   }
 
+  /**
+   * Renders an email template by replacing all placeholders with the actual values
+   * provided in the parameters map.
+   *
+   * @param templateType the type of the email template to render
+   * @param params a map of placeholder names to their replacement values
+   * @return a {@link RenderedTemplate} containing the subject and body with all placeholders replaced
+   * @throws IllegalArgumentException if required placeholders are missing in {@code params}
+   */
   public RenderedTemplate renderTemplate(
       final TemplateType templateType, final Map<String, String> params) {
     final Template template = loadTemplate(templateType);
     validateTemplateParams(template, params);
     return RenderedTemplate.from(replacePlaceholders(template, params));
-  }
-
-  public Template getEmailTemplate(
-      final TemplateType templateType, final Map<String, String> params) {
-    final Template template = loadTemplate(templateType);
-    validateTemplateParams(template, params);
-    final Template emailTemplate = replacePlaceholders(template, params);
-
-    return emailTemplate;
   }
 
   private Template loadTemplate(final TemplateType templateType) {
