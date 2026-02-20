@@ -38,11 +38,11 @@ export default function ProfilePictureSection({
       <Typography variant="h6" sx={{ mb: 2 }}>
         Profile Picture & Status
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+      <Box sx={{ display: 'flex', gap: 3 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
           <Avatar
             src={imageUrl}
-            sx={{ width: 80, height: 80, bgcolor: 'primary.main', fontSize: 32 }}
+            sx={{ width: 120, height: 120, bgcolor: 'primary.main', fontSize: 48 }}
           >
             {(fullName || '?').charAt(0)}
           </Avatar>
@@ -63,11 +63,16 @@ export default function ProfilePictureSection({
             {uploading ? 'Uploading...' : 'Change Picture'}
           </Button>
         </Box>
-        <Box>
-          <Typography variant="subtitle2" color="text.secondary">
-            Profile Status
-          </Typography>
-          <Chip label={statusLabel} color={statusColor} size="small" />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            gap: 1,
+          }}
+        >
+          <Typography variant="h6">Profile Status</Typography>
+          <Chip label={statusLabel} color={statusColor} sx={{ display: 'flex' }} />
         </Box>
       </Box>
     </Paper>
