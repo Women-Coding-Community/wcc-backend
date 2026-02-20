@@ -43,6 +43,7 @@ export const MOCK_MENTOR = {
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     links: [] as { title: string; uri: string }[],
   },
+  profilePictureUrl: 'https://i.pravatar.cc/150?img=47',
   images: [] as { path: string; alt: string; type: string }[],
   network: [] as { type: string; link: string }[],
 };

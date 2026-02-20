@@ -4,7 +4,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, API_BASE, API_KEY } from '@/lib/api';
 import { getStoredToken } from '@/lib/auth';
 import { editMentorSchema, EditMentorFormData } from './schema';
 import { MOCK_MENTOR } from './mockData';
@@ -70,6 +70,10 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>(
+    MOCK_MENTOR.profilePictureUrl
+  );
+  const [profilePictureUploading, setProfilePictureUploading] = useState(false);
 
   const {
     control,
@@ -121,6 +125,47 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
       links: data.links,
     },
   });
+
+  const handleProfilePictureUpload = async (file: File) => {
+    const token = getStoredToken();
+    if (!token) {
+      setApiError('Authentication token not found. Please login again.');
+      return;
+    }
+
+    setProfilePictureUploading(true);
+    setApiError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch(
+        `${API_BASE}/api/platform/v1/resources/member-profile-picture?memberId=${mentorId}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            ...(API_KEY ? { 'X-API-KEY': API_KEY } : {}),
+          },
+          body: formData,
+          credentials: 'include',
+        }
+      );
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message ?? `${res.status} ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      setProfilePictureUrl(data.resource.driveFileLink);
+    } catch (e: unknown) {
+      setApiError(e instanceof Error ? e.message : 'Failed to upload profile picture');
+    } finally {
+      setProfilePictureUploading(false);
+    }
+  };
 
   const onSubmit = async (data: EditMentorFormData) => {
     setLoading(true);
@@ -202,6 +247,9 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
         <ProfilePictureSection
           fullName={MOCK_MENTOR.fullName}
           profileStatus={MOCK_MENTOR.profileStatus}
+          imageUrl={profilePictureUrl}
+          onPictureChange={handleProfilePictureUpload}
+          uploading={profilePictureUploading}
         />
         <PersonalInfoSection control={control} errors={errors} />
         <BioSection control={control} errors={errors} />
