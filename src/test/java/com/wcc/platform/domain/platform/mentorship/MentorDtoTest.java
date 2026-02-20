@@ -1,7 +1,7 @@
 package com.wcc.platform.domain.platform.mentorship;
 
-import static com.wcc.platform.domain.platform.SocialNetworkType.github;
-import static com.wcc.platform.domain.platform.SocialNetworkType.linkedin;
+import static com.wcc.platform.domain.platform.SocialNetworkType.GITHUB;
+import static com.wcc.platform.domain.platform.SocialNetworkType.LINKEDIN;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +42,7 @@ class MentorDtoTest {
             .city("Original City")
             .companyName("Original Company")
             .images(List.of(new Image("profile.jpg", "Profile Image", ImageType.MOBILE)))
-            .network(List.of(new SocialNetwork(linkedin, "https://linkedin.com/in/original")))
+            .network(List.of(new SocialNetwork(LINKEDIN, "https://linkedin.com/in/original")))
             .profileStatus(ProfileStatus.PENDING)
             .spokenLanguages(List.of("English", "Spanish"))
             .bio("Original bio")
@@ -118,7 +118,7 @@ class MentorDtoTest {
             .city("Updated City")
             .companyName("Updated Company")
             .images(List.of(new Image("new.jpg", "New Image", ImageType.DESKTOP)))
-            .network(List.of(new SocialNetwork(github, "https://github.com/new")))
+            .network(List.of(new SocialNetwork(GITHUB, "https://github.com/new")))
             .spokenLanguages(List.of("French", "German"))
             .bio("Updated bio")
             .skills(
@@ -209,7 +209,7 @@ class MentorDtoTest {
     assertEquals("Updated Name", result.getFullName());
     assertEquals(1, result.getImages().size());
     assertEquals(1, result.getNetwork().size());
-    assertEquals(linkedin, result.getNetwork().getFirst().type());
+    assertEquals(LINKEDIN, result.getNetwork().getFirst().type());
     assertEquals(2, result.getSpokenLanguages().size());
   }
 

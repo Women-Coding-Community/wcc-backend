@@ -9,10 +9,6 @@ export const footerData = {
       link: 'https://www.linkedin.com/company/womencodingcommunity',
     },
     {
-      type: 'twitter',
-      link: 'https://twitter.com/WCC_Community',
-    },
-    {
       type: 'github',
       link: 'https://github.com/WomenCodingCommunity',
     },
