@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/** Unit tests for Mentor deserialization with custom MonthDeserializer. */
+/** Unit tests for Mentor deserialization. */
 class MentorDeserializationTest {
 
   private ObjectMapper objectMapper;
