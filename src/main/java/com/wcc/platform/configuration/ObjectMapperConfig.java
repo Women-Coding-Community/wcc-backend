@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.wcc.platform.deserializers.*;
@@ -18,10 +19,7 @@ import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ProgramType;
-import com.wcc.platform.serializer.CapitalizeEnumFromStringSerializer;
-import com.wcc.platform.serializer.CapitalizeEnumSerializer;
-import com.wcc.platform.serializer.LowerCaseEnumSerializer;
-import com.wcc.platform.serializer.YearSerializer;
+import com.wcc.platform.serializer.*;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -56,6 +54,7 @@ public class ObjectMapperConfig {
     objectMapper
         .registerModule(
             new JavaTimeModule()
+                .enable(JavaTimeFeature.ONE_BASED_MONTHS)
                 .addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer(formatter))
                 .addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(formatter))
                 .addDeserializer(Year.class, new YearDeserializer())
