@@ -56,7 +56,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         "images": [],
         "network": [
           {
-            "type": "LINKEDIN",
+            "type": "linkedin",
             "link": "https://www.linkedin.com/in/sonali-goel-6b611522/"
           }
         ],
@@ -117,8 +117,8 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         "memberTypes": [ "MENTOR", "DIRECTOR"],
         "images": [],
         "network": [
-          { "type": "LINKEDIN", "link": "https://www.linkedin.com/in/dricazenck/" },
-          { "type": "GITHUB", "link": "https://github.com/dricazenck" }
+          { "type": "linkedin", "link": "https://www.linkedin.com/in/dricazenck/" },
+          { "type": "github", "link": "https://github.com/dricazenck" }
         ],
         "pronouns": "she/her",
         "pronounCategory": "FEMININE",
@@ -194,7 +194,7 @@ curl -s -X POST "${API_BASE}/platform/v1/members" \
   "pronounCategory": "FEMININE",
   "network": [
     {
-      "type": "LINKEDIN",
+      "type": "linkedin",
       "link": "https://www.linkedin.com/in/nevena-verbi%C4%8D-83a16ab"
     }
   ]
@@ -223,11 +223,11 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
           "images": [],
           "network": [
             {
-              "type": "LINKEDIN",
+              "type": "linkedin",
               "link": "https://www.linkedin.com/in/maria-silva/"
             },
             {
-              "type": "GITHUB",
+              "type": "github",
               "link": "https://github.com/mariasilva"
             }
           ],
@@ -291,7 +291,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                 "images": [],
                 "network": [
                   {
-                    "type": "LINKEDIN",
+                    "type": "linkedin",
                     "link": "https://www.linkedin.com/in/emma-schmidt/"
                   }
                 ],
