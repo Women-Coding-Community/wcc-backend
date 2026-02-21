@@ -40,7 +40,7 @@ jobs:
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Run Integration tests
-        run: ./gradlew testIntegration jacocoIntegrationReport --scan
+        run: ./gradlew testIntegration jacocoIntegrationReport --stacktrace --info
         env:
           DOCKER_HOST: "unix:///var/run/docker.sock"
           TESTCONTAINERS_RYUK_DISABLED: "true"
