@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 @ActiveProfiles("test")
 @Import({SecurityConfig.class, TestConfig.class})
@@ -47,7 +48,7 @@ class EmailTemplateControllerTest {
 
     var request =
         createTemplateRequest(
-            TemplateType.FEEDBACK_MENTOR_ADHOC,
+            TemplateType.NEW_MENTEES_ALERT_MENTOR_LONG,
             params);
 
     RenderedTemplate renderedTemplate =
@@ -58,7 +59,9 @@ class EmailTemplateControllerTest {
     when(emailTemplateService.renderTemplate(eq(TemplateType.FEEDBACK_MENTOR_ADHOC), any()))
         .thenReturn(renderedTemplate);
 
-    mockMvc.perform(postRequest(API_EMAIL_TEMP_PREVIEW, request)).andExpect(status().isCreated());
+    mockMvc.perform(postRequest(API_EMAIL_TEMP_PREVIEW, request))
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(status().isCreated());
   }
 
   @Test
