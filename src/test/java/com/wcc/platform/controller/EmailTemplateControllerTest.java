@@ -38,6 +38,8 @@ class EmailTemplateControllerTest {
 
 
   private static final String API_EMAIL_TEMP_PREVIEW = "/api/platform/v1/email/template/preview";
+  private static final String API_KEY_HEADER = "X-API-KEY";
+  private static final String API_KEY_VALUE = "test-api-key";
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
   @MockBean private EmailService emailService;
@@ -65,6 +67,7 @@ class EmailTemplateControllerTest {
 
     mockMvc.perform(
             post(API_EMAIL_TEMP_PREVIEW)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
         )
