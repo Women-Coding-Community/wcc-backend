@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -318,5 +319,25 @@ class EmailServiceTest {
     assertThat(sentRequest.getBcc()).isNull();
     assertThat(sentRequest.getReplyTo()).isNull();
     assertThat(sentRequest.isHtml()).isFalse();
+  }
+
+  @Test
+  @DisplayName(
+      "Given provided template type is not found, when sending template email, then should throw an Exception")
+  void shouldThrowExceptionWhenTemplateEmailFails() {
+    TemplateEmailRequest request = TemplateEmailRequest.builder()
+        .to("test@example.com")
+        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+        .templateParameters(Map.of("name", "John"))
+        .build();
+
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenThrow(new RuntimeException("Template not found."));
+
+    assertThatThrownBy(() -> emailService.sendTemplateEmail(request))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Template not found.");
+
+    verify(emailService, never()).sendEmail(any());
   }
 }
