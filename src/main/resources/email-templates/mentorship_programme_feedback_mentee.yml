@@ -1,0 +1,24 @@
+MENTORSHIP_FEEDBACK_MENTEE:
+  subject: "We Value Your Feedback On WCC {{year}} Mentorship Programme"
+  body: |
+    <p>Dear Mentee,</p>
+    
+    <p>
+    We are now approaching the end of the {{year}} mentorship program, and we hope it's been an enriching experience for you.
+    </p>
+    
+    <p>
+    To better understand your experience and identify areas for improvement, we kindly request your feedback here.
+    </p>
+    
+    <p>
+    This short survey will only take a few minutes to complete. Your input is highly valued and will help us enhance the program for everyone involved.
+    </p>
+    
+    <p>
+    Thank you for your time and valuable contributions.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>

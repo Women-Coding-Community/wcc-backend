@@ -1,5 +1,6 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.domain.template.TemplateType.FEEDBACK_MENTOR_ADHOC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
@@ -12,11 +13,13 @@ import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.service.EmailService;
 import com.wcc.platform.service.EmailTemplateService;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,15 +48,42 @@ class EmailControllerTest {
   @MockBean private EmailTemplateService templateService;
 
   private EmailRequest emailRequest;
+  private TemplateEmailRequest templateEmailRequest;
+  private TemplateEmailRequest invalidTemplateEmailRequest;
   private EmailResponse emailResponse;
 
   @BeforeEach
   void setUp() {
+
+    Map<String, String> templateParams = Map.of(
+        "mentorName", "Mike",
+        "program", "Ad-hoc mentorship",
+        "menteeName", "Alice",
+        "deadline", "27/09/25",
+        "teamEmailSignature", "Best Regards"
+    );
+
+
     emailRequest =
         EmailRequest.builder()
             .to("recipient@example.com")
             .subject("Test Subject")
             .body("Test Body")
+            .html(false)
+            .build();
+
+    templateEmailRequest =
+        TemplateEmailRequest.builder()
+            .to("recipient@example.com")
+            .templateType(FEEDBACK_MENTOR_ADHOC)
+            .templateParameters(templateParams)
+            .html(false)
+            .build();
+
+    invalidTemplateEmailRequest =
+        TemplateEmailRequest.builder()
+            .templateType(FEEDBACK_MENTOR_ADHOC)
+            .templateParameters(templateParams)
             .html(false)
             .build();
 
@@ -232,4 +262,37 @@ class EmailControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true));
   }
+
+  @Test
+  @DisplayName(
+      "Given valid template email request, when sending template email via API, then should return success response")
+  void shouldSendTemplateEmailSuccessfully() throws Exception {
+    when(emailService.sendTemplateEmail(any(TemplateEmailRequest.class))).thenReturn(emailResponse);
+
+    mockMvc
+        .perform(
+            post("/api/platform/v1/email/template/send")
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(templateEmailRequest)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.message").value("Email sent successfully"))
+        .andExpect(jsonPath("$.recipient").value("recipient@example.com"));
+  }
+
+  @Test
+  @DisplayName(
+      "Given invalid template email request without recipient, when sending template email, then should return bad request")
+  void shouldReturnBadRequestForInvalidTemplateEmail() throws Exception {
+    mockMvc
+        .perform(
+            post("/api/platform/v1/email/template/send")
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidTemplateEmailRequest)))
+        .andExpect(status().isBadRequest());
+  }
+
+
 }

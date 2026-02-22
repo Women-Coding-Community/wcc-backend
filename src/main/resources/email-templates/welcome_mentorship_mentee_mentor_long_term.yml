@@ -1,0 +1,71 @@
+WELCOME_MENTORSHIP_MENTEE_MENTOR_LONG:
+  subject: "Welcome to the {{year}} Mentorship Programme"
+  body: |
+    <p>Dear {{mentorName}} and {{menteeName}},</p>
+
+    <p>
+    We are excited to introduce you to our <strong>Mentorship Programme</strong>!
+    </p>
+
+    <p><strong>Contact information:</strong></p>
+
+    <ul>
+      <li><strong>Mentor:</strong> {{mentorName}} (<a href="mailto:{{mentorEmail}}">{{mentorEmail}}</a>)</li>
+      <li><strong>Mentee:</strong> {{menteeName}} (<a href="mailto:{{menteeEmail}}">{{menteeEmail}}</a>)</li>
+    </ul>
+
+    <p>
+    We believe that mentorship is a powerful tool for personal and professional growth, and we are thrilled to have you as part of this program.
+    We hope that this mentorship relationship will be a valuable opportunity for you to learn, grow, and achieve your goals.
+    </p>
+
+    <p>
+    The mentorship program will run from <strong>April to September</strong>.
+    The frequency and format of the meetings will be decided by you during your initial meeting.
+    We recommend at least <strong>two mentoring sessions per month</strong> (45 minutes to 1 hour each) to ensure a meaningful relationship.
+    </p>
+
+    <p><strong>Getting started:</strong></p>
+
+    <ul>
+      <li>
+        Schedule an initial meeting to discuss expectations.
+        The mentee is kindly asked to book the first session using the mentor’s scheduling link:
+        <a href="{{mentorSchedulingLink}}">Schedule your first meeting</a>
+      </li>
+      <li>Define specific and measurable goals for the mentorship relationship.</li>
+      <li>Develop an action plan to achieve those goals.</li>
+      <li>Schedule regular check-ins to monitor progress and adjust the action plan as needed.</li>
+    </ul>
+
+    <p>
+    We also encourage both of you to communicate regularly outside of scheduled mentorship sessions
+    (using your preferred channel: Slack or email) to get the most out of the program.
+    </p>
+
+    <p><strong>Helpful resources:</strong></p>
+
+    <ul>
+      <li>
+        <a href="{{attendanceTrackerUrl}}">Pair Mentorship Attendance Tracker</a> – for mentees to log session attendance.
+      </li>
+      <li>
+        <a href="{{notionTrackingTemplateUrl}}">Notion Tracking Template</a> – to track goals, progress, and stay organised.
+      </li>
+      <li>
+        <a href="{{resourcesUrl}}">Mentorship Resources</a> – for mentors and mentees.
+      </li>
+      <li>
+        <a href="{{codeOfConductUrl}}">Code of Conduct for Mentors and Mentees</a>
+      </li>
+    </ul>
+
+    <p>
+    We hope these resources help you make the most of this mentorship opportunity.
+    If you have any questions or concerns, please don’t hesitate to reach out to us via email or the
+    Slack channel <strong>#mentorship</strong>.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>

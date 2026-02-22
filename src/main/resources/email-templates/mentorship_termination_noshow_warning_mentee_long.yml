@@ -1,0 +1,46 @@
+MENTEE_TERMINATION_WARNING_LONG:
+  subject: "[Urgent] Retain Your Mentee Status in the {{year}} WCC Mentorship Programme"
+  body: |
+    <p>Hi {{menteeName}},</p>
+  
+    <p>
+    We are reaching out regarding your current status within the Women Coding Community
+    MentorshipProgramme.<br/>
+    We have noticed that you have not engaged with your assigned mentor nor logged any sessions
+    in the {{WCCMentorshipAttendanceTracker2025Link}} since the start of the programme.
+    </p>
+    
+    <p>
+    This lack of engagement is a serious concern, as consistent communication and active participation
+    are essential to a meaningful mentorship experience.
+    </p>
+    
+    <p>
+    As per the Women Coding Community's Mentee Code of Conduct, we would like to remind you of the following:
+    </p>
+    
+    <p>
+    No-shows are unacceptable for both mentors and mentees. Participants who fail to attend sessions
+    without notice may be excluded from the current and future mentorship programme cycles.<br/>
+    No-replies by email or Slack for more than a week are unacceptable during the programme.
+    Participants who applied but fail to respond without reason will be banned from the current cycle.<br/>
+    It is expected that mentees maintain timely communication and engage proactively with their mentors.
+    </p>
+    
+    <p>
+    To continue in the programme, you must respond to this email by {{deadline}}, confirming whether
+    you wish to remain an active mentee. If we do not hear from you by then, your mentorship will be
+    officially terminated for this cycle.
+    </p>
+    
+    <p>
+    If there are challenges preventing your participation, please let us know so we can try to support you.
+    </p>
+    
+    <p>
+    Please acknowledge receipt of this email and share your decision by the deadline above.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>

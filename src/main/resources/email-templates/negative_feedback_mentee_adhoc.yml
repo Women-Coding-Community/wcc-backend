@@ -1,0 +1,32 @@
+NEGATIVE_FEEDBACK_MENTEE_ADHOC:
+  subject: "Your Feedback About Ad-Hoc Mentorship Session"
+  body: |
+    <p>Hi {{menteeFirstName}},</p>
+
+    <p>
+    Thank you for sharing your feedback about the Ad-hoc mentoring programme.  
+    We are sorry {{feedbackFromMentee}} the scheduled session with {{mentorFullName}} did not happen as expected.
+    </p>
+
+    <p>
+    {{additionalPersonalisation}}
+    </p>
+
+    <p>
+    This does not align with how the programme is typically run as per our Mentorship Code of Conduct,  
+    and we will be taking measures to properly address the situation.  
+    {{measuresToBeTaken}}
+    </p>
+
+    <p>
+    Once again, we apologise that this experience was not as you expected and we hope 
+    you would still be interested in attending a session with our other mentors.
+    </p>
+
+    <p>
+    Thank you for your time.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

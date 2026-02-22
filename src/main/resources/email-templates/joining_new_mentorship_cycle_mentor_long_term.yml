@@ -1,0 +1,35 @@
+NEW_CYCLE_MENTOR_LONG:
+  subject: "Invitation to Join the {{year}} Mentorship Programme Cycle"
+  body: |
+    <p>Dear Mentors,</p>
+
+    <p>I hope this message finds you well!</p>
+
+    <p>
+    As we prepare for the <strong>{{year}}</strong> mentorship cycle, we would like to invite you to join us once again as a mentor.
+    Your invaluable support in previous years made a significant impact on our community, and we would be thrilled to have you continue guiding and inspiring the next generation of women in tech.
+    </p>
+
+    <p>
+    Please take a moment to fill out this form by <strong>{{deadline}}</strong> to renew your interest in the programme:
+    <a href="{{renewalFormUrl}}">Renew your interest</a>
+    </p>
+
+    <p><strong>Key Timelines for the {{year}} Cycle:</strong></p>
+
+    <ul>
+      <li>Launch &amp; Mentee Registrations Period: March {{year}}</li>
+      <li>Programme Start Date: April {{year}}</li>
+    </ul>
+
+    <p>
+    Your involvement is crucial to the success of the program, and we would be excited to have you back.
+    </p>
+
+    <p>
+    Thank you once again for your continued support of the WomenCoding Community.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>

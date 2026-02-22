@@ -1,0 +1,34 @@
+STUDY_GROUP_AVAILABILITY_MENTOR:
+  subject: "Regarding Your Interest in Leading a Study Group for {{year}} WCC Mentorship Programme"
+  body: |
+    <p>Dear {{mentorName}},</p>
+
+    <p>
+    We’re reaching out regarding your previous interest in conducting a <strong>study group</strong>
+    within the <strong>Women Coding Community</strong>.
+    </p>
+
+    <p>
+    If you’re still available and interested, we’d be grateful if you could confirm the following details:
+    </p>
+
+    <ul>
+      <li><strong>Availability to lead a study group:</strong> Yes / No</li>
+      <li><strong>Study group focus:</strong> {{studyGroupFocus}}</li>
+      <li><strong>Brief description:</strong> {{studyGroupDescription}}</li>
+      <li><strong>Maximum number of mentees:</strong> {{maxMentees}}</li>
+    </ul>
+
+    <p>
+    Your support means a great deal to the community, and we truly appreciate your time and expertise.
+    </p>
+
+    <p>
+    If you have any questions or concerns, please don’t hesitate to reach out to us via email or the
+    Slack channel.
+    We look forward to hearing from you!
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

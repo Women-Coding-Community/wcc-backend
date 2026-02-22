@@ -1,0 +1,40 @@
+FINAL_UPDATES_MENTORSHIP_MENTOR:
+  subject: "Your Feedback Matters - Final Updates for the {{year}} Mentorship Cycle"
+  body: |
+    <p>Dear Mentor,</p>
+  
+    <p>
+    As we approach the end of the program for {{year}}, we wanted to extend our heartfelt gratitude for the time, 
+    guidance, and dedication you have shared with your mentees.
+    </p>
+    
+    <p>
+    To recognise and celebrate your efforts, we will be presenting recognition certificates to our active mentors.
+    </p>
+    
+    <p>
+    Please take a moment to remind your long-term mentees (if any) to log all sessions in the attendance tracker.
+    </p>
+    
+    <p>
+    Please encourage your mentee to provide feedback for you so we can showcase it on your profile, 
+    highlighting your impact and strengthening your presence on our website.
+    </p>
+    
+    <p>
+    Long-term Mentor: {{longTermFeedbackFormUrl}}<br/>
+    Ad-hoc mentor: {{adHocFeedbackFormUrl}}
+    </p>
+    
+    <p>
+    We would also greatly appreciate your feedback to help us improve the mentorship program.<br/>
+    {{mentorshipFeedbackForm}}
+    </p>
+    
+    <p>
+    Thank you again for your invaluable support and commitment.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>

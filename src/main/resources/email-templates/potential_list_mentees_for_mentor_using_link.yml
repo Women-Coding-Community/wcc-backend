@@ -1,0 +1,27 @@
+LIST_MENTEES_FOR_MENTOR_LINK:
+  subject: "WCC: Potential list of mentees for {{month}} ad-hoc sessions"
+  body: |
+    <p>Dear {{mentorName}},</p>
+
+    <p>
+    We hope this email finds you well. We are excited to share with you some potential mentees for this month. As someone who has extensive experience, your guidance and insights can be invaluable to these individuals as they seek to grow in their careers.
+    </p>
+
+    <p>
+    Here is a link to spreadsheet with mentees information: {{spreadsheetLink}}
+    </p>
+
+    <ol>
+      <li>We have sent your scheduling link to the mentee(s) who will book a session with you as per your availability.</li>
+      <li>Please conduct the session with the mentee(s).</li>
+      <li>Kindly ask the mentee(s) to provide feedback using this form after the session: {{feedbackFormUrl}}</li>
+      <li>Inform the mentorship team by email or Slack when the session happens.</li>
+    </ol>
+
+    <p>
+    Thank you for your time and consideration. We greatly appreciate your willingness to support our program and help empower women in tech.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

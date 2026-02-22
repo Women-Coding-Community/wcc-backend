@@ -1,0 +1,27 @@
+PAIRING_TERMINATION_MENTOR_MENTEE:
+  subject: "Update on Your {{year}} Long-term Mentorship Match"
+  body: |
+    <p>Dear {{mentorFirstName}} and {{menteeFirstName}},</p>
+  
+    <p>
+    We are writing to formally conclude the mentoring match between you for the {{year}} cycle 
+    of WCC's Long-term Mentoring Programme.
+    </p>
+    
+    <p>
+    While it is unfortunate that this match has not worked out as hoped, we would like 
+    to reiterate our thanks to both of you for your time and engagement.
+    </p>
+    
+    <p>
+    We hope to support you in future cycles in ways that are more conducive to your needs and availability.
+    </p>
+    
+    <p>
+    If you have any questions or would like to stay involved in other programme activities 
+    we have within the community, please feel free to reach out.
+    </p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>

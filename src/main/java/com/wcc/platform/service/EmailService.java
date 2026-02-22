@@ -2,7 +2,10 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
+import com.wcc.platform.domain.template.RenderedTemplate;
+import com.wcc.platform.domain.template.Template;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import com.wcc.platform.service.EmailTemplateService;
 
 /**
  * Service class for handling email operations. Provides functionality to send emails using
@@ -28,13 +32,16 @@ public class EmailService {
   private final JavaMailSender javaMailSender;
 
   private final String fromEmail;
+  private final EmailTemplateService emailTemplateService;
 
   @Autowired
   public EmailService(
       final JavaMailSender javaMailSender,
-      final @Value("${spring.mail.username}") String fromEmail) {
+      final @Value("${spring.mail.username}") String fromEmail,
+      final EmailTemplateService emailTemplateService) {
     this.javaMailSender = javaMailSender;
     this.fromEmail = fromEmail;
+    this.emailTemplateService = emailTemplateService;
   }
 
   /**
@@ -83,6 +90,34 @@ public class EmailService {
       log.error("Failed to send email to: {}. Error: {}", emailRequest.getTo(), e.getMessage(), e);
       throw new EmailSendException("Failed to send email to: " + emailRequest.getTo(), e);
     }
+  }
+
+  public EmailResponse sendTemplateEmail(TemplateEmailRequest request) {
+
+    final RenderedTemplate renderedTemplate = emailTemplateService.renderTemplate(
+            request.getTemplateType(), request.getTemplateParameters());
+
+    EmailRequest.EmailRequestBuilder emailBuilder = EmailRequest.builder()
+        .to(request.getTo())
+        .subject(renderedTemplate.subject())
+        .body(renderedTemplate.body())
+        .html(request.isHtml());
+
+    if (request.getCc() != null && !request.getCc().isEmpty()) {
+      emailBuilder.cc(request.getCc());
+    }
+
+    if (request.getBcc() != null && !request.getBcc().isEmpty()) {
+      emailBuilder.bcc(request.getBcc());
+    }
+
+    if (request.getReplyTo() != null && !request.getReplyTo().isEmpty()) {
+      emailBuilder.replyTo(request.getReplyTo());
+    }
+
+    EmailRequest emailRequest = emailBuilder.build();
+
+    return sendEmail(emailRequest);
   }
 
   /**

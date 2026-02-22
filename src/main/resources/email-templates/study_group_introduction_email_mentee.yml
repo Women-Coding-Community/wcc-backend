@@ -1,0 +1,49 @@
+STUDY_GROUP_INTRODUCTION_MENTEE:
+  subject: "Welcome to WCC {{year}} Mentorship Programme Study Group"
+  body: |
+    <p>Dear {{menteeName}},</p>
+
+    <p>
+    We are thrilled to inform you that you have been successfully matched for our upcoming study group:
+    <strong>{{studyGroupName}}</strong> within the <strong>Mentorship Programme 2025</strong>,
+    which will be initiated and led by <a href="{{mentorProfileUrl}}">{{mentorName}}</a>.
+    </p>
+
+    <p>
+    We believe this study group will be an excellent opportunity for both mentors and mentees to grow and learn together.
+    We encourage open communication and active participation from both sides to ensure a successful and fulfilling mentorship experience.
+    </p>
+
+    <p>
+    Please join the study group Slack channel here:
+    <a href="{{slackStudyGroupUrl}}">Join the study group channel</a>
+    </p>
+
+    <p><strong>Resources to support your mentorship journey:</strong></p>
+
+    <ul>
+      <li>
+        <a href="{{notionTrackingTemplateUrl}}">Notion Tracking Template</a> – track your progress, set goals, and keep your mentorship relationship organised.
+      </li>
+      <li>
+        <a href="{{attendanceTrackerUrl}}">Study Group Attendance Tracker</a> – for mentees to log session attendance.
+      </li>
+      <li>
+        <a href="{{resourcesUrl}}">Resources</a> – additional support for mentors and mentees.
+      </li>
+      <li>
+        <a href="{{codeOfConductUrl}}">Code of Conduct</a> – guidelines for mentors and mentees.
+      </li>
+    </ul>
+
+    <p>
+    We wish you all the best as you embark on this exciting journey, and we look forward to hearing about your progress and successes along the way.
+    </p>
+
+    <p>
+    If you have any questions or concerns, please don’t hesitate to reach out via email or Slack channel.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

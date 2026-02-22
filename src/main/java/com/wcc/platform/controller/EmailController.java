@@ -2,6 +2,7 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.TemplateRequest;
 import com.wcc.platform.service.EmailService;
@@ -116,4 +117,33 @@ public class EmailController {
             templateRequest.templateType(), templateRequest.params());
     return new ResponseEntity<>(renderedTemplate, HttpStatus.CREATED);
   }
+
+  /**
+   * API to send a single email using a template.
+   *
+   * @param templateEmailRequest the email request containing recipient, template type and template parameters
+   * @return EmailResponse with the status of the email sending operation
+   */
+  @PostMapping("/template/send")
+  @Operation(
+      summary = "Send a single email using a template",
+      description = "Sends an email with a template to the specified recipient")
+  @ApiResponses({
+      @ApiResponse(
+          responseCode = "200",
+          description = "Email sent successfully",
+          content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = EmailResponse.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid email request", content = @Content),
+      @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content)
+  })
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<EmailResponse> sendTemplateEmail(
+      @Valid @RequestBody final TemplateEmailRequest templateEmailRequest) {
+    final EmailResponse response = emailService.sendTemplateEmail(templateEmailRequest);
+    return ResponseEntity.ok(response);
+  }
+
 }
