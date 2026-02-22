@@ -7,9 +7,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
@@ -24,9 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 @ActiveProfiles("test")
 @Import({SecurityConfig.class, TestConfig.class})
@@ -36,6 +39,7 @@ class EmailTemplateControllerTest {
 
   private static final String API_EMAIL_TEMP_PREVIEW = "/api/platform/v1/email/template/preview";
   @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
   @MockBean private EmailService emailService;
   @MockBean private EmailTemplateService emailTemplateService;
 
@@ -48,7 +52,7 @@ class EmailTemplateControllerTest {
 
     var request =
         createTemplateRequest(
-            TemplateType.NEW_MENTEES_ALERT_MENTOR_LONG,
+            TemplateType.FEEDBACK_MENTOR_ADHOC,
             params);
 
     RenderedTemplate renderedTemplate =
@@ -59,8 +63,12 @@ class EmailTemplateControllerTest {
     when(emailTemplateService.renderTemplate(eq(TemplateType.FEEDBACK_MENTOR_ADHOC), any()))
         .thenReturn(renderedTemplate);
 
-    mockMvc.perform(postRequest(API_EMAIL_TEMP_PREVIEW, request))
-        .andDo(MockMvcResultHandlers.print())
+    mockMvc.perform(
+            post(API_EMAIL_TEMP_PREVIEW)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+        .andDo(print())
         .andExpect(status().isCreated());
   }
 
