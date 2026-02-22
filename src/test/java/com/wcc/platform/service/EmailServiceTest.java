@@ -16,6 +16,7 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.TemplateType;
 import jakarta.mail.internet.MimeMessage;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -339,5 +340,41 @@ class EmailServiceTest {
         .hasMessageContaining("Template not found.");
 
     verify(emailService, never()).sendEmail(any());
+  }
+
+  @Test
+  @DisplayName("Should build EmailRequest when optional fields are empty and send email")
+  void shouldSendTemplateEmailWhenOptionalFieldsAreEmpty() {
+    TemplateEmailRequest request = TemplateEmailRequest.builder()
+        .to("test@example.com")
+        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+        .templateParameters(Map.of("key", "value"))
+        .cc(null)
+        .bcc(Collections.emptyList())
+        .replyTo("")
+        .build();
+
+    RenderedTemplate renderedTemplate =
+        new RenderedTemplate("Subject", "Body");
+
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(renderedTemplate);
+
+    doReturn(EmailResponse.builder().success(true).build())
+        .when(emailService)
+        .sendEmail(any());
+
+    emailService.sendTemplateEmail(request);
+
+    ArgumentCaptor<EmailRequest> captor =
+        ArgumentCaptor.forClass(EmailRequest.class);
+
+    verify(emailService).sendEmail(captor.capture());
+
+    EmailRequest sentRequest = captor.getValue();
+
+    assertThat(sentRequest.getCc()).isNull();
+    assertThat(sentRequest.getBcc()).isNull();
+    assertThat(sentRequest.getReplyTo()).isNull();
   }
 }
