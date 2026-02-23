@@ -37,7 +37,8 @@ class EmailTemplateControllerTest extends DefaultDatabaseSetup {
             "mentorName", "Alice",
             "menteeName", "Bob",
             "program", "Mentorship",
-            "deadline", "2025-12-01");
+            "deadline", "2025-12-01",
+            "teamEmailSignature", "Best regards");
     var request = new TemplateRequest(TemplateType.FEEDBACK_MENTOR_ADHOC, params);
 
     HttpHeaders headers = new HttpHeaders();
