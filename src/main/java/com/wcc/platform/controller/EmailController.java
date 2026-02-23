@@ -121,7 +121,8 @@ public class EmailController {
   /**
    * API to send a single email using a template.
    *
-   * @param templateEmailRequest the email request containing recipient, template type and template parameters
+   * @param templateEmailRequest the email request containing recipient,
+   *                             template type and template parameters
    * @return EmailResponse with the status of the email sending operation
    */
   @PostMapping("/template/send")

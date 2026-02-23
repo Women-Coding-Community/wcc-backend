@@ -49,7 +49,7 @@ class EmailControllerTest {
 
   private EmailRequest emailRequest;
   private TemplateEmailRequest templateEmailRequest;
-  private TemplateEmailRequest invalidTemplateEmailRequest;
+  private TemplateEmailRequest invalidTempEmailReq;
   private EmailResponse emailResponse;
 
   @BeforeEach
@@ -80,7 +80,7 @@ class EmailControllerTest {
             .html(false)
             .build();
 
-    invalidTemplateEmailRequest =
+    invalidTempEmailReq =
         TemplateEmailRequest.builder()
             .templateType(FEEDBACK_MENTOR_ADHOC)
             .templateParameters(templateParams)
@@ -290,7 +290,7 @@ class EmailControllerTest {
             post("/api/platform/v1/email/template/send")
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidTemplateEmailRequest)))
+                .content(objectMapper.writeValueAsString(invalidTempEmailReq)))
         .andExpect(status().isBadRequest());
   }
 
