@@ -255,7 +255,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
         <BioSection control={control} errors={errors} />
         <SkillsSection control={control} errors={errors} />
         <MentorshipAvailabilitySection control={control} errors={errors} />
-        <ResourcesSection control={control} errors={errors} />
+        <ResourcesSection control={control} />
       </Stack>
 
       <Box sx={{ mt: 3 }}>
