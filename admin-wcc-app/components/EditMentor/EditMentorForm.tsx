@@ -225,7 +225,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
               Profile Editor
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Update your profile information
+              Update profile information
             </Typography>
           </Box>
           <SaveButton />
