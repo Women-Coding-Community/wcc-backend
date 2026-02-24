@@ -60,7 +60,8 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Mentorship Type *"
+                    required
+                    label="Mentorship Type"
                     placeholder="Select mentorship types"
                     error={!!errors.mentorshipType}
                     helperText={errors.mentorshipType?.message}
