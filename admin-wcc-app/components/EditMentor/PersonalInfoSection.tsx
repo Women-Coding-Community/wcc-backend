@@ -86,7 +86,8 @@ export default function PersonalInfoSection({ control, errors }: FormSectionProp
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Country *"
+                    required
+                    label="Country"
                     placeholder="Search country"
                     error={!!errors.country}
                     helperText={errors.country?.message}
@@ -101,7 +102,16 @@ export default function PersonalInfoSection({ control, errors }: FormSectionProp
           <Controller
             name="city"
             control={control}
-            render={({ field }) => <TextField {...field} fullWidth label="City" />}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                required
+                label="City"
+                error={!!errors.city}
+                helperText={errors.city?.message}
+              />
+            )}
           />
         </Grid>
 
@@ -116,7 +126,14 @@ export default function PersonalInfoSection({ control, errors }: FormSectionProp
                 value={field.value}
                 onChange={(_, newValue) => field.onChange(newValue)}
                 renderInput={(params) => (
-                  <TextField {...params} label="Spoken Languages" placeholder="Select languages" />
+                  <TextField
+                    {...params}
+                    required
+                    label="Spoken Languages"
+                    placeholder="Select languages"
+                    error={!!errors.spokenLanguages}
+                    helperText={errors.spokenLanguages?.message}
+                  />
                 )}
                 renderTags={(value, getTagProps) =>
                   value.map((option, index) => (

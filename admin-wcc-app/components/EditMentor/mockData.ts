@@ -13,9 +13,18 @@ export const MOCK_MENTOR = {
   memberTypes: ['MENTOR'],
   skills: {
     yearsExperience: 5,
-    areas: ['BACKEND', 'FRONTEND'],
-    languages: ['CPP', 'JAVA', 'JAVASCRIPT', 'TYPESCRIPT', 'PYTHON'],
-    mentorshipFocus: ['CAREER_GROWTH', 'TECHNICAL_SKILLS'],
+    areas: [
+      { technicalArea: 'BACKEND', proficiencyLevel: 'EXPERT' },
+      { technicalArea: 'FRONTEND', proficiencyLevel: 'ADVANCED' },
+    ],
+    languages: [
+      { language: 'C_PLUS_PLUS', proficiencyLevel: 'ADVANCED' },
+      { language: 'JAVA', proficiencyLevel: 'EXPERT' },
+      { language: 'JAVASCRIPT', proficiencyLevel: 'ADVANCED' },
+      { language: 'TYPESCRIPT', proficiencyLevel: 'ADVANCED' },
+      { language: 'PYTHON', proficiencyLevel: 'INTERMEDIATE' },
+    ],
+    mentorshipFocus: ['SWITCH_CAREER_TO_IT', 'GROW_MID_TO_SENIOR'],
   },
   menteeSection: {
     mentorshipType: ['AD_HOC'],
@@ -41,7 +50,7 @@ export const MOCK_MENTOR = {
   resources: {
     books:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    links: [] as { title: string; uri: string }[],
+    links: [] as { title: string; label: string; uri: string }[],
   },
   profilePictureUrl: 'https://i.pravatar.cc/150?img=47',
   images: [] as { path: string; alt: string; type: string }[],

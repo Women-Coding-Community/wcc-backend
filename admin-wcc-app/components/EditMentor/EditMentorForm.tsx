@@ -97,7 +97,6 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
     city: data.city,
     companyName: data.companyName,
     memberTypes: ['MENTOR'],
-    profileStatus: MOCK_MENTOR.profileStatus,
     network: data.network,
     bio: data.bio,
     spokenLanguages: data.spokenLanguages,
