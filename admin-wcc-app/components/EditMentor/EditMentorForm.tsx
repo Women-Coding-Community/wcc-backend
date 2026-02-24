@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Box, Alert, CircularProgress, Paper, Typography, Stack } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { useRouter } from 'next/router';
@@ -70,10 +70,20 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>(
-    MOCK_MENTOR.profilePictureUrl
-  );
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>(undefined);
   const [profilePictureUploading, setProfilePictureUploading] = useState(false);
+
+  useEffect(() => {
+    const token = getStoredToken();
+    if (!token) return;
+
+    apiFetch<{ resource: { driveFileLink: string } }>(
+      `/api/platform/v1/resources/member-profile-picture/${mentorId}`,
+      { token }
+    )
+      .then((data) => setProfilePictureUrl(data.resource.driveFileLink))
+      .catch(() => {});
+  }, [mentorId]);
 
   const {
     control,
