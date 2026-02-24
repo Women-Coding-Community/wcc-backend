@@ -5,7 +5,6 @@ import com.wcc.platform.domain.email.EmailResponse;
 import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.template.RenderedTemplate;
-import com.wcc.platform.domain.template.Template;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +18,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import com.wcc.platform.service.EmailTemplateService;
 
 /**
  * Service class for handling email operations. Provides functionality to send emails using
@@ -92,12 +90,12 @@ public class EmailService {
     }
   }
 
-  public EmailResponse sendTemplateEmail(TemplateEmailRequest request) {
+  public EmailResponse sendTemplateEmail(final TemplateEmailRequest request) {
 
     final RenderedTemplate renderedTemplate = emailTemplateService.renderTemplate(
             request.getTemplateType(), request.getTemplateParameters());
 
-    EmailRequest.EmailRequestBuilder emailBuilder = EmailRequest.builder()
+    final EmailRequest.EmailRequestBuilder emailBuilder = EmailRequest.builder()
         .to(request.getTo())
         .subject(renderedTemplate.subject())
         .body(renderedTemplate.body())
@@ -115,7 +113,7 @@ public class EmailService {
       emailBuilder.replyTo(request.getReplyTo());
     }
 
-    EmailRequest emailRequest = emailBuilder.build();
+    final EmailRequest emailRequest = emailBuilder.build();
 
     return sendEmail(emailRequest);
   }
