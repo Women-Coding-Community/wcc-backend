@@ -1,4 +1,4 @@
-POTENTIAL_MENTEES_LONG:
+FOLLOWUP_MENTEES_LONG:
   subject: "[Reminder] Please Select Your Mentees for the WCC Mentorship programme {{year}}"
   body: |
     <p>Dear {{mentorName}},</p>

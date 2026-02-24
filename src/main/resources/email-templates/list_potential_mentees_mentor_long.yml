@@ -1,4 +1,4 @@
-POTENTIAL_MENTEES_MENTOR_LONG:
+MENTEES_MENTOR_LONG:
   subject: "Mentee Assignments for WCC Mentorship programme {{year}}"
   body: |
     <p>Dear {{mentorName}},</p>

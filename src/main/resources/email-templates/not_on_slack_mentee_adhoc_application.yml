@@ -1,4 +1,4 @@
-NOT_ON_SLACK_MENTEE_ADHOC:
+NO_SLACK_MENTEE:
   subject: "Regarding your Ad-Hoc Application - Join our Slack Community"
   body: |
     <p>Dear {{menteeName}},</p>

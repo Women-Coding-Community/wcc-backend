@@ -1,4 +1,4 @@
-STUDY_GROUP_INTRODUCTION_MENTEE:
+STUDY_GROUP_INTRO:
   subject: "Welcome to WCC {{year}} Mentorship Programme Study Group"
   body: |
     <p>Dear {{menteeName}},</p>

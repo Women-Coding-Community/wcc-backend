@@ -1,4 +1,4 @@
-CHECKIN_ANNOUNCEMENT_MENTEE:
+CHECKIN_MENTEE:
   subject: "Mentorship Catch-Up for Mentees, {{checkinDate}}"
   body: |
     <p>Dear {{menteeName}},</p>

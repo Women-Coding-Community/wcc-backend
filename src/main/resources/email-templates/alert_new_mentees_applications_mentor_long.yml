@@ -1,4 +1,4 @@
-NEW_MENTEES_ALERT_MENTOR_LONG:
+NEW_MENTEES_LONG:
   subject: "[Action Required] New Mentee Applications for WCC Mentorship Programme"
   body: |
     <p>Dear {{mentorName}},</p>

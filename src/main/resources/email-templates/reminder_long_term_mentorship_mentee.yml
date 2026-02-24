@@ -1,4 +1,4 @@
-REMINDER_LONG_MENTORSHIP_MENTEE:
+REMINDER_MENTEE_LONG:
   subject: "Important Information for All Mentees - {{year}} WCC Mentorship Programme"
   body: |
     <p>Dear Mentees,</p>

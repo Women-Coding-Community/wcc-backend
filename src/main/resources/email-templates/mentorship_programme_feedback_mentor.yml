@@ -1,4 +1,4 @@
-MENTORSHIP_FEEDBACK_MENTOR:
+FEEDBACK_MENTOR:
   subject: "We Value Your Feedback On WCC {{year}} Mentorship Programme"
   body: |
     <p>Dear {{mentorName}},</p>

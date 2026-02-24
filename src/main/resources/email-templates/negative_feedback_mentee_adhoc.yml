@@ -1,4 +1,4 @@
-NEGATIVE_FEEDBACK_MENTEE_ADHOC:
+NEG_FEEDBACK_MENTEE:
   subject: "Your Feedback About Ad-Hoc Mentorship Session"
   body: |
     <p>Hi {{menteeFirstName}},</p>

@@ -1,4 +1,4 @@
-AVAILABILITY_MENTOR_ADHOC:
+MENTOR_AVAIL_ADHOC:
   subject: "Confirm Availability for Ad-Hoc Sessions for {{month}}, {{year}}"
   body: |
     <p>Dear Mentor,</p>

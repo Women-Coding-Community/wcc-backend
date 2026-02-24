@@ -1,4 +1,4 @@
-MENTEE_TERMINATION_LONG:
+MENTEE_TERMIN_LONG:
   subject: "[Urgent] Retain Your Mentee Status in the {{year}} WCC Mentorship Programme"
   body: |
     <p>Hi {{menteeName}},</p>

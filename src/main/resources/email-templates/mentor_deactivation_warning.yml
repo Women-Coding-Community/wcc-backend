@@ -1,4 +1,4 @@
-MENTOR_DEACTIVATION_WARNING:
+MENTOR_DEACT_WARN:
   subject: "[Urgent] Your Mentor Status Within Women Coding Community"
   body: |
     <p>Hi {{mentorFirstName}},</p>

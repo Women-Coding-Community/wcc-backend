@@ -1,4 +1,4 @@
-WELCOME_MENTORSHIP_LONG:
+WELCOME_LONG:
   subject: "Welcome to the {{year}} Mentorship Programme"
   body: |
     <p>Dear {{mentorName}} and {{menteeName}},</p>

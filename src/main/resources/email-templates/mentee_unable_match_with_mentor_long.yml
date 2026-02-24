@@ -1,4 +1,4 @@
-UNABLE_MATCH_MENTOR_LONG:
+NO_MATCH_MENTOR_LONG:
   subject: "Update on Your Mentorship Application – Women Coding Community"
   body: |
     <p>Dear {{menteeNames}},</p>

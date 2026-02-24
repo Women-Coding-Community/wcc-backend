@@ -1,4 +1,4 @@
-STUDY_GROUP_AVAILABILITY_MENTOR:
+STUDY_GROUP_AVAIL:
   subject: "Regarding Your Interest in Leading a Study Group for {{year}} WCC Mentorship Programme"
   body: |
     <p>Dear {{mentorName}},</p>

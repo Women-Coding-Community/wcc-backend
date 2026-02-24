@@ -1,4 +1,4 @@
-PROFILE_NOT_APPROVED_MENTOR:
+MENTOR_PROFILE_REJECT:
   subject: "Mentor Profile Not Approved"
   body: |
     <p>Dear {{mentorshipApplicantName}},</p>
