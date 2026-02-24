@@ -1,4 +1,4 @@
-MENTORSHIP_FEEDBACK_MENTEE_ADHOC:
+MENTEE_FEEDBACK_ADHOC:
   subject: "We’d Love Your Feedback – {{Month}} Mentorship Experience"
   body: |
     <p>Dear Mentee,</p>

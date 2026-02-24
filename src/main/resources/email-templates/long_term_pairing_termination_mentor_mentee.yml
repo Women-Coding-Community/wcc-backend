@@ -1,4 +1,4 @@
-PAIRING_TERMINATION_MENTOR_MENTEE:
+PAIRING_TERMINATION:
   subject: "Update on Your {{year}} Long-term Mentorship Match"
   body: |
     <p>Dear {{mentorFirstName}} and {{menteeFirstName}},</p>

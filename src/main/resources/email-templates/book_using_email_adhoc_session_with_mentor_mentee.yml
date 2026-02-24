@@ -1,4 +1,4 @@
-BOOK_ADHOC_SESSION_MENTEE_EMAIL:
+ADHOC_SESSION_EMAIL:
   subject: "Book ad-hoc session with your mentor"
   body: |
     <p>Dear {{menteeName}},</p>
