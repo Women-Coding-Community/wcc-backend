@@ -11,7 +11,8 @@ public enum ProfileStatus {
   ACTIVE(1),
   DISABLED(2),
   BANNED(3),
-  PENDING(4);
+  PENDING(4),
+  REJECTED(5);
 
   private final int statusId;
 

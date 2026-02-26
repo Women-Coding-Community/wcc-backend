@@ -37,6 +37,24 @@ public class MentorshipNotificationService {
   }
 
   /**
+   * Sends a mentor rejection notification email to the specified mentor.
+   *
+   * @param mentor the mentor to notify
+   */
+  public void sendMentorRejectionEmail(final Mentor mentor, final String rejectionReason) {
+    sendNotification(
+        mentor.getEmail(),
+        TemplateType.MENTOR_REJECTED,
+        Map.of(
+            "mentorshipApplicantName",
+            mentor.getFullName(),
+            "rejectionReason",
+            rejectionReason,
+            "volunteerFormUrl",
+            notificationConfig.getVolunteerFormUrl()));
+  }
+
+  /**
    * Renders an email template and sends a notification email to the specified recipient.
    *
    * @param recipientEmail the recipient's email address

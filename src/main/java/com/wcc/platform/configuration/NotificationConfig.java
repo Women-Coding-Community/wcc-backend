@@ -11,4 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class NotificationConfig {
   private String mentorProfileUrl;
+  private String volunteerFormUrl;
 }

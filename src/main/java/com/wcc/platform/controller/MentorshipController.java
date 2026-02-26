@@ -60,10 +60,8 @@ public class MentorshipController {
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(
-      @Valid @RequestBody final MentorDto mentorDto) {
-    return new ResponseEntity<>(
-        mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
+  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final MentorDto mentorDto) {
+    return new ResponseEntity<>(mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
   }
 
   /**
@@ -92,6 +90,20 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> acceptMentor(@Valid @PathVariable final Long mentorId) {
     return new ResponseEntity<>(mentorshipService.activateMentor(mentorId), HttpStatus.OK);
+  }
+
+  /**
+   * API to reject mentor registration.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return updated mentor with rejected status.
+   */
+  @PatchMapping("/mentors/{mentorId}/reject")
+  @Operation(summary = "API to accept mentor registration")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<Mentor> rejectMentor(
+      @Valid @PathVariable final Long mentorId, @RequestBody final String feedback) {
+    return new ResponseEntity<>(mentorshipService.rejectMentor(mentorId, feedback), HttpStatus.OK);
   }
 
   /**
