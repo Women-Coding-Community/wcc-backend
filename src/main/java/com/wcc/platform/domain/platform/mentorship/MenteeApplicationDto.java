@@ -1,7 +1,9 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -17,4 +19,11 @@ import jakarta.validation.constraints.NotNull;
 public record MenteeApplicationDto(
     @NotNull Long menteeId,
     @NotNull Long mentorId,
-    @NotNull @Min(1) @Max(5) Integer priorityOrder) {}
+    @NotNull @Min(1) @Max(5) Integer priorityOrder,
+    @Schema(example = "I have applied many times and I could have a long-term mentor last years")
+        String applicationMessage,
+    @NotBlank
+        @Schema(
+            example = "This mentor has skills I am looking forward to improve this year",
+            description = "Why this mentor was selected and is a good match for the mentee")
+        String whyMentor) {}

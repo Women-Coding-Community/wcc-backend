@@ -54,7 +54,8 @@ public class SetupMenteeFactories {
                     List.of(
                         new LanguageProficiency(
                             CodeLanguage.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
-                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)));
+                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
+            .availableHsMonth(10);
     if (menteeId != null) {
       menteeBuilder.id(menteeId);
     }

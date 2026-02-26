@@ -102,6 +102,7 @@ public class MenteeService {
               .skills(menteeToBeSaved.getSkills())
               .spokenLanguages(menteeToBeSaved.getSpokenLanguages())
               .bio(menteeToBeSaved.getBio())
+              .availableHsMonth(menteeToBeSaved.getAvailableHsMonth())
               .build();
 
       mentee = menteeRepository.create(menteeWithExistingId);

@@ -7,6 +7,7 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.type.MemberType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
@@ -26,6 +27,10 @@ public class Mentee extends Member {
   private @NotBlank String bio;
   private List<String> spokenLanguages;
 
+  @NotNull
+  @Min(1)
+  private Integer availableHsMonth;
+
   @Builder(builderMethodName = "menteeBuilder")
   public Mentee(
       final Long id,
@@ -44,7 +49,8 @@ public class Mentee extends Member {
       final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
       final String bio,
-      final Skills skills) {
+      final Skills skills,
+      final Integer availableHsMonth) {
     super(
         id,
         fullName,
@@ -65,5 +71,6 @@ public class Mentee extends Member {
     this.skills = skills;
     this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
     this.bio = bio;
+    this.availableHsMonth = availableHsMonth;
   }
 }

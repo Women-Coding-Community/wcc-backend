@@ -189,9 +189,9 @@ class MentorshipWorkflowIntegrationTest extends DefaultDatabaseSetup
             MentorshipType.LONG_TERM,
             Year.of(2026),
             List.of(
-                new MenteeApplicationDto(null, mentor1.getId(), 1),
-                new MenteeApplicationDto(null, mentor2.getId(), 2),
-                new MenteeApplicationDto(null, mentor3.getId(), 3)));
+                new MenteeApplicationDto(null, mentor1.getId(), 1, "Test application", "Test why mentor"),
+                new MenteeApplicationDto(null, mentor2.getId(), 2, "Test application", "Test why mentor"),
+                new MenteeApplicationDto(null, mentor3.getId(), 3, "Test application", "Test why mentor")));
 
     var mentee = menteeService.saveRegistration(registration);
 

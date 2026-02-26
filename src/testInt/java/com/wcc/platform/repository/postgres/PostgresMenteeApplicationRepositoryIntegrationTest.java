@@ -176,6 +176,45 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
     assertEquals(1L, count);
   }
 
+  @Test
+  @DisplayName("Given application with whyMentor, when creating, then field should be persisted")
+  void shouldPersistWhyMentorField() {
+    MenteeApplication application =
+        MenteeApplication.builder()
+            .menteeId(mentee.getId())
+            .mentorId(mentor.getId())
+            .cycleId(cycle.getCycleId())
+            .priorityOrder(1)
+            .status(ApplicationStatus.PENDING)
+            .applicationMessage("I want to learn")
+            .whyMentor("Because this mentor has expertise in my field")
+            .build();
+
+    MenteeApplication created = applicationRepository.create(application);
+
+    assertNotNull(created.getWhyMentor());
+    assertEquals("Because this mentor has expertise in my field", created.getWhyMentor());
+  }
+
+  @Test
+  @DisplayName("Given application without whyMentor, when creating, then field should be null")
+  void shouldAllowNullWhyMentorField() {
+    MenteeApplication application =
+        MenteeApplication.builder()
+            .menteeId(mentee.getId())
+            .mentorId(mentor.getId())
+            .cycleId(cycle.getCycleId())
+            .priorityOrder(1)
+            .status(ApplicationStatus.PENDING)
+            .applicationMessage("I want to learn")
+            .build();
+
+    MenteeApplication created = applicationRepository.create(application);
+
+    assertNotNull(created.getApplicationId());
+    assertEquals("I want to learn", created.getApplicationMessage());
+  }
+
   private MenteeApplication createTestApplication(final int priority) {
     return applicationRepository.create(
         MenteeApplication.builder()

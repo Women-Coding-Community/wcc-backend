@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Year;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Represents a mentee registration with mentorship preferences and mentor applications.
@@ -17,21 +18,35 @@ import java.util.List;
 public record MenteeRegistration(
     @NotNull Mentee mentee,
     @NotNull MentorshipType mentorshipType,
-    @NotNull @Schema(type = "integer", format = "int32", example = "2026", description = "The year of the mentorship cycle") Year cycleYear,
+    @NotNull
+        @Schema(
+            type = "integer",
+            format = "int32",
+            example = "2026",
+            description = "The year of the mentorship cycle")
+        Year cycleYear,
     @Size(min = 1, max = 5) List<MenteeApplicationDto> applications) {
 
   public List<MenteeApplication> toApplications(
       final MentorshipCycleEntity cycle, final Long menteeId) {
     return applications.stream()
         .map(
-            application ->
-                MenteeApplication.builder()
-                    .menteeId(menteeId)
-                    .mentorId(application.mentorId())
-                    .priorityOrder(application.priorityOrder())
-                    .status(ApplicationStatus.PENDING)
-                    .cycleId(cycle.getCycleId())
-                    .build())
+            application -> {
+              final var builder = MenteeApplication.builder();
+
+              if (StringUtils.isNotBlank(application.applicationMessage())) {
+                builder.applicationMessage(application.applicationMessage());
+              }
+
+              return builder
+                  .menteeId(menteeId)
+                  .mentorId(application.mentorId())
+                  .whyMentor(application.whyMentor())
+                  .priorityOrder(application.priorityOrder())
+                  .status(ApplicationStatus.PENDING)
+                  .cycleId(cycle.getCycleId())
+                  .build();
+            })
         .toList();
   }
 

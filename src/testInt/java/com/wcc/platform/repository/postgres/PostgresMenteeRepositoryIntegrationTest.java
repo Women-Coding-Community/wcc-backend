@@ -75,4 +75,58 @@ class PostgresMenteeRepositoryIntegrationTest extends DefaultDatabaseSetup
     repository.deleteById(mentee.getId());
     memberRepository.deleteById(mentee.getId());
   }
+
+  @Test
+  void testCreateMenteeWithAvailableHsMonth() {
+    var menteeWithHours =
+        Mentee.menteeBuilder()
+            .fullName("Test Mentee")
+            .position("Developer")
+            .email("test_hours@email.com")
+            .slackDisplayName("@testhours")
+            .country(mentee.getCountry())
+            .city("Test City")
+            .companyName("Test Company")
+            .spokenLanguages(List.of("English"))
+            .bio("Bio text")
+            .skills(mentee.getSkills())
+            .profileStatus(mentee.getProfileStatus())
+            .availableHsMonth(8)
+            .build();
+
+    Mentee created = repository.create(menteeWithHours);
+
+    assertThat(created.getAvailableHsMonth()).isEqualTo(8);
+
+    repository.deleteById(created.getId());
+    memberRepository.deleteById(created.getId());
+  }
+
+  @Test
+  void testUpdateMenteeAvailableHsMonth() {
+    Mentee created = repository.create(mentee);
+    var updated =
+        Mentee.menteeBuilder()
+            .id(created.getId())
+            .fullName(created.getFullName())
+            .position(created.getPosition())
+            .email(created.getEmail())
+            .slackDisplayName(created.getSlackDisplayName())
+            .country(created.getCountry())
+            .city(created.getCity())
+            .companyName(created.getCompanyName())
+            .spokenLanguages(created.getSpokenLanguages())
+            .bio(created.getBio())
+            .skills(mentee.getSkills())
+            .profileStatus(created.getProfileStatus())
+            .availableHsMonth(12)
+            .build();
+
+    Mentee result = repository.update(created.getId(), updated);
+
+    assertThat(result.getAvailableHsMonth()).isEqualTo(12);
+
+    repository.deleteById(created.getId());
+    memberRepository.deleteById(created.getId());
+  }
 }

@@ -25,7 +25,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private static final String SELECT_ALL_MENTEES = "SELECT * FROM mentees";
   private static final String SQL_INSERT_MENTEE =
       "INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, "
-          + "spoken_languages) VALUES (?, ?, ?, ?, ?)";
+          + "spoken_languages, available_hs_month) VALUES (?, ?, ?, ?, ?, ?)";
   private static final String SQL_PROG_LANG_INSERT =
       "INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)";
   private static final String SQL_TECH_AREAS_INSERT =
@@ -34,7 +34,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
       "INSERT INTO mentee_mentorship_focus_areas (mentee_id, focus_area_id) VALUES (?, ?)";
   private static final String SQL_UPDATE_MENTEE =
       "UPDATE mentees SET mentees_profile_status = ?, bio = ?, years_experience = ?, "
-          + "spoken_languages = ? WHERE mentee_id = ?";
+          + "spoken_languages = ?, available_hs_month = ? WHERE mentee_id = ?";
   private static final String SQL_DELETE_TECH_AREAS =
       "DELETE FROM mentee_technical_areas WHERE mentee_id = ?";
   private static final String SQL_DELETE_LANGUAGES =
@@ -130,6 +130,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
         mentee.getBio(),
         skills.yearsExperience(),
         String.join(",", mentee.getSpokenLanguages()),
+        mentee.getAvailableHsMonth(),
         memberId);
   }
 
@@ -142,7 +143,8 @@ public class PostgresMenteeRepository implements MenteeRepository {
         profileStatus.getStatusId(),
         mentee.getBio(),
         skills.yearsExperience(),
-        String.join(",", mentee.getSpokenLanguages()));
+        String.join(",", mentee.getSpokenLanguages()),
+        mentee.getAvailableHsMonth());
   }
 
   /** Inserts technical areas for the mentee in mentee_technical_areas table. */
