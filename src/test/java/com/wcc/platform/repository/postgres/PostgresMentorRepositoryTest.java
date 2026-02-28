@@ -14,6 +14,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
@@ -45,7 +46,11 @@ class PostgresMentorRepositoryTest {
     repository =
         spy(
             new PostgresMentorRepository(
-                jdbc, mentorMapper, memberMapper, mock(com.wcc.platform.repository.MemberRepository.class), validator));
+                jdbc,
+                mentorMapper,
+                memberMapper,
+                mock(com.wcc.platform.repository.MemberRepository.class),
+                validator));
   }
 
   @Test
@@ -134,5 +139,41 @@ class PostgresMentorRepositoryTest {
     } catch (NoSuchElementException e) {
       assertNotNull(e);
     }
+  }
+
+  @Test
+  void testUpdateProfileStatus() {
+    long mentorId = 1L;
+    Mentor createdMentor = createMentorTest();
+
+    doReturn(Optional.of(createdMentor)).when(repository).findById(mentorId);
+
+    Mentor result = repository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+
+    verify(jdbc)
+        .update(
+            "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?",
+            ProfileStatus.ACTIVE.getStatusId(),
+            mentorId);
+    assertNotNull(result);
+  }
+
+  @Test
+  void testUpdateToRejected() {
+    long mentorId = 1L;
+    String rejectionReason = "Not a good fit at this time";
+    Mentor rejectedMentor = createMentorTest();
+
+    doReturn(Optional.of(rejectedMentor)).when(repository).findById(mentorId);
+
+    Mentor result = repository.updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason);
+
+    verify(jdbc)
+        .update(
+            "UPDATE mentors SET profile_status = ?, rejection_reason = ? WHERE mentor_id = ?",
+            ProfileStatus.REJECTED.getStatusId(),
+            rejectionReason,
+            mentorId);
+    assertNotNull(result);
   }
 }

@@ -99,7 +99,7 @@ public class MentorshipController {
    * @return updated mentor with rejected status.
    */
   @PatchMapping("/mentors/{mentorId}/reject")
-  @Operation(summary = "API to accept mentor registration")
+  @Operation(summary = "API to reject mentor registration")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> rejectMentor(
       @Valid @PathVariable final Long mentorId, @RequestBody final String feedback) {
