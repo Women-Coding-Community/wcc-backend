@@ -303,7 +303,7 @@ class MentorshipControllerTest {
             MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/reject")
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(APPLICATION_JSON)
-                .content(rejectionReason))
+                .content("{\"reason\": \"" + rejectionReason + "\"}"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(1)))
         .andExpect(jsonPath("$.fullName", is(rejectedMentor.getFullName())))
@@ -326,7 +326,8 @@ class MentorshipControllerTest {
         .perform(
             MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/reject")
                 .header(API_KEY_HEADER, API_KEY_VALUE)
-                .content(rejectionReason))
+                .contentType(APPLICATION_JSON)
+                .content("{\"reason\": \"" + rejectionReason + "\"}"))
         .andExpect(status().isConflict())
         .andExpect(
             jsonPath("$.message", is("Mentor with ID " + mentorId + " is already rejected")));
@@ -345,7 +346,8 @@ class MentorshipControllerTest {
         .perform(
             MockMvcRequestBuilders.patch(API_MENTORS + "/" + nonExistentMentorId + "/reject")
                 .header(API_KEY_HEADER, API_KEY_VALUE)
-                .content(rejectionReason))
+                .contentType(APPLICATION_JSON)
+                .content("{\"reason\": \"" + rejectionReason + "\"}"))
         .andExpect(status().isNotFound());
   }
 

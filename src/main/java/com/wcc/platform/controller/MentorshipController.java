@@ -4,6 +4,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.mentorship.MentorRejectionRequest;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -102,8 +103,10 @@ public class MentorshipController {
   @Operation(summary = "API to reject mentor registration")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> rejectMentor(
-      @Valid @PathVariable final Long mentorId, @RequestBody final String feedback) {
-    return new ResponseEntity<>(mentorshipService.rejectMentor(mentorId, feedback), HttpStatus.OK);
+      @Valid @PathVariable final Long mentorId,
+      @RequestBody final MentorRejectionRequest rejectionRequest) {
+    return new ResponseEntity<>(
+        mentorshipService.rejectMentor(mentorId, rejectionRequest.reason()), HttpStatus.OK);
   }
 
   /**
