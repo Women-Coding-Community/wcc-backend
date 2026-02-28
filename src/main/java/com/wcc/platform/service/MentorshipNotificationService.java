@@ -33,7 +33,7 @@ public class MentorshipNotificationService {
     sendNotification(
         mentor.getEmail(),
         TemplateType.MENTOR_APPROVED,
-        Map.of("mentorName", mentor.getFullName(), "mentorLink", mentorBaseUrl));
+        Map.of("mentorName", mentor.getFullName(), "mentorProfileUrl", mentorBaseUrl));
   }
 
   /**
@@ -44,7 +44,7 @@ public class MentorshipNotificationService {
   public void sendMentorRejectionEmail(final Mentor mentor, final String rejectionReason) {
     sendNotification(
         mentor.getEmail(),
-        TemplateType.MENTOR_REJECTED,
+        TemplateType.MENTOR_PROFILE_REJECT,
         Map.of(
             "mentorshipApplicantName",
             mentor.getFullName(),
