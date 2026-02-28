@@ -115,7 +115,7 @@ Mentees, Volunteers, and Community Leaders.
 - ✅ `user_token` - Session tokens with expiry
 - ✅ `members` - User profiles (full_name, email, bio, skills)
 - ✅ `member_types` - COLLABORATOR, VOLUNTEER, DIRECTOR, LEAD, EVANGELIST, MEMBER
-- ✅ `member_statuses` - ACTIVE, DISABLED, BANNED, PENDING
+- ✅ `member_statuses` - ACTIVE, DISABLED, BANNED, PENDING, REJECTED
 - ✅ `member_images` - Profile images
 - ✅ `member_social_networks` - Social links
 - ✅ `mentors` - Mentor profiles (extends members)
