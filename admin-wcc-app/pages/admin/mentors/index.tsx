@@ -119,7 +119,11 @@ export default function MentorsPage() {
         )}
         <Box>
           {items.map((m) => (
-            <Paper key={m.id} sx={{ p: 2, mb: 2 }}>
+            <Paper
+              key={m.id}
+              sx={{ p: 2, mb: 2, cursor: 'pointer', '&:hover': { boxShadow: 3 } }}
+              onClick={() => router.push(`/admin/mentors/${m.id}`)}
+            >
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="flex-start">
                 <Avatar sx={{ bgcolor: 'primary.main', width: 60, height: 60 }}>
                   {(m.fullName || '?').substring(0, 1)}
