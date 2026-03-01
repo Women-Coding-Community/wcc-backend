@@ -24,7 +24,7 @@ MENTOR_PROFILE_REJECT:
 
     <p>
     You can also express your interest in volunteering with us by checking this page:
-    <a href="{{volunteerFormUrl}}">Volunteer with Women Coding Community</a>,
+    <a href="{{volunteerUrl}}">Volunteer with Women Coding Community</a>,
     and by joining our <strong>#i_want_to_help</strong> and <strong>#volunteers</strong> Slack channels.
     </p>
 

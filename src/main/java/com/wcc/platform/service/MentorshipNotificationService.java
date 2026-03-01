@@ -50,8 +50,8 @@ public class MentorshipNotificationService {
             mentor.getFullName(),
             "rejectionReason",
             rejectionReason,
-            "volunteerFormUrl",
-            notificationConfig.getVolunteerFormUrl()));
+            "volunteerUrl",
+            notificationConfig.getVolunteerUrl()));
   }
 
   /**
