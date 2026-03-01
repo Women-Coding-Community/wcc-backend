@@ -275,6 +275,30 @@ public class MentorshipService {
     return activatedMentor;
   }
 
+  /**
+   * Reject a pending mentor by setting their status to REJECTED.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return mentor with a rejected status
+   * @throws MemberNotFoundException if mentor is not found
+   * @throws MentorStatusException if mentor is already rejected
+   */
+  public Mentor rejectMentor(final Long mentorId, final String rejectionReason) {
+    final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
+    final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
+
+    if (mentor.getProfileStatus() == ProfileStatus.REJECTED) {
+      throw new MentorStatusException("Mentor with ID " + mentorId + " is already rejected");
+    }
+
+    final Mentor rejectedMentor =
+        mentorRepository.updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason);
+
+    notificationService.sendMentorRejectionEmail(rejectedMentor, rejectionReason);
+
+    return rejectedMentor;
+  }
+
   private void validateMentorCommitment(final Mentor mentor) {
     final var menteeSection = mentor.getMenteeSection();
 

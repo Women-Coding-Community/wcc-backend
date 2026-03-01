@@ -23,7 +23,9 @@ import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
@@ -313,6 +315,106 @@ class MentorshipServiceTest {
     assertEquals(updatedMentor, result);
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository).update(anyLong(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given pending mentor, when activateMentor is called, then returns"
+          + " accepted mentor and sends mentor approval email")
+  void testAcceptMentor() {
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE)).thenReturn(mentor);
+
+    Mentor result = service.activateMentor(mentorId);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+    verify(notificationService).sendMentorApprovalEmail(mentor);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor that is already ACTIVE, when activateMentor is called,"
+          + " then throws MentorStatusException")
+  void testAcceptAlreadyRejectedMentorThrowsMentorStatusException() {
+    long mentorId = 1L;
+    var approvedMentor = mock(Mentor.class);
+    when(approvedMentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(approvedMentor));
+
+    assertThrows(MentorStatusException.class, () -> service.activateMentor(mentorId));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
+    verify(notificationService, never()).sendMentorApprovalEmail(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given non-existent mentor, when activateMentor is called,"
+          + " then throws MemberNotFoundException")
+  void testAcceptNonExistentMentorThrowsMemberNotFoundException() {
+    long mentorId = 999L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.empty());
+
+    assertThrows(MemberNotFoundException.class, () -> service.activateMentor(mentorId));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
+    verify(notificationService, never()).sendMentorApprovalEmail(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given pending mentor, when rejectMentor is called with a reason,"
+          + " then returns rejected mentor and sends rejection email")
+  void testRejectMentor() {
+    long mentorId = 1L;
+    String rejectionReason = "Not a good fit at this time";
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason))
+        .thenReturn(mentor);
+
+    Mentor result = service.rejectMentor(mentorId, rejectionReason);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason);
+    verify(notificationService).sendMentorRejectionEmail(mentor, rejectionReason);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor that is already REJECTED, when rejectMentor is called,"
+          + " then throws MentorStatusException")
+  void testRejectAlreadyRejectedMentorThrowsMentorStatusException() {
+    long mentorId = 1L;
+    var rejectedMentor = mock(Mentor.class);
+    when(rejectedMentor.getProfileStatus()).thenReturn(ProfileStatus.REJECTED);
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(rejectedMentor));
+
+    assertThrows(MentorStatusException.class, () -> service.rejectMentor(mentorId, "reason"));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateToRejected(anyLong(), any(), anyString());
+    verify(notificationService, never()).sendMentorRejectionEmail(any(), anyString());
+  }
+
+  @Test
+  @DisplayName(
+      "Given non-existent mentor, when rejectMentor is called,"
+          + " then throws MemberNotFoundException")
+  void testRejectNonExistentMentorThrowsMemberNotFoundException() {
+    long mentorId = 999L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.empty());
+
+    assertThrows(MemberNotFoundException.class, () -> service.rejectMentor(mentorId, "reason"));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateToRejected(anyLong(), any(), anyString());
+    verify(notificationService, never()).sendMentorRejectionEmail(any(), anyString());
   }
 
   @Test

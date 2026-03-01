@@ -34,4 +34,13 @@ public interface MentorRepository extends CrudRepository<Mentor, Long> {
    * @return mentor with updated profile status
    */
   Mentor updateProfileStatus(Long mentorId, ProfileStatus profileStatus);
+
+  /**
+   * Reject a mentor by setting their profile status to REJECTED and recording the reason.
+   *
+   * @param mentorId the mentor's unique identifier
+   * @param rejectionReason the reason for rejection
+   * @return mentor with updated status and rejection reason
+   */
+  Mentor updateToRejected(Long mentorId, ProfileStatus profileStatus, String rejectionReason);
 }
