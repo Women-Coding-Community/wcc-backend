@@ -33,7 +33,25 @@ public class MentorshipNotificationService {
     sendNotification(
         mentor.getEmail(),
         TemplateType.MENTOR_APPROVED,
-        Map.of("mentorName", mentor.getFullName(), "mentorLink", mentorBaseUrl));
+        Map.of("mentorName", mentor.getFullName(), "mentorProfileUrl", mentorBaseUrl));
+  }
+
+  /**
+   * Sends a mentor rejection notification email to the specified mentor.
+   *
+   * @param mentor the mentor to notify
+   */
+  public void sendMentorRejectionEmail(final Mentor mentor, final String rejectionReason) {
+    sendNotification(
+        mentor.getEmail(),
+        TemplateType.MENTOR_PROFILE_REJECT,
+        Map.of(
+            "mentorshipApplicantName",
+            mentor.getFullName(),
+            "rejectionReason",
+            rejectionReason,
+            "volunteerUrl",
+            notificationConfig.getVolunteerUrl()));
   }
 
   /**

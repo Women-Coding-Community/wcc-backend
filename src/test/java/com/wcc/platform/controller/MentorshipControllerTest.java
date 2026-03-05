@@ -189,6 +189,8 @@ class MentorshipControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given pending mentor, when accept is called, then returns 200 OK with ACTIVE status")
   void testAcceptMentorReturnsOk() throws Exception {
     Long mentorId = 1L;
     Mentor pendingMentor = createMentorTest("Jane");
@@ -248,6 +250,7 @@ class MentorshipControllerTest {
   }
 
   @Test
+  @DisplayName("Given non-existent mentor, when accept is called, then returns 404 Not Found")
   void testAcceptNonExistentMentorReturnsNotFound() throws Exception {
     Long nonExistentMentorId = 999L;
 
@@ -258,6 +261,93 @@ class MentorshipControllerTest {
         .perform(
             MockMvcRequestBuilders.patch(API_MENTORS + "/" + nonExistentMentorId + "/accept")
                 .header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @DisplayName(
+      "Given pending mentor, when reject is called, then returns 200 OK with REJECTED status")
+  void testRejectMentorReturnsOk() throws Exception {
+    Long mentorId = 1L;
+    Mentor pendingMentor = createMentorTest("Jane");
+    MentorDto mentorDto = createMentorDtoTest(mentorId, MemberType.MENTOR);
+    mentorDto =
+        MentorDto.mentorDtoBuilder()
+            .id(mentorDto.getId())
+            .fullName(mentorDto.getFullName())
+            .position(mentorDto.getPosition())
+            .email(mentorDto.getEmail())
+            .slackDisplayName(mentorDto.getSlackDisplayName())
+            .country(mentorDto.getCountry())
+            .city(mentorDto.getCity())
+            .companyName(mentorDto.getCompanyName())
+            .images(mentorDto.getImages())
+            .network(mentorDto.getNetwork())
+            .profileStatus(ProfileStatus.REJECTED)
+            .spokenLanguages(mentorDto.getSpokenLanguages())
+            .bio(mentorDto.getBio())
+            .skills(mentorDto.getSkills())
+            .menteeSection(mentorDto.getMenteeSection())
+            .feedbackSection(mentorDto.getFeedbackSection())
+            .resources(mentorDto.getResources())
+            .build();
+
+    Mentor rejectedMentor = createUpdatedMentorTest(pendingMentor, mentorDto);
+
+    String rejectionReason = "Not a good fit at this time";
+    when(mentorshipService.rejectMentor(eq(mentorId), eq(rejectionReason)))
+        .thenReturn(rejectedMentor);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/reject")
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content("{\"reason\": \"" + rejectionReason + "\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.fullName", is(rejectedMentor.getFullName())))
+        .andExpect(jsonPath("$.profileStatus", is("REJECTED")));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor already accepted (REJECTED), when reject is called again, then"
+          + " returns 409 Conflict")
+  void testAcceptAlreadyRejectedMentorReturnsConflict() throws Exception {
+    Long mentorId = 1L;
+    String rejectionReason = "Not a good fit at this time";
+
+    when(mentorshipService.rejectMentor(eq(mentorId), any()))
+        .thenThrow(
+            new MentorStatusException("Mentor with ID " + mentorId + " is already rejected"));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + mentorId + "/reject")
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content("{\"reason\": \"" + rejectionReason + "\"}"))
+        .andExpect(status().isConflict())
+        .andExpect(
+            jsonPath("$.message", is("Mentor with ID " + mentorId + " is already rejected")));
+  }
+
+  @Test
+  @DisplayName("Given non-existent mentor, when reject is called, then returns 404 Not Found")
+  void testRejectNonExistentMentorReturnsNotFound() throws Exception {
+    Long nonExistentMentorId = 999L;
+    String rejectionReason = "Not a good fit at this time";
+
+    when(mentorshipService.rejectMentor(eq(nonExistentMentorId), any()))
+        .thenThrow(new MemberNotFoundException(nonExistentMentorId));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(API_MENTORS + "/" + nonExistentMentorId + "/reject")
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content("{\"reason\": \"" + rejectionReason + "\"}"))
         .andExpect(status().isNotFound());
   }
 

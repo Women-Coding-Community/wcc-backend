@@ -44,8 +44,10 @@ public class PostgresMentorRepository implements MentorRepository {
           + "accept_male_mentee = ?, "
           + "accept_promote_social_media = ? "
           + "WHERE mentor_id = ?";
-  private static final String UPDATE_MENTOR_STATUS =
+  private static final String SQL_SET_MENTOR_STATUS =
       "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?";
+  private static final String SQL_REJECT_MENTOR =
+      "UPDATE mentors SET profile_status = ?, rejection_reason = ? WHERE mentor_id = ?";
   private static final String SQL_INSERT_MENTOR =
       "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "
           + " spoken_languages, is_available, calendly_link, "
@@ -127,7 +129,15 @@ public class PostgresMentorRepository implements MentorRepository {
   @Override
   @Transactional
   public Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus) {
-    jdbc.update(UPDATE_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
+    jdbc.update(SQL_SET_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
+    return findById(mentorId).orElse(null);
+  }
+
+  @Transactional
+  @Override
+  public Mentor updateToRejected(
+      final Long mentorId, final ProfileStatus profileStatus, final String rejectionReason) {
+    jdbc.update(SQL_REJECT_MENTOR, profileStatus.getStatusId(), rejectionReason, mentorId);
     return findById(mentorId).orElse(null);
   }
 
