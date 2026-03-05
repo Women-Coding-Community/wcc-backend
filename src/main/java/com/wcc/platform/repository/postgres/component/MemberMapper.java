@@ -1,7 +1,7 @@
 package com.wcc.platform.repository.postgres.component;
 
 import static com.wcc.platform.repository.postgres.constants.MemberConstants.COLUMN_MEMBER_ID;
-import static com.wcc.platform.repository.postgres.constants.MemberConstants.COL_WOMEN_NON_BINARY;
+import static com.wcc.platform.repository.postgres.constants.MemberConstants.COL_WOMEN;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -34,11 +34,15 @@ import org.springframework.util.CollectionUtils;
 public class MemberMapper {
   private static final String INSERT =
       "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
-          + "country_id, status_id, bio, years_experience, spoken_language, pronouns, pronoun_category_id, women_or_non_binary) "
+          + "country_id, status_id, bio, years_experience, spoken_language, pronouns, pronoun_category_id, "
+          + COL_WOMEN
+          + ") "
           + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, ?, ?, ?)";
   private static final String UPDATE_SQL =
       "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
-          + "company_name = ?, email = ?, city = ?, country_id = ?, pronouns = ?, pronoun_category_id = ?, women_or_non_binary = ? "
+          + "company_name = ?, email = ?, city = ?, country_id = ?, pronouns = ?, pronoun_category_id = ?, "
+          + COL_WOMEN
+          + " = ? "
           + "WHERE id = ?";
 
   private final JdbcTemplate jdbc;
@@ -73,7 +77,7 @@ public class MemberMapper {
         .network(networks)
         .pronouns(pronouns)
         .pronounCategory(pronounCategory)
-        .isWomenNonBinary(rs.getBoolean(COL_WOMEN_NON_BINARY))
+        .isWomen(rs.getBoolean(COL_WOMEN))
         .build();
   }
 
@@ -92,7 +96,7 @@ public class MemberMapper {
         defaultStatusPending,
         member.getPronouns(),
         getPronounCategoryId(member.getPronounCategory()),
-        member.getIsWomenNonBinary());
+        member.getIsWomen());
 
     final var memberId =
         jdbc.queryForObject(
@@ -120,7 +124,7 @@ public class MemberMapper {
         getCountryId(member.getCountry()),
         member.getPronouns(),
         getPronounCategoryId(member.getPronounCategory()),
-        member.getIsWomenNonBinary(),
+        member.getIsWomen(),
         memberId);
 
     // Update member types

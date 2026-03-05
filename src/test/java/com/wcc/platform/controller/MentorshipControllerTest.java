@@ -263,8 +263,8 @@ class MentorshipControllerTest {
 
   @Test
   @DisplayName(
-      "Given mentor with isWomenNonBinary=true, when creating mentor, then response includes the field")
-  void testCreateMentorWithIsWomenNonBinaryReturnsFieldInResponse() throws Exception {
+      "Given mentor with isWomen=true, when creating mentor, then response includes the field")
+  void testCreateMentorWithIsWomenReturnsFieldInResponse() throws Exception {
     Mentor mentor = createMentorTest("Test Mentor");
     mentor =
         Mentor.mentorBuilder()
@@ -280,7 +280,7 @@ class MentorshipControllerTest {
             .skills(mentor.getSkills())
             .menteeSection(mentor.getMenteeSection())
             .profileStatus(ProfileStatus.PENDING)
-            .isWomenNonBinary(true)
+            .isWomen(true)
             .build();
 
     when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
@@ -288,13 +288,13 @@ class MentorshipControllerTest {
     mockMvc
         .perform(postRequest(API_MENTORS, mentor))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.isWomenNonBinary", is(true)));
+        .andExpect(jsonPath("$.isWomen", is(true)));
   }
 
   @Test
   @DisplayName(
-      "Given mentors exist, when getting all mentors, then response includes isWomenNonBinary field")
-  void testGetAllMentorsIncludesIsWomenNonBinaryField() throws Exception {
+      "Given mentors exist, when getting all mentors, then response includes isWomen field")
+  void testGetAllMentorsIncludesIsWomenField() throws Exception {
     MentorDto mentorDto1 = createMentorDtoTest(1L, MemberType.MENTOR);
     mentorDto1 =
         MentorDto.mentorDtoBuilder()
@@ -310,7 +310,7 @@ class MentorshipControllerTest {
             .skills(mentorDto1.getSkills())
             .menteeSection(mentorDto1.getMenteeSection())
             .profileStatus(mentorDto1.getProfileStatus())
-            .isWomenNonBinary(true)
+            .isWomen(true)
             .build();
 
     MentorDto mentorDto2 = createMentorDtoTest(2L, MemberType.MENTOR);
@@ -328,7 +328,7 @@ class MentorshipControllerTest {
             .skills(mentorDto2.getSkills())
             .menteeSection(mentorDto2.getMenteeSection())
             .profileStatus(mentorDto2.getProfileStatus())
-            .isWomenNonBinary(false)
+            .isWomen(false)
             .build();
 
     when(mentorshipService.getAllMentors()).thenReturn(List.of(mentorDto1, mentorDto2));
@@ -336,7 +336,7 @@ class MentorshipControllerTest {
     mockMvc
         .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].isWomenNonBinary", is(true)))
-        .andExpect(jsonPath("$[1].isWomenNonBinary", is(false)));
+        .andExpect(jsonPath("$[0].isWomen", is(true)))
+        .andExpect(jsonPath("$[1].isWomen", is(false)));
   }
 }

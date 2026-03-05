@@ -41,7 +41,7 @@ public class MenteeMapper {
                 .country(member.getCountry())
                 .city(member.getCity())
                 .companyName(member.getCompanyName())
-                .isWomenNonBinary(member.getIsWomenNonBinary())
+                .isWomen(member.getIsWomen())
                 .images(member.getImages())
                 .network(member.getNetwork()));
 

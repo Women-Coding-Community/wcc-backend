@@ -100,7 +100,7 @@ class MentorDtoTest {
             + "skills=null, spokenLanguages=[English, Spanish], bio=bio info,"
             + " menteeSection=null, feedbackSection=null, resources=null, "
             + "calendlyLink=null, acceptMale=null, acceptPromotion=null, "
-            + "isWomenNonBinary=null)";
+            + "isWomen=null)";
 
     assertEquals(expected, mentor.toString());
   }
@@ -128,7 +128,8 @@ class MentorDtoTest {
                         new TechnicalAreaProficiency(
                             TechnicalArea.FULLSTACK, ProficiencyLevel.BEGINNER)),
                     List.of(
-                        new LanguageProficiency(CodeLanguage.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
+                        new LanguageProficiency(
+                            CodeLanguage.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
                     List.of(MentorshipFocusArea.CHANGE_SPECIALISATION)))
             .menteeSection(
                 new MenteeSection(
@@ -312,7 +313,7 @@ class MentorDtoTest {
   }
 
   @Test
-  void testIsWomenNonBinaryFieldIsIncludedInDto() {
+  void testIsWomenFieldIsIncludedInDto() {
     MentorDto mentor =
         MentorDto.mentorDtoBuilder()
             .id(1L)
@@ -324,37 +325,32 @@ class MentorDtoTest {
             .city("New York")
             .spokenLanguages(List.of("English"))
             .bio("Bio text")
-            .skills(
-                new Skills(
-                    5,
-                    List.of(),
-                    List.of(),
-                    List.of()))
+            .skills(new Skills(5, List.of(), List.of(), List.of()))
             .menteeSection(new MenteeSection("ideal", "additional", null, List.of()))
-            .isWomenNonBinary(true)
+            .isWomen(true)
             .build();
 
-    assertEquals(true, mentor.getIsWomenNonBinary());
+    assertEquals(true, mentor.getIsWomen());
   }
 
   @Test
-  void testIsWomenNonBinaryCanBeNull() {
-    MentorDto mentor = MentorDto.mentorDtoBuilder().isWomenNonBinary(null).build();
+  void testIsWomenCanBeNull() {
+    MentorDto mentor = MentorDto.mentorDtoBuilder().isWomen(null).build();
 
-    assertNull(mentor.getIsWomenNonBinary());
+    assertNull(mentor.getIsWomen());
   }
 
   @Test
-  void testIsWomenNonBinaryIsMergedCorrectly() {
-    mentorDto = MentorDto.mentorDtoBuilder().isWomenNonBinary(false).build();
+  void testIsWomenIsMergedCorrectly() {
+    mentorDto = MentorDto.mentorDtoBuilder().isWomen(false).build();
 
     Mentor result = mentorDto.merge(existingMentor);
 
-    assertEquals(false, result.getIsWomenNonBinary());
+    assertEquals(false, result.getIsWomen());
   }
 
   @Test
-  void testIsWomenNonBinaryRetainedWhenDtoValueIsNull() {
+  void testIsWomenRetainedWhenDtoValueIsNull() {
     Mentor mentorWithValue =
         Mentor.mentorBuilder()
             .id(1L)
@@ -370,13 +366,13 @@ class MentorDtoTest {
             .skills(new Skills(5, List.of(), List.of(), List.of()))
             .menteeSection(new MenteeSection("ideal", "additional", null, List.of()))
             .spokenLanguages(List.of("English"))
-            .isWomenNonBinary(true)
+            .isWomen(true)
             .build();
 
     mentorDto = MentorDto.mentorDtoBuilder().fullName("Updated Name").build();
 
     Mentor result = mentorDto.merge(mentorWithValue);
 
-    assertEquals(true, result.getIsWomenNonBinary());
+    assertEquals(true, result.getIsWomen());
   }
 }

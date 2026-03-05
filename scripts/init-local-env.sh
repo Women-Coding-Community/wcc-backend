@@ -60,7 +60,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
             "link": "https://www.linkedin.com/in/sonali-goel-6b611522/"
           }
         ],
-        "isWomenNonBinary": true,
+        "isWomen": true,
         "acceptMale": false,
         "acceptPromotion": true,
         "pronouns": "she/her",
@@ -123,7 +123,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
           { "type": "linkedin", "link": "https://www.linkedin.com/in/dricazenck/" },
           { "type": "github", "link": "https://github.com/dricazenck" }
         ],
-        "isWomenNonBinary":true,
+        "isWomen":true,
         "acceptMale": true,
         "acceptPromotion": true,
         "pronouns": "she/her",
@@ -196,7 +196,7 @@ curl -s -X POST "${API_BASE}/platform/v1/members" \
   "memberTypes": [
     "MEMBER", "VOLUNTEER", "COLLABORATOR"
   ],
-  "isWomenNonBinary": true,
+  "isWomen": true,
   "pronouns": "she/her",
   "pronounCategory": "FEMININE",
   "network": [
@@ -240,7 +240,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
           ],
           "pronouns": "she/her",
           "pronounCategory": "FEMININE",
-          "isWomenNonBinary": true,
+          "isWomen": true,
           "profileStatus": "ACTIVE",
           "skills": {
             "yearsExperience": 2,
@@ -308,7 +308,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                     "link": "https://www.linkedin.com/in/emma-schmidt/"
                   }
                 ],
-                "isWomenNonBinary": true,
+                "isWomen": true,
                 "pronounCategory": "FEMININE",
                 "skills": {
                   "yearsExperience": 3,
