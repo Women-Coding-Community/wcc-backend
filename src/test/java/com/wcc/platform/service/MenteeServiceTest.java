@@ -1,7 +1,6 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
-import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,9 +11,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.configuration.MentorshipConfig;
-import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
@@ -22,6 +21,7 @@ import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
@@ -29,6 +29,7 @@ import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Month;
 import java.util.List;
@@ -48,12 +49,12 @@ class MenteeServiceTest {
   @Mock private MentorshipConfig.Validation validation;
   @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MemberRepository memberRepository;
+  @Mock private MentorRepository mentorRepository;
   @Mock private UserProvisionService userProvisionService;
 
   private MenteeService menteeService;
   private Mentee mentee;
-  private UserAccount userAccount;
-
+  
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
@@ -67,9 +68,10 @@ class MenteeServiceTest {
             applicationRepository,
             menteeRepository,
             memberRepository,
+            mentorRepository,
             userProvisionService);
     mentee = createMenteeTest();
-    userAccount = createUserAccountTest(mentee);
+    when(mentorRepository.findById(any())).thenReturn(Optional.of(Mentor.mentorBuilder().build()));
   }
 
   @Test
@@ -81,7 +83,9 @@ class MenteeServiceTest {
             mentee,
             MentorshipType.AD_HOC,
             currentYear,
-            List.of(new MenteeApplicationDto(null, 1L, 1, "Test application message", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
 
     var cycle =
         MentorshipCycleEntity.builder()
@@ -131,7 +135,9 @@ class MenteeServiceTest {
             menteeWithId,
             MentorshipType.AD_HOC,
             currentYear,
-            List.of(new MenteeApplicationDto(null, 1L, 1, "Test application message", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
 
     MentorshipCycleEntity cycle =
         MentorshipCycleEntity.builder()
@@ -176,7 +182,9 @@ class MenteeServiceTest {
             mentee,
             MentorshipType.AD_HOC,
             currentYear,
-            List.of(new MenteeApplicationDto(null, 1L, 1, "Test application message", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
     when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
 
     MentorshipCycleClosedException exception =
@@ -197,7 +205,9 @@ class MenteeServiceTest {
             mentee,
             MentorshipType.AD_HOC,
             currentYear,
-            List.of(new MenteeApplicationDto(null, 1L, 1, "Test application message", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
 
     MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
     when(mentorshipService.getCurrentCycle()).thenReturn(longTermCycle);
@@ -221,7 +231,9 @@ class MenteeServiceTest {
             mentee,
             MentorshipType.AD_HOC,
             currentYear,
-            List.of(new MenteeApplicationDto(null, 1L, 1, "Test application message", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
 
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
@@ -235,6 +247,30 @@ class MenteeServiceTest {
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));
     verify(mentorshipService).getCurrentCycle();
+    verify(mentorRepository).findById(1L);
+  }
+
+  @Test
+  @DisplayName(
+      "Given non-existent mentor When creating mentee Then should throw MentorNotFoundException")
+  void shouldThrowExceptionWhenMentorDoesNotExist() {
+    var currentYear = java.time.Year.now();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
+
+    when(mentorRepository.findById(1L)).thenReturn(Optional.empty());
+
+    MentorNotFoundException exception =
+        assertThrows(
+            MentorNotFoundException.class, () -> menteeService.saveRegistration(registration));
+
+    assertThat(exception.getMessage()).isEqualTo("Mentor not found: 1");
   }
 
   @Test
@@ -247,7 +283,9 @@ class MenteeServiceTest {
             mentee,
             MentorshipType.AD_HOC,
             currentYear,
-            List.of(new MenteeApplicationDto(null, 1L, 1, "Test application message", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
     when(validation.isEnabled()).thenReturn(false);
 
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
@@ -276,7 +314,9 @@ class MenteeServiceTest {
             mentee,
             MentorshipType.AD_HOC,
             currentYear,
-            List.of(new MenteeApplicationDto(null, 1L, 1, "Test application message", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, 1L, 1, "Test application message", "Test why mentor")));
 
     var cycle =
         MentorshipCycleEntity.builder()

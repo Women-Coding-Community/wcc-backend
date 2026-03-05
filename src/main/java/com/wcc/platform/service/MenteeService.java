@@ -3,6 +3,7 @@ package com.wcc.platform.service;
 import com.wcc.platform.configuration.MentorshipConfig;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
@@ -16,6 +17,7 @@ import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Year;
 import java.util.List;
@@ -35,6 +37,7 @@ public class MenteeService {
   private final MenteeApplicationRepository registrationsRepo;
   private final MenteeRepository menteeRepository;
   private final MemberRepository memberRepository;
+  private final MentorRepository mentorRepository;
   private final UserProvisionService userProvisionService;
 
   /**
@@ -57,6 +60,8 @@ public class MenteeService {
    * @return The created or updated Mentee record.
    */
   public Mentee saveRegistration(final MenteeRegistration registrationRequest) {
+    validateMentors(registrationRequest);
+
     final var mentee = registrationRequest.mentee();
     final var cycle =
         getMentorshipCycle(registrationRequest.mentorshipType(), registrationRequest.cycleYear());
@@ -154,6 +159,19 @@ public class MenteeService {
             .toList();
 
     return menteeRegistration.withApplications(filteredApplications);
+  }
+
+  private void validateMentors(final MenteeRegistration registrationRequest) {
+    if (registrationRequest.applications() != null) {
+      registrationRequest
+          .applications()
+          .forEach(
+              application -> {
+                if (mentorRepository.findById(application.mentorId()).isEmpty()) {
+                  throw new MentorNotFoundException(application.mentorId());
+                }
+              });
+    }
   }
 
   /**

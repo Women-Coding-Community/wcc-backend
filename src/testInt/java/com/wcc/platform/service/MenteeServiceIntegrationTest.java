@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
@@ -112,8 +113,10 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             MentorshipType.LONG_TERM,
             Year.of(2026),
             List.of(
-                new MenteeApplicationDto(null, createdMentors.getFirst(), 1, "Test application", "Test why mentor"),
-                new MenteeApplicationDto(null, createdMentors.get(1), 2, "Test application", "Test why mentor")));
+                new MenteeApplicationDto(
+                    null, createdMentors.getFirst(), 1, "Test application", "Test why mentor"),
+                new MenteeApplicationDto(
+                    null, createdMentors.get(1), 2, "Test application", "Test why mentor")));
 
     var savedMentee = menteeService.saveRegistration(registration);
     createdMentees.add(savedMentee);
@@ -154,7 +157,9 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.AD_HOC,
             Year.of(2028),
-            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
 
     var savedMentee = menteeService.saveRegistration(registration);
     createdMentees.add(savedMentee);
@@ -177,7 +182,9 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.LONG_TERM,
             Year.now(),
-            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
 
     var savedMentee = menteeService.saveRegistration(registration);
     createdMentees.add(savedMentee);
@@ -199,11 +206,16 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             MentorshipType.LONG_TERM,
             Year.of(2026),
             List.of(
-                new MenteeApplicationDto(null, createdMentors.getFirst(), 1, "Test application", "Test why mentor"),
-                new MenteeApplicationDto(null, createdMentors.get(1), 2, "Test application", "Test why mentor"),
-                new MenteeApplicationDto(null, createdMentors.get(2), 3, "Test application", "Test why mentor"),
-                new MenteeApplicationDto(null, createdMentors.get(3), 4, "Test application", "Test why mentor"),
-                new MenteeApplicationDto(null, createdMentors.get(4), 5, "Test application", "Test why mentor")));
+                new MenteeApplicationDto(
+                    null, createdMentors.getFirst(), 1, "Test application", "Test why mentor"),
+                new MenteeApplicationDto(
+                    null, createdMentors.get(1), 2, "Test application", "Test why mentor"),
+                new MenteeApplicationDto(
+                    null, createdMentors.get(2), 3, "Test application", "Test why mentor"),
+                new MenteeApplicationDto(
+                    null, createdMentors.get(3), 4, "Test application", "Test why mentor"),
+                new MenteeApplicationDto(
+                    null, createdMentors.get(4), 5, "Test application", "Test why mentor")));
 
     var savedMentee = menteeService.saveRegistration(initialRegistration);
     createdMentees.add(savedMentee);
@@ -231,7 +243,13 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             menteeWithId,
             MentorshipType.LONG_TERM,
             Year.of(2026),
-            List.of(new MenteeApplicationDto(menteeWithId.getId(), createdMentors.get(5), 1, "Test application", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    menteeWithId.getId(),
+                    createdMentors.get(5),
+                    1,
+                    "Test application",
+                    "Test why mentor")));
 
     assertThatThrownBy(() -> menteeService.saveRegistration(exceedingRegistration))
         .isInstanceOf(MenteeRegistrationLimitException.class);
@@ -249,7 +267,9 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.LONG_TERM,
             Year.of(2026),
-            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
 
     var savedMentee = menteeService.saveRegistration(registration);
     createdMentees.add(savedMentee);
@@ -273,7 +293,9 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.LONG_TERM,
             Year.of(2026),
-            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
 
     var savedMentee = menteeService.saveRegistration(initialRegistration);
     createdMentees.add(savedMentee);
@@ -302,8 +324,18 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             MentorshipType.LONG_TERM,
             Year.of(2026),
             List.of(
-                new MenteeApplicationDto(menteeWithId.getId(), createdMentors.get(1), 2, "Test application", "Test why mentor"),
-                new MenteeApplicationDto(menteeWithId.getId(), createdMentors.get(2), 3, "Test application", "Test why mentor")));
+                new MenteeApplicationDto(
+                    menteeWithId.getId(),
+                    createdMentors.get(1),
+                    2,
+                    "Test application",
+                    "Test why mentor"),
+                new MenteeApplicationDto(
+                    menteeWithId.getId(),
+                    createdMentors.get(2),
+                    3,
+                    "Test application",
+                    "Test why mentor")));
 
     var updatedMentee = menteeService.saveRegistration(secondRegistration);
 
@@ -343,7 +375,9 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
             mentee,
             MentorshipType.LONG_TERM,
             Year.of(2026),
-            List.of(new MenteeApplicationDto(null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
+            List.of(
+                new MenteeApplicationDto(
+                    null, createdMentors.getFirst(), 1, "Test application", "Test why mentor")));
 
     // Should successfully create mentee using existing member's ID
     final Mentee savedMentee = menteeService.saveRegistration(registration);
@@ -352,5 +386,27 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
     assertThat(savedMentee).isNotNull();
     assertThat(savedMentee.getId()).isEqualTo(savedMember.getId());
     assertThat(savedMentee.getEmail()).isEqualTo("existing-member@test.com");
+  }
+
+  @Test
+  @DisplayName(
+      "Given non-existent mentor id, when saving mentee registration, then it should throw MentorNotFoundException")
+  void shouldThrowExceptionWhenMentorDoesNotExist() {
+    final Mentee mentee =
+        SetupMenteeFactories.createMenteeTest(
+            null, "Mentee with non-existent mentor", "non-existent-mentor@test.com");
+
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.LONG_TERM,
+            Year.of(2026),
+            List.of(
+                new MenteeApplicationDto(
+                    null, 999_999L, 1, "Test application message", "Test why mentor")));
+
+    assertThatThrownBy(() -> menteeService.saveRegistration(registration))
+        .isInstanceOf(MentorNotFoundException.class)
+        .hasMessageContaining("Mentor not found: 999999");
   }
 }
