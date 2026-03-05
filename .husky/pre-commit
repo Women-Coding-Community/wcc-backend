@@ -1,1 +1,3 @@
-cd admin-wcc-app && npx lint-staged
+if git diff --cached --name-only | grep -q "^admin-wcc-app/"; then
+  cd admin-wcc-app && npx lint-staged
+fi

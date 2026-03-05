@@ -1,1 +1,2 @@
-cd admin-wcc-app && npm run build
+if git diff --name-only HEAD@{push} HEAD 2>/dev/null | grep -q "^admin-wcc-app/"; then
+  cd admin-wcc-app && npm run build
