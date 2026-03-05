@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
-  private @NotNull ProfileStatus profileStatus;
+  private ProfileStatus profileStatus;
   private @NotNull Skills skills;
   private @NotBlank String bio;
   private List<String> spokenLanguages;
@@ -67,7 +68,7 @@ public class Mentee extends Member {
         pronounCategory,
         isWomen);
 
-    this.profileStatus = profileStatus;
+    this.profileStatus = Objects.requireNonNullElse(profileStatus, ProfileStatus.PENDING);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
     this.bio = bio;
