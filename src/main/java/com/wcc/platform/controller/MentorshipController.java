@@ -4,6 +4,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.mentorship.MentorRejectionRequest;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,10 +61,8 @@ public class MentorshipController {
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(
-      @Valid @RequestBody final MentorDto mentorDto) {
-    return new ResponseEntity<>(
-        mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
+  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final MentorDto mentorDto) {
+    return new ResponseEntity<>(mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
   }
 
   /**
@@ -92,6 +91,22 @@ public class MentorshipController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> acceptMentor(@Valid @PathVariable final Long mentorId) {
     return new ResponseEntity<>(mentorshipService.activateMentor(mentorId), HttpStatus.OK);
+  }
+
+  /**
+   * API to reject mentor registration.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return updated mentor with rejected status.
+   */
+  @PatchMapping("/mentors/{mentorId}/reject")
+  @Operation(summary = "API to reject mentor registration")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<Mentor> rejectMentor(
+      @Valid @PathVariable final Long mentorId,
+      @RequestBody final MentorRejectionRequest rejectionRequest) {
+    return new ResponseEntity<>(
+        mentorshipService.rejectMentor(mentorId, rejectionRequest.reason()), HttpStatus.OK);
   }
 
   /**
