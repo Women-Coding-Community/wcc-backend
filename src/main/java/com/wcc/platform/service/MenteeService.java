@@ -62,14 +62,14 @@ public class MenteeService {
   public Mentee saveRegistration(final MenteeRegistration registrationRequest) {
     validateMentors(registrationRequest);
 
-    final var mentee = registrationRequest.mentee();
+    final var initialMentee = registrationRequest.mentee();
     final var cycle =
         getMentorshipCycle(registrationRequest.mentorshipType(), registrationRequest.cycleYear());
 
-    // first applications existent by the mentee
-    // TODO check if the mentee exist
+    final Mentee mentee = ensureMenteeId(initialMentee);
+    final var registrationWithId = registrationRequest.withMentee(mentee);
 
-    final var filteredRegistrations = ignoreDuplicateApplications(registrationRequest, cycle);
+    final var filteredRegistrations = ignoreDuplicateApplications(registrationWithId, cycle);
     final var registrationCount =
         registrationsRepo.countMenteeApplications(mentee.getId(), cycle.getCycleId());
 
@@ -79,52 +79,63 @@ public class MenteeService {
       return createMenteeRegistrations(filteredRegistrations, cycle);
     }
 
-    return createMenteeAndApplications(filteredRegistrations, cycle);
+    return createOrUpdateMenteeAndApplications(filteredRegistrations, cycle);
   }
 
-  private Mentee createMenteeAndApplications(
+  /** Check if the mentee exist by ID or Email. */
+  private Mentee ensureMenteeId(final Mentee mentee) {
+    if (mentee.getId() != null) {
+      return mentee;
+    }
+    return memberRepository
+        .findByEmail(mentee.getEmail())
+        .map(
+            member ->
+                Mentee.menteeBuilder()
+                    .id(member.getId())
+                    .fullName(mentee.getFullName())
+                    .position(mentee.getPosition())
+                    .email(mentee.getEmail())
+                    .slackDisplayName(mentee.getSlackDisplayName())
+                    .country(mentee.getCountry())
+                    .city(mentee.getCity())
+                    .companyName(mentee.getCompanyName())
+                    .images(mentee.getImages())
+                    .network(mentee.getNetwork())
+                    .profileStatus(mentee.getProfileStatus())
+                    .skills(mentee.getSkills())
+                    .spokenLanguages(mentee.getSpokenLanguages())
+                    .bio(mentee.getBio())
+                    .availableHsMonth(mentee.getAvailableHsMonth())
+                    .build())
+        .orElse(mentee);
+  }
+
+  private Mentee createOrUpdateMenteeAndApplications(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
     final var menteeToBeSaved = menteeRegistration.mentee();
 
-    final var existingMember = memberRepository.findByEmail(menteeToBeSaved.getEmail());
-
-    final Mentee mentee;
-    if (existingMember.isPresent()) {
-      final var existingMemberId = existingMember.get().getId();
-      final var menteeWithExistingId =
-          Mentee.menteeBuilder()
-              .id(existingMemberId)
-              .fullName(menteeToBeSaved.getFullName())
-              .position(menteeToBeSaved.getPosition())
-              .email(menteeToBeSaved.getEmail())
-              .slackDisplayName(menteeToBeSaved.getSlackDisplayName())
-              .country(menteeToBeSaved.getCountry())
-              .city(menteeToBeSaved.getCity())
-              .companyName(menteeToBeSaved.getCompanyName())
-              .images(menteeToBeSaved.getImages())
-              .network(menteeToBeSaved.getNetwork())
-              .profileStatus(menteeToBeSaved.getProfileStatus())
-              .skills(menteeToBeSaved.getSkills())
-              .spokenLanguages(menteeToBeSaved.getSpokenLanguages())
-              .bio(menteeToBeSaved.getBio())
-              .availableHsMonth(menteeToBeSaved.getAvailableHsMonth())
-              .build();
-
-      mentee = menteeRepository.create(menteeWithExistingId);
+    final Mentee savedMentee;
+    if (menteeToBeSaved.getId() != null) {
+      if (menteeRepository.findById(menteeToBeSaved.getId()).isPresent()) {
+        savedMentee = menteeRepository.update(menteeToBeSaved.getId(), menteeToBeSaved);
+      } else {
+        savedMentee = menteeRepository.create(menteeToBeSaved);
+      }
     } else {
       menteeToBeSaved.setMemberTypes(List.of(MemberType.MENTEE));
-      mentee = menteeRepository.create(menteeToBeSaved);
+      savedMentee = menteeRepository.create(menteeToBeSaved);
     }
-    userProvisionService.provisionUserRole(mentee.getId(), mentee.getEmail(), RoleType.MENTEE);
 
-    final var registration = menteeRegistration.withMentee(mentee);
+    userProvisionService.provisionUserRole(
+        savedMentee.getId(), savedMentee.getEmail(), RoleType.MENTEE);
+
+    final var registration = menteeRegistration.withMentee(savedMentee);
     return createMenteeRegistrations(registration, cycle);
   }
 
   private Mentee createMenteeRegistrations(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    // TODO check if the mentee was already registered to the mentor.
-
     final var applications =
         menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
     applications.forEach(registrationsRepo::create);
@@ -192,7 +203,6 @@ public class MenteeService {
     if (openCycle.isPresent()) {
       final MentorshipCycleEntity cycle = openCycle.get();
 
-      // Only validate status if validation is enabled
       if (mentorshipConfig.getValidation().isEnabled() && cycle.getStatus() != CycleStatus.OPEN) {
         throw new MentorshipCycleClosedException(
             String.format(
