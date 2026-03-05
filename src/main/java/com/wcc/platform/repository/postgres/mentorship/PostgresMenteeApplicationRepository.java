@@ -53,8 +53,8 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   private static final String INSERT_APPLICATION =
       "INSERT INTO mentee_applications "
-          + "(mentee_id, mentor_id, cycle_id, priority_order, application_status, application_message) "
-          + "VALUES (?, ?, ?, ?, ?::application_status, ?) "
+          + "(mentee_id, mentor_id, cycle_id, priority_order, application_status, application_message, why_mentor) "
+          + "VALUES (?, ?, ?, ?, ?::application_status, ?, ?) "
           + "RETURNING application_id";
 
   private final JdbcTemplate jdbc;
@@ -70,7 +70,8 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
             entity.getCycleId(),
             entity.getPriorityOrder(),
             entity.getStatus().getValue(),
-            entity.getApplicationMessage());
+            entity.getApplicationMessage(),
+            entity.getWhyMentor());
 
     return findById(generatedId)
         .orElseThrow(
@@ -157,6 +158,7 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
         .priorityOrder(rs.getInt("priority_order"))
         .status(ApplicationStatus.fromValue(rs.getString("application_status")))
         .applicationMessage(rs.getString("application_message"))
+        .whyMentor(rs.getString("why_mentor"))
         .appliedAt(
             rs.getTimestamp("applied_at") != null
                 ? rs.getTimestamp("applied_at").toInstant().atZone(ZoneId.systemDefault())

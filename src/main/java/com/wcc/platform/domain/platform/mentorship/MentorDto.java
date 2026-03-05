@@ -50,7 +50,7 @@ public class MentorDto extends MemberDto {
   private String calendlyLink;
   private Boolean acceptMale;
   private Boolean acceptPromotion;
-  private Boolean isWomenNonBinary;
+  private Boolean isWomen;
 
   /** Mentor Builder. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -75,7 +75,7 @@ public class MentorDto extends MemberDto {
       @NotNull final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources,
-      final Boolean isWomenNonBinary,
+      final Boolean isWomen,
       final String calendlyLink,
       final Boolean acceptMale,
       final Boolean acceptPromotion) {
@@ -93,7 +93,7 @@ public class MentorDto extends MemberDto {
         network,
         pronouns,
         pronounCategory,
-        isWomenNonBinary);
+        isWomen);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages;
     this.bio = bio;
@@ -106,7 +106,7 @@ public class MentorDto extends MemberDto {
     this.calendlyLink = calendlyLink;
     this.acceptMale = acceptMale;
     this.acceptPromotion = acceptPromotion;
-    this.isWomenNonBinary = isWomenNonBinary;
+    this.isWomen = isWomen;
   }
 
   /**
@@ -136,7 +136,7 @@ public class MentorDto extends MemberDto {
         .menteeSection(getMenteeSection())
         .feedbackSection(getFeedbackSection())
         .resources(getResources())
-        .isWomenNonBinary(getIsWomenNonBinary())
+        .isWomen(getIsWomen())
         .calendlyLink(getCalendlyLink())
         .acceptMale(getAcceptMale())
         .acceptPromotion(getAcceptPromotion())
@@ -176,7 +176,7 @@ public class MentorDto extends MemberDto {
         .network(mergeCollection(this.getNetwork(), mentor.getNetwork()))
         .spokenLanguages(mergeCollection(this.getSpokenLanguages(), mentor.getSpokenLanguages()))
         .images(mergeCollection(this.getImages(), mentor.getImages()))
-        .isWomenNonBinary(mergeNullable(this.getIsWomenNonBinary(), mentor.getIsWomenNonBinary()))
+        .isWomen(mergeNullable(this.getIsWomen(), mentor.getIsWomen()))
         .calendlyLink(mergeString(this.getCalendlyLink(), mentor.getCalendlyLink()))
         .acceptMale(mergeNullable(this.getAcceptMale(), mentor.getAcceptMale()))
         .acceptPromotion(mergeNullable(this.getAcceptPromotion(), mentor.getAcceptPromotion()))
