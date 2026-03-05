@@ -2,6 +2,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.MemberRepository;
@@ -135,8 +136,13 @@ public class PostgresMenteeRepository implements MenteeRepository {
   }
 
   private void insertMenteeDetails(final Mentee mentee, final Long memberId) {
-    final var profileStatus = mentee.getProfileStatus();
+    var profileStatus = mentee.getProfileStatus();
     final var skills = mentee.getSkills();
+
+    if (profileStatus == null) {
+      profileStatus = ProfileStatus.PENDING;
+    }
+
     jdbc.update(
         SQL_INSERT_MENTEE,
         memberId,
