@@ -309,6 +309,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                   }
                 ],
                 "isWomen": true,
+                "pronouns": "she/her",
                 "pronounCategory": "FEMININE",
                 "skills": {
                   "yearsExperience": 3,
