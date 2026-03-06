@@ -12,8 +12,8 @@ import jakarta.validation.constraints.NotNull;
  * priority order of the application.
  *
  * @param mentorId Unique identifier of the mentor to whom the application is directed.
- * @param priorityOrder Priority order of the application, ranging from 1 (highest priority) to 5
- *     (lowest priority).
+ * @param priorityOrder Priority order of the application, ranging from 1 (the highest priority) to
+ *     5 (the lowest priority).
  */
 public record MenteeApplicationDto(
     @NotNull Long mentorId,

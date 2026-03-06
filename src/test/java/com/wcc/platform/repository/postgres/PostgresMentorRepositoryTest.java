@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -22,7 +23,6 @@ import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
 import jakarta.validation.Validator;
 import java.sql.ResultSet;
 import java.util.Collections;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,11 +134,9 @@ class PostgresMentorRepositoryTest {
     doNothing().when(mentorMapper).updateMentor(any(), eq(2L));
     doReturn(Optional.empty()).when(repository).findById(2L);
 
-    try {
-      repository.update(2L, updatedMentor);
-    } catch (NoSuchElementException e) {
-      assertNotNull(e);
-    }
+    assertThrows(
+        com.wcc.platform.domain.exceptions.MentorNotFoundException.class,
+        () -> repository.update(2L, updatedMentor));
   }
 
   @Test

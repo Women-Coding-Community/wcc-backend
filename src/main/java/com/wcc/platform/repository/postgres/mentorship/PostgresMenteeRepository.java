@@ -62,7 +62,16 @@ public class PostgresMenteeRepository implements MenteeRepository {
       memberId = memberMapper.addMember(mentee);
     }
 
-    insertMenteeDetails(mentee, memberId);
+    if (!findById(memberId).isPresent()) {
+      insertMenteeDetails(mentee, memberId);
+    } else {
+      updateMenteeDetails(mentee, memberId);
+    }
+
+    jdbc.update(SQL_DELETE_TECH_AREAS, memberId);
+    jdbc.update(SQL_DELETE_LANGUAGES, memberId);
+    jdbc.update(DELETE_FOCUS_AREAS, memberId);
+
     insertTechnicalAreas(mentee.getSkills(), memberId);
     insertLanguages(mentee.getSkills(), memberId);
     insertMentorshipFocusAreas(mentee.getSkills(), memberId);

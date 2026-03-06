@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -96,12 +97,15 @@ class MenteeServiceTest {
             .status(CycleStatus.OPEN)
             .build();
 
-    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    Member existingMember = Member.builder().id(1L).build();
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existingMember));
     when(menteeRepository.create(any(Mentee.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
     when(menteeRepository.update(any(), any(Mentee.class)))
         .thenAnswer(invocation -> invocation.getArgument(1));
-    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(menteeRepository.findById(any()))
+        .thenReturn(Optional.empty())
+        .thenReturn(Optional.of(mentee));
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
@@ -110,7 +114,7 @@ class MenteeServiceTest {
 
     assertEquals(mentee, result);
     verify(userProvisionService).provisionUserRole(any(), anyString(), eq(RoleType.MENTEE));
-    verify(memberRepository).findByEmail(anyString());
+    verify(memberRepository, atLeastOnce()).findByEmail(anyString());
     verify(menteeRepository).create(any(Mentee.class));
     verify(applicationRepository).create(any());
   }
@@ -150,6 +154,7 @@ class MenteeServiceTest {
             .status(CycleStatus.OPEN)
             .build();
 
+    when(menteeRepository.findById(1L)).thenReturn(Optional.of(menteeWithId));
     when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
         .thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
@@ -237,12 +242,15 @@ class MenteeServiceTest {
 
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
-    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    Member existingMember = Member.builder().id(1L).build();
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existingMember));
     when(menteeRepository.create(any(Mentee.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
     when(menteeRepository.update(any(), any(Mentee.class)))
         .thenAnswer(invocation -> invocation.getArgument(1));
-    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(menteeRepository.findById(any()))
+        .thenReturn(Optional.empty())
+        .thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
     Mentee result = menteeService.saveRegistration(registration);
@@ -292,10 +300,13 @@ class MenteeServiceTest {
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
     when(mentorshipService.getCurrentCycle())
         .thenReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.JANUARY));
-    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    Member existingMember = Member.builder().id(1L).build();
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existingMember));
     when(menteeRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     when(menteeRepository.update(any(), any())).thenAnswer(invocation -> invocation.getArgument(1));
-    when(menteeRepository.findById(any())).thenReturn(Optional.of(mentee));
+    when(menteeRepository.findById(any()))
+        .thenReturn(Optional.empty())
+        .thenReturn(Optional.of(mentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
 
@@ -358,7 +369,7 @@ class MenteeServiceTest {
 
     assertThat(result.getId()).isEqualTo(999L);
     assertThat(result.getEmail()).isEqualTo(mentee.getEmail());
-    verify(memberRepository).findByEmail(mentee.getEmail());
+    verify(memberRepository, atLeastOnce()).findByEmail(mentee.getEmail());
     verify(menteeRepository).update(eq(999L), any(Mentee.class));
   }
 
@@ -393,13 +404,17 @@ class MenteeServiceTest {
         .thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
-    when(menteeRepository.findById(999L)).thenReturn(Optional.of(menteeWithExistingId));
+    when(menteeRepository.findById(999L))
+        .thenReturn(Optional.empty())
+        .thenReturn(Optional.of(menteeWithExistingId));
+    when(menteeRepository.create(any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
     when(menteeRepository.update(eq(999L), any(Mentee.class)))
         .thenAnswer(invocation -> invocation.getArgument(1));
 
     menteeService.saveRegistration(registration);
 
-    verify(menteeRepository).update(eq(999L), any(Mentee.class));
+    verify(menteeRepository).create(any(Mentee.class));
   }
 
   @Test

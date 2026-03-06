@@ -19,7 +19,6 @@ import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -84,6 +83,12 @@ public class MemberMapper {
   /** Adds a new member to the database and returns the member ID. */
   public Long addMember(final Member member) {
     final int defaultStatusPending = 1;
+    final var existingMemberId = findMemberIdByEmail(member.getEmail());
+    if (existingMemberId != null) {
+      updateMember(member, existingMemberId);
+      return existingMemberId;
+    }
+
     jdbc.update(
         INSERT,
         member.getFullName(),
@@ -99,15 +104,31 @@ public class MemberMapper {
         member.getIsWomen());
 
     final var memberId =
-        jdbc.queryForObject(
+        jdbc.query(
             "SELECT id FROM members WHERE email = ?",
-            SingleColumnRowMapper.newInstance(Long.class),
+            rs -> rs.next() ? rs.getLong("id") : null,
             member.getEmail());
+
+    if (memberId == null) {
+      throw new IllegalStateException("Failed to retrieve member ID after insertion: " + member.getEmail());
+    }
 
     addMemberTypes(memberId, member);
     addSocialNetworks(memberId, member);
 
     return memberId;
+  }
+
+  private Long findMemberIdByEmail(final String email) {
+    return jdbc.query(
+        "SELECT id FROM members WHERE email = ?",
+        rs -> {
+          if (rs.next()) {
+            return rs.getLong("id");
+          }
+          return null;
+        },
+        email);
   }
 
   /** Updates an existing member in the database. */

@@ -21,6 +21,13 @@ public class PostgresMemberMemberTypeRepository {
 
   /** Add a member type to a member. */
   public void addMemberType(final Long memberId, final int memberTypeId) {
+    final String sqlCheck =
+        "SELECT COUNT(*) FROM member_member_types WHERE member_id = ? AND member_type_id = ?";
+    final Integer count = jdbc.queryForObject(sqlCheck, Integer.class, memberId, memberTypeId);
+    if (count != null && count > 0) {
+      return;
+    }
+
     final String sql = "INSERT INTO member_member_types (member_id, member_type_id) VALUES (?, ?)";
     jdbc.update(sql, memberId, memberTypeId);
   }
