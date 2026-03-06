@@ -84,7 +84,7 @@ public class MenteeService {
 
   /** Check if the mentee exist by ID or Email. */
   private Mentee ensureMenteeId(final Mentee mentee) {
-    if (mentee.getId() != null) {
+    if (mentee.getId() != null && menteeRepository.findById(mentee.getId()).isPresent()) {
       return mentee;
     }
     return memberRepository
