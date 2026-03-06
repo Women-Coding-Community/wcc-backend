@@ -85,7 +85,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
 
     var cycle =
         MentorshipCycleEntity.builder()
@@ -140,7 +140,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
 
     MentorshipCycleEntity cycle =
         MentorshipCycleEntity.builder()
@@ -187,7 +187,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
     when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
 
     MentorshipCycleClosedException exception =
@@ -210,7 +210,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
 
     MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
     when(mentorshipService.getCurrentCycle()).thenReturn(longTermCycle);
@@ -236,7 +236,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
 
     MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
     when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
@@ -268,7 +268,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
 
     when(mentorRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -291,7 +291,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
     when(validation.isEnabled()).thenReturn(false);
 
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
@@ -323,7 +323,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(
-                    null, 1L, 1, "Test application message", "Test why mentor")));
+                    1L, 1, "Test application message", "Test why mentor")));
 
     var cycle =
         MentorshipCycleEntity.builder()
