@@ -8,7 +8,7 @@ set -euo pipefail
 # --------------------------------------------
 
 API_BASE="http://localhost:8080/api"
-API_KEY="dev-key"
+API_KEY="test"
 
 echo "🚀 Starting WCC backend seed..."
 
@@ -347,11 +347,11 @@ echo " "
 echo "✅  Mentee Emma added."
 echo " "
 
-# 5️⃣ List Mentees (endpoint not yet implemented)
-# echo "➡️ Fetching all mentees..."
-# curl -s -X GET "${API_BASE}/platform/v1/mentees" \
-#   -H "accept: */*" \
-#   -H "X-API-KEY: ${API_KEY}" | jq '.'
-# echo ""
-# echo "✅  Mentees listed."
-# echo ""
+# 5️⃣ List Members
+ echo "➡️ Fetching all members..."
+ curl -s -X GET "${API_BASE}/platform/v1/members" \
+   -H "accept: */*" \
+   -H "X-API-KEY: ${API_KEY}" | jq '.'
+ echo ""
+ echo "✅  Mentees listed."
+ echo ""

@@ -1,9 +1,8 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.MentorshipConfig;
-import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
-import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
-import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
+import com.wcc.platform.domain.exceptions.*;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
@@ -16,13 +15,16 @@ import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/** Service for managing mentee-related operations. */
 @Service
 @AllArgsConstructor
 public class MenteeService {
@@ -35,6 +37,7 @@ public class MenteeService {
   private final MenteeApplicationRepository registrationsRepo;
   private final MenteeRepository menteeRepository;
   private final MemberRepository memberRepository;
+  private final MentorRepository mentorRepository;
   private final UserProvisionService userProvisionService;
 
   /**
@@ -53,73 +56,154 @@ public class MenteeService {
   /**
    * Create a mentee registration for a mentorship cycle.
    *
-   * @param registrationRequest The registration details to process
+   * @param request The registration details to process
    * @return The created or updated Mentee record.
    */
-  public Mentee saveRegistration(final MenteeRegistration registrationRequest) {
-    final var mentee = registrationRequest.mentee();
-    final var cycle =
-        getMentorshipCycle(registrationRequest.mentorshipType(), registrationRequest.cycleYear());
+  public Mentee saveRegistration(final MenteeRegistration request) {
+    validateMentors(request);
 
-    // first applications existent by the mentee
-    // TODO check if the mentee exist
+    final Year cycleYear = request.cycleYear() != null ? request.cycleYear() : Year.now();
+    final var cycle = getMentorshipCycle(request.mentorshipType(), cycleYear);
 
-    final var filteredRegistrations = ignoreDuplicateApplications(registrationRequest, cycle);
-    final var registrationCount =
-        registrationsRepo.countMenteeApplications(mentee.getId(), cycle.getCycleId());
+    final var menteeId = ensureMenteeId(request.mentee());
+    if (menteeId != null) {
+      request.mentee().setId(menteeId);
+      final var filteredRegistrations =
+          ignoreDuplicateApplications(request, cycle);
+      final var registrationCount =
+          registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
 
-    validateRegistrationLimit(registrationCount);
+      validateRegistrationLimit(registrationCount);
+      validateDuplicatedPriorities(
+          menteeId, cycle.getCycleId(), filteredRegistrations.toApplications(cycle, menteeId));
 
-    if (registrationCount != null && registrationCount > 0) {
-      return createMenteeRegistrations(filteredRegistrations, cycle);
+      if (registrationCount != null && registrationCount > 0) {
+        userProvisionService.provisionUserRole(
+            menteeId, request.mentee().getEmail(), RoleType.MENTEE);
+        return createMenteeRegistrations(filteredRegistrations, cycle);
+      }
     }
 
-    return createMenteeAndApplications(filteredRegistrations, cycle);
+    return saveRegistration(request, cycle);
   }
 
-  private Mentee createMenteeAndApplications(
-      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    final var menteeToBeSaved = menteeRegistration.mentee();
+  private void validateDuplicatedPriorities(
+      final Long menteeId, final Long cycleId, final List<MenteeApplication> applications) {
+    final List<Integer> requestPriorities =
+        applications.stream().map(MenteeApplication::getPriorityOrder).toList();
 
-    final var existingMember = memberRepository.findByEmail(menteeToBeSaved.getEmail());
-
-    final Mentee mentee;
-    if (existingMember.isPresent()) {
-      final var existingMemberId = existingMember.get().getId();
-      final var menteeWithExistingId =
-          Mentee.menteeBuilder()
-              .id(existingMemberId)
-              .fullName(menteeToBeSaved.getFullName())
-              .position(menteeToBeSaved.getPosition())
-              .email(menteeToBeSaved.getEmail())
-              .slackDisplayName(menteeToBeSaved.getSlackDisplayName())
-              .country(menteeToBeSaved.getCountry())
-              .city(menteeToBeSaved.getCity())
-              .companyName(menteeToBeSaved.getCompanyName())
-              .images(menteeToBeSaved.getImages())
-              .network(menteeToBeSaved.getNetwork())
-              .profileStatus(menteeToBeSaved.getProfileStatus())
-              .skills(menteeToBeSaved.getSkills())
-              .spokenLanguages(menteeToBeSaved.getSpokenLanguages())
-              .bio(menteeToBeSaved.getBio())
-              .availableHsMonth(menteeToBeSaved.getAvailableHsMonth())
-              .build();
-
-      mentee = menteeRepository.create(menteeWithExistingId);
-    } else {
-      menteeToBeSaved.setMemberTypes(List.of(MemberType.MENTEE));
-      mentee = menteeRepository.create(menteeToBeSaved);
+    if (requestPriorities.size()
+        != requestPriorities.stream().distinct().collect(Collectors.counting())) {
+      throw new DuplicatedPriorityException("Priorities must be unique in the request");
     }
-    userProvisionService.provisionUserRole(mentee.getId(), mentee.getEmail(), RoleType.MENTEE);
 
-    final var registration = menteeRegistration.withMentee(mentee);
-    return createMenteeRegistrations(registration, cycle);
+    final List<MenteeApplication> existingApplications =
+        registrationsRepo.findByMenteeAndCycle(menteeId, cycleId);
+
+    if (existingApplications.isEmpty()) {
+      return;
+    }
+
+    final List<Integer> existingPriorities =
+        existingApplications.stream().map(MenteeApplication::getPriorityOrder).toList();
+
+    for (final Integer priority : requestPriorities) {
+      if (existingPriorities.contains(priority)) {
+        throw new DuplicatedPriorityException(
+            String.format(
+                "Mentee %d already has an application with priority %d in cycle %d",
+                menteeId, priority, cycleId));
+      }
+    }
+  }
+
+  private Mentee saveRegistration(
+      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    final var mentee = menteeRegistration.mentee();
+
+    final Mentee savedMentee = createOrUpdateMentee(mentee);
+    final Long menteeId = savedMentee.getId();
+
+    menteeRegistration.mentee().setId(menteeId);
+
+    userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
+
+    validateDuplicatedPriorities(
+        menteeId, cycle.getCycleId(), menteeRegistration.toApplications(cycle, menteeId));
+    return createMenteeRegistrations(menteeRegistration, cycle);
+  }
+
+  /**
+   * Creates or updates a mentee, preserving existing member types if the member already exists.
+   *
+   * @param mentee The mentee to create or update
+   * @return The saved mentee
+   */
+  private Mentee createOrUpdateMentee(final Mentee mentee) {
+    if (mentee.getId() != null) {
+      return handleMenteeWithId(mentee);
+    }
+    return handleMenteeWithoutId(mentee);
+  }
+
+  private Mentee handleMenteeWithId(final Mentee mentee) {
+    if (menteeRepository.findById(mentee.getId()).isPresent()) {
+      return menteeRepository.update(mentee.getId(), mentee);
+    }
+
+    final var existingMember = memberRepository.findById(mentee.getId()).orElse(null);
+    if (existingMember != null) {
+      mentee.setMemberTypes(mergeMemberTypes(existingMember.getMemberTypes()));
+    } else {
+      mentee.setMemberTypes(List.of(MemberType.MENTEE));
+    }
+    return menteeRepository.create(mentee);
+  }
+
+  private Mentee handleMenteeWithoutId(final Mentee mentee) {
+    final var existingMember = memberRepository.findByEmail(mentee.getEmail()).orElse(null);
+
+    if (existingMember == null) {
+      mentee.setMemberTypes(List.of(MemberType.MENTEE));
+      return menteeRepository.create(mentee);
+    }
+
+    mentee.setId(existingMember.getId());
+    mentee.setMemberTypes(mergeMemberTypes(existingMember.getMemberTypes()));
+
+    if (menteeRepository.findById(existingMember.getId()).isPresent()) {
+      return menteeRepository.update(existingMember.getId(), mentee);
+    }
+    return menteeRepository.create(mentee);
+  }
+
+  /**
+   * Merges existing member types with MENTEE type.
+   *
+   * @param existingMemberTypes The current member types
+   * @return List of merged member types including MENTEE
+   */
+  private List<MemberType> mergeMemberTypes(final List<MemberType> existingMemberTypes) {
+    final List<MemberType> mergedTypes = new ArrayList<>(existingMemberTypes);
+    if (!mergedTypes.contains(MemberType.MENTEE)) {
+      mergedTypes.add(MemberType.MENTEE);
+    }
+    return mergedTypes;
+  }
+
+  /** Check if the mentee exist by ID or Email. */
+  private Long ensureMenteeId(final Mentee mentee) {
+    if (mentee.getId() != null) {
+      final var optMentee = menteeRepository.findById(mentee.getId());
+      if (optMentee.isPresent()) {
+        return mentee.getId();
+      }
+    }
+    return memberRepository.findByEmail(mentee.getEmail()).map(Member::getId).orElse(null);
   }
 
   private Mentee createMenteeRegistrations(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    // TODO check if the mentee was already registered to the mentor.
-
     final var applications =
         menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
     applications.forEach(registrationsRepo::create);
@@ -156,6 +240,19 @@ public class MenteeService {
     return menteeRegistration.withApplications(filteredApplications);
   }
 
+  private void validateMentors(final MenteeRegistration registrationRequest) {
+    if (registrationRequest.applications() != null) {
+      registrationRequest
+          .applications()
+          .forEach(
+              application -> {
+                if (mentorRepository.findById(application.mentorId()).isEmpty()) {
+                  throw new MentorNotFoundException(application.mentorId());
+                }
+              });
+    }
+  }
+
   /**
    * Retrieves the MentorshipCycleEntity for the given mentorship type and cycle year. Validates
    * that the cycle is open and the mentorship type matches the current cycle.
@@ -174,7 +271,6 @@ public class MenteeService {
     if (openCycle.isPresent()) {
       final MentorshipCycleEntity cycle = openCycle.get();
 
-      // Only validate status if validation is enabled
       if (mentorshipConfig.getValidation().isEnabled() && cycle.getStatus() != CycleStatus.OPEN) {
         throw new MentorshipCycleClosedException(
             String.format(

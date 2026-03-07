@@ -18,8 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 public record MenteeRegistration(
     @NotNull Mentee mentee,
     @NotNull MentorshipType mentorshipType,
-    @NotNull
-        @Schema(
+    @Schema(
             type = "integer",
             format = "int32",
             example = "2026",
@@ -27,6 +26,7 @@ public record MenteeRegistration(
         Year cycleYear,
     @Size(min = 1, max = 5) List<MenteeApplicationDto> applications) {
 
+  /** Converts a list of {@code MenteeApplicationDto} to a list of {@code MenteeApplication}. */
   public List<MenteeApplication> toApplications(
       final MentorshipCycleEntity cycle, final Long menteeId) {
     return applications.stream()
@@ -51,10 +51,6 @@ public record MenteeRegistration(
   }
 
   public MenteeRegistration withApplications(final List<MenteeApplicationDto> applications) {
-    return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
-  }
-
-  public MenteeRegistration withMentee(final Mentee mentee) {
     return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
   }
 }

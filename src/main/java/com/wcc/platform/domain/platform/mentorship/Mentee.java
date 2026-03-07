@@ -16,10 +16,12 @@ import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @NoArgsConstructor
+@ToString(callSuper = true)
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 

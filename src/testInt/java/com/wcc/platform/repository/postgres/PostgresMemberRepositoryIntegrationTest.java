@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.cms.attributes.Country;
-import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.MemberType;
@@ -36,7 +34,8 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
             .city("Valencia")
             .companyName("CompanyName")
             .memberTypes(List.of(MemberType.LEADER))
-            .images(List.of(new Image("image.png", "alt image", ImageType.DESKTOP)))
+            // Update/Create images is not part of this test to be done later
+            .images(List.of())
             .network(List.of(new SocialNetwork(SLACK, "slack_link")))
             .build();
 
@@ -56,10 +55,11 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
             .slackDisplayName("slack_name 2")
             .country(new Country("PT", "Portugal"))
             .city("Lisbon")
-            .images(List.of(new Image("image2.png", "alt image2", ImageType.DESKTOP)))
+            .images(List.of())
             .companyName("CompanyName2")
             .memberTypes(List.of(MemberType.LEADER))
             .network(List.of(new SocialNetwork(SLACK, "slack_link_2")))
+            .isWomen(true)
             .build();
 
     var updatedMember = repository.update(newMember.getId(), member2);

@@ -11,13 +11,11 @@ import jakarta.validation.constraints.NotNull;
  * This record encapsulates the details required to link a mentee with a mentor, along with the
  * priority order of the application.
  *
- * @param menteeId Unique identifier of the mentee applying for mentorship.
  * @param mentorId Unique identifier of the mentor to whom the application is directed.
- * @param priorityOrder Priority order of the application, ranging from 1 (highest priority) to 5
- *     (lowest priority).
+ * @param priorityOrder Priority order of the application, ranging from 1 (the highest priority) to
+ *     5 (the lowest priority).
  */
 public record MenteeApplicationDto(
-    @NotNull Long menteeId,
     @NotNull Long mentorId,
     @NotNull @Min(1) @Max(5) Integer priorityOrder,
     @Schema(example = "I have applied many times and I could have a long-term mentor last years")
