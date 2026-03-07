@@ -45,6 +45,16 @@ public class ProgrammeController {
     return ResponseEntity.ok(service.getProgramme(programType));
   }
 
+  /** Get all programmes API. */
+  @Tag(name = "Pages: Programmes", description = "Pages and/or sections APIs")
+  @GetMapping("/api/cms/v1/programmes")
+  @Operation(summary = "API to retrieve page with all programmes")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<ProgrammePage> getAllProgrammes() {
+
+    return ResponseEntity.ok(service.getAllProgrammes());
+  }
+
   /** Create Programme Page Content and store into database. */
   @Tag(name = "Platform: Program", description = "Program Internal APIs")
   @PostMapping("/api/platform/v1/program")
