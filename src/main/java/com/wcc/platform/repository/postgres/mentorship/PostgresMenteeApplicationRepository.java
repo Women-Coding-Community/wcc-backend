@@ -11,6 +11,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * PostgreSQL implementation of MenteeApplicationRepository. Manages mentee applications to mentors
@@ -59,6 +60,7 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   private final JdbcTemplate jdbc;
 
+  @Transactional
   @Override
   public MenteeApplication create(final MenteeApplication entity) {
     final var existing =
