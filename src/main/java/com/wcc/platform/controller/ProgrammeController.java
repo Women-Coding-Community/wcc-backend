@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
+import com.wcc.platform.domain.cms.pages.programme.ProgrammesPage;
 import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.service.ProgrammeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,11 +47,11 @@ public class ProgrammeController {
   }
 
   /** Get all programmes API. */
-  @Tag(name = "Pages: Programmes", description = "Pages and/or sections APIs")
+  @Tag(name = "Pages: Programmes", description = "API to retrieve Page with all programmes")
   @GetMapping("/api/cms/v1/programmes")
   @Operation(summary = "API to retrieve page with all programmes")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<ProgrammePage> getAllProgrammes() {
+  public ResponseEntity<ProgrammesPage> getAllProgrammes() {
 
     return ResponseEntity.ok(service.getAllProgrammes());
   }

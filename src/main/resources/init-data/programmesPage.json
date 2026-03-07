@@ -1,5 +1,5 @@
 {
-  "id": "page:PROGRAMS",
+  "id": "page:PROGRAMMES",
   "heroSection": {
     "title": "WCC Programmes",
     "images": [
@@ -82,8 +82,8 @@
           "uri": "/programmes/writing-club"
         },
         "customStyle": {
+          "icon": "group",
           "backgroundColour": {
-            "icon": "group",
             "color": "secondary",
             "shade": {
               "name": "dark",
