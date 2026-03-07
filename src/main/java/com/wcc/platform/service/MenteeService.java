@@ -21,6 +21,7 @@ import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -89,29 +90,7 @@ public class MenteeService {
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
     final var mentee = menteeRegistration.mentee();
 
-    final Mentee savedMentee;
-    if (mentee.getId() != null) {
-      if (menteeRepository.findById(mentee.getId()).isPresent()) {
-        savedMentee = menteeRepository.update(mentee.getId(), mentee);
-      } else {
-        savedMentee = menteeRepository.create(mentee);
-      }
-    } else {
-      final var existingMemberId =
-          memberRepository.findByEmail(mentee.getEmail()).map(Member::getId).orElse(null);
-
-      if (existingMemberId != null) {
-        mentee.setId(existingMemberId);
-        if (menteeRepository.findById(existingMemberId).isPresent()) {
-          savedMentee = menteeRepository.update(existingMemberId, mentee);
-        } else {
-          savedMentee = menteeRepository.create(mentee);
-        }
-      } else {
-        mentee.setMemberTypes(List.of(MemberType.MENTEE));
-        savedMentee = menteeRepository.create(mentee);
-      }
-    }
+    final Mentee savedMentee = createOrUpdateMentee(mentee);
 
     menteeRegistration.mentee().setId(savedMentee.getId());
 
@@ -120,6 +99,65 @@ public class MenteeService {
 
     final var registration = menteeRegistration.toRegistration();
     return createMenteeRegistrations(registration, cycle);
+  }
+
+  /**
+   * Creates or updates a mentee, preserving existing member types if the member already exists.
+   *
+   * @param mentee The mentee to create or update
+   * @return The saved mentee
+   */
+  private Mentee createOrUpdateMentee(final Mentee mentee) {
+    if (mentee.getId() != null) {
+      return handleMenteeWithId(mentee);
+    }
+    return handleMenteeWithoutId(mentee);
+  }
+
+  private Mentee handleMenteeWithId(final Mentee mentee) {
+    if (menteeRepository.findById(mentee.getId()).isPresent()) {
+      return menteeRepository.update(mentee.getId(), mentee);
+    }
+
+    // Check if member exists and preserve member types
+    final var existingMember = memberRepository.findById(mentee.getId()).orElse(null);
+    if (existingMember != null) {
+      mentee.setMemberTypes(mergeMemberTypes(existingMember.getMemberTypes()));
+    } else {
+      mentee.setMemberTypes(List.of(MemberType.MENTEE));
+    }
+    return menteeRepository.create(mentee);
+  }
+
+  private Mentee handleMenteeWithoutId(final Mentee mentee) {
+    final var existingMember = memberRepository.findByEmail(mentee.getEmail()).orElse(null);
+
+    if (existingMember == null) {
+      mentee.setMemberTypes(List.of(MemberType.MENTEE));
+      return menteeRepository.create(mentee);
+    }
+
+    mentee.setId(existingMember.getId());
+    mentee.setMemberTypes(mergeMemberTypes(existingMember.getMemberTypes()));
+
+    if (menteeRepository.findById(existingMember.getId()).isPresent()) {
+      return menteeRepository.update(existingMember.getId(), mentee);
+    }
+    return menteeRepository.create(mentee);
+  }
+
+  /**
+   * Merges existing member types with MENTEE type.
+   *
+   * @param existingMemberTypes The current member types
+   * @return List of merged member types including MENTEE
+   */
+  private List<MemberType> mergeMemberTypes(final List<MemberType> existingMemberTypes) {
+    final List<MemberType> mergedTypes = new ArrayList<>(existingMemberTypes);
+    if (!mergedTypes.contains(MemberType.MENTEE)) {
+      mergedTypes.add(MemberType.MENTEE);
+    }
+    return mergedTypes;
   }
 
   /** Check if the mentee exist by ID or Email. */

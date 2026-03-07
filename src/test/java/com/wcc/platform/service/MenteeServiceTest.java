@@ -27,6 +27,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
@@ -491,5 +492,69 @@ class MenteeServiceTest {
     assertThat(result).isEqualTo(existingMentee);
     verify(menteeRepository).update(eq(5L), any(Mentee.class));
     verify(memberRepository, never()).findByEmail(anyString());
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member who is a mentor When registering as mentee Then should preserve mentor type and add mentee type")
+  void shouldPreserveMemberTypesWhenExistingMentorRegistersAsMentee() {
+    var currentYear = Year.now();
+    var menteeRequest = createMenteeTest(null, "Test Member", "mentor@wcc.com");
+    var registration =
+        new MenteeRegistration(
+            menteeRequest,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(1L, 1, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    // Existing member who is already a MENTOR and MEMBER
+    Member existingMentorMember =
+        Member.builder()
+            .id(100L)
+            .email("mentor@wcc.com")
+            .fullName("Test Member")
+            .position("Senior Engineer")
+            .slackDisplayName("testmember")
+            .memberTypes(List.of(MemberType.MEMBER, MemberType.MENTOR))
+            .build();
+
+    when(memberRepository.findByEmail("mentor@wcc.com"))
+        .thenReturn(Optional.of(existingMentorMember));
+    when(memberRepository.findById(100L)).thenReturn(Optional.of(existingMentorMember));
+    when(menteeRepository.findById(100L)).thenReturn(Optional.empty());
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(100L, 1L)).thenReturn(0L);
+    // Capture the created mentee to verify member types
+    Mentee[] capturedMentee = new Mentee[1];
+    when(menteeRepository.create(any(Mentee.class)))
+        .thenAnswer(
+            invocation -> {
+              capturedMentee[0] = invocation.getArgument(0);
+              return capturedMentee[0];
+            });
+    when(menteeRepository.findById(100L))
+        .thenReturn(Optional.empty())
+        .thenAnswer(invocation -> Optional.ofNullable(capturedMentee[0]));
+
+    Mentee result = menteeService.saveRegistration(registration);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(100L);
+    assertThat(capturedMentee[0].getMemberTypes())
+        .as("Member types should be preserved and merged")
+        .containsExactlyInAnyOrder(MemberType.MEMBER, MemberType.MENTOR, MemberType.MENTEE);
+    verify(memberRepository).findByEmail("mentor@wcc.com");
+    verify(memberRepository).findById(100L);
+    verify(menteeRepository).create(any(Mentee.class));
   }
 }
