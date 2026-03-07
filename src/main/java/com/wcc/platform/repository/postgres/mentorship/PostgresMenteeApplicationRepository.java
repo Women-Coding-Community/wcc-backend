@@ -70,7 +70,12 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
     final Long generatedId =
         jdbc.query(
             INSERT_APPLICATION,
-            rs -> rs.next() ? rs.getLong(1) : null,
+            rs -> {
+              if (rs.next()) {
+                return rs.getLong(1);
+              }
+              return null;
+            },
             entity.getMenteeId(),
             entity.getMentorId(),
             entity.getCycleId(),

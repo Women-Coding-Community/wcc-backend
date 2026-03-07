@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class PostgresMentorshipMatchRepository implements MentorshipMatchRepository {
 
   private static final String SELECT_ALL =

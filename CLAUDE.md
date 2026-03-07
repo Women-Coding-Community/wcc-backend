@@ -547,6 +547,11 @@ When creating commits:
 - ✅ Keep commit messages concise and focused on the "why" rather than the "what"
 - ✅ Follow the existing commit style in the repository
 
+**Pre-commit checklist for Java changes:**
+1. Run `./gradlew :pmdAll` to check for PMD violations
+2. Fix any violations before committing
+3. Run tests: `./gradlew test` (and `./gradlew testIntegration` if appropriate)
+
 **Example of correct commit message:**
 ```
 feat: Add mentorship resources page endpoint
@@ -554,6 +559,8 @@ feat: Add mentorship resources page endpoint
 Implement new CMS endpoint to serve downloadable mentorship resources
 including guides for mentees and mentors with Google Drive links.
 ```
+
+**Note:** A pre-commit hook is available (`.git/hooks/pre-commit`) that automatically runs PMD analysis on Java file changes. This helps catch code quality issues before they are committed.
 
 ## Comment Lines
 

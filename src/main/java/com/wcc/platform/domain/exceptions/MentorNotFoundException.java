@@ -6,7 +6,7 @@ public class MentorNotFoundException extends RuntimeException {
     super("Mentor not found: " + mentorId);
   }
 
-  public MentorNotFoundException(String message) {
+  public MentorNotFoundException(final String message) {
     super(message);
   }
 }

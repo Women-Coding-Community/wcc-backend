@@ -62,7 +62,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
       memberId = memberMapper.addMember(mentee);
     }
 
-    if (!findById(memberId).isPresent()) {
+    if (findById(memberId).isEmpty()) {
       insertMenteeDetails(mentee, memberId);
     } else {
       updateMenteeDetails(mentee, memberId);

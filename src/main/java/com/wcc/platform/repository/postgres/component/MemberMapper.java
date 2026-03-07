@@ -82,13 +82,13 @@ public class MemberMapper {
 
   /** Adds a new member to the database and returns the member ID. */
   public Long addMember(final Member member) {
-    final int defaultStatusPending = 1;
     final var existingMemberId = findMemberIdByEmail(member.getEmail());
     if (existingMemberId != null) {
       updateMember(member, existingMemberId);
       return existingMemberId;
     }
 
+    final int defaultStatusPending = 1;
     jdbc.update(
         INSERT,
         member.getFullName(),
@@ -106,7 +106,12 @@ public class MemberMapper {
     final var memberId =
         jdbc.query(
             "SELECT id FROM members WHERE email = ?",
-            rs -> rs.next() ? rs.getLong("id") : null,
+            rs -> {
+              if (rs.next()) {
+                return rs.getLong("id");
+              }
+              return null;
+            },
             member.getEmail());
 
     if (memberId == null) {
