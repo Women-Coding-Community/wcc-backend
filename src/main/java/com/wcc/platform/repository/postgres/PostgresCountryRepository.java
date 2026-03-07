@@ -1,6 +1,7 @@
 package com.wcc.platform.repository.postgres;
 
 import com.wcc.platform.domain.cms.attributes.Country;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.repository.CrudRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,7 @@ public class PostgresCountryRepository implements CrudRepository<Country, Long> 
           if (rs.next()) {
             return rs.getLong("id");
           }
-          return 1L; // Default to ID 1 if not found
+          throw new ContentNotFoundException("Country code not found: " + countryCode);
         },
         countryCode);
   }
