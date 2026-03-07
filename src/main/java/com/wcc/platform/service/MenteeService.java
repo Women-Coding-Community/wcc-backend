@@ -119,7 +119,6 @@ public class MenteeService {
       return menteeRepository.update(mentee.getId(), mentee);
     }
 
-    // Check if member exists and preserve member types
     final var existingMember = memberRepository.findById(mentee.getId()).orElse(null);
     if (existingMember != null) {
       mentee.setMemberTypes(mergeMemberTypes(existingMember.getMemberTypes()));
