@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/** Service for managing mentee-related operations. */
 @Service
 @AllArgsConstructor
 public class MenteeService {

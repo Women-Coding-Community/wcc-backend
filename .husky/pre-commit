@@ -1,3 +1,32 @@
+# Check for frontend changes and run lint-staged
 if git diff --cached --name-only | grep -q "^admin-wcc-app/"; then
   cd admin-wcc-app && npx lint-staged
+fi
+
+# Check for Java file changes and run PMD
+JAVA_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.java$')
+
+if [ -n "$JAVA_FILES" ]; then
+  echo "🔍 Checking Java code quality with PMD..."
+  echo "Java files to be committed:"
+  echo "$JAVA_FILES" | sed 's/^/  - /'
+  echo ""
+
+  ./gradlew :pmdAll --quiet
+
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ PMD violations detected!"
+    echo ""
+    echo "Please fix the PMD violations before committing."
+    echo "Review the PMD report at: build/reports/pmd/main.html"
+    echo ""
+    echo "To see violations in terminal, run: ./gradlew :pmdAll"
+    echo ""
+    echo "To bypass this hook (not recommended), use: git commit --no-verify"
+    exit 1
+  fi
+
+  echo "✅ PMD check passed - no violations found"
+  echo ""
 fi

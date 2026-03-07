@@ -560,7 +560,7 @@ Implement new CMS endpoint to serve downloadable mentorship resources
 including guides for mentees and mentors with Google Drive links.
 ```
 
-**Note:** A pre-commit hook is available (`.git/hooks/pre-commit`) that automatically runs PMD analysis on Java file changes. This helps catch code quality issues before they are committed.
+**Note:** A pre-commit hook is configured in `.husky/pre-commit` (using Husky) that automatically runs PMD analysis on Java file changes. This helps catch code quality issues before they are committed.
 
 ## Comment Lines
 
