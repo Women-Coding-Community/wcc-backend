@@ -419,6 +419,46 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
+      "Given null cycleYear in registration, when saving, then it should default to current year")
+  void shouldDefaultToCurrentYearWhenCycleYearIsNull() {
+    var currentYear = Year.now();
+    var registration =
+        new MenteeRegistration(
+            mentee,
+            MentorshipType.AD_HOC,
+            null,
+            List.of(
+                new MenteeApplicationDto(1L, 1, "Test application message", "Test why mentor")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    Member existingMember = Member.builder().id(1L).build();
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existingMember));
+    when(menteeRepository.create(any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+    when(menteeRepository.update(any(), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+    when(menteeRepository.findById(any()))
+        .thenReturn(Optional.empty())
+        .thenReturn(Optional.of(mentee));
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+
+    Mentee result = menteeService.saveRegistration(registration);
+
+    assertThat(result).isEqualTo(mentee);
+    verify(cycleRepository).findByYearAndType(currentYear, MentorshipType.AD_HOC);
+  }
+
+  @Test
+  @DisplayName(
       "Given mentee with existing id When creating mentee Then should use existing mentee without email lookup")
   void shouldReturnExistingMenteeWhenIdExistsInRepository() {
     var currentYear = Year.now();

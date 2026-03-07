@@ -64,7 +64,8 @@ public class MenteeService {
   public Mentee saveRegistration(final MenteeRegistration request) {
     validateMentors(request);
 
-    final var cycle = getMentorshipCycle(request.mentorshipType(), request.cycleYear());
+    final Year cycleYear = request.cycleYear() != null ? request.cycleYear() : Year.now();
+    final var cycle = getMentorshipCycle(request.mentorshipType(), cycleYear);
 
     final var menteeId = ensureMenteeId(request.mentee());
     if (menteeId != null) {
