@@ -69,7 +69,7 @@ public class MenteeService {
     if (menteeId != null) {
       request.mentee().setId(menteeId);
       final var filteredRegistrations =
-          ignoreDuplicateApplications(request.toRegistration(), cycle);
+          ignoreDuplicateApplications(request, cycle);
       final var registrationCount =
           registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
 
@@ -78,11 +78,13 @@ public class MenteeService {
           menteeId, cycle.getCycleId(), filteredRegistrations.toApplications(cycle, menteeId));
 
       if (registrationCount != null && registrationCount > 0) {
+        userProvisionService.provisionUserRole(
+            menteeId, request.mentee().getEmail(), RoleType.MENTEE);
         return createMenteeRegistrations(filteredRegistrations, cycle);
       }
     }
 
-    return saveRegistration(request.toRegistration(), cycle);
+    return saveRegistration(request, cycle);
   }
 
   private void validateDuplicatedPriorities(
@@ -126,10 +128,9 @@ public class MenteeService {
 
     userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
 
-    final var registration = menteeRegistration.toRegistration();
     validateDuplicatedPriorities(
-        menteeId, cycle.getCycleId(), registration.toApplications(cycle, menteeId));
-    return createMenteeRegistrations(registration, cycle);
+        menteeId, cycle.getCycleId(), menteeRegistration.toApplications(cycle, menteeId));
+    return createMenteeRegistrations(menteeRegistration, cycle);
   }
 
   /**

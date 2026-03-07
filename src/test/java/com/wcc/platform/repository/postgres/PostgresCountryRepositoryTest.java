@@ -4,12 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -147,12 +150,18 @@ class PostgresCountryRepositoryTest {
   @DisplayName(
       "Given non-existent country code, when finding country ID, "
           + "then it should throw ContentNotFoundException")
-  void shouldThrowExceptionWhenCountryCodeNotFound() {
+  void shouldThrowExceptionWhenCountryCodeNotFound() throws SQLException {
     String countryCode = "XX";
+    ResultSet resultSet = mock(ResultSet.class);
+    when(resultSet.next()).thenReturn(false);
 
-    when(jdbc.query(
-            anyString(), ArgumentMatchers.<ResultSetExtractor<Object>>any(), eq(countryCode)))
-        .thenThrow(new ContentNotFoundException("Country code not found: " + countryCode));
+    doAnswer(
+            invocation -> {
+              ResultSetExtractor<Long> extractor = invocation.getArgument(1);
+              return extractor.extractData(resultSet);
+            })
+        .when(jdbc)
+        .query(anyString(), ArgumentMatchers.<ResultSetExtractor<Long>>any(), eq(countryCode));
 
     var exception =
         assertThrows(
@@ -162,7 +171,7 @@ class PostgresCountryRepositoryTest {
     verify(jdbc)
         .query(
             eq("SELECT id FROM countries WHERE country_code = ?"),
-            ArgumentMatchers.<ResultSetExtractor<Object>>any(),
+            ArgumentMatchers.<ResultSetExtractor<Long>>any(),
             eq(countryCode));
   }
 }

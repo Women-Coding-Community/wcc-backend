@@ -19,16 +19,10 @@ public class PostgresMemberMemberTypeRepository {
         sql, (rs, rowNum) -> MemberType.fromId(rs.getInt("member_type_id")), memberId);
   }
 
-  /** Add a member type to a member. */
+  /** Add a member type to a member, ignoring if the association already exists. */
   public void addMemberType(final Long memberId, final int memberTypeId) {
-    final String sqlCheck =
-        "SELECT COUNT(*) FROM member_member_types WHERE member_id = ? AND member_type_id = ?";
-    final Integer count = jdbc.queryForObject(sqlCheck, Integer.class, memberId, memberTypeId);
-    if (count != null && count > 0) {
-      return;
-    }
-
-    final String sql = "INSERT INTO member_member_types (member_id, member_type_id) VALUES (?, ?)";
+    final String sql =
+        "INSERT INTO member_member_types (member_id, member_type_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
     jdbc.update(sql, memberId, memberTypeId);
   }
 

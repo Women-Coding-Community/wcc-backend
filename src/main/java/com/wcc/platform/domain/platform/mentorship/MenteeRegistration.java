@@ -53,8 +53,4 @@ public record MenteeRegistration(
   public MenteeRegistration withApplications(final List<MenteeApplicationDto> applications) {
     return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
   }
-
-  public MenteeRegistration toRegistration() {
-    return new MenteeRegistration(mentee, mentorshipType, cycleYear, applications);
-  }
 }

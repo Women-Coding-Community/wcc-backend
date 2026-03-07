@@ -119,7 +119,8 @@ public class PostgresMentorRepository implements MentorRepository {
       updateMentor(mentor, memberId);
     }
     final var mentorAdded = findById(memberId);
-    return mentorAdded.orElseThrow(() -> new MentorNotFoundException("Mentor saved: " + mentor));
+    return mentorAdded.orElseThrow(
+        () -> new MentorNotFoundException("Mentor not found after save for id: " + memberId));
   }
 
   @Override
@@ -129,7 +130,7 @@ public class PostgresMentorRepository implements MentorRepository {
     memberMapper.updateMember(mentor, mentorId);
     updateMentor(mentor, mentorId);
     return findById(mentorId)
-        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentor));
+        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentorId));
   }
 
   @Override
