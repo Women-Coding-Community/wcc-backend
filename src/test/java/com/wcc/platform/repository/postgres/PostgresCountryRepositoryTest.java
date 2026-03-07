@@ -154,7 +154,7 @@ class PostgresCountryRepositoryTest {
             anyString(), ArgumentMatchers.<ResultSetExtractor<Object>>any(), eq(countryCode)))
         .thenThrow(new ContentNotFoundException("Country code not found: " + countryCode));
 
-    ContentNotFoundException exception =
+    var exception =
         assertThrows(
             ContentNotFoundException.class, () -> repository.findCountryIdByCode(countryCode));
 

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.configuration.MentorshipConfig;
+import com.wcc.platform.domain.exceptions.DuplicatedPriorityException;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
 import com.wcc.platform.domain.exceptions.MentorNotFoundException;
@@ -21,6 +22,7 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -34,6 +36,7 @@ import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.util.List;
@@ -167,6 +170,104 @@ class MenteeServiceTest {
             () -> menteeService.saveRegistration(registration));
 
     assertThat(exception.getMessage()).contains("has already reached the limit of 5 registrations");
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentee with existing priority When creating mentee Then should throw DuplicatedPriorityException")
+  void shouldThrowExceptionWhenPriorityAlreadyExists() {
+    var currentYear = Year.now();
+    Mentee menteeWithId =
+        Mentee.menteeBuilder()
+            .id(1L)
+            .fullName("Mentee")
+            .email("a@b.com")
+            .position("pos")
+            .slackDisplayName("slack")
+            .country(mentee.getCountry())
+            .city("city")
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("bio")
+            .skills(mentee.getSkills())
+            .spokenLanguages(List.of("English"))
+            .build();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            menteeWithId,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(
+                new MenteeApplicationDto(2L, 1, "Test application message", "Test why mentor")));
+
+    MentorshipCycleEntity cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    when(menteeRepository.findById(1L)).thenReturn(Optional.of(menteeWithId));
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+
+    // Simulate existing application with priority 1
+    var existingApplication =
+        MenteeApplication.builder().menteeId(1L).mentorId(1L).cycleId(1L).priorityOrder(1).build();
+
+    when(applicationRepository.findByMenteeAndCycle(1L, 1L))
+        .thenReturn(List.of(existingApplication));
+
+    assertThrows(
+        DuplicatedPriorityException.class, () -> menteeService.saveRegistration(registration));
+  }
+
+  @Test
+  @DisplayName(
+      "Given multiple applications with same priority in request When creating mentee Then should throw DuplicatedPriorityException")
+  void shouldThrowExceptionWhenPriorityDuplicatedInRequest() {
+    var currentYear = Year.now();
+    Mentee menteeWithId =
+        Mentee.menteeBuilder()
+            .id(1L)
+            .fullName("Mentee")
+            .email("a@b.com")
+            .position("pos")
+            .slackDisplayName("slack")
+            .country(mentee.getCountry())
+            .city("city")
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("bio")
+            .skills(mentee.getSkills())
+            .spokenLanguages(List.of("English"))
+            .build();
+    MenteeRegistration registration =
+        new MenteeRegistration(
+            menteeWithId,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(
+                new MenteeApplicationDto(2L, 1, "Msg 1", "Why 1"),
+                new MenteeApplicationDto(3L, 1, "Msg 2", "Why 2")));
+
+    MentorshipCycleEntity cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .registrationStartDate(LocalDate.now().minusDays(1))
+            .registrationEndDate(LocalDate.now().plusDays(1))
+            .build();
+
+    when(menteeRepository.findById(1L)).thenReturn(Optional.of(menteeWithId));
+    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
+        .thenReturn(Optional.of(cycle));
+
+    when(applicationRepository.findByMenteeAndCycle(1L, 1L)).thenReturn(List.of());
+
+    assertThrows(
+        DuplicatedPriorityException.class, () -> menteeService.saveRegistration(registration));
   }
 
   @Test

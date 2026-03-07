@@ -1,10 +1,7 @@
 package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.MentorshipConfig;
-import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
-import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
-import com.wcc.platform.domain.exceptions.MentorNotFoundException;
-import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
+import com.wcc.platform.domain.exceptions.*;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
@@ -77,6 +74,8 @@ public class MenteeService {
           registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
 
       validateRegistrationLimit(registrationCount);
+      validateDuplicatedPriorities(
+          menteeId, cycle.getCycleId(), filteredRegistrations.toApplications(cycle, menteeId));
 
       if (registrationCount != null && registrationCount > 0) {
         return createMenteeRegistrations(filteredRegistrations, cycle);
@@ -86,18 +85,50 @@ public class MenteeService {
     return saveRegistration(request.toRegistration(), cycle);
   }
 
+  private void validateDuplicatedPriorities(
+      final Long menteeId, final Long cycleId, final List<MenteeApplication> applications) {
+    final List<Integer> requestPriorities =
+        applications.stream().map(MenteeApplication::getPriorityOrder).toList();
+
+    if (requestPriorities.size()
+        != requestPriorities.stream().distinct().collect(Collectors.counting())) {
+      throw new DuplicatedPriorityException("Priorities must be unique in the request");
+    }
+
+    final List<MenteeApplication> existingApplications =
+        registrationsRepo.findByMenteeAndCycle(menteeId, cycleId);
+
+    if (existingApplications.isEmpty()) {
+      return;
+    }
+
+    final List<Integer> existingPriorities =
+        existingApplications.stream().map(MenteeApplication::getPriorityOrder).toList();
+
+    for (final Integer priority : requestPriorities) {
+      if (existingPriorities.contains(priority)) {
+        throw new DuplicatedPriorityException(
+            String.format(
+                "Mentee %d already has an application with priority %d in cycle %d",
+                menteeId, priority, cycleId));
+      }
+    }
+  }
+
   private Mentee saveRegistration(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
     final var mentee = menteeRegistration.mentee();
 
     final Mentee savedMentee = createOrUpdateMentee(mentee);
+    final Long menteeId = savedMentee.getId();
 
-    menteeRegistration.mentee().setId(savedMentee.getId());
+    menteeRegistration.mentee().setId(menteeId);
 
-    userProvisionService.provisionUserRole(
-        savedMentee.getId(), savedMentee.getEmail(), RoleType.MENTEE);
+    userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
 
     final var registration = menteeRegistration.toRegistration();
+    validateDuplicatedPriorities(
+        menteeId, cycle.getCycleId(), registration.toApplications(cycle, menteeId));
     return createMenteeRegistrations(registration, cycle);
   }
 

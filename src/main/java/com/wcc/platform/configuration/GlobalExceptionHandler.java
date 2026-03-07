@@ -5,8 +5,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
-import com.wcc.platform.domain.exceptions.DuplicatedItemException;
-import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
@@ -85,10 +84,9 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Receive {@link DuplicatedMemberException} and {@link
-   * com.wcc.platform.domain.exceptions.DuplicatedItemException} return {@link HttpStatus#CONFLICT}.
+   * Receive {@link DuplicatedException} subclasses and return {@link HttpStatus#CONFLICT}.
    */
-  @ExceptionHandler({DuplicatedMemberException.class, DuplicatedItemException.class})
+  @ExceptionHandler(DuplicatedException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorDetails> handleRecordAlreadyExitsException(
       final RuntimeException ex, final WebRequest request) {
