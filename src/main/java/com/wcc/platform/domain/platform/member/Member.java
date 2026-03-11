@@ -1,10 +1,12 @@
 package com.wcc.platform.domain.platform.member;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +27,8 @@ import lombok.ToString;
 @Getter
 @Builder(toBuilder = true)
 public class Member {
+  @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Setter private Long id;
   @NotBlank private String fullName;
   @NotBlank private String position;

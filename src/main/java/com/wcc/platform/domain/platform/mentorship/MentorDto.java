@@ -12,7 +12,6 @@ import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.resource.MentorResource;
 import io.micrometer.common.util.StringUtils;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -37,7 +36,6 @@ public class MentorDto extends MemberDto {
    * Read-only for API: client cannot set this; server always uses PENDING on create/retains on
    * update.
    */
-  @Schema(accessMode = Schema.AccessMode.READ_ONLY)
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private ProfileStatus profileStatus;
 
