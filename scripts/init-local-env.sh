@@ -8,7 +8,7 @@ set -euo pipefail
 # --------------------------------------------
 
 API_BASE="http://localhost:8080/api"
-API_KEY="dev-key"
+API_KEY="test"
 
 echo "🚀 Starting WCC backend seed..."
 
@@ -60,6 +60,9 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
             "link": "https://www.linkedin.com/in/sonali-goel-6b611522/"
           }
         ],
+        "isWomen": true,
+        "acceptMale": false,
+        "acceptPromotion": true,
         "pronouns": "she/her",
         "pronounCategory": "FEMININE",
         "skills": {
@@ -114,12 +117,15 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         },
         "city": "Valencia",
         "companyName": "Centric Software",
-        "memberTypes": [ "MENTOR", "DIRECTOR"],
+        "memberTypes": [ "MENTOR"],
         "images": [],
         "network": [
           { "type": "linkedin", "link": "https://www.linkedin.com/in/dricazenck/" },
           { "type": "github", "link": "https://github.com/dricazenck" }
         ],
+        "isWomen":true,
+        "acceptMale": true,
+        "acceptPromotion": true,
         "pronouns": "she/her",
         "pronounCategory": "FEMININE",
         "skills": {
@@ -190,6 +196,7 @@ curl -s -X POST "${API_BASE}/platform/v1/members" \
   "memberTypes": [
     "MEMBER", "VOLUNTEER", "COLLABORATOR"
   ],
+  "isWomen": true,
   "pronouns": "she/her",
   "pronounCategory": "FEMININE",
   "network": [
@@ -233,6 +240,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
           ],
           "pronouns": "she/her",
           "pronounCategory": "FEMININE",
+          "isWomen": true,
           "profileStatus": "ACTIVE",
           "skills": {
             "yearsExperience": 2,
@@ -251,7 +259,8 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
             ]
           },
           "spokenLanguages": [ "Portuguese", "English", "Spanish" ],
-          "bio": "I am a Junior Software Engineer passionate about backend development and eager to learn best practices in software architecture and cloud technologies. I graduated in Computer Science and have been working with Java and Spring Boot for the past 2 years. I am looking for guidance to advance my career and become a senior engineer."
+          "bio": "I am a Junior Software Engineer passionate about backend development and eager to learn best practices in software architecture and cloud technologies. I graduated in Computer Science and have been working with Java and Spring Boot for the past 2 years. I am looking for guidance to advance my career and become a senior engineer.",
+          "availableHsMonth": 6
         },
         "mentorshipType": "LONG_TERM",
         "cycleYear": 2026,
@@ -259,12 +268,16 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
           {
             "menteeId": 1,
             "mentorId": 1,
-            "priorityOrder": 1
+            "priorityOrder": 1,
+            "whyMentor": "This mentor for backend",
+            "applicationMessage": "Other relevant information to be shared",
           },
           {
             "menteeId": 1,
             "mentorId": 2,
-            "priorityOrder": 2
+            "priorityOrder": 2,
+            "whyMentor": "This mentor for frontend",
+            "applicationMessage": "Other relevant information to be shared",
           }
         ]
       }'
@@ -295,6 +308,7 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                     "link": "https://www.linkedin.com/in/emma-schmidt/"
                   }
                 ],
+                "isWomen": true,
                 "pronouns": "she/her",
                 "pronounCategory": "FEMININE",
                 "skills": {
@@ -313,7 +327,8 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
                   ]
                 },
                 "spokenLanguages": [ "German", "English" ],
-                "bio": "I am a Frontend Developer transitioning from traditional web development to cloud-native applications. I have experience with React and Vue.js, and I am currently learning AWS and Kubernetes. I am seeking mentorship to understand DevOps practices and how to build scalable frontend applications integrated with cloud services."
+                "bio": "I am a Frontend Developer transitioning from traditional web development to cloud-native applications. I have experience with React and Vue.js, and I am currently learning AWS and Kubernetes. I am seeking mentorship to understand DevOps practices and how to build scalable frontend applications integrated with cloud services.",
+                "availableHsMonth": 8
               },
               "mentorshipType": "LONG-TERM",
               "cycleYear": 2026,
@@ -332,11 +347,11 @@ echo " "
 echo "✅  Mentee Emma added."
 echo " "
 
-# 5️⃣ List Mentees (endpoint not yet implemented)
-# echo "➡️ Fetching all mentees..."
-# curl -s -X GET "${API_BASE}/platform/v1/mentees" \
-#   -H "accept: */*" \
-#   -H "X-API-KEY: ${API_KEY}" | jq '.'
-# echo ""
-# echo "✅  Mentees listed."
-# echo ""
+# 5️⃣ List Members
+ echo "➡️ Fetching all members..."
+ curl -s -X GET "${API_BASE}/platform/v1/members" \
+   -H "accept: */*" \
+   -H "X-API-KEY: ${API_KEY}" | jq '.'
+ echo ""
+ echo "✅  Mentees listed."
+ echo ""

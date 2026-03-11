@@ -101,11 +101,15 @@ public class PostgresSkillRepository implements SkillRepository {
   }
 
   private Integer getYearsExperience(final Long mentorId) {
-    final var yearsExperience =
-        jdbcTemplate.queryForObject(
-            SELECT_YEARS, SingleColumnRowMapper.newInstance(Integer.class), mentorId);
+    try {
+      final var yearsExperience =
+          jdbcTemplate.queryForObject(
+              SELECT_YEARS, SingleColumnRowMapper.newInstance(Integer.class), mentorId);
 
-    return yearsExperience != null ? yearsExperience : 1;
+      return yearsExperience != null ? yearsExperience : 1;
+    } catch (EmptyResultDataAccessException e) {
+      return 1;
+    }
   }
 
   private List<TechnicalAreaProficiency> getMentorAreas(final Long mentorId) {

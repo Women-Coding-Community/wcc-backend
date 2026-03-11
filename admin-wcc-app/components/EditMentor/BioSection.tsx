@@ -1,4 +1,4 @@
-import { TextField, Paper, Typography } from '@mui/material';
+import { Paper, TextField, Typography } from '@mui/material';
 import { Controller } from 'react-hook-form';
 import { FormSectionProps } from './types';
 

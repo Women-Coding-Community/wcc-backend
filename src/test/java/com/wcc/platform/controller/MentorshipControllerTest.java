@@ -96,7 +96,7 @@ class MentorshipControllerTest {
                 .content(
                     "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[{\"technicalArea\":\"BACKEND\",\"proficiencyLevel\":\"BEGINNER\"}],\"languages\":[{\"language\":\"JAVASCRIPT\",\"proficiencyLevel\":\"BEGINNER\"}],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
                         + currentYear
-                        + "\",\"applications\":[{\"menteeId\":null,\"mentorId\":1,\"priorityOrder\":1}]}"))
+                        + "\",\"applications\":[{\"mentorId\":1,\"priorityOrder\":1,\"whyMentor\":\"This mentor has skills I want to improve\"}]}"))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(2)))
         .andExpect(jsonPath("$.fullName", is("Mark")));
@@ -353,8 +353,8 @@ class MentorshipControllerTest {
 
   @Test
   @DisplayName(
-      "Given mentor with isWomenNonBinary=true, when creating mentor, then response includes the field")
-  void testCreateMentorWithIsWomenNonBinaryReturnsFieldInResponse() throws Exception {
+      "Given mentor with isWomen=true, when creating mentor, then response includes the field")
+  void testCreateMentorWithIsWomenReturnsFieldInResponse() throws Exception {
     Mentor mentor = createMentorTest("Test Mentor");
     mentor =
         Mentor.mentorBuilder()
@@ -370,7 +370,7 @@ class MentorshipControllerTest {
             .skills(mentor.getSkills())
             .menteeSection(mentor.getMenteeSection())
             .profileStatus(ProfileStatus.PENDING)
-            .isWomenNonBinary(true)
+            .isWomen(true)
             .build();
 
     when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
@@ -378,13 +378,13 @@ class MentorshipControllerTest {
     mockMvc
         .perform(postRequest(API_MENTORS, mentor))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.isWomenNonBinary", is(true)));
+        .andExpect(jsonPath("$.isWomen", is(true)));
   }
 
   @Test
   @DisplayName(
-      "Given mentors exist, when getting all mentors, then response includes isWomenNonBinary field")
-  void testGetAllMentorsIncludesIsWomenNonBinaryField() throws Exception {
+      "Given mentors exist, when getting all mentors, then response includes isWomen field")
+  void testGetAllMentorsIncludesIsWomenField() throws Exception {
     MentorDto mentorDto1 = createMentorDtoTest(1L, MemberType.MENTOR);
     mentorDto1 =
         MentorDto.mentorDtoBuilder()
@@ -400,7 +400,7 @@ class MentorshipControllerTest {
             .skills(mentorDto1.getSkills())
             .menteeSection(mentorDto1.getMenteeSection())
             .profileStatus(mentorDto1.getProfileStatus())
-            .isWomenNonBinary(true)
+            .isWomen(true)
             .build();
 
     MentorDto mentorDto2 = createMentorDtoTest(2L, MemberType.MENTOR);
@@ -418,7 +418,7 @@ class MentorshipControllerTest {
             .skills(mentorDto2.getSkills())
             .menteeSection(mentorDto2.getMenteeSection())
             .profileStatus(mentorDto2.getProfileStatus())
-            .isWomenNonBinary(false)
+            .isWomen(false)
             .build();
 
     when(mentorshipService.getAllMentors()).thenReturn(List.of(mentorDto1, mentorDto2));
@@ -426,7 +426,7 @@ class MentorshipControllerTest {
     mockMvc
         .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].isWomenNonBinary", is(true)))
-        .andExpect(jsonPath("$[1].isWomenNonBinary", is(false)));
+        .andExpect(jsonPath("$[0].isWomen", is(true)))
+        .andExpect(jsonPath("$[1].isWomen", is(false)));
   }
 }

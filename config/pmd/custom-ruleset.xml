@@ -20,6 +20,11 @@
     <exclude name="UseUtilityClass"/>
     <exclude name="LoosePackageCoupling"/>
   </rule>
+  <rule ref="category/java/design.xml/TooManyMethods">
+    <properties>
+      <property name="maxmethods" value="15"/>
+    </properties>
+  </rule>
   <rule ref="category/java/errorprone.xml">
     <exclude name="MissingSerialVersionUID"/>
   </rule>

@@ -280,6 +280,33 @@ You can generate a Postman collection from the application’s OpenAPI specifica
 
 ## Quality Checks
 
+**PMD Static Analysis**
+
+Before committing Java code changes, run PMD to check for code quality violations:
+
+```shell
+./gradlew :pmdAll
+```
+
+If violations are found, the build will fail and show the report location. Fix all violations before committing.
+
+**Pre-commit Hook (Automatic PMD Check)**
+
+A pre-commit hook is configured in `.husky/pre-commit` (using Husky) that runs PMD analysis on Java file changes before each commit. The hook will:
+- Detect staged Java files
+- Run `./gradlew :pmdAll`
+- Block the commit if violations are found
+- Show the path to the PMD report for review
+
+To bypass the hook (not recommended):
+```shell
+git commit --no-verify
+```
+
+**Note:** The project uses Husky for git hooks management. The pre-commit hook also runs `lint-staged` for frontend changes in `admin-wcc-app/`.
+
+**Other Quality Checks**
+
 * [Setup Quality Checks](docs/quality_checks.md)
 
 ## Deploy

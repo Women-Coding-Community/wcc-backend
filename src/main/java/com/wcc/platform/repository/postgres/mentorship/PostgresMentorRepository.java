@@ -2,6 +2,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MemberRepository;
@@ -112,9 +113,14 @@ public class PostgresMentorRepository implements MentorRepository {
       memberId = memberMapper.addMember(mentor);
     }
 
-    addMentor(mentor, memberId);
+    if (findById(memberId).isEmpty()) {
+      addMentor(mentor, memberId);
+    } else {
+      updateMentor(mentor, memberId);
+    }
     final var mentorAdded = findById(memberId);
-    return mentorAdded.orElse(null);
+    return mentorAdded.orElseThrow(
+        () -> new MentorNotFoundException("Mentor not found after save for id: " + memberId));
   }
 
   @Override
@@ -123,14 +129,16 @@ public class PostgresMentorRepository implements MentorRepository {
     validate(mentor);
     memberMapper.updateMember(mentor, mentorId);
     updateMentor(mentor, mentorId);
-    return findById(mentorId).orElse(null);
+    return findById(mentorId)
+        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentorId));
   }
 
   @Override
   @Transactional
   public Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus) {
     jdbc.update(SQL_SET_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
-    return findById(mentorId).orElse(null);
+    return findById(mentorId)
+        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentorId));
   }
 
   @Transactional
@@ -138,7 +146,8 @@ public class PostgresMentorRepository implements MentorRepository {
   public Mentor updateToRejected(
       final Long mentorId, final ProfileStatus profileStatus, final String rejectionReason) {
     jdbc.update(SQL_REJECT_MENTOR, profileStatus.getStatusId(), rejectionReason, mentorId);
-    return findById(mentorId).orElse(null);
+    return findById(mentorId)
+        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentorId));
   }
 
   private void validate(final Mentor mentor) {

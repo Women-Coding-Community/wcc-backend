@@ -30,6 +30,7 @@ class MenteeMapperTest {
   private static final String COLUMN_PROFILE_STATUS = "mentees_profile_status";
   private static final String COLUMN_BIO = "bio";
   private static final String COLUMN_SPOKEN_LANGUAGES = "spoken_languages";
+  private static final String COLUMN_AVAILABLE_HS_MONTH = "available_hs_month";
 
   @Mock private JdbcTemplate jdbc;
   @Mock private ResultSet resultSet;
@@ -54,6 +55,7 @@ class MenteeMapperTest {
     when(resultSet.getInt(COLUMN_PROFILE_STATUS)).thenReturn(1);
     when(resultSet.getString(COLUMN_BIO)).thenReturn("Looking for a mentor");
     when(resultSet.getString(COLUMN_SPOKEN_LANGUAGES)).thenReturn("German");
+    when(resultSet.getInt(COLUMN_AVAILABLE_HS_MONTH)).thenReturn(5);
 
     when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
 
@@ -65,6 +67,7 @@ class MenteeMapperTest {
     assertEquals(ProfileStatus.fromId(1), mentee.getProfileStatus());
     assertThat(mentee.getSpokenLanguages()).containsExactlyInAnyOrderElementsOf(List.of("German"));
     assertEquals("Looking for a mentor", mentee.getBio());
+    assertEquals(5, mentee.getAvailableHsMonth());
   }
 
   @Test
@@ -81,5 +84,25 @@ class MenteeMapperTest {
             });
 
     assertEquals("DB error", exception.getMessage());
+  }
+
+  @Test
+  void testMapRowToMenteeIncludesAvailableHsMonth() throws Exception {
+    // Arrange
+    long menteeId = 3L;
+    Member member = mock(Member.class);
+    when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
+    when(resultSet.getInt(COLUMN_PROFILE_STATUS)).thenReturn(1);
+    when(resultSet.getString(COLUMN_BIO)).thenReturn("Mentee bio");
+    when(resultSet.getString(COLUMN_SPOKEN_LANGUAGES)).thenReturn("English");
+    when(resultSet.getInt(COLUMN_AVAILABLE_HS_MONTH)).thenReturn(10);
+
+    when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
+
+    // Act
+    Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
+
+    // Assert
+    assertEquals(10, mentee.getAvailableHsMonth());
   }
 }

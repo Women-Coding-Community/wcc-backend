@@ -27,9 +27,10 @@ import lombok.ToString;
 @Getter
 @Builder(toBuilder = true)
 public class Member {
-  @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+  @Setter
+  @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Auto-generated member ID")
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  @Setter private Long id;
+  private Long id;
   @NotBlank private String fullName;
   @NotBlank private String position;
   @Setter @NotBlank @Email private String email;
@@ -42,7 +43,7 @@ public class Member {
   private List<SocialNetwork> network;
   private String pronouns;
   private PronounCategory pronounCategory;
-  private Boolean isWomenNonBinary;
+  private Boolean isWomen;
 
   public MemberDto toDto() {
     return new MemberDto(
@@ -59,6 +60,6 @@ public class Member {
         network,
         pronouns,
         pronounCategory,
-        isWomenNonBinary);
+        isWomen);
   }
 }
