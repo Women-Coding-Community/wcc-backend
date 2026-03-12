@@ -1,12 +1,22 @@
-# Claude Code Skills — Developer Guide
+# AI Skills — Developer Guide
 
-This document explains the Claude Code skills configured in this repository and how to use them in your daily workflow.
+This document explains the AI workflow skills configured in this repository and how to use them with any AI coding agent.
 
-## What are Claude Code Skills?
+## The idea: agent-agnostic skills
 
-Claude Code skills are custom slash commands you can invoke directly in your terminal with Claude Code. Instead of writing a long prompt every time, you type a short command like `/commit` or `/pr-review` and Claude follows a predefined, project-specific workflow.
+A **skill** is a plain-markdown workflow runbook. It tells an AI agent exactly what steps to follow for a repeatable task — safely committing code, reviewing a PR, scaffolding a migration, and so on.
 
-Skills live in `.claude/skills/<skill-name>/SKILL.md` and are automatically discovered by Claude Code.
+The canonical skills live in **`.ai/skills/`** and are written without any tool-specific syntax. Each AI agent then has a thin adapter that points to them:
+
+| Agent | Adapter location | Invoke with |
+|-------|-----------------|-------------|
+| **Claude Code** | `.claude/skills/<name>/SKILL.md` | `/commit`, `/pr-review` |
+| **OpenAI Codex** | `AGENTS.md` (repo root) | Natural language or slash commands |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | Natural language in chat |
+| **Cursor** | `.cursor/rules/*.mdc` | Natural language or `@commit` rules |
+| **Windsurf** | `.windsurf/rules/` | Natural language |
+
+The workflow logic is defined **once** in `.ai/skills/`. Agent adapters are thin wrappers — no duplication.
 
 ---
 
@@ -75,8 +85,31 @@ Reviews a pull request using the GitHub CLI and posts inline comments directly o
 
 ## How to Create a New Skill
 
-1. Create a directory: `.claude/skills/<your-skill-name>/`
-2. Create `SKILL.md` with a YAML frontmatter block and a markdown body:
+### 1. Write the canonical runbook in `.ai/skills/`
+
+Create `.ai/skills/<your-skill-name>.md`:
+
+```markdown
+# Skill: your-skill-name
+
+Short description of when to apply this skill.
+
+## When to apply
+...
+
+## Step 1 — ...
+## Step 2 — ...
+## Step N — ...
+
+## Rules
+- ...
+```
+
+Keep it plain markdown — no tool-specific syntax. This is the source of truth.
+
+### 2. Add the Claude Code adapter
+
+Create `.claude/skills/<your-skill-name>/SKILL.md`:
 
 ```markdown
 ---
@@ -84,19 +117,26 @@ name: your-skill-name
 description: One-line description shown in Claude Code
 ---
 
-# Skill Title
+# Your Skill Name
 
-## Step 1: ...
-## Step 2: ...
+> **Canonical runbook**: `.ai/skills/your-skill-name.md`
+> This file is the Claude Code adapter.
+
+[paste or summarise the canonical runbook steps here]
 ```
 
-3. Claude Code discovers it automatically — invoke it with `/<your-skill-name>`
+### 3. Register with other agents
+
+- **Codex**: add a section to `AGENTS.md`
+- **Copilot**: add a line to `.github/copilot-instructions.md`
+- **Cursor**: create `.cursor/rules/<your-skill-name>.mdc`
 
 **Tips for writing good skills:**
 - Be explicit about the order of steps
 - State what to do when something goes wrong (abort conditions)
 - Include example commands the skill should run
 - Keep the scope focused — one skill, one job
+- Write the canonical runbook first, adapters second
 
 ---
 
@@ -135,9 +175,33 @@ This loop is especially powerful when learning a new language or framework. You 
 
 ---
 
+## Repository structure
+
+```
+.ai/
+  skills/
+    commit.md           ← canonical commit workflow (any agent)
+    pr-review.md        ← canonical PR review workflow (any agent)
+  README.md             ← agent compatibility table
+
+.claude/skills/         ← Claude Code adapters
+  commit/SKILL.md
+  pr-review/SKILL.md
+
+AGENTS.md               ← OpenAI Codex entry point
+.github/
+  copilot-instructions.md   ← GitHub Copilot instructions
+.cursor/rules/          ← Cursor rules
+  commit.mdc
+  pr-review.mdc
+```
+
 ## References
 
 - [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code)
+- [OpenAI Codex — AGENTS.md spec](https://platform.openai.com/docs/codex)
+- [GitHub Copilot custom instructions](https://docs.github.com/en/copilot/customizing-copilot)
+- [Cursor rules documentation](https://docs.cursor.com/context/rules)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [WCC Backend — quality checks](./quality_checks.md)
 - [WCC Backend — CLAUDE.md](../CLAUDE.md)

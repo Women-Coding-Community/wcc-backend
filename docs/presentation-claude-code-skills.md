@@ -100,7 +100,61 @@ project conventions faster.
 
 ---
 
-## Slide 6 — Live demo: the WCC Backend project
+## Slide 6 — Skills are NOT Claude-specific
+
+**The same workflow can be used by any AI agent.**
+
+The trick: write the runbook once in plain markdown, then add a thin adapter per agent.
+
+```
+.ai/
+  skills/
+    commit.md       ← canonical source of truth (no tool syntax)
+    pr-review.md
+
+.claude/skills/commit/SKILL.md        ← Claude Code reads this
+AGENTS.md                              ← OpenAI Codex reads this
+.github/copilot-instructions.md        ← GitHub Copilot reads this
+.cursor/rules/commit.mdc               ← Cursor reads this
+```
+
+| Agent | How to invoke |
+|-------|--------------|
+| Claude Code | `/commit` in terminal |
+| OpenAI Codex | "commit my changes" in chat |
+| GitHub Copilot | "commit my changes" in Copilot Chat |
+| Cursor | "commit my changes" or `@commit` |
+
+**One runbook. Every agent. No duplication.**
+
+---
+
+## Slide 6b — The `.ai/` folder convention
+
+There is no single universal standard yet — but `.ai/` is emerging as a neutral home for agent-agnostic content.
+
+**Why `.ai/` and not agent-specific folders?**
+- `.claude/` — belongs to Claude Code
+- `AGENTS.md` — belongs to Codex
+- `.cursorrules` — belongs to Cursor
+- `.ai/` — belongs to no one; readable by all
+
+When you put runbooks in `.ai/skills/`, every agent config file can point to them. You change the workflow in one place and all agents get the update.
+
+```
+# AGENTS.md (Codex)
+Full runbook: .ai/skills/commit.md
+
+# .github/copilot-instructions.md (Copilot)
+Commit workflow: see .ai/skills/commit.md
+
+# .cursor/rules/commit.mdc (Cursor)
+Follow the runbook at .ai/skills/commit.md
+```
+
+---
+
+## Slide 7 — Live demo: the WCC Backend project
 
 **The Women Coding Community backend is open source.**
 Repository: `Women-Coding-Community/wcc-backend`
@@ -108,14 +162,19 @@ Repository: `Women-Coding-Community/wcc-backend`
 We will demo on branch `claude_skills`:
 
 ```bash
-# 1. Show the skill files
-cat .claude/skills/commit/SKILL.md
-cat .claude/skills/pr-review/SKILL.md
+# 1. Show the canonical skill (agent-agnostic)
+cat .ai/skills/commit.md
 
-# 2. Run /commit on real staged changes
+# 2. Show the Claude Code adapter
+cat .claude/skills/commit/SKILL.md
+
+# 3. Show the Codex adapter
+cat AGENTS.md
+
+# 4. Run /commit on real staged changes (Claude Code)
 /commit
 
-# 3. Run /pr-review on a real PR
+# 5. Run /pr-review on a real PR
 /pr-review <pr-number>
 ```
 
@@ -126,7 +185,7 @@ Watch what Claude does:
 
 ---
 
-## Slide 7 — AI as your Java learning buddy
+## Slide 8 — AI as your Java learning buddy
 
 **The learning loop:**
 
@@ -149,7 +208,7 @@ Merge with confidence ✓
 
 ---
 
-## Slide 8 — What you learn from each tool
+## Slide 9 — What you learn from each tool
 
 ### From `/commit`
 
@@ -168,39 +227,47 @@ Merge with confidence ✓
 
 ---
 
-## Slide 9 — How to add skills to your own project
+## Slide 10 — How to add skills to your own project
 
-**3 files, 5 minutes:**
+**The pattern: canonical first, adapters second.**
 
-```bash
-mkdir -p .claude/skills/my-skill
+**Step 1** — Write the runbook in `.ai/skills/my-skill.md`:
+
+```markdown
+# Skill: my-skill
+
+## When to apply
+When the user asks to ...
+
+## Step 1 — Gather context
+...
+
+## Step 2 — Do the thing
+...
+
+## Rules
+- Stop if X
+- Never do Y
 ```
 
-Create `.claude/skills/my-skill/SKILL.md`:
+**Step 2** — Add Claude Code adapter `.claude/skills/my-skill/SKILL.md`:
 
 ```markdown
 ---
 name: my-skill
-description: What this skill does in one sentence
+description: One sentence for Claude Code
 ---
-
-# My Skill
-
-## Step 1: Gather context
-Run `git status` and explain what you see.
-
-## Step 2: Do the thing
-...
-
-## Step 3: Confirm
-...
+> Canonical runbook: .ai/skills/my-skill.md
+[paste steps here]
 ```
 
-**That's it.** Claude Code picks it up automatically. Run `/my-skill`.
+**Step 3** — Register in `AGENTS.md`, `.github/copilot-instructions.md`, and `.cursor/rules/my-skill.mdc`
+
+**Result:** every agent on the project follows the same workflow.
 
 ---
 
-## Slide 10 — Tips for writing good skills
+## Slide 11 — Tips for writing good skills
 
 | Do | Don't |
 |----|-------|
@@ -212,7 +279,7 @@ Run `git status` and explain what you see.
 
 ---
 
-## Slide 11 — Going further
+## Slide 12 — Going further
 
 **Other skills you could build:**
 
@@ -227,9 +294,12 @@ Run `git status` and explain what you see.
 
 ---
 
-## Slide 12 — Resources
+## Slide 13 — Resources
 
 - **Claude Code docs**: https://docs.anthropic.com/en/docs/claude-code
+- **OpenAI Codex / AGENTS.md**: https://platform.openai.com/docs/codex
+- **GitHub Copilot custom instructions**: https://docs.github.com/en/copilot/customizing-copilot
+- **Cursor rules**: https://docs.cursor.com/context/rules
 - **This demo branch**: `Women-Coding-Community/wcc-backend` → branch `claude_skills`
 - **Skills guide in this repo**: `docs/claude-code-skills.md`
 - **Conventional Commits**: https://www.conventionalcommits.org/
@@ -237,7 +307,7 @@ Run `git status` and explain what you see.
 
 ---
 
-## Slide 13 — Join us
+## Slide 14 — Join us
 
 Women Coding Community is open source and welcomes contributors at all levels.
 

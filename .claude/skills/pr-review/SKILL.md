@@ -5,6 +5,11 @@ description: Review pull requests using GitHub CLI. Use when asked to check a PR
 
 # PR Review
 
+> **Canonical runbook**: `.ai/skills/pr-review.md`
+> This file is the Claude Code adapter. The workflow logic is defined in the canonical skill
+> so it can be shared with other agents (Codex, Copilot, Cursor). Any changes to the workflow
+> should be made in `.ai/skills/pr-review.md` first.
+
 ## Workflow
 
 1. Read PR metadata and diff with GitHub CLI:

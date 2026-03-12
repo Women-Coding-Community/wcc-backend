@@ -7,6 +7,11 @@ allowed-tools: Bash
 
 # Commit Skill
 
+> **Canonical runbook**: `.ai/skills/commit.md`
+> This file is the Claude Code adapter. The workflow logic is defined in the canonical skill
+> so it can be shared with other agents (Codex, Copilot, Cursor). Any changes to the workflow
+> should be made in `.ai/skills/commit.md` first.
+
 You are now in commit mode. Follow these steps **in order**, stopping if any check fails.
 
 ## Step 1: Gather status and diff
