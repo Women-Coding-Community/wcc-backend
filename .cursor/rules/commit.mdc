@@ -1,0 +1,14 @@
+---
+description: Safe commit workflow with sensitive-data detection
+globs:
+alwaysApply: false
+---
+
+Follow the commit runbook at `.ai/skills/commit.md` whenever the user asks to commit.
+
+Key rules:
+- Scan diff for secrets/credentials before staging anything — abort if found
+- Conventional Commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
+- Always include a body explaining *why* the change was made
+- Stage by explicit file name — never `git add .` or `git add -A`
+- No AI co-author or attribution lines in the commit message
