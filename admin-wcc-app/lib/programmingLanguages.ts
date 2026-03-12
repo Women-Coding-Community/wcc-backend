@@ -4,6 +4,7 @@ export const PROGRAMMING_LANGUAGES = [
   { value: 'C_SHARP', label: 'C#' },
   { value: 'GO', label: 'Go' },
   { value: 'JAVA', label: 'Java' },
+  { value: 'SCALA', label: 'Scala' },
   { value: 'JAVASCRIPT', label: 'JavaScript' },
   { value: 'KOTLIN', label: 'Kotlin' },
   { value: 'PHP', label: 'PHP' },
