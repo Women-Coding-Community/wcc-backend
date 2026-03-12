@@ -24,6 +24,7 @@ public enum CodeLanguage {
   PYTHON("Python", 9),
   RUBY("Ruby", 10),
   RUST("Rust", 11),
+  SCALA("Scala", 14),
   TYPESCRIPT("Typescript", 12),
   OTHER("Other", 13);
 
