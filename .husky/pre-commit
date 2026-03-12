@@ -4,7 +4,7 @@ if git diff --cached --name-only | grep -q "^admin-wcc-app/"; then
 fi
 
 # Check for Java file changes and run PMD
-JAVA_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.java$')
+JAVA_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.java$' || true)
 
 if [ -n "$JAVA_FILES" ]; then
   echo "🔍 Checking Java code quality with PMD..."

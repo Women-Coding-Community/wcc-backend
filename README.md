@@ -19,6 +19,7 @@
   - [Open API Documentation](#open-api-documentation)
   - [API Documentation](#api-documentation)
   - [Quality Checks](#quality-checks)
+    - [AI-Assisted Pre-Commit Review](#ai-assisted-pre-commit-review-claude-code)
   - [Deploy](#deploy)
   - [Frontend (Administration Platform)](#frontend-administration-platform)
     - [Run frontend locally](#run-frontend-locally)
@@ -304,6 +305,25 @@ git commit --no-verify
 ```
 
 **Note:** The project uses Husky for git hooks management. The pre-commit hook also runs `lint-staged` for frontend changes in `admin-wcc-app/`.
+
+**AI-Assisted Pre-Commit Review (Claude Code)**
+
+If you use [Claude Code](https://claude.ai/code), you can run a local code review on your staged and unstaged changes before committing:
+
+```shell
+/pre-commit-review
+```
+
+The skill will:
+- Analyse all local changes (`git diff HEAD` and `git diff --staged`)
+- Produce an **overall summary** of what the change does and whether it is safe to commit
+- List **per-file findings** anchored to the changed line numbers with severity levels:
+  - `[CRITICAL]` — must fix before committing (security, data loss, broken contract)
+  - `[WARNING]` — should fix (likely bug, convention mismatch, missing test)
+  - `[INFO]` — optional improvement (style, readability)
+- Call out **what looks good** to keep feedback balanced
+
+No GitHub CLI or open PR is required — it works entirely on your local diff.
 
 **Other Quality Checks**
 
