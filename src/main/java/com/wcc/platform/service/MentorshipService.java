@@ -147,13 +147,13 @@ public class MentorshipService {
   }
 
   private List<MentorDto> getAllMentors(final MentorshipCycle currentCycle) {
-    final var allMentors = mentorRepository.getAll();
+    final var allActiveMentors = mentorRepository.getAll().stream().filter(m -> m.getProfileStatus() == ProfileStatus.ACTIVE);
 
     if (currentCycle == CYCLE_CLOSED) {
-      return allMentors.stream().map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
+      return allActiveMentors.map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
     }
 
-    return allMentors.stream()
+    return allActiveMentors
         .map(mentor -> enrichWithProfilePicture(mentor.toDto(currentCycle)))
         .toList();
   }
