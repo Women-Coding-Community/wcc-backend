@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.member;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.PronounCategory;
@@ -28,6 +29,7 @@ import lombok.ToString;
 public class Member {
   @Setter
   @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Auto-generated member ID")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
   @NotBlank private String fullName;
   @NotBlank private String position;
