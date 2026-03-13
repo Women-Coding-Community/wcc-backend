@@ -57,7 +57,7 @@ class MentorshipControllerTest {
   @Test
   void testGetAllMentorsReturnsOk() throws Exception {
     List<MentorDto> mockMentors = List.of(createMentorTest("Jane").toDto());
-    when(mentorshipService.getAllMentors()).thenReturn(mockMentors);
+    when(mentorshipService.getAllActiveMentors()).thenReturn(mockMentors);
 
     mockMvc
         .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))
@@ -421,7 +421,7 @@ class MentorshipControllerTest {
             .isWomen(false)
             .build();
 
-    when(mentorshipService.getAllMentors()).thenReturn(List.of(mentorDto1, mentorDto2));
+    when(mentorshipService.getAllActiveMentors()).thenReturn(List.of(mentorDto1, mentorDto2));
 
     mockMvc
         .perform(getRequest(API_MENTORS).contentType(APPLICATION_JSON))

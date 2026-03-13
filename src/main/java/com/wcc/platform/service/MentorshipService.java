@@ -127,7 +127,7 @@ public class MentorshipService {
       final MentorsPage mentorsPage, final MentorAppliedFilters filters) {
     final var currentCycle = getCurrentCycle();
 
-    final var mentors = FiltersUtil.applyFilters(getAllMentors(currentCycle), filters);
+    final var mentors = FiltersUtil.applyFilters(getAllActiveMentors(currentCycle), filters);
 
     return mentorsPage.updateUpdate(
         currentCycle.toOpenCycle(), FiltersUtil.mentorshipAllFilters(), mentors);
@@ -142,18 +142,18 @@ public class MentorshipService {
    *
    * @return List of mentors.
    */
-  public List<MentorDto> getAllMentors() {
-    return getAllMentors(getCurrentCycle());
+  public List<MentorDto> getAllActiveMentors() {
+    return getAllActiveMentors(getCurrentCycle());
   }
 
-  private List<MentorDto> getAllMentors(final MentorshipCycle currentCycle) {
-    final var allMentors = mentorRepository.getAll();
+  private List<MentorDto> getAllActiveMentors(final MentorshipCycle currentCycle) {
+    final var allActiveMentors = mentorRepository.getAll().stream().filter(m -> m.getProfileStatus() == ProfileStatus.ACTIVE);
 
     if (currentCycle == CYCLE_CLOSED) {
-      return allMentors.stream().map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
+      return allActiveMentors.map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
     }
 
-    return allMentors.stream()
+    return allActiveMentors
         .map(mentor -> enrichWithProfilePicture(mentor.toDto(currentCycle)))
         .toList();
   }

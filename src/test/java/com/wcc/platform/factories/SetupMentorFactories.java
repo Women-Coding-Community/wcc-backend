@@ -55,7 +55,7 @@ public class SetupMentorFactories {
             .images(member.getImages())
             .pronouns(null)
             .pronounCategory(null)
-            .profileStatus(ProfileStatus.PENDING)
+            .profileStatus(ProfileStatus.ACTIVE)
             .bio("Mentor bio")
             .spokenLanguages(List.of("english", "spanish", "german"))
             .skills(

@@ -66,7 +66,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
   void shouldReturnMentorsPageWithMentorsAndOpenCycle() {
     var mentorsPage = service.getMentorsPage(page);
 
-    assertThat(service.getAllMentors()).isNotEmpty();
+    assertThat(service.getAllActiveMentors()).isNotEmpty();
     assertThat(mentorsPage.openCycle()).isNotNull();
     var mentors = mentorsPage.mentors();
     assertThat(mentors).isNotEmpty();
@@ -97,7 +97,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             .build();
     profilePicRepository.create(profilePicture);
 
-    var mentors = service.getAllMentors();
+    var mentors = service.getAllActiveMentors();
 
     var mentorWithPicture =
         mentors.stream()
@@ -126,7 +126,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     repository.deleteById(mentor.getId());
     var createdMentor = repository.create(mentor);
 
-    var mentors = service.getAllMentors();
+    var mentors = service.getAllActiveMentors();
 
     var mentorWithoutPicture =
         mentors.stream()
@@ -223,7 +223,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             .build();
     profilePicRepository.create(profilePicture);
 
-    var mentors = service.getAllMentors();
+    var mentors = service.getAllActiveMentors();
 
     var mentorResult =
         mentors.stream()
