@@ -82,9 +82,8 @@ class ApiKeyFilterTest {
     verify(objectMapper).writeValue(eq(servletOutputStream), mapCaptor.capture());
 
     Map<String, String> actualMap = mapCaptor.getValue();
-    assertThat(actualMap.get("error")).isEqualTo("Unauthorized");
-    assertThat(actualMap.get("message")).isEqualTo("Invalid API Key");
-
+    assertThat(actualMap).containsEntry("error", "Unauthorized");
+    assertThat(actualMap).containsEntry("message", "Invalid API Key");
     verifyNoInteractions(filterChain);
   }
 
