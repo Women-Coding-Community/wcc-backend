@@ -445,7 +445,7 @@ class MentorshipServiceTest {
   @Test
   @DisplayName(
       "Given active and pending mentors with a closed cycle, when getAllMentors is called, then all"
-          + " mentors are returned")
+          + " active mentors are returned")
   void shouldReturnOnlyActiveMentorsWhenCycleIsClosed() {
     var activeMentor = mock(Mentor.class);
     var pendingMentor = mock(Mentor.class);
