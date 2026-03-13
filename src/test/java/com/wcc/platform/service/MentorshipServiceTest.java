@@ -437,7 +437,7 @@ class MentorshipServiceTest {
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
     when(service.getCurrentCycle()).thenReturn(openCycle);
 
-    List<MentorDto> result = service.getAllMentors();
+    List<MentorDto> result = service.getAllActiveMentors();
 
     assertThat(result).containsExactly(activeMentorDto);
   }
@@ -459,7 +459,7 @@ class MentorshipServiceTest {
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
     when(service.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
 
-    List<MentorDto> result = service.getAllMentors();
+    List<MentorDto> result = service.getAllActiveMentors();
 
     assertThat(result).containsExactly(activeMentorDto);
   }

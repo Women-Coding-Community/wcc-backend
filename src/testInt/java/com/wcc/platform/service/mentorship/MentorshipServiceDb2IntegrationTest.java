@@ -47,6 +47,6 @@ class MentorshipServiceDb2IntegrationTest {
 
     assertThat(mentorsPage.openCycle()).isNotNull();
     assertThat(mentorsPage.mentors()).isNotEmpty();
-    assertThat(service.getAllMentors()).isNotEmpty();
+    assertThat(service.getAllActiveMentors()).isNotEmpty();
   }
 }

@@ -47,7 +47,7 @@ public class MentorshipController {
   @Operation(summary = "API to retrieve a list of all members")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorDto>> getAllMentors() {
-    final List<MentorDto> mentors = mentorshipService.getAllMentors();
+    final List<MentorDto> mentors = mentorshipService.getAllActiveMentors();
     return ResponseEntity.ok(mentors);
   }
 
