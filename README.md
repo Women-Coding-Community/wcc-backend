@@ -474,4 +474,3 @@ Follow these guidelines to keep the collection consistent and easy to maintain.
 4. Example: `mentee-registration-approval-flow`, `matching-flow`
 5. Add requests in the order they should be executed
 6. Ensure each request can be run sequentially as part of a folder execution by running the whole folder and making sure the HTML report is generated
-# Working on Sonar fix
