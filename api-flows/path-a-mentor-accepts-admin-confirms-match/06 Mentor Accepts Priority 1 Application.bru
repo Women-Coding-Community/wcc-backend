@@ -1,0 +1,39 @@
+meta {
+  name: Mentor Accepts Priority 1 Application
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/api/platform/v1/mentors/applications/:applicationId/accept
+  body: json
+  auth: apikey
+}
+
+params:path {
+  applicationId: {{pA_appId_p1}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+body:json {
+  {
+    "mentorResponse": "Looking forward to working with you!"
+  }
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Application status is MENTOR_ACCEPTED", function() {
+    const body = res.getBody();
+    expect(body.status).to.equal("MENTOR_ACCEPTED");
+    expect(body.mentorResponse).to.equal("Looking forward to working with you!");
+  });
+}

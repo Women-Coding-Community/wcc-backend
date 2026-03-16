@@ -1,0 +1,37 @@
+meta {
+  name: GET Applications and Verify DROPPED
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/mentees/:menteeId/applications
+  body: none
+  auth: apikey
+}
+
+params:path {
+  menteeId: {{pC_menteeId}}
+}
+
+params:query {
+  cycleId: {{pC_cycleId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Application status is DROPPED (terminal — no forwarding)", function() {
+    const apps = res.getBody();
+    expect(apps).to.be.an('array').with.lengthOf(1);
+    expect(apps[0].status).to.equal("DROPPED");
+  });
+}

@@ -1,0 +1,37 @@
+meta {
+  name: GET Open Cycle
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/admin/mentorship/cycles/current
+  body: none
+  auth: apikey
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+script:post-response {
+  const cycle = res.body;
+  bru.setEnvVar("pD_cycleId", cycle.cycleId);
+  bru.setEnvVar("pD_cycleYear", cycle.cycleYear);
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Open cycle exists with required fields", function() {
+    const cycle = res.getBody();
+    expect(cycle).to.exist;
+    expect(cycle.cycleId, "cycleId must be present").to.exist;
+    expect(cycle.cycleYear, "cycleYear must be present").to.exist;
+    expect(cycle.status, "cycle must be OPEN").to.equal("OPEN");
+  });
+}

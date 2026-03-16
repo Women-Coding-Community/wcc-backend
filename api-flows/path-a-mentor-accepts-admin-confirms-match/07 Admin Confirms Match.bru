@@ -1,0 +1,41 @@
+meta {
+  name: Admin Confirms Match
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/platform/v1/admin/mentorship/matches/confirm/:applicationId
+  body: none
+  auth: apikey
+}
+
+params:path {
+  applicationId: {{pA_appId_p1}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+script:post-response {
+  bru.setEnvVar("pA_matchId", res.body.matchId);
+}
+
+tests {
+  test("Response Status is Created (201)", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+
+  test("Match created with ACTIVE status linking correct mentor and mentee", function() {
+    const match = res.getBody();
+    const mentorId = parseInt(bru.getEnvVar("pA_mentor1Id"), 10);
+    const menteeId = parseInt(bru.getEnvVar("pA_menteeId"), 10);
+    expect(match.matchId, "matchId must be present").to.exist;
+    expect(match.status).to.equal("ACTIVE");
+    expect(match.mentorId).to.equal(mentorId);
+    expect(match.menteeId).to.equal(menteeId);
+  });
+}

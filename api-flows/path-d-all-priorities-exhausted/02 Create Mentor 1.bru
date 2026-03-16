@@ -1,0 +1,70 @@
+meta {
+  name: Create Mentor 1
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/platform/v1/mentors
+  body: json
+  auth: apikey
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+script:pre-request {
+  const { faker } = require('@faker-js/faker');
+
+  const payload = {
+    fullName: faker.person.fullName(),
+    position: faker.person.jobTitle(),
+    email: faker.internet.email(),
+    slackDisplayName: faker.internet.username(),
+    country: {
+      countryCode: faker.location.countryCode(),
+      countryName: faker.location.country()
+    },
+    city: faker.location.city(),
+    companyName: faker.company.name(),
+    memberTypes: ["MENTOR"],
+    images: [],
+    network: [],
+    profileStatus: "PENDING",
+    skills: {
+      yearsExperience: 8,
+      areas: ["Software Engineering"],
+      languages: ["Java"],
+      mentorshipFocus: ["Career growth"]
+    },
+    spokenLanguages: ["English"],
+    bio: faker.person.bio(),
+    menteeSection: {
+      longTerm: { numMentee: 2, hours: 2 },
+      adHoc: [],
+      idealMentee: faker.lorem.sentence(),
+      additional: ""
+    }
+  };
+
+  req.setBody(payload);
+}
+
+script:post-response {
+  bru.setEnvVar("pD_mentor1Id", res.body.id);
+}
+
+tests {
+  test("Response Status is Created (201)", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+
+  test("Mentor 1 created with PENDING status", function() {
+    const body = res.getBody();
+    expect(body.id, "mentor id must be present").to.exist;
+    expect(body.profileStatus).to.equal("PENDING");
+  });
+}

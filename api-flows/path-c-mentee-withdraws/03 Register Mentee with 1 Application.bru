@@ -1,0 +1,79 @@
+meta {
+  name: Register Mentee with 1 Application
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/platform/v1/mentees
+  body: json
+  auth: apikey
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+script:pre-request {
+  const { faker } = require('@faker-js/faker');
+
+  const mentorId = parseInt(bru.getEnvVar("pC_mentorId"), 10);
+  const cycleYear = parseInt(bru.getEnvVar("pC_cycleYear"), 10);
+
+  const payload = {
+    mentee: {
+      fullName: faker.person.fullName(),
+      position: faker.person.jobTitle(),
+      email: faker.internet.email(),
+      slackDisplayName: faker.internet.username(),
+      country: {
+        countryCode: faker.location.countryCode(),
+        countryName: faker.location.country()
+      },
+      city: faker.location.city(),
+      companyName: faker.company.name(),
+      images: [],
+      network: [],
+      profileStatus: "ACTIVE",
+      skills: {
+        yearsExperience: 1,
+        areas: ["Software Engineering"],
+        languages: ["JavaScript"],
+        mentorshipFocus: ["Career growth"]
+      },
+      spokenLanguages: ["English"],
+      bio: faker.person.bio(),
+      availableHsMonth: 3
+    },
+    mentorshipType: "LONG_TERM",
+    cycleYear: cycleYear,
+    applications: [
+      {
+        mentorId: mentorId,
+        priorityOrder: 1,
+        whyMentor: faker.lorem.sentence(),
+        applicationMessage: faker.lorem.sentence()
+      }
+    ]
+  };
+
+  req.setBody(payload);
+}
+
+script:post-response {
+  bru.setEnvVar("pC_menteeId", res.body.id);
+}
+
+tests {
+  test("Response Status is Created (201)", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+
+  test("Mentee created and returned with correct profile status", function() {
+    const body = res.getBody();
+    expect(body.id, "mentee id must be present").to.exist;
+    expect(body.profileStatus).to.equal("ACTIVE");
+  });
+}

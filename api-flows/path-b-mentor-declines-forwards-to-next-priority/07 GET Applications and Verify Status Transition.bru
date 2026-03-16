@@ -1,0 +1,45 @@
+meta {
+  name: GET Applications and Verify Status Transition
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/mentees/:menteeId/applications
+  body: none
+  auth: apikey
+}
+
+params:path {
+  menteeId: {{pB_menteeId}}
+}
+
+params:query {
+  cycleId: {{pB_cycleId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Priority 1 application is MENTOR_DECLINED", function() {
+    const apps = res.getBody();
+    const p1 = apps.find(a => a.priorityOrder === 1);
+    expect(p1, "priority 1 application must exist").to.exist;
+    expect(p1.status).to.equal("MENTOR_DECLINED");
+  });
+
+  test("Priority 2 application remains PENDING (forwarded)", function() {
+    const apps = res.getBody();
+    const p2 = apps.find(a => a.priorityOrder === 2);
+    expect(p2, "priority 2 application must exist").to.exist;
+    expect(p2.status).to.equal("PENDING");
+  });
+}

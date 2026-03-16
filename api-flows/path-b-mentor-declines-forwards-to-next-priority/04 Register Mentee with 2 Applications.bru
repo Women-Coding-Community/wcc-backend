@@ -1,0 +1,86 @@
+meta {
+  name: Register Mentee with 2 Applications
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/platform/v1/mentees
+  body: json
+  auth: apikey
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+script:pre-request {
+  const { faker } = require('@faker-js/faker');
+
+  const mentor1Id = parseInt(bru.getEnvVar("pB_mentor1Id"), 10);
+  const mentor2Id = parseInt(bru.getEnvVar("pB_mentor2Id"), 10);
+  const cycleYear = parseInt(bru.getEnvVar("pB_cycleYear"), 10);
+
+  const payload = {
+    mentee: {
+      fullName: faker.person.fullName(),
+      position: faker.person.jobTitle(),
+      email: faker.internet.email(),
+      slackDisplayName: faker.internet.username(),
+      country: {
+        countryCode: faker.location.countryCode(),
+        countryName: faker.location.country()
+      },
+      city: faker.location.city(),
+      companyName: faker.company.name(),
+      images: [],
+      network: [],
+      profileStatus: "ACTIVE",
+      skills: {
+        yearsExperience: 2,
+        areas: ["Software Engineering"],
+        languages: ["Python"],
+        mentorshipFocus: ["Career growth"]
+      },
+      spokenLanguages: ["English"],
+      bio: faker.person.bio(),
+      availableHsMonth: 4
+    },
+    mentorshipType: "LONG_TERM",
+    cycleYear: cycleYear,
+    applications: [
+      {
+        mentorId: mentor1Id,
+        priorityOrder: 1,
+        whyMentor: faker.lorem.sentence(),
+        applicationMessage: faker.lorem.sentence()
+      },
+      {
+        mentorId: mentor2Id,
+        priorityOrder: 2,
+        whyMentor: faker.lorem.sentence(),
+        applicationMessage: faker.lorem.sentence()
+      }
+    ]
+  };
+
+  req.setBody(payload);
+}
+
+script:post-response {
+  bru.setEnvVar("pB_menteeId", res.body.id);
+}
+
+tests {
+  test("Response Status is Created (201)", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+
+  test("Mentee created and returned with correct profile status", function() {
+    const body = res.getBody();
+    expect(body.id, "mentee id must be present").to.exist;
+    expect(body.profileStatus).to.equal("ACTIVE");
+  });
+}

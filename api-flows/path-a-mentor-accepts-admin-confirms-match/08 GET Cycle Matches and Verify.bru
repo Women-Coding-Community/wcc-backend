@@ -1,0 +1,38 @@
+meta {
+  name: GET Cycle Matches and Verify
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/admin/mentorship/matches
+  body: none
+  auth: apikey
+}
+
+params:query {
+  cycleId: {{pA_cycleId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Confirmed match is present in cycle matches", function() {
+    const matches = res.getBody();
+    const matchId = parseInt(bru.getEnvVar("pA_matchId"), 10);
+    const menteeId = parseInt(bru.getEnvVar("pA_menteeId"), 10);
+    expect(matches).to.be.an('array');
+    const found = matches.find(m => Number(m.matchId) === matchId);
+    expect(found, `match with id ${matchId} should be present`).to.exist;
+    expect(found.status).to.equal("ACTIVE");
+    expect(found.menteeId).to.equal(menteeId);
+  });
+}

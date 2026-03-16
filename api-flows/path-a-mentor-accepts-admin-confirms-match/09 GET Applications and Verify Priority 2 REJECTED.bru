@@ -1,0 +1,45 @@
+meta {
+  name: GET Applications and Verify Priority 2 REJECTED
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/mentees/:menteeId/applications
+  body: none
+  auth: apikey
+}
+
+params:path {
+  menteeId: {{pA_menteeId}}
+}
+
+params:query {
+  cycleId: {{pA_cycleId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Priority 1 application is MATCHED", function() {
+    const apps = res.getBody();
+    const p1 = apps.find(a => a.priorityOrder === 1);
+    expect(p1, "priority 1 application must exist").to.exist;
+    expect(p1.status).to.equal("MATCHED");
+  });
+
+  test("Priority 2 application is REJECTED after match confirmed", function() {
+    const apps = res.getBody();
+    const p2 = apps.find(a => a.priorityOrder === 2);
+    expect(p2, "priority 2 application must exist").to.exist;
+    expect(p2.status).to.equal("REJECTED");
+  });
+}

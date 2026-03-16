@@ -1,0 +1,46 @@
+meta {
+  name: GET Applications and Verify All DECLINED
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/mentees/:menteeId/applications
+  body: none
+  auth: apikey
+}
+
+params:path {
+  menteeId: {{pD_menteeId}}
+}
+
+params:query {
+  cycleId: {{pD_cycleId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("All 3 applications are MENTOR_DECLINED (current behaviour — all priorities exhausted)", function() {
+    // NOTE: Once ticket #548 is implemented, the last application should transition
+    // to PENDING_MANUAL_MATCH instead of remaining as MENTOR_DECLINED.
+    // Update this assertion after #548 lands.
+    const apps = res.getBody();
+    expect(apps).to.be.an('array').with.lengthOf(3);
+    apps.forEach(app => expect(app.status).to.equal("MENTOR_DECLINED"));
+  });
+
+  test("GET applications by status MENTOR_DECLINED returns this mentee's applications", function() {
+    const apps = res.getBody();
+    const menteeId = parseInt(bru.getEnvVar("pD_menteeId"), 10);
+    apps.forEach(app => expect(app.menteeId).to.equal(menteeId));
+  });
+}

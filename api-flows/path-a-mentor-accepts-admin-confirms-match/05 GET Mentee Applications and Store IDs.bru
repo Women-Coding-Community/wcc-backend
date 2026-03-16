@@ -1,0 +1,54 @@
+meta {
+  name: GET Mentee Applications and Store IDs
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/platform/v1/mentees/:menteeId/applications
+  body: none
+  auth: apikey
+}
+
+params:path {
+  menteeId: {{pA_menteeId}}
+}
+
+params:query {
+  cycleId: {{pA_cycleId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+script:post-response {
+  const apps = res.body;
+  const p1 = apps.find(a => a.priorityOrder === 1);
+  const p2 = apps.find(a => a.priorityOrder === 2);
+  if (p1) bru.setEnvVar("pA_appId_p1", p1.applicationId);
+  if (p2) bru.setEnvVar("pA_appId_p2", p2.applicationId);
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("Returns 2 applications ordered by priority, all PENDING", function() {
+    const apps = res.getBody();
+    expect(apps).to.be.an('array').with.lengthOf(2);
+    expect(apps[0].priorityOrder).to.equal(1);
+    expect(apps[1].priorityOrder).to.equal(2);
+    apps.forEach(app => expect(app.status).to.equal("PENDING"));
+  });
+
+  test("Priority 1 application targets mentor 1", function() {
+    const apps = res.getBody();
+    const mentor1Id = parseInt(bru.getEnvVar("pA_mentor1Id"), 10);
+    const p1 = apps.find(a => a.priorityOrder === 1);
+    expect(p1.mentorId).to.equal(mentor1Id);
+  });
+}
