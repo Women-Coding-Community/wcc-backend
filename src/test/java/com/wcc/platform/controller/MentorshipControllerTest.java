@@ -219,7 +219,7 @@ class MentorshipControllerTest {
 
     Mentor acceptedMentor = createUpdatedMentorTest(pendingMentor, mentorDto);
 
-    when(mentorshipService.activateMentor(eq(mentorId))).thenReturn(acceptedMentor);
+    when(mentorshipService.activateMentor(mentorId)).thenReturn(acceptedMentor);
 
     mockMvc
         .perform(
