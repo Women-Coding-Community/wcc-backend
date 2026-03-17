@@ -17,5 +17,5 @@ export const TECHNICAL_AREAS = [
   {value: 'PROJ_MANAGEMENT', label: 'Project Management'},
   {value: 'QA', label: 'Quality Assurance'},
   {value: 'SECURITY', label: 'Security'},
-  {value: 'SITE_RELIABILITY_ENGINEERING', label: 'Site Reliability Engineering'},
+  {value: 'SRE', label: 'Site Reliability Engineering'},
 ];

@@ -31,7 +31,7 @@ public enum TechnicalArea {
   PROJ_MANAGEMENT(14, "Project Management"),
   QA(8, "Quality Assurance"),
   SECURITY(19, "Security"),
-  SITE_RELIABILITY_ENGINEERING(19, "Site Reliability Engineering");
+  SRE(19, "Site Reliability Engineering");
 
   private final int technicalAreaId;
   private final String description;
