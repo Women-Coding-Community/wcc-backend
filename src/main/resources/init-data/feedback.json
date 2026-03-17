@@ -1,0 +1,81 @@
+[
+  {
+    "id": 1,
+    "reviewerId": 1,
+    "revieweeId": 2,
+    "mentorshipCycleId": 1,
+    "feedbackType": "MENTOR_REVIEW",
+    "rating": 5,
+    "feedbackText": "An exceptional mentor.",
+    "year": 2026,
+    "isAnonymous": false,
+    "isApproved": true,
+    "createdAt": "2026-01-15T10:30:00Z",
+    "updatedAt": "2026-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "reviewerId": 1,
+    "revieweeId": 2,
+    "mentorshipCycleId": 1,
+    "feedbackType": "MENTOR_REVIEW",
+    "rating": 5,
+    "feedbackText": "An exceptional mentor.",
+    "year": 2026,
+    "isAnonymous": true,
+    "isApproved": false,
+    "createdAt": "2026-01-20T14:15:00Z",
+    "updatedAt": "2026-01-20T14:15:00Z"
+  },
+  {
+    "id": 3,
+    "reviewerId": 2,
+    "feedbackType": "COMMUNITY_GENERAL",
+    "rating": 5,
+    "feedbackText": "The Women Coding Community fantastic feedback.",
+    "year": 2026,
+    "isAnonymous": false,
+    "isApproved": true,
+    "createdAt": "2026-01-18T09:00:00Z",
+    "updatedAt": "2026-01-18T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "reviewerId": 2,
+    "feedbackType": "COMMUNITY_GENERAL",
+    "rating": 5,
+    "feedbackText": "The Women Coding Community fantastic feedback.",
+    "year": 2026,
+    "isAnonymous": true,
+    "isApproved": false,
+    "createdAt": "2026-02-05T16:45:00Z",
+    "updatedAt": "2026-02-05T16:45:00Z"
+  },
+  {
+    "id": 5,
+    "reviewerId": 1,
+    "mentorshipCycleId": 1,
+    "feedbackType": "MENTORSHIP_PROGRAM",
+    "rating": 5,
+    "feedbackText": "The mentorship program feedback.",
+    "year": 2026,
+    "isAnonymous": true,
+    "isApproved": false,
+    "createdAt": "2026-02-10T11:20:00Z",
+    "updatedAt": "2026-02-10T11:20:00Z"
+  },
+  {
+    "id": 6,
+    "reviewerId": 2,
+    "mentorshipCycleId": 1,
+    "feedbackType": "MENTORSHIP_PROGRAM",
+    "rating": 4,
+    "feedbackText": "The mentorship program feedback.",
+    "year": 2026,
+    "isAnonymous": false,
+    "isApproved": true,
+    "createdAt": "2026-02-12T13:30:00Z",
+    "updatedAt": "2026-02-12T13:30:00Z"
+  }
+]
+

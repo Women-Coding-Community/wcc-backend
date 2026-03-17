@@ -8,6 +8,7 @@ import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
+import com.wcc.platform.domain.exceptions.FeedbackNotFoundException;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
@@ -31,7 +32,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     ContentNotFoundException.class,
     NoSuchElementException.class,
-    MemberNotFoundException.class
+    MemberNotFoundException.class,
+    FeedbackNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
