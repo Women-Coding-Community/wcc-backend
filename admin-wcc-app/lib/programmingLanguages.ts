@@ -15,4 +15,7 @@ export const PROGRAMMING_LANGUAGES = [
   {value: 'SCALA', label: 'Scala'},
   {value: 'SWIFT', label: 'Swift'},
   {value: 'DART', label: 'Dart'},
+  {value: 'REGO', label: 'Rego'},
+  {value: 'BASH', label: 'Bash'},
+  {value: 'YAML', label: 'Yaml'},
 ];

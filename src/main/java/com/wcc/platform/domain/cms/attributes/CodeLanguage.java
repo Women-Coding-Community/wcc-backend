@@ -28,7 +28,10 @@ public enum CodeLanguage {
   OTHER("Other", 13),
   SCALA("Scala", 14),
   SWIFT("Swift", 15),
-  DART("Dart", 16);
+  DART("Dart", 16),
+  REGO("Rego", 17),
+  BASH("Bash", 18),
+  YAML("Yaml", 19);
 
   private final String name;
   private final int langId;

@@ -8,4 +8,7 @@ VALUES (18, 'SECURITY', 'Security'),
 INSERT INTO languages (id, name, description)
 VALUES (14, 'SCALA', 'Scala'),
        (15, 'SWIFT', 'Swift'),
-       (16, 'DART', 'Dart');
+       (16, 'DART', 'Dart'),
+       (17, 'REGO', 'Rego'),
+       (18, 'BASH', 'Bash'),
+       (19, 'YAML', 'Yaml');
