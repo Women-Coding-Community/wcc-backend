@@ -1,7 +1,8 @@
 -- Insert additional technical areas
 INSERT INTO technical_areas (id, name, description)
 VALUES (18, 'SECURITY', 'Security'),
-       (19, 'SRE', 'Site Reliability Engineering');
+       (19, 'SRE', 'Site Reliability Engineering'),
+       (20, 'NETWORK_ENGINEERING', 'Network Engineering');
 
 --Insert additional code languages
 INSERT INTO languages (id, name, description)
