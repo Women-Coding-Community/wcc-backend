@@ -18,4 +18,7 @@ export const PROGRAMMING_LANGUAGES = [
   {value: 'REGO', label: 'Rego'},
   {value: 'BASH', label: 'Bash'},
   {value: 'YAML', label: 'Yaml'},
+  {value: 'HCL', label: 'HCL'},
+  {value: 'TERRAFORM', label: 'Terraform'},
+  {value: 'OPENTOFU', label: 'OpenTofu'},
 ];

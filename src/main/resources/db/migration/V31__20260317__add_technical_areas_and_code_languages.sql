@@ -11,4 +11,7 @@ VALUES (14, 'SCALA', 'Scala'),
        (16, 'DART', 'Dart'),
        (17, 'REGO', 'Rego'),
        (18, 'BASH', 'Bash'),
-       (19, 'YAML', 'Yaml');
+       (19, 'YAML', 'Yaml'),
+       (20, 'HCL', 'HCL'),
+       (21, 'TERRAFORM', 'Terraform'),
+       (22, 'OPENTOFU', 'OpenTofu');

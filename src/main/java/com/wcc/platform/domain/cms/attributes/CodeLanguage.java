@@ -31,7 +31,10 @@ public enum CodeLanguage {
   DART("Dart", 16),
   REGO("Rego", 17),
   BASH("Bash", 18),
-  YAML("Yaml", 19);
+  YAML("Yaml", 19),
+  HCL("HCL", 20),
+  TERRAFORM("Terraform", 21),
+  OPENTOFU("OpenTofu", 22);
 
   private final String name;
   private final int langId;
