@@ -19,7 +19,7 @@ public class TechnicalAreaDeserializer extends JsonDeserializer<TechnicalArea> {
       return Arrays.stream(TechnicalArea.values())
           .filter(
               area ->
-                  area.getDescription().equalsIgnoreCase(value)
+                  area.getDescription().replace("_", " ").equalsIgnoreCase(value)
                       || area.name().equalsIgnoreCase(value))
           .findFirst()
           .orElseThrow(
