@@ -22,6 +22,7 @@ import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -83,9 +84,20 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
-  /**
-   * Receive {@link DuplicatedException} subclasses and return {@link HttpStatus#CONFLICT}.
-   */
+  /** Receive {@link DataAccessException} then return {@link HttpStatus#CONFLICT}. */
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ResponseEntity<ErrorDetails> handleDataAccessException(
+      final DataIntegrityViolationException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.CONFLICT.value(),
+            ex.getMostSpecificCause().getMessage(),
+            request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+  }
+
+  /** Receive {@link DuplicatedException} subclasses and return {@link HttpStatus#CONFLICT}. */
   @ExceptionHandler(DuplicatedException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorDetails> handleRecordAlreadyExitsException(
