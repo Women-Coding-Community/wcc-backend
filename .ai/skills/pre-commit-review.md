@@ -50,11 +50,13 @@ Apply only the checks relevant to what was actually changed.
 - State and effect hygiene — no unnecessary re-renders, correct dependency arrays
 - Project style conventions
 
-### Tests
+### Tests (Java)
 - New logic paths have corresponding unit tests
 - Integration tests exist for database/API changes
-- Test names follow Given-When-Then `@DisplayName` format (Java) or descriptive `it()`/`test()` (JS)
 - Mocks used only where appropriate; integration tests hit real infrastructure
+- **Naming**: method names must use the `should` prefix (e.g. `shouldReturnConflictForDuplicateKey`), not `test`
+- **`@DisplayName`**: every test must have a `@DisplayName` annotation in Given-When-Then format: `"Given <precondition>, when <action>, then <expected outcome>"` — no `// Arrange / Act / Assert` inline comments
+- **Java 21 idioms**: prefer `.getFirst()` over `.get(0)` for `List` access; flag `.get(0)` usages in new or changed test code as [INFO]
 
 ## Step 4 — Output format
 
