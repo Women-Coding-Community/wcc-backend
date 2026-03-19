@@ -45,7 +45,7 @@ public class MenteeMapper {
                 .images(member.getImages())
                 .network(member.getNetwork()));
 
-    final var skillsMentee = skillsRepository.findSkills(menteeId);
+    final var skillsMentee = skillsRepository.findMenteeSkills(menteeId);
     skillsMentee.ifPresent(builder::skills);
 
     return builder

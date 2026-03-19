@@ -27,14 +27,27 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor
 public class PostgresSkillRepository implements SkillRepository {
 
-  private static final String SELECT_AREAS_IDS =
-      "SELECT technical_area_id, proficiency_level_id FROM mentor_technical_areas WHERE mentor_id = ?";
-  private static final String SELECT_FOCUS_IDS =
-      "SELECT focus_area_id FROM mentor_mentorship_focus_areas WHERE mentor_id = ?";
-  private static final String SELECT_LANGUAGES_IDS =
-      "SELECT language_id, proficiency_level_id FROM mentor_languages WHERE mentor_id = ?";
   private static final String SELECT_YEARS =
       "SELECT years_experience FROM mentors WHERE mentor_id = ?";
+  private static final String SELECT_YEARS_MENTEE =
+      "SELECT years_experience FROM mentees WHERE mentee_id = ?";
+
+  private static final String SELECT_AREAS_IDS =
+      "SELECT technical_area_id, proficiency_level_id "
+          + "FROM mentor_technical_areas WHERE mentor_id = ?";
+  private static final String SELECT_MENTEE_AREAS =
+      "SELECT technical_area_id, proficiency_level_id FROM mentee_technical_areas WHERE mentee_id = ?";
+
+  private static final String SELECT_FOCUS_IDS =
+      "SELECT focus_area_id FROM mentor_mentorship_focus_areas WHERE mentor_id = ?";
+  private static final String SELECT_MENTEE_FOCUS =
+      "SELECT focus_area_id FROM mentee_mentorship_focus_areas WHERE mentee_id = ?";
+
+  private static final String SELECT_LANGUAGES_IDS =
+      "SELECT language_id, proficiency_level_id FROM mentor_languages WHERE mentor_id = ?";
+  private static final String SELECT_MENTEE_LANGS =
+      "SELECT language_id, proficiency_level_id FROM mentee_languages WHERE mentee_id = ?";
+
   private static final String SQL_TECH_AREAS_INSERT =
       "INSERT INTO mentor_technical_areas (mentor_id, technical_area_id, proficiency_level_id) VALUES (?, ?, ?)";
   private static final String SQL_PROG_LANG_INSERT =
@@ -50,7 +63,21 @@ public class PostgresSkillRepository implements SkillRepository {
       final var areas = getMentorAreas(mentorId);
       final var focusAreas = getMentorFocusAreas(mentorId);
       final var languages = getMentorLanguages(mentorId);
-      final var yearsExperience = getYearsExperience(mentorId);
+      final var yearsExperience = getYearsExperience(mentorId, SELECT_YEARS);
+
+      return Optional.of(new Skills(yearsExperience, areas, languages, focusAreas));
+    } catch (EmptyResultDataAccessException ex) {
+      return Optional.empty();
+    }
+  }
+
+  @Override
+  public Optional<Skills> findMenteeSkills(final Long menteeId) {
+    try {
+      final var areas = getMenteeAreas(menteeId);
+      final var focusAreas = getMenteeFocusAreas(menteeId);
+      final var languages = getMenteeLanguages(menteeId);
+      final var yearsExperience = getYearsExperience(menteeId, SELECT_YEARS_MENTEE);
 
       return Optional.of(new Skills(yearsExperience, areas, languages, focusAreas));
     } catch (EmptyResultDataAccessException ex) {
@@ -100,11 +127,10 @@ public class PostgresSkillRepository implements SkillRepository {
     }
   }
 
-  private Integer getYearsExperience(final Long mentorId) {
+  private Integer getYearsExperience(final Long id, final String sql) {
     try {
       final var yearsExperience =
-          jdbcTemplate.queryForObject(
-              SELECT_YEARS, SingleColumnRowMapper.newInstance(Integer.class), mentorId);
+          jdbcTemplate.queryForObject(sql, SingleColumnRowMapper.newInstance(Integer.class), id);
 
       return yearsExperience != null ? yearsExperience : 1;
     } catch (EmptyResultDataAccessException e) {
@@ -131,7 +157,15 @@ public class PostgresSkillRepository implements SkillRepository {
   }
 
   private List<MentorshipFocusArea> getMentorFocusAreas(final Long mentorId) {
-    return jdbcTemplate.query(SELECT_FOCUS_IDS, (rs, rowNum) -> rs.getInt(1), mentorId).stream()
+    return getFocusAreas(mentorId, SELECT_FOCUS_IDS);
+  }
+
+  private List<MentorshipFocusArea> getMenteeFocusAreas(final Long menteeId) {
+    return getFocusAreas(menteeId, SELECT_MENTEE_FOCUS);
+  }
+
+  private List<MentorshipFocusArea> getFocusAreas(final Long id, final String sql) {
+    return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt(1), id).stream()
         .filter(Objects::nonNull)
         .map(
             focusAreaId -> {
@@ -156,6 +190,41 @@ public class PostgresSkillRepository implements SkillRepository {
                   CodeLanguage.fromId(languageId), ProficiencyLevel.fromId(proficiencyLevelId));
             },
             mentorId)
+        .stream()
+        .filter(Objects::nonNull)
+        .distinct()
+        .toList();
+  }
+
+  private List<LanguageProficiency> getMenteeLanguages(final Long menteeId) {
+    return jdbcTemplate
+        .query(
+            SELECT_MENTEE_LANGS,
+            (rs, rowNum) -> {
+              final int languageId = rs.getInt("language_id");
+              final int proficiencyLevelId = rs.getInt("proficiency_level_id");
+              return new LanguageProficiency(
+                  CodeLanguage.fromId(languageId), ProficiencyLevel.fromId(proficiencyLevelId));
+            },
+            menteeId)
+        .stream()
+        .filter(Objects::nonNull)
+        .distinct()
+        .toList();
+  }
+
+  private List<TechnicalAreaProficiency> getMenteeAreas(final Long menteeId) {
+    return jdbcTemplate
+        .query(
+            SELECT_MENTEE_AREAS,
+            (rs, rowNum) -> {
+              final int technicalAreaId = rs.getInt("technical_area_id");
+              final int proficiencyLevelId = rs.getInt("proficiency_level_id");
+              return new TechnicalAreaProficiency(
+                  TechnicalArea.fromId(technicalAreaId),
+                  ProficiencyLevel.fromId(proficiencyLevelId));
+            },
+            menteeId)
         .stream()
         .filter(Objects::nonNull)
         .distinct()

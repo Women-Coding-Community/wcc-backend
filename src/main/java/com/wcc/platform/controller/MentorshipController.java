@@ -123,4 +123,16 @@ public class MentorshipController {
     return new ResponseEntity<>(
         menteeService.saveRegistration(menteeRegistration), HttpStatus.CREATED);
   }
+
+  /**
+   * Retrieves a list of all registered mentees.
+   *
+   * @return a list of Mentee existent mentees
+   */
+  @GetMapping("/mentees")
+  @Operation(summary = "API to list all mentee")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<Mentee>> listMentees() {
+    return new ResponseEntity<>(menteeService.getAllMentees(), HttpStatus.OK);
+  }
 }
