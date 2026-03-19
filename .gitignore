@@ -46,3 +46,4 @@ node_modules
 .DS_Store
 /fly.toml
 docs/presentation-claude-code-skills.md
+/src/main/resources/application-dev.yml
