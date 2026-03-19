@@ -57,6 +57,16 @@ Apply only the checks relevant to what was actually changed.
 - **Naming**: method names must use the `should` prefix (e.g. `shouldReturnConflictForDuplicateKey`), not `test`
 - **`@DisplayName`**: every test must have a `@DisplayName` annotation in Given-When-Then format: `"Given <precondition>, when <action>, then <expected outcome>"` — no `// Arrange / Act / Assert` inline comments
 - **Java 21 idioms**: prefer `.getFirst()` over `.get(0)` for `List` access; flag `.get(0)` usages in new or changed test code as [INFO]
+- **Sonar: useless `eq(...)` wrappers** — flag `eq(...)` used around a literal value or specific object in Mockito `when()`/`verify()` calls as [WARNING]. Sonar rule: _"Remove this and every subsequent useless `eq(...)` invocation; pass the values directly."_ `eq()` is only needed when mixing matchers with literals in the same call; if all arguments are literals, drop `eq()` entirely.
+  ```java
+  // bad — Sonar warning
+  when(service.findById(eq(1L))).thenReturn(result);
+  // good
+  when(service.findById(1L)).thenReturn(result);
+
+  // ok — eq() needed because another arg uses a matcher
+  when(service.update(eq(1L), any(Dto.class))).thenReturn(result);
+  ```
 
 ## Step 4 — Output format
 

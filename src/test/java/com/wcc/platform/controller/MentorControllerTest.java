@@ -2,7 +2,6 @@ package com.wcc.platform.controller;
 
 import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
-import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
@@ -21,11 +20,9 @@ import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
-import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
-import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -38,24 +35,23 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-/** Unit test for mentorship APIs. */
+/** Unit test for MentorController. */
 @ActiveProfiles("test")
 @Import({SecurityConfig.class, TestConfig.class})
-@WebMvcTest(MentorshipController.class)
-class MentorshipControllerTest {
+@WebMvcTest(MentorController.class)
+class MentorControllerTest {
 
   private static final String API_MENTORS = "/api/platform/v1/mentors";
-  private static final String API_MENTEES = "/api/platform/v1/mentees";
   private static final String API_KEY_HEADER = "X-API-KEY";
   private static final String API_KEY_VALUE = "test-api-key";
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired private MockMvc mockMvc;
   @MockBean private MentorshipService mentorshipService;
-  @MockBean private MenteeService menteeService;
 
   @Test
-  void testGetAllMentorsReturnsOk() throws Exception {
+  @DisplayName("Given mentors exist, when getting all mentors, then return 200 OK")
+  void shouldGetAllMentorsAndReturnOk() throws Exception {
     List<MentorDto> mockMentors = List.of(createMentorTest("Jane").toDto());
     when(mentorshipService.getAllMentors()).thenReturn(mockMentors);
 
@@ -68,7 +64,8 @@ class MentorshipControllerTest {
   }
 
   @Test
-  void testCreateMentorReturnsCreated() throws Exception {
+  @DisplayName("Given valid mentor DTO, when creating mentor, then return 201 Created")
+  void shouldCreateMentorAndReturnCreated() throws Exception {
     var mentorRequestBody = createMentorDtoTest(1L, MemberType.MENTOR);
     var returnedMentor = createMentorTest("Jane");
     when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor);
@@ -82,28 +79,8 @@ class MentorshipControllerTest {
   }
 
   @Test
-  void testCreateMenteeReturnsCreated() throws Exception {
-    Mentee mockMentee = createMenteeTest(2L, "Mark", "mark@test.com");
-    var currentYear = java.time.Year.now();
-
-    when(menteeService.saveRegistration(any())).thenReturn(mockMentee);
-
-    mockMvc
-        .perform(
-            MockMvcRequestBuilders.post(API_MENTEES)
-                .header(API_KEY_HEADER, API_KEY_VALUE)
-                .contentType(APPLICATION_JSON)
-                .content(
-                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[{\"technicalArea\":\"BACKEND\",\"proficiencyLevel\":\"BEGINNER\"}],\"languages\":[{\"language\":\"JAVASCRIPT\",\"proficiencyLevel\":\"BEGINNER\"}],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
-                        + currentYear
-                        + "\",\"applications\":[{\"mentorId\":1,\"priorityOrder\":1,\"whyMentor\":\"This mentor has skills I want to improve\"}]}"))
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id", is(2)))
-        .andExpect(jsonPath("$.fullName", is("Mark")));
-  }
-
-  @Test
-  void testUpdateMentorReturnsOk() throws Exception {
+  @DisplayName("Given valid mentor ID and DTO, when updating mentor, then return 200 OK")
+  void shouldUpdateMentorAndReturnOk() throws Exception {
     Long mentorId = 1L;
     Mentor existingMentor = createMentorTest();
     MentorDto mentorDto = createMentorTest().toDto();
@@ -122,7 +99,8 @@ class MentorshipControllerTest {
   }
 
   @Test
-  void testUpdateMentorReturnsUpdatedFields() throws Exception {
+  @DisplayName("Given valid mentor ID and DTO, when updating mentor, then return updated fields")
+  void shouldUpdateMentorAndReturnUpdatedFields() throws Exception {
     Long mentorId = 1L;
     Mentor existingMentor = createMentorTest();
     MentorDto mentorDto = createMentorTest().toDto();
@@ -140,7 +118,8 @@ class MentorshipControllerTest {
         .andExpect(jsonPath("$.id", is(1)))
         .andExpect(jsonPath("$.bio", is(updatedMentor.getBio())))
         .andExpect(jsonPath("$.spokenLanguages", hasSize(2)))
-        .andExpect(jsonPath("$.spokenLanguages[0]", is(updatedMentor.getSpokenLanguages().get(0))))
+        .andExpect(
+            jsonPath("$.spokenLanguages[0]", is(updatedMentor.getSpokenLanguages().getFirst())))
         .andExpect(jsonPath("$.spokenLanguages[1]", is(updatedMentor.getSpokenLanguages().get(1))))
         .andExpect(
             jsonPath("$.skills.yearsExperience", is(updatedMentor.getSkills().yearsExperience())))
@@ -172,7 +151,8 @@ class MentorshipControllerTest {
   }
 
   @Test
-  void testUpdateNonExistentMentorThrowsException() throws Exception {
+  @DisplayName("Given non-existent mentor ID, when updating mentor, then return 404 Not Found")
+  void shouldReturnNotFoundWhenUpdatingNonExistentMentor() throws Exception {
     Long nonExistentMentorId = 999L;
     MentorDto mentorDto = createMentorTest().toDto();
 
@@ -191,11 +171,10 @@ class MentorshipControllerTest {
   @Test
   @DisplayName(
       "Given pending mentor, when accept is called, then returns 200 OK with ACTIVE status")
-  void testAcceptMentorReturnsOk() throws Exception {
+  void shouldAcceptMentorAndReturnOk() throws Exception {
     Long mentorId = 1L;
     Mentor pendingMentor = createMentorTest("Jane");
     MentorDto mentorDto = createMentorDtoTest(mentorId, MemberType.MENTOR);
-    // Explicitly set the status to ACTIVE in the DTO, which is now respected by the factory
     mentorDto =
         MentorDto.mentorDtoBuilder()
             .id(mentorDto.getId())
@@ -235,10 +214,10 @@ class MentorshipControllerTest {
   @DisplayName(
       "Given mentor already accepted (ACTIVE), when accept is called again, then"
           + " returns 409 Conflict")
-  void testAcceptAlreadyAcceptedMentorReturnsConflict() throws Exception {
+  void shouldReturnConflictWhenAcceptingAlreadyActiveMentor() throws Exception {
     Long mentorId = 1L;
 
-    when(mentorshipService.activateMentor(eq(mentorId)))
+    when(mentorshipService.activateMentor(mentorId))
         .thenThrow(new MentorStatusException("Mentor with ID " + mentorId + " is already active"));
 
     mockMvc
@@ -251,10 +230,10 @@ class MentorshipControllerTest {
 
   @Test
   @DisplayName("Given non-existent mentor, when accept is called, then returns 404 Not Found")
-  void testAcceptNonExistentMentorReturnsNotFound() throws Exception {
+  void shouldReturnNotFoundWhenAcceptingNonExistentMentor() throws Exception {
     Long nonExistentMentorId = 999L;
 
-    when(mentorshipService.activateMentor(eq(nonExistentMentorId)))
+    when(mentorshipService.activateMentor(nonExistentMentorId))
         .thenThrow(new MemberNotFoundException(nonExistentMentorId));
 
     mockMvc
@@ -267,7 +246,7 @@ class MentorshipControllerTest {
   @Test
   @DisplayName(
       "Given pending mentor, when reject is called, then returns 200 OK with REJECTED status")
-  void testRejectMentorReturnsOk() throws Exception {
+  void shouldRejectMentorAndReturnOk() throws Exception {
     Long mentorId = 1L;
     Mentor pendingMentor = createMentorTest("Jane");
     MentorDto mentorDto = createMentorDtoTest(mentorId, MemberType.MENTOR);
@@ -295,8 +274,7 @@ class MentorshipControllerTest {
     Mentor rejectedMentor = createUpdatedMentorTest(pendingMentor, mentorDto);
 
     String rejectionReason = "Not a good fit at this time";
-    when(mentorshipService.rejectMentor(eq(mentorId), eq(rejectionReason)))
-        .thenReturn(rejectedMentor);
+    when(mentorshipService.rejectMentor(mentorId, rejectionReason)).thenReturn(rejectedMentor);
 
     mockMvc
         .perform(
@@ -312,9 +290,9 @@ class MentorshipControllerTest {
 
   @Test
   @DisplayName(
-      "Given mentor already accepted (REJECTED), when reject is called again, then"
+      "Given mentor already rejected (REJECTED), when reject is called again, then"
           + " returns 409 Conflict")
-  void testAcceptAlreadyRejectedMentorReturnsConflict() throws Exception {
+  void shouldReturnConflictWhenRejectingAlreadyRejectedMentor() throws Exception {
     Long mentorId = 1L;
     String rejectionReason = "Not a good fit at this time";
 
@@ -335,7 +313,7 @@ class MentorshipControllerTest {
 
   @Test
   @DisplayName("Given non-existent mentor, when reject is called, then returns 404 Not Found")
-  void testRejectNonExistentMentorReturnsNotFound() throws Exception {
+  void shouldReturnNotFoundWhenRejectingNonExistentMentor() throws Exception {
     Long nonExistentMentorId = 999L;
     String rejectionReason = "Not a good fit at this time";
 
@@ -354,7 +332,7 @@ class MentorshipControllerTest {
   @Test
   @DisplayName(
       "Given mentor with isWomen=true, when creating mentor, then response includes the field")
-  void testCreateMentorWithIsWomenReturnsFieldInResponse() throws Exception {
+  void shouldReturnIsWomenFieldWhenCreatingMentor() throws Exception {
     Mentor mentor = createMentorTest("Test Mentor");
     mentor =
         Mentor.mentorBuilder()
@@ -384,7 +362,7 @@ class MentorshipControllerTest {
   @Test
   @DisplayName(
       "Given mentors exist, when getting all mentors, then response includes isWomen field")
-  void testGetAllMentorsIncludesIsWomenField() throws Exception {
+  void shouldIncludeIsWomenFieldWhenGettingAllMentors() throws Exception {
     MentorDto mentorDto1 = createMentorDtoTest(1L, MemberType.MENTOR);
     mentorDto1 =
         MentorDto.mentorDtoBuilder()

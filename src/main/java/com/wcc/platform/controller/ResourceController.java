@@ -28,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/platform/v1/resources")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Platform: Resources", description = "APIs for managing resources and profile pictures")
+@Tag(
+    name = "Platform: Mentorship Resources",
+    description = "APIs for managing overall resources like profile pictures")
 @AllArgsConstructor
 public class ResourceController {
 

@@ -25,7 +25,7 @@ description: Review local staged and unstaged changes before committing. Outputs
 3. Check conventions and quality for changed technologies only:
    - **Java/Spring Boot**: Java 21 idioms, Spring Boot conventions, transaction/error-handling patterns, naming consistency, clean-code principles, Lombok alignment.
    - **Frontend (React/TypeScript)**: component boundaries, typing quality, state/effect hygiene, project style conventions.
-   - **Tests (Java)**: coverage of new logic paths; method names use `should` prefix; every test has `@DisplayName("Given …, when …, then …")` — no `// Arrange / Act / Assert` comments; prefer `.getFirst()` over `.get(0)` (Java 21); mocks only where appropriate.
+   - **Tests (Java)**: coverage of new logic paths; method names use `should` prefix; every test has `@DisplayName("Given …, when …, then …")` — no `// Arrange / Act / Assert` comments; prefer `.getFirst()` over `.get(0)` (Java 21); mocks only where appropriate; flag useless `eq(...)` wrappers around literals in Mockito `when()`/`verify()` calls as [WARNING] — `eq()` is only needed when mixing matchers with literals in the same invocation.
 
 4. Output the review in two parts:
 
