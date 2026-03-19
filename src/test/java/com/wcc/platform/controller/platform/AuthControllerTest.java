@@ -18,6 +18,7 @@ import com.wcc.platform.domain.auth.UserToken;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
+import com.wcc.platform.service.MemberService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +57,7 @@ class AuthControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
   @MockBean private AuthService authService;
+  @MockBean private MemberService memberService;
 
   @Test
   @DisplayName(
