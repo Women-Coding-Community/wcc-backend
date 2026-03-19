@@ -26,6 +26,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @AllArgsConstructor
 public class PostgresSkillRepository implements SkillRepository {
+  private static final String COLUMN_PROFICIENCY = "proficiency_level_id";
 
   private static final String SELECT_YEARS =
       "SELECT years_experience FROM mentors WHERE mentor_id = ?";
@@ -144,7 +145,7 @@ public class PostgresSkillRepository implements SkillRepository {
             SELECT_AREAS_IDS,
             (rs, rowNum) -> {
               final int technicalAreaId = rs.getInt("technical_area_id");
-              final int proficiencyLevelId = rs.getInt("proficiency_level_id");
+              final int proficiencyLevelId = rs.getInt(COLUMN_PROFICIENCY);
               return new TechnicalAreaProficiency(
                   TechnicalArea.fromId(technicalAreaId),
                   ProficiencyLevel.fromId(proficiencyLevelId));
@@ -185,7 +186,7 @@ public class PostgresSkillRepository implements SkillRepository {
             SELECT_LANGUAGES_IDS,
             (rs, rowNum) -> {
               final int languageId = rs.getInt("language_id");
-              final int proficiencyLevelId = rs.getInt("proficiency_level_id");
+              final int proficiencyLevelId = rs.getInt(COLUMN_PROFICIENCY);
               return new LanguageProficiency(
                   CodeLanguage.fromId(languageId), ProficiencyLevel.fromId(proficiencyLevelId));
             },
@@ -202,7 +203,7 @@ public class PostgresSkillRepository implements SkillRepository {
             SELECT_MENTEE_LANGS,
             (rs, rowNum) -> {
               final int languageId = rs.getInt("language_id");
-              final int proficiencyLevelId = rs.getInt("proficiency_level_id");
+              final int proficiencyLevelId = rs.getInt(COLUMN_PROFICIENCY);
               return new LanguageProficiency(
                   CodeLanguage.fromId(languageId), ProficiencyLevel.fromId(proficiencyLevelId));
             },
@@ -219,7 +220,7 @@ public class PostgresSkillRepository implements SkillRepository {
             SELECT_MENTEE_AREAS,
             (rs, rowNum) -> {
               final int technicalAreaId = rs.getInt("technical_area_id");
-              final int proficiencyLevelId = rs.getInt("proficiency_level_id");
+              final int proficiencyLevelId = rs.getInt(COLUMN_PROFICIENCY);
               return new TechnicalAreaProficiency(
                   TechnicalArea.fromId(technicalAreaId),
                   ProficiencyLevel.fromId(proficiencyLevelId));

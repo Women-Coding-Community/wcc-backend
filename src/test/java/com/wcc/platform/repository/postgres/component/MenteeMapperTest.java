@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -54,9 +55,10 @@ class MenteeMapperTest {
     menteeMapper = spy(new MenteeMapper(jdbc, memberRepository, skillsRepository));
   }
 
+  @DisplayName(
+      "Given a valid result set, when mapping row to mentee, then mentee fields are correctly populated")
   @Test
-  void testMapRowToMenteeSuccessfully() throws Exception {
-    // Arrange
+  void shouldMapRowToMenteeSuccessfully() throws Exception {
     long menteeId = 2L;
     Member member = mock(Member.class);
     when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
@@ -67,10 +69,8 @@ class MenteeMapperTest {
 
     when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
 
-    // Act
     Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
 
-    // Assert
     assertEquals(menteeId, mentee.getId());
     assertEquals(ProfileStatus.fromId(1), mentee.getProfileStatus());
     assertThat(mentee.getSpokenLanguages()).containsExactlyInAnyOrderElementsOf(List.of("German"));
@@ -78,9 +78,10 @@ class MenteeMapperTest {
     assertEquals(5, mentee.getAvailableHsMonth());
   }
 
+  @DisplayName(
+      "Given a mentee with skills, when mapping row to mentee, then skills are correctly populated")
   @Test
-  void testMapRowToMenteeWithSkills() throws Exception {
-    // Arrange
+  void shouldMapRowToMenteeWithSkills() throws Exception {
     long menteeId = 1L;
     Member member = mock(Member.class);
     when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
@@ -100,27 +101,26 @@ class MenteeMapperTest {
 
     when(skillsRepository.findMenteeSkills(menteeId)).thenReturn(Optional.of(skills));
 
-    // Act
     Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
 
-    // Assert
     assertThat(mentee.getSkills()).isNotNull();
     assertEquals(2, mentee.getSkills().yearsExperience());
-    assertEquals(TechnicalArea.BACKEND, mentee.getSkills().areas().get(0).technicalArea());
-    assertEquals(ProficiencyLevel.ADVANCED, mentee.getSkills().areas().get(0).proficiencyLevel());
-    assertEquals(CodeLanguage.JAVA, mentee.getSkills().languages().get(0).language());
-    assertEquals(ProficiencyLevel.EXPERT, mentee.getSkills().languages().get(0).proficiencyLevel());
+    TechnicalAreaProficiency area = mentee.getSkills().areas().getFirst();
+    assertEquals(TechnicalArea.BACKEND, area.technicalArea());
+    assertEquals(ProficiencyLevel.ADVANCED, area.proficiencyLevel());
+    assertEquals(CodeLanguage.JAVA, mentee.getSkills().languages().getFirst().language());
+    assertEquals(ProficiencyLevel.EXPERT, mentee.getSkills().languages().getFirst().proficiencyLevel());
     assertEquals(
-        MentorshipFocusArea.SWITCH_CAREER_TO_IT, mentee.getSkills().mentorshipFocus().get(0));
+        MentorshipFocusArea.SWITCH_CAREER_TO_IT, mentee.getSkills().mentorshipFocus().getFirst());
     verify(skillsRepository).findMenteeSkills(menteeId);
   }
 
+  @DisplayName(
+      "Given a result set that throws a SQL error, when mapping row to mentee, then SQLException is propagated")
   @Test
-  void testMapRowToMenteeThrowsExceptionOnSqlError() throws Exception {
-    // Arrange
+  void shouldThrowExceptionOnSqlError() throws Exception {
     when(resultSet.getLong(COLUMN_MENTEE_ID)).thenThrow(new SQLException("DB error"));
 
-    // Act & Assert
     SQLException exception =
         assertThrows(
             SQLException.class,
@@ -131,9 +131,10 @@ class MenteeMapperTest {
     assertEquals("DB error", exception.getMessage());
   }
 
+  @DisplayName(
+      "Given a result set with available hours per month, when mapping row to mentee, then available hours are correctly set")
   @Test
-  void testMapRowToMenteeIncludesAvailableHsMonth() throws Exception {
-    // Arrange
+  void shouldIncludeAvailableHsMonthWhenMappingMentee() throws Exception {
     long menteeId = 3L;
     Member member = mock(Member.class);
     when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
@@ -144,10 +145,8 @@ class MenteeMapperTest {
 
     when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
 
-    // Act
     Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
 
-    // Assert
     assertEquals(10, mentee.getAvailableHsMonth());
   }
 }

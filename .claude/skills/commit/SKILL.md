@@ -52,7 +52,21 @@ Please remove the sensitive data before committing. Consider using environment v
 
 Do NOT proceed further.
 
-## Step 3: Draft the commit message
+## Step 3: Check Java test conventions (if Java test files are changed)
+
+Scan the diff for any added or modified Java test files (`src/test/**`, `src/testInt/**`). For each, flag:
+
+| Rule | Violation | Severity |
+|---|---|---|
+| `should` prefix | Method name starts with `test` instead of `should` | WARNING |
+| `@DisplayName` present | Test method has no `@DisplayName` | WARNING |
+| Given-When-Then wording | `@DisplayName` text does not follow `"Given …, when …, then …"` | WARNING |
+| No inline phase comments | `// Arrange`, `// Act`, or `// Assert` in test body | INFO |
+| `.getFirst()` preferred | `.get(0)` on a `List` in new/changed test code | INFO |
+
+List violations and ask the user whether to fix them before committing or proceed as-is.
+
+## Step 4: Draft the commit message
 
 Analyze the diff and status to write a commit message:
 
@@ -71,11 +85,11 @@ Format:
 
 Show the draft commit message to the user before proceeding.
 
-## Step 4: Stage files
+## Step 5: Stage files
 
 Stage the specific files using `git add <files>` (never use `git add .` or `git add -A` — always add files by name to avoid accidentally including sensitive files).
 
-## Step 5: Create the commit
+## Step 6: Create the commit
 
 Run:
 

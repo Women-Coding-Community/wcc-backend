@@ -53,6 +53,10 @@ public interface PostgresMenteeTestSetup {
 
     for (int i = 0; i < mentee.getSkills().languages().size(); i++) {
       assertEquals(
+          mentee.getSkills().languages().get(i).language(),
+          menteeFound.getSkills().languages().get(i).language(),
+          "Language must match");
+      assertEquals(
           mentee.getSkills().languages().get(i).proficiencyLevel(),
           menteeFound.getSkills().languages().get(i).proficiencyLevel(),
           "Language proficiency level must match");
@@ -64,6 +68,10 @@ public interface PostgresMenteeTestSetup {
         "Number of technical areas must match");
 
     for (int i = 0; i < mentee.getSkills().areas().size(); i++) {
+      assertEquals(
+          mentee.getSkills().areas().get(i).technicalArea(),
+          menteeFound.getSkills().areas().get(i).technicalArea(),
+          "Technical area must match");
       assertEquals(
           mentee.getSkills().areas().get(i).proficiencyLevel(),
           menteeFound.getSkills().areas().get(i).proficiencyLevel(),

@@ -130,7 +130,7 @@ public class MentorshipController {
    * @return a list of Mentee existent mentees
    */
   @GetMapping("/mentees")
-  @Operation(summary = "API to list all mentee")
+  @Operation(summary = "API to list all mentees")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Mentee>> listMentees() {
     return new ResponseEntity<>(menteeService.getAllMentees(), HttpStatus.OK);
