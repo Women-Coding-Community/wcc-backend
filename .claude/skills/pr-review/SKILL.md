@@ -34,6 +34,12 @@ description: Review pull requests using GitHub CLI. Use when asked to check a PR
 - Do not leave only general/top-level comments when line-level comments are possible.
 - If a comment was posted in the wrong place, repost at the correct line and remove the incorrect one.
 
+1. Submit a formal review decision after posting inline comments:
+- Use `gh api repos/<owner>/<repo>/pulls/<number>/reviews -X POST -f commit_id='<sha>' -f body='<summary>' -f event='<event>'`
+- **APPROVE** when no `[CRITICAL]` findings are present — write a short encouraging summary (2–3 sentences) noting what looks good and listing any `[WARNING]`/`[INFO]` items as optional follow-ups.
+- **REQUEST_CHANGES** when any `[CRITICAL]` finding exists — clearly list what must be resolved before merge.
+- **COMMENT** only when genuinely uncertain or when author input is needed before a decision can be made.
+
 1. Respect user review preferences from this repo context:
 - Use the context into the repo from the PR URL for the PR operations.
 - Avoid rerunning local tests when the user says they already tested, unless they ask for test execution.
