@@ -6,6 +6,7 @@ import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -104,6 +105,7 @@ public class AuthController {
    * @return List of all members.
    */
   @GetMapping("/users")
+  @SecurityRequirement(name = "apiKey")
   @Operation(summary = "API to retrieve users with access to restrict area")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<UserAccount>> getUsers() {

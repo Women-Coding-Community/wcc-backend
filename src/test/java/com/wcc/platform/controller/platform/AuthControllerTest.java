@@ -40,6 +40,9 @@ class AuthControllerTest {
 
   private static final String LOGIN_PATH = "/api/auth/login";
   private static final String AUTHENTICATED_PATH = "/api/auth/me";
+  private static final String USERS_PATH = "/api/auth/users";
+  private static final String API_KEY_HEADER = "X-API-KEY";
+  private static final String API_KEY_VALUE = "test-api-key";
 
   private final UserToken userToken =
       UserToken.builder()
@@ -113,5 +116,18 @@ class AuthControllerTest {
   @DisplayName("Given missing Authorization header When GET /auth/me Then return 401 Unauthorized")
   void givenMissingAuthHeaderWhenRefreshThenReturnBadRequest() throws Exception {
     mockMvc.perform(get(AUTHENTICATED_PATH)).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @DisplayName("Given users exist, when getting users, then return 200 OK with user list")
+  void shouldReturnUsersWhenCallingGetUsers() throws Exception {
+    var userAccount = new UserAccount(1L, "admin@wcc.dev", RoleType.ADMIN);
+    when(memberService.getUsers()).thenReturn(List.of(userAccount));
+
+    mockMvc
+        .perform(get(USERS_PATH).header(API_KEY_HEADER, API_KEY_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].email").value("admin@wcc.dev"));
   }
 }
