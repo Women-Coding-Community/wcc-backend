@@ -118,7 +118,8 @@ class MentorControllerTest {
         .andExpect(jsonPath("$.id", is(1)))
         .andExpect(jsonPath("$.bio", is(updatedMentor.getBio())))
         .andExpect(jsonPath("$.spokenLanguages", hasSize(2)))
-        .andExpect(jsonPath("$.spokenLanguages[0]", is(updatedMentor.getSpokenLanguages().getFirst())))
+        .andExpect(
+            jsonPath("$.spokenLanguages[0]", is(updatedMentor.getSpokenLanguages().getFirst())))
         .andExpect(jsonPath("$.spokenLanguages[1]", is(updatedMentor.getSpokenLanguages().get(1))))
         .andExpect(
             jsonPath("$.skills.yearsExperience", is(updatedMentor.getSkills().yearsExperience())))
@@ -216,7 +217,7 @@ class MentorControllerTest {
   void shouldReturnConflictWhenAcceptingAlreadyActiveMentor() throws Exception {
     Long mentorId = 1L;
 
-    when(mentorshipService.activateMentor(eq(mentorId)))
+    when(mentorshipService.activateMentor(mentorId))
         .thenThrow(new MentorStatusException("Mentor with ID " + mentorId + " is already active"));
 
     mockMvc
@@ -232,7 +233,7 @@ class MentorControllerTest {
   void shouldReturnNotFoundWhenAcceptingNonExistentMentor() throws Exception {
     Long nonExistentMentorId = 999L;
 
-    when(mentorshipService.activateMentor(eq(nonExistentMentorId)))
+    when(mentorshipService.activateMentor(nonExistentMentorId))
         .thenThrow(new MemberNotFoundException(nonExistentMentorId));
 
     mockMvc
@@ -273,8 +274,7 @@ class MentorControllerTest {
     Mentor rejectedMentor = createUpdatedMentorTest(pendingMentor, mentorDto);
 
     String rejectionReason = "Not a good fit at this time";
-    when(mentorshipService.rejectMentor(eq(mentorId), eq(rejectionReason)))
-        .thenReturn(rejectedMentor);
+    when(mentorshipService.rejectMentor(mentorId, rejectionReason)).thenReturn(rejectedMentor);
 
     mockMvc
         .perform(
