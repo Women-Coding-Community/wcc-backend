@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
             + "and the mentee itself.")
 @AllArgsConstructor
 @Validated
-public class MentorshipApplicationController {
+public class MenteeApplicationController {
 
   private final MenteeWorkflowService applicationService;
 

@@ -1,5 +1,6 @@
 package com.wcc.platform.controller.platform;
 
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
@@ -107,6 +108,7 @@ public class AuthController {
   @GetMapping("/users")
   @SecurityRequirement(name = "apiKey")
   @Operation(summary = "API to retrieve users with access to restrict area")
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<UserAccount>> getUsers() {
     return ResponseEntity.ok(memberService.getUsers());
