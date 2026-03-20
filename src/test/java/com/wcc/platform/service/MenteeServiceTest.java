@@ -13,8 +13,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.configuration.MentorshipConfig;
-import com.wcc.platform.domain.cms.attributes.Image;
-import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.exceptions.DuplicatedPriorityException;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
@@ -60,7 +58,6 @@ class MenteeServiceTest {
   @Mock private MemberRepository memberRepository;
   @Mock private MentorRepository mentorRepository;
   @Mock private UserProvisionService userProvisionService;
-  @Mock private ResourceService resourceService;
 
   private MenteeService menteeService;
   private Mentee mentee;
@@ -79,8 +76,7 @@ class MenteeServiceTest {
             menteeRepository,
             memberRepository,
             mentorRepository,
-            userProvisionService,
-            resourceService);
+            userProvisionService);
     mentee = createMenteeTest(null, "Test Mentee", "test@wcc.com");
     when(mentorRepository.findById(any())).thenReturn(Optional.of(Mentor.mentorBuilder().build()));
   }
@@ -282,27 +278,11 @@ class MenteeServiceTest {
   void testGetAllMentees() {
     List<Mentee> mentees = List.of(mentee);
     when(menteeRepository.getAll()).thenReturn(mentees);
-    when(resourceService.findProfilePictureImage(any())).thenReturn(Optional.empty());
 
     List<Mentee> result = menteeService.getAllMentees();
 
     assertEquals(mentees, result);
     verify(menteeRepository).getAll();
-  }
-
-  @Test
-  @DisplayName(
-      "Given mentee with profile picture, when getting all mentees, then images are enriched")
-  void shouldEnrichMenteeWithProfilePictureWhenGettingAllMentees() {
-    var image = new Image("https://example.com/photo.jpg", "Photo", ImageType.DESKTOP);
-
-    when(menteeRepository.getAll()).thenReturn(List.of(mentee));
-    when(resourceService.findProfilePictureImage(mentee.getId())).thenReturn(Optional.of(image));
-
-    var result = menteeService.getAllMentees();
-
-    assertThat(result).hasSize(1);
-    assertThat(result.getFirst().getImages()).containsExactly(image);
   }
 
   @Test

@@ -39,7 +39,6 @@ public class MenteeService {
   private final MemberRepository memberRepository;
   private final MentorRepository mentorRepository;
   private final UserProvisionService userProvisionService;
-  private final ResourceService resourceService;
 
   /**
    * Return all stored mentees.
@@ -51,7 +50,7 @@ public class MenteeService {
     if (allMentees == null) {
       return List.of();
     }
-    return allMentees.stream().map(this::enrichWithProfilePicture).toList();
+    return allMentees;
   }
 
   /**
@@ -87,6 +86,22 @@ public class MenteeService {
     return saveRegistration(request, cycle);
   }
 
+  private Mentee saveRegistration(
+      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    final var mentee = menteeRegistration.mentee();
+
+    final Mentee savedMentee = createOrUpdateMentee(mentee);
+    final Long menteeId = savedMentee.getId();
+
+    menteeRegistration.mentee().setId(menteeId);
+
+    userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
+
+    validateDuplicatedPriorities(
+        menteeId, cycle.getCycleId(), menteeRegistration.toApplications(cycle, menteeId));
+    return createMenteeRegistrations(menteeRegistration, cycle);
+  }
+
   private void validateDuplicatedPriorities(
       final Long menteeId, final Long cycleId, final List<MenteeApplication> applications) {
     final List<Integer> requestPriorities =
@@ -114,22 +129,6 @@ public class MenteeService {
                 menteeId, priority, cycleId));
       }
     }
-  }
-
-  private Mentee saveRegistration(
-      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    final var mentee = menteeRegistration.mentee();
-
-    final Mentee savedMentee = createOrUpdateMentee(mentee);
-    final Long menteeId = savedMentee.getId();
-
-    menteeRegistration.mentee().setId(menteeId);
-
-    userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
-
-    validateDuplicatedPriorities(
-        menteeId, cycle.getCycleId(), menteeRegistration.toApplications(cycle, menteeId));
-    return createMenteeRegistrations(menteeRegistration, cycle);
   }
 
   /**
@@ -313,12 +312,5 @@ public class MenteeService {
               "Mentee has already reached the limit of 5 registrations for %d",
               registrationsCount));
     }
-  }
-
-  private Mentee enrichWithProfilePicture(final Mentee mentee) {
-    resourceService
-        .findProfilePictureImage(mentee.getId())
-        .ifPresent(image -> mentee.setImages(List.of(image)));
-    return mentee;
   }
 }

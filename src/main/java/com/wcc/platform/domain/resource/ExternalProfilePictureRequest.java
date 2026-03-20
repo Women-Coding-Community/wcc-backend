@@ -11,4 +11,4 @@ import org.hibernate.validator.constraints.URL;
  * @param externalUrl the publicly accessible URL of the profile picture
  */
 public record ExternalProfilePictureRequest(
-    @NotNull Long memberId, @NotBlank @URL String externalUrl) {}
+    @NotNull Long memberId, @NotBlank @URL(protocol = "https") String externalUrl) {}

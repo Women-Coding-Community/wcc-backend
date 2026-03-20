@@ -104,7 +104,6 @@ public class ResourceController {
   /** Saves a member's profile picture from an external URL. */
   @PostMapping("/member-profile-picture/link")
   @Operation(summary = "Save a member's profile picture from an external URL")
-  @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MemberProfilePicture> saveExternalProfilePicture(
       @Valid @RequestBody final ExternalProfilePictureRequest request) {
 
