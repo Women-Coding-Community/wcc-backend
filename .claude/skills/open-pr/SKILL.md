@@ -35,7 +35,7 @@ allowed-tools: Bash, Read, Glob
 
 3. Suggest a PR title using Conventional Commits format: `<type>: <short imperative description>` (50–72 chars). When multiple types apply, use the most significant: `feat` > `fix` > `refactor` > `test` > `docs` > `chore`.
 
-4. Generate the filled-in PR description. Pre-check only the applicable change type boxes; remove the inapplicable ones entirely.
+4. Generate the filled-in PR description. Pre-check only the applicable change type boxes; remove the inapplicable ones entirely. Write all prose sections (Description, Related Issue) as flowing paragraphs — do NOT wrap lines at any character limit. Each sentence or logical thought should continue on the same line so that GitHub renders the text correctly without unwanted line breaks.
 
 5. **Screenshots section** — decide based on changed files:
    - Frontend changes (`admin-wcc-app/**`, `*.tsx`, `*.css`, components, pages): include the section and list the specific screenshots needed (before/after UI, error states, label/title changes, GIF for interactions). Emphasise that screenshots are required for the reviewer to assess visual changes.
@@ -51,6 +51,8 @@ allowed-tools: Bash, Read, Glob
    - Remind the user to add screenshots before submitting if required
 
 ## Rules
+
+- **Never hard-wrap prose** — description text must not have forced line breaks mid-sentence or mid-paragraph; let GitHub reflow the text naturally
 
 - Always target `main` on `Women-Coding-Community/wcc-backend` (upstream)
 - Never use `gh pr create` — fork permissions require the user to open the PR through the browser
