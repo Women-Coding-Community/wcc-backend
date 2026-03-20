@@ -21,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 /** Integration tests for ResourceService external profile picture feature. */
 @ActiveProfiles("test")
-class ResourceControllerIntegrationTest extends DefaultDatabaseSetup {
+class ResourceServiceIntegrationTest extends DefaultDatabaseSetup {
 
   private static final String TEST_EMAIL = "resource-integration-test@wcc.com";
   private static final String EXTERNAL_URL = "https://example.com/photo.jpg";
