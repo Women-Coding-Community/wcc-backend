@@ -44,10 +44,17 @@ allowed-tools: Bash, Read, Glob
 
 6. **Pull request checklist** — always include the contributor guide checkbox. Include "I have tested my changes locally" only for `feat`, `fix`, `refactor`, or frontend changes — omit it for pure `docs`, `chore`, or `ci` changes.
 
-7. Print:
+7. Derive the contributor's GitHub username from the `origin` remote:
+   ```bash
+   git remote get-url origin
+   # https://github.com/<username>/wcc-backend.git  or  git@github.com:<username>/wcc-backend.git
+   ```
+   Extract `<username>` from the URL (path segment before `/wcc-backend`).
+
+   Print:
    - **Suggested PR title** (plain text)
    - **PR description** (markdown code block)
-   - **GitHub compare URL**: `https://github.com/Women-Coding-Community/wcc-backend/compare/main...dricazenck:<branch-name>`
+   - **GitHub compare URL**: `https://github.com/Women-Coding-Community/wcc-backend/compare/main...<username>:<branch-name>`
    - Remind the user to add screenshots before submitting if required
 
 ## Rules
