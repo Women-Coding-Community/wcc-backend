@@ -39,6 +39,7 @@ public class MenteeService {
   private final MemberRepository memberRepository;
   private final MentorRepository mentorRepository;
   private final UserProvisionService userProvisionService;
+  private final ResourceService resourceService;
 
   /**
    * Return all stored mentees.
@@ -50,7 +51,7 @@ public class MenteeService {
     if (allMentees == null) {
       return List.of();
     }
-    return allMentees;
+    return allMentees.stream().map(this::enrichWithProfilePicture).toList();
   }
 
   /**
@@ -68,8 +69,7 @@ public class MenteeService {
     final var menteeId = ensureMenteeId(request.mentee());
     if (menteeId != null) {
       request.mentee().setId(menteeId);
-      final var filteredRegistrations =
-          ignoreDuplicateApplications(request, cycle);
+      final var filteredRegistrations = ignoreDuplicateApplications(request, cycle);
       final var registrationCount =
           registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
 
@@ -92,8 +92,7 @@ public class MenteeService {
     final List<Integer> requestPriorities =
         applications.stream().map(MenteeApplication::getPriorityOrder).toList();
 
-    if (requestPriorities.size()
-        != requestPriorities.stream().distinct().collect(Collectors.counting())) {
+    if (requestPriorities.size() != requestPriorities.stream().distinct().count()) {
       throw new DuplicatedPriorityException("Priorities must be unique in the request");
     }
 
@@ -314,5 +313,12 @@ public class MenteeService {
               "Mentee has already reached the limit of 5 registrations for %d",
               registrationsCount));
     }
+  }
+
+  private Mentee enrichWithProfilePicture(final Mentee mentee) {
+    resourceService
+        .findProfilePictureImage(mentee.getId())
+        .ifPresent(image -> mentee.setImages(List.of(image)));
+    return mentee;
   }
 }
