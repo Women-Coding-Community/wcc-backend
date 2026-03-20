@@ -112,6 +112,15 @@ Include the "tested locally" item **only if** the change has runnable behaviour 
 
 ## Step 5 — Print title, description, and URL
 
+Derive the contributor's GitHub username from the `origin` remote:
+
+```bash
+git remote get-url origin
+# e.g. https://github.com/<username>/wcc-backend.git  or  git@github.com:<username>/wcc-backend.git
+```
+
+Extract `<username>` from the URL (the path segment before `/wcc-backend`).
+
 Output in this order:
 
 1. **Suggested PR title** (plain text, ready to paste)
@@ -119,7 +128,7 @@ Output in this order:
 3. **GitHub compare URL**:
 
 ```
-https://github.com/Women-Coding-Community/wcc-backend/compare/main...dricazenck:<branch-name>
+https://github.com/Women-Coding-Community/wcc-backend/compare/main...<username>:<branch-name>
 ```
 
 Tell the user to:
