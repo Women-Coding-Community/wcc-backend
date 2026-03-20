@@ -29,6 +29,7 @@ public class Member {
   @Setter
   @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Auto-generated member ID")
   private Long id;
+
   @NotBlank private String fullName;
   @NotBlank private String position;
   @Setter @NotBlank @Email private String email;
@@ -37,12 +38,13 @@ public class Member {
   private String city;
   private String companyName;
   @Setter @NotNull private List<MemberType> memberTypes;
-  private List<Image> images;
+  @Setter private List<Image> images;
   private List<SocialNetwork> network;
   private String pronouns;
   private PronounCategory pronounCategory;
   private Boolean isWomen;
 
+  /** Converts this Member entity to a MemberDto for data transfer purposes. */
   public MemberDto toDto() {
     return new MemberDto(
         id,
