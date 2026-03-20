@@ -1,5 +1,5 @@
 ---
-name: wcc-smart-issue
+name: create-github-issue
 description: Interactively create a well-structured GitHub issue (bug or feature) for Women-Coding-Community/wcc-backend with Scrum user story, acceptance criteria, test scenarios, and code examples derived from the codebase. Adds the issue to the Backend Platform project board.
 argument-hint: "[title] or describe the issue interactively"
 allowed-tools: Bash(gh *), Grep, Glob, Read
@@ -13,7 +13,7 @@ Create a richly structured GitHub issue using Scrum conventions, with acceptance
 
 ## Load project configuration
 
-Load [project-config.md](../wcc-create-issue/project-config.md) before starting — it contains all field IDs, option IDs, labels, and milestones.
+Load [project-config.md](project-config.md) before starting — it contains all field IDs, option IDs, labels, and milestones.
 
 ---
 

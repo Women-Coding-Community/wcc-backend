@@ -2,7 +2,7 @@
 
 ## Repository
 - **Upstream repo** (where issues are created): `Women-Coding-Community/wcc-backend`
-- **User fork** (DO NOT create issues here): `dricazenck/wcc-backend`
+- **User fork** (DO NOT create issues here): contributor's personal fork
 
 ## Project Board
 - **Project**: Backend Platform
