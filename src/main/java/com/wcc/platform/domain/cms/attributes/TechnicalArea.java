@@ -29,7 +29,10 @@ public enum TechnicalArea {
   OTHER(7, "Other"),
   PROD_MANAGEMENT(13, "Product Management"),
   PROJ_MANAGEMENT(14, "Project Management"),
-  QA(8, "Quality Assurance");
+  QA(8, "Quality Assurance"),
+  SECURITY(18, "Security"),
+  SRE(19, "Site Reliability Engineering"),
+  NETWORK_ENGINEERING(20, "Network Engineering");
 
   private final int technicalAreaId;
   private final String description;

@@ -1,0 +1,53 @@
+meta {
+  name: API to update mentor data
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/platform/v1/mentors/:mentorId
+  body: json
+  auth: apikey
+}
+
+params:path {
+  mentorId: {{userId}}
+}
+
+auth:apikey {
+  key: X-API-KEY
+  value: {{apiKey}}
+  placement: header
+}
+
+body:json {
+  {{PUTpayload}}
+}
+
+script:pre-request {
+  const { faker } = require('@faker-js/faker');
+  
+  const original = bru.getEnvVar("mentor_payload"); 
+  const userId = bru.getEnvVar("userId"); 
+  
+  const putPayload = original;
+  const newJob = faker.person.jobTitle();
+  putPayload.position = newJob;
+  
+  bru.setEnvVar("newJob", newJob)
+  req.setBody(putPayload)
+  
+}
+
+tests {
+  test("Response Status is OK (200)", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response body should contain updated position", function() {
+    const body = res.getBody()
+    const newJob = bru.getEnvVar("newJob");
+    expect(body.position).to.equal(newJob)
+  }) 
+  
+}

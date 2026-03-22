@@ -1,6 +1,6 @@
 package com.wcc.platform.factories;
 
-import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
+import static com.wcc.platform.domain.cms.PageType.TIMELINE_AD_HOC;
 import static com.wcc.platform.factories.SetUpStyleFactories.createCustomStyleTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 
@@ -148,7 +148,7 @@ public class SetupMentorshipPagesFactories {
   }
 
   public static LongTermTimeLinePage createLongTermTimeLinePageTest() {
-    final String pageId = PageType.MENTORSHIP_LONG_TIMELINE.getId();
+    final String pageId = PageType.TIMELINE_LONG_TERM.getId();
     return new LongTermTimeLinePage(
         pageId,
         SetupFactories.createNoImageHeroSectionTest(),
@@ -192,7 +192,7 @@ public class SetupMentorshipPagesFactories {
 
   /** Test factory for Ad Hoc Timeline Page. */
   public static MentorshipAdHocTimelinePage createMentorshipAdHocTimelinePageTest() {
-    final String pageId = AD_HOC_TIMELINE.getId();
+    final String pageId = TIMELINE_AD_HOC.getId();
 
     return new MentorshipAdHocTimelinePage(
         pageId,
@@ -210,14 +210,13 @@ public class SetupMentorshipPagesFactories {
     }
   }
 
-/** Test factory for Mentorship Resources Page with file. */
-public static MentorshipResourcesPage createMentorshipResourcesPageTest() {
+  /** Test factory for Mentorship Resources Page with file. */
+  public static MentorshipResourcesPage createMentorshipResourcesPageTest() {
     try {
-        final String content = FileUtil.readFileAsString(PageType.MENTORSHIP_RESOURCES.getFileName());
-        return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipResourcesPage.class);
+      final String content = FileUtil.readFileAsString(PageType.MENTORSHIP_RESOURCES.getFileName());
+      return SetupFactories.OBJECT_MAPPER.readValue(content, MentorshipResourcesPage.class);
     } catch (JsonProcessingException e) {
-        return createMentorshipResourcesPageTest();
+      return createMentorshipResourcesPageTest();
     }
-}
-
+  }
 }

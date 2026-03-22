@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
@@ -135,6 +136,107 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
     assertThat(mentorWithoutPicture.getImages()).isNullOrEmpty();
 
+    repository.deleteById(createdMentor.getId());
+    memberRepository.deleteById(createdMentor.getId());
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with email, when creating mentor with same email, then it should use existing member")
+  void shouldUseExistingMemberWhenMentorEmailAlreadyExists() {
+    // Create a regular member first
+    final Member existingMember =
+        Member.builder()
+            .fullName("Existing Member")
+            .email("existing-mentor-member@test.com")
+            .position("Software Engineer")
+            .slackDisplayName("@existing-mentor")
+            .country(new com.wcc.platform.domain.cms.attributes.Country("US", "United States"))
+            .city("New York")
+            .companyName("Tech Corp")
+            .memberTypes(java.util.List.of(com.wcc.platform.domain.platform.type.MemberType.MEMBER))
+            .images(java.util.List.of())
+            .network(java.util.List.of())
+            .build();
+
+    final Member savedMember = memberRepository.create(existingMember);
+
+    // Create a mentor with the same email
+    final Mentor mentor =
+        createMentorTest(null, "Mentor From Existing Member", "existing-mentor-member@test.com");
+
+    // Should successfully create mentor using existing member's ID
+    final Mentor savedMentor = service.create(mentor);
+
+    assertThat(savedMentor).isNotNull();
+    assertThat(savedMentor.getId()).isEqualTo(savedMember.getId());
+    assertThat(savedMentor.getEmail()).isEqualTo("existing-mentor-member@test.com");
+
+    // Cleanup
+    repository.deleteById(savedMentor.getId());
+    memberRepository.deleteById(savedMember.getId());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with pronouns in database, when getAllMentors is called, then DTO should"
+          + " contain pronouns and pronoun category")
+  void shouldReturnMentorsWithPronounsFromDatabase() {
+    var mentor = createMentorTest(7L, "mentor with pronouns", "pronouns@domain.com");
+    mentor =
+        Mentor.mentorBuilder()
+            .id(mentor.getId())
+            .fullName(mentor.getFullName())
+            .position(mentor.getPosition())
+            .email(mentor.getEmail())
+            .slackDisplayName(mentor.getSlackDisplayName())
+            .country(mentor.getCountry())
+            .city(mentor.getCity())
+            .companyName(mentor.getCompanyName())
+            .images(mentor.getImages())
+            .network(mentor.getNetwork())
+            .pronouns("they/them")
+            .pronounCategory(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL)
+            .profileStatus(mentor.getProfileStatus())
+            .spokenLanguages(mentor.getSpokenLanguages())
+            .bio(mentor.getBio())
+            .skills(mentor.getSkills())
+            .menteeSection(mentor.getMenteeSection())
+            .build();
+
+    memberRepository.deleteByEmail(mentor.getEmail());
+    repository.deleteById(mentor.getId());
+    var createdMentor = repository.create(mentor);
+
+    var resource =
+        createResourceTest().toBuilder()
+            .resourceType(ResourceType.PROFILE_PICTURE)
+            .driveFileLink("https://drive.google.com/file/d/pronouns-test-file/view")
+            .build();
+    var createdResource = resourceRepository.create(resource);
+
+    var profilePicture =
+        MemberProfilePicture.builder()
+            .memberId(createdMentor.getId())
+            .resourceId(createdResource.getId())
+            .resource(createdResource)
+            .build();
+    profilePicRepository.create(profilePicture);
+
+    var mentors = service.getAllMentors();
+
+    var mentorResult =
+        mentors.stream()
+            .filter(m -> m.getId().equals(createdMentor.getId()))
+            .findFirst()
+            .orElseThrow();
+
+    assertThat(mentorResult.getPronouns()).isEqualTo("they/them");
+    assertThat(mentorResult.getPronounCategory())
+        .isEqualTo(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL);
+
+    profilePicRepository.deleteByMemberId(createdMentor.getId());
+    resourceRepository.deleteById(createdResource.getId());
     repository.deleteById(createdMentor.getId());
     memberRepository.deleteById(createdMentor.getId());
   }

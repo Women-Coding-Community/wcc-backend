@@ -1,9 +1,11 @@
 package com.wcc.platform.repository.postgres.component;
 
 import static com.wcc.platform.repository.postgres.constants.MemberConstants.COLUMN_MEMBER_ID;
+import static com.wcc.platform.repository.postgres.constants.MemberConstants.COL_WOMEN;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.MemberType;
@@ -17,7 +19,6 @@ import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -32,11 +33,16 @@ import org.springframework.util.CollectionUtils;
 public class MemberMapper {
   private static final String INSERT =
       "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
-          + "country_id, status_id, bio, years_experience, spoken_language) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)";
+          + "country_id, status_id, bio, years_experience, spoken_language, pronouns, pronoun_category_id, "
+          + COL_WOMEN
+          + ") "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, ?, ?, ?)";
   private static final String UPDATE_SQL =
       "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
-          + "company_name = ?, email = ?, city = ?, country_id = ? WHERE id = ?";
+          + "company_name = ?, email = ?, city = ?, country_id = ?, pronouns = ?, pronoun_category_id = ?, "
+          + COL_WOMEN
+          + " = ? "
+          + "WHERE id = ?";
 
   private final JdbcTemplate jdbc;
   private final PostgresCountryRepository countryRepository;
@@ -51,6 +57,11 @@ public class MemberMapper {
     final List<Image> images = List.of();
     final List<SocialNetwork> networks = socialNetworkRepo.findByMemberId(memberId);
 
+    final String pronouns = rs.getString("pronouns");
+    final int pronounCategoryId = rs.getInt("pronoun_category_id");
+    final PronounCategory pronounCategory =
+        pronounCategoryId > 0 ? PronounCategory.fromId(pronounCategoryId) : null;
+
     return Member.builder()
         .id(rs.getLong(COLUMN_MEMBER_ID))
         .fullName(rs.getString("full_name"))
@@ -63,12 +74,21 @@ public class MemberMapper {
         .memberTypes(memberTypes)
         .images(images)
         .network(networks)
+        .pronouns(pronouns)
+        .pronounCategory(pronounCategory)
+        .isWomen(rs.getBoolean(COL_WOMEN))
         .build();
   }
 
   /** Adds a new member to the database and returns the member ID. */
   public Long addMember(final Member member) {
-    final int defaultStatusId = 1;
+    final var existingMemberId = findMemberIdByEmail(member.getEmail());
+    if (existingMemberId != null) {
+      updateMember(member, existingMemberId);
+      return existingMemberId;
+    }
+
+    final int defaultStatusPending = 1;
     jdbc.update(
         INSERT,
         member.getFullName(),
@@ -78,18 +98,42 @@ public class MemberMapper {
         member.getEmail(),
         member.getCity(),
         getCountryId(member.getCountry()),
-        defaultStatusId);
+        defaultStatusPending,
+        member.getPronouns(),
+        getPronounCategoryId(member.getPronounCategory()),
+        member.getIsWomen());
 
     final var memberId =
-        jdbc.queryForObject(
+        jdbc.query(
             "SELECT id FROM members WHERE email = ?",
-            SingleColumnRowMapper.newInstance(Long.class),
+            rs -> {
+              if (rs.next()) {
+                return rs.getLong("id");
+              }
+              return null;
+            },
             member.getEmail());
+
+    if (memberId == null) {
+      throw new IllegalStateException("Failed to retrieve member ID after insertion: " + member.getEmail());
+    }
 
     addMemberTypes(memberId, member);
     addSocialNetworks(memberId, member);
 
     return memberId;
+  }
+
+  private Long findMemberIdByEmail(final String email) {
+    return jdbc.query(
+        "SELECT id FROM members WHERE email = ?",
+        rs -> {
+          if (rs.next()) {
+            return rs.getLong("id");
+          }
+          return null;
+        },
+        email);
   }
 
   /** Updates an existing member in the database. */
@@ -104,6 +148,9 @@ public class MemberMapper {
         member.getEmail(),
         member.getCity(),
         getCountryId(member.getCountry()),
+        member.getPronouns(),
+        getPronounCategoryId(member.getPronounCategory()),
+        member.getIsWomen(),
         memberId);
 
     // Update member types
@@ -140,5 +187,10 @@ public class MemberMapper {
       countryCode = country.countryCode().toUpperCase(Locale.ENGLISH);
     }
     return countryRepository.findCountryIdByCode(countryCode);
+  }
+
+  /** Retrieves the pronoun category ID or null if not specified. */
+  private Integer getPronounCategoryId(final PronounCategory pronounCategory) {
+    return pronounCategory != null ? pronounCategory.getCategoryId() : null;
   }
 }

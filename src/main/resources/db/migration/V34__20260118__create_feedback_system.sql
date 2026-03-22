@@ -13,27 +13,13 @@ VALUES (1, 'MENTOR_REVIEW', 'Review of a mentor by a mentee'),
        (3, 'MENTORSHIP_PROGRAM', 'Feedback about the mentorship program')
 ON CONFLICT (id) DO NOTHING;
 
--- Mentorship cycle table
-CREATE TABLE IF NOT EXISTS mentorship_cycle
-(
-    id          SERIAL PRIMARY KEY,
-    cycle_type  INTEGER NOT NULL REFERENCES mentorship_types (id),
-    month_num   INTEGER,
-    description TEXT,
-    start_date  DATE,
-    end_date    DATE,
-    is_active   BOOLEAN                  DEFAULT TRUE,
-    created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Feedback table
 CREATE TABLE IF NOT EXISTS feedback
 (
     id                  BIGSERIAL PRIMARY KEY,
     reviewer_id         INTEGER NOT NULL REFERENCES members (id) ON DELETE CASCADE,
     reviewee_id         INTEGER REFERENCES members (id) ON DELETE SET NULL,
-    mentorship_cycle_id INTEGER REFERENCES mentorship_cycle (id) ON DELETE SET NULL,
+    mentorship_cycle_id INTEGER REFERENCES mentorship_cycles (cycle_id) ON DELETE SET NULL,
     feedback_type_id    INTEGER NOT NULL REFERENCES feedback_types (id),
     rating              INTEGER CHECK (rating >= 0 AND rating <= 5),
     feedback_text       TEXT    NOT NULL,

@@ -1,18 +1,13 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
-import com.wcc.platform.domain.platform.mentorship.Mentee;
-import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.service.MemberService;
-import com.wcc.platform.service.MenteeService;
-import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,13 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Platform", description = "All platform Internal APIs")
+@Tag(
+    name = "Platform: Overall Members",
+    description = "Platform Members' APIs to create, update, delete and retrieve members")
 @AllArgsConstructor
 public class MemberController {
 
   private final MemberService memberService;
-  private final MentorshipService mentorshipService;
-  private final MenteeService menteeService;
 
   /**
    * API to retrieve information about members.
@@ -51,32 +46,7 @@ public class MemberController {
     final List<Member> members = memberService.getAllMembers();
     return ResponseEntity.ok(members);
   }
-
-  /**
-   * API to retrieve information users with access to platform restrict area.
-   *
-   * @return List of all members.
-   */
-  @GetMapping("/users")
-  @Operation(summary = "API to retrieve users with access to restrict area")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<UserAccount>> getUsers() {
-    return ResponseEntity.ok(memberService.getUsers());
-  }
-
-  /**
-   * API to retrieve information about mentors.
-   *
-   * @return List of all mentors.
-   */
-  @GetMapping("/mentors")
-  @Operation(summary = "API to retrieve a list of all members")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<MentorDto>> getAllMentors() {
-    final List<MentorDto> mentors = mentorshipService.getAllMentors();
-    return ResponseEntity.ok(mentors);
-  }
-
+  
   /**
    * API to create member.
    *
@@ -85,47 +55,8 @@ public class MemberController {
   @PostMapping("/members")
   @Operation(summary = "API to submit member registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Member> createMember(@RequestBody final Member member) {
+  public ResponseEntity<Member> createMember(@Valid @RequestBody final Member member) {
     return new ResponseEntity<>(memberService.createMember(member), HttpStatus.CREATED);
-  }
-
-  /**
-   * API to create mentor.
-   *
-   * @return Create a new mentor.
-   */
-  @PostMapping("/mentors")
-  @Operation(summary = "API to submit mentor registration")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(@RequestBody final Mentor mentor) {
-    return new ResponseEntity<>(mentorshipService.create(mentor), HttpStatus.CREATED);
-  }
-
-  /**
-   * API to update mentor information.
-   *
-   * @param mentorId mentor's unique identifier
-   * @param mentorDto MentorDto with updated mentor's data
-   * @return Updated mentor
-   */
-  @PutMapping("/mentors/{mentorId}")
-  @Operation(summary = "API to update mentor data")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Member> updateMentor(
-      @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
-    return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
-  }
-
-  /**
-   * API to create mentee.
-   *
-   * @return Create a new mentee.
-   */
-  @PostMapping("/mentees")
-  @Operation(summary = "API to submit mentee registration")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentee> createMentee(@RequestBody final Mentee mentee) {
-    return new ResponseEntity<>(menteeService.create(mentee), HttpStatus.CREATED);
   }
 
   /**
@@ -139,7 +70,7 @@ public class MemberController {
   @Operation(summary = "API to update member data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
-      @PathVariable final Long memberId, @RequestBody final MemberDto memberDto) {
+      @PathVariable final Long memberId, @Valid @RequestBody final MemberDto memberDto) {
     return new ResponseEntity<>(memberService.updateMember(memberId, memberDto), HttpStatus.OK);
   }
 

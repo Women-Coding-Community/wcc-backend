@@ -1,13 +1,13 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.PageType.AD_HOC_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.MENTORS;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_CONDUCT;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_FAQ;
-import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_LONG_TIMELINE;
 import static com.wcc.platform.domain.cms.PageType.MENTORSHIP_RESOURCES;
 import static com.wcc.platform.domain.cms.PageType.STUDY_GROUPS;
+import static com.wcc.platform.domain.cms.PageType.TIMELINE_AD_HOC;
+import static com.wcc.platform.domain.cms.PageType.TIMELINE_LONG_TERM;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermTimeLinePage;
@@ -80,7 +80,7 @@ public class MentorshipPagesService {
    * @return Mentorship Long-Term TimeLine page.
    */
   public LongTermTimeLinePage getLongTermTimeLine() {
-    final var page = repository.findById(MENTORSHIP_LONG_TIMELINE.getId());
+    final var page = repository.findById(TIMELINE_LONG_TERM.getId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), LongTermTimeLinePage.class);
@@ -89,7 +89,7 @@ public class MentorshipPagesService {
       }
     }
     return repository.getFallback(
-        MENTORSHIP_LONG_TIMELINE, LongTermTimeLinePage.class, objectMapper);
+        TIMELINE_LONG_TERM, LongTermTimeLinePage.class, objectMapper);
   }
 
   /**
@@ -165,7 +165,7 @@ public class MentorshipPagesService {
   }
 
   public MentorshipAdHocTimelinePage getAdHocTimeline() {
-    final var page = repository.findById(AD_HOC_TIMELINE.getId());
+    final var page = repository.findById(TIMELINE_AD_HOC.getId());
     if (page.isPresent()) {
       try {
         return objectMapper.convertValue(page.get(), MentorshipAdHocTimelinePage.class);
@@ -173,7 +173,7 @@ public class MentorshipPagesService {
         throw new PlatformInternalException(e.getMessage(), e);
       }
     }
-    return repository.getFallback(AD_HOC_TIMELINE, MentorshipAdHocTimelinePage.class, objectMapper);
+    return repository.getFallback(TIMELINE_AD_HOC, MentorshipAdHocTimelinePage.class, objectMapper);
   }
 
   /**

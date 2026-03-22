@@ -1,16 +1,18 @@
 package com.wcc.platform.configuration;
 
-import com.wcc.platform.domain.platform.config.PlatformServers;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.Schema;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,6 +28,9 @@ public class OpenApiConfig implements WebMvcConfigurer {
 
   private static final String ACTUATOR = "actuator";
   private static final String ACTUATOR_SPRING = "Spring Boot Actuator";
+
+  @Value("${backend.app.url}")
+  private String appBaseUrl;
 
   private static Consumer<Tag> renameActuator() {
     return tag -> {
@@ -58,9 +63,7 @@ public class OpenApiConfig implements WebMvcConfigurer {
   /** Customize servers for open API. */
   @Bean
   public OpenAPI customOpenApi() {
-    return new OpenAPI()
-        .addServersItem(new Server().url(PlatformServers.DEV.getUri()).description("Dev"))
-        .addServersItem(new Server().url(PlatformServers.LOCAL.getUri()).description("Localhost"));
+    return new OpenAPI().addServersItem(new Server().url(appBaseUrl));
   }
 
   /** Customize Actuator endpoint tag. */
@@ -76,6 +79,32 @@ public class OpenApiConfig implements WebMvcConfigurer {
             .values()
             .forEach(pathItem -> pathItem.readOperations().forEach(updateOperationTag()));
       }
+    };
+  }
+
+  /**
+   * Ensure generated OpenAPI maps the mentorship `cycleYear` to an integer.
+   * This overrides the schema produced by the generator at runtime (used by `/api-docs`).
+   */
+  @Bean
+  public OpenApiCustomizer cycleYearSchemaCustomizer() {
+    return openApi -> {
+      if (openApi.getComponents() == null) {
+        return;
+      }
+
+      final var schemas = openApi.getComponents().getSchemas();
+      if (schemas == null) {
+        return;
+      }
+
+      final Schema<?> menteeRegistration = schemas.get("MenteeRegistration");
+      final IntegerSchema integerSchema = new IntegerSchema().format("int32");
+      if (menteeRegistration != null && menteeRegistration.getProperties() != null) {
+        menteeRegistration.getProperties().put("cycleYear", integerSchema);
+      }
+
+      schemas.put("Year", integerSchema);
     };
   }
 }

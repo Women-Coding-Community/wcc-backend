@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.platform.type.ResourceType;
+import com.wcc.platform.domain.resource.ExternalProfilePictureRequest;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.service.ResourceService;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,7 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/platform/v1/resources")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Resources", description = "APIs for managing resources and profile pictures")
+@Tag(
+    name = "Platform: Mentorship Resources",
+    description = "APIs for managing overall resources like profile pictures")
 @AllArgsConstructor
 public class ResourceController {
 
@@ -94,6 +99,17 @@ public class ResourceController {
 
     resourceService.deleteResource(id);
     return ResponseEntity.noContent().build();
+  }
+
+  /** Saves a member's profile picture from an external URL. */
+  @PostMapping("/member-profile-picture/link")
+  @Operation(summary = "Save a member's profile picture from an external URL")
+  public ResponseEntity<MemberProfilePicture> saveExternalProfilePicture(
+      @Valid @RequestBody final ExternalProfilePictureRequest request) {
+
+    final var profilePicture =
+        resourceService.saveExternalProfilePicture(request.memberId(), request.externalUrl());
+    return new ResponseEntity<>(profilePicture, HttpStatus.CREATED);
   }
 
   /** Uploads a member's profile picture. */

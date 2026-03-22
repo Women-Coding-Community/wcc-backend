@@ -6,23 +6,28 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.factories.SetupMentorshipPagesFactories;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import java.time.Month;
 import java.util.List;
@@ -37,15 +42,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MentorshipServiceFilteringTest {
 
   @Mock private MentorRepository mentorRepository;
+  @Mock private MemberRepository memberRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
-
+  @Mock private UserProvisionService userProvisionService;
+  @Mock private MentorshipNotificationService notificationService;
   private MentorshipService service;
   private Mentor mentor1;
   private MentorsPage mentorsPage;
 
   @BeforeEach
   void setUp() {
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, 10));
+    service =
+        spy(
+            new MentorshipService(
+                mentorRepository, memberRepository, userProvisionService, profilePicRepo, 10, notificationService));
     doReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY)).when(service).getCurrentCycle();
     mentorsPage = SetupMentorshipPagesFactories.createMentorPageTest();
     mentor1 =
@@ -56,7 +66,7 @@ class MentorshipServiceFilteringTest {
             "Acme",
             5,
             List.of(TechnicalArea.BACKEND, TechnicalArea.FRONTEND, TechnicalArea.FRONTEND),
-            List.of(Languages.JAVA, Languages.PYTHON, Languages.KOTLIN),
+            List.of(CodeLanguage.JAVA, CodeLanguage.PYTHON, CodeLanguage.KOTLIN),
             List.of(
                 MentorshipFocusArea.GROW_MID_TO_SENIOR, MentorshipFocusArea.SWITCH_CAREER_TO_IT),
             List.of(MentorshipType.LONG_TERM),
@@ -69,7 +79,7 @@ class MentorshipServiceFilteringTest {
             "Globex",
             1,
             List.of(TechnicalArea.FRONTEND),
-            List.of(Languages.JAVASCRIPT),
+            List.of(CodeLanguage.JAVASCRIPT),
             List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT),
             List.of(MentorshipType.LONG_TERM),
             Month.MARCH);
@@ -88,7 +98,7 @@ class MentorshipServiceFilteringTest {
             List.of(MentorshipType.LONG_TERM),
             3,
             List.of(TechnicalArea.BACKEND),
-            List.of(Languages.JAVA),
+            List.of(CodeLanguage.JAVA),
             List.of(MentorshipFocusArea.GROW_MID_TO_SENIOR));
 
     var result = service.getMentorsPage(mentorsPage, filters);
@@ -130,12 +140,20 @@ class MentorshipServiceFilteringTest {
       final String company,
       final int years,
       final List<TechnicalArea> areas,
-      final List<Languages> languages,
+      final List<CodeLanguage> languages,
       final List<MentorshipFocusArea> focus,
       final List<MentorshipType> types,
       final Month availableMonth) {
 
     final Member base = SetupFactories.createMemberTest(MemberType.MENTOR);
+
+    // Determine long-term and ad-hoc from types
+    final LongTermMentorship longTerm =
+        types.contains(MentorshipType.LONG_TERM) ? new LongTermMentorship(1, 4) : null;
+    final List<MentorMonthAvailability> adHoc =
+        types.contains(MentorshipType.AD_HOC)
+            ? List.of(new MentorMonthAvailability(availableMonth, 2))
+            : List.of();
 
     return Mentor.mentorBuilder()
         .id(mentorId)
@@ -151,13 +169,19 @@ class MentorshipServiceFilteringTest {
         .profileStatus(ProfileStatus.ACTIVE)
         .bio("Bio for " + name)
         .spokenLanguages(List.of("English"))
-        .skills(new Skills(years, areas, languages, focus))
-        .menteeSection(
-            new MenteeSection(
-                types,
-                List.of(new MentorMonthAvailability(availableMonth, 2)),
-                "ideal",
-                "additional"))
+        .pronouns(null)
+        .pronounCategory(null)
+        .skills(
+            new Skills(
+                years,
+                areas.stream()
+                    .map(area -> new TechnicalAreaProficiency(area, ProficiencyLevel.BEGINNER))
+                    .toList(),
+                languages.stream()
+                    .map(lang -> new LanguageProficiency(lang, ProficiencyLevel.BEGINNER))
+                    .toList(),
+                focus))
+        .menteeSection(new MenteeSection("ideal", "additional", longTerm, adHoc))
         .build();
   }
 }

@@ -183,7 +183,7 @@ class MentorshipPagesServiceTest {
     var mapPage =
         new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
 
-    when(pageRepository.findById(PageType.AD_HOC_TIMELINE.getId()))
+    when(pageRepository.findById(PageType.TIMELINE_AD_HOC.getId()))
         .thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(MentorshipAdHocTimelinePage.class)))
         .thenReturn(page);
@@ -196,7 +196,7 @@ class MentorshipPagesServiceTest {
   void whenGetAdHocTimelineGivenRecordNotInDatabaseThenHasFallbackPage() {
     var page = createMentorshipAdHocTimelinePageTest();
     when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.AD_HOC_TIMELINE.getId())).thenReturn(Optional.empty());
+    when(pageRepository.findById(PageType.TIMELINE_AD_HOC.getId())).thenReturn(Optional.empty());
 
     assertEquals(page, service.getAdHocTimeline());
     verify(pageRepository, times(1)).getFallback(any(), any(), any());
@@ -208,7 +208,7 @@ class MentorshipPagesServiceTest {
     var mapPage =
         new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
 
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
+    when(pageRepository.findById(PageType.TIMELINE_LONG_TERM.getId()))
         .thenReturn(Optional.of(mapPage));
     when(objectMapper.convertValue(anyMap(), eq(LongTermTimeLinePage.class))).thenReturn(page);
 
@@ -221,8 +221,7 @@ class MentorshipPagesServiceTest {
   void whenGetLongTermTimeLineGivenRecordNotInDatabaseThenHasFallbackPage() {
     var page = createLongTermTimeLinePageTest();
     when(pageRepository.getFallback(any(), any(), any())).thenReturn(page);
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
-        .thenReturn(Optional.empty());
+    when(pageRepository.findById(PageType.TIMELINE_LONG_TERM.getId())).thenReturn(Optional.empty());
 
     var response = service.getLongTermTimeLine();
     assertEquals(page, response);
@@ -235,7 +234,7 @@ class MentorshipPagesServiceTest {
     var mapPage =
         new ObjectMapper().registerModule(new JavaTimeModule()).convertValue(page, Map.class);
 
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
+    when(pageRepository.findById(PageType.TIMELINE_LONG_TERM.getId()))
         .thenReturn(Optional.of(mapPage));
 
     // Mock the objectMapper to throw IllegalArgumentException
@@ -248,7 +247,7 @@ class MentorshipPagesServiceTest {
   @Test
   void whenGetLongTermTimeLineGivenRepositoryFindByIdThrowsExceptionThenPropagateException() {
     // Test that exceptions from repository.findById are propagated
-    when(pageRepository.findById(PageType.MENTORSHIP_LONG_TIMELINE.getId()))
+    when(pageRepository.findById(PageType.TIMELINE_LONG_TERM.getId()))
         .thenThrow(new RuntimeException("Database connection failed"));
 
     // The exception should be propagated

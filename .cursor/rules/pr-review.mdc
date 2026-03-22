@@ -1,0 +1,14 @@
+---
+description: PR review workflow with inline GitHub comments
+globs:
+alwaysApply: false
+---
+
+Follow the PR review runbook at `.ai/skills/pr-review.md` whenever the user asks to review a pull request.
+
+Key rules:
+- Use `gh pr diff` and `gh api` to post inline comments on exact changed lines
+- Prioritise: regressions → security → data integrity → conventions → tests
+- Java 21 idioms, Spring Boot conventions, Given-When-Then test names
+- Comments must include the concrete risk, the failing scenario, and a fix suggestion
+- Keep tone collaborative and encouraging — contributors should want to fix and learn

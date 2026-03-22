@@ -1,5 +1,7 @@
 package com.wcc.platform.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -249,6 +252,101 @@ class ResourceServiceTest {
 
     Class<MemberNotFoundException> expected = MemberNotFoundException.class;
     assertThrows(expected, () -> resourceService.deleteMemberProfilePicture(memberId));
+  }
+
+  @Test
+  @DisplayName(
+      "Given valid member and URL, "
+          + "when saving external profile picture, "
+          + "then returns created profile picture")
+  void shouldSaveExternalProfilePictureWhenMemberExistsAndNoPreviousPicture() {
+    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.empty());
+    when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
+    when(repository.create(any(MemberProfilePicture.class))).thenReturn(profilePicture);
+
+    var result =
+        resourceService.saveExternalProfilePicture(memberId, "https://example.com/photo.jpg");
+
+    assertThat(result).isEqualTo(profilePicture);
+    verify(repository).findByMemberId(memberId);
+    verify(resourceRepository).create(any(Resource.class));
+    verify(repository).create(any(MemberProfilePicture.class));
+  }
+
+  @Test
+  @DisplayName(
+      "Given member with existing picture, "
+          + "when saving external profile picture, "
+          + "then replaces previous picture")
+  void shouldReplaceExistingPictureWhenSavingExternalProfilePicture() {
+    var externalResource =
+        Resource.builder()
+            .id(resourceId)
+            .name("")
+            .description("")
+            .fileName("")
+            .contentType("")
+            .size(0L)
+            .driveFileLink("https://example.com/photo.jpg")
+            .resourceType(ResourceType.PROFILE_PICTURE)
+            .build();
+
+    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+    when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
+    when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(externalResource));
+    doNothing().when(resourceRepository).deleteById(any(UUID.class));
+    when(resourceRepository.create(any(Resource.class))).thenReturn(externalResource);
+    when(repository.create(any(MemberProfilePicture.class))).thenReturn(profilePicture);
+
+    var result =
+        resourceService.saveExternalProfilePicture(memberId, "https://example.com/photo.jpg");
+
+    assertThat(result).isEqualTo(profilePicture);
+    verify(repository).deleteByMemberId(memberId);
+    verify(resourceRepository).deleteById(resourceId);
+    verify(repository).create(any(MemberProfilePicture.class));
+  }
+
+  @Test
+  @DisplayName(
+      "Given member does not exist, "
+          + "when saving external profile picture, "
+          + "then throws MemberNotFoundException")
+  void shouldThrowMemberNotFoundWhenSavingExternalProfilePictureForUnknownMember() {
+    when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(
+            () ->
+                resourceService.saveExternalProfilePicture(
+                    memberId, "https://example.com/photo.jpg"))
+        .isInstanceOf(MemberNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName(
+      "Given resource with null driveFileId, "
+          + "when deleting resource, "
+          + "then skips file storage deletion")
+  void shouldSkipFileStorageDeletionWhenDriveFileIdIsNull() {
+    var resourceWithoutDriveFile =
+        Resource.builder()
+            .id(resourceId)
+            .name("")
+            .fileName("")
+            .contentType("")
+            .size(0L)
+            .driveFileLink("https://example.com/photo.jpg")
+            .resourceType(ResourceType.PROFILE_PICTURE)
+            .build();
+
+    when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resourceWithoutDriveFile));
+    doNothing().when(resourceRepository).deleteById(any(UUID.class));
+
+    resourceService.deleteResource(resourceId);
+
+    verify(resourceRepository).deleteById(resourceId);
+    verify(fileStorageRepository, times(0)).deleteFile(anyString());
   }
 
   @Test

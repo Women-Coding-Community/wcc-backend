@@ -1,6 +1,5 @@
 package com.wcc.platform.controller;
 
-import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
 import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
 import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 import static org.hamcrest.Matchers.is;
@@ -10,12 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.ProgrammeService;
-import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,8 +30,10 @@ import org.springframework.test.web.servlet.MockMvc;
 class ProgrammeControllerTest {
   public static final String API_PROGRAMME = "/api/cms/v1/program";
   public static final String PROG_TYPE_BOOK_CLUB = "?type=BOOK_CLUB";
+  private static final String PROG_BOOK_CLUB = "init-data/bookClubPage.json";
 
   @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
   @MockBean private ProgrammeService service;
 
@@ -53,10 +54,11 @@ class ProgrammeControllerTest {
 
   @Test
   void testOkResponse() throws Exception {
-    var fileName = PROG_BOOK_CLUB.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
+    var fileName = PROG_BOOK_CLUB;
+    var page = createProgrammePageTest(fileName);
+    var expectedJson = objectMapper.writeValueAsString(page);
 
-    when(service.getProgramme(BOOK_CLUB)).thenReturn(createProgrammePageTest(fileName));
+    when(service.getProgramme(BOOK_CLUB)).thenReturn(page);
 
     mockMvc
         .perform(

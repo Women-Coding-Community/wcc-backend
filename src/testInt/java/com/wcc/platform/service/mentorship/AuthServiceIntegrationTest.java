@@ -39,13 +39,8 @@ class AuthServiceIntegrationTest extends DefaultDatabaseSetup {
     users.forEach(user -> userAccountRepository.deleteById(user.getId()));
 
     userAccountRepository.create(
-        UserAccount.builder()
-            .memberId(savedMember.getId())
-            .email(mentor.getEmail())
-            .roles(List.of(RoleType.ADMIN))
-            .enabled(true)
-            .passwordHash("newHash")
-            .build());
+        new UserAccount(
+            1, savedMember.getId(), mentor.getEmail(), "hash", List.of(RoleType.ADMIN), true));
 
     userAccount = userAccountRepository.findByEmail(mentor.getEmail()).orElseThrow();
   }

@@ -1,6 +1,6 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
@@ -12,5 +12,5 @@ public record MentorAppliedFilters(
     List<MentorshipType> mentorshipTypes,
     Integer yearsExperience,
     List<TechnicalArea> areas,
-    List<Languages> languages,
+    List<CodeLanguage> languages,
     List<MentorshipFocusArea> focus) {}

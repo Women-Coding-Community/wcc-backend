@@ -1,9 +1,12 @@
 package com.wcc.platform.domain.platform.member;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +23,8 @@ import lombok.ToString;
 @ToString
 @Builder
 public class MemberDto {
+  @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
   private String fullName;
   private String position;
@@ -31,6 +36,9 @@ public class MemberDto {
   private List<MemberType> memberTypes;
   private List<Image> images;
   private List<SocialNetwork> network;
+  private String pronouns;
+  private PronounCategory pronounCategory;
+  private Boolean isWomen;
 
   /**
    * Update member using attributes from his DTO.
@@ -51,6 +59,9 @@ public class MemberDto {
         .memberTypes(getMemberTypes())
         .images(getImages())
         .network(getNetwork())
+        .pronouns(getPronouns())
+        .pronounCategory(getPronounCategory())
+        .isWomen(getIsWomen())
         .build();
   }
 }

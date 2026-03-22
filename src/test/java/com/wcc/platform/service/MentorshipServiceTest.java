@@ -1,40 +1,42 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.factories.SetupMentorFactories.createMemberProfilePictureTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
-import static com.wcc.platform.factories.SetupMentorFactories.createResourceTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
-import static com.wcc.platform.service.MentorshipService.CYCLE_CLOSED;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
-import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.auth.UserAccount;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
+import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
+import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
+import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.RoleType;
+import org.mockito.ArgumentCaptor;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
 import java.time.Month;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,11 +51,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MentorshipServiceTest {
 
   @Mock private MentorRepository mentorRepository;
+  @Mock private MemberRepository memberRepository;
+  @Mock private UserProvisionService userProvisionService;
   @Mock private MemberProfilePictureRepository profilePicRepo;
-  private Integer daysOpen = 10;
+  @Mock private MentorshipNotificationService notificationService;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
+  private UserAccount userAccount;
   private MentorshipService service;
 
   public MentorshipServiceTest() {
@@ -62,28 +67,68 @@ class MentorshipServiceTest {
 
   @BeforeEach
   void setUp() {
+    final int daysOpen = 10;
     MockitoAnnotations.openMocks(this);
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
     updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
+    userAccount = createUserAccountTest(mentor);
+    service =
+        spy(
+            new MentorshipService(
+                mentorRepository,
+                memberRepository,
+                userProvisionService,
+                profilePicRepo,
+                daysOpen,
+                notificationService));
   }
 
   @Test
+  @DisplayName(
+      "Given mentor with existing ID, when creating mentor with no matching email, then throw DuplicatedMemberException")
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
     when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
+    when(mentor.getEmail()).thenReturn("test@test.com");
+    when(memberRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
 
     assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
     verify(mentorRepository, never()).create(any());
   }
 
   @Test
+  @DisplayName(
+      "Given mentor with new email and no existing ID conflict, when creating mentor, then create and provision user role")
   void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
     var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
     when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(mentor.getEmail()).thenReturn("newmentor@test.com");
+    when(memberRepository.findByEmail("newmentor@test.com")).thenReturn(Optional.empty());
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty(), Optional.of(mentor));
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
+
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(userProvisionService).provisionUserRole(anyLong(), anyString(), eq(RoleType.MENTOR));
+    verify(memberRepository).findByEmail("newmentor@test.com");
+    verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and 4+ hours commitment for 1 mentee When creating"
+          + " Then create mentor and return it")
+  void testCreateAvailableLongTermMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.longTerm()).thenReturn(new LongTermMentorship(1, 4));
     when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
     when(mentorRepository.create(mentor)).thenReturn(mentor);
 
@@ -94,101 +139,119 @@ class MentorshipServiceTest {
   }
 
   @Test
-  void whenGetAllMentorsGivenCycleClosedThenReturnDtosWithoutCycle() {
-    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
-    var dto = mock(MentorDto.class);
-    when(mentor.toDto()).thenReturn(dto);
-    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
+  @DisplayName(
+      "Given mentor with ad-hoc mentorship only When creating Then create mentor and return it")
+  void testCreateAdHocOnlyMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.longTerm()).thenReturn(null);
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    var result = service.create(mentor);
 
-    var result = service.getAllMentors();
-
-    assertEquals(List.of(dto), result);
-    verify(mentor, times(1)).toDto();
-    verify(mentor, never()).toDto(any(MentorshipCycle.class));
-  }
-
-  @Test
-  void whenGetAllMentorsGivenAdHocCycleOpenThenReturnDtosWithCycle() {
-    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
-    var dto = mock(MentorDto.class);
-    when(mentor.toDto(any(MentorshipCycle.class))).thenReturn(dto);
-    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
-
-    var cycle = new MentorshipCycle(MentorshipType.AD_HOC);
-    doReturn(cycle).when(service).getCurrentCycle();
-
-    var result = service.getAllMentors();
-
-    assertEquals(List.of(dto), result);
-    verify(mentor, times(1)).toDto(cycle);
-    verify(mentor, never()).toDto();
-  }
-
-  @Test
-  void whenGetAllMentorsGivenLongTermCycleOpenThenReturnDtosWithCycle() {
-    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
-    var dto = mock(MentorDto.class);
-    when(mentor.toDto(any(MentorshipCycle.class))).thenReturn(dto);
-    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
-
-    var cycle = new MentorshipCycle(MentorshipType.LONG_TERM);
-    doReturn(cycle).when(service).getCurrentCycle();
-
-    var result = service.getAllMentors();
-
-    assertEquals(List.of(dto), result);
-    verify(mentor, times(1)).toDto(cycle);
-    verify(mentor, never()).toDto();
-  }
-
-  @Test
-  void testGetCurrentCycleReturnsLongTermDuringMarchWithinOpenDays() {
-    var march3 = ZonedDateTime.of(2025, 3, 3, 10, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(march3).when(service).nowLondon();
-
-    var cycle = service.getCurrentCycle();
-
-    assertEquals(new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH), cycle);
-  }
-
-  @Test
-  void testGetCurrentCycleReturnsAdHocFromMayWithinOpenDays() {
-    daysOpen = 7;
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
-    var may2 = ZonedDateTime.of(2025, 5, 2, 9, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(may2).when(service).nowLondon();
-
-    var cycle = service.getCurrentCycle();
-
-    assertEquals(new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY), cycle);
-  }
-
-  @Test
-  void testGetCurrentCycleReturnsClosedOutsideWindows() {
-    daysOpen = 5;
-    service = spy(new MentorshipService(mentorRepository, profilePicRepo, daysOpen));
-
-    // April -> closed
-    var april10 = ZonedDateTime.of(2025, 4, 10, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(april10).when(service).nowLondon();
-    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
-
-    // December -> closed
-    var dec1 = ZonedDateTime.of(2025, 12, 1, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(dec1).when(service).nowLondon();
-    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
-
-    // May but beyond open days -> closed
-    var may20 = ZonedDateTime.of(2025, 5, 20, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(may20).when(service).nowLondon();
-    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
   }
 
   @Test
   @DisplayName(
-      "Given mentor exists When updating the mentor Then should update mentor attributes and return updated mentor")
+      "Given mentor with long-term mentorship and under 2 hours per mentee When creating Then throw"
+          + " IllegalArgumentException")
+  void testCreateUnavailableLongTermMentor() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    // 2 mentees with only 2 total hours = 1 hour per mentee (below minimum)
+    when(menteeSection.longTerm()).thenReturn(new LongTermMentorship(2, 2));
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+
+    var expectedMsg = "Long-term mentorship requires at least 2 hours per mentee.";
+    var exception = assertThrows(IllegalArgumentException.class, () -> service.create(mentor));
+    assertEquals(expectedMsg, exception.getMessage());
+
+    verify(mentorRepository, never()).create(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and exactly 2 hours per mentee When creating Then"
+          + " create mentor and return it")
+  void testCreateLongTermMentorWithMinimumHours() {
+    var mentor = mock(Mentor.class);
+    var menteeSection = mock(MenteeSection.class);
+    when(mentor.getId()).thenReturn(2L);
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(menteeSection.longTerm()).thenReturn(new LongTermMentorship(2, 4));
+    when(mentorRepository.findById(2L)).thenReturn(Optional.empty());
+    when(mentorRepository.create(mentor)).thenReturn(mentor);
+
+    var result = service.create(mentor);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).create(mentor);
+  }
+
+  @Test
+  @DisplayName(
+      "Given existing member with same email, when re-registering as mentor, then all fields are preserved")
+  void shouldPreserveAllFieldsWhenMentorReRegistersWithExistingEmail() {
+    var country = mock(com.wcc.platform.domain.cms.attributes.Country.class);
+    var skills = mock(Skills.class);
+    var menteeSection = mock(MenteeSection.class);
+    var mentor = mock(Mentor.class);
+    when(mentor.getEmail()).thenReturn("existing@test.com");
+    when(mentor.getFullName()).thenReturn("Diana Fox");
+    when(mentor.getPosition()).thenReturn("Engineering Manager");
+    when(mentor.getSlackDisplayName()).thenReturn("@diana");
+    when(mentor.getCountry()).thenReturn(country);
+    when(mentor.getCity()).thenReturn("Amsterdam");
+    when(mentor.getCompanyName()).thenReturn("CompanyN");
+    when(mentor.getImages()).thenReturn(List.of());
+    when(mentor.getNetwork()).thenReturn(List.of());
+    when(mentor.getPronouns()).thenReturn("she/her");
+    when(mentor.getPronounCategory()).thenReturn(PronounCategory.FEMININE);
+    when(mentor.getSkills()).thenReturn(skills);
+    when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
+    when(mentor.getBio()).thenReturn("Bio");
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
+    when(mentor.getFeedbackSection()).thenReturn(null);
+    when(mentor.getResources()).thenReturn(null);
+    when(mentor.getIsWomen()).thenReturn(true);
+    when(mentor.getCalendlyLink()).thenReturn("https://calendly.com/myname");
+    when(mentor.getAcceptMale()).thenReturn(true);
+    when(mentor.getAcceptPromotion()).thenReturn(false);
+
+    Member existingMember = Member.builder().id(999L).email("existing@test.com").build();
+    when(memberRepository.findByEmail("existing@test.com")).thenReturn(Optional.of(existingMember));
+    when(mentorRepository.create(any(Mentor.class))).thenReturn(mock(Mentor.class));
+
+    service.create(mentor);
+
+    ArgumentCaptor<Mentor> mentorCaptor = ArgumentCaptor.forClass(Mentor.class);
+    verify(memberRepository).findByEmail("existing@test.com");
+    verify(mentorRepository).create(mentorCaptor.capture());
+
+    Mentor captured = mentorCaptor.getValue();
+    assertThat(captured.getId()).isEqualTo(999L);
+    assertThat(captured.getProfileStatus()).isEqualTo(ProfileStatus.PENDING);
+    assertThat(captured.getIsWomen()).isTrue();
+    assertThat(captured.getPronouns()).isEqualTo("she/her");
+    assertThat(captured.getPronounCategory()).isEqualTo(PronounCategory.FEMININE);
+    assertThat(captured.getCalendlyLink()).isEqualTo("https://calendly.com/myname");
+    assertThat(captured.getAcceptMale()).isTrue();
+    assertThat(captured.getAcceptPromotion()).isFalse();
+    assertThat(captured.getSkills()).isEqualTo(skills);
+    assertThat(captured.getMenteeSection()).isEqualTo(menteeSection);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor exists When updating the mentor Then should update mentor attributes and return"
+          + " updated mentor")
   void testUpdateMentor() {
     long mentorId = 1L;
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
@@ -203,7 +266,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor does not exist When updating the mentor Then should throw MemberNotFoundException")
+      "Given mentor does not exist When updating the mentor Then should throw"
+          + " MemberNotFoundException")
   void testUpdateMentorNotFound() {
     long mentorId = 1L;
 
@@ -217,7 +281,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor exists When updating with mismatched mentor ID Then should throw IllegalArgumentException")
+      "Given mentor exists When updating with mismatched mentor ID Then should throw"
+          + " IllegalArgumentException")
   void testUpdateMentorIllegalIdMismatch() {
     long mentorId = 1L;
     MentorDto newMentorDto = createMentorDtoTest(999L, MemberType.DIRECTOR);
@@ -231,69 +296,170 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with profile picture, when getAllMentors is called, then images list should"
-          + " contain profile picture")
-  void shouldMergeProfilePictureIntoImagesWhenMentorHasProfilePicture() {
-    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
-    var dto = mock(MentorDto.class);
-    when(mentor.toDto()).thenReturn(dto);
-    when(dto.getId()).thenReturn(1L);
-    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
+      "Given mentor with long-term mentorship and 4+ hours per mentee When updating the mentor"
+          + " Then update and return it")
+  void testUpdateLongTermMentorAvailableHours() {
+    final var updatedMentor =
+        createUpdatedMentorTest(
+            mentor,
+            mentorDto,
+            new LongTermMentorship(2, 8), // 4 hours per mentee
+            List.of(new MentorMonthAvailability(Month.JANUARY, 2)));
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentor);
+    Member result = service.updateMentor(mentorId, mentorDto);
 
-    var resource = createResourceTest();
-    var profilePicture = createMemberProfilePictureTest(1L).toBuilder().resource(resource).build();
-    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.of(profilePicture));
-
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
-
-    var result = service.getAllMentors();
-
-    assertThat(result).hasSize(1);
-    var mentorDto = result.get(0);
-    assertThat(mentorDto.getImages()).hasSize(1);
-    assertThat(mentorDto.getImages().get(0).path()).isEqualTo(resource.getDriveFileLink());
-    assertThat(mentorDto.getImages().get(0).type()).isEqualTo(ImageType.DESKTOP);
+    assertEquals(updatedMentor, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).update(anyLong(), any());
   }
 
   @Test
   @DisplayName(
-      "Given mentor without profile picture, when getAllMentors is called, then images list"
-          + " should be empty")
-  void shouldReturnEmptyImagesWhenMentorHasNoProfilePicture() {
-    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
-    var dto = mock(MentorDto.class);
-    when(mentor.toDto()).thenReturn(dto);
-    when(dto.getId()).thenReturn(1L);
-    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
-    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
+      "Given mentor with ad-hoc mentorship only When updating the mentor Then update and return it")
+  void testUpdateAdHocOnlyMentor() {
+    final var updatedMentor =
+        createUpdatedMentorTest(
+            mentor,
+            mentorDto,
+            null, // No long-term
+            List.of(
+                new MentorMonthAvailability(Month.JANUARY, 1),
+                new MentorMonthAvailability(Month.FEBRUARY, 0)));
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.update(anyLong(), any())).thenReturn(updatedMentor);
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    Member result = service.updateMentor(mentorId, mentorDto);
 
-    var result = service.getAllMentors();
-
-    assertThat(result).hasSize(1);
-    var mentorDto = result.get(0);
-    assertThat(mentorDto.getImages()).isNullOrEmpty();
+    assertEquals(updatedMentor, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).update(anyLong(), any());
   }
 
   @Test
   @DisplayName(
-      "Given profile picture fetch throws exception, when getAllMentors is called, then images"
-          + " should be empty and exception should be logged")
-  void shouldHandleExceptionWhenFetchingProfilePictureFails() {
-    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
-    var dto = mock(MentorDto.class);
-    when(mentor.toDto()).thenReturn(dto);
-    when(dto.getId()).thenReturn(1L);
-    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
-    when(profilePicRepo.findByMemberId(1L)).thenThrow(new RuntimeException("Database error"));
+      "Given pending mentor, when activateMentor is called, then returns"
+          + " accepted mentor and sends mentor approval email")
+  void testAcceptMentor() {
+    long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE)).thenReturn(mentor);
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    Mentor result = service.activateMentor(mentorId);
 
-    var result = service.getAllMentors();
+    assertEquals(mentor, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+    verify(notificationService).sendMentorApprovalEmail(mentor);
+  }
 
-    assertThat(result).hasSize(1);
-    var mentorDto = result.get(0);
-    assertThat(mentorDto.getImages()).isNullOrEmpty();
+  @Test
+  @DisplayName(
+      "Given mentor that is already ACTIVE, when activateMentor is called,"
+          + " then throws MentorStatusException")
+  void testAcceptAlreadyRejectedMentorThrowsMentorStatusException() {
+    long mentorId = 1L;
+    var approvedMentor = mock(Mentor.class);
+    when(approvedMentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(approvedMentor));
+
+    assertThrows(MentorStatusException.class, () -> service.activateMentor(mentorId));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
+    verify(notificationService, never()).sendMentorApprovalEmail(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given non-existent mentor, when activateMentor is called,"
+          + " then throws MemberNotFoundException")
+  void testAcceptNonExistentMentorThrowsMemberNotFoundException() {
+    long mentorId = 999L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.empty());
+
+    assertThrows(MemberNotFoundException.class, () -> service.activateMentor(mentorId));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateProfileStatus(anyLong(), any());
+    verify(notificationService, never()).sendMentorApprovalEmail(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given pending mentor, when rejectMentor is called with a reason,"
+          + " then returns rejected mentor and sends rejection email")
+  void testRejectMentor() {
+    long mentorId = 1L;
+    String rejectionReason = "Not a good fit at this time";
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+    when(mentorRepository.updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason))
+        .thenReturn(mentor);
+
+    Mentor result = service.rejectMentor(mentorId, rejectionReason);
+
+    assertEquals(mentor, result);
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository).updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason);
+    verify(notificationService).sendMentorRejectionEmail(mentor, rejectionReason);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor that is already REJECTED, when rejectMentor is called,"
+          + " then throws MentorStatusException")
+  void testRejectAlreadyRejectedMentorThrowsMentorStatusException() {
+    long mentorId = 1L;
+    var rejectedMentor = mock(Mentor.class);
+    when(rejectedMentor.getProfileStatus()).thenReturn(ProfileStatus.REJECTED);
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(rejectedMentor));
+
+    assertThrows(MentorStatusException.class, () -> service.rejectMentor(mentorId, "reason"));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateToRejected(anyLong(), any(), anyString());
+    verify(notificationService, never()).sendMentorRejectionEmail(any(), anyString());
+  }
+
+  @Test
+  @DisplayName(
+      "Given non-existent mentor, when rejectMentor is called,"
+          + " then throws MemberNotFoundException")
+  void testRejectNonExistentMentorThrowsMemberNotFoundException() {
+    long mentorId = 999L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.empty());
+
+    assertThrows(MemberNotFoundException.class, () -> service.rejectMentor(mentorId, "reason"));
+
+    verify(mentorRepository).findById(mentorId);
+    verify(mentorRepository, never()).updateToRejected(anyLong(), any(), anyString());
+    verify(notificationService, never()).sendMentorRejectionEmail(any(), anyString());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with long-term mentorship and under 2 hours per mentee When updating the mentor"
+          + " Then throw IllegalArgumentException")
+  void testUpdateUnavailableLongTermMentorIllegalArgumentException() {
+    long mentorId = 1L;
+    // 2 mentees with only 2 total hours = 1 hour per mentee (below minimum)
+    MentorDto newMentorDto =
+        createMentorDtoTest(
+            1L,
+            MemberType.DIRECTOR,
+            new LongTermMentorship(2, 2),
+            List.of(new MentorMonthAvailability(Month.JANUARY, 2)));
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
+
+    var expectedMsg = "Long-term mentorship requires at least 2 hours per mentee.";
+    var exception =
+        assertThrows(
+            IllegalArgumentException.class, () -> service.updateMentor(mentorId, newMentorDto));
+    assertEquals(expectedMsg, exception.getMessage());
+
+    verify(mentorRepository).findById(anyLong());
+    verify(mentorRepository, never()).update(anyLong(), any());
   }
 }

@@ -8,7 +8,7 @@ set -euo pipefail
 # --------------------------------------------
 
 API_BASE="http://localhost:8080/api"
-API_KEY="dev-key"
+API_KEY="test"
 
 echo "🚀 Starting WCC backend seed..."
 
@@ -56,15 +56,27 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         "images": [],
         "network": [
           {
-            "type": "LINKEDIN",
+            "type": "linkedin",
             "link": "https://www.linkedin.com/in/sonali-goel-6b611522/"
           }
         ],
-        "profileStatus": "ACTIVE",
+        "isWomen": true,
+        "acceptMale": false,
+        "acceptPromotion": true,
+        "pronouns": "she/her",
+        "pronounCategory": "FEMININE",
         "skills": {
           "yearsExperience": 10,
-          "areas": [ "BACKEND", "DISTRIBUTED_SYSTEMS", "Machine Learning"],
-          "languages": [ "java", "javascript", "Python", "C++" ],
+          "areas": [
+            { "technicalArea": "BACKEND", "proficiencyLevel": "EXPERT" },
+            { "technicalArea": "DISTRIBUTED_SYSTEMS", "proficiencyLevel": "ADVANCED" }
+          ],
+          "languages": [
+            { "language": "JAVA", "proficiencyLevel": "EXPERT" },
+            { "language": "JAVASCRIPT", "proficiencyLevel": "ADVANCED" },
+            { "language": "PYTHON", "proficiencyLevel": "INTERMEDIATE" },
+            { "language": "C_PLUS_PLUS", "proficiencyLevel": "INTERMEDIATE" }
+          ],
           "mentorshipFocus": [
             "Switch career to IT",
             "Grow from beginner to mid-level",
@@ -74,19 +86,16 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         "spokenLanguages": [ "english"],
         "bio": "Sonali serves as a Lead Engineer at Yoox-Net-a-porter, specializing in managing and constructing extensive-scale ecommerce solutions. She leverages Java-based commerce platforms and integrates them with open-source technologies like Spring Boot and Spring Batch. As an AWS-certified Solution Architect, she possesses deep knowledge of Amazon Web Services, complemented by proficiency in implementing continuous integration and continuous deployment (CICD) practices to ensure seamless software delivery. Additionally, she excels in architecting and implementing microservices-based architectures to drive agility and modularity in software development With over 13 years of experience in the technology industry, Sonali brings a wealth of expertise in steering technical direction and fostering high-performance outcomes. Her passion lies in nurturing a culture of continuous learning and innovation. Outside of her professional endeavors, Sonali actively volunteers with Women Who Code, advocating for gender diversity. She is also a creative enthusiast, utilizing design templates to convey ideas, thoughts, and emotions visually.",
         "menteeSection": {
-          "mentorshipType": [ "LONG_TERM", "AD_HOC"],
-          "availability": [
-            {
-              "month": 6,
-              "hours": 1
-            },
-            {
-              "month": 7,
-              "hours": 1
-            }
-          ],
           "idealMentee": "I am seeking mentees who are enthusiastic about learning and growing in the field of technology. Whether you are a beginner looking to enhance your programming skills or an experienced professional aiming to delve deeper into cloud architecture and e-commerce systems, I am here to support your journey. I value proactive communication, eagerness to learn, and a collaborative spirit. If you are committed to expanding your knowledge and skills in software development, AWS architecture, CI/CD pipelines, and Terraform, I would be delighted to work with you.",
-          "additional": "Career Growth and Development, Resume Review, Preparation for Technical Interviews, Leadership and Team Management Skills, Learning Resources and Skill Development Plans."
+          "additional": "Career Growth and Development, Resume Review, Preparation for Technical Interviews, Leadership and Team Management Skills, Learning Resources and Skill Development Plans.",
+          "longTerm": {
+            "numMentee": 2,
+            "hours": 4
+          },
+          "adHoc": [
+            { "month": "JUNE", "hours": 1 },
+            { "month": "JULY", "hours": 1 }
+          ]
         }
       }'
 echo " "
@@ -108,17 +117,29 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         },
         "city": "Valencia",
         "companyName": "Centric Software",
-        "memberTypes": [ "MENTOR", "DIRECTOR"],
+        "memberTypes": [ "MENTOR"],
         "images": [],
         "network": [
-          { "type": "LINKEDIN", "link": "https://www.linkedin.com/in/dricazenck/" },
-          { "type": "GITHUB", "link": "https://github.com/dricazenck" }
+          { "type": "linkedin", "link": "https://www.linkedin.com/in/dricazenck/" },
+          { "type": "github", "link": "https://github.com/dricazenck" }
         ],
-        "profileStatus": "ACTIVE",
+        "isWomen":true,
+        "acceptMale": true,
+        "acceptPromotion": true,
+        "pronouns": "she/her",
+        "pronounCategory": "FEMININE",
         "skills": {
           "yearsExperience": 15,
-          "areas": [ "BACKEND", "FULLSTACK", "DISTRIBUTED_SYSTEMS" ],
-          "languages": [ "java", "javascript", "Kotlin" ],
+          "areas": [
+            { "technicalArea": "BACKEND", "proficiencyLevel": "EXPERT" },
+            { "technicalArea": "FULLSTACK", "proficiencyLevel": "ADVANCED" },
+            { "technicalArea": "DISTRIBUTED_SYSTEMS", "proficiencyLevel": "ADVANCED" }
+          ],
+          "languages": [
+            { "language": "JAVA", "proficiencyLevel": "EXPERT" },
+            { "language": "JAVASCRIPT", "proficiencyLevel": "ADVANCED" },
+            { "language": "KOTLIN", "proficiencyLevel": "INTERMEDIATE" }
+          ],
           "mentorshipFocus": [
             "Grow from beginner to mid-level",
             "Grow beyond senior level"
@@ -127,35 +148,20 @@ curl -s -X POST "${API_BASE}/platform/v1/mentors" \
         "spokenLanguages": [ "portuguese", "english", "spanish"],
         "bio": "I am a mother, a wife, and a Software Engineer. I graduated in Computer Science and have over 14 years of experience working in tech companies in Brazil, Germany, and Spain. As Backend Engineer, I found this to be my passion which I focused on in the last six years of my career. I am always excited to help others, and my goal is to empower women and support them with the difficulties I had as an engineer, and I still have from time to time.",
         "menteeSection": {
-          "mentorshipType": [ "LONG_TERM",  "AD_HOC" ],
-          "availability": [
-            {
-              "month": 6,
-              "hours": 2
-            },
-            {
-              "month": 7,
-              "hours": 2
-            },
-            {
-              "month": 8,
-              "hours": 2
-            },
-            {
-              "month": 9,
-              "hours": 2
-            },
-            {
-              "month": 10,
-              "hours": 2
-            },
-            {
-              "month": 11,
-              "hours": 2
-            }
-          ],
           "idealMentee": "Someone willing to learn new technologies or to improve current skills",
-          "additional": "Spring Boot and Best Practices"
+          "additional": "Spring Boot and Best Practices",
+          "longTerm": {
+            "numMentee": 2,
+            "hours": 8
+          },
+          "adHoc": [
+            { "month": "JUNE", "hours": 2 },
+            { "month": "JULY", "hours": 2 },
+            { "month": "AUGUST", "hours": 2 },
+            { "month": "SEPTEMBER", "hours": 2 },
+            { "month": "OCTOBER", "hours": 2 },
+            { "month": "NOVEMBER", "hours": 2 }
+          ]
         }
       }'
 echo ""
@@ -190,9 +196,12 @@ curl -s -X POST "${API_BASE}/platform/v1/members" \
   "memberTypes": [
     "MEMBER", "VOLUNTEER", "COLLABORATOR"
   ],
+  "isWomen": true,
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
   "network": [
     {
-      "type": "LINKEDIN",
+      "type": "linkedin",
       "link": "https://www.linkedin.com/in/nevena-verbi%C4%8D-83a16ab"
     }
   ]
@@ -207,41 +216,70 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
   -H "X-API-KEY: ${API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
-        "fullName": "Maria Silva",
-        "position": "Junior Software Engineer",
-        "email": "maria.silva@email.com",
-        "slackDisplayName": "@MariaS",
-        "country": {
-          "countryCode": "BR",
-          "countryName": "Brazil"
+        "mentee": {
+          "fullName": "Maria Silva",
+          "position": "Junior Software Engineer",
+          "email": "maria.silva@email.com",
+          "slackDisplayName": "@MariaS",
+          "country": {
+            "countryCode": "BR",
+            "countryName": "Brazil"
+          },
+          "city": "São Paulo",
+          "companyName": "TechBrasil",
+          "images": [],
+          "network": [
+            {
+              "type": "linkedin",
+              "link": "https://www.linkedin.com/in/maria-silva/"
+            },
+            {
+              "type": "github",
+              "link": "https://github.com/mariasilva"
+            }
+          ],
+          "pronouns": "she/her",
+          "pronounCategory": "FEMININE",
+          "isWomen": true,
+          "profileStatus": "ACTIVE",
+          "skills": {
+            "yearsExperience": 2,
+            "areas": [
+              { "technicalArea": "BACKEND", "proficiencyLevel": "INTERMEDIATE" },
+              { "technicalArea": "FULLSTACK", "proficiencyLevel": "BEGINNER" }
+            ],
+            "languages": [
+              { "language": "JAVA", "proficiencyLevel": "INTERMEDIATE" },
+              { "language": "JAVASCRIPT", "proficiencyLevel": "INTERMEDIATE" },
+              { "language": "PYTHON", "proficiencyLevel": "BEGINNER" }
+            ],
+            "mentorshipFocus": [
+              "Grow from beginner to mid-level",
+              "Grow beyond senior level"
+            ]
+          },
+          "spokenLanguages": [ "Portuguese", "English", "Spanish" ],
+          "bio": "I am a Junior Software Engineer passionate about backend development and eager to learn best practices in software architecture and cloud technologies. I graduated in Computer Science and have been working with Java and Spring Boot for the past 2 years. I am looking for guidance to advance my career and become a senior engineer.",
+          "availableHsMonth": 6
         },
-        "city": "São Paulo",
-        "companyName": "TechBrasil",
-        "images": [],
-        "network": [
+        "mentorshipType": "LONG_TERM",
+        "cycleYear": 2026,
+        "applications": [
           {
-            "type": "LINKEDIN",
-            "link": "https://www.linkedin.com/in/maria-silva/"
+            "menteeId": 1,
+            "mentorId": 1,
+            "priorityOrder": 1,
+            "whyMentor": "This mentor for backend",
+            "applicationMessage": "Other relevant information to be shared",
           },
           {
-            "type": "GITHUB",
-            "link": "https://github.com/mariasilva"
+            "menteeId": 1,
+            "mentorId": 2,
+            "priorityOrder": 2,
+            "whyMentor": "This mentor for frontend",
+            "applicationMessage": "Other relevant information to be shared",
           }
-        ],
-        "profileStatus": "ACTIVE",
-        "skills": {
-          "yearsExperience": 2,
-          "areas": [ "BACKEND", "FULLSTACK" ],
-          "languages": [ "Java", "Javascript", "Python" ],
-          "mentorshipFocus": [
-            "Grow from beginner to mid-level",
-            "Grow beyond senior level"
-          ]
-        },
-        "spokenLanguages": [ "Portuguese", "English", "Spanish" ],
-        "bio": "I am a Junior Software Engineer passionate about backend development and eager to learn best practices in software architecture and cloud technologies. I graduated in Computer Science and have been working with Java and Spring Boot for the past 2 years. I am looking for guidance to advance my career and become a senior engineer.",
-        "mentorshipType": "LONG_TERM",
-        "prevMentorshipType": "AD_HOC"
+        ]
       }'
 echo " "
 echo "✅  Mentee Maria added."
@@ -252,47 +290,68 @@ curl -s -X POST "${API_BASE}/platform/v1/mentees" \
   -H "X-API-KEY: ${API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
-        "fullName": "Emma Schmidt",
-        "position": "Frontend Developer",
-        "email": "emma.schmidt@email.com",
-        "slackDisplayName": "@EmmaS",
-        "country": {
-          "countryCode": "DE",
-          "countryName": "Germany"
-        },
-        "city": "Berlin",
-        "companyName": "CloudTech GmbH",
-        "images": [],
-        "network": [
-          {
-            "type": "LINKEDIN",
-            "link": "https://www.linkedin.com/in/emma-schmidt/"
-          }
-        ],
-        "profileStatus": "ACTIVE",
-        "skills": {
-          "yearsExperience": 3,
-          "areas": [ "FRONTEND", "DEVOPS" ],
-          "languages": [ "Javascript", "Python" ],
-          "mentorshipFocus": [
-            "Switch career to IT",
-            "Grow from beginner to mid-level"
-          ]
-        },
-        "spokenLanguages": [ "German", "English" ],
-        "bio": "I am a Frontend Developer transitioning from traditional web development to cloud-native applications. I have experience with React and Vue.js, and I am currently learning AWS and Kubernetes. I am seeking mentorship to understand DevOps practices and how to build scalable frontend applications integrated with cloud services.",
-        "mentorshipType": "AD_HOC",
-        "prevMentorshipType": "AD_HOC"
-      }'
+              "mentee": {
+                "fullName": "Emma Schmidt",
+                "position": "Frontend Developer",
+                "email": "emma.schmidt@email.com",
+                "slackDisplayName": "@EmmaS",
+                "country": {
+                  "countryCode": "DE",
+                  "countryName": "Germany"
+                },
+                "city": "Berlin",
+                "companyName": "CloudTech GmbH",
+                "images": [],
+                "network": [
+                  {
+                    "type": "linkedin",
+                    "link": "https://www.linkedin.com/in/emma-schmidt/"
+                  }
+                ],
+                "isWomen": true,
+                "pronouns": "she/her",
+                "pronounCategory": "FEMININE",
+                "skills": {
+                  "yearsExperience": 3,
+                  "areas": [
+                    { "technicalArea": "FRONTEND", "proficiencyLevel": "ADVANCED" },
+                    { "technicalArea": "DEVOPS", "proficiencyLevel": "BEGINNER" }
+                  ],
+                  "languages": [
+                    { "language": "JAVASCRIPT", "proficiencyLevel": "ADVANCED" },
+                    { "language": "PYTHON", "proficiencyLevel": "INTERMEDIATE" }
+                  ],
+                  "mentorshipFocus": [
+                    "Switch career to IT",
+                    "Grow from beginner to mid-level"
+                  ]
+                },
+                "spokenLanguages": [ "German", "English" ],
+                "bio": "I am a Frontend Developer transitioning from traditional web development to cloud-native applications. I have experience with React and Vue.js, and I am currently learning AWS and Kubernetes. I am seeking mentorship to understand DevOps practices and how to build scalable frontend applications integrated with cloud services.",
+                "availableHsMonth": 8
+              },
+              "mentorshipType": "LONG-TERM",
+              "cycleYear": 2026,
+              "applications": [
+                {
+                  "mentorId": 2,
+                  "priorityOrder": 1
+                },
+                {
+                  "mentorId": 1,
+                  "priorityOrder": 2
+                }
+              ]
+            }'
 echo " "
 echo "✅  Mentee Emma added."
 echo " "
 
-# 5️⃣ List Mentees (endpoint not yet implemented)
-# echo "➡️ Fetching all mentees..."
-# curl -s -X GET "${API_BASE}/platform/v1/mentees" \
-#   -H "accept: */*" \
-#   -H "X-API-KEY: ${API_KEY}" | jq '.'
-# echo ""
-# echo "✅  Mentees listed."
-# echo ""
+# 5️⃣ List Members
+ echo "➡️ Fetching all members..."
+ curl -s -X GET "${API_BASE}/platform/v1/members" \
+   -H "accept: */*" \
+   -H "X-API-KEY: ${API_KEY}" | jq '.'
+ echo ""
+ echo "✅  Mentees listed."
+ echo ""

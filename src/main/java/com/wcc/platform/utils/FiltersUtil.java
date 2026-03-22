@@ -2,15 +2,16 @@ package com.wcc.platform.utils;
 
 import static java.util.Locale.ENGLISH;
 
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorAppliedFilters;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorFilterSection;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
-import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.SkillsFilter;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -22,8 +23,9 @@ public final class FiltersUtil {
 
   /** Returns a MentorFilterSection object with all mentorship types and skills. */
   public static MentorFilterSection mentorshipAllFilters() {
-    final var skills =
-        new Skills(0, TechnicalArea.getAll(), Languages.getAll(), MentorshipFocusArea.getAll());
+    final var areas = TechnicalArea.getAll().stream().toList();
+    final var languages = CodeLanguage.getAll().stream().toList();
+    final var skills = new SkillsFilter(0, areas, languages, MentorshipFocusArea.getAll());
 
     return MentorFilterSection.builder()
         .types(List.of(MentorshipType.LONG_TERM, MentorshipType.AD_HOC))
@@ -38,8 +40,6 @@ public final class FiltersUtil {
    * @param filters the filtering criteria encapsulated in a {@link MentorAppliedFilters} object; it
    *     can include various fields such as keyword, mentorship types, years of experience,
    *     technical areas, languages, or mentorship focus. If null, no filtering is applied.
-   * @param currentCycle the current mentorship cycle as a {@link MentorshipCycle} object, used to
-   *     retrieve the initial list of mentors to be filtered.
    * @return a list of {@link MentorDto} objects that match the specified filtering criteria, or the
    *     full list of mentors if no filters are provided.
    */
@@ -88,10 +88,11 @@ public final class FiltersUtil {
     if (CollectionUtils.isEmpty(types)) {
       return true;
     }
-    if (mentor.getMenteeSection() == null || mentor.getMenteeSection().mentorshipType() == null) {
+    if (mentor.getMenteeSection() == null) {
       return false;
     }
-    return types.stream().anyMatch(t -> mentor.getMenteeSection().mentorshipType().contains(t));
+    final var mentorTypes = mentor.getMenteeSection().getMentorshipTypes();
+    return types.stream().anyMatch(mentorTypes::contains);
   }
 
   private static boolean matchesMinYears(
@@ -115,7 +116,9 @@ public final class FiltersUtil {
     final var skills = mentorDto.getSkills();
     return skills != null
         && skills.areas() != null
-        && skills.areas().stream().anyMatch(wantedAreas::contains);
+        && skills.areas().stream()
+            .map(TechnicalAreaProficiency::technicalArea)
+            .anyMatch(wantedAreas::contains);
   }
 
   private static boolean matchesLanguages(
@@ -127,7 +130,9 @@ public final class FiltersUtil {
     final var skills = mentorDto.getSkills();
     return skills != null
         && skills.languages() != null
-        && skills.languages().stream().anyMatch(wantedLangs::contains);
+        && skills.languages().stream()
+            .map(LanguageProficiency::language)
+            .anyMatch(wantedLangs::contains);
   }
 
   private static boolean matchesFocus(

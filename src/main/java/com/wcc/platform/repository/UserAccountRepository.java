@@ -1,6 +1,7 @@
 package com.wcc.platform.repository;
 
 import com.wcc.platform.domain.auth.UserAccount;
+import com.wcc.platform.domain.platform.type.RoleType;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ public interface UserAccountRepository extends CrudRepository<UserAccount, Integ
   Optional<UserAccount> findByEmail(String email);
 
   List<UserAccount> findAll();
+
+  void updateRole(Integer id, List<RoleType> roles);
 }

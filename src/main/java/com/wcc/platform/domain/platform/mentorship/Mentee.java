@@ -2,50 +2,58 @@ package com.wcc.platform.domain.platform.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.type.MemberType;
-import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @NoArgsConstructor
+@ToString(callSuper = true)
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
-  private @NotBlank MentorshipType prevMentorshipType;
-  private @NotBlank MentorshipType mentorshipType;
-  private @NotNull ProfileStatus profileStatus;
-  private @NotBlank Skills skills;
+  private ProfileStatus profileStatus;
+  private @NotNull Skills skills;
   private @NotBlank String bio;
   private List<String> spokenLanguages;
+
+  @NotNull
+  @Min(1)
+  private Integer availableHsMonth;
 
   @Builder(builderMethodName = "menteeBuilder")
   public Mentee(
       final Long id,
-      @NotBlank final String fullName,
-      @NotBlank final String position,
-      @NotBlank @Email final String email,
-      @NotBlank final String slackDisplayName,
-      @NotBlank final Country country,
-      @NotBlank final String city,
+      final String fullName,
+      final String position,
+      final String email,
+      final String slackDisplayName,
+      final Country country,
+      final String city,
       final String companyName,
       final List<Image> images,
       final List<SocialNetwork> network,
-      @NotNull final ProfileStatus profileStatus,
-      final List<String> spokenLanguages, // TODO
-      @NotBlank final String bio,
-      @NotBlank final Skills skills,
-      @NotBlank final MentorshipType mentorshipType,
-      @NotBlank final MentorshipType prevMentorshipType) {
+      final String pronouns,
+      final PronounCategory pronounCategory,
+      final Boolean isWomen,
+      final ProfileStatus profileStatus,
+      final List<String> spokenLanguages,
+      final String bio,
+      final Skills skills,
+      final Integer availableHsMonth) {
     super(
         id,
         fullName,
@@ -57,13 +65,15 @@ public class Mentee extends Member {
         companyName,
         Collections.singletonList(MemberType.MENTEE),
         images,
-        network);
+        network,
+        pronouns,
+        pronounCategory,
+        isWomen);
 
-    this.profileStatus = profileStatus;
+    this.profileStatus = Objects.requireNonNullElse(profileStatus, ProfileStatus.PENDING);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
     this.bio = bio;
-    this.mentorshipType = mentorshipType;
-    this.prevMentorshipType = prevMentorshipType;
+    this.availableHsMonth = availableHsMonth;
   }
 }

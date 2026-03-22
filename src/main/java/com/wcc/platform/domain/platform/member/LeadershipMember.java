@@ -54,7 +54,10 @@ public class LeadershipMember extends Member {
         companyName,
         memberTypes,
         images,
-        network);
+        network,
+        null,
+        null,
+        null);
 
     this.memberTypes = memberTypes;
   }

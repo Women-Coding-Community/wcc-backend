@@ -1,0 +1,37 @@
+MENTOR_APPROVED:
+  subject: "Mentor Profile Approval Confirmation"
+  body: |
+    <p>Dear {{mentorName}},</p>
+
+    <p>
+    Thank you for your interest in our <strong>Mentorship Programme</strong>.
+    We are pleased to inform you that your profile has been <strong>approved</strong>.
+    </p>
+
+    <p>
+    Your information is now visible on our website and accessible to potential mentees.
+    You can view your profile using the link below:
+    </p>
+
+    <p>
+    <a href="{{mentorProfileUrl}}">View your mentor profile</a>
+    </p>
+
+    <p>
+    We appreciate your time and willingness to serve as a mentor.
+    We are excited to have you as part of our community and look forward to connecting you with mentees
+    who can benefit from your expertise and experience.
+    </p>
+
+    <p>
+    If you need to make any corrections to your profile or have any questions,
+    please feel free to reply to this email.
+    </p>
+
+    <p>
+    Thank you again, and welcome to our Mentorship Programme!
+    </p>
+
+    <p>
+    WCC Mentorship Team
+    </p>

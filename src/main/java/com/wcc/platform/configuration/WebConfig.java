@@ -2,7 +2,7 @@ package com.wcc.platform.configuration;
 
 import com.wcc.platform.configuration.converter.StringToEnumConverter;
 import com.wcc.platform.configuration.converter.StringToEnumConverterFactory;
-import com.wcc.platform.domain.platform.config.PlatformServers;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -12,11 +12,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+  @Value("${backend.app.url}")
+  private String appBaseUrl;
+
   @Override
   public void addCorsMappings(final CorsRegistry registry) {
     registry
         .addMapping("/**")
-        .allowedOrigins(PlatformServers.LOCAL.getUri(), PlatformServers.DEV.getUri())
+        .allowedOrigins(appBaseUrl)
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
         .allowedHeaders("*");
   }

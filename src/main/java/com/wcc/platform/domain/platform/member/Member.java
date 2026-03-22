@@ -1,19 +1,22 @@
 package com.wcc.platform.domain.platform.member;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 /** Member class with common attributes for all community members. */
@@ -21,21 +24,29 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-@Data
+@Getter
 @Builder(toBuilder = true)
 public class Member {
+  @Setter
+  @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Auto-generated member ID")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
+
   @NotBlank private String fullName;
   @NotBlank private String position;
-  @NotBlank @Email private String email;
+  @Setter @NotBlank @Email private String email;
   @NotBlank private String slackDisplayName;
   @NotNull private Country country;
   private String city;
   private String companyName;
-  @NotNull private List<MemberType> memberTypes;
-  @NotEmpty private List<Image> images;
+  @Setter @NotNull private List<MemberType> memberTypes;
+  @Setter private List<Image> images;
   private List<SocialNetwork> network;
+  private String pronouns;
+  private PronounCategory pronounCategory;
+  private Boolean isWomen;
 
+  /** Converts this Member entity to a MemberDto for data transfer purposes. */
   public MemberDto toDto() {
     return new MemberDto(
         id,
@@ -48,6 +59,9 @@ public class Member {
         companyName,
         memberTypes,
         images,
-        network);
+        network,
+        pronouns,
+        pronounCategory,
+        isWomen);
   }
 }

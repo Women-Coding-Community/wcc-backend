@@ -8,8 +8,8 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
-import com.wcc.platform.repository.postgres.PostgresMenteeSectionRepository;
-import com.wcc.platform.repository.postgres.PostgresSkillRepository;
+import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository;
+import com.wcc.platform.repository.postgres.mentorship.PostgresSkillRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class MentorMapper {
-  
+
   private final PostgresMemberRepository memberRepository;
   private final PostgresSkillRepository skillsRepository;
   private final PostgresMenteeSectionRepository menteeSectionRepo;
@@ -42,8 +42,11 @@ public class MentorMapper {
                 .slackDisplayName(member.getSlackDisplayName())
                 .country(member.getCountry())
                 .city(member.getCity())
+                .pronouns(member.getPronouns())
+                .pronounCategory(member.getPronounCategory())
                 .companyName(member.getCompanyName())
                 .images(member.getImages())
+                .isWomen(member.getIsWomen())
                 .network(member.getNetwork()));
 
     final var skillsMentor = skillsRepository.findSkills(mentorId);
@@ -57,6 +60,9 @@ public class MentorMapper {
         .profileStatus(ProfileStatus.fromId(rs.getInt(COLUMN_PROFILE_STATUS)))
         .spokenLanguages(List.of(rs.getString(COLUMN_SPOKEN_LANG).split(COMMA)))
         .bio(rs.getString(COLUMN_BIO))
+        .calendlyLink(rs.getString(COL_CALENDLY_LINK))
+        .acceptMale(rs.getBoolean(COL_ACCEPT_MALE))
+        .acceptPromotion(rs.getBoolean(COL_ACCEPT_PROMO))
         .build();
   }
 

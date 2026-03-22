@@ -1,9 +1,8 @@
 package com.wcc.platform.service;
 
-import static com.wcc.platform.domain.cms.PageType.PROG_BOOK_CLUB;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.repository.PageRepository;
@@ -36,14 +35,10 @@ public class ProgrammeService {
     final var page = pageRepository.findById(programType.toPageId());
 
     if (page.isPresent()) {
-      try {
-        return objectMapper.convertValue(page.get(), ProgrammePage.class);
-      } catch (IllegalArgumentException e) {
-        throw new PlatformInternalException(e.getMessage(), e);
-      }
+      return objectMapper.convertValue(page.get(), ProgrammePage.class);
     }
 
-    return pageRepository.getFallback(PROG_BOOK_CLUB, ProgrammePage.class, objectMapper);
+    throw new ContentNotFoundException(programType);
   }
 
   /** Save programme page based on program Type. */

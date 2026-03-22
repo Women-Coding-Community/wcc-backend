@@ -31,7 +31,7 @@ public class ProgrammeController {
   }
 
   /** Get program API. */
-  @Tag(name = "Pages and Sections", description = "Pages and/or sections APIs")
+  @Tag(name = "Pages: General", description = "Pages and/or sections APIs")
   @GetMapping("/api/cms/v1/program")
   @Operation(
       summary = "API to retrieve programme page",
@@ -45,8 +45,8 @@ public class ProgrammeController {
     return ResponseEntity.ok(service.getProgramme(programType));
   }
 
-  /** Create Programme Page Content and store into database. */
-  @Tag(name = "Platform: Program", description = "Program Internal APIs")
+  /** Create Program Page Content and store into a database. */
+  @Tag(name = "Platform: Pages", description = "Platform Internal Pages APIs")
   @PostMapping("/api/platform/v1/program")
   @Operation(
       summary = "Create program page content by program type",
@@ -60,8 +60,8 @@ public class ProgrammeController {
     return ResponseEntity.ok(service.create(type, page));
   }
 
-  /** Update Program Page and store into database. */
-  @Tag(name = "Platform: Program", description = "Program Internal APIs")
+  /** Update Program Page and store into a database. */
+  @Tag(name = "Platform: Pages", description = "Platform Internal Pages APIs")
   @PutMapping("/api/platform/v1/program")
   @Operation(
       summary = "Update program page content by program type",

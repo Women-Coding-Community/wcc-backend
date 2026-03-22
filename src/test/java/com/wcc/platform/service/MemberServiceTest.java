@@ -5,23 +5,27 @@ import static com.wcc.platform.factories.SetupFactories.createMemberTest;
 import static com.wcc.platform.factories.SetupFactories.createUpdatedMemberTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMemberProfilePictureTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createResourceTest;
+import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.UserAccountRepository;
@@ -36,33 +40,42 @@ import org.mockito.MockitoAnnotations;
 class MemberServiceTest {
 
   @Mock private MemberRepository memberRepository;
-  @Mock private UserAccountRepository userAccountRepository;
+  @Mock private UserAccountRepository userRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
+  @Mock private UserProvisionService userProvisionService;
 
   private MemberService service;
 
   private Member member;
   private Member updatedMember;
   private MemberDto memberDto;
+  private UserAccount user;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    service = new MemberService(memberRepository, userAccountRepository, profilePicRepo);
+    service =
+        new MemberService(memberRepository, userRepository, profilePicRepo, userProvisionService);
     member = createMemberTest(MemberType.DIRECTOR);
     memberDto = createMemberDtoTest(MemberType.DIRECTOR);
     updatedMember = createUpdatedMemberTest(member, memberDto);
+    user = createUserAccountTest(member);
   }
 
   @Test
-  @DisplayName("Given Member, when created, then should return created member")
+  @DisplayName(
+      "Given Member, when created, then should return created member and create user account")
   void testCreateMember() {
+    when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(member.getEmail())).thenReturn(Optional.empty());
     when(memberRepository.create(any(Member.class))).thenReturn(member);
 
     Member result = service.createMember(member);
 
     assertEquals(member, result);
     verify(memberRepository).create(member);
+    verify(userProvisionService)
+        .provisionUserRole(eq(result.getId()), eq(result.getEmail()), eq(RoleType.VIEWER));
   }
 
   @Test
@@ -200,5 +213,19 @@ class MemberServiceTest {
     assertThat(result).hasSize(1);
     var memberResult = result.get(0);
     assertThat(memberResult.getImages()).isEqualTo(member.getImages());
+  }
+
+  @Test
+  void shouldNotCreateUserAccountWhenUserAlreadyExists() {
+    UserAccount existingUserAccount = new UserAccount(999L, member.getEmail(), RoleType.ADMIN);
+
+    when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(member.getEmail()))
+        .thenReturn(Optional.of(existingUserAccount));
+    when(memberRepository.create(member)).thenReturn(member);
+
+    service.createMember(member);
+
+    verify(userRepository, never()).create(any(UserAccount.class));
   }
 }

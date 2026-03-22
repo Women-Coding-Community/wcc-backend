@@ -26,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 /**
  * Unit tests for the MemberMapper class, which maps database rows to Member objects and handles
@@ -43,8 +42,7 @@ class MemberMapperTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    memberMapper =
-        new MemberMapper(jdbc, countryRepository, memberTypeRepo, socialNetworkRepo);
+    memberMapper = new MemberMapper(jdbc, countryRepository, memberTypeRepo, socialNetworkRepo);
   }
 
   @Test
@@ -58,6 +56,8 @@ class MemberMapperTest {
     when(resultSet.getString("slack_name")).thenReturn("johnny");
     when(resultSet.getString("city")).thenReturn("London");
     when(resultSet.getString("company_name")).thenReturn("WCC");
+    when(resultSet.getString("pronouns")).thenReturn("she/her");
+    when(resultSet.getInt("pronoun_category_id")).thenReturn(1);
 
     Country country = mock(Country.class);
     when(countryRepository.findById(2L)).thenReturn(Optional.of(country));
@@ -73,6 +73,8 @@ class MemberMapperTest {
     assertEquals(country, member.getCountry());
     assertEquals("London", member.getCity());
     assertEquals("WCC", member.getCompanyName());
+    assertEquals("she/her", member.getPronouns());
+    assertNotNull(member.getPronounCategory());
     assertNotNull(member.getMemberTypes());
     assertNotNull(member.getImages());
     assertNotNull(member.getNetwork());
@@ -87,11 +89,16 @@ class MemberMapperTest {
     when(member.getCompanyName()).thenReturn("WCC");
     when(member.getEmail()).thenReturn("jane@example.com");
     when(member.getCity()).thenReturn("Amsterdam");
+    when(member.getPronouns()).thenReturn("she/her");
+    when(member.getPronounCategory()).thenReturn(null);
     Country country = mock(Country.class);
     when(member.getCountry()).thenReturn(country);
     when(countryRepository.findCountryIdByCode(anyString())).thenReturn(3L);
 
-    when(jdbc.queryForObject(anyString(), any(RowMapper.class), any())).thenReturn(10L);
+    when(jdbc.query(
+            anyString(), any(org.springframework.jdbc.core.ResultSetExtractor.class), anyString()))
+        .thenReturn(null) // for findMemberIdByEmail
+        .thenReturn(10L); // for retrieving ID after insertion
 
     when(member.getImages()).thenReturn(Collections.emptyList());
     when(member.getMemberTypes()).thenReturn(Collections.emptyList());
@@ -113,6 +120,8 @@ class MemberMapperTest {
     when(member.getCompanyName()).thenReturn("WCC");
     when(member.getEmail()).thenReturn("jane@example.com");
     when(member.getCity()).thenReturn("Amsterdam");
+    when(member.getPronouns()).thenReturn("they/them");
+    when(member.getPronounCategory()).thenReturn(null);
     Country country = mock(Country.class);
     when(member.getCountry()).thenReturn(country);
     when(countryRepository.findCountryIdByCode(anyString())).thenReturn(3L);
@@ -123,7 +132,20 @@ class MemberMapperTest {
 
     memberMapper.updateMember(member, 20L);
 
-    verify(jdbc).update(anyString(), any(), any(), any(), any(), any(), any(), any(), any());
+    verify(jdbc)
+        .update(
+            anyString(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any());
     verify(memberTypeRepo).deleteByMemberId(20L);
     verify(socialNetworkRepo).deleteByMemberId(20L);
   }

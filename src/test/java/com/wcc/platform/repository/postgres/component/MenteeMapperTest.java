@@ -3,30 +3,30 @@ package com.wcc.platform.repository.postgres.component;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.cms.attributes.Country;
-import com.wcc.platform.domain.cms.attributes.Languages;
+import com.wcc.platform.domain.cms.attributes.CodeLanguage;
+import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
+import com.wcc.platform.domain.cms.attributes.ProficiencyLevel;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.repository.SkillRepository;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,150 +35,118 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 class MenteeMapperTest {
 
-    private static final String COLUMN_MENTEE_ID = "mentee_id";
-    private static final String COLUMN_PROFILE_STATUS = "mentees_profile_status";
-    private static final String COLUMN_BIO = "bio";
-    private static final String COLUMN_SPOKEN_LANGUAGES = "spoken_languages";
+  private static final String COLUMN_MENTEE_ID = "mentee_id";
+  private static final String COLUMN_PROFILE_STATUS = "mentees_profile_status";
+  private static final String COLUMN_BIO = "bio";
+  private static final String COLUMN_SPOKEN_LANGUAGES = "spoken_languages";
+  private static final String COLUMN_AVAILABLE_HS_MONTH = "available_hs_month";
 
-    @Mock private JdbcTemplate jdbc;
-    @Mock private ResultSet resultSet;
-    @Mock private PostgresMemberRepository memberRepository;
-    @Mock private SkillRepository skillsRepository;
-    @Mock private PostgresCountryRepository countryRepository;
+  @Mock private JdbcTemplate jdbc;
+  @Mock private ResultSet resultSet;
+  @Mock private PostgresMemberRepository memberRepository;
+  @Mock private SkillRepository skillsRepository;
+  @Mock private PostgresCountryRepository countryRepository;
 
-    @InjectMocks private MenteeMapper menteeMapper;
+  @InjectMocks private MenteeMapper menteeMapper;
 
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-        menteeMapper = spy(new MenteeMapper(jdbc, memberRepository, skillsRepository));
-    }
+  @BeforeEach
+  void setup() {
+    MockitoAnnotations.openMocks(this);
+    menteeMapper = spy(new MenteeMapper(jdbc, memberRepository, skillsRepository));
+  }
 
-    @Test
-    void testMapRowToMenteeSuccessfully() throws Exception {
-        //Arrange
-        long menteeId = 2L;
-        Member member = mock(Member.class);
-        when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
-        when(resultSet.getInt(COLUMN_PROFILE_STATUS)).thenReturn(1);
-        when(resultSet.getString(COLUMN_BIO)).thenReturn("Looking for a mentor");
-        when(resultSet.getString(COLUMN_SPOKEN_LANGUAGES)).thenReturn("German");
+  @DisplayName(
+      "Given a valid result set, when mapping row to mentee, then mentee fields are correctly populated")
+  @Test
+  void shouldMapRowToMenteeSuccessfully() throws Exception {
+    long menteeId = 2L;
+    Member member = mock(Member.class);
+    when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
+    when(resultSet.getInt(COLUMN_PROFILE_STATUS)).thenReturn(1);
+    when(resultSet.getString(COLUMN_BIO)).thenReturn("Looking for a mentor");
+    when(resultSet.getString(COLUMN_SPOKEN_LANGUAGES)).thenReturn("German");
+    when(resultSet.getInt(COLUMN_AVAILABLE_HS_MONTH)).thenReturn(5);
 
-        when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
-        when(menteeMapper.loadMentorshipTypes(menteeId)).thenReturn(Optional.of(MentorshipType.fromId(1)));
+    when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
 
-        //Act
-        Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
+    Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
 
-        //Assert
-        assertEquals(menteeId, mentee.getId());
-        assertEquals(ProfileStatus.fromId(1), mentee.getProfileStatus());
-        assertThat(mentee.getSpokenLanguages())
-            .containsExactlyInAnyOrderElementsOf(List.of("German"));
-        assertEquals("Looking for a mentor", mentee.getBio());
-        assertEquals("Ad-Hoc", mentee.getMentorshipType().toString());
-    }
+    assertEquals(menteeId, mentee.getId());
+    assertEquals(ProfileStatus.fromId(1), mentee.getProfileStatus());
+    assertThat(mentee.getSpokenLanguages()).containsExactlyInAnyOrderElementsOf(List.of("German"));
+    assertEquals("Looking for a mentor", mentee.getBio());
+    assertEquals(5, mentee.getAvailableHsMonth());
+  }
 
-    @Test
-    void testAddMentee() {
-        //Arrange
-        Member member = mock(Member.class);
-        Long memberId = 5L;
-        when(member.getId()).thenReturn(memberId);
+  @DisplayName(
+      "Given a mentee with skills, when mapping row to mentee, then skills are correctly populated")
+  @Test
+  void shouldMapRowToMenteeWithSkills() throws Exception {
+    long menteeId = 1L;
+    Member member = mock(Member.class);
+    when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
+    when(resultSet.getInt(COLUMN_PROFILE_STATUS)).thenReturn(1);
+    when(resultSet.getString(COLUMN_BIO)).thenReturn("Looking for a mentor");
+    when(resultSet.getString(COLUMN_SPOKEN_LANGUAGES)).thenReturn("English");
+    when(resultSet.getInt(COLUMN_AVAILABLE_HS_MONTH)).thenReturn(10);
 
-        Mentee mentee = mock(Mentee.class);
-        when(mentee.getFullName()).thenReturn("Jane Doe");
-        when(mentee.getSlackDisplayName()).thenReturn("jane");
-        when(mentee.getPosition()).thenReturn("QA");
-        when(mentee.getCompanyName()).thenReturn("WCC");
-        when(mentee.getEmail()).thenReturn("jane@example.com");
-        when(mentee.getCity()).thenReturn("Amsterdam");
-        when(mentee.getBio()).thenReturn("Looking for a mentor");
-        when(mentee.getImages()).thenReturn(Collections.emptyList());
-        when(mentee.getMemberTypes()).thenReturn(Collections.emptyList());
-        when(mentee.getNetwork()).thenReturn(Collections.emptyList());
+    when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
 
-        Country country = mock(Country.class);
-        when(mentee.getCountry()).thenReturn(country);
-        when(countryRepository.findCountryIdByCode(anyString())).thenReturn(3L);
+    Skills skills =
+        new Skills(
+            2,
+            List.of(new TechnicalAreaProficiency(TechnicalArea.BACKEND, ProficiencyLevel.ADVANCED)),
+            List.of(new LanguageProficiency(CodeLanguage.JAVA, ProficiencyLevel.EXPERT)),
+            List.of(MentorshipFocusArea.SWITCH_CAREER_TO_IT));
 
-        ProfileStatus profileStatus = mock(ProfileStatus.class);
-        when(mentee.getProfileStatus()).thenReturn(profileStatus);
-        when(profileStatus.getStatusId()).thenReturn(1);
+    when(skillsRepository.findMenteeSkills(menteeId)).thenReturn(Optional.of(skills));
 
-        Skills skills = mock(Skills.class);
-        when(mentee.getSkills()).thenReturn(skills);
-        when(skills.yearsExperience()).thenReturn(5);
-        when(skills.areas()).thenReturn(Collections.emptyList());
-        when(skills.languages()).thenReturn(Collections.emptyList());
-        when(skills.mentorshipFocus()).thenReturn(Collections.emptyList());
+    Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
 
-        MentorshipType mentorshipType = mock(MentorshipType.class);
-        when(mentee.getMentorshipType()).thenReturn(mentorshipType);
-        when(mentorshipType.getMentorshipTypeId()).thenReturn(10);
+    assertThat(mentee.getSkills()).isNotNull();
+    assertEquals(2, mentee.getSkills().yearsExperience());
+    TechnicalAreaProficiency area = mentee.getSkills().areas().getFirst();
+    assertEquals(TechnicalArea.BACKEND, area.technicalArea());
+    assertEquals(ProficiencyLevel.ADVANCED, area.proficiencyLevel());
+    assertEquals(CodeLanguage.JAVA, mentee.getSkills().languages().getFirst().language());
+    assertEquals(ProficiencyLevel.EXPERT, mentee.getSkills().languages().getFirst().proficiencyLevel());
+    assertEquals(
+        MentorshipFocusArea.SWITCH_CAREER_TO_IT, mentee.getSkills().mentorshipFocus().getFirst());
+    verify(skillsRepository).findMenteeSkills(menteeId);
+  }
 
-        MentorshipType prevMentorshipType = mock(MentorshipType.class);
-        when(mentee.getPrevMentorshipType()).thenReturn(prevMentorshipType);
-        when(prevMentorshipType.getMentorshipTypeId()).thenReturn(20);
+  @DisplayName(
+      "Given a result set that throws a SQL error, when mapping row to mentee, then SQLException is propagated")
+  @Test
+  void shouldThrowExceptionOnSqlError() throws Exception {
+    when(resultSet.getLong(COLUMN_MENTEE_ID)).thenThrow(new SQLException("DB error"));
 
-        TechnicalArea techArea = mock(TechnicalArea.class);
-        when(techArea.getTechnicalAreaId()).thenReturn(100);
-        when(skills.areas()).thenReturn(List.of(techArea));
+    SQLException exception =
+        assertThrows(
+            SQLException.class,
+            () -> {
+              menteeMapper.mapRowToMentee(resultSet);
+            });
 
-        Languages lang = mock(Languages.class);
-        when(lang.getLangId()).thenReturn(55);
-        when(skills.languages()).thenReturn(List.of(lang));
+    assertEquals("DB error", exception.getMessage());
+  }
 
-        //Act
-        menteeMapper.addMentee(mentee, memberId);
+  @DisplayName(
+      "Given a result set with available hours per month, when mapping row to mentee, then available hours are correctly set")
+  @Test
+  void shouldIncludeAvailableHsMonthWhenMappingMentee() throws Exception {
+    long menteeId = 3L;
+    Member member = mock(Member.class);
+    when(resultSet.getLong(COLUMN_MENTEE_ID)).thenReturn(menteeId);
+    when(resultSet.getInt(COLUMN_PROFILE_STATUS)).thenReturn(1);
+    when(resultSet.getString(COLUMN_BIO)).thenReturn("Mentee bio");
+    when(resultSet.getString(COLUMN_SPOKEN_LANGUAGES)).thenReturn("English");
+    when(resultSet.getInt(COLUMN_AVAILABLE_HS_MONTH)).thenReturn(10);
 
-        //Assert
-        verify(jdbc).update(
-            eq("INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, spoken_languages) VALUES (?, ?, ?, ?, ?)"),
-            eq(memberId),
-            eq(1),
-            eq("Looking for a mentor"),
-            eq(5),
-            eq("")
-        );
+    when(memberRepository.findById(menteeId)).thenReturn(Optional.of(member));
 
-        verify(jdbc).update(
-            eq("INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)"),
-            eq(memberId),
-            eq(100)
-        );
+    Mentee mentee = menteeMapper.mapRowToMentee(resultSet);
 
-        verify(jdbc).update(
-            eq("INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)"),
-            eq(memberId),
-            eq(55)
-        );
-
-        verify(jdbc).update(
-            eq("INSERT INTO mentee_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)"),
-            eq(memberId),
-            eq(10)
-        );
-
-        verify(jdbc).update(
-            eq("INSERT INTO mentee_previous_mentorship_types (mentee_id, mentorship_type) VALUES (?, ?)"),
-            eq(memberId),
-            eq(20)
-        );
-    }
-
-    @Test
-    void testMapRowToMenteeThrowsExceptionOnSqlError() throws Exception {
-        // Arrange
-        when(resultSet.getLong(COLUMN_MENTEE_ID)).thenThrow(new SQLException("DB error"));
-
-        // Act & Assert
-        SQLException exception = assertThrows(SQLException.class, () -> {
-            menteeMapper.mapRowToMentee(resultSet);
-        });
-
-        assertEquals("DB error", exception.getMessage());
-    }
-
-
+    assertEquals(10, mentee.getAvailableHsMonth());
+  }
 }

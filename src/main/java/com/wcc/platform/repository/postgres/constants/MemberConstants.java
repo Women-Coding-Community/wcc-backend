@@ -5,6 +5,7 @@ public final class MemberConstants {
 
   public static final String TABLE = "members";
   public static final String COLUMN_MEMBER_ID = "id";
+  public static final String COL_WOMEN = "women";
 
   private MemberConstants() {}
 }
