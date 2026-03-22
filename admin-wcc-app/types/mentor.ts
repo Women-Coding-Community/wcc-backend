@@ -27,7 +27,7 @@ export interface MentorCountry {
 
 export interface MenteeSection {
   mentorshipType?: string[];
-  availability?: any[];
+  availability?: unknown[];
   idealMentee?: string;
   additional?: string;
 }
