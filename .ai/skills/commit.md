@@ -4,7 +4,8 @@ Safe commit workflow with sensitive-data detection and conventional commit messa
 
 ## When to apply
 
-Run this workflow when the user asks you to commit, stage and commit, or `/commit`.
+Run this workflow when the user asks you to commit or stage and commit, or
+uses an agent-specific shortcut such as `/commit` in Claude Code.
 
 ## Step 1 — Gather context
 
