@@ -8,12 +8,14 @@ import com.wcc.platform.domain.template.Template;
 import com.wcc.platform.domain.template.TemplateType;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +24,16 @@ import org.springframework.stereotype.Service;
 public class EmailTemplateService {
   private static final String TEMPLATE_PATH = "email-templates/";
   private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
+  private static final String SIGNATURE_KEY = "teamEmailSignature";
 
   private final ObjectMapper yamlObjectMapper;
+  private final String teamEmailSignature;
 
-  public EmailTemplateService(final @Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper) {
+  public EmailTemplateService(
+      final @Qualifier("yamlObjectMapper") ObjectMapper yamlObjectMapper,
+      final @Value("${app.email.team-signature}") String teamEmailSignature) {
     this.yamlObjectMapper = yamlObjectMapper;
+    this.teamEmailSignature = teamEmailSignature;
   }
 
   /**
@@ -41,8 +48,16 @@ public class EmailTemplateService {
   public RenderedTemplate renderTemplate(
       final TemplateType templateType, final Map<String, String> params) {
     final Template template = loadTemplate(templateType);
-    validateTemplateParams(template, params);
-    return RenderedTemplate.from(replacePlaceholders(template, params));
+    final Map<String, String> mergedParams = mergeWithDefaults(params);
+    validateTemplateParams(template, mergedParams);
+    return RenderedTemplate.from(replacePlaceholders(template, mergedParams));
+  }
+
+  private Map<String, String> mergeWithDefaults(final Map<String, String> params) {
+    final Map<String, String> merged = new ConcurrentHashMap<>();
+    merged.put(SIGNATURE_KEY, teamEmailSignature);
+    merged.putAll(params);
+    return merged;
   }
 
   private Template loadTemplate(final TemplateType templateType) {
