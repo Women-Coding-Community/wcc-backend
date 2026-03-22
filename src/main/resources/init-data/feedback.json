@@ -1,81 +1,91 @@
 [
   {
-    "id": 1,
     "reviewerId": 1,
     "revieweeId": 2,
     "mentorshipCycleId": 1,
     "feedbackType": "MENTOR_REVIEW",
     "rating": 5,
-    "feedbackText": "An exceptional mentor.",
+    "feedbackText": "Excellent mentor! Very patient and knowledgeable. Helped me understand complex Spring Boot concepts and provided great career advice. Would highly recommend!",
     "year": 2026,
-    "isAnonymous": false,
-    "isApproved": true,
-    "createdAt": "2026-01-15T10:30:00Z",
-    "updatedAt": "2026-01-15T10:30:00Z"
+    "isAnonymous": false
   },
   {
-    "id": 2,
-    "reviewerId": 1,
-    "revieweeId": 2,
+    "reviewerId": 2,
+    "revieweeId": 3,
     "mentorshipCycleId": 1,
     "feedbackType": "MENTOR_REVIEW",
-    "rating": 5,
-    "feedbackText": "An exceptional mentor.",
+    "rating": 4,
+    "feedbackText": "Great mentoring experience. The mentor was very supportive and always available to answer questions. Learned a lot about frontend development best practices.",
     "year": 2026,
-    "isAnonymous": true,
-    "isApproved": false,
-    "createdAt": "2026-01-20T14:15:00Z",
-    "updatedAt": "2026-01-20T14:15:00Z"
+    "isAnonymous": true
   },
   {
-    "id": 3,
-    "reviewerId": 2,
+    "reviewerId": 3,
     "feedbackType": "COMMUNITY_GENERAL",
-    "rating": 5,
-    "feedbackText": "The Women Coding Community fantastic feedback.",
+    "feedbackText": "Love this community! Very welcoming and inclusive environment. The support from other members has been incredible. Thank you for creating such a safe space for women in tech!",
     "year": 2026,
-    "isAnonymous": false,
-    "isApproved": true,
-    "createdAt": "2026-01-18T09:00:00Z",
-    "updatedAt": "2026-01-18T09:00:00Z"
+    "isAnonymous": false
   },
   {
-    "id": 4,
-    "reviewerId": 2,
+    "reviewerId": 4,
     "feedbackType": "COMMUNITY_GENERAL",
-    "rating": 5,
-    "feedbackText": "The Women Coding Community fantastic feedback.",
+    "feedbackText": "Amazing community with lots of opportunities to learn and grow. The events are well-organized and the networking opportunities are fantastic.",
     "year": 2026,
-    "isAnonymous": true,
-    "isApproved": false,
-    "createdAt": "2026-02-05T16:45:00Z",
-    "updatedAt": "2026-02-05T16:45:00Z"
+    "isAnonymous": true
   },
   {
-    "id": 5,
     "reviewerId": 1,
     "mentorshipCycleId": 1,
     "feedbackType": "MENTORSHIP_PROGRAM",
     "rating": 5,
-    "feedbackText": "The mentorship program feedback.",
+    "feedbackText": "The mentorship program structure is excellent. The matching process was thoughtful and my mentor was a perfect fit. The resources provided were very helpful.",
     "year": 2026,
-    "isAnonymous": true,
-    "isApproved": false,
-    "createdAt": "2026-02-10T11:20:00Z",
-    "updatedAt": "2026-02-10T11:20:00Z"
+    "isAnonymous": false
   },
   {
-    "id": 6,
     "reviewerId": 2,
     "mentorshipCycleId": 1,
     "feedbackType": "MENTORSHIP_PROGRAM",
     "rating": 4,
-    "feedbackText": "The mentorship program feedback.",
+    "feedbackText": "Great program overall! Would love to see more structured check-ins and maybe some group mentorship sessions. But overall very satisfied with the experience.",
     "year": 2026,
-    "isAnonymous": false,
-    "isApproved": true,
-    "createdAt": "2026-02-12T13:30:00Z",
-    "updatedAt": "2026-02-12T13:30:00Z"
+    "isAnonymous": false
+  },
+  {
+    "reviewerId": 5,
+    "revieweeId": 2,
+    "mentorshipCycleId": 1,
+    "feedbackType": "MENTOR_REVIEW",
+    "rating": 5,
+    "feedbackText": "Outstanding mentor! Goes above and beyond to help mentees succeed. Provided valuable code reviews and helped me prepare for technical interviews.",
+    "year": 2026,
+    "isAnonymous": false
+  },
+  {
+    "reviewerId": 6,
+    "revieweeId": 3,
+    "mentorshipCycleId": 1,
+    "feedbackType": "MENTOR_REVIEW",
+    "rating": 5,
+    "feedbackText": "My mentor was incredibly helpful in navigating my career transition into tech. Provided practical advice and was always encouraging. Grateful for this opportunity!",
+    "year": 2026,
+    "isAnonymous": true
+  },
+  {
+    "reviewerId": 3,
+    "mentorshipCycleId": 1,
+    "feedbackType": "MENTORSHIP_PROGRAM",
+    "rating": 5,
+    "feedbackText": "This program changed my career trajectory! The structure, support, and quality of mentors is exceptional. Highly recommend to anyone looking to grow in tech.",
+    "year": 2026,
+    "isAnonymous": false
+  },
+  {
+    "reviewerId": 7,
+    "feedbackType": "COMMUNITY_GENERAL",
+    "feedbackText": "Such a supportive and empowering community! The resources, events, and people here have helped me grow both professionally and personally. Thank you WCC!",
+    "year": 2026,
+    "isAnonymous": false
   }
 ]
 
