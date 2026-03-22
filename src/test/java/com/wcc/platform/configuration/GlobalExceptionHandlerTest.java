@@ -9,6 +9,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
@@ -128,6 +129,34 @@ class GlobalExceptionHandlerTest {
             "Unrecognized field 'name' at 'name'. "
                 + "Allowed fields: proficiencyLevel, technicalArea",
             DETAILS);
+    assertEquals(BAD_REQUEST, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given malformed JSON with invalid enum value, "
+          + "when handling, then return BAD_REQUEST with fallback message")
+  void shouldReturnBadRequestWithFallbackMessageForInvalidEnumValue() {
+    var invalidJson =
+        """
+        {
+          "technicalArea": "NOT_A_REAL_AREA",
+          "proficiencyLevel": "BEGINNER"
+        }
+        """;
+    var cause =
+        assertThrows(
+            InvalidFormatException.class,
+            () -> new ObjectMapper().readValue(invalidJson, TechnicalAreaProficiency.class));
+    var exception =
+        new HttpMessageNotReadableException(
+            "JSON parse error", cause, new MockHttpInputMessage(invalidJson.getBytes()));
+
+    var response =
+        globalExceptionHandler.handleHttpMessageNotReadableException(exception, webRequest);
+
+    var expectation = new ErrorDetails(BAD_REQUEST.value(), cause.getMessage(), DETAILS);
     assertEquals(BAD_REQUEST, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
