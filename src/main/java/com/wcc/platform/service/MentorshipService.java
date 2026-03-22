@@ -133,7 +133,7 @@ public class MentorshipService {
       final MentorsPage mentorsPage, final MentorAppliedFilters filters) {
     final var currentCycle = getCurrentCycle();
 
-    final var mentors = FiltersUtil.applyFilters(getAllMentors(currentCycle), filters);
+    final var mentors = FiltersUtil.applyFilters(getAllActiveMentors(currentCycle), filters);
 
     return mentorsPage.updateUpdate(
         currentCycle.toOpenCycle(), FiltersUtil.mentorshipAllFilters(), mentors);
@@ -144,22 +144,37 @@ public class MentorshipService {
   }
 
   /**
-   * Return all stored mentors in the current cycle.
+   * Return all mentors ignoring their status and the current cycle.
+   * Intended for privileged (admin/leader) use only.
    *
-   * @return List of mentors.
+   * @return list of all mentor DTOs regardless of {@link ProfileStatus}.
    */
   public List<MentorDto> getAllMentors() {
-    return getAllMentors(getCurrentCycle());
+    return mentorRepository.getAll().stream()
+        .map(mentor -> enrichWithProfilePicture(mentor.toDto()))
+        .toList();
   }
 
-  private List<MentorDto> getAllMentors(final MentorshipCycle currentCycle) {
-    final var allMentors = mentorRepository.getAll();
+  /**
+   * Return all ACTIVE mentors in the current cycle. Mentors with PENDING or REJECTED status are
+   * always excluded regardless of the cycle state.
+   *
+   * @return List of active mentor DTOs.
+   */
+  public List<MentorDto> getAllActiveMentors() {
+    return getAllActiveMentors(getCurrentCycle());
+  }
+
+  private List<MentorDto> getAllActiveMentors(final MentorshipCycle currentCycle) {
+    final var allActiveMentors =
+        mentorRepository.getAll().stream()
+            .filter(m -> m.getProfileStatus() == ProfileStatus.ACTIVE);
 
     if (currentCycle == CYCLE_CLOSED) {
-      return allMentors.stream().map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
+      return allActiveMentors.map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
     }
 
-    return allMentors.stream()
+    return allActiveMentors
         .map(mentor -> enrichWithProfilePicture(mentor.toDto(currentCycle)))
         .toList();
   }

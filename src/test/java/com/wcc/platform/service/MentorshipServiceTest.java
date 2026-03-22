@@ -29,10 +29,11 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.RoleType;
-import org.mockito.ArgumentCaptor;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -43,10 +44,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith(MockitoExtension.class)
 class MentorshipServiceTest {
 
@@ -436,6 +439,51 @@ class MentorshipServiceTest {
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository, never()).updateToRejected(anyLong(), any(), anyString());
     verify(notificationService, never()).sendMentorRejectionEmail(any(), anyString());
+  }
+
+  @Test
+  @DisplayName(
+      "Given active and pending mentors with an open cycle, when getAllActiveMentors is called, then only"
+          + " active mentors are returned")
+  void shouldReturnOnlyActiveMentorsWhenCycleIsOpen() {
+    var activeMentor = mock(Mentor.class);
+    var pendingMentor = mock(Mentor.class);
+    var activeMentorDto = mock(MentorDto.class);
+    var openCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+
+    when(activeMentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+    when(pendingMentor.getProfileStatus()).thenReturn(ProfileStatus.PENDING);
+    when(activeMentor.toDto(openCycle)).thenReturn(activeMentorDto);
+    when(activeMentorDto.getId()).thenReturn(1L);
+    when(mentorRepository.getAll()).thenReturn(List.of(activeMentor, pendingMentor));
+    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
+    when(service.getCurrentCycle()).thenReturn(openCycle);
+
+    List<MentorDto> result = service.getAllActiveMentors();
+
+    assertThat(result).containsExactly(activeMentorDto);
+  }
+
+  @Test
+  @DisplayName(
+      "Given active and pending mentors with a closed cycle, when getAllActiveMentors is called, then all"
+          + " active mentors are returned")
+  void shouldReturnOnlyActiveMentorsWhenCycleIsClosed() {
+    var activeMentor = mock(Mentor.class);
+    var pendingMentor = mock(Mentor.class);
+    var activeMentorDto = mock(MentorDto.class);
+
+    when(activeMentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+    when(pendingMentor.getProfileStatus()).thenReturn(ProfileStatus.PENDING);
+    when(activeMentor.toDto()).thenReturn(activeMentorDto);
+    when(activeMentorDto.getId()).thenReturn(1L);
+    when(mentorRepository.getAll()).thenReturn(List.of(activeMentor, pendingMentor));
+    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
+    when(service.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
+
+    List<MentorDto> result = service.getAllActiveMentors();
+
+    assertThat(result).containsExactly(activeMentorDto);
   }
 
   @Test
