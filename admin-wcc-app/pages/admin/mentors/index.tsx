@@ -44,7 +44,13 @@ export default function MentorsPage() {
 
         <Box>
           {items.map((m) => (
-            <MentorCard key={m.id} mentor={m} />
+            <Box
+              key={m.id}
+              onClick={() => router.push(`/admin/mentors/${m.id}`)}
+              sx={{ cursor: 'pointer', '&:hover': { boxShadow: 3 } }}
+            >
+              <MentorCard mentor={m} />
+            </Box>
           ))}
           {items.length === 0 && !error && (
             <Typography color="text.secondary">No mentors found.</Typography>

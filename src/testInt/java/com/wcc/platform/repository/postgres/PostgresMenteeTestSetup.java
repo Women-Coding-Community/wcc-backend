@@ -41,6 +41,47 @@ public interface PostgresMenteeTestSetup {
     assertEquals(
         mentee.getProfileStatus(), menteeFound.getProfileStatus(), "Profile status must match");
 
+    assertNotNull(menteeFound.getSkills(), "Skills should not be null");
+    assertEquals(
+        mentee.getSkills().yearsExperience(),
+        menteeFound.getSkills().yearsExperience(),
+        "Years of experience must match");
+    assertEquals(
+        mentee.getSkills().languages().size(),
+        menteeFound.getSkills().languages().size(),
+        "Number of languages must match");
+
+    for (int i = 0; i < mentee.getSkills().languages().size(); i++) {
+      assertEquals(
+          mentee.getSkills().languages().get(i).language(),
+          menteeFound.getSkills().languages().get(i).language(),
+          "Language must match");
+      assertEquals(
+          mentee.getSkills().languages().get(i).proficiencyLevel(),
+          menteeFound.getSkills().languages().get(i).proficiencyLevel(),
+          "Language proficiency level must match");
+    }
+
+    assertEquals(
+        mentee.getSkills().areas().size(),
+        menteeFound.getSkills().areas().size(),
+        "Number of technical areas must match");
+
+    for (int i = 0; i < mentee.getSkills().areas().size(); i++) {
+      assertEquals(
+          mentee.getSkills().areas().get(i).technicalArea(),
+          menteeFound.getSkills().areas().get(i).technicalArea(),
+          "Technical area must match");
+      assertEquals(
+          mentee.getSkills().areas().get(i).proficiencyLevel(),
+          menteeFound.getSkills().areas().get(i).proficiencyLevel(),
+          "Technical area proficiency level must match");
+    }
+    assertEquals(
+        mentee.getSkills().mentorshipFocus().size(),
+        menteeFound.getSkills().mentorshipFocus().size(),
+        "Number of focus areas must match");
+
     repository.deleteById(menteeCreated.getId());
     assertTrue(repository.findById(menteeCreated.getId()).isEmpty());
 

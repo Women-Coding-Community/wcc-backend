@@ -106,27 +106,24 @@ class MemberControllerTest {
   }
 
   @Test
-  void testCreateMemberWithIsWomenNonBinaryReturnsFieldInResponse() throws Exception {
+  void testCreateMemberWithIsWomenReturnsFieldInResponse() throws Exception {
     Member member = createMemberTest(MemberType.MEMBER);
-    member =
-        member.toBuilder()
-            .isWomenNonBinary(true)
-            .build();
+    member = member.toBuilder().isWomen(true).build();
     when(memberService.createMember(any(Member.class))).thenReturn(member);
 
     mockMvc
         .perform(postRequest(API_MEMBERS, member))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.isWomenNonBinary", is(true)));
+        .andExpect(jsonPath("$.isWomen", is(true)));
   }
 
   @Test
-  void testGetAllMembersIncludesIsWomenNonBinaryField() throws Exception {
+  void testGetAllMembersIncludesIsWomenField() throws Exception {
     Member member1 = createMemberTest(MemberType.MEMBER);
-    member1 = member1.toBuilder().isWomenNonBinary(true).build();
+    member1 = member1.toBuilder().isWomen(true).build();
 
     Member member2 = createMemberTest(MemberType.VOLUNTEER);
-    member2 = member2.toBuilder().isWomenNonBinary(false).build();
+    member2 = member2.toBuilder().isWomen(false).build();
 
     List<Member> mockMembers = List.of(member1, member2);
     when(memberService.getAllMembers()).thenReturn(mockMembers);
@@ -134,7 +131,7 @@ class MemberControllerTest {
     mockMvc
         .perform(getRequest(API_MEMBERS).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].isWomenNonBinary", is(true)))
-        .andExpect(jsonPath("$[1].isWomenNonBinary", is(false)));
+        .andExpect(jsonPath("$[0].isWomen", is(true)))
+        .andExpect(jsonPath("$[1].isWomen", is(false)));
   }
 }

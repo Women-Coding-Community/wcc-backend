@@ -1,0 +1,4 @@
+interface:
+  display_name: "WCC PR Review"
+  short_description: "Review WCC backend/frontend PRs inline"
+  default_prompt: "Review this PR from Women-Coding-Community/wcc-backend or Women-Coding-Community/wcc-frontend, identify bugs/regressions, and leave concise inline comments with suggested code fixes on the exact changed lines."

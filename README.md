@@ -19,6 +19,7 @@
   - [Open API Documentation](#open-api-documentation)
   - [API Documentation](#api-documentation)
   - [Quality Checks](#quality-checks)
+    - [AI-Assisted Pre-Commit Review](#ai-assisted-pre-commit-review-claude-code)
   - [Deploy](#deploy)
   - [Frontend (Administration Platform)](#frontend-administration-platform)
     - [Run frontend locally](#run-frontend-locally)
@@ -279,6 +280,52 @@ You can generate a Postman collection from the application’s OpenAPI specifica
   API credentials
 
 ## Quality Checks
+
+**PMD Static Analysis**
+
+Before committing Java code changes, run PMD to check for code quality violations:
+
+```shell
+./gradlew :pmdAll
+```
+
+If violations are found, the build will fail and show the report location. Fix all violations before committing.
+
+**Pre-commit Hook (Automatic PMD Check)**
+
+A pre-commit hook is configured in `.husky/pre-commit` (using Husky) that runs PMD analysis on Java file changes before each commit. The hook will:
+- Detect staged Java files
+- Run `./gradlew :pmdAll`
+- Block the commit if violations are found
+- Show the path to the PMD report for review
+
+To bypass the hook (not recommended):
+```shell
+git commit --no-verify
+```
+
+**Note:** The project uses Husky for git hooks management. The pre-commit hook also runs `lint-staged` for frontend changes in `admin-wcc-app/`.
+
+**AI-Assisted Pre-Commit Review (Claude Code)**
+
+If you use [Claude Code](https://claude.ai/code), you can run a local code review on your staged and unstaged changes before committing:
+
+```shell
+/pre-commit-review
+```
+
+The skill will:
+- Analyse all local changes (`git diff HEAD` and `git diff --staged`)
+- Produce an **overall summary** of what the change does and whether it is safe to commit
+- List **per-file findings** anchored to the changed line numbers with severity levels:
+  - `[CRITICAL]` — must fix before committing (security, data loss, broken contract)
+  - `[WARNING]` — should fix (likely bug, convention mismatch, missing test)
+  - `[INFO]` — optional improvement (style, readability)
+- Call out **what looks good** to keep feedback balanced
+
+No GitHub CLI or open PR is required — it works entirely on your local diff.
+
+**Other Quality Checks**
 
 * [Setup Quality Checks](docs/quality_checks.md)
 

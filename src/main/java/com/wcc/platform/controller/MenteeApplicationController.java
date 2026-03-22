@@ -33,10 +33,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Platform: Mentors & Mentees", description = "Platform APIs for mentors and mentees")
+@Tag(
+    name = "Platform: Mentees Applications",
+    description =
+        "Apis responsible to manage mentees applications including "
+            + "admins approval in the cycle, mentors approval/rejection "
+            + "and the mentee itself.")
 @AllArgsConstructor
 @Validated
-public class MentorshipApplicationController {
+public class MenteeApplicationController {
 
   private final MenteeWorkflowService applicationService;
 

@@ -1,6 +1,7 @@
 package com.wcc.platform.domain.platform;
 
 import java.util.Arrays;
+import java.util.Locale;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -29,5 +30,10 @@ public enum SocialNetworkType {
         .filter(type -> type.typeId == typeId)
         .findFirst()
         .orElse(UNKNOWN);
+  }
+
+  @Override
+  public String toString() {
+    return name().toLowerCase(Locale.ENGLISH);
   }
 }

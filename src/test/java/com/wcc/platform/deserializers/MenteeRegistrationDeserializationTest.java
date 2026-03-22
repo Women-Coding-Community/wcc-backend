@@ -51,9 +51,9 @@ class MenteeRegistrationDeserializationTest {
           "cycleYear": 2026,
           "applications": [
             {
-              "menteeId": null,
               "mentorId": 1,
-              "priorityOrder": 1
+              "priorityOrder": 1,
+              "whyMentor": "Test reason"
             }
           ]
         }
@@ -98,9 +98,9 @@ class MenteeRegistrationDeserializationTest {
           "cycleYear": "2026",
           "applications": [
             {
-              "menteeId": null,
               "mentorId": 2,
-              "priorityOrder": 1
+              "priorityOrder": 1,
+              "whyMentor": "Test reason"
             }
           ]
         }

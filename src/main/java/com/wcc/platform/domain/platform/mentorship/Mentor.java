@@ -65,7 +65,7 @@ public class Mentor extends Member {
       final MenteeSection menteeSection,
       final FeedbackSection feedbackSection,
       final MentorResource resources,
-      final Boolean isWomenNonBinary,
+      final Boolean isWomen,
       final String calendlyLink,
       final Boolean acceptMale,
       final Boolean acceptPromotion) {
@@ -83,7 +83,7 @@ public class Mentor extends Member {
         network,
         pronouns,
         pronounCategory,
-        isWomenNonBinary);
+        isWomen);
 
     this.profileStatus = profileStatus;
     this.skills = skills;
@@ -148,7 +148,7 @@ public class Mentor extends Member {
         .menteeSection(mentor.getMenteeSection().toDto())
         .feedbackSection(mentor.getFeedbackSection())
         .resources(mentor.getResources())
-        .isWomenNonBinary(mentor.getIsWomenNonBinary())
+        .isWomen(mentor.getIsWomen())
         .calendlyLink(mentor.getCalendlyLink())
         .acceptMale(mentor.getAcceptMale())
         .acceptPromotion(mentor.getAcceptPromotion());
