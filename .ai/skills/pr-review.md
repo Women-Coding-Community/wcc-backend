@@ -4,7 +4,9 @@ Code review workflow that posts inline comments on a pull request using the GitH
 
 ## When to apply
 
-Run this workflow when the user asks you to review a PR, check a pull request, or `/pr-review`.
+Run this workflow when the user asks you to review a PR or check a pull
+request, or uses an agent-specific shortcut such as `/pr-review` in Claude
+Code.
 
 ## Step 1 — Fetch PR data
 
