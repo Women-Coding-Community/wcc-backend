@@ -68,8 +68,7 @@ public class MenteeService {
     final var menteeId = ensureMenteeId(request.mentee());
     if (menteeId != null) {
       request.mentee().setId(menteeId);
-      final var filteredRegistrations =
-          ignoreDuplicateApplications(request, cycle);
+      final var filteredRegistrations = ignoreDuplicateApplications(request, cycle);
       final var registrationCount =
           registrationsRepo.countMenteeApplications(menteeId, cycle.getCycleId());
 
@@ -87,13 +86,28 @@ public class MenteeService {
     return saveRegistration(request, cycle);
   }
 
+  private Mentee saveRegistration(
+      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
+    final var mentee = menteeRegistration.mentee();
+
+    final Mentee savedMentee = createOrUpdateMentee(mentee);
+    final Long menteeId = savedMentee.getId();
+
+    menteeRegistration.mentee().setId(menteeId);
+
+    userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
+
+    validateDuplicatedPriorities(
+        menteeId, cycle.getCycleId(), menteeRegistration.toApplications(cycle, menteeId));
+    return createMenteeRegistrations(menteeRegistration, cycle);
+  }
+
   private void validateDuplicatedPriorities(
       final Long menteeId, final Long cycleId, final List<MenteeApplication> applications) {
     final List<Integer> requestPriorities =
         applications.stream().map(MenteeApplication::getPriorityOrder).toList();
 
-    if (requestPriorities.size()
-        != requestPriorities.stream().distinct().collect(Collectors.counting())) {
+    if (requestPriorities.size() != requestPriorities.stream().distinct().count()) {
       throw new DuplicatedPriorityException("Priorities must be unique in the request");
     }
 
@@ -115,22 +129,6 @@ public class MenteeService {
                 menteeId, priority, cycleId));
       }
     }
-  }
-
-  private Mentee saveRegistration(
-      final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    final var mentee = menteeRegistration.mentee();
-
-    final Mentee savedMentee = createOrUpdateMentee(mentee);
-    final Long menteeId = savedMentee.getId();
-
-    menteeRegistration.mentee().setId(menteeId);
-
-    userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
-
-    validateDuplicatedPriorities(
-        menteeId, cycle.getCycleId(), menteeRegistration.toApplications(cycle, menteeId));
-    return createMenteeRegistrations(menteeRegistration, cycle);
   }
 
   /**

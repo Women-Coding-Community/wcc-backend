@@ -14,6 +14,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -75,6 +76,21 @@ class GlobalExceptionHandlerTest {
 
     var expectation = new ErrorDetails(FORBIDDEN.value(), "Error", DETAILS);
     assertEquals(FORBIDDEN, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given DataAccessException, when handling, then return CONFLICT with specific cause message")
+  void shouldReturnConflictForDataAccessException() {
+    var rootCause = new RuntimeException("duplicate key value violates unique constraint");
+    var exception =
+        new DuplicateKeyException("PreparedStatementCallback; SQL [INSERT...]", rootCause);
+
+    var response = globalExceptionHandler.handleDataAccessException(exception, webRequest);
+
+    var expectation = new ErrorDetails(CONFLICT.value(), rootCause.getMessage(), DETAILS);
+    assertEquals(CONFLICT, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
 }

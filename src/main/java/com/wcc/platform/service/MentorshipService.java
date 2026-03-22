@@ -91,6 +91,8 @@ public class MentorshipService {
               .companyName(mentor.getCompanyName())
               .images(mentor.getImages())
               .network(mentor.getNetwork())
+              .pronouns(mentor.getPronouns())
+              .pronounCategory(mentor.getPronounCategory())
               .profileStatus(ProfileStatus.PENDING)
               .skills(mentor.getSkills())
               .spokenLanguages(mentor.getSpokenLanguages())
@@ -98,6 +100,10 @@ public class MentorshipService {
               .menteeSection(mentor.getMenteeSection())
               .feedbackSection(mentor.getFeedbackSection())
               .resources(mentor.getResources())
+              .isWomen(mentor.getIsWomen())
+              .calendlyLink(mentor.getCalendlyLink())
+              .acceptMale(mentor.getAcceptMale())
+              .acceptPromotion(mentor.getAcceptPromotion())
               .build();
 
       return mentorRepository.create(mentorWithExistingId);

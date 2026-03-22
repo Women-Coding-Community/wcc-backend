@@ -75,7 +75,31 @@ gh api repos/<owner>/<repo>/pulls/<number>/comments \
 
 Prefer line-level comments over top-level summary comments.
 
-## Step 5 — Comment quality bar
+## Step 5 — Submit review decision
+
+After posting all inline comments, submit a formal review decision:
+
+```bash
+gh api repos/<owner>/<repo>/pulls/<number>/reviews \
+  -X POST \
+  -f commit_id='<sha>' \
+  -f body='<summary>' \
+  -f event='<event>'
+```
+
+**Decision rules:**
+
+| Condition | `event` value |
+|---|---|
+| No `[CRITICAL]` findings | `APPROVE` |
+| Any `[CRITICAL]` finding | `REQUEST_CHANGES` |
+| Uncertain / needs author input | `COMMENT` |
+
+When approving, write a short encouraging body (2–3 sentences) summarising what looks good and calling out any `[WARNING]` or `[INFO]` items the author may want to address as a follow-up.
+
+When requesting changes, clearly list the `[CRITICAL]` items that must be resolved before merge.
+
+## Step 6 — Comment quality bar
 
 Every comment must:
 - State the **concrete risk** (what could go wrong)

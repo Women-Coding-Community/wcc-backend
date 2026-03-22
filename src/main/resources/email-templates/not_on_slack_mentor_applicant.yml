@@ -1,0 +1,28 @@
+NOT_ON_SLACK_MENTOR:
+  subject: "[Action Required] Update on Your WCC Mentor Application"
+  body: |
+    <p>Dear {{mentorName}},</p>
+
+    <p>
+    Thank you for your application to register as a mentor with the
+    <strong>Women Coding Community</strong>.
+    </p>
+
+    <p>
+    At the moment, we’re unable to find you in our Slack community.
+    All mentors are required to join the community in order for their application to be accepted.
+    Please join us on Slack using the link below:
+    </p>
+
+    <p>
+    <a href="{{slackInviteUrl}}">Join the Women Coding Community on Slack</a>
+    </p>
+
+    <p>
+    Once you’ve joined, we’ll be happy to move forward with your application.
+    We look forward to hearing from you soon.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>

@@ -12,4 +12,12 @@ public interface SkillRepository {
    * @return Skills
    */
   Optional<Skills> findSkills(Long mentorId);
+
+  /**
+   * Return mentee skills like technical areas, languages, experience
+   *
+   * @param menteeId id of the mentee
+   * @return Skills
+   */
+  Optional<Skills> findMenteeSkills(Long menteeId);
 }

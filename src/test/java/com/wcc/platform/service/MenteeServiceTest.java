@@ -82,7 +82,7 @@ class MenteeServiceTest {
   }
 
   @Test
-  @DisplayName("Given Mentee Registration When saved Then should return mentee")
+  @DisplayName("Given mentee registration, when saved, then should return mentee")
   void testSaveRegistrationMentee() {
     var currentYear = Year.now();
     var registration =
@@ -125,7 +125,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentee exceeds registration limit When creating mentee Then should throw MenteeRegistrationLimitExceededException")
+      "Given mentee exceeds registration limit, when creating mentee, "
+          + "then should throw MenteeRegistrationLimitExceededException")
   void shouldThrowExceptionWhenRegistrationLimitExceeded() {
     var currentYear = Year.now();
     Mentee menteeWithId =
@@ -174,7 +175,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentee with existing priority When creating mentee Then should throw DuplicatedPriorityException")
+      "Given mentee with existing priority, when creating mentee, "
+          + "then should throw DuplicatedPriorityException")
   void shouldThrowExceptionWhenPriorityAlreadyExists() {
     var currentYear = Year.now();
     Mentee menteeWithId =
@@ -224,7 +226,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given multiple applications with same priority in request When creating mentee Then should throw DuplicatedPriorityException")
+      "Given multiple applications with same priority in request, when creating mentee, "
+          + "then should throw DuplicatedPriorityException")
   void shouldThrowExceptionWhenPriorityDuplicatedInRequest() {
     var currentYear = Year.now();
     Mentee menteeWithId =
@@ -271,7 +274,7 @@ class MenteeServiceTest {
   }
 
   @Test
-  @DisplayName("Given has mentees When getting all mentees Then should return all")
+  @DisplayName("Given has mentees, when getting all mentees, then should return all")
   void testGetAllMentees() {
     List<Mentee> mentees = List.of(mentee);
     when(menteeRepository.getAll()).thenReturn(mentees);
@@ -284,7 +287,7 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given closed cycle When creating mentee Then should throw MentorshipCycleClosedException")
+      "Given closed cycle, when creating mentee, then should throw MentorshipCycleClosedException")
   void shouldThrowExceptionWhenCycleIsClosed() {
     var currentYear = Year.now();
     MenteeRegistration registration =
@@ -306,7 +309,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentee type does not match cycle type When creating mentee Then should throw InvalidMentorshipTypeException")
+      "Given mentee type does not match cycle type, when creating mentee, "
+          + "then should throw InvalidMentorshipTypeException")
   void shouldThrowExceptionWhenMenteeTypeDoesNotMatchCycleType() {
     var currentYear = Year.now();
     MenteeRegistration registration =
@@ -331,7 +335,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given valid cycle and matching mentee type When creating mentee Then should create successfully")
+      "Given valid cycle and matching mentee type, "
+          + "when creating mentee, then should create successfully")
   void shouldSaveRegistrationMenteeWhenCycleIsOpenAndTypeMatches() {
     var currentYear = Year.now();
     MenteeRegistration registration =
@@ -365,7 +370,7 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given non-existent mentor When creating mentee Then should throw MentorNotFoundException")
+      "Given non-existent mentor, when creating mentee, then should throw MentorNotFoundException")
   void shouldThrowExceptionWhenMentorDoesNotExist() {
     var currentYear = Year.now();
     MenteeRegistration registration =
@@ -387,7 +392,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given validation is disabled When creating mentee Then should skip validation and create successfully")
+      "Given validation is disabled, when creating mentee, "
+          + "then should skip validation and create successfully")
   void shouldSkipValidationWhenValidationIsDisabled() {
     var currentYear = Year.now();
     MenteeRegistration registration =
@@ -421,7 +427,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given existing member with email, when creating mentee with same email, then it should use existing member")
+      "Given existing member with email, when creating mentee with same email, "
+          + "then it should use existing member")
   void shouldUseExistingMemberWhenMenteeEmailAlreadyExists() {
     var currentYear = Year.now();
     MenteeRegistration registration =
@@ -477,7 +484,7 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given member exists but id is not provided When creating mentee with same email "
+      "Given member exists but id is not provided, when creating mentee with same email, "
           + "then member is returned based on respective email")
   void shouldFallbackToExistingMemberWhenProvidedIdDoesNotExistButEmailExists() {
     var currentYear = Year.now();
@@ -561,7 +568,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentee with existing id When creating mentee Then should use existing mentee without email lookup")
+      "Given mentee with existing id, when creating mentee, "
+          + "then should use existing mentee without email lookup")
   void shouldReturnExistingMenteeWhenIdExistsInRepository() {
     var currentYear = Year.now();
     var existingMentee = createMenteeTest(5L, "Test Mentee", "test@wcc.com");
@@ -597,7 +605,8 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given existing member who is a mentor When registering as mentee Then should preserve mentor type and add mentee type")
+      "Given existing member who is a mentor, when registering as mentee, "
+          + "then should preserve mentor type and add mentee type")
   void shouldPreserveMemberTypesWhenExistingMentorRegistersAsMentee() {
     var currentYear = Year.now();
     var menteeRequest = createMenteeTest(null, "Test Member", "mentor@wcc.com");

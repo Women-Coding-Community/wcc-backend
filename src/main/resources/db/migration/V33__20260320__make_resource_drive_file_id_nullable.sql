@@ -1,0 +1,1 @@
+ALTER TABLE resource ALTER COLUMN drive_file_id DROP NOT NULL;

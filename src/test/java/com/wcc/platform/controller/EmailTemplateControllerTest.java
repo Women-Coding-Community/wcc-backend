@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(EmailController.class)
 class EmailTemplateControllerTest {
 
+
   private static final String API_EMAIL_TEMP_PREVIEW = "/api/platform/v1/email/template/preview";
   @Autowired private MockMvc mockMvc;
   @MockBean private EmailService emailService;

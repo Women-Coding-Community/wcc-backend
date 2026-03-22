@@ -52,7 +52,22 @@ Please remove the sensitive data before committing. Consider using environment v
 
 Do NOT proceed further.
 
-## Step 3: Draft the commit message
+## Step 3: Check Java test conventions (if Java test files are changed)
+
+Scan the diff for any added or modified Java test files (`src/test/**`, `src/testInt/**`). For each, flag:
+
+| Rule | Violation | Severity |
+|---|---|---|
+| `should` prefix | Method name starts with `test` instead of `should` | WARNING |
+| `@DisplayName` present | Test method has no `@DisplayName` | WARNING |
+| Given-When-Then wording | `@DisplayName` text does not follow `"Given …, when …, then …"` | WARNING |
+| No useless `eq()` | `eq(literal)` in Mockito `when()`/`verify()` when no other matcher is used in the same call | WARNING |
+| No inline phase comments | `// Arrange`, `// Act`, or `// Assert` in test body | INFO |
+| `.getFirst()` preferred | `.get(0)` on a `List` in new/changed test code | INFO |
+
+List violations and ask the user whether to fix them before committing or proceed as-is.
+
+## Step 4: Draft the commit message
 
 Analyze the diff and status to write a commit message:
 
@@ -60,22 +75,27 @@ Analyze the diff and status to write a commit message:
 - **Blank line**
 - **Body**: Explain *why* the change is being made, not just what. Describe context, motivation, and any trade-offs. Minimum 2-3 sentences.
 
+**Body formatting rules:**
+- Wrap every line at **72 characters** — keeps the message readable in terminals, `git log`, and GitHub PR descriptions
+- Do **not** mention test fixes or test convention changes unless the PR is exclusively about tests — focus on the business or technical motivation
+- Write the body so it can be re-used directly as a PR description: describe the *problem being solved* and *why*, not the mechanical steps
+
 Format:
 ```
 <subject line>
 
-<body explaining why and context>
+<body — each line ≤72 chars, focused on why, no test details>
 ```
 
 **NEVER include any Co-Authored-By, Co-authored-by, or similar trailer lines.**
 
 Show the draft commit message to the user before proceeding.
 
-## Step 4: Stage files
+## Step 5: Stage files
 
 Stage the specific files using `git add <files>` (never use `git add .` or `git add -A` — always add files by name to avoid accidentally including sensitive files).
 
-## Step 5: Create the commit
+## Step 6: Create the commit
 
 Run:
 

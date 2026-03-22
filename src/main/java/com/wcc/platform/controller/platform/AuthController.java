@@ -1,10 +1,13 @@
 package com.wcc.platform.controller.platform;
 
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
+import com.wcc.platform.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -35,6 +39,7 @@ public class AuthController {
   private static final ResponseEntity<LoginResponse> UNAUTHORIZED =
       ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid credentials"));
   private final AuthService authService;
+  private final MemberService memberService;
 
   /**
    * Authenticates a user using their email and password and returns an access token upon successful
@@ -93,6 +98,24 @@ public class AuthController {
         new LoginResponse(user.getRoles(), authService.getMember(user.getMemberId()));
 
     return ResponseEntity.ok(response);
+  }
+
+  /**
+   * API to retrieve information users with access to platform restrict area.
+   *
+   * @return List of all members.
+   */
+  @GetMapping("/users")
+  @Operation(
+      summary = "API to retrieve users with access to restrict area",
+      security = {
+        @SecurityRequirement(name = "apiKey"),
+        @SecurityRequirement(name = "bearerAuth")
+      })
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<UserAccount>> getUsers() {
+    return ResponseEntity.ok(memberService.getUsers());
   }
 
   /**

@@ -7,12 +7,15 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.platform.type.ResourceType;
+import com.wcc.platform.domain.resource.ExternalProfilePictureRequest;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.service.ResourceService;
@@ -21,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,8 +42,10 @@ import org.springframework.web.multipart.MultipartFile;
 class ResourceControllerTest {
 
   private static final String CONTENT_TYPE = "image/jpeg";
+  private static final String EXTERNAL_URL = "https://example.com/photo.jpg";
   private Long memberId;
   @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
   @MockBean private ResourceService resourceService;
   private UUID resourceId;
   private Resource resource;
@@ -207,5 +213,41 @@ class ResourceControllerTest {
                 .header("X-API-KEY", "test-api-key")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
+  }
+
+  @Test
+  @DisplayName(
+      "Given valid request, "
+          + "when saving external profile picture link, "
+          + "then returns 201 with profile picture")
+  void shouldSaveExternalProfilePictureLinkReturnsCreated() throws Exception {
+    var request = new ExternalProfilePictureRequest(memberId, EXTERNAL_URL);
+    when(resourceService.saveExternalProfilePicture(memberId, EXTERNAL_URL))
+        .thenReturn(profilePicture);
+
+    mockMvc
+        .perform(
+            post("/api/platform/v1/resources/member-profile-picture/link")
+                .header("X-API-KEY", "test-api-key")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.memberId").value(memberId))
+        .andExpect(jsonPath("$.resourceId").value(resourceId.toString()));
+  }
+
+  @Test
+  @DisplayName(
+      "Given invalid URL, when saving external profile picture link, then returns 400")
+  void shouldReturn400WhenExternalUrlIsInvalid() throws Exception {
+    var request = new ExternalProfilePictureRequest(memberId, "not-a-valid-url");
+
+    mockMvc
+        .perform(
+            post("/api/platform/v1/resources/member-profile-picture/link")
+                .header("X-API-KEY", "test-api-key")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
   }
 }

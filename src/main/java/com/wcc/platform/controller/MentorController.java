@@ -1,11 +1,8 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.platform.mentorship.Mentee;
-import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorRejectionRequest;
-import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,17 +23,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Rest controller for members pages apis. */
+/** Rest controller for mentors page apis. */
 @RestController
 @RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Platform: Mentors & Mentees", description = "All platform Internal APIs")
+@Tag(
+    name = "Platform: Mentors",
+    description = "APIs for mentor registration, approval, and management")
 @AllArgsConstructor
 @Validated
-public class MentorshipController {
+public class MentorController {
 
   private final MentorshipService mentorshipService;
-  private final MenteeService menteeService;
 
   /**
    * API to retrieve information about mentors.
@@ -44,7 +42,7 @@ public class MentorshipController {
    * @return List of all mentors.
    */
   @GetMapping("/mentors")
-  @Operation(summary = "API to retrieve a list of all members")
+  @Operation(summary = "API to retrieve a list of all mentors")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorDto>> getAllMentors() {
     final List<MentorDto> mentors = mentorshipService.getAllActiveMentors();
@@ -107,20 +105,5 @@ public class MentorshipController {
       @RequestBody final MentorRejectionRequest rejectionRequest) {
     return new ResponseEntity<>(
         mentorshipService.rejectMentor(mentorId, rejectionRequest.reason()), HttpStatus.OK);
-  }
-
-  /**
-   * API to create mentee.
-   *
-   * @param menteeRegistration The mentee registration details
-   * @return Create a new mentee.
-   */
-  @PostMapping("/mentees")
-  @Operation(summary = "API to submit mentee registration")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentee> createMentee(
-      @Valid @RequestBody final MenteeRegistration menteeRegistration) {
-    return new ResponseEntity<>(
-        menteeService.saveRegistration(menteeRegistration), HttpStatus.CREATED);
   }
 }

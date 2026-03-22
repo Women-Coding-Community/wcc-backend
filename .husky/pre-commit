@@ -1,6 +1,6 @@
 # Check for frontend changes and run lint-staged
 if git diff --cached --name-only | grep -q "^admin-wcc-app/"; then
-  cd admin-wcc-app && npx lint-staged
+  (cd admin-wcc-app && npx lint-staged)
 fi
 
 # Check for Java file changes and run PMD

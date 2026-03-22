@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.RoleType;
 import java.util.Arrays;
@@ -18,10 +19,19 @@ public class UserAccount {
   private Integer id;
   private Long memberId;
   private String email;
-  private String passwordHash;
+  @JsonIgnore private String passwordHash;
   private List<RoleType> roles;
   private boolean enabled;
 
+  /**
+   * Constructs a new instance of {@code UserAccount} with the specified member ID, email, and
+   * roles. A random password is generated for the account during initialization, and the account is
+   * enabled by default.
+   *
+   * @param memberId the unique identifier of the member
+   * @param email the email address associated with the account
+   * @param roles the roles assigned to the account
+   */
   public UserAccount(final Long memberId, final String email, final RoleType... roles) {
     this.memberId = memberId;
     this.email = email;
