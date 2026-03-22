@@ -103,7 +103,7 @@ class GlobalExceptionHandlerTest {
   @DisplayName(
       "Given malformed JSON with unknown field, "
           + "when handling, then return BAD_REQUEST with field context")
-  void shouldReturnBadRequestForHttpMessageNotReadableException() throws Exception {
+  void shouldReturnBadRequestForHttpMessageNotReadableException() {
     var invalidJson =
         """
         {
