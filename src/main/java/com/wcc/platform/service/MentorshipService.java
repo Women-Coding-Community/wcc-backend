@@ -143,6 +143,13 @@ public class MentorshipService {
     return getMentorsPage(mentorsPage, null);
   }
 
+  /** Return all mentors ignoring their status and the current cycle. */
+  public List<MentorDto> getAllMentors() {
+    return mentorRepository.getAll().stream()
+        .map(mentor -> enrichWithProfilePicture(mentor.toDto()))
+        .toList();
+  }
+
   /**
    * Return all ACTIVE mentors in the current cycle. Mentors with PENDING or REJECTED status are
    * always excluded regardless of the cycle state.
