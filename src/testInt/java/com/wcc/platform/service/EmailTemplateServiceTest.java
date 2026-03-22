@@ -31,7 +31,8 @@ public class EmailTemplateServiceTest extends DefaultDatabaseSetup {
             "mentorName", "Alice Mentor",
             "menteeName", "Bob Mentee",
             "program", "Mentorship",
-            "deadline", "2025-12-01");
+            "deadline", "2025-12-01",
+            "teamEmailSignature", "Best regards");
 
     var out = templateService.renderTemplate(templateType, parameters);
 

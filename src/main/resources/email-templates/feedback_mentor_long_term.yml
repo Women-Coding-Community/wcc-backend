@@ -6,4 +6,4 @@ FEEDBACK_MENTOR_LONG:
     <p>You can submit feedback using this form: <a href="https://docs.google.com/forms/d/e/EXAMPLE_FORM_ID/viewform">Submit feedback</a></p>
     <p>If possible, please reply by {{deadline}}.</p>
     <p>Thank you for supporting {{menteeName}}.</p>
-    <p>Best,<br/>Mentorship Team</p>
+    <p>{{teamEmailSignature}}</p>

@@ -3,21 +3,30 @@ package com.wcc.platform.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
+import com.wcc.platform.domain.template.RenderedTemplate;
+import com.wcc.platform.domain.template.TemplateType;
 import jakarta.mail.internet.MimeMessage;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -28,7 +37,15 @@ class EmailServiceTest {
 
   @Mock private MimeMessage mimeMessage;
 
-  @InjectMocks private EmailService emailService;
+  @Mock
+  private EmailTemplateService emailTemplateService;
+
+  @Mock
+  private EmailResponse emailResponse;
+
+  @InjectMocks
+  @Spy
+  private EmailService emailService;
 
   private EmailRequest emailRequest;
 
@@ -219,5 +236,148 @@ class EmailServiceTest {
     assertThat(responses.get(0).isSuccess()).isFalse();
     assertThat(responses.get(0).getError()).contains("Failed to send email");
     assertThat(responses.get(1).isSuccess()).isTrue();
+  }
+
+  @Test
+  @DisplayName(
+      "Given a template email request with all optional fields, when sending template email, then should build and send email with all fields")
+  void shouldSendTemplateEmailWithAllFields() {
+
+    TemplateEmailRequest request = TemplateEmailRequest.builder()
+        .to("recipient@example.com")
+        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+        .templateParameters(Map.of("mentorName", "John"))
+        .cc(List.of("cc@example.com"))
+        .bcc(List.of("bcc@example.com"))
+        .replyTo("reply@example.com")
+        .html(true)
+        .build();
+
+    RenderedTemplate renderedTemplate =
+        new RenderedTemplate("Subject", "Body");
+
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(renderedTemplate);
+
+    doReturn(emailResponse)
+        .when(emailService)
+        .sendEmail(any(EmailRequest.class));
+
+    EmailResponse result = emailService.sendTemplateEmail(request);
+
+    assertThat(result).isEqualTo(emailResponse);
+
+    ArgumentCaptor<EmailRequest> captor =
+        ArgumentCaptor.forClass(EmailRequest.class);
+
+    verify(emailService).sendEmail(captor.capture());
+
+    EmailRequest sentRequest = captor.getValue();
+
+    assertThat(sentRequest.getTo()).isEqualTo("recipient@example.com");
+    assertThat(sentRequest.getSubject()).isEqualTo("Subject");
+    assertThat(sentRequest.getBody()).isEqualTo("Body");
+    assertThat(sentRequest.getCc()).contains("cc@example.com");
+    assertThat(sentRequest.getBcc()).contains("bcc@example.com");
+    assertThat(sentRequest.getReplyTo()).isEqualTo("reply@example.com");
+    assertThat(sentRequest.isHtml()).isTrue();
+  }
+
+  @Test
+  @DisplayName(
+      "Given a template email request without optional fields, when sending template email, then should build and send email with only required fields")
+  void shouldSendTemplateEmailWithoutOptionalFields() {
+
+    TemplateEmailRequest request = TemplateEmailRequest.builder()
+        .to("recipient@example.com")
+        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+        .templateParameters(Map.of("mentorName", "John"))
+        .build();
+
+    RenderedTemplate renderedTemplate =
+        new RenderedTemplate("Subject", "Body");
+
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(renderedTemplate);
+
+    doReturn(emailResponse)
+        .when(emailService)
+        .sendEmail(any(EmailRequest.class));
+
+    EmailResponse result = emailService.sendTemplateEmail(request);
+
+    assertThat(result).isEqualTo(emailResponse);
+
+    ArgumentCaptor<EmailRequest> captor =
+        ArgumentCaptor.forClass(EmailRequest.class);
+
+    verify(emailService).sendEmail(captor.capture());
+
+    EmailRequest sentRequest = captor.getValue();
+
+    assertThat(sentRequest.getTo()).isEqualTo("recipient@example.com");
+    assertThat(sentRequest.getSubject()).isEqualTo("Subject");
+    assertThat(sentRequest.getBody()).isEqualTo("Body");
+    assertThat(sentRequest.getCc()).isNull();
+    assertThat(sentRequest.getBcc()).isNull();
+    assertThat(sentRequest.getReplyTo()).isNull();
+    assertThat(sentRequest.isHtml()).isFalse();
+  }
+
+  @Test
+  @DisplayName(
+      "Given provided template type is not found, when sending template email, then should throw an Exception")
+  void shouldThrowExceptionWhenTemplateEmailFails() {
+    TemplateEmailRequest request = TemplateEmailRequest.builder()
+        .to("test@example.com")
+        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+        .templateParameters(Map.of("name", "John"))
+        .build();
+
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenThrow(new RuntimeException("Template not found."));
+
+    assertThatThrownBy(() -> emailService.sendTemplateEmail(request))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Template not found.");
+
+    verify(emailService, never()).sendEmail(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given a template email request with empty optional fields, when sending template email, then should omit cc, bcc and replyTo from the built request")
+  void shouldSendTemplateEmailWhenOptionalFieldsAreEmpty() {
+    TemplateEmailRequest request = TemplateEmailRequest.builder()
+        .to("test@example.com")
+        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+        .templateParameters(Map.of("key", "value"))
+        .cc(null)
+        .bcc(Collections.emptyList())
+        .replyTo("")
+        .build();
+
+    RenderedTemplate renderedTemplate =
+        new RenderedTemplate("Subject", "Body");
+
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(renderedTemplate);
+
+    doReturn(EmailResponse.builder().success(true).build())
+        .when(emailService)
+        .sendEmail(any());
+
+    emailService.sendTemplateEmail(request);
+
+    ArgumentCaptor<EmailRequest> captor =
+        ArgumentCaptor.forClass(EmailRequest.class);
+
+    verify(emailService).sendEmail(captor.capture());
+
+    EmailRequest sentRequest = captor.getValue();
+
+    assertThat(sentRequest.getCc()).isNull();
+    assertThat(sentRequest.getBcc()).isNull();
+    assertThat(sentRequest.getReplyTo()).isNull();
   }
 }
