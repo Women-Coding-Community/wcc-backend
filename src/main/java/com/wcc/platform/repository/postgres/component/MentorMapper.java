@@ -46,7 +46,7 @@ public class MentorMapper {
                 .pronounCategory(member.getPronounCategory())
                 .companyName(member.getCompanyName())
                 .images(member.getImages())
-                .isWomenNonBinary(member.getIsWomenNonBinary())
+                .isWomen(member.getIsWomen())
                 .network(member.getNetwork()));
 
     final var skillsMentor = skillsRepository.findSkills(mentorId);

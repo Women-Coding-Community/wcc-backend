@@ -1,7 +1,7 @@
 package com.wcc.platform.repository.postgres.component;
 
 import static com.wcc.platform.repository.postgres.constants.MemberConstants.COLUMN_MEMBER_ID;
-import static com.wcc.platform.repository.postgres.constants.MemberConstants.COL_WOMEN_NON_BINARY;
+import static com.wcc.platform.repository.postgres.constants.MemberConstants.COL_WOMEN;
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -19,7 +19,6 @@ import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,11 +33,15 @@ import org.springframework.util.CollectionUtils;
 public class MemberMapper {
   private static final String INSERT =
       "INSERT INTO members (full_name, slack_name, position, company_name, email, city, "
-          + "country_id, status_id, bio, years_experience, spoken_language, pronouns, pronoun_category_id, women_or_non_binary) "
+          + "country_id, status_id, bio, years_experience, spoken_language, pronouns, pronoun_category_id, "
+          + COL_WOMEN
+          + ") "
           + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, ?, ?, ?)";
   private static final String UPDATE_SQL =
       "UPDATE members SET full_name = ?, slack_name = ?, position = ?, "
-          + "company_name = ?, email = ?, city = ?, country_id = ?, pronouns = ?, pronoun_category_id = ?, women_or_non_binary = ? "
+          + "company_name = ?, email = ?, city = ?, country_id = ?, pronouns = ?, pronoun_category_id = ?, "
+          + COL_WOMEN
+          + " = ? "
           + "WHERE id = ?";
 
   private final JdbcTemplate jdbc;
@@ -73,12 +76,18 @@ public class MemberMapper {
         .network(networks)
         .pronouns(pronouns)
         .pronounCategory(pronounCategory)
-        .isWomenNonBinary(rs.getBoolean(COL_WOMEN_NON_BINARY))
+        .isWomen(rs.getBoolean(COL_WOMEN))
         .build();
   }
 
   /** Adds a new member to the database and returns the member ID. */
   public Long addMember(final Member member) {
+    final var existingMemberId = findMemberIdByEmail(member.getEmail());
+    if (existingMemberId != null) {
+      updateMember(member, existingMemberId);
+      return existingMemberId;
+    }
+
     final int defaultStatusPending = 1;
     jdbc.update(
         INSERT,
@@ -92,18 +101,39 @@ public class MemberMapper {
         defaultStatusPending,
         member.getPronouns(),
         getPronounCategoryId(member.getPronounCategory()),
-        member.getIsWomenNonBinary());
+        member.getIsWomen());
 
     final var memberId =
-        jdbc.queryForObject(
+        jdbc.query(
             "SELECT id FROM members WHERE email = ?",
-            SingleColumnRowMapper.newInstance(Long.class),
+            rs -> {
+              if (rs.next()) {
+                return rs.getLong("id");
+              }
+              return null;
+            },
             member.getEmail());
+
+    if (memberId == null) {
+      throw new IllegalStateException("Failed to retrieve member ID after insertion: " + member.getEmail());
+    }
 
     addMemberTypes(memberId, member);
     addSocialNetworks(memberId, member);
 
     return memberId;
+  }
+
+  private Long findMemberIdByEmail(final String email) {
+    return jdbc.query(
+        "SELECT id FROM members WHERE email = ?",
+        rs -> {
+          if (rs.next()) {
+            return rs.getLong("id");
+          }
+          return null;
+        },
+        email);
   }
 
   /** Updates an existing member in the database. */
@@ -120,7 +150,7 @@ public class MemberMapper {
         getCountryId(member.getCountry()),
         member.getPronouns(),
         getPronounCategoryId(member.getPronounCategory()),
-        member.getIsWomenNonBinary(),
+        member.getIsWomen(),
         memberId);
 
     // Update member types

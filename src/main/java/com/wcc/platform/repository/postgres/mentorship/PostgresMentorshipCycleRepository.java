@@ -64,6 +64,11 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
 
   @Override
   public MentorshipCycleEntity create(final MentorshipCycleEntity entity) {
+    final var existing = findByYearAndType(entity.getCycleYear(), entity.getMentorshipType());
+    if (existing.isPresent()) {
+      return update(existing.get().getCycleId(), entity);
+    }
+
     final Long generatedId =
         jdbc.queryForObject(
             INSERT_CYCLE,

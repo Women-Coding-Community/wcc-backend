@@ -91,6 +91,8 @@ public class MentorshipService {
               .companyName(mentor.getCompanyName())
               .images(mentor.getImages())
               .network(mentor.getNetwork())
+              .pronouns(mentor.getPronouns())
+              .pronounCategory(mentor.getPronounCategory())
               .profileStatus(ProfileStatus.PENDING)
               .skills(mentor.getSkills())
               .spokenLanguages(mentor.getSpokenLanguages())
@@ -98,6 +100,10 @@ public class MentorshipService {
               .menteeSection(mentor.getMenteeSection())
               .feedbackSection(mentor.getFeedbackSection())
               .resources(mentor.getResources())
+              .isWomen(mentor.getIsWomen())
+              .calendlyLink(mentor.getCalendlyLink())
+              .acceptMale(mentor.getAcceptMale())
+              .acceptPromotion(mentor.getAcceptPromotion())
               .build();
 
       return mentorRepository.create(mentorWithExistingId);
@@ -273,6 +279,30 @@ public class MentorshipService {
     notificationService.sendMentorApprovalEmail(activatedMentor);
 
     return activatedMentor;
+  }
+
+  /**
+   * Reject a pending mentor by setting their status to REJECTED.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return mentor with a rejected status
+   * @throws MemberNotFoundException if mentor is not found
+   * @throws MentorStatusException if mentor is already rejected
+   */
+  public Mentor rejectMentor(final Long mentorId, final String rejectionReason) {
+    final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
+    final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
+
+    if (mentor.getProfileStatus() == ProfileStatus.REJECTED) {
+      throw new MentorStatusException("Mentor with ID " + mentorId + " is already rejected");
+    }
+
+    final Mentor rejectedMentor =
+        mentorRepository.updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason);
+
+    notificationService.sendMentorRejectionEmail(rejectedMentor, rejectionReason);
+
+    return rejectedMentor;
   }
 
   private void validateMentorCommitment(final Mentor mentor) {

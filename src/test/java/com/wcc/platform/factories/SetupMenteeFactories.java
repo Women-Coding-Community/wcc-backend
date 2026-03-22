@@ -48,13 +48,13 @@ public class SetupMenteeFactories {
                     2,
                     List.of(
                         new TechnicalAreaProficiency(
-                            TechnicalArea.BACKEND, ProficiencyLevel.BEGINNER),
+                            TechnicalArea.BACKEND, ProficiencyLevel.ADVANCED),
                         new TechnicalAreaProficiency(
-                            TechnicalArea.FRONTEND, ProficiencyLevel.BEGINNER)),
+                            TechnicalArea.FRONTEND, ProficiencyLevel.INTERMEDIATE)),
                     List.of(
-                        new LanguageProficiency(
-                            CodeLanguage.JAVASCRIPT, ProficiencyLevel.BEGINNER)),
-                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)));
+                        new LanguageProficiency(CodeLanguage.JAVASCRIPT, ProficiencyLevel.EXPERT)),
+                    List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
+            .availableHsMonth(10);
     if (menteeId != null) {
       menteeBuilder.id(menteeId);
     }

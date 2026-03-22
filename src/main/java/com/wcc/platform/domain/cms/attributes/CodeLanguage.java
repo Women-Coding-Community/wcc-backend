@@ -25,7 +25,16 @@ public enum CodeLanguage {
   RUBY("Ruby", 10),
   RUST("Rust", 11),
   TYPESCRIPT("Typescript", 12),
-  OTHER("Other", 13);
+  OTHER("Other", 13),
+  SCALA("Scala", 14),
+  SWIFT("Swift", 15),
+  DART("Dart", 16),
+  REGO("Rego", 17),
+  BASH("Bash", 18),
+  YAML("Yaml", 19),
+  HCL("HCL", 20),
+  TERRAFORM("Terraform", 21),
+  OPENTOFU("OpenTofu", 22);
 
   private final String name;
   private final int langId;

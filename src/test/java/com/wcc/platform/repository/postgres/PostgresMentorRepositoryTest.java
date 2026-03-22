@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import com.wcc.platform.repository.postgres.component.MentorMapper;
@@ -21,7 +23,6 @@ import com.wcc.platform.repository.postgres.mentorship.PostgresMentorRepository;
 import jakarta.validation.Validator;
 import java.sql.ResultSet;
 import java.util.Collections;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,11 @@ class PostgresMentorRepositoryTest {
     repository =
         spy(
             new PostgresMentorRepository(
-                jdbc, mentorMapper, memberMapper, mock(com.wcc.platform.repository.MemberRepository.class), validator));
+                jdbc,
+                mentorMapper,
+                memberMapper,
+                mock(com.wcc.platform.repository.MemberRepository.class),
+                validator));
   }
 
   @Test
@@ -129,10 +134,44 @@ class PostgresMentorRepositoryTest {
     doNothing().when(mentorMapper).updateMentor(any(), eq(2L));
     doReturn(Optional.empty()).when(repository).findById(2L);
 
-    try {
-      repository.update(2L, updatedMentor);
-    } catch (NoSuchElementException e) {
-      assertNotNull(e);
-    }
+    assertThrows(
+        com.wcc.platform.domain.exceptions.MentorNotFoundException.class,
+        () -> repository.update(2L, updatedMentor));
+  }
+
+  @Test
+  void testUpdateProfileStatus() {
+    long mentorId = 1L;
+    Mentor createdMentor = createMentorTest();
+
+    doReturn(Optional.of(createdMentor)).when(repository).findById(mentorId);
+
+    Mentor result = repository.updateProfileStatus(mentorId, ProfileStatus.ACTIVE);
+
+    verify(jdbc)
+        .update(
+            "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?",
+            ProfileStatus.ACTIVE.getStatusId(),
+            mentorId);
+    assertNotNull(result);
+  }
+
+  @Test
+  void testUpdateToRejected() {
+    long mentorId = 1L;
+    String rejectionReason = "Not a good fit at this time";
+    Mentor rejectedMentor = createMentorTest();
+
+    doReturn(Optional.of(rejectedMentor)).when(repository).findById(mentorId);
+
+    Mentor result = repository.updateToRejected(mentorId, ProfileStatus.REJECTED, rejectionReason);
+
+    verify(jdbc)
+        .update(
+            "UPDATE mentors SET profile_status = ?, rejection_reason = ? WHERE mentor_id = ?",
+            ProfileStatus.REJECTED.getStatusId(),
+            rejectionReason,
+            mentorId);
+    assertNotNull(result);
   }
 }

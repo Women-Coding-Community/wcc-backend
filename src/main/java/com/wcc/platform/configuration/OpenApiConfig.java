@@ -2,6 +2,7 @@ package com.wcc.platform.configuration;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.servers.Server;
@@ -19,11 +20,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /** Custom configuration for open api. */
 @Configuration
-@SecurityScheme(
-    name = "apiKey",
-    type = SecuritySchemeType.APIKEY,
-    paramName = "X-API-KEY",
-    in = io.swagger.v3.oas.annotations.enums.SecuritySchemeIn.HEADER)
+@SecuritySchemes({
+  @SecurityScheme(
+      name = "apiKey",
+      type = SecuritySchemeType.APIKEY,
+      paramName = "X-API-KEY",
+      in = io.swagger.v3.oas.annotations.enums.SecuritySchemeIn.HEADER),
+  @SecurityScheme(
+      name = "bearerAuth",
+      type = SecuritySchemeType.HTTP,
+      scheme = "bearer",
+      bearerFormat = "JWT")
+})
 public class OpenApiConfig implements WebMvcConfigurer {
 
   private static final String ACTUATOR = "actuator";

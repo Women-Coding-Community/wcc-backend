@@ -2,35 +2,35 @@
 
 <!-- TOC -->
 
-- [WCC: Platform Backend Service](#wcc-platform-backend-service)
-  - [How to start?](#how-to-start)
-  - [Setup locally](#setup-locally)
-    - [JAVA 21 with SDKMAN](#java-21-with-sdkman)
-    - [Setup IntelliJ](#setup-intellij)
-      - [Lombok](#lombok)
-      - [Enable Save Actions](#enable-save-actions)
-      - [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
-      - [Google Format](#google-format)
-        - [IntelliJ JRE Config](#intellij-jre-config)
-    - [Setup PostgreSQL database](#setup-postgresql-database)
-  - [Run Locally](#run-locally)
-    - [Run Locally without Authentication](#run-locally-without-authentication)
-  - [Generate Postman Collection](#generate-postman-collection)
-  - [Open API Documentation](#open-api-documentation)
-  - [API Documentation](#api-documentation)
-  - [Quality Checks](#quality-checks)
-  - [Deploy](#deploy)
-  - [Frontend (Administration Platform)](#frontend-administration-platform)
-    - [Run frontend locally](#run-frontend-locally)
-      - [Test credentials (seeded)](#test-credentials-seeded)
-    - [Frontend tests](#frontend-tests)
-    - [CORS configuration (backend)](#cors-configuration-backend)
-    - [CI/CD and deploy (Vercel)](#cicd-and-deploy-vercel)
-  - [API Testing Collection with Bruno](#api-testing-collection-with-bruno)
-    - [Prerequisites](#prerequisites)
-    - [Open the Collection in Bruno](#open-the-collection-in-bruno)
-    - [Running Requests](#running-requests)
-    - [How to Add New Flows / Requests](#how-to-add-new-flows--requests)
+* [WCC: Platform Backend Service](#wcc-platform-backend-service)
+    * [How to start?](#how-to-start)
+    * [Setup locally](#setup-locally)
+        * [JAVA 21 with SDKMAN](#java-21-with-sdkman)
+        * [Setup IntelliJ](#setup-intellij)
+            * [Lombok](#lombok)
+            * [Enable Save Actions](#enable-save-actions)
+            * [Enable Checkstyle Warnings](#enable-checkstyle-warnings)
+            * [Google Format](#google-format)
+                * [IntelliJ JRE Config](#intellij-jre-config)
+        * [Setup PostgreSQL database](#setup-postgresql-database)
+    * [Run Locally](#run-locally)
+        * [Run Locally without Authentication](#run-locally-without-authentication)
+    * [Generate Postman Collection](#generate-postman-collection)
+    * [Open API Documentation](#open-api-documentation)
+    * [API Documentation](#api-documentation)
+    * [Quality Checks](#quality-checks)
+    * [Deploy](#deploy)
+    * [Frontend (Administration Platform)](#frontend-administration-platform)
+        * [Run frontend locally](#run-frontend-locally)
+            * [Test credentials (seeded)](#test-credentials-seeded)
+        * [Frontend tests](#frontend-tests)
+        * [CORS configuration (backend)](#cors-configuration-backend)
+        * [CI/CD and deploy (Vercel)](#cicd-and-deploy-vercel)
+    * [API Testing Collection with Bruno](#api-testing-collection-with-bruno)
+        * [Prerequisites](#prerequisites)
+        * [Open the Collection in Bruno](#open-the-collection-in-bruno)
+        * [Running Requests](#running-requests)
+        * [How to Add New Flows / Requests](#how-to-add-new-flows--requests)
 
 <!-- TOC -->
 
@@ -160,7 +160,8 @@ docker --version
 
 ### Setup PostgreSQL database
 
-PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running the `./scripts/docker-up.sh` as explained in [Run Locally](#run-locally) section.
+PostgreSQL runs in Docker. The image (postgres:15) is downloaded from Docker Hub when running the
+`./scripts/docker-up.sh` as explained in [Run Locally](#run-locally) section.
 
 Setup Data source in the IntelliJ.
 
@@ -280,6 +281,59 @@ You can generate a Postman collection from the application’s OpenAPI specifica
 
 ## Quality Checks
 
+**PMD Static Analysis**
+
+Before committing Java code changes, run PMD to check for code quality violations:
+
+```shell
+./gradlew :pmdAll
+```
+
+If violations are found, the build will fail and show the report location. Fix all violations before
+committing.
+
+**Pre-commit Hook (Automatic PMD Check)**
+
+A pre-commit hook is configured in `.husky/pre-commit` (using Husky) that runs PMD analysis on Java
+file changes before each commit. The hook will:
+
+- Detect staged Java files
+- Run `./gradlew :pmdAll`
+- Block the commit if violations are found
+- Show the path to the PMD report for review
+
+To bypass the hook (not recommended):
+
+```shell
+git commit --no-verify
+```
+
+**Note:** The project uses Husky for git hooks management. The pre-commit hook also runs
+`lint-staged` for frontend changes in `admin-wcc-app/`.
+
+**AI-Assisted Pre-Commit Review (Claude Code)**
+
+If you use [Claude Code](https://claude.ai/code), you can run a local code review on your staged and
+unstaged changes before committing:
+
+```shell
+/pre-commit-review
+```
+
+The skill will:
+
+- Analyse all local changes (`git diff HEAD` and `git diff --staged`)
+- Produce an **overall summary** of what the change does and whether it is safe to commit
+- List **per-file findings** anchored to the changed line numbers with severity levels:
+    - `[CRITICAL]` — must fix before committing (security, data loss, broken contract)
+    - `[WARNING]` — should fix (likely bug, convention mismatch, missing test)
+    - `[INFO]` — optional improvement (style, readability)
+- Call out **what looks good** to keep feedback balanced
+
+No GitHub CLI or open PR is required — it works entirely on your local diff.
+
+**Other Quality Checks**
+
 * [Setup Quality Checks](docs/quality_checks.md)
 
 ## Deploy
@@ -330,6 +384,10 @@ You can change or disable this seeding with properties:
    Open http://localhost:3000
 ```
 
+   > **Changing the port**: if port 3000 is already in use (e.g. by another frontend project), add
+   > `PORT=3001` to `admin-wcc-app/.env.local` and restart. The app will be available at
+   > `http://localhost:3001`. `.env.local` is gitignored so this only affects your local machine.
+
 3. Authentication
 
 - Use a valid user email/password from the backend auth tables. On success, you will be redirected
@@ -355,7 +413,9 @@ avoid CORS issues.
 
 ### CI/CD and deploy (Vercel)
 
-A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-frontend-dev.yml` to deploy the frontend to Vercel Dev environment on pushes to `main`. Configure the following repository secrets:
+A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-frontend-dev.yml` to deploy
+the frontend to Vercel Dev environment on pushes to `main`. Configure the following repository
+secrets:
 
 - VERCEL_TOKEN
 - VERCEL_ORG_ID
@@ -368,12 +428,16 @@ Alternatively, you can connect the repository directly in Vercel dashboard and s
 
 ## API Testing Collection with Bruno
 
-`api-flows` folder contains a Bruno API flow used for testing, and validating our backend APIs in a consistent, shareable way.
+`api-flows` folder contains a Bruno API flow used for testing, and validating our backend APIs in a
+consistent, shareable way.
 
-Bruno is a fast, Git-friendly API client (think Postman, but local-first and text-based). This flow is designed so the whole team can run the same requests with minimal setup and predictable results.
+Bruno is a fast, Git-friendly API client (think Postman, but local-first and text-based). This flow
+is designed so the whole team can run the same requests with minimal setup and predictable results.
 
 ### Prerequisites
+
 Before using this flow, make sure you have:
+
 1. Bruno installed: https://www.usebruno.com/
 2. Access to the target API environment (local/dev/staging) by running docker locally.
 
@@ -382,42 +446,51 @@ Before using this flow, make sure you have:
 1. Open Bruno
 2. Click Open Collection
 3. Select the `api-flows` folder of this repository
-4. Bruno will automatically load all requests and local environment variables. Make sure to select the environment `local` that was loaded alongside the collection
+4. Bruno will automatically load all requests and local environment variables. Make sure to select
+   the environment `local` that was loaded alongside the collection
 
 ### Running Requests
+
 **Run a Single Request**
+
 1. Select a request
 2. Choose the correct environment (top-right)
 3. Click Send
 
 **Run a Folder / Flow**
+
 1. Right-click a folder
 2. Select Run Folder
 3. Bruno will execute requests in order
 
 This is useful for end-to-end flows like:
 
-Mentor creation → Get Mentors and validate if the mentor was created → Update Mentor data → Get Mentors and validate if the mentor was updated → Delete Mentor → Get Mentors and validate if the mentor was deleted
+Mentor creation → Get Mentors and validate if the mentor was created → Update Mentor data → Get
+Mentors and validate if the mentor was updated → Delete Mentor → Get Mentors and validate if the
+mentor was deleted
 
 **Run a Folder and Generate HTML Report**
 
 1. Navigate to the root of the collection: `cd api-flows`
 2. Install necessary dependencies: `npm install`
-3. Create `.env` file based on the `.env.example` 
-4. Execute Flow using this command: `npm run test:local`. 
-5. Execute Flow using this command with HTML report generated: `npm run test:local:report`. Open HTML report in browser
+3. Create `.env` file based on the `.env.example`
+4. Execute Flow using this command: `npm run test:local`.
+5. Execute Flow using this command with HTML report generated: `npm run test:local:report`. Open
+   HTML report in browser
 
 ### How to Add New Flows / Requests
 
 Follow these guidelines to keep the collection consistent and easy to maintain.
 
 **Adding a New Request**
+
 1. In Bruno, right-click the target folder
 2. Select New Request
 3. Give the request a clear, descriptive name
 4. Select the HTTP method and configure the endpoint, headers, and body
 5. Use environment variables (e.g. {{baseUrl}}, {{mentorId}}) instead of hardcoded values
-6. Use [dynamic variables](https://docs.usebruno.com/testing/script/dynamic-variables) in scripts to generate realistic data for payloads
+6. Use [dynamic variables](https://docs.usebruno.com/testing/script/dynamic-variables) in scripts to
+   generate realistic data for payloads
 
 **Adding a New Flow (Folder)**
 
@@ -426,4 +499,5 @@ Follow these guidelines to keep the collection consistent and easy to maintain.
 3. Name the folder after the business flow or feature
 4. Example: `mentee-registration-approval-flow`, `matching-flow`
 5. Add requests in the order they should be executed
-6. Ensure each request can be run sequentially as part of a folder execution by running the whole folder and making sure the HTML report is generated
+6. Ensure each request can be run sequentially as part of a folder execution by running the whole
+   folder and making sure the HTML report is generated

@@ -8,6 +8,7 @@ import com.wcc.platform.domain.template.RenderedTemplate;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
+import org.apache.commons.lang3.StringUtils;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -90,16 +91,24 @@ public class EmailService {
     }
   }
 
+  /**
+   * Sends an email using a pre-defined template with dynamic parameters.
+   *
+   * @param request the template email request containing recipient, template type, parameters and
+   *     optional CC, BCC and reply-to fields
+   * @return an {@link EmailResponse} indicating whether the email was sent successfully
+   */
   public EmailResponse sendTemplateEmail(final TemplateEmailRequest request) {
-
-    final RenderedTemplate renderedTemplate = emailTemplateService.renderTemplate(
+    final RenderedTemplate renderedTemplate =
+        emailTemplateService.renderTemplate(
             request.getTemplateType(), request.getTemplateParameters());
 
-    final EmailRequest.EmailRequestBuilder emailBuilder = EmailRequest.builder()
-        .to(request.getTo())
-        .subject(renderedTemplate.subject())
-        .body(renderedTemplate.body())
-        .html(request.isHtml());
+    final EmailRequest.EmailRequestBuilder emailBuilder =
+        EmailRequest.builder()
+            .to(request.getTo())
+            .subject(renderedTemplate.subject())
+            .body(renderedTemplate.body())
+            .html(request.isHtml());
 
     if (request.getCc() != null && !request.getCc().isEmpty()) {
       emailBuilder.cc(request.getCc());
@@ -109,13 +118,11 @@ public class EmailService {
       emailBuilder.bcc(request.getBcc());
     }
 
-    if (request.getReplyTo() != null && !request.getReplyTo().isEmpty()) {
+    if (StringUtils.isNotBlank(request.getReplyTo())) {
       emailBuilder.replyTo(request.getReplyTo());
     }
 
-    final EmailRequest emailRequest = emailBuilder.build();
-
-    return sendEmail(emailRequest);
+    return sendEmail(emailBuilder.build());
   }
 
   /**

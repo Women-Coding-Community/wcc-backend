@@ -7,24 +7,32 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.type.MemberType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @NoArgsConstructor
+@ToString(callSuper = true)
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
-  private @NotNull ProfileStatus profileStatus;
+  private ProfileStatus profileStatus;
   private @NotNull Skills skills;
   private @NotBlank String bio;
   private List<String> spokenLanguages;
+
+  @NotNull
+  @Min(1)
+  private Integer availableHsMonth;
 
   @Builder(builderMethodName = "menteeBuilder")
   public Mentee(
@@ -40,11 +48,12 @@ public class Mentee extends Member {
       final List<SocialNetwork> network,
       final String pronouns,
       final PronounCategory pronounCategory,
-      final Boolean isWomenNonBinary,
+      final Boolean isWomen,
       final ProfileStatus profileStatus,
       final List<String> spokenLanguages,
       final String bio,
-      final Skills skills) {
+      final Skills skills,
+      final Integer availableHsMonth) {
     super(
         id,
         fullName,
@@ -59,11 +68,12 @@ public class Mentee extends Member {
         network,
         pronouns,
         pronounCategory,
-        isWomenNonBinary);
+        isWomen);
 
-    this.profileStatus = profileStatus;
+    this.profileStatus = Objects.requireNonNullElse(profileStatus, ProfileStatus.PENDING);
     this.skills = skills;
     this.spokenLanguages = spokenLanguages.stream().map(StringUtils::capitalize).toList();
     this.bio = bio;
+    this.availableHsMonth = availableHsMonth;
   }
 }

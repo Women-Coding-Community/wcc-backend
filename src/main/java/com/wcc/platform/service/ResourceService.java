@@ -1,5 +1,7 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.platform.type.ResourceType;
@@ -13,14 +15,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /** Service for managing resources and profile pictures. */
-@Slf4j
 @Service
 @AllArgsConstructor
 public class ResourceService {
@@ -86,6 +86,24 @@ public class ResourceService {
                     "Profile picture not found for the member: " + memberId));
   }
 
+  /**
+   * Finds a member's profile picture as an {@link Image}, returning empty when none exists.
+   *
+   * @param memberId the member's identifier
+   * @return an Optional containing the profile picture Image, or empty if not found
+   */
+  public Optional<Image> findProfilePictureImage(final Long memberId) {
+    return profilePicRepo
+        .findByMemberId(memberId)
+        .map(MemberProfilePicture::getResource)
+        .map(
+            resource ->
+                new Image(
+                    resource.getDriveFileLink(),
+                    StringUtils.defaultIfEmpty(resource.getName(), "Profile picture"),
+                    ImageType.DESKTOP));
+  }
+
   private MemberProfilePicture uploadProfile(final Long memberId, final MultipartFile file) {
     final Optional<MemberProfilePicture> existingPicture = profilePicRepo.findByMemberId(memberId);
 
@@ -108,11 +126,49 @@ public class ResourceService {
     return profilePicRepo.create(profilePicture);
   }
 
+  /** Saves a member's profile picture from an external URL. */
+  @Transactional
+  public MemberProfilePicture saveExternalProfilePicture(
+      final Long memberId, final String externalUrl) {
+    memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException(memberId));
+
+    final Optional<MemberProfilePicture> existingPicture = profilePicRepo.findByMemberId(memberId);
+    if (existingPicture.isPresent()) {
+      deleteResourceBy(existingPicture.get().getResourceId());
+      profilePicRepo.deleteByMemberId(memberId);
+    }
+
+    final Resource resource =
+        Resource.builder()
+            .id(UUID.randomUUID())
+            .name(StringUtils.EMPTY)
+            .description(StringUtils.EMPTY)
+            .fileName(StringUtils.EMPTY)
+            .contentType(StringUtils.EMPTY)
+            .size(0L)
+            .driveFileLink(externalUrl)
+            .resourceType(ResourceType.PROFILE_PICTURE)
+            .build();
+
+    final Resource savedResource = resourceRepo.create(resource);
+
+    final MemberProfilePicture profilePicture =
+        MemberProfilePicture.builder()
+            .memberId(memberId)
+            .resourceId(savedResource.getId())
+            .resource(savedResource)
+            .build();
+
+    return profilePicRepo.create(profilePicture);
+  }
+
   private void deleteResourceBy(final UUID resourceId) {
     final var resource = getResource(resourceId);
     profilePicRepo.deleteById(resourceId);
     resourceRepo.deleteById(resourceId);
-    fileStorageRepo.deleteFile(resource.getDriveFileId());
+    if (resource.getDriveFileId() != null) {
+      fileStorageRepo.deleteFile(resource.getDriveFileId());
+    }
   }
 
   private void deleteProfileBy(final Long memberId) {

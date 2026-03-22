@@ -2,6 +2,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 
 import static com.wcc.platform.repository.postgres.constants.MentorConstants.COLUMN_MENTOR_ID;
 
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MemberRepository;
@@ -44,8 +45,10 @@ public class PostgresMentorRepository implements MentorRepository {
           + "accept_male_mentee = ?, "
           + "accept_promote_social_media = ? "
           + "WHERE mentor_id = ?";
-  private static final String UPDATE_MENTOR_STATUS =
+  private static final String SQL_SET_MENTOR_STATUS =
       "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?";
+  private static final String SQL_REJECT_MENTOR =
+      "UPDATE mentors SET profile_status = ?, rejection_reason = ? WHERE mentor_id = ?";
   private static final String SQL_INSERT_MENTOR =
       "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "
           + " spoken_languages, is_available, calendly_link, "
@@ -110,9 +113,14 @@ public class PostgresMentorRepository implements MentorRepository {
       memberId = memberMapper.addMember(mentor);
     }
 
-    addMentor(mentor, memberId);
+    if (findById(memberId).isEmpty()) {
+      addMentor(mentor, memberId);
+    } else {
+      updateMentor(mentor, memberId);
+    }
     final var mentorAdded = findById(memberId);
-    return mentorAdded.orElse(null);
+    return mentorAdded.orElseThrow(
+        () -> new MentorNotFoundException("Mentor not found after save for id: " + memberId));
   }
 
   @Override
@@ -121,14 +129,25 @@ public class PostgresMentorRepository implements MentorRepository {
     validate(mentor);
     memberMapper.updateMember(mentor, mentorId);
     updateMentor(mentor, mentorId);
-    return findById(mentorId).orElse(null);
+    return findById(mentorId)
+        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentorId));
   }
 
   @Override
   @Transactional
   public Mentor updateProfileStatus(final Long mentorId, final ProfileStatus profileStatus) {
-    jdbc.update(UPDATE_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
-    return findById(mentorId).orElse(null);
+    jdbc.update(SQL_SET_MENTOR_STATUS, profileStatus.getStatusId(), mentorId);
+    return findById(mentorId)
+        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentorId));
+  }
+
+  @Transactional
+  @Override
+  public Mentor updateToRejected(
+      final Long mentorId, final ProfileStatus profileStatus, final String rejectionReason) {
+    jdbc.update(SQL_REJECT_MENTOR, profileStatus.getStatusId(), rejectionReason, mentorId);
+    return findById(mentorId)
+        .orElseThrow(() -> new MentorNotFoundException("Mentor not found: " + mentorId));
   }
 
   private void validate(final Mentor mentor) {

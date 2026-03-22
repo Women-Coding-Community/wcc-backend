@@ -12,4 +12,13 @@ export const PROGRAMMING_LANGUAGES = [
   { value: 'RUST', label: 'Rust' },
   { value: 'TYPESCRIPT', label: 'TypeScript' },
   { value: 'OTHER', label: 'Other' },
+  { value: 'SCALA', label: 'Scala' },
+  { value: 'SWIFT', label: 'Swift' },
+  { value: 'DART', label: 'Dart' },
+  { value: 'REGO', label: 'Rego' },
+  { value: 'BASH', label: 'Bash' },
+  { value: 'YAML', label: 'Yaml' },
+  { value: 'HCL', label: 'HCL' },
+  { value: 'TERRAFORM', label: 'Terraform' },
+  { value: 'OPENTOFU', label: 'OpenTofu' },
 ];

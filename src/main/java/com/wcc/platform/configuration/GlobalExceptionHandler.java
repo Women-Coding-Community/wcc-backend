@@ -5,8 +5,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
-import com.wcc.platform.domain.exceptions.DuplicatedItemException;
-import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
+import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
@@ -14,6 +13,7 @@ import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
@@ -22,6 +22,7 @@ import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,7 +39,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     ContentNotFoundException.class,
     NoSuchElementException.class,
-    MemberNotFoundException.class
+    MemberNotFoundException.class,
+    MentorNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
@@ -82,11 +84,21 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
-  /**
-   * Receive {@link DuplicatedMemberException} and {@link
-   * com.wcc.platform.domain.exceptions.DuplicatedItemException} return {@link HttpStatus#CONFLICT}.
-   */
-  @ExceptionHandler({DuplicatedMemberException.class, DuplicatedItemException.class})
+  /** Receive {@link DataAccessException} then return {@link HttpStatus#CONFLICT}. */
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ResponseEntity<ErrorDetails> handleDataAccessException(
+      final DataIntegrityViolationException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.CONFLICT.value(),
+            ex.getMostSpecificCause().getMessage(),
+            request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+  }
+
+  /** Receive {@link DuplicatedException} subclasses and return {@link HttpStatus#CONFLICT}. */
+  @ExceptionHandler(DuplicatedException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorDetails> handleRecordAlreadyExitsException(
       final RuntimeException ex, final WebRequest request) {

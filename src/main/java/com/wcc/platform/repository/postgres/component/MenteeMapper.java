@@ -41,11 +41,11 @@ public class MenteeMapper {
                 .country(member.getCountry())
                 .city(member.getCity())
                 .companyName(member.getCompanyName())
-                .isWomenNonBinary(member.getIsWomenNonBinary())
+                .isWomen(member.getIsWomen())
                 .images(member.getImages())
                 .network(member.getNetwork()));
 
-    final var skillsMentee = skillsRepository.findSkills(menteeId);
+    final var skillsMentee = skillsRepository.findMenteeSkills(menteeId);
     skillsMentee.ifPresent(builder::skills);
 
     return builder
@@ -53,6 +53,7 @@ public class MenteeMapper {
         .profileStatus(ProfileStatus.fromId(rs.getInt("mentees_profile_status")))
         .spokenLanguages(List.of(rs.getString("spoken_languages").split(COMMA)))
         .bio(rs.getString("bio"))
+        .availableHsMonth(rs.getInt("available_hs_month"))
         .build();
   }
 }

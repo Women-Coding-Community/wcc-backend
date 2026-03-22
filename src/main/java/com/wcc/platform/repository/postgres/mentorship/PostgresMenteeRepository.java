@@ -2,6 +2,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.MemberRepository;
@@ -25,16 +26,16 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private static final String SELECT_ALL_MENTEES = "SELECT * FROM mentees";
   private static final String SQL_INSERT_MENTEE =
       "INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, "
-          + "spoken_languages) VALUES (?, ?, ?, ?, ?)";
+          + "spoken_languages, available_hs_month) VALUES (?, ?, ?, ?, ?, ?)";
   private static final String SQL_PROG_LANG_INSERT =
-      "INSERT INTO mentee_languages (mentee_id, language_id) VALUES (?, ?)";
+      "INSERT INTO mentee_languages (mentee_id, language_id, proficiency_level_id) VALUES (?, ?, ?)";
   private static final String SQL_TECH_AREAS_INSERT =
-      "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id) VALUES (?, ?)";
+      "INSERT INTO mentee_technical_areas (mentee_id, technical_area_id, proficiency_level_id) VALUES (?, ?, ?)";
   private static final String INSERT_FOCUS_AREAS =
       "INSERT INTO mentee_mentorship_focus_areas (mentee_id, focus_area_id) VALUES (?, ?)";
   private static final String SQL_UPDATE_MENTEE =
       "UPDATE mentees SET mentees_profile_status = ?, bio = ?, years_experience = ?, "
-          + "spoken_languages = ? WHERE mentee_id = ?";
+          + "spoken_languages = ?, available_hs_month = ? WHERE mentee_id = ?";
   private static final String SQL_DELETE_TECH_AREAS =
       "DELETE FROM mentee_technical_areas WHERE mentee_id = ?";
   private static final String SQL_DELETE_LANGUAGES =
@@ -61,7 +62,16 @@ public class PostgresMenteeRepository implements MenteeRepository {
       memberId = memberMapper.addMember(mentee);
     }
 
-    insertMenteeDetails(mentee, memberId);
+    if (findById(memberId).isEmpty()) {
+      insertMenteeDetails(mentee, memberId);
+    } else {
+      updateMenteeDetails(mentee, memberId);
+    }
+
+    jdbc.update(SQL_DELETE_TECH_AREAS, memberId);
+    jdbc.update(SQL_DELETE_LANGUAGES, memberId);
+    jdbc.update(DELETE_FOCUS_AREAS, memberId);
+
     insertTechnicalAreas(mentee.getSkills(), memberId);
     insertLanguages(mentee.getSkills(), memberId);
     insertMentorshipFocusAreas(mentee.getSkills(), memberId);
@@ -130,32 +140,47 @@ public class PostgresMenteeRepository implements MenteeRepository {
         mentee.getBio(),
         skills.yearsExperience(),
         String.join(",", mentee.getSpokenLanguages()),
+        mentee.getAvailableHsMonth(),
         memberId);
   }
 
   private void insertMenteeDetails(final Mentee mentee, final Long memberId) {
-    final var profileStatus = mentee.getProfileStatus();
+    var profileStatus = mentee.getProfileStatus();
     final var skills = mentee.getSkills();
+
+    if (profileStatus == null) {
+      profileStatus = ProfileStatus.PENDING;
+    }
+
     jdbc.update(
         SQL_INSERT_MENTEE,
         memberId,
         profileStatus.getStatusId(),
         mentee.getBio(),
         skills.yearsExperience(),
-        String.join(",", mentee.getSpokenLanguages()));
+        String.join(",", mentee.getSpokenLanguages()),
+        mentee.getAvailableHsMonth());
   }
 
   /** Inserts technical areas for the mentee in mentee_technical_areas table. */
   private void insertTechnicalAreas(final Skills menteeSkills, final Long memberId) {
     for (final var areaProf : menteeSkills.areas()) {
-      jdbc.update(SQL_TECH_AREAS_INSERT, memberId, areaProf.technicalArea().getTechnicalAreaId());
+      jdbc.update(
+          SQL_TECH_AREAS_INSERT,
+          memberId,
+          areaProf.technicalArea().getTechnicalAreaId(),
+          areaProf.proficiencyLevel().getLevelId());
     }
   }
 
   /** Inserts programming languages for a mentee in mentee_languages table. */
   private void insertLanguages(final Skills menteeSkills, final Long memberId) {
     for (final var langProf : menteeSkills.languages()) {
-      jdbc.update(SQL_PROG_LANG_INSERT, memberId, langProf.language().getLangId());
+      jdbc.update(
+          SQL_PROG_LANG_INSERT,
+          memberId,
+          langProf.language().getLangId(),
+          langProf.proficiencyLevel().getLevelId());
     }
   }
 

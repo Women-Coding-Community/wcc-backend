@@ -1,7 +1,7 @@
 package com.wcc.platform.domain.exceptions;
 
 /** Repository duplicated exception. */
-public class DuplicatedItemException extends RuntimeException {
+public class DuplicatedItemException extends DuplicatedException {
   public DuplicatedItemException(final String message) {
     super(message);
   }
