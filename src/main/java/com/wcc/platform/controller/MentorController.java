@@ -45,7 +45,7 @@ public class MentorController {
    */
   @GetMapping("/mentors")
   @Operation(
-      summary = "API to retrieve a list of all mentors with access to restrict area",
+      summary = "API to retrieve a list of all mentors with access to restricted area",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)

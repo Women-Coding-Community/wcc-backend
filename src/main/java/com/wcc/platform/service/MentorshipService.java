@@ -143,7 +143,12 @@ public class MentorshipService {
     return getMentorsPage(mentorsPage, null);
   }
 
-  /** Return all mentors ignoring their status and the current cycle. */
+  /**
+   * Return all mentors ignoring their status and the current cycle.
+   * Intended for privileged (admin/leader) use only.
+   *
+   * @return list of all mentor DTOs regardless of {@link ProfileStatus}.
+   */
   public List<MentorDto> getAllMentors() {
     return mentorRepository.getAll().stream()
         .map(mentor -> enrichWithProfilePicture(mentor.toDto()))
