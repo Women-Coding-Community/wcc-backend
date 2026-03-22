@@ -239,7 +239,8 @@ class EmailServiceTest {
   }
 
   @Test
-  @DisplayName("Should build EmailRequest with all optional fields and send email")
+  @DisplayName(
+      "Given a template email request with all optional fields, when sending template email, then should build and send email with all fields")
   void shouldSendTemplateEmailWithAllFields() {
 
     TemplateEmailRequest request = TemplateEmailRequest.builder()
@@ -283,7 +284,8 @@ class EmailServiceTest {
   }
 
   @Test
-  @DisplayName("Should build EmailRequest without optional fields and send email")
+  @DisplayName(
+      "Given a template email request without optional fields, when sending template email, then should build and send email with only required fields")
   void shouldSendTemplateEmailWithoutOptionalFields() {
 
     TemplateEmailRequest request = TemplateEmailRequest.builder()

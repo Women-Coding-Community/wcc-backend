@@ -1,5 +1,5 @@
 MENTEE_APP_LONG:
-  subject: "We’ve received your registration for the [year] WCC Mentorship Programme"
+  subject: "We’ve received your registration for the {{year}} WCC Mentorship Programme"
   body: |
     <p>Dear {{menteeName}},</p>
 
