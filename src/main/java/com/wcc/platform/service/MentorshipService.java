@@ -138,16 +138,19 @@ public class MentorshipService {
   }
 
   /**
-   * Return all stored mentors in the current cycle.
+   * Return all ACTIVE mentors in the current cycle. Mentors with PENDING or REJECTED status are
+   * always excluded regardless of the cycle state.
    *
-   * @return List of mentors.
+   * @return List of active mentor DTOs.
    */
   public List<MentorDto> getAllActiveMentors() {
     return getAllActiveMentors(getCurrentCycle());
   }
 
   private List<MentorDto> getAllActiveMentors(final MentorshipCycle currentCycle) {
-    final var allActiveMentors = mentorRepository.getAll().stream().filter(m -> m.getProfileStatus() == ProfileStatus.ACTIVE);
+    final var allActiveMentors =
+        mentorRepository.getAll().stream()
+            .filter(m -> m.getProfileStatus() == ProfileStatus.ACTIVE);
 
     if (currentCycle == CYCLE_CLOSED) {
       return allActiveMentors.map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
