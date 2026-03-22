@@ -106,8 +106,12 @@ public class AuthController {
    * @return List of all members.
    */
   @GetMapping("/users")
-  @SecurityRequirement(name = "apiKey")
-  @Operation(summary = "API to retrieve users with access to restrict area")
+  @Operation(
+      summary = "API to retrieve users with access to restrict area",
+      security = {
+        @SecurityRequirement(name = "apiKey"),
+        @SecurityRequirement(name = "bearerAuth")
+      })
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<UserAccount>> getUsers() {
