@@ -92,7 +92,12 @@ public class MenteeApplicationController {
   @RequiresPermission(
       value = {Permission.MENTOR_APPL_READ, Permission.MENTOR_APPROVE},
       operator = LogicalOperator.OR)
-  @Operation(summary = "Get applications received by a mentor")
+  @Operation(
+      summary = "Get applications received by a mentor",
+      security = {
+        @SecurityRequirement(name = "apiKey"),
+        @SecurityRequirement(name = "bearerAuth")
+      })
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getMentorApplications(
       @Parameter(description = "ID of the mentor") @PathVariable final Long mentorId,
