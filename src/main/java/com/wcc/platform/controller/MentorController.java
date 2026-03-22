@@ -1,8 +1,10 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorRejectionRequest;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -42,10 +44,13 @@ public class MentorController {
    * @return List of all mentors.
    */
   @GetMapping("/mentors")
-  @Operation(summary = "API to retrieve a list of all mentors")
+  @Operation(
+      summary = "API to retrieve a list of all mentors with access to restrict area",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorDto>> getAllMentors() {
-    final List<MentorDto> mentors = mentorshipService.getAllActiveMentors();
+    final List<MentorDto> mentors = mentorshipService.getAllMentors();
     return ResponseEntity.ok(mentors);
   }
 
