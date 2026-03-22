@@ -1,20 +1,25 @@
 package com.wcc.platform.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
+import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -91,6 +96,39 @@ class GlobalExceptionHandlerTest {
 
     var expectation = new ErrorDetails(CONFLICT.value(), rootCause.getMessage(), DETAILS);
     assertEquals(CONFLICT, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given malformed JSON with unknown field, "
+          + "when handling, then return BAD_REQUEST with field context")
+  void shouldReturnBadRequestForHttpMessageNotReadableException() throws Exception {
+    var invalidJson =
+        """
+        {
+          "name": "BACKEND",
+          "proficiencyLevel": "BEGINNER"
+        }
+        """;
+    var cause =
+        assertThrows(
+            com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException.class,
+            () -> new ObjectMapper().readValue(invalidJson, TechnicalAreaProficiency.class));
+    var exception =
+        new HttpMessageNotReadableException(
+            "JSON parse error", cause, new MockHttpInputMessage(invalidJson.getBytes()));
+
+    var response =
+        globalExceptionHandler.handleHttpMessageNotReadableException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            BAD_REQUEST.value(),
+            "Unrecognized field 'name' at 'name'. "
+                + "Allowed fields: proficiencyLevel, technicalArea",
+            DETAILS);
+    assertEquals(BAD_REQUEST, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
 }
