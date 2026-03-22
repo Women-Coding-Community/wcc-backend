@@ -345,7 +345,8 @@ class EmailServiceTest {
   }
 
   @Test
-  @DisplayName("Should build EmailRequest when optional fields are empty and send email")
+  @DisplayName(
+      "Given a template email request with empty optional fields, when sending template email, then should omit cc, bcc and replyTo from the built request")
   void shouldSendTemplateEmailWhenOptionalFieldsAreEmpty() {
     TemplateEmailRequest request = TemplateEmailRequest.builder()
         .to("test@example.com")

@@ -9,9 +9,9 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -55,7 +55,8 @@ public class EmailService {
       log.info("Attempting to send email to: {}", emailRequest.getTo());
 
       final MimeMessage message = javaMailSender.createMimeMessage();
-      final var mimeMessageHelper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+      final var mimeMessageHelper =
+          new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
       mimeMessageHelper.setFrom(fromEmail);
       mimeMessageHelper.setTo(emailRequest.getTo());
