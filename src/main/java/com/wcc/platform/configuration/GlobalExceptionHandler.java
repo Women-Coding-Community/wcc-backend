@@ -158,6 +158,17 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
+  /** Return 400 Bad Request for InvalidTokenException. */
+  @ExceptionHandler(InvalidTokenException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ErrorDetails> handleInvalidTokenException(
+      final InvalidTokenException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.BAD_REQUEST.value(), ex.getMessage(), request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+  }
+
   /** Return 403 Forbidden for ForbiddenException. */
   @ExceptionHandler(ForbiddenException.class)
   public ResponseEntity<ErrorDetails> handleForbiddenException(

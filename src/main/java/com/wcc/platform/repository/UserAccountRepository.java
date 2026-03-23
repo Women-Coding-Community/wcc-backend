@@ -17,4 +17,12 @@ public interface UserAccountRepository extends CrudRepository<UserAccount, Integ
   List<UserAccount> findAll();
 
   void updateRole(Integer id, List<RoleType> roles);
+
+  /**
+   * Updates the password hash for the given user account.
+   *
+   * @param id the user account ID
+   * @param newPasswordHash the new Argon2-hashed password
+   */
+  void updatePassword(Integer id, String newPasswordHash);
 }

@@ -6,6 +6,10 @@ import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.PasswordResetService;
+import com.wcc.platform.service.PasswordResetService.ConfirmPasswordResetRequest;
+import com.wcc.platform.service.PasswordResetService.PasswordResetResponse;
+import com.wcc.platform.service.PasswordResetService.ResetPasswordRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +44,7 @@ public class AuthController {
       ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid credentials"));
   private final AuthService authService;
   private final MemberService memberService;
+  private final PasswordResetService passwordResetService;
 
   /**
    * Authenticates a user using their email and password and returns an access token upon successful
@@ -82,6 +87,7 @@ public class AuthController {
    */
   @GetMapping("/me")
   @Operation(summary = "Get current authenticated user and member info")
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   public ResponseEntity<LoginResponse> currentUser() {
     final var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !auth.isAuthenticated()) {
@@ -116,6 +122,38 @@ public class AuthController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<UserAccount>> getUsers() {
     return ResponseEntity.ok(memberService.getUsers());
+  }
+
+  /**
+   * Initiates a password reset by sending a reset link to the specified user's email. Restricted to
+   * ADMIN and LEADER roles.
+   *
+   * @param request the reset request containing the target email and recipient display name
+   * @return 204 No Content on success
+   */
+  @PostMapping("/reset-password/request")
+  @Operation(summary = "Send a password reset link to a registered user (admin/leader only)")
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public ResponseEntity<PasswordResetResponse> requestPasswordReset(
+      @RequestBody @Valid final ResetPasswordRequest request) {
+    passwordResetService.requestReset(request.email(), request.recipientName());
+    return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * Confirms a password reset by validating the single-use token and applying the new password.
+   * This endpoint is public — the token itself is the proof of identity.
+   *
+   * @param request the confirmation request containing the reset token and the new password
+   * @return 200 OK with a confirmation message
+   */
+  @PostMapping("/reset-password/confirm")
+  @Operation(summary = "Confirm password reset using a single-use token from the reset email")
+  public ResponseEntity<PasswordResetResponse> confirmPasswordReset(
+      @RequestBody @Valid final ConfirmPasswordResetRequest request) {
+    passwordResetService.confirmReset(request.token(), request.newPassword());
+    return ResponseEntity.ok(new PasswordResetResponse("Password has been reset successfully"));
   }
 
   /**

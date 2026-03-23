@@ -68,6 +68,9 @@ app:
     allowed-origins: http://localhost:3000,https://localhost:3000
   email:
     team-signature: "WCC Mentorship Team"
+  reset-password:
+    base-url: ${NEXT_PUBLIC_APP_URL:http://localhost:3000}
+    ttl-minutes: 60
   seed:
     admin:
       enabled: true
