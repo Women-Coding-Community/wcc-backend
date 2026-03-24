@@ -93,8 +93,8 @@ public class AuthController {
     }
     final var userAccount =
         authService.findUserByEmail(
-            auth.getPrincipal() instanceof UserAccount.User
-                ? ((UserAccount.User) auth.getPrincipal()).userAccount().getEmail()
+            auth.getPrincipal() instanceof UserAccount.User user
+                ? user.userAccount().getEmail()
                 : null);
     if (userAccount.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
