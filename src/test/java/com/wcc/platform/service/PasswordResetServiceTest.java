@@ -8,9 +8,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.configuration.PasswordResetProperties;
+import com.wcc.platform.configuration.PasswordResetConfig;
 import com.wcc.platform.domain.auth.PasswordResetToken;
 import com.wcc.platform.domain.auth.UserAccount;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.InvalidTokenException;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.PasswordResetTokenRepository;
@@ -47,7 +48,7 @@ class PasswordResetServiceTest {
 
   @BeforeEach
   void setUp() {
-    var resetProperties = new PasswordResetProperties();
+    var resetProperties = new PasswordResetConfig();
     resetProperties.setBaseUrl("http://localhost:3000");
     resetProperties.setTtlMinutes(60);
 
@@ -72,7 +73,7 @@ class PasswordResetServiceTest {
     passwordResetService.requestReset(EMAIL, RECIPIENT_NAME);
 
     verify(resetTokenRepository).create(any(PasswordResetToken.class));
-    verify(emailService).sendEmail(any());
+    verify(emailService).sendTemplateEmail(any(TemplateEmailRequest.class));
   }
 
   @Test
@@ -84,7 +85,7 @@ class PasswordResetServiceTest {
     passwordResetService.requestReset(EMAIL, RECIPIENT_NAME);
 
     verify(resetTokenRepository, never()).create(any());
-    verify(emailService, never()).sendEmail(any());
+    verify(emailService, never()).sendTemplateEmail(any());
   }
 
   @Test

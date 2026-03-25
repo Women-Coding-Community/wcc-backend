@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "app.reset-password")
-public class PasswordResetProperties {
+public class PasswordResetConfig {
 
   /** Base URL of the frontend application. Used to construct the reset link sent by email. */
   private String baseUrl = "http://localhost:3000";

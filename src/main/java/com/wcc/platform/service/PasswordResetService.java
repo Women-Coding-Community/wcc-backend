@@ -1,16 +1,18 @@
 package com.wcc.platform.service;
 
-import com.wcc.platform.configuration.PasswordResetProperties;
+import com.wcc.platform.configuration.PasswordResetConfig;
 import com.wcc.platform.domain.auth.PasswordResetToken;
 import com.wcc.platform.domain.auth.UserAccount;
-import com.wcc.platform.domain.email.EmailRequest;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.InvalidTokenException;
+import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.PasswordResetTokenRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
 import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,26 +37,25 @@ public class PasswordResetService {
   private final UserTokenRepository userTokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final EmailService emailService;
-  private final PasswordResetProperties resetProperties;
+  private final PasswordResetConfig passwordResetConfig;
 
   /**
    * Initiates the password reset flow for the given email address. Generates a single-use reset
-   * token, stores it, and emails the reset link to the user. If the email is not registered, the
-   * method returns silently to avoid leaking account existence information.
+   * token, stores it, and emails the reset link to the user.
    *
    * @param email the email address of the user whose password should be reset
    * @param recipientName the display name to include in the email greeting
+   * @return a message indicating whether the reset email was sent or the user was not found
    */
-  public void requestReset(final String email, final String recipientName) {
+  public String requestReset(final String email, final String recipientName) {
     final Optional<UserAccount> userOpt = userAccountRepository.findByEmail(email);
     if (userOpt.isEmpty()) {
-      log.warn("Password reset requested for unknown email: {}", email);
-      return;
+      return "User not found for email: " + email;
     }
 
     final UserAccount user = userOpt.get();
     final OffsetDateTime now = OffsetDateTime.now();
-    final OffsetDateTime expiresAt = now.plusMinutes(resetProperties.getTtlMinutes());
+    final OffsetDateTime expiresAt = now.plusMinutes(passwordResetConfig.getTtlMinutes());
     final String rawToken = generateToken();
 
     resetTokenRepository.create(
@@ -66,17 +67,20 @@ public class PasswordResetService {
             .used(false)
             .build());
 
-    final String resetLink = resetProperties.getBaseUrl() + RESET_PATH + rawToken;
+    final String resetLink = passwordResetConfig.getBaseUrl() + RESET_PATH + rawToken;
 
-    emailService.sendEmail(
-        EmailRequest.builder()
+    emailService.sendTemplateEmail(
+        TemplateEmailRequest.builder()
             .to(email)
-            .subject("Reset Your Password — Women Coding Community")
-            .body(buildEmailBody(recipientName, resetLink))
+            .templateType(TemplateType.RESET_PASSWORD)
+            .templateParameters(
+                Map.of(
+                    "recipientName", recipientName,
+                    "resetLink", resetLink))
             .html(true)
             .build());
 
-    log.info("Password reset email sent to: {}", email);
+    return "Password reset email sent";
   }
 
   /**
@@ -110,17 +114,6 @@ public class PasswordResetService {
     final byte[] bytes = new byte[48];
     RANDOM.nextBytes(bytes);
     return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-  }
-
-  private String buildEmailBody(final String recipientName, final String resetLink) {
-    return "<p>Dear " + recipientName + ",</p>"
-        + "<p>A password reset has been requested for your <strong>Women Coding Community</strong>"
-        + " account.</p>"
-        + "<p>Click the link below to set a new password. This link is valid for <strong>"
-        + resetProperties.getTtlMinutes() + " minutes</strong> and can only be used once.</p>"
-        + "<p><a href=\"" + resetLink + "\">Reset your password</a></p>"
-        + "<p>If you did not request a password reset, please ignore this email.</p>"
-        + "<p>WCC Team</p>";
   }
 
   /** Request DTO for the password reset initiation endpoint. */

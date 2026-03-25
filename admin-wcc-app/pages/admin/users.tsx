@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Box, Button, Paper, Snackbar, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
 import { apiFetch } from '@/lib/api';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
@@ -12,7 +12,6 @@ interface UserDto {
 }
 
 const USERS_PATH = '/api/platform/v1/users';
-const RESET_PATH = '/api/auth/reset-password/request';
 
 export default function UsersPage() {
   const router = useRouter();
@@ -21,21 +20,19 @@ export default function UsersPage() {
   const [roles, setRoles] = useState('USER');
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [resetSuccess, setResetSuccess] = useState<string | null>(null);
-  const [resettingEmail, setResettingEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const stored = getStoredToken();
-    if (!stored || isTokenExpired(stored)) router.replace('/login');
+    const token = getStoredToken();
+    if (!token || isTokenExpired(token)) router.replace('/login');
     else {
-      setToken(stored);
-      loadUsers(stored);
+      setToken(token);
+      loadUsers(token);
     }
   }, [router]);
 
-  const loadUsers = async (t: string) => {
+  const loadUsers = async (token: string) => {
     try {
-      const data = await apiFetch<UserDto[]>(USERS_PATH, { token: t });
+      const data = await apiFetch<UserDto[]>(USERS_PATH, { token: token });
       setItems(data || []);
     } catch (e: any) {
       setError(e.message);
@@ -58,28 +55,10 @@ export default function UsersPage() {
   const deleteUser = async (id?: string) => {
     if (!token || !id) return;
     try {
-      await apiFetch(`${USERS_PATH}/${id}`, { method: 'DELETE', token });
+      await apiFetch(USERS_PATH + `${USERS_PATH}/${id}`, { method: 'DELETE', token });
       await loadUsers(token);
     } catch (e: any) {
       setError(e.message);
-    }
-  };
-
-  const sendResetLink = async (userEmail: string) => {
-    if (!token) return;
-    setError(null);
-    setResettingEmail(userEmail);
-    try {
-      await apiFetch(RESET_PATH, {
-        method: 'POST',
-        body: { email: userEmail, recipientName: userEmail },
-        token,
-      });
-      setResetSuccess(`Reset link sent to ${userEmail}`);
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setResettingEmail(null);
     }
   };
 
@@ -105,13 +84,7 @@ export default function UsersPage() {
           {items.map((u) => (
             <Paper
               key={u.id}
-              sx={{
-                p: 2,
-                mb: 1,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              sx={{ p: 2, mb: 1, display: 'flex', justifyContent: 'space-between' }}
             >
               <div>
                 <Typography>{u.email}</Typography>
@@ -119,33 +92,13 @@ export default function UsersPage() {
                   {u.roles}
                 </Typography>
               </div>
-              <Stack direction="row" spacing={1}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  disabled={resettingEmail === u.email}
-                  onClick={() => sendResetLink(u.email)}
-                >
-                  {resettingEmail === u.email ? 'Sending…' : 'Send Reset Link'}
-                </Button>
-                <Button color="secondary" onClick={() => deleteUser(u.id)}>
-                  Delete
-                </Button>
-              </Stack>
+              <Button color="secondary" onClick={() => deleteUser(u.id)}>
+                Delete
+              </Button>
             </Paper>
           ))}
         </Box>
       </Paper>
-      <Snackbar
-        open={!!resetSuccess}
-        autoHideDuration={4000}
-        onClose={() => setResetSuccess(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="success" onClose={() => setResetSuccess(null)}>
-          {resetSuccess}
-        </Alert>
-      </Snackbar>
     </AdminLayout>
   );
 }

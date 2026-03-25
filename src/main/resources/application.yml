@@ -70,7 +70,7 @@ app:
     team-signature: "WCC Mentorship Team"
   reset-password:
     base-url: ${NEXT_PUBLIC_APP_URL:http://localhost:3000}
-    ttl-minutes: 60
+    ttl-minutes: 7200
   seed:
     admin:
       enabled: true

@@ -86,7 +86,9 @@ public class AuthController {
    * <p>The method fetches information about the logged-in user
    */
   @GetMapping("/me")
-  @Operation(summary = "Get current authenticated user and member info")
+  @Operation(
+      summary = "Get current authenticated user and member info",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   public ResponseEntity<LoginResponse> currentUser() {
     final var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -94,7 +96,11 @@ public class AuthController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    final var userAccount = authService.findUserByEmail(auth.getName());
+    final var userAccount =
+        authService.findUserByEmail(
+            auth.getPrincipal() instanceof UserAccount.User user
+                ? user.userAccount().getEmail()
+                : null);
     if (userAccount.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -114,10 +120,7 @@ public class AuthController {
   @GetMapping("/users")
   @Operation(
       summary = "API to retrieve users with access to restrict area",
-      security = {
-        @SecurityRequirement(name = "apiKey"),
-        @SecurityRequirement(name = "bearerAuth")
-      })
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<UserAccount>> getUsers() {
@@ -129,16 +132,19 @@ public class AuthController {
    * ADMIN and LEADER roles.
    *
    * @param request the reset request containing the target email and recipient display name
-   * @return 204 No Content on success
+   * @return 200 OK with a message indicating whether the reset email was sent or the user was not
+   *     found
    */
   @PostMapping("/reset-password/request")
-  @Operation(summary = "Send a password reset link to a registered user (admin/leader only)")
+  @Operation(
+      summary = "Send a password reset link to a registered user (admin/leader only)",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
-  @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<PasswordResetResponse> requestPasswordReset(
       @RequestBody @Valid final ResetPasswordRequest request) {
-    passwordResetService.requestReset(request.email(), request.recipientName());
-    return ResponseEntity.noContent().build();
+    final String message =
+        passwordResetService.requestReset(request.email(), request.recipientName());
+    return ResponseEntity.ok(new PasswordResetResponse(message));
   }
 
   /**

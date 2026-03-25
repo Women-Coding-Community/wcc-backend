@@ -2,6 +2,7 @@ package com.wcc.platform.controller.platform;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -15,10 +16,14 @@ import com.wcc.platform.controller.platform.AuthController.LoginRequest;
 import com.wcc.platform.controller.platform.AuthController.LoginResponse;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.auth.UserToken;
+import com.wcc.platform.domain.exceptions.InvalidTokenException;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.PasswordResetService;
+import com.wcc.platform.service.PasswordResetService.ConfirmPasswordResetRequest;
+import com.wcc.platform.service.PasswordResetService.ResetPasswordRequest;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +46,8 @@ class AuthControllerTest {
   private static final String LOGIN_PATH = "/api/auth/login";
   private static final String AUTHENTICATED_PATH = "/api/auth/me";
   private static final String USERS_PATH = "/api/auth/users";
+  private static final String RESET_REQUEST_PATH = "/api/auth/reset-password/request";
+  private static final String RESET_CONFIRM_PATH = "/api/auth/reset-password/confirm";
   private static final String API_KEY_HEADER = "X-API-KEY";
   private static final String API_KEY_VALUE = "test-api-key";
 
@@ -61,6 +68,7 @@ class AuthControllerTest {
   @Autowired private ObjectMapper objectMapper;
   @MockBean private AuthService authService;
   @MockBean private MemberService memberService;
+  @MockBean private PasswordResetService passwordResetService;
 
   @Test
   @DisplayName(
@@ -129,5 +137,57 @@ class AuthControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(1))
         .andExpect(jsonPath("$[0].email").value("admin@wcc.dev"));
+  }
+
+  @Test
+  @DisplayName(
+      "Given valid reset request with API key, when POST /reset-password/request,"
+          + " then return 200 with message")
+  void shouldReturn200WhenRequestingPasswordReset() throws Exception {
+    var request = new ResetPasswordRequest("user@wcc.dev", "Test User");
+    when(passwordResetService.requestReset(anyString(), anyString()))
+        .thenReturn("Password reset email sent");
+
+    mockMvc
+        .perform(
+            post(RESET_REQUEST_PATH)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName(
+      "Given valid token and new password, when POST /reset-password/confirm,"
+          + " then return 200 with success message")
+  void shouldReturn200WhenConfirmingPasswordReset() throws Exception {
+    var request = new ConfirmPasswordResetRequest("valid-token", "NewP@ssword1");
+
+    mockMvc
+        .perform(
+            post(RESET_CONFIRM_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Password has been reset successfully"));
+  }
+
+  @Test
+  @DisplayName(
+      "Given invalid or expired token, when POST /reset-password/confirm,"
+          + " then return 400 Bad Request")
+  void shouldReturn400WhenConfirmingPasswordResetWithInvalidToken() throws Exception {
+    var request = new ConfirmPasswordResetRequest("expired-token", "NewP@ssword1");
+    doThrow(new InvalidTokenException("Password reset token is invalid or has expired"))
+        .when(passwordResetService)
+        .confirmReset(anyString(), anyString());
+
+    mockMvc
+        .perform(
+            post(RESET_CONFIRM_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
   }
 }
