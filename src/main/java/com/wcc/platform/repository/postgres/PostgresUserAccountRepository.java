@@ -23,7 +23,8 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
 
   private static final String SQL_SELECT_ALL = "SELECT * FROM user_accounts;";
   private static final String SQL_SELECT_BY_ID = "SELECT * FROM user_accounts WHERE id = ?";
-  private static final String SQL_SELECT_BY_MAIL = "SELECT * FROM user_accounts WHERE email = ?";
+  private static final String SQL_SELECT_BY_MAIL =
+      "SELECT * FROM user_accounts WHERE LOWER(email) = LOWER(?)";
   private static final String SQL_DELETE = "DELETE FROM user_accounts WHERE id = ?";
   private static final String SQL_INSERT =
       "INSERT INTO user_accounts (member_id, email, password_hash) VALUES (?,?,?)";
