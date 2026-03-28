@@ -19,7 +19,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "playwright": "^1.48.2"
+    "playwright": "^1.48.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "github:apidevtools/swagger-parser",
