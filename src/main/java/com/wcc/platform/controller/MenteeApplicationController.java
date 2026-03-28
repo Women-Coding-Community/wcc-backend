@@ -117,10 +117,10 @@ public class MenteeApplicationController {
    * @param applicationId The application ID
    * @return Updated application
    */
-  @PatchMapping("/admin/applications/{applicationId}/forward")
+  @PatchMapping("/mentees/applications/{applicationId}/forward")
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
-      summary = "Admin forwards application to mentor",
+      summary = "Admin forwards mentee application to mentor",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MenteeApplication> forwardApplication(
