@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
@@ -29,25 +30,25 @@ public class MenteeWorkflowService {
   private final MentorshipCycleRepository cycleRepository;
 
   /**
-   * Admin forwards an application.
+   * Admin approves a mentee application.
    *
    * @param applicationId the application ID
    * @return updated application
    * @throws ApplicationNotFoundException if application not found
    */
   @Transactional
-  public MenteeApplication forwardApplication(final Long applicationId) {
+  public MenteeApplication approveApplication(final Long applicationId) {
     final MenteeApplication application = getApplicationOrThrow(applicationId);
 
     if (application.getStatus() != ApplicationStatus.PENDING) {
-      throw new ApplicationMenteeWorkflowException(applicationId);
+      throw new ContentNotFoundException("Application with id " + applicationId + " not found");
     }
 
     final MenteeApplication updated =
         applicationRepository.updateStatus(applicationId, ApplicationStatus.MENTOR_REVIEWING, null);
 
     log.info(
-        "Application {} from mentee {} forwarded to mentor {}",
+        "Application {} from mentee {} approved and to be reviewed by mentor {}",
         applicationId,
         application.getMenteeId(),
         application.getMentorId());

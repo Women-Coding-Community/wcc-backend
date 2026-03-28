@@ -112,7 +112,7 @@ public class MenteeApplicationController {
   }
 
   /**
-   * API for admin to approve the application and it will be available to the mentor to review
+   * API for admin to approve the application and make it available for the mentor to review
    *
    * @param applicationId The application ID
    * @return Updated application
@@ -120,12 +120,12 @@ public class MenteeApplicationController {
   @PatchMapping("/mentees/applications/{applicationId}/approve")
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
-      summary = "Admin forwards mentee application to mentor",
+      summary = "Admin approves mentee application",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MenteeApplication> forwardApplication(
+  public ResponseEntity<MenteeApplication> approveApplication(
       @Parameter(description = "Application ID") @PathVariable final Long applicationId) {
-    final MenteeApplication updated = applicationService.forwardApplication(applicationId);
+    final MenteeApplication updated = applicationService.approveApplication(applicationId);
     return ResponseEntity.ok(updated);
   }
 
