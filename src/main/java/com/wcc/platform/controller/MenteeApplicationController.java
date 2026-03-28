@@ -117,7 +117,7 @@ public class MenteeApplicationController {
    * @param applicationId The application ID
    * @return Updated application
    */
-  @PatchMapping("/mentees/applications/{applicationId}/forward")
+  @PatchMapping("/mentees/applications/{applicationId}/approve")
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
       summary = "Admin forwards mentee application to mentor",
