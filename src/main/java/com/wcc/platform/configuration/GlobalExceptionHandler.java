@@ -30,7 +30,8 @@ public class GlobalExceptionHandler {
     ContentNotFoundException.class,
     NoSuchElementException.class,
     MemberNotFoundException.class,
-    MentorNotFoundException.class
+    MentorNotFoundException.class,
+    ApplicationNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
