@@ -41,7 +41,7 @@ public class MenteeWorkflowService {
     final MenteeApplication application = getApplicationOrThrow(applicationId);
 
     if (application.getStatus() != ApplicationStatus.PENDING) {
-      throw new ContentNotFoundException("Application with id " + applicationId + " not found");
+      throw new ContentNotFoundException("No pending application with id " + applicationId);
     }
 
     final MenteeApplication updated =

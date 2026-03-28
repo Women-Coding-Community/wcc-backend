@@ -97,6 +97,6 @@ class MenteeWorkflowServiceTest {
 
     assertThatThrownBy(() -> service.approveApplication(99L))
         .isInstanceOf(ApplicationNotFoundException.class)
-        .hasMessageContaining("Application not found with ID: 99");
+        .hasMessageContaining("Application with id 99 not found");
   }
 }

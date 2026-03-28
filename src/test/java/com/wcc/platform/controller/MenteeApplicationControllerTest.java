@@ -67,7 +67,7 @@ class MenteeApplicationControllerTest {
   @DisplayName("Given a non-PENDING application, when admin approves it, then return 404 NOT_FOUND")
   void shouldReturn404WhenApplicationIsNotPending() throws Exception {
     when(applicationService.approveApplication(2L))
-        .thenThrow(new ContentNotFoundException("Application with id 2 not found"));
+        .thenThrow(new ContentNotFoundException("No pending application with id 2"));
 
     mockMvc
         .perform(
