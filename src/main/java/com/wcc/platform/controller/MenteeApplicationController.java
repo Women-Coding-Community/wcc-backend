@@ -94,10 +94,7 @@ public class MenteeApplicationController {
       operator = LogicalOperator.OR)
   @Operation(
       summary = "Get applications received by a mentor",
-      security = {
-        @SecurityRequirement(name = "apiKey"),
-        @SecurityRequirement(name = "bearerAuth")
-      })
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getMentorApplications(
       @Parameter(description = "ID of the mentor") @PathVariable final Long mentorId,
@@ -112,6 +109,24 @@ public class MenteeApplicationController {
             : applications;
 
     return ResponseEntity.ok(filtered);
+  }
+
+  /**
+   * API for admin to forward an application to a mentor
+   *
+   * @param applicationId The application ID
+   * @return Updated application
+   */
+  @PatchMapping("/admin/applications/{applicationId}/forward")
+  @RequiresPermission(Permission.MENTEE_APPROVE)
+  @Operation(
+      summary = "Admin forwards application to mentor",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MenteeApplication> forwardApplication(
+      @Parameter(description = "Application ID") @PathVariable final Long applicationId) {
+    final MenteeApplication updated = applicationService.forwardApplication(applicationId);
+    return ResponseEntity.ok(updated);
   }
 
   /**

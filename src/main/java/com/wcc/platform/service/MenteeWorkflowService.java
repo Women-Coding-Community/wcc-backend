@@ -29,6 +29,33 @@ public class MenteeWorkflowService {
   private final MentorshipCycleRepository cycleRepository;
 
   /**
+   * Admin forwards an application.
+   *
+   * @param applicationId the application ID
+   * @return updated application
+   * @throws ApplicationNotFoundException if application not found
+   */
+  @Transactional
+  public MenteeApplication forwardApplication(final Long applicationId) {
+    final MenteeApplication application = getApplicationOrThrow(applicationId);
+
+    if (application.getStatus() != ApplicationStatus.PENDING) {
+      throw new ApplicationMenteeWorkflowException(applicationId);
+    }
+
+    final MenteeApplication updated =
+        applicationRepository.updateStatus(applicationId, ApplicationStatus.MENTOR_REVIEWING, null);
+
+    log.info(
+        "Application {} from mentee {} forwarded to mentor {}",
+        applicationId,
+        application.getMenteeId(),
+        application.getMentorId());
+
+    return updated;
+  }
+
+  /**
    * Mentor accepts an application.
    *
    * @param applicationId the application ID
