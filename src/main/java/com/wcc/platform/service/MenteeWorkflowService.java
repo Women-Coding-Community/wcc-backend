@@ -60,11 +60,12 @@ public class MenteeWorkflowService {
    * Admin rejects a mentee application.
    *
    * @param applicationId the application ID
+   * @param reason reason for rejection
    * @return updated application
    * @throws ApplicationNotFoundException if application not found
    */
   @Transactional
-  public MenteeApplication rejectApplication(final Long applicationId) {
+  public MenteeApplication rejectApplication(final Long applicationId, final String reason) {
     final MenteeApplication application = getApplicationOrThrow(applicationId);
 
     if (application.getStatus() != ApplicationStatus.PENDING) {
@@ -72,7 +73,7 @@ public class MenteeWorkflowService {
     }
 
     final MenteeApplication updated =
-        applicationRepository.updateStatus(applicationId, ApplicationStatus.REJECTED, null);
+        applicationRepository.updateStatus(applicationId, ApplicationStatus.REJECTED, reason);
 
     log.info(
         "Application {} from mentee {} rejected by the Mentorship Team",

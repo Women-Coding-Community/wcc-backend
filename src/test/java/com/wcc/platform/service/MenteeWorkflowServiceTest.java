@@ -127,10 +127,10 @@ class MenteeWorkflowServiceTest {
             .build();
 
     when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
-    when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, null))
+    when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, "Not eligible"))
         .thenReturn(rejected);
 
-    final MenteeApplication result = service.rejectApplication(1L);
+    final MenteeApplication result = service.rejectApplication(1L, "Not eligible");
 
     assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
   }
@@ -152,7 +152,7 @@ class MenteeWorkflowServiceTest {
 
     when(applicationRepository.findById(2L)).thenReturn(Optional.of(rejected));
 
-    assertThatThrownBy(() -> service.rejectApplication(2L))
+    assertThatThrownBy(() -> service.rejectApplication(2L, "Not eligible"))
         .isInstanceOf(ContentNotFoundException.class)
         .hasMessageContaining("No pending application with id 2");
   }
@@ -163,7 +163,7 @@ class MenteeWorkflowServiceTest {
   void shouldThrowApplicationNotFoundExceptionWhenApplicationDoesNotExist() {
     when(applicationRepository.findById(99L)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> service.rejectApplication(99L))
+    assertThatThrownBy(() -> service.rejectApplication(99L, "Not eligible"))
         .isInstanceOf(ApplicationNotFoundException.class)
         .hasMessageContaining("Application not found with ID: 99");
   }

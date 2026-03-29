@@ -5,10 +5,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.service.MenteeWorkflowService;
@@ -36,6 +38,7 @@ class MenteeApplicationControllerTest {
   private static final String API_KEY_VALUE = "test-api-key";
 
   @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
   @MockBean private MenteeWorkflowService applicationService;
 
   @Test
@@ -109,13 +112,16 @@ class MenteeApplicationControllerTest {
             .whyMentor("Great mentor")
             .build();
 
-    when(applicationService.rejectApplication(1L)).thenReturn(rejected);
+    final ApplicationRejectRequest request = new ApplicationRejectRequest("Not eligible");
+
+    when(applicationService.rejectApplication(1L, "Not eligible")).thenReturn(rejected);
 
     mockMvc
         .perform(
             MockMvcRequestBuilders.patch(REJECT_URL, 1L)
                 .header(API_KEY_HEADER, API_KEY_VALUE)
-                .contentType(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.applicationId").value(1))
         .andExpect(jsonPath("$.status").value("REJECTED"));
@@ -124,14 +130,17 @@ class MenteeApplicationControllerTest {
   @Test
   @DisplayName("Given a non-PENDING application, when admin rejects it, then return 404 NOT_FOUND")
   void shouldReturn404WhenRejectedApplicationIsNotPending() throws Exception {
-    when(applicationService.rejectApplication(2L))
+    final ApplicationRejectRequest request = new ApplicationRejectRequest("Not eligible");
+
+    when(applicationService.rejectApplication(2L, "Not eligible"))
         .thenThrow(new ContentNotFoundException("No pending application with id 2"));
 
     mockMvc
         .perform(
             MockMvcRequestBuilders.patch(REJECT_URL, 2L)
                 .header(API_KEY_HEADER, API_KEY_VALUE)
-                .contentType(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isNotFound());
   }
 
@@ -139,14 +148,17 @@ class MenteeApplicationControllerTest {
   @DisplayName(
       "Given an application that does not exist, when admin rejects it, then return 404 NOT_FOUND")
   void shouldReturn404WhenRejectedApplicationDoesNotExist() throws Exception {
-    when(applicationService.rejectApplication(99L))
+    final ApplicationRejectRequest request = new ApplicationRejectRequest("Not eligible");
+
+    when(applicationService.rejectApplication(99L, "Not eligible"))
         .thenThrow(new ApplicationNotFoundException(99L));
 
     mockMvc
         .perform(
             MockMvcRequestBuilders.patch(REJECT_URL, 99L)
                 .header(API_KEY_HEADER, API_KEY_VALUE)
-                .contentType(APPLICATION_JSON))
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isNotFound());
   }
 }

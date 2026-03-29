@@ -2772,6 +2772,66 @@
                             ]
                         },
 	                        {
+    "name": "/api/platform/v1/mentees/applications/:applicationId/reject",
+                "description": "",
+                 "item": [
+                            {
+                                "name": "Admin rejects mentee application",
+                                "request": {
+                                    "method": "PATCH",
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json",
+                                            "description": "",
+                                            "disabled": false
+                                        },
+                                        {
+                                            "key": "Accept",
+                                            "value": "*/*",
+                                            "description": "",
+                                            "disabled": false
+                                        }
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{\n \"reason\": \"<string>\"\n}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{baseUrl}}/api/platform/v1/mentees/applications/:applicationId/reject",
+                                        "host": [
+                                            "{{baseUrl}}"
+                                        ],
+                                        "path": [
+                                            "api",
+                                            "platform",
+                                            "v1",
+                                            "mentees",
+                                            "applications",
+                                            ":applicationId",
+                                            "reject"
+                                        ],
+                                        "variable": [
+                                            {
+                                                "key": "applicationId",
+                                                "value": "",
+                                                "description": "Application ID"
+                                            }
+                                        ],
+                                        "query": [
+                                        ]
+                                    },
+                                    "description": ""
+                                }
+                            }
+                            ]
+                        },
+	                        {
     "name": "/api/platform/v1/mentees/applications/:applicationId/withdraw",
                 "description": "",
                  "item": [

@@ -5,6 +5,7 @@ import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.ApplicationAcceptRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationDeclineRequest;
+import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.ApplicationWithdrawRequest;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
@@ -133,6 +134,7 @@ public class MenteeApplicationController {
    * API for admin to reject a mentee application.
    *
    * @param applicationId The application ID
+   * @param request Rejection request with reason
    * @return Updated application
    */
   @PatchMapping("/mentees/applications/{applicationId}/reject")
@@ -142,8 +144,10 @@ public class MenteeApplicationController {
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MenteeApplication> rejectApplication(
-      @Parameter(description = "Application ID") @PathVariable final Long applicationId) {
-    final MenteeApplication updated = applicationService.rejectApplication(applicationId);
+      @Parameter(description = "Application ID") @PathVariable final Long applicationId,
+      @Valid @RequestBody final ApplicationRejectRequest request) {
+    final MenteeApplication updated =
+        applicationService.rejectApplication(applicationId, request.reason());
     return ResponseEntity.ok(updated);
   }
 
