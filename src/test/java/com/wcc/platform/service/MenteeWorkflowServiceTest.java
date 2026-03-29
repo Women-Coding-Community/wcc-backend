@@ -86,7 +86,7 @@ class MenteeWorkflowServiceTest {
 
     assertThatThrownBy(() -> service.approveApplication(2L))
         .isInstanceOf(ContentNotFoundException.class)
-        .hasMessageContaining("Application with id 2 not found");
+        .hasMessageContaining("No pending application with id 2");
   }
 
   @Test
@@ -97,6 +97,6 @@ class MenteeWorkflowServiceTest {
 
     assertThatThrownBy(() -> service.approveApplication(99L))
         .isInstanceOf(ApplicationNotFoundException.class)
-        .hasMessageContaining("Application with id 99 not found");
+        .hasMessageContaining("Application not found with ID: 99");
   }
 }
