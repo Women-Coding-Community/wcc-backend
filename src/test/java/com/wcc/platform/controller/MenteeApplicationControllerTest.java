@@ -36,6 +36,8 @@ class MenteeApplicationControllerTest {
       "/api/platform/v1/mentees/applications/{applicationId}/reject";
   private static final String API_KEY_HEADER = "X-API-KEY";
   private static final String API_KEY_VALUE = "test-api-key";
+  private static final String REJECTION_REASON =
+      "Application does not meet the eligibility criteria";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
@@ -112,9 +114,9 @@ class MenteeApplicationControllerTest {
             .whyMentor("Great mentor")
             .build();
 
-    final ApplicationRejectRequest request = new ApplicationRejectRequest("Not eligible");
+    final ApplicationRejectRequest request = new ApplicationRejectRequest(REJECTION_REASON);
 
-    when(applicationService.rejectApplication(1L, "Not eligible")).thenReturn(rejected);
+    when(applicationService.rejectApplication(1L, REJECTION_REASON)).thenReturn(rejected);
 
     mockMvc
         .perform(
@@ -130,9 +132,9 @@ class MenteeApplicationControllerTest {
   @Test
   @DisplayName("Given a non-PENDING application, when admin rejects it, then return 404 NOT_FOUND")
   void shouldReturn404WhenRejectedApplicationIsNotPending() throws Exception {
-    final ApplicationRejectRequest request = new ApplicationRejectRequest("Not eligible");
+    final ApplicationRejectRequest request = new ApplicationRejectRequest(REJECTION_REASON);
 
-    when(applicationService.rejectApplication(2L, "Not eligible"))
+    when(applicationService.rejectApplication(2L, REJECTION_REASON))
         .thenThrow(new ContentNotFoundException("No pending application with id 2"));
 
     mockMvc
@@ -148,9 +150,9 @@ class MenteeApplicationControllerTest {
   @DisplayName(
       "Given an application that does not exist, when admin rejects it, then return 404 NOT_FOUND")
   void shouldReturn404WhenRejectedApplicationDoesNotExist() throws Exception {
-    final ApplicationRejectRequest request = new ApplicationRejectRequest("Not eligible");
+    final ApplicationRejectRequest request = new ApplicationRejectRequest(REJECTION_REASON);
 
-    when(applicationService.rejectApplication(99L, "Not eligible"))
+    when(applicationService.rejectApplication(99L, REJECTION_REASON))
         .thenThrow(new ApplicationNotFoundException(99L));
 
     mockMvc

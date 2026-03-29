@@ -20,6 +20,9 @@ import org.mockito.MockitoAnnotations;
 
 class MenteeWorkflowServiceTest {
 
+  private static final String REJECTION_REASON =
+      "Application does not meet the eligibility criteria";
+
   @Mock private MenteeApplicationRepository applicationRepository;
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
@@ -127,10 +130,10 @@ class MenteeWorkflowServiceTest {
             .build();
 
     when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
-    when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, "Not eligible"))
+    when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
         .thenReturn(rejected);
 
-    final MenteeApplication result = service.rejectApplication(1L, "Not eligible");
+    final MenteeApplication result = service.rejectApplication(1L, REJECTION_REASON);
 
     assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
   }
@@ -152,7 +155,7 @@ class MenteeWorkflowServiceTest {
 
     when(applicationRepository.findById(2L)).thenReturn(Optional.of(rejected));
 
-    assertThatThrownBy(() -> service.rejectApplication(2L, "Not eligible"))
+    assertThatThrownBy(() -> service.rejectApplication(2L, REJECTION_REASON))
         .isInstanceOf(ContentNotFoundException.class)
         .hasMessageContaining("No pending application with id 2");
   }
@@ -163,7 +166,7 @@ class MenteeWorkflowServiceTest {
   void shouldThrowApplicationNotFoundExceptionWhenApplicationDoesNotExist() {
     when(applicationRepository.findById(99L)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> service.rejectApplication(99L, "Not eligible"))
+    assertThatThrownBy(() -> service.rejectApplication(99L, REJECTION_REASON))
         .isInstanceOf(ApplicationNotFoundException.class)
         .hasMessageContaining("Application not found with ID: 99");
   }
