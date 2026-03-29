@@ -29,6 +29,12 @@ description: Review pull requests using GitHub CLI. Use when asked to check a PR
 - Testing changes: assess test coverage around new logic and regression paths; call out missing unit/integration tests when risk is not covered.
 - Do not raise unrelated style/framework guidance for technologies not touched by the PR.
 
+1. Preview all planned comments before posting:
+- Present every planned inline comment to the user using the format: `### \`<file>\` — line <N> (<label>)` followed by the comment body.
+- Include the overall review summary (what looks good, findings by severity).
+- Ask: **"Shall I post these as-is, or would you like to adjust any of them?"**
+- Wait for explicit confirmation before posting anything to GitHub.
+
 1. Use inline comments on correlated source lines:
 - Prefer PR review comments attached to exact changed lines.
 - Do not leave only general/top-level comments when line-level comments are possible.
