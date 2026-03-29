@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PasswordResetService {
 
   private static final SecureRandom RANDOM = new SecureRandom();
-  private static final String RESET_PATH = "/reset-password?token=";
 
   private final PasswordResetTokenRepository resetTokenRepository;
   private final UserAccountRepository userAccountRepository;
@@ -50,7 +49,8 @@ public class PasswordResetService {
   public String requestReset(final String email, final String recipientName) {
     final Optional<UserAccount> userOpt = userAccountRepository.findByEmail(email);
     if (userOpt.isEmpty()) {
-      return "User not found for email: " + email;
+      log.warn("Password reset requested for unknown email: {}", email);
+      return "If this email is registered, a reset link has been sent";
     }
 
     final UserAccount user = userOpt.get();
@@ -67,7 +67,8 @@ public class PasswordResetService {
             .used(false)
             .build());
 
-    final String resetLink = passwordResetConfig.getBaseUrl() + RESET_PATH + rawToken;
+    final String resetLink =
+        passwordResetConfig.getBaseUrl() + passwordResetConfig.getResetPath() + rawToken;
 
     emailService.sendTemplateEmail(
         TemplateEmailRequest.builder()

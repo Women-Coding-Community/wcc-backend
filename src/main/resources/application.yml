@@ -69,8 +69,9 @@ app:
   email:
     team-signature: "WCC Mentorship Team"
   reset-password:
-    base-url: ${NEXT_PUBLIC_APP_URL:http://localhost:3000}
-    ttl-minutes: 7200
+    base-url: http://localhost:3000
+    ttl-minutes: 60
+    reset-path: /reset-password?token=
   seed:
     admin:
       enabled: true
