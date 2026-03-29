@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Service responsible for the password reset flow. Handles generating reset tokens, sending the
@@ -76,7 +77,10 @@ public class PasswordResetService {
             .build());
 
     final String resetLink =
-        passwordResetConfig.getBaseUrl() + passwordResetConfig.getResetPath() + rawToken;
+        UriComponentsBuilder.fromHttpUrl(passwordResetConfig.getBaseUrl())
+            .path(passwordResetConfig.getResetPath())
+            .queryParam("token", rawToken)
+            .toUriString();
 
     emailService.sendTemplateEmail(
         TemplateEmailRequest.builder()

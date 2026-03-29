@@ -1,5 +1,6 @@
 package com.wcc.platform.controller.platform;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.controller.platform.AuthController.LoginRequest;
 import com.wcc.platform.controller.platform.AuthController.LoginResponse;
 import com.wcc.platform.domain.auth.UserAccount;
@@ -137,6 +139,20 @@ class AuthControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(1))
         .andExpect(jsonPath("$[0].email").value("admin@wcc.dev"));
+  }
+
+  @Test
+  @DisplayName(
+      "Given requestPasswordReset method, when inspecting its annotations,"
+          + " then it should require ADMIN or LEADER role")
+  void shouldRequireAdminOrLeaderRoleOnPasswordResetRequestEndpoint() throws NoSuchMethodException {
+    var method =
+        AuthController.class.getDeclaredMethod("requestPasswordReset", ResetPasswordRequest.class);
+    var annotation = method.getAnnotation(RequiresRole.class);
+
+    assertThat(annotation).isNotNull();
+    assertThat(annotation.value())
+        .containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.LEADER);
   }
 
   @Test

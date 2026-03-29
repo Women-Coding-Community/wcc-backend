@@ -22,6 +22,6 @@ public class PasswordResetConfig {
   /** Time-to-live for a password reset token, in minutes. Defaults to 60. */
   private int ttlMinutes = 60;
 
-  /** Path appended to baseUrl to form the password reset link, including the token query param. */
-  private String resetPath = "/reset-password?token=";
+  /** Path component of the password reset URL (without query params, e.g. /reset-password). */
+  private String resetPath = "/reset-password";
 }
