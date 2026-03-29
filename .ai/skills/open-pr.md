@@ -5,7 +5,8 @@ GitHub URL so the user can open the PR in the browser.
 
 ## When to apply
 
-Run this workflow when the user asks to open a PR, create a pull request, or `/open-pr`.
+Run this workflow when the user asks to open a PR or create a pull request, or
+uses an agent-specific shortcut such as `/open-pr` in Claude Code.
 
 ## Step 1 — Gather context
 

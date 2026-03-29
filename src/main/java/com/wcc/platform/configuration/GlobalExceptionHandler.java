@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
+import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
@@ -47,7 +48,8 @@ public class GlobalExceptionHandler {
     ContentNotFoundException.class,
     NoSuchElementException.class,
     MemberNotFoundException.class,
-    MentorNotFoundException.class
+    MentorNotFoundException.class,
+    ApplicationNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(

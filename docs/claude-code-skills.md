@@ -11,7 +11,7 @@ The canonical skills live in **`.ai/skills/`** and are written without any tool-
 | Agent | Adapter location | Invoke with |
 |-------|-----------------|-------------|
 | **Claude Code** | `.claude/skills/<name>/SKILL.md` | `/commit`, `/pr-review` |
-| **OpenAI Codex** | `AGENTS.md` (repo root) | Natural language or slash commands |
+| **OpenAI Codex** | `AGENTS.md` (repo root) | Natural language requests |
 | **GitHub Copilot** | `.github/copilot-instructions.md` | Natural language in chat |
 | **Cursor** | `.cursor/rules/*.mdc` | Natural language or `@commit` rules |
 | **Windsurf** | `.windsurf/rules/` | Natural language |
@@ -21,6 +21,10 @@ The workflow logic is defined **once** in `.ai/skills/`. Agent adapters are thin
 ---
 
 ## Available Skills
+
+The canonical runbooks are the same for every supported agent. Claude may
+invoke them through `.claude/skills/...`, while Codex should discover them
+through `AGENTS.md` and open the matching file from `.ai/skills/`.
 
 ### `/commit`
 
@@ -40,6 +44,9 @@ Safely stages and commits your changes with a well-structured commit message.
 ```bash
 # Make your changes, then in Claude Code:
 /commit
+
+# Or ask Codex naturally:
+"commit the current changes using the repo commit skill"
 ```
 
 **Why this matters:**
@@ -73,7 +80,24 @@ Reviews a pull request using the GitHub CLI and posts inline comments directly o
 
 # Or with a full URL:
 /pr-review https://github.com/Women-Coding-Community/wcc-backend/pull/541
+
+# Or ask Codex naturally:
+"review PR 541 using the repo pr-review skill"
 ```
+
+---
+
+## How Codex should access skills
+
+Codex uses `AGENTS.md` as the repository entry point. That file should list the
+available skills and point back to the canonical runbooks under `.ai/skills/`.
+
+When a task matches a workflow:
+
+1. Read `AGENTS.md` to discover the available skill names
+2. Open the matching `.ai/skills/<name>.md` runbook
+3. Execute the runbook steps, adapting only where repository safety rules or
+   explicit user instructions require it
 
 **Why this matters:**
 - Gives you a second pair of eyes before requesting human review

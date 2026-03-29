@@ -4,7 +4,9 @@ Local code review workflow that analyses staged and unstaged changes before a co
 
 ## When to apply
 
-Run this workflow when the user asks to review local changes, check code before committing, or `/pre-commit-review`.
+Run this workflow when the user asks to review local changes or check code
+before committing, or uses an agent-specific shortcut such as
+`/pre-commit-review` in Claude Code.
 
 ## Step 1 — Gather local diff
 
