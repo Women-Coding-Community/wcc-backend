@@ -9,6 +9,9 @@ import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.PasswordResetTokenRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.Base64;
@@ -42,10 +45,15 @@ public class PasswordResetService {
    * Initiates the password reset flow for the given email address. Generates a single-use reset
    * token, stores it, and emails the reset link to the user.
    *
+   * <p>Transactional to roll back the token insert if the email send fails. Trade-off: the email is
+   * sent before the transaction commits, so there is a negligible window where the token is not yet
+   * visible. A future improvement is to extract token creation to a separate service.
+   *
    * @param email the email address of the user whose password should be reset
    * @param recipientName the display name to include in the email greeting
    * @return a message indicating whether the reset email was sent or the user was not found
    */
+  @Transactional
   public String requestReset(final String email, final String recipientName) {
     final Optional<UserAccount> userOpt = userAccountRepository.findByEmail(email);
     if (userOpt.isEmpty()) {
@@ -118,10 +126,14 @@ public class PasswordResetService {
   }
 
   /** Request DTO for the password reset initiation endpoint. */
-  public record ResetPasswordRequest(String email, String recipientName) {}
+  public record ResetPasswordRequest(
+      @NotBlank @Email String email, @NotBlank String recipientName) {}
 
   /** Request DTO for the password reset confirmation endpoint. */
-  public record ConfirmPasswordResetRequest(String token, String newPassword) {}
+  public record ConfirmPasswordResetRequest(
+      @NotBlank String token,
+      @NotBlank @Size(min = 8, message = "Password must be at least 8 characters")
+          String newPassword) {}
 
   /** Response DTO returned from both password reset endpoints. */
   public record PasswordResetResponse(String message) {}
