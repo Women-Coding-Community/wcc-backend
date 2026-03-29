@@ -89,25 +89,24 @@ public class AuthController {
   @Operation(
       summary = "Get current authenticated user and member info",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @ResponseStatus(HttpStatus.OK)
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   public ResponseEntity<LoginResponse> currentUser() {
     final var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !auth.isAuthenticated()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
-    final var userAccount =
-        authService.findUserByEmail(
-            auth.getPrincipal() instanceof UserAccount.User user
-                ? user.userAccount().getEmail()
-                : null);
+    if (!(auth.getPrincipal() instanceof UserAccount.User user)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    final var userAccount = authService.findUserByEmail(user.userAccount().getEmail());
     if (userAccount.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    final UserAccount user = userAccount.get();
+    final UserAccount account = userAccount.get();
     final var response =
-        new LoginResponse(user.getRoles(), authService.getMember(user.getMemberId()));
+        new LoginResponse(account.getRoles(), authService.getMember(account.getMemberId()));
 
     return ResponseEntity.ok(response);
   }

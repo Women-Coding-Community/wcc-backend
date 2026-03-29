@@ -78,9 +78,11 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         if (userAccount.isPresent()) {
           final UserAccount account = userAccount.get();
           final var authorities =
-              account.getRoles().stream()
-                  .map(role -> new SimpleGrantedAuthority(role.name()))
-                  .toList();
+              account.getRoles() == null
+                  ? List.<SimpleGrantedAuthority>of()
+                  : account.getRoles().stream()
+                      .map(role -> new SimpleGrantedAuthority(role.name()))
+                      .toList();
           final UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(
                   new UserAccount.User(account, null), null, authorities);
