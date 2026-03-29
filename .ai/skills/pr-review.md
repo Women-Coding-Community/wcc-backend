@@ -55,7 +55,20 @@ Apply only the checks relevant to what the PR actually changed.
 - Test names follow Given-When-Then `@DisplayName` format (Java) or descriptive `it()`/`test()` (JS)
 - Mocks used only where appropriate; integration tests hit real infrastructure
 
-## Step 4 — Post inline comments
+## Step 4 — Preview comments before posting
+
+Before making any GitHub API calls, present all planned inline comments to the user in this format:
+
+```
+### `<file>` — line <N> (<brief label>)
+**[CRITICAL|WARNING|INFO]** <comment body>
+```
+
+Then ask: **"Shall I post these as-is, or would you like to adjust any of them?"**
+
+Wait for explicit confirmation before proceeding to Step 5.
+
+## Step 5 — Post inline comments
 
 Use `gh api` to post comments anchored to exact changed lines:
 
@@ -77,7 +90,7 @@ gh api repos/<owner>/<repo>/pulls/<number>/comments \
 
 Prefer line-level comments over top-level summary comments.
 
-## Step 5 — Submit review decision
+## Step 6 — Submit review decision
 
 After posting all inline comments, submit a formal review decision:
 
@@ -101,7 +114,7 @@ When approving, write a short encouraging body (2–3 sentences) summarising wha
 
 When requesting changes, clearly list the `[CRITICAL]` items that must be resolved before merge.
 
-## Step 6 — Comment quality bar
+## Step 7 — Comment quality bar
 
 Every comment must:
 - State the **concrete risk** (what could go wrong)

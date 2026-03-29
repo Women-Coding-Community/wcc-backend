@@ -4,10 +4,27 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import com.wcc.platform.domain.exceptions.*;
+import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
+import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.DuplicatedException;
+import com.wcc.platform.domain.exceptions.EmailSendException;
+import com.wcc.platform.domain.exceptions.ErrorDetails;
+import com.wcc.platform.domain.exceptions.ForbiddenException;
+import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
+import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
+import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
+import com.wcc.platform.domain.exceptions.MentorStatusException;
+import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,6 +39,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 /** Global controller to handle all exceptions for the API. */
+@SuppressWarnings({"PMD.ExcessiveImports"})
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -30,7 +48,8 @@ public class GlobalExceptionHandler {
     ContentNotFoundException.class,
     NoSuchElementException.class,
     MemberNotFoundException.class,
-    MentorNotFoundException.class
+    MentorNotFoundException.class,
+    ApplicationNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
@@ -189,7 +208,7 @@ public class GlobalExceptionHandler {
     return cause.getMessage();
   }
 
-  private String formatPath(final java.util.List<JsonMappingException.Reference> path) {
+  private String formatPath(final List<Reference> path) {
     if (path.isEmpty()) {
       return "$";
     }
