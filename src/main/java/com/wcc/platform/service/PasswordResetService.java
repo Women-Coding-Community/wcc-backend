@@ -9,9 +9,6 @@ import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.PasswordResetTokenRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.Base64;
@@ -129,16 +126,4 @@ public class PasswordResetService {
     return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
   }
 
-  /** Request DTO for the password reset initiation endpoint. */
-  public record ResetPasswordRequest(
-      @NotBlank @Email String email, @NotBlank String recipientName) {}
-
-  /** Request DTO for the password reset confirmation endpoint. */
-  public record ConfirmPasswordResetRequest(
-      @NotBlank String token,
-      @NotBlank @Size(min = 8, message = "Password must be at least 8 characters")
-          String newPassword) {}
-
-  /** Response DTO returned from both password reset endpoints. */
-  public record PasswordResetResponse(String message) {}
 }

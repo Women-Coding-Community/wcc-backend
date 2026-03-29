@@ -7,14 +7,14 @@ import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
 import com.wcc.platform.service.PasswordResetService;
-import com.wcc.platform.service.PasswordResetService.ConfirmPasswordResetRequest;
-import com.wcc.platform.service.PasswordResetService.PasswordResetResponse;
-import com.wcc.platform.service.PasswordResetService.ResetPasswordRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -161,10 +161,20 @@ public class AuthController {
     return ResponseEntity.ok(new PasswordResetResponse("Password has been reset successfully"));
   }
 
-  /**
-   * Represents a login request that encapsulates the user's email and password used for
-   * authentication.
-   */
+  /** Request DTO for the password reset initiation endpoint. */
+  public record ResetPasswordRequest(
+      @NotBlank @Email String email, @NotBlank String recipientName) {}
+
+  /** Request DTO for the password reset confirmation endpoint. */
+  public record ConfirmPasswordResetRequest(
+      @NotBlank String token,
+      @NotBlank @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
+          String newPassword) {}
+
+  /** Response DTO returned from both password reset endpoints. */
+  public record PasswordResetResponse(String message) {}
+
+  /** Represents a login request that encapsulates the user's email and password. */
   public record LoginRequest(@NotNull String email, @NotNull String password) {}
 
   /**
