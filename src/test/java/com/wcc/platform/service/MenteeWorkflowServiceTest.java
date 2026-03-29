@@ -20,6 +20,9 @@ import org.mockito.MockitoAnnotations;
 
 class MenteeWorkflowServiceTest {
 
+  private static final String REJECTION_REASON =
+      "Application does not meet the eligibility criteria";
+
   @Mock private MenteeApplicationRepository applicationRepository;
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
@@ -70,7 +73,7 @@ class MenteeWorkflowServiceTest {
   @Test
   @DisplayName(
       "Given a non-PENDING application, when admin approves it, then ContentNotFoundException is thrown")
-  void shouldThrowContentNotFoundExceptionWhenApplicationIsNotPending() {
+  void shouldThrowContentNotFoundExceptionWhenApprovedApplicationIsNotPending() {
     final MenteeApplication reviewing =
         MenteeApplication.builder()
             .applicationId(2L)
@@ -92,10 +95,78 @@ class MenteeWorkflowServiceTest {
   @Test
   @DisplayName(
       "Given an application that does not exist, when admin approves it, then ApplicationNotFoundException is thrown")
-  void shouldThrowApplicationNotFoundExceptionWhenApplicationDoesNotExist() {
+  void shouldThrowApplicationNotFoundExceptionWhenApprovedApplicationDoesNotExist() {
     when(applicationRepository.findById(99L)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> service.approveApplication(99L))
+        .isInstanceOf(ApplicationNotFoundException.class)
+        .hasMessageContaining("Application not found with ID: 99");
+  }
+
+  @Test
+  @DisplayName(
+      "Given a PENDING application, when admin rejects it, then status is updated to REJECTED")
+  void shouldRejectPendingApplicationAndUpdateStatusToRejected() {
+    final MenteeApplication pending =
+        MenteeApplication.builder()
+            .applicationId(1L)
+            .menteeId(10L)
+            .mentorId(20L)
+            .cycleId(5L)
+            .priorityOrder(1)
+            .status(ApplicationStatus.PENDING)
+            .whyMentor("Great mentor")
+            .build();
+
+    final MenteeApplication rejected =
+        MenteeApplication.builder()
+            .applicationId(1L)
+            .menteeId(10L)
+            .mentorId(20L)
+            .cycleId(5L)
+            .priorityOrder(1)
+            .status(ApplicationStatus.REJECTED)
+            .whyMentor("Great mentor")
+            .build();
+
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
+    when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
+        .thenReturn(rejected);
+
+    final MenteeApplication result = service.rejectApplication(1L, REJECTION_REASON);
+
+    assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a non-PENDING application, when admin rejects it, then ContentNotFoundException is thrown")
+  void shouldThrowContentNotFoundExceptionWhenRejectedApplicationIsNotPending() {
+    final MenteeApplication rejected =
+        MenteeApplication.builder()
+            .applicationId(2L)
+            .menteeId(10L)
+            .mentorId(20L)
+            .cycleId(5L)
+            .priorityOrder(1)
+            .status(ApplicationStatus.REJECTED)
+            .whyMentor("Great mentor")
+            .build();
+
+    when(applicationRepository.findById(2L)).thenReturn(Optional.of(rejected));
+
+    assertThatThrownBy(() -> service.rejectApplication(2L, REJECTION_REASON))
+        .isInstanceOf(ContentNotFoundException.class)
+        .hasMessageContaining("No pending application with id 2");
+  }
+
+  @Test
+  @DisplayName(
+      "Given an application that does not exist, when admin rejects it, then ApplicationNotFoundException is thrown")
+  void shouldThrowApplicationNotFoundExceptionWhenApplicationDoesNotExist() {
+    when(applicationRepository.findById(99L)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> service.rejectApplication(99L, REJECTION_REASON))
         .isInstanceOf(ApplicationNotFoundException.class)
         .hasMessageContaining("Application not found with ID: 99");
   }
