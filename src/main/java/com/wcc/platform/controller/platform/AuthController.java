@@ -81,21 +81,27 @@ public class AuthController {
    * <p>The method fetches information about the logged-in user
    */
   @GetMapping("/me")
-  @Operation(summary = "Get current authenticated user and member info")
+  @Operation(
+      summary = "Get current authenticated user and member info",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @ResponseStatus(HttpStatus.OK)
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   public ResponseEntity<LoginResponse> currentUser() {
     final var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !auth.isAuthenticated()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
-    final var userAccount = authService.findUserByEmail(auth.getName());
+    if (!(auth.getPrincipal() instanceof UserAccount.User user)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    final var userAccount = authService.findUserByEmail(user.userAccount().getEmail());
     if (userAccount.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    final UserAccount user = userAccount.get();
+    final UserAccount account = userAccount.get();
     final var response =
-        new LoginResponse(user.getRoles(), authService.getMember(user.getMemberId()));
+        new LoginResponse(account.getRoles(), authService.getMember(account.getMemberId()));
 
     return ResponseEntity.ok(response);
   }
@@ -108,10 +114,7 @@ public class AuthController {
   @GetMapping("/users")
   @Operation(
       summary = "API to retrieve users with access to restrict area",
-      security = {
-        @SecurityRequirement(name = "apiKey"),
-        @SecurityRequirement(name = "bearerAuth")
-      })
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<UserAccount>> getUsers() {
