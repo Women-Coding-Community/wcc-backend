@@ -130,6 +130,24 @@ public class MenteeApplicationController {
   }
 
   /**
+   * API for admin to reject a mentee application.
+   *
+   * @param applicationId The application ID
+   * @return Updated application
+   */
+  @PatchMapping("/mentees/applications/{applicationId}/reject")
+  @RequiresPermission(Permission.MENTEE_APPROVE)
+  @Operation(
+      summary = "Admin rejects mentee application",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MenteeApplication> rejectApplication(
+      @Parameter(description = "Application ID") @PathVariable final Long applicationId) {
+    final MenteeApplication updated = applicationService.rejectApplication(applicationId);
+    return ResponseEntity.ok(updated);
+  }
+
+  /**
    * API for mentor to accept an application.
    *
    * @param applicationId The application ID

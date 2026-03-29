@@ -57,6 +57,32 @@ public class MenteeWorkflowService {
   }
 
   /**
+   * Admin rejects a mentee application.
+   *
+   * @param applicationId the application ID
+   * @return updated application
+   * @throws ApplicationNotFoundException if application not found
+   */
+  @Transactional
+  public MenteeApplication rejectApplication(final Long applicationId) {
+    final MenteeApplication application = getApplicationOrThrow(applicationId);
+
+    if (application.getStatus() != ApplicationStatus.PENDING) {
+      throw new ContentNotFoundException("No pending application with id " + applicationId);
+    }
+
+    final MenteeApplication updated =
+        applicationRepository.updateStatus(applicationId, ApplicationStatus.REJECTED, null);
+
+    log.info(
+        "Application {} from mentee {} rejected by the Mentorship Team",
+        applicationId,
+        application.getMenteeId());
+
+    return updated;
+  }
+
+  /**
    * Mentor accepts an application.
    *
    * @param applicationId the application ID

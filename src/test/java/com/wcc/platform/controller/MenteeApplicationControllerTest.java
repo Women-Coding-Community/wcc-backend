@@ -30,6 +30,8 @@ class MenteeApplicationControllerTest {
 
   private static final String APPROVE_URL =
       "/api/platform/v1/mentees/applications/{applicationId}/approve";
+  private static final String REJECT_URL =
+      "/api/platform/v1/mentees/applications/{applicationId}/reject";
   private static final String API_KEY_HEADER = "X-API-KEY";
   private static final String API_KEY_VALUE = "test-api-key";
 
@@ -65,7 +67,7 @@ class MenteeApplicationControllerTest {
 
   @Test
   @DisplayName("Given a non-PENDING application, when admin approves it, then return 404 NOT_FOUND")
-  void shouldReturn404WhenApplicationIsNotPending() throws Exception {
+  void shouldReturn404WhenApprovedApplicationIsNotPending() throws Exception {
     when(applicationService.approveApplication(2L))
         .thenThrow(new ContentNotFoundException("No pending application with id 2"));
 
@@ -80,13 +82,69 @@ class MenteeApplicationControllerTest {
   @Test
   @DisplayName(
       "Given an application that does not exist, when admin approves it, then return 404 NOT_FOUND")
-  void shouldReturn404WhenApplicationDoesNotExist() throws Exception {
+  void shouldReturn404WhenApprovedApplicationDoesNotExist() throws Exception {
     when(applicationService.approveApplication(99L))
         .thenThrow(new ApplicationNotFoundException(99L));
 
     mockMvc
         .perform(
             MockMvcRequestBuilders.patch(APPROVE_URL, 99L)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @DisplayName(
+      "Given a PENDING application, when admin rejects it, then return 200 OK with updated application")
+  void shouldRejectApplicationAndReturn200() throws Exception {
+    final MenteeApplication rejected =
+        MenteeApplication.builder()
+            .applicationId(1L)
+            .menteeId(10L)
+            .mentorId(20L)
+            .cycleId(5L)
+            .priorityOrder(1)
+            .status(ApplicationStatus.REJECTED)
+            .whyMentor("Great mentor")
+            .build();
+
+    when(applicationService.rejectApplication(1L)).thenReturn(rejected);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(REJECT_URL, 1L)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.applicationId").value(1))
+        .andExpect(jsonPath("$.status").value("REJECTED"));
+  }
+
+  @Test
+  @DisplayName("Given a non-PENDING application, when admin rejects it, then return 404 NOT_FOUND")
+  void shouldReturn404WhenRejectedApplicationIsNotPending() throws Exception {
+    when(applicationService.rejectApplication(2L))
+        .thenThrow(new ContentNotFoundException("No pending application with id 2"));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(REJECT_URL, 2L)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @DisplayName(
+      "Given an application that does not exist, when admin rejects it, then return 404 NOT_FOUND")
+  void shouldReturn404WhenRejectedApplicationDoesNotExist() throws Exception {
+    when(applicationService.rejectApplication(99L))
+        .thenThrow(new ApplicationNotFoundException(99L));
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(REJECT_URL, 99L)
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
