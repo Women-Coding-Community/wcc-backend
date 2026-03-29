@@ -14,6 +14,7 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
+import com.wcc.platform.domain.exceptions.InvalidTokenException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
@@ -174,6 +175,17 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.value(),
             extractReadableMessage(ex),
             request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+  }
+
+  /** Return 400 Bad Request for InvalidTokenException. */
+  @ExceptionHandler(InvalidTokenException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ErrorDetails> handleInvalidTokenException(
+      final InvalidTokenException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.BAD_REQUEST.value(), ex.getMessage(), request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 

@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react';
-import {Alert, Box, Button, Paper, Stack, TextField, Typography} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Alert, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
-import {apiFetch} from '@/lib/api';
-import {getStoredToken, isTokenExpired} from '@/lib/auth';
-import {useRouter} from 'next/router';
+import { apiFetch } from '@/lib/api';
+import { getStoredToken, isTokenExpired } from '@/lib/auth';
+import { useRouter } from 'next/router';
 
 interface UserDto {
   id?: string;
@@ -32,7 +32,7 @@ export default function UsersPage() {
 
   const loadUsers = async (token: string) => {
     try {
-      const data = await apiFetch<UserDto[]>(USERS_PATH, {token: token});
+      const data = await apiFetch<UserDto[]>(USERS_PATH, { token: token });
       setItems(data || []);
     } catch (e: any) {
       setError(e.message);
@@ -43,7 +43,7 @@ export default function UsersPage() {
     if (!token) return;
     setError(null);
     try {
-      await apiFetch(USERS_PATH, {method: 'POST', body: {email, roles}, token});
+      await apiFetch(USERS_PATH, { method: 'POST', body: { email, roles }, token });
       setEmail('');
       setRoles('USER');
       await loadUsers(token);
@@ -55,7 +55,7 @@ export default function UsersPage() {
   const deleteUser = async (id?: string) => {
     if (!token || !id) return;
     try {
-      await apiFetch(USERS_PATH + `${USERS_PATH}/${id}`, {method: 'DELETE', token});
+      await apiFetch(USERS_PATH + `${USERS_PATH}/${id}`, { method: 'DELETE', token });
       await loadUsers(token);
     } catch (e: any) {
       setError(e.message);
@@ -63,28 +63,42 @@ export default function UsersPage() {
   };
 
   return (
-      <AdminLayout>
-        <Paper sx={{p: 3}}>
-          <Typography variant="h5" gutterBottom>Users</Typography>
-          {error && <Alert severity="error" sx={{mb: 2}}>{error}</Alert>}
-          <Stack direction={{xs: 'column', sm: 'row'}} spacing={2} sx={{mb: 3}}>
-            <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-            <TextField label="Roles" value={roles} onChange={(e) => setRoles(e.target.value)}/>
-            <Button variant="contained" onClick={createUser}>Create</Button>
-          </Stack>
-          <Box>
-            {items.map((u) => (
-                <Paper key={u.id}
-                       sx={{p: 2, mb: 1, display: 'flex', justifyContent: 'space-between'}}>
-                  <div>
-                    <Typography>{u.email}</Typography>
-                    <Typography variant="caption" color="text.secondary">{u.roles}</Typography>
-                  </div>
-                  <Button color="secondary" onClick={() => deleteUser(u.id)}>Delete</Button>
-                </Paper>
-            ))}
-          </Box>
-        </Paper>
-      </AdminLayout>
+    <AdminLayout>
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Users
+        </Typography>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
+          <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <TextField label="Roles" value={roles} onChange={(e) => setRoles(e.target.value)} />
+          <Button variant="contained" onClick={createUser}>
+            Create
+          </Button>
+        </Stack>
+        <Box>
+          {items.map((u) => (
+            <Paper
+              key={u.id}
+              sx={{ p: 2, mb: 1, display: 'flex', justifyContent: 'space-between' }}
+            >
+              <div>
+                <Typography>{u.email}</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {u.roles}
+                </Typography>
+              </div>
+              <Button color="secondary" onClick={() => deleteUser(u.id)}>
+                Delete
+              </Button>
+            </Paper>
+          ))}
+        </Box>
+      </Paper>
+    </AdminLayout>
   );
 }

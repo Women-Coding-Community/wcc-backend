@@ -68,6 +68,10 @@ app:
     allowed-origins: http://localhost:3000,https://localhost:3000
   email:
     team-signature: "WCC Mentorship Team"
+  reset-password:
+    base-url: http://localhost:3000
+    ttl-minutes: 60
+    reset-path: /reset-password
   seed:
     admin:
       enabled: true

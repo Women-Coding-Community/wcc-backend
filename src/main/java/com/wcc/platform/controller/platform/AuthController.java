@@ -6,11 +6,15 @@ import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +44,7 @@ public class AuthController {
       ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid credentials"));
   private final AuthService authService;
   private final MemberService memberService;
+  private final PasswordResetService passwordResetService;
 
   /**
    * Authenticates a user using their email and password and returns an access token upon successful
@@ -122,9 +127,54 @@ public class AuthController {
   }
 
   /**
-   * Represents a login request that encapsulates the user's email and password used for
-   * authentication.
+   * Initiates a password reset by sending a reset link to the specified user's email. Restricted to
+   * ADMIN and LEADER roles.
+   *
+   * @param request the reset request containing the target email and recipient display name
+   * @return 200 OK with a message indicating whether the reset email was sent or the user was not
+   *     found
    */
+  @PostMapping("/reset-password/request")
+  @Operation(
+      summary = "Send a password reset link to a registered user (admin/leader only)",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  public ResponseEntity<PasswordResetResponse> requestPasswordReset(
+      @RequestBody @Valid final ResetPasswordRequest request) {
+    final String message =
+        passwordResetService.requestReset(request.email(), request.recipientName());
+    return ResponseEntity.ok(new PasswordResetResponse(message));
+  }
+
+  /**
+   * Confirms a password reset by validating the single-use token and applying the new password.
+   * This endpoint is public — the token itself is the proof of identity.
+   *
+   * @param request the confirmation request containing the reset token and the new password
+   * @return 200 OK with a confirmation message
+   */
+  @PostMapping("/reset-password/confirm")
+  @Operation(summary = "Confirm password reset using a single-use token from the reset email")
+  public ResponseEntity<PasswordResetResponse> confirmPasswordReset(
+      @RequestBody @Valid final ConfirmPasswordResetRequest request) {
+    passwordResetService.confirmReset(request.token(), request.newPassword());
+    return ResponseEntity.ok(new PasswordResetResponse("Password has been reset successfully"));
+  }
+
+  /** Request DTO for the password reset initiation endpoint. */
+  public record ResetPasswordRequest(
+      @NotBlank @Email String email, @NotBlank String recipientName) {}
+
+  /** Request DTO for the password reset confirmation endpoint. */
+  public record ConfirmPasswordResetRequest(
+      @NotBlank String token,
+      @NotBlank @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
+          String newPassword) {}
+
+  /** Response DTO returned from both password reset endpoints. */
+  public record PasswordResetResponse(String message) {}
+
+  /** Represents a login request that encapsulates the user's email and password. */
   public record LoginRequest(@NotNull String email, @NotNull String password) {}
 
   /**

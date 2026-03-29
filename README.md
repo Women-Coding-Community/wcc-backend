@@ -384,9 +384,10 @@ You can change or disable this seeding with properties:
    Open http://localhost:3000
 ```
 
-   > **Changing the port**: if port 3000 is already in use (e.g. by another frontend project), add
-   > `PORT=3001` to `admin-wcc-app/.env.local` and restart. The app will be available at
-   > `http://localhost:3001`. `.env.local` is gitignored so this only affects your local machine.
+> **Changing the port**: if port 3000 is already in use (e.g. by another frontend project), add
+> `PORT=3001` to `admin-wcc-app/.env.local`, update `allowed-origins` in `application-local.yml`
+> to include `http://localhost:3001,https://localhost:3001`, and run using `npx next dev -p 3001`.
+> The app will be available at `http://localhost:3001`. `.env.local` is gitignored so this only affects your local machine.
 
 3. Authentication
 

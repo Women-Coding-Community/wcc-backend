@@ -70,4 +70,10 @@ public class PostgresUserTokenRepository implements UserTokenRepository {
   public void purgeExpired(final OffsetDateTime now) {
     jdbc.update("DELETE FROM user_tokens WHERE expires_at <= ?", now);
   }
+
+  @Override
+  public void revokeAllForUser(final Integer userId) {
+    jdbc.update("UPDATE user_tokens SET revoked = TRUE WHERE user_id = ? AND revoked = FALSE",
+        userId);
+  }
 }

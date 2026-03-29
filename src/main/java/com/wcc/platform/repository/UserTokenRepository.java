@@ -12,4 +12,11 @@ public interface UserTokenRepository {
   void revoke(String token);
 
   void purgeExpired(OffsetDateTime now);
+
+  /**
+   * Revokes all active session tokens for the given user.
+   *
+   * @param userId the user account ID whose tokens should be revoked
+   */
+  void revokeAllForUser(Integer userId);
 }
