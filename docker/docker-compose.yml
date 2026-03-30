@@ -29,9 +29,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: MFpFnhhICniFNPA
       SPRING_APP_BASE_URL: http://localhost:8080
     healthcheck:
-      # http://localhost:8080/actuator/health is always DOWN because of the 
+      # http://localhost:8080/actuator/health is always DOWN because of the
       # lack of mail service authentication
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health/ping | grep UP || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health/ping | grep UP || exit 1" ]
       interval: 10s
       timeout: 1s
       retries: 5

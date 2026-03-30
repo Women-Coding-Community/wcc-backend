@@ -18,6 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.auth.UserAccount;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
@@ -28,6 +29,9 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
@@ -40,10 +44,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith(MockitoExtension.class)
 class MentorshipServiceTest {
 
@@ -82,6 +88,8 @@ class MentorshipServiceTest {
   }
 
   @Test
+  @DisplayName(
+      "Given mentor with existing ID, when creating mentor with no matching email, then throw DuplicatedMemberException")
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
@@ -94,6 +102,8 @@ class MentorshipServiceTest {
   }
 
   @Test
+  @DisplayName(
+      "Given mentor with new email and no existing ID conflict, when creating mentor, then create and provision user role")
   void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
@@ -190,41 +200,55 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given existing member with email, when creating mentor with same email, then it should use"
-          + " existing member")
-  void shouldUseExistingMemberWhenMentorEmailAlreadyExists() {
+      "Given existing member with same email, when re-registering as mentor, then all fields are preserved")
+  void shouldPreserveAllFieldsWhenMentorReRegistersWithExistingEmail() {
+    var country = mock(com.wcc.platform.domain.cms.attributes.Country.class);
+    var skills = mock(Skills.class);
+    var menteeSection = mock(MenteeSection.class);
     var mentor = mock(Mentor.class);
     when(mentor.getEmail()).thenReturn("existing@test.com");
-    when(mentor.getFullName()).thenReturn("Existing Member as Mentor");
-    when(mentor.getPosition()).thenReturn("Software Engineer");
-    when(mentor.getSlackDisplayName()).thenReturn("@existing");
-    when(mentor.getCountry())
-        .thenReturn(mock(com.wcc.platform.domain.cms.attributes.Country.class));
-    when(mentor.getCity()).thenReturn("New York");
-    when(mentor.getCompanyName()).thenReturn("Tech Corp");
+    when(mentor.getFullName()).thenReturn("Diana Fox");
+    when(mentor.getPosition()).thenReturn("Engineering Manager");
+    when(mentor.getSlackDisplayName()).thenReturn("@diana");
+    when(mentor.getCountry()).thenReturn(country);
+    when(mentor.getCity()).thenReturn("Amsterdam");
+    when(mentor.getCompanyName()).thenReturn("CompanyN");
     when(mentor.getImages()).thenReturn(List.of());
     when(mentor.getNetwork()).thenReturn(List.of());
-    when(mentor.getSkills())
-        .thenReturn(mock(com.wcc.platform.domain.platform.mentorship.Skills.class));
+    when(mentor.getPronouns()).thenReturn("she/her");
+    when(mentor.getPronounCategory()).thenReturn(PronounCategory.FEMININE);
+    when(mentor.getSkills()).thenReturn(skills);
     when(mentor.getSpokenLanguages()).thenReturn(List.of("English"));
     when(mentor.getBio()).thenReturn("Bio");
-    when(mentor.getMenteeSection()).thenReturn(mock(MenteeSection.class));
+    when(mentor.getMenteeSection()).thenReturn(menteeSection);
     when(mentor.getFeedbackSection()).thenReturn(null);
     when(mentor.getResources()).thenReturn(null);
+    when(mentor.getIsWomen()).thenReturn(true);
+    when(mentor.getCalendlyLink()).thenReturn("https://calendly.com/myname");
+    when(mentor.getAcceptMale()).thenReturn(true);
+    when(mentor.getAcceptPromotion()).thenReturn(false);
 
-    // Mock existing member with same email
     Member existingMember = Member.builder().id(999L).email("existing@test.com").build();
     when(memberRepository.findByEmail("existing@test.com")).thenReturn(Optional.of(existingMember));
+    when(mentorRepository.create(any(Mentor.class))).thenReturn(mock(Mentor.class));
 
-    var mentorWithExistingId = mock(Mentor.class);
-    when(mentorWithExistingId.getId()).thenReturn(999L);
-    when(mentorRepository.create(any(Mentor.class))).thenReturn(mentorWithExistingId);
+    service.create(mentor);
 
-    Mentor result = service.create(mentor);
-
-    assertThat(result.getId()).isEqualTo(999L);
+    ArgumentCaptor<Mentor> mentorCaptor = ArgumentCaptor.forClass(Mentor.class);
     verify(memberRepository).findByEmail("existing@test.com");
-    verify(mentorRepository).create(any(Mentor.class));
+    verify(mentorRepository).create(mentorCaptor.capture());
+
+    Mentor captured = mentorCaptor.getValue();
+    assertThat(captured.getId()).isEqualTo(999L);
+    assertThat(captured.getProfileStatus()).isEqualTo(ProfileStatus.PENDING);
+    assertThat(captured.getIsWomen()).isTrue();
+    assertThat(captured.getPronouns()).isEqualTo("she/her");
+    assertThat(captured.getPronounCategory()).isEqualTo(PronounCategory.FEMININE);
+    assertThat(captured.getCalendlyLink()).isEqualTo("https://calendly.com/myname");
+    assertThat(captured.getAcceptMale()).isTrue();
+    assertThat(captured.getAcceptPromotion()).isFalse();
+    assertThat(captured.getSkills()).isEqualTo(skills);
+    assertThat(captured.getMenteeSection()).isEqualTo(menteeSection);
   }
 
   @Test
@@ -415,6 +439,51 @@ class MentorshipServiceTest {
     verify(mentorRepository).findById(mentorId);
     verify(mentorRepository, never()).updateToRejected(anyLong(), any(), anyString());
     verify(notificationService, never()).sendMentorRejectionEmail(any(), anyString());
+  }
+
+  @Test
+  @DisplayName(
+      "Given active and pending mentors with an open cycle, when getAllActiveMentors is called, then only"
+          + " active mentors are returned")
+  void shouldReturnOnlyActiveMentorsWhenCycleIsOpen() {
+    var activeMentor = mock(Mentor.class);
+    var pendingMentor = mock(Mentor.class);
+    var activeMentorDto = mock(MentorDto.class);
+    var openCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+
+    when(activeMentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+    when(pendingMentor.getProfileStatus()).thenReturn(ProfileStatus.PENDING);
+    when(activeMentor.toDto(openCycle)).thenReturn(activeMentorDto);
+    when(activeMentorDto.getId()).thenReturn(1L);
+    when(mentorRepository.getAll()).thenReturn(List.of(activeMentor, pendingMentor));
+    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
+    when(service.getCurrentCycle()).thenReturn(openCycle);
+
+    List<MentorDto> result = service.getAllActiveMentors();
+
+    assertThat(result).containsExactly(activeMentorDto);
+  }
+
+  @Test
+  @DisplayName(
+      "Given active and pending mentors with a closed cycle, when getAllActiveMentors is called, then all"
+          + " active mentors are returned")
+  void shouldReturnOnlyActiveMentorsWhenCycleIsClosed() {
+    var activeMentor = mock(Mentor.class);
+    var pendingMentor = mock(Mentor.class);
+    var activeMentorDto = mock(MentorDto.class);
+
+    when(activeMentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+    when(pendingMentor.getProfileStatus()).thenReturn(ProfileStatus.PENDING);
+    when(activeMentor.toDto()).thenReturn(activeMentorDto);
+    when(activeMentorDto.getId()).thenReturn(1L);
+    when(mentorRepository.getAll()).thenReturn(List.of(activeMentor, pendingMentor));
+    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
+    when(service.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
+
+    List<MentorDto> result = service.getAllActiveMentors();
+
+    assertThat(result).containsExactly(activeMentorDto);
   }
 
   @Test

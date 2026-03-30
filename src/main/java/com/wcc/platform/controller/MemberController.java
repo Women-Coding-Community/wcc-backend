@@ -1,6 +1,5 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.service.MemberService;
@@ -27,7 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/platform/v1")
 @SecurityRequirement(name = "apiKey")
-@Tag(name = "Platform: Members", description = "Platform Members' APIs")
+@Tag(
+    name = "Platform: Overall Members",
+    description = "Platform Members' APIs to create, update, delete and retrieve members")
 @AllArgsConstructor
 public class MemberController {
 
@@ -45,19 +46,7 @@ public class MemberController {
     final List<Member> members = memberService.getAllMembers();
     return ResponseEntity.ok(members);
   }
-
-  /**
-   * API to retrieve information users with access to platform restrict area.
-   *
-   * @return List of all members.
-   */
-  @GetMapping("/users")
-  @Operation(summary = "API to retrieve users with access to restrict area")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<UserAccount>> getUsers() {
-    return ResponseEntity.ok(memberService.getUsers());
-  }
-
+  
   /**
    * API to create member.
    *

@@ -57,7 +57,7 @@ public class ProgrammeController {
   }
 
   /** Create Programme Page Content and store into database. */
-  @Tag(name = "Platform: Program", description = "Program Internal APIs")
+  @Tag(name = "Platform: Pages", description = "Platform Internal Pages APIs")
   @PostMapping("/api/platform/v1/program")
   @Operation(
       summary = "Create program page content by program type",

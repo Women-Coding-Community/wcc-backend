@@ -11,6 +11,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * PostgreSQL implementation of MenteeApplicationRepository. Manages mentee applications to mentors
@@ -59,12 +60,24 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   private final JdbcTemplate jdbc;
 
+  @Transactional
   @Override
   public MenteeApplication create(final MenteeApplication entity) {
+    final var existing =
+        findByMenteeMentorCycle(entity.getMenteeId(), entity.getMentorId(), entity.getCycleId());
+    if (existing.isPresent()) {
+      return existing.get();
+    }
+
     final Long generatedId =
-        jdbc.queryForObject(
+        jdbc.query(
             INSERT_APPLICATION,
-            Long.class,
+            rs -> {
+              if (rs.next()) {
+                return rs.getLong(1);
+              }
+              return null;
+            },
             entity.getMenteeId(),
             entity.getMentorId(),
             entity.getCycleId(),
@@ -72,6 +85,10 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
             entity.getStatus().getValue(),
             entity.getApplicationMessage(),
             entity.getWhyMentor());
+
+    if (generatedId == null) {
+      throw new IllegalStateException("Failed to insert application and retrieve ID");
+    }
 
     return findById(generatedId)
         .orElseThrow(
@@ -146,7 +163,8 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   @Override
   public Long countMenteeApplications(final Long menteeId, final Long cycleId) {
-    return jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
+    final Long count = jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
+    return count != null ? count : 0L;
   }
 
   private MenteeApplication mapRow(final ResultSet rs) throws SQLException {

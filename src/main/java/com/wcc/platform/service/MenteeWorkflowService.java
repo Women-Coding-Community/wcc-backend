@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
@@ -27,6 +28,60 @@ public class MenteeWorkflowService {
   private final MenteeApplicationRepository applicationRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
+
+  /**
+   * Admin approves a mentee application.
+   *
+   * @param applicationId the application ID
+   * @return updated application
+   * @throws ApplicationNotFoundException if application not found
+   */
+  @Transactional
+  public MenteeApplication approveApplication(final Long applicationId) {
+    final MenteeApplication application = getApplicationOrThrow(applicationId);
+
+    if (application.getStatus() != ApplicationStatus.PENDING) {
+      throw new ContentNotFoundException("No pending application with id " + applicationId);
+    }
+
+    final MenteeApplication updated =
+        applicationRepository.updateStatus(applicationId, ApplicationStatus.MENTOR_REVIEWING, null);
+
+    log.info(
+        "Application {} from mentee {} approved and to be reviewed by mentor {}",
+        applicationId,
+        application.getMenteeId(),
+        application.getMentorId());
+
+    return updated;
+  }
+
+  /**
+   * Admin rejects a mentee application.
+   *
+   * @param applicationId the application ID
+   * @param reason reason for rejection
+   * @return updated application
+   * @throws ApplicationNotFoundException if application not found
+   */
+  @Transactional
+  public MenteeApplication rejectApplication(final Long applicationId, final String reason) {
+    final MenteeApplication application = getApplicationOrThrow(applicationId);
+
+    if (application.getStatus() != ApplicationStatus.PENDING) {
+      throw new ContentNotFoundException("No pending application with id " + applicationId);
+    }
+
+    final MenteeApplication updated =
+        applicationRepository.updateStatus(applicationId, ApplicationStatus.REJECTED, reason);
+
+    log.info(
+        "Application {} from mentee {} rejected by the Mentorship Team",
+        applicationId,
+        application.getMenteeId());
+
+    return updated;
+  }
 
   /**
    * Mentor accepts an application.

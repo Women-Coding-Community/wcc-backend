@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyMethods")
 public class PostgresMentorshipMatchRepository implements MentorshipMatchRepository {
 
   private static final String SELECT_ALL =
@@ -156,12 +157,16 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
 
   @Override
   public int countActiveMenteesByMentorAndCycle(final Long mentorId, final Long cycleId) {
-    return jdbc.queryForObject(COUNT_ACTIVE_MENTOR, Integer.class, mentorId, cycleId);
+    final Integer count =
+        jdbc.queryForObject(COUNT_ACTIVE_MENTOR, Integer.class, mentorId, cycleId);
+    return count != null ? count : 0;
   }
 
   @Override
   public boolean isMenteeMatchedInCycle(final Long menteeId, final Long cycleId) {
-    return jdbc.queryForObject(CHECK_MENTEE_MATCHED, Boolean.class, menteeId, cycleId);
+    final Boolean matched =
+        jdbc.queryForObject(CHECK_MENTEE_MATCHED, Boolean.class, menteeId, cycleId);
+    return matched != null && matched;
   }
 
   @Override

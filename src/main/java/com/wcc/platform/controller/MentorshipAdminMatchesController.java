@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "apiKey")
 @Tag(name = "Platform: Mentorship Admin", description = "Admin endpoints for mentorship management")
 @RequiredArgsConstructor
-public class AdminMentorshipController {
+public class MentorshipAdminMatchesController {
 
   private final MentorshipMatchingService matchingService;
   private final MentorshipCycleRepository cycleRepository;
@@ -95,7 +95,7 @@ public class AdminMentorshipController {
    * API to cancel a mentorship match.
    *
    * @param matchId The match ID
-   * @param request Cancellation request with reason and who cancelled
+   * @param request Cancellation request with reason and who canceled
    * @return Updated match
    */
   @PatchMapping("/matches/{matchId}/cancel")

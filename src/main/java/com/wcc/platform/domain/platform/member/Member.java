@@ -1,10 +1,12 @@
 package com.wcc.platform.domain.platform.member;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +27,11 @@ import lombok.ToString;
 @Getter
 @Builder(toBuilder = true)
 public class Member {
-  @Setter private Long id;
+  @Setter
+  @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Auto-generated member ID")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Long id;
+
   @NotBlank private String fullName;
   @NotBlank private String position;
   @Setter @NotBlank @Email private String email;
@@ -34,12 +40,13 @@ public class Member {
   private String city;
   private String companyName;
   @Setter @NotNull private List<MemberType> memberTypes;
-  private List<Image> images;
+  @Setter private List<Image> images;
   private List<SocialNetwork> network;
   private String pronouns;
   private PronounCategory pronounCategory;
   private Boolean isWomen;
 
+  /** Converts this Member entity to a MemberDto for data transfer purposes. */
   public MemberDto toDto() {
     return new MemberDto(
         id,

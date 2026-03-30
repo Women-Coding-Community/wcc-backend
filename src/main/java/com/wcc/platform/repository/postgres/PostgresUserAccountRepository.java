@@ -33,6 +33,8 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
       "INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)";
   private static final String SQL_SELECT_ROLES = "SELECT role_id FROM user_roles WHERE user_id = ?";
   private static final String SQL_DELETE_ROLES = "DELETE FROM user_roles WHERE user_id = ?";
+  private static final String SQL_UPDATE_PASSWORD =
+      "UPDATE user_accounts SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
 
   private final JdbcTemplate jdbc;
 
@@ -108,6 +110,11 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
     for (final RoleType role : roles) {
       jdbc.update(SQL_INSERT_ROLE, userId, role.getTypeId());
     }
+  }
+
+  @Override
+  public void updatePassword(final Integer id, final String newPasswordHash) {
+    jdbc.update(SQL_UPDATE_PASSWORD, newPasswordHash, id);
   }
 
   private UserAccount mapUser(final ResultSet rs) throws SQLException {

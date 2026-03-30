@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedItemException;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.JsonUtil;
@@ -82,7 +83,7 @@ public class PostgresPageRepository implements PageRepository {
       } else {
         final String sql = "UPDATE " + TABLE + " SET data = ? WHERE id = ?";
         jdbc.update(sql, data, id);
-        return findById(id).orElseThrow();
+        return findById(id).orElseThrow(() -> new ContentNotFoundException("Unable to save " + id));
       }
     } catch (JsonProcessingException e) {
       throw new IllegalArgumentException(e);

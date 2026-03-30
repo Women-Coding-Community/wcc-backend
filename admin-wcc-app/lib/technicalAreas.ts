@@ -16,4 +16,7 @@ export const TECHNICAL_AREAS = [
   { value: 'PROD_MANAGEMENT', label: 'Product Management' },
   { value: 'PROJ_MANAGEMENT', label: 'Project Management' },
   { value: 'QA', label: 'Quality Assurance' },
+  { value: 'SECURITY', label: 'Security' },
+  { value: 'SRE', label: 'Site Reliability Engineering' },
+  { value: 'NETWORK_ENGINEERING', label: 'Network Engineering' },
 ];
