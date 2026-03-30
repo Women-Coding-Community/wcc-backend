@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/** Programme item to be listed in the landing page. */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

@@ -2,7 +2,7 @@ package com.wcc.platform.domain.cms.pages.programme;
 
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.cms.attributes.ProgrammesSection;
+import com.wcc.platform.domain.cms.attributes.ListSection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/** Programmes landing page with all programmes. */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,5 +23,5 @@ public class ProgrammesPage {
   @NotBlank private String id;
   @NotNull private HeroSection heroSection;
   @NotNull private CommonSection section;
-  @NotNull private ProgrammesSection programmesSection;
+  @NotNull private ListSection<ProgrammeCardItem> programmesSection;
 }
