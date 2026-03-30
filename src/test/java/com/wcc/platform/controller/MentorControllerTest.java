@@ -7,7 +7,6 @@ import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -472,13 +471,13 @@ class MentorControllerTest {
   @DisplayName("Given POST request with id in body, when creating mentor, then id in body is ignored")
   void shouldIgnoreIdInRequestBodyWhenCreatingMentor() throws Exception {
     var requestWithId = createMentorDtoTest(999L, MemberType.MENTOR);
-    var savedMentor = createMentorTest("Jane"); // returns DB-assigned id (e.g. 1)
+    var savedMentor = createMentorTest("Jane");
 
     when(mentorshipService.create(any())).thenReturn(savedMentor);
 
     mockMvc
         .perform(postRequest(API_MENTORS, requestWithId))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(not(999)));
+        .andExpect(jsonPath("$.id").value(is(1)));
   }
 }
