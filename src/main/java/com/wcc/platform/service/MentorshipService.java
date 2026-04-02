@@ -7,7 +7,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
-import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -144,19 +143,6 @@ public class MentorshipService {
     final var openCycle = cycleRepository.findOpenCycle();
 
     return openCycle.orElse(CLOSED_CYCLE);
-  }
-
-  /**
-   * Retrieves the currently open MentorshipCycleEntity.
-   *
-   * @return The open MentorshipCycleEntity.
-   * @throws MentorshipCycleClosedException If no open cycle exists.
-   */
-  public MentorshipCycleEntity getOpenCycle() {
-    final var openCycle = cycleRepository.findOpenCycle();
-
-    return openCycle.orElseThrow(
-        () -> new MentorshipCycleClosedException("Mentorship cycle is closed"));
   }
 
   /**

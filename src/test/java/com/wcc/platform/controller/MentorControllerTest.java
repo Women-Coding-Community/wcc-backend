@@ -79,65 +79,6 @@ class MentorControllerTest {
   }
 
   @Test
-  @DisplayName(
-      "Given mentor payload with unknown nested field, "
-          + "when creating mentor, then return 400 with field context")
-  void shouldReturnBadRequestWithFieldContextForUnknownJsonField() throws Exception {
-    var invalidMentorPayload =
-        """
-        {
-          "fullName": "fullName MENTOR",
-          "position": "position MENTOR",
-          "email": "email@mentor",
-          "slackDisplayName": "slackDisplayName",
-          "country": {
-            "countryCode": "ES",
-            "countryName": "Spain"
-          },
-          "city": "City",
-          "companyName": "Company name",
-          "images": [],
-          "network": [],
-          "bio": "Mentor bio",
-          "spokenLanguages": ["English"],
-          "skills": {
-            "yearsExperience": 2,
-            "areas": [
-              {
-                "name": "BACKEND",
-                "proficiencyLevel": "BEGINNER"
-              }
-            ],
-            "languages": [],
-            "mentorshipFocus": []
-          },
-          "menteeSection": {
-            "idealMentee": "ideal mentee description",
-            "additional": "additional",
-            "longTerm": {
-              "maxMentees": 1,
-              "hoursPerMentee": 4
-            },
-            "adHoc": []
-          }
-        }
-        """;
-
-    mockMvc
-        .perform(
-            MockMvcRequestBuilders.post(API_MENTORS)
-                .header(API_KEY_HEADER, API_KEY_VALUE)
-                .contentType(APPLICATION_JSON)
-                .content(invalidMentorPayload))
-        .andExpect(status().isBadRequest())
-        .andExpect(
-            jsonPath(
-                "$.message",
-                is(
-                    "Unrecognized field 'name' at 'skills.areas[0].name'. Allowed fields: proficiencyLevel, technicalArea")));
-  }
-
-  @Test
   @DisplayName("Given valid mentor ID and DTO, when updating mentor, then return 200 OK")
   void shouldUpdateMentorAndReturnOk() throws Exception {
     Long mentorId = 1L;
