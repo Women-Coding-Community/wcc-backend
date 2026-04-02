@@ -27,6 +27,7 @@ public final class MemberTypeRoleMapper {
   private static final Map<RoleType, Integer> ROLE_HIERARCHY =
       Map.of(
           RoleType.ADMIN, 100,
+          RoleType.MENTORSHIP_ADMIN, 90,
           RoleType.LEADER, 80,
           RoleType.MENTOR, 60,
           RoleType.CONTRIBUTOR, 50,
