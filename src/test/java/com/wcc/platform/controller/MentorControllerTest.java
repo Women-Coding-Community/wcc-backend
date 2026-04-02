@@ -474,8 +474,7 @@ class MentorControllerTest {
   @DisplayName(
       "Given getAllMentors method, when inspecting its annotations,"
           + " then it should require ADMIN, LEADER or MENTORSHIP_ADMIN role")
-  void shouldRequireAdminLeaderOrMentorshipAdminRoleOnGetAllMentors()
-      throws NoSuchMethodException {
+  void shouldRequireAdminLeaderOrMentorshipAdminRoleOnGetAllMentors() throws NoSuchMethodException {
     var method = MentorController.class.getDeclaredMethod("getAllMentors");
     var annotation = method.getAnnotation(RequiresRole.class);
 
