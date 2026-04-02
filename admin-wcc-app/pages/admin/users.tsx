@@ -8,10 +8,10 @@ import { useRouter } from 'next/router';
 interface UserDto {
   id?: string;
   email: string;
-  roles?: string;
+  roles?: string[];
 }
 
-const USERS_PATH = '/api/platform/v1/users';
+const USERS_PATH = '/api/auth/users';
 
 export default function UsersPage() {
   const router = useRouter();
@@ -89,7 +89,7 @@ export default function UsersPage() {
               <div>
                 <Typography>{u.email}</Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {u.roles}
+                  {u.roles?.join(', ')}
                 </Typography>
               </div>
               <Button color="secondary" onClick={() => deleteUser(u.id)}>
