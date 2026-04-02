@@ -10,9 +10,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum RoleType {
   ADMIN(1, "Platform Administrator", Set.of(Permission.values())),
-  LEADER(
-      4,
-      "Platform Leader",
+  MENTORSHIP_ADMIN(
+      20,
+      "Mentorship Administrator",
       Set.of(
           Permission.USER_READ,
           Permission.MENTOR_APPROVE,
@@ -20,6 +20,14 @@ public enum RoleType {
           Permission.CYCLE_EMAIL_SEND,
           Permission.MATCH_MANAGE,
           Permission.MENTOR_APPL_READ)),
+  LEADER(
+      4,
+      "Platform Leader",
+      Set.of(
+          Permission.USER_READ,
+          Permission.USER_WRITE,
+          Permission.MENTOR_APPL_READ,
+          Permission.MENTOR_PROFILE_UPDATE)),
   MENTEE(
       5, "Mentee In Community", Set.of(Permission.MENTEE_APPL_SUBMIT, Permission.MENTEE_APPL_READ)),
   MENTOR(

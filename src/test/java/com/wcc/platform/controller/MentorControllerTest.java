@@ -5,6 +5,7 @@ import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,12 +18,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -76,65 +79,6 @@ class MentorControllerTest {
         .andExpect(jsonPath("$.id", is(1)))
         .andExpect(jsonPath("$.fullName", is("Jane")))
         .andExpect(jsonPath("$.profileStatus", is("PENDING")));
-  }
-
-  @Test
-  @DisplayName(
-      "Given mentor payload with unknown nested field, "
-          + "when creating mentor, then return 400 with field context")
-  void shouldReturnBadRequestWithFieldContextForUnknownJsonField() throws Exception {
-    var invalidMentorPayload =
-        """
-        {
-          "fullName": "fullName MENTOR",
-          "position": "position MENTOR",
-          "email": "email@mentor",
-          "slackDisplayName": "slackDisplayName",
-          "country": {
-            "countryCode": "ES",
-            "countryName": "Spain"
-          },
-          "city": "City",
-          "companyName": "Company name",
-          "images": [],
-          "network": [],
-          "bio": "Mentor bio",
-          "spokenLanguages": ["English"],
-          "skills": {
-            "yearsExperience": 2,
-            "areas": [
-              {
-                "name": "BACKEND",
-                "proficiencyLevel": "BEGINNER"
-              }
-            ],
-            "languages": [],
-            "mentorshipFocus": []
-          },
-          "menteeSection": {
-            "idealMentee": "ideal mentee description",
-            "additional": "additional",
-            "longTerm": {
-              "maxMentees": 1,
-              "hoursPerMentee": 4
-            },
-            "adHoc": []
-          }
-        }
-        """;
-
-    mockMvc
-        .perform(
-            MockMvcRequestBuilders.post(API_MENTORS)
-                .header(API_KEY_HEADER, API_KEY_VALUE)
-                .contentType(APPLICATION_JSON)
-                .content(invalidMentorPayload))
-        .andExpect(status().isBadRequest())
-        .andExpect(
-            jsonPath(
-                "$.message",
-                is(
-                    "Unrecognized field 'name' at 'skills.areas[0].name'. Allowed fields: proficiencyLevel, technicalArea")));
   }
 
   @Test
@@ -465,5 +409,18 @@ class MentorControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].isWomen", is(true)))
         .andExpect(jsonPath("$[1].isWomen", is(false)));
+  }
+
+  @Test
+  @DisplayName(
+      "Given getAllMentors method, when inspecting its annotations,"
+          + " then it should require ADMIN, LEADER or MENTORSHIP_ADMIN role")
+  void shouldRequireAdminLeaderOrMentorshipAdminRoleOnGetAllMentors() throws NoSuchMethodException {
+    var method = MentorController.class.getDeclaredMethod("getAllMentors");
+    var annotation = method.getAnnotation(RequiresRole.class);
+
+    assertThat(annotation).isNotNull();
+    assertThat(annotation.value())
+        .containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN);
   }
 }

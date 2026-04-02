@@ -47,7 +47,7 @@ public class MentorController {
   @Operation(
       summary = "API to retrieve a list of all mentors with access to restricted area",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorDto>> getAllMentors() {
     final List<MentorDto> mentors = mentorshipService.getAllMentors();

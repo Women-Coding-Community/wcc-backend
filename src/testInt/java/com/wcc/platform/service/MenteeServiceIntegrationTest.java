@@ -312,24 +312,39 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
   }
 
   private void ensureLongTermCycleExists() {
-    final var cycle = cycleRepository.findByYearAndType(TEST_YEAR_2026, MentorshipType.LONG_TERM);
-    if (cycle.isEmpty()) {
-      cycleRepository.create(
-          MentorshipCycleEntity.builder()
-              .cycleYear(TEST_YEAR_2026)
-              .mentorshipType(MentorshipType.LONG_TERM)
-              .cycleMonth(Month.MARCH)
-              .registrationStartDate(LocalDate.now().minusDays(1))
-              .registrationEndDate(LocalDate.now().plusDays(10))
-              .cycleStartDate(LocalDate.now().plusDays(15))
-              .status(CycleStatus.OPEN)
-              .maxMenteesPerMentor(MAX_MENTEES_PER_MENTOR)
-              .description("Test Cycle")
-              .build());
-    }
+    cycleRepository
+        .findOpenCycle()
+        .ifPresent(
+            cycle -> {
+              cycle.setStatus(CycleStatus.CLOSED);
+              cycleRepository.update(cycle.getCycleId(), cycle);
+            });
+
+    final var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleYear(TEST_YEAR_2026)
+            .mentorshipType(MentorshipType.LONG_TERM)
+            .cycleMonth(Month.MARCH)
+            .registrationStartDate(LocalDate.now().minusDays(1))
+            .registrationEndDate(LocalDate.now().plusDays(10))
+            .cycleStartDate(LocalDate.now().plusDays(15))
+            .status(CycleStatus.OPEN)
+            .maxMenteesPerMentor(MAX_MENTEES_PER_MENTOR)
+            .description("Test Cycle")
+            .build();
+    final var savedCycle = cycleRepository.create(cycle);
+    createdCycles.add(savedCycle.getCycleId());
   }
 
   private void createAdHocCycle() {
+    cycleRepository
+        .findOpenCycle()
+        .ifPresent(
+            cycle -> {
+              cycle.setStatus(CycleStatus.CLOSED);
+              cycleRepository.update(cycle.getCycleId(), cycle);
+            });
+
     final var adHocCycle =
         MentorshipCycleEntity.builder()
             .cycleYear(TEST_YEAR_2028)

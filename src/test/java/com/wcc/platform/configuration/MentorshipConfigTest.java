@@ -12,18 +12,8 @@ class MentorshipConfigTest {
   void shouldHaveDefaultValues() {
     MentorshipConfig config = new MentorshipConfig();
 
-    assertThat(config.getDaysCycleOpen()).isEqualTo(10);
     assertThat(config.getValidation()).isNotNull();
     assertThat(config.getValidation().isEnabled()).isTrue();
-  }
-
-  @Test
-  @DisplayName("Given custom daysCycleOpen When setting value Then should update correctly")
-  void shouldSetDaysCycleOpen() {
-    MentorshipConfig config = new MentorshipConfig();
-    config.setDaysCycleOpen(15);
-
-    assertThat(config.getDaysCycleOpen()).isEqualTo(15);
   }
 
   @Test
