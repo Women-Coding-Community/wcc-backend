@@ -58,8 +58,7 @@ public class MentorshipCycleEntity {
    * @return MentorsPage.OpenCycle value object
    */
   public MentorsPage.OpenCycle toOpenCycleValue() {
-    return new MentorshipCycle(mentorshipType, cycleMonth != null ? cycleMonth : null)
-        .toOpenCycle();
+    return new MentorshipCycle(mentorshipType, cycleMonth).toOpenCycle();
   }
 
   /**

@@ -147,11 +147,10 @@ public class MentorshipService {
   }
 
   /**
-   * Retrieves the MentorshipCycleEntity for the given mentorship type and cycle year. Validates
-   * that the cycle is open and the mentorship type matches the current cycle.
+   * Retrieves the currently open MentorshipCycleEntity.
    *
-   * @return The MentorshipCycleEntity
-   * @throws MentorshipCycleClosedException If the mentorship cycle is closed.
+   * @return The open MentorshipCycleEntity.
+   * @throws MentorshipCycleClosedException If no open cycle exists.
    */
   public MentorshipCycleEntity getOpenCycle() {
     final var openCycle = cycleRepository.findOpenCycle();
