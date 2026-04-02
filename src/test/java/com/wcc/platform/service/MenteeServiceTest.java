@@ -12,7 +12,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.configuration.MentorshipConfig;
 import com.wcc.platform.domain.exceptions.DuplicatedPriorityException;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
@@ -50,9 +49,6 @@ class MenteeServiceTest {
 
   @Mock private MenteeApplicationRepository applicationRepository;
   @Mock private MenteeRepository menteeRepository;
-  @Mock private MentorshipService mentorshipService;
-  @Mock private MentorshipConfig mentorshipConfig;
-  @Mock private MentorshipConfig.Validation validation;
   @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MemberRepository memberRepository;
   @Mock private MentorRepository mentorRepository;
@@ -64,8 +60,6 @@ class MenteeServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    when(mentorshipConfig.getValidation()).thenReturn(validation);
-    when(validation.isEnabled()).thenReturn(true);
     menteeService =
         new MenteeService(
             cycleRepository,
@@ -405,9 +399,9 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
-      "Given validation is disabled, when creating mentee, "
-          + "then should skip validation and create successfully")
-  void shouldSkipValidationWhenValidationIsDisabled() {
+      "Given an open cycle matching the registration type, when creating mentee, "
+          + "then should create successfully")
+  void shouldCreateMenteeWhenOpenCycleMatches() {
     var currentYear = Year.now();
     MenteeRegistration registration =
         new MenteeRegistration(
@@ -416,9 +410,7 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(1L, 1, "Test application message", "Test why mentor")));
-    when(validation.isEnabled()).thenReturn(false);
 
-    when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
     when(cycleRepository.findOpenCycle())
         .thenReturn(
             Optional.of(

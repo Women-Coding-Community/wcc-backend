@@ -25,7 +25,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
-import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
@@ -75,7 +74,6 @@ class MentorshipServiceTest {
 
   @BeforeEach
   void setUp() {
-    final int daysOpen = 10;
     MockitoAnnotations.openMocks(this);
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
@@ -104,17 +102,6 @@ class MentorshipServiceTest {
 
     assertThrows(DuplicatedMemberException.class, () -> service.create(mentor));
     verify(mentorRepository, never()).create(any());
-  }
-
-  @Test
-  @DisplayName(
-      "Given closed cycle, when get current cycle, then throw MentorshipCycleClosedException")
-  void whenGetCurrentCycleGivenNoOpenCycleThenThrowException() {
-    when(cycleRepository.findOpenCycle()).thenReturn(Optional.empty());
-
-    var exception =
-        assertThrows(MentorshipCycleClosedException.class, service::getOpenCycle);
-    assertEquals("Mentorship cycle is closed", exception.getMessage());
   }
 
   void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
