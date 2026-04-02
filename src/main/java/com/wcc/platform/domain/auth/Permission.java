@@ -2,6 +2,7 @@ package com.wcc.platform.domain.auth;
 
 import lombok.AllArgsConstructor;
 
+/** Enum representing permissions for different actions within the platform. */
 @AllArgsConstructor
 public enum Permission {
   // User Management
