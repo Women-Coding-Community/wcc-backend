@@ -1,6 +1,5 @@
 package com.wcc.platform.domain.cms.pages.mentorship;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.SkillsFilter;
 import java.util.List;
@@ -18,7 +17,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Getter
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class MentorFilterSection {
   private String keyword;
   private List<MentorshipType> types;
