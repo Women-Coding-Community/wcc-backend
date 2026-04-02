@@ -27,9 +27,11 @@ import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.type.MemberType;
@@ -37,6 +39,7 @@ import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +52,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 @ExtendWith(MockitoExtension.class)
 class MentorshipServiceTest {
 
@@ -58,6 +61,7 @@ class MentorshipServiceTest {
   @Mock private UserProvisionService userProvisionService;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
+  @Mock private MentorshipCycleRepository cycleRepository;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
@@ -70,7 +74,6 @@ class MentorshipServiceTest {
 
   @BeforeEach
   void setUp() {
-    final int daysOpen = 10;
     MockitoAnnotations.openMocks(this);
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
@@ -81,9 +84,9 @@ class MentorshipServiceTest {
             new MentorshipService(
                 mentorRepository,
                 memberRepository,
+                cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                daysOpen,
                 notificationService));
   }
 
@@ -101,9 +104,6 @@ class MentorshipServiceTest {
     verify(mentorRepository, never()).create(any());
   }
 
-  @Test
-  @DisplayName(
-      "Given mentor with new email and no existing ID conflict, when creating mentor, then create and provision user role")
   void whenCreateGivenMentorDoesNotExistThenCreateMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
@@ -449,15 +449,21 @@ class MentorshipServiceTest {
     var activeMentor = mock(Mentor.class);
     var pendingMentor = mock(Mentor.class);
     var activeMentorDto = mock(MentorDto.class);
-    var openCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+    var openCycle =
+        Optional.of(
+            MentorshipCycleEntity.builder()
+                .mentorshipType(MentorshipType.LONG_TERM)
+                .cycleMonth(Month.MARCH)
+                .status(CycleStatus.OPEN)
+                .build());
 
     when(activeMentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(pendingMentor.getProfileStatus()).thenReturn(ProfileStatus.PENDING);
-    when(activeMentor.toDto(openCycle)).thenReturn(activeMentorDto);
+    when(activeMentor.toDto(any(MentorshipCycle.class))).thenReturn(activeMentorDto);
     when(activeMentorDto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(activeMentor, pendingMentor));
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
-    when(service.getCurrentCycle()).thenReturn(openCycle);
+    when(cycleRepository.findOpenCycle()).thenReturn(openCycle);
 
     List<MentorDto> result = service.getAllActiveMentors();
 
@@ -466,8 +472,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given active and pending mentors with a closed cycle, when getAllActiveMentors is called, then all"
-          + " active mentors are returned")
+      "Given active and pending mentors with a closed cycle, "
+          + "when getAllActiveMentors is called, then exception is throws for closed cycle")
   void shouldReturnOnlyActiveMentorsWhenCycleIsClosed() {
     var activeMentor = mock(Mentor.class);
     var pendingMentor = mock(Mentor.class);
@@ -479,7 +485,8 @@ class MentorshipServiceTest {
     when(activeMentorDto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(activeMentor, pendingMentor));
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
-    when(service.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
+    when(service.getCurrentCycle())
+        .thenReturn(MentorshipCycleEntity.builder().status(CycleStatus.CLOSED).build());
 
     List<MentorDto> result = service.getAllActiveMentors();
 
