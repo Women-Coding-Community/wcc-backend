@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -30,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 @ToString
 @NoArgsConstructor
 @SuppressWarnings("PMD.ImmutableField")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MentorDto extends MemberDto {
 
   /**

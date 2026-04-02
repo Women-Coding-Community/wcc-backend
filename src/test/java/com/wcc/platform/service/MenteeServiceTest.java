@@ -26,7 +26,6 @@ import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
@@ -69,8 +68,6 @@ class MenteeServiceTest {
     when(validation.isEnabled()).thenReturn(true);
     menteeService =
         new MenteeService(
-            mentorshipService,
-            mentorshipConfig,
             cycleRepository,
             applicationRepository,
             menteeRepository,
@@ -79,6 +76,14 @@ class MenteeServiceTest {
             userProvisionService);
     mentee = createMenteeTest(null, "Test Mentee", "test@wcc.com");
     when(mentorRepository.findById(any())).thenReturn(Optional.of(Mentor.mentorBuilder().build()));
+
+    var openCycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .status(CycleStatus.OPEN)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .build();
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(openCycle));
   }
 
   @Test
@@ -110,8 +115,7 @@ class MenteeServiceTest {
     when(menteeRepository.findById(any()))
         .thenReturn(Optional.empty())
         .thenReturn(Optional.of(mentee));
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
     Mentee result = menteeService.saveRegistration(registration);
@@ -160,8 +164,7 @@ class MenteeServiceTest {
             .build();
 
     when(menteeRepository.findById(1L)).thenReturn(Optional.of(menteeWithId));
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(1L, 1L)).thenReturn(5L);
 
@@ -210,8 +213,7 @@ class MenteeServiceTest {
             .build();
 
     when(menteeRepository.findById(1L)).thenReturn(Optional.of(menteeWithId));
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
 
     // Simulate existing application with priority 1
     var existingApplication =
@@ -264,8 +266,7 @@ class MenteeServiceTest {
             .build();
 
     when(menteeRepository.findById(1L)).thenReturn(Optional.of(menteeWithId));
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
 
     when(applicationRepository.findByMenteeAndCycle(1L, 1L)).thenReturn(List.of());
 
@@ -297,14 +298,14 @@ class MenteeServiceTest {
             currentYear,
             List.of(
                 new MenteeApplicationDto(1L, 1, "Test application message", "Test why mentor")));
-    when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CYCLE_CLOSED);
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.empty());
 
     MentorshipCycleClosedException exception =
         assertThrows(
             MentorshipCycleClosedException.class,
             () -> menteeService.saveRegistration(registration));
 
-    assertThat(exception.getMessage()).contains("Mentorship cycle is currently closed");
+    assertThat(exception.getMessage()).contains("Mentorship cycle is closed");
   }
 
   @Test
@@ -321,8 +322,14 @@ class MenteeServiceTest {
             List.of(
                 new MenteeApplicationDto(1L, 1, "Test application message", "Test why mentor")));
 
-    MentorshipCycle longTermCycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
-    when(mentorshipService.getCurrentCycle()).thenReturn(longTermCycle);
+    when(cycleRepository.findOpenCycle())
+        .thenReturn(
+            Optional.of(
+                MentorshipCycleEntity.builder()
+                    .mentorshipType(MentorshipType.LONG_TERM)
+                    .cycleMonth(Month.MARCH)
+                    .status(CycleStatus.OPEN)
+                    .build()));
 
     InvalidMentorshipTypeException exception =
         assertThrows(
@@ -347,8 +354,14 @@ class MenteeServiceTest {
             List.of(
                 new MenteeApplicationDto(1L, 1, "Test application message", "Test why mentor")));
 
-    MentorshipCycle adHocCycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
-    when(mentorshipService.getCurrentCycle()).thenReturn(adHocCycle);
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .mentorshipType(MentorshipType.AD_HOC)
+            .cycleMonth(Month.MAY)
+            .status(CycleStatus.OPEN)
+            .build();
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+
     Member existingMember = Member.builder().id(1L).build();
     when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existingMember));
     when(menteeRepository.create(any(Mentee.class)))
@@ -364,7 +377,7 @@ class MenteeServiceTest {
 
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));
-    verify(mentorshipService).getCurrentCycle();
+    verify(cycleRepository, atLeastOnce()).findOpenCycle();
     verify(mentorRepository).findById(1L);
   }
 
@@ -406,8 +419,14 @@ class MenteeServiceTest {
     when(validation.isEnabled()).thenReturn(false);
 
     when(cycleRepository.findByYearAndType(any(), any())).thenReturn(Optional.empty());
-    when(mentorshipService.getCurrentCycle())
-        .thenReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.JANUARY));
+    when(cycleRepository.findOpenCycle())
+        .thenReturn(
+            Optional.of(
+                MentorshipCycleEntity.builder()
+                    .mentorshipType(MentorshipType.AD_HOC)
+                    .cycleMonth(Month.MAY)
+                    .status(CycleStatus.OPEN)
+                    .build()));
     Member existingMember = Member.builder().id(1L).build();
     when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(existingMember));
     when(menteeRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -422,7 +441,7 @@ class MenteeServiceTest {
 
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));
-    verify(mentorshipService).getCurrentCycle();
+    verify(cycleRepository, atLeastOnce()).findOpenCycle();
   }
 
   @Test
@@ -465,8 +484,7 @@ class MenteeServiceTest {
             .build();
 
     when(memberRepository.findByEmail(mentee.getEmail())).thenReturn(Optional.of(existingMember));
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(menteeRepository.create(any(Mentee.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -509,8 +527,7 @@ class MenteeServiceTest {
     when(menteeRepository.findById(12_345L)).thenReturn(Optional.empty());
     when(memberRepository.findByEmail("existing@test.com"))
         .thenReturn(Optional.of(Member.builder().id(999L).build()));
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
     when(menteeRepository.findById(999L))
@@ -556,14 +573,13 @@ class MenteeServiceTest {
     when(menteeRepository.findById(any()))
         .thenReturn(Optional.empty())
         .thenReturn(Optional.of(mentee));
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
 
     Mentee result = menteeService.saveRegistration(registration);
 
     assertThat(result).isEqualTo(mentee);
-    verify(cycleRepository).findByYearAndType(currentYear, MentorshipType.AD_HOC);
+    verify(cycleRepository, atLeastOnce()).findOpenCycle();
   }
 
   @Test
@@ -588,8 +604,7 @@ class MenteeServiceTest {
             .status(CycleStatus.OPEN)
             .build();
 
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
     when(menteeRepository.findById(5L)).thenReturn(Optional.of(existingMentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
@@ -640,8 +655,7 @@ class MenteeServiceTest {
         .thenReturn(Optional.of(existingMentorMember));
     when(memberRepository.findById(100L)).thenReturn(Optional.of(existingMentorMember));
     when(menteeRepository.findById(100L)).thenReturn(Optional.empty());
-    when(cycleRepository.findByYearAndType(currentYear, MentorshipType.AD_HOC))
-        .thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(100L, 1L)).thenReturn(0L);
     // Capture the created mentee to verify member types

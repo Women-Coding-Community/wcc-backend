@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -52,11 +53,21 @@ public class MentorshipCycleEntity {
   }
 
   /**
-   * Convert to MentorshipCycle value object for backward compatibility.
+   * Convert to MentorsPage.OpenCycle for backward compatibility.
+   *
+   * @return MentorsPage.OpenCycle value object
+   */
+  public MentorsPage.OpenCycle toOpenCycleValue() {
+    return new MentorshipCycle(mentorshipType, cycleMonth != null ? cycleMonth : null)
+        .toOpenCycle();
+  }
+
+  /**
+   * Convert to MentorshipCycle value object.
    *
    * @return MentorshipCycle value object
    */
   public MentorshipCycle toMentorshipCycle() {
-    return new MentorshipCycle(mentorshipType, cycleMonth != null ? cycleMonth : null);
+    return new MentorshipCycle(mentorshipType, cycleMonth);
   }
 }

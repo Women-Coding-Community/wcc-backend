@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.member;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
@@ -22,10 +23,12 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MemberDto {
   @Schema(accessMode = Schema.AccessMode.READ_ONLY)
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
+
   private String fullName;
   private String position;
   private String email;
