@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
+import com.wcc.platform.domain.cms.pages.programme.ProgrammesPage;
 import com.wcc.platform.domain.platform.type.ProgramType;
 import com.wcc.platform.service.ProgrammeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,7 +46,17 @@ public class ProgrammeController {
     return ResponseEntity.ok(service.getProgramme(programType));
   }
 
-  /** Create Program Page Content and store into a database. */
+  /** Get all programmes API. */
+  @Tag(name = "Pages: Programmes", description = "API to retrieve Page with all programmes")
+  @GetMapping("/api/cms/v1/programmes")
+  @Operation(summary = "API to retrieve page with all programmes")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<ProgrammesPage> getAllProgrammes() {
+
+    return ResponseEntity.ok(service.getAllProgrammes());
+  }
+
+  /** Create Programme Page Content and store into database. */
   @Tag(name = "Platform: Pages", description = "Platform Internal Pages APIs")
   @PostMapping("/api/platform/v1/program")
   @Operation(
@@ -60,8 +71,8 @@ public class ProgrammeController {
     return ResponseEntity.ok(service.create(type, page));
   }
 
-  /** Update Program Page and store into a database. */
-  @Tag(name = "Platform: Pages", description = "Platform Internal Pages APIs")
+  /** Update Program Page and store into database. */
+  @Tag(name = "Platform: Program", description = "Program Internal APIs")
   @PutMapping("/api/platform/v1/program")
   @Operation(
       summary = "Update program page content by program type",

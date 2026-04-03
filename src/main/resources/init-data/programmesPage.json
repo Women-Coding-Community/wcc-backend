@@ -1,0 +1,241 @@
+{
+  "id": "page:PROGRAMMES",
+  "heroSection": {
+    "title": "WCC Programmes",
+    "images": [
+      {
+        "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+        "alt": "There is a group of women showing WCC logo",
+        "type": "desktop"
+      }
+    ],
+    "customStyle": {
+      "backgroundColour": {
+        "color": "PRIMARY",
+        "shade": {
+          "name": "LIGHT",
+          "value": 90
+        }
+      }
+    }
+  },
+  "section": {
+    "description": "Here you will find the list of available WCC programmes."
+  },
+  "programmesSection": {
+    "items": [
+      {
+        "title": "Code Club",
+        "description": "Code club is a series of short workshops that teach basic coding skills to young people.",
+        "images": [
+          {
+            "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+            "alt": "There is a group of women showing WCC logo",
+            "type": "desktop"
+          }
+        ],
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/code-club"
+        },
+        "customStyle": {
+          "icon": "code_blocks",
+          "backgroundColour": {
+            "color": "secondary",
+            "shade": {
+              "name": "LIGHT",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "Book Club",
+        "description": "The study group focuses on mastering API testing using Postman, a popular API development and testing tool. Sessions feature hands-on exercises and real-world scenarios to deepen understanding of testing techniques and gain practical knowledge on API automation.",
+        "images": [
+          {
+            "path": "https://drive.google.com/uc?id=1efbBcw8yaASbSx3pgqcj06tIN-P2Wf55&export=download",
+            "alt": "There is a group of women showing WCC logo",
+            "type": "desktop"
+          }
+        ],
+        "link": {
+          "label": "program page",
+          "uri": "programmes/book-club"
+        },
+        "customStyle": {
+          "icon": "book_2",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "Writing Club",
+        "description": "Writing club is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/writing-club"
+        },
+        "customStyle": {
+          "icon": "group",
+          "backgroundColour": {
+            "color": "secondary",
+            "shade": {
+              "name": "dark",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "Speaking Club",
+        "description": "Speaking club is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/speaking-club"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "CV Clinic Programme",
+        "description": "CV Clinic Program is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/cv-clinic-programme"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "Java Track",
+        "description": "Java Track is a series of short workshops that teach basic coding skills.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/java-track"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "Leetcode Programme",
+        "description": "Leetcode Programme is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/leetcode-programme"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "Machine Learning",
+        "description": "Machine Learning Programme is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/machine-learning"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "Mock Interview Programme",
+        "description": "Mock Interview Programme is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/mock-interview-programme"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "QA Track",
+        "description": "QA Track is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/qa-track"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      },
+      {
+        "title": "System Design Track",
+        "description": "System Design Track is a series of short workshops that teach basic coding skills to young people.",
+        "link": {
+          "label": "program page",
+          "uri": "/programmes/system-design-track"
+        },
+        "customStyle": {
+          "icon": "calendar_month",
+          "backgroundColour": {
+            "color": "tertiary",
+            "shade": {
+              "name": "main",
+              "value": 90
+            }
+          }
+        }
+      }
+    ]
+  }
+}
