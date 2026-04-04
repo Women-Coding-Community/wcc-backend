@@ -1,12 +1,24 @@
-"use client";
-import React, {createContext, useContext, useEffect, useMemo, useState} from 'react';
-import {useRouter} from 'next/router';
-import {apiFetch} from '@/lib/api';
-import {clearToken, getStoredToken, isTokenExpired, storeToken, storeTokenExpiry} from '@/lib/auth';
+'use client';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
+import { apiFetch } from '@/lib/api';
+import {
+  clearToken,
+  getStoredToken,
+  isTokenExpired,
+  storeToken,
+  storeTokenExpiry,
+} from '@/lib/auth';
+
+interface Member {
+  id?: string;
+  fullName: string;
+  roles?: string;
+}
 
 export type AuthContextType = {
   token: string | null;
-  member: object | null;
+  member: Member | null;
   roles: string[];
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -14,8 +26,8 @@ export type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-  const [member, setMember] = useState<object | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [member, setMember] = useState<Member | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const router = useRouter();
@@ -25,13 +37,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     if (token && !isTokenExpired(token)) {
       setToken(token);
 
-      apiFetch<{ roles: string[], member: object }>(`/api/auth/me`, {token: token})
-      .then(data => {
-        setRoles(data.roles);
-        setMember(data.member);
-      })
-      .catch(() => {
-      });
+      apiFetch<{ roles: string[]; member: Member }>(`/api/auth/me`, { token: token })
+        .then((data) => {
+          setRoles(data.roles);
+          setMember(data.member);
+        })
+        .catch(() => {});
     } else {
       clearToken();
     }
@@ -39,12 +50,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
   const login = async (email: string, password: string) => {
     const res = await apiFetch<{
-      member: object;
+      member: Member;
       token: string;
       roles: string[];
-      expiresAt?: string
+      expiresAt?: string;
     }>(`/api/auth/login`, {
-      method: 'POST', body: {email, password}
+      method: 'POST',
+      body: { email, password },
     });
 
     storeToken(res.token);
@@ -67,8 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     router.push('/login');
   };
 
-  const value = useMemo(() =>
-      ({token, member, roles, login, logout}), [member, token, roles]);
+  const value = useMemo(() => ({ token, member, roles, login, logout }), [member, token, roles]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
