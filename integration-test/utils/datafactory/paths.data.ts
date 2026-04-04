@@ -13,4 +13,8 @@ export const PATHS = {
   PARTNERS_PAGE: '/api/cms/v1/partners',
   TEAM_PAGE: '/api/cms/v1/team',
   PLATFORM_PAGE: '/api/platform/v1/page',
+  // Auth
+  AUTH_LOGIN: '/api/auth/login',
+  AUTH_ME: '/api/auth/me',
+  AUTH_USERS: '/api/auth/users',
 };
