@@ -43,6 +43,14 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
       "SELECT * FROM mentee_applications WHERE application_status = ?::application_status "
           + "ORDER BY applied_at DESC";
 
+  private static final String SEL_BY_STATUS_PRIO =
+      "SELECT * FROM mentee_applications WHERE application_status = ?::application_status "
+          + "AND priority_order = ? ORDER BY applied_at DESC";
+
+  private static final String SEL_PENDING_MENTEE =
+      "SELECT * FROM mentee_applications WHERE mentee_id = ? "
+          + "AND application_status = 'pending' ORDER BY priority_order";
+
   private static final String SEL_BY_MENTOR =
       "SELECT * FROM mentee_applications "
           + "WHERE mentee_id = ? AND mentor_id = ? AND cycle_id = ?";
@@ -165,6 +173,21 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   public Long countMenteeApplications(final Long menteeId, final Long cycleId) {
     final Long count = jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
     return count != null ? count : 0L;
+  }
+
+  @Override
+  public List<MenteeApplication> findByStatusAndPriorityOrder(
+      final ApplicationStatus status, final Integer priorityOrder) {
+    return jdbc.query(
+        SEL_BY_STATUS_PRIO,
+        (rs, rowNum) -> mapRow(rs),
+        status.getValue(),
+        priorityOrder);
+  }
+
+  @Override
+  public List<MenteeApplication> findPendingByMenteeId(final Long menteeId) {
+    return jdbc.query(SEL_PENDING_MENTEE, (rs, rowNum) -> mapRow(rs), menteeId);
   }
 
   private MenteeApplication mapRow(final ResultSet rs) throws SQLException {
