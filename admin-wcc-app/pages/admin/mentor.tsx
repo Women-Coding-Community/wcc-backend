@@ -28,10 +28,9 @@ import { getStoredToken, isTokenExpired } from '@/lib/auth';
 import {
   acceptApplication,
   declineApplication,
-  getMentees,
   getMentorApplications,
 } from '@/services/menteeService';
-import { DashboardMentee, MenteeApplication } from '@/types/menteeApplication';
+import { MenteeApplication } from '@/types/menteeApplication';
 
 interface MemberWithId {
   id: number;
@@ -47,45 +46,12 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-function formatFocus(focus?: string[]): string {
-  if (!focus?.length) return '—';
-  return focus[0]
-    .replace(/_/g, ' ')
-    .toLowerCase()
-    .replace(/\b\w/g, (l) => l.toUpperCase());
-}
-
-function formatMentorshipType(types?: string[]): string {
-  if (!types?.length) return '—';
-  if (types.includes('LONG_TERM')) return 'Long-term';
-  if (types.includes('AD_HOC')) return 'Ad-hoc';
-  return types[0];
-}
-
-function formatYears(years?: number): string {
-  if (years == null) return '—';
-  if (years === 0) return 'Less than 1 year';
-  if (years === 1) return '1 year';
-  if (years <= 3) return '1-3 years';
-  if (years <= 5) return '3-5 years';
-  return `${years}+ years`;
-}
-
-function formatTechStack(mentee: DashboardMentee): string {
-  const lang = mentee.skills?.languages?.[0]?.language;
-  const area = mentee.skills?.areas?.[0]?.technicalArea?.replace(/_/g, ' ');
-  return lang ?? area ?? '—';
-}
-
-const ACTIVE_STATUSES = ['PENDING', 'MENTOR_REVIEWING'];
-
 export default function MentorDashboardPage() {
   const { token, member, roles } = useAuth();
   const router = useRouter();
 
   const [assignedApplications, setAssignedApplications] = useState<MenteeApplication[]>([]);
   const [pendingApplications, setPendingApplications] = useState<MenteeApplication[]>([]);
-  const [menteesMap, setMenteesMap] = useState<Map<number, DashboardMentee>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -96,35 +62,33 @@ export default function MentorDashboardPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const mentorId = (member as MemberWithId | null)?.id;
+  const canAccess = roles.includes('ADMIN') || roles.includes('MENTOR');
 
   useEffect(() => {
     const storedToken = getStoredToken();
     if (!storedToken || isTokenExpired(storedToken)) {
       router.replace('/login');
+      return;
     }
-  }, [router]);
+    if (roles.length > 0 && !canAccess) {
+      router.replace('/admin');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roles, canAccess]);
 
   useEffect(() => {
-    if (!token || !mentorId) return;
+    if (!token || !mentorId || !canAccess) return;
     loadData();
-  }, [token, mentorId]);
+  }, [token, mentorId, canAccess]);
 
   async function loadData() {
     if (!token || !mentorId) return;
     setLoading(true);
     setError(null);
     try {
-      const [allApplications, mentees] = await Promise.all([
-        getMentorApplications(mentorId, token),
-        getMentees(token),
-      ]);
-
-      const map = new Map<number, DashboardMentee>();
-      mentees.forEach((m) => map.set(m.id, m));
-      setMenteesMap(map);
-
+      const allApplications = await getMentorApplications(mentorId, token);
       setAssignedApplications(allApplications.filter((a) => a.status === 'MATCHED'));
-      setPendingApplications(allApplications.filter((a) => ACTIVE_STATUSES.includes(a.status)));
+      setPendingApplications(allApplications.filter((a) => a.status === 'MENTOR_REVIEWING'));
     } catch (e: any) {
       setError(e.message ?? 'Failed to load dashboard data');
     } finally {
@@ -173,6 +137,8 @@ export default function MentorDashboardPage() {
     }
   }
 
+  if (!canAccess && roles.length > 0) return null;
+
   return (
     <AdminLayout>
       {loading ? (
@@ -185,7 +151,6 @@ export default function MentorDashboardPage() {
         <Stack spacing={4}>
           {actionError && <Alert severity="error">{actionError}</Alert>}
 
-          {/* My Assigned Mentee */}
           <Box>
             <Typography variant="h5" fontWeight={600} gutterBottom>
               My Assigned Mentee
@@ -195,10 +160,7 @@ export default function MentorDashboardPage() {
             ) : (
               <Stack spacing={2}>
                 {assignedApplications.map((app) => {
-                  const mentee = menteesMap.get(app.menteeId);
-                  const name = mentee?.fullName ?? `Mentee #${app.menteeId}`;
-                  const type = formatMentorshipType(mentee?.skills?.mentorshipType);
-
+                  const name = `Mentee #${app.menteeId}`;
                   return (
                     <Paper key={app.applicationId} variant="outlined" sx={{ p: 2 }}>
                       <Stack
@@ -210,14 +172,7 @@ export default function MentorDashboardPage() {
                       >
                         <Stack direction="row" alignItems="center" spacing={2}>
                           <Avatar sx={{ bgcolor: 'primary.main' }}>{getInitials(name)}</Avatar>
-                          <Box>
-                            <Typography fontWeight={600}>{name}</Typography>
-                            {mentee?.position && (
-                              <Typography variant="caption" color="text.secondary">
-                                {mentee.position}
-                              </Typography>
-                            )}
-                          </Box>
+                          <Typography fontWeight={600}>{name}</Typography>
                           <Chip
                             label="Active"
                             size="small"
@@ -227,20 +182,8 @@ export default function MentorDashboardPage() {
                               fontWeight: 600,
                             }}
                           />
-                          {type !== '—' && (
-                            <Chip label={type} size="small" color="primary" variant="outlined" />
-                          )}
                         </Stack>
                         <Stack direction="row" spacing={1} alignItems="center">
-                          {mentee?.email && (
-                            <Button
-                              size="small"
-                              variant="contained"
-                              href={`mailto:${mentee.email}`}
-                            >
-                              Email Session
-                            </Button>
-                          )}
                           <Button size="small" variant="outlined">
                             Session History
                           </Button>
@@ -258,13 +201,12 @@ export default function MentorDashboardPage() {
 
           <Divider />
 
-          {/* Mentee Applications */}
           <Box>
             <Typography variant="h5" fontWeight={600} gutterBottom>
               Mentee Applications
             </Typography>
             <Typography variant="body2" color="text.secondary" mb={2}>
-              Review and manage mentee applications
+              Review and manage mentee applications assigned to you
             </Typography>
 
             {pendingApplications.length === 0 ? (
@@ -278,16 +220,10 @@ export default function MentorDashboardPage() {
                         <strong>Mentee</strong>
                       </TableCell>
                       <TableCell>
-                        <strong>Tech Stack</strong>
+                        <strong>Message</strong>
                       </TableCell>
                       <TableCell>
-                        <strong>Mentorship Focus</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Years of Experience</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Type</strong>
+                        <strong>Applied</strong>
                       </TableCell>
                       <TableCell align="right">
                         <strong>Action</strong>
@@ -296,10 +232,7 @@ export default function MentorDashboardPage() {
                   </TableHead>
                   <TableBody>
                     {pendingApplications.map((app) => {
-                      const mentee = menteesMap.get(app.menteeId);
-                      const name = mentee?.fullName ?? `Mentee #${app.menteeId}`;
-                      const type = formatMentorshipType(mentee?.skills?.mentorshipType);
-
+                      const name = `Mentee #${app.menteeId}`;
                       return (
                         <TableRow key={app.applicationId} hover>
                           <TableCell>
@@ -317,39 +250,18 @@ export default function MentorDashboardPage() {
                               <Typography variant="body2">{name}</Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell>
-                            <Typography variant="body2">
-                              {formatTechStack(
-                                mentee ?? {
-                                  id: app.menteeId,
-                                  fullName: name,
-                                }
-                              )}
+                          <TableCell sx={{ maxWidth: 300 }}>
+                            <Typography variant="body2" noWrap title={app.whyMentor}>
+                              {app.whyMentor}
                             </Typography>
                           </TableCell>
                           <TableCell>
                             <Typography variant="body2">
-                              {formatFocus(mentee?.skills?.mentorshipFocus)}
+                              {new Date(app.appliedAt).toLocaleDateString()}
                             </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="body2">
-                              {formatYears(mentee?.skills?.yearsExperience)}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Chip
-                              label={type}
-                              size="small"
-                              color={type === 'Long-term' ? 'primary' : 'warning'}
-                              variant="outlined"
-                            />
                           </TableCell>
                           <TableCell align="right">
                             <Stack direction="row" spacing={1} justifyContent="flex-end">
-                              <Button size="small" variant="outlined">
-                                View Profile
-                              </Button>
                               <Button
                                 size="small"
                                 variant="contained"
@@ -357,7 +269,7 @@ export default function MentorDashboardPage() {
                                 disabled={submitting}
                                 onClick={() => handleAccept(app.applicationId)}
                               >
-                                Approve
+                                Accept
                               </Button>
                               <Button
                                 size="small"
@@ -366,7 +278,7 @@ export default function MentorDashboardPage() {
                                 disabled={submitting}
                                 onClick={() => openDeclineDialog(app.applicationId)}
                               >
-                                Reject
+                                Decline
                               </Button>
                             </Stack>
                           </TableCell>
@@ -381,7 +293,6 @@ export default function MentorDashboardPage() {
         </Stack>
       )}
 
-      {/* Decline reason dialog */}
       <Dialog open={declineDialogOpen} onClose={closeDeclineDialog} maxWidth="sm" fullWidth>
         <DialogTitle>Decline Application</DialogTitle>
         <DialogContent>
