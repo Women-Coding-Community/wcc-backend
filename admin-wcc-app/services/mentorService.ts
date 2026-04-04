@@ -23,3 +23,11 @@ export async function getMentors(token: string): Promise<MentorItem[]> {
   const data = await apiFetch<MentorsResponse>(MENTORS_PATH, { token });
   return normalize(data);
 }
+
+export async function getMentorById(
+  mentorId: string | number,
+  token: string
+): Promise<MentorItem | null> {
+  const mentors = await getMentors(token);
+  return mentors.find((m) => String(m.id) === String(mentorId)) ?? null;
+}
