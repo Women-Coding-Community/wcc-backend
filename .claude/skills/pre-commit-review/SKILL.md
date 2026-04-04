@@ -3,6 +3,8 @@ name: pre-commit-review
 description: Review local staged and unstaged changes before committing. Auto-fixes style violations (line length, @DisplayName casing, var, eq() wrappers, .get(0)), then outputs a summary of findings requiring human judgement.
 ---
 
+> **Scope**: Local — wcc-backend only
+
 # Pre-Commit Review
 
 > **Canonical runbook**: `.ai/skills/pre-commit-review.md`

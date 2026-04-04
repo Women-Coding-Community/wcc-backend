@@ -5,6 +5,8 @@ argument-hint: "[title] or describe the issue interactively"
 allowed-tools: Bash(gh *), Grep, Glob, Read
 ---
 
+> **Scope**: Local — wcc-backend only
+
 # WCC Smart Issue Creator
 
 Create a richly structured GitHub issue using Scrum conventions, with acceptance criteria and test scenarios auto-generated from the title and requirements. Searches the codebase for relevant code examples to include in the issue body.
