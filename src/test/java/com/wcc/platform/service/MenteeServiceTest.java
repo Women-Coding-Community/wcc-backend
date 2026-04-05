@@ -274,15 +274,16 @@ class MenteeServiceTest {
   }
 
   @Test
-  @DisplayName("Given has mentees, when getting all mentees, then should return all")
-  void testGetAllMentees() {
-    List<Mentee> mentees = List.of(mentee);
-    when(menteeRepository.getAll()).thenReturn(mentees);
+  @DisplayName(
+      "Given active mentees exist, when getting all mentees, then should return only active mentees")
+  void shouldReturnOnlyActiveMentees() {
+    var mentees = List.of(mentee);
+    when(menteeRepository.findByStatus(ProfileStatus.ACTIVE)).thenReturn(mentees);
 
-    List<Mentee> result = menteeService.getAllMentees();
+    var result = menteeService.getAllMentees();
 
     assertEquals(mentees, result);
-    verify(menteeRepository).getAll();
+    verify(menteeRepository).findByStatus(ProfileStatus.ACTIVE);
   }
 
   @Test
