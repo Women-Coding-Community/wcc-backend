@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.RestController;
             + "and the mentee itself.")
 @AllArgsConstructor
 @Validated
-@SuppressWarnings({"PMD.ExcessiveImports"})
 public class MenteeApplicationController {
 
   private final MenteeWorkflowService applicationService;
