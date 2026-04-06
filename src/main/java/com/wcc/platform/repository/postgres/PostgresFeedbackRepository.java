@@ -63,6 +63,7 @@ public class PostgresFeedbackRepository implements FeedbackRepository {
   }
 
   @Override
+  @SuppressWarnings({"PMD.InsufficientStringBufferDeclaration", "PMD.CognitiveComplexity"})
   public List<Feedback> getAll(final FeedbackSearchCriteria criteria) {
     final StringBuilder sql = new StringBuilder("SELECT * FROM feedback WHERE 1=1");
     final List<Object> params = new ArrayList<>();
@@ -108,7 +109,7 @@ public class PostgresFeedbackRepository implements FeedbackRepository {
   }
 
   @Override
-  public void setAnonymousStatus(final Long feedbackId, final Boolean isAnonymous) {
+  public void updateAnonymousStatus(final Long feedbackId, final Boolean isAnonymous) {
     jdbc.update(SET_ANONYMOUS_STATUS, isAnonymous, feedbackId);
   }
 }

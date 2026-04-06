@@ -34,6 +34,7 @@ import org.springframework.web.context.request.WebRequest;
 
 /** Global controller to handle all exceptions for the API. */
 @RestControllerAdvice
+@SuppressWarnings("PMD.ExcessiveImports")
 public class GlobalExceptionHandler {
 
   /** Receive ContentNotFoundException and return {@link HttpStatus#NOT_FOUND}. */

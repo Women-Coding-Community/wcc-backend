@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -128,7 +129,7 @@ public class FeedbackController {
    * @param feedbackId ID of the feedback to approve
    * @return No content
    */
-  @PutMapping("/{feedbackId}/approve")
+  @PatchMapping("/{feedbackId}/approve")
   @Operation(summary = "Approve feedback (admin only)")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Void> approveFeedback(
@@ -144,13 +145,13 @@ public class FeedbackController {
    * @param isAnonymous true to hide reviewer name, false to show reviewer name
    * @return No content
    */
-  @PutMapping("/{feedbackId}/anonymous-status")
-  @Operation(summary = "Set feedback anonymous status (to hide/show reviewer name)")
+  @PatchMapping("/{feedbackId}/anonymous-status")
+  @Operation(summary = "Update feedback anonymous status (to hide/show reviewer name)")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Void> setFeedbackAnonymousStatus(
+  public ResponseEntity<Void> updateFeedbackAnonymousStatus(
       @Parameter(description = "ID of the feedback") @PathVariable final Long feedbackId,
       @Parameter(description = "Is anonymous") @RequestParam final Boolean isAnonymous) {
-    feedbackService.setFeedbackAnonymousStatus(feedbackId, isAnonymous);
+    feedbackService.updateFeedbackAnonymousStatus(feedbackId, isAnonymous);
     return ResponseEntity.ok().build();
   }
 

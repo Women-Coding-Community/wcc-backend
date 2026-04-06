@@ -1,6 +1,7 @@
 package com.wcc.platform.repository.postgres.constants;
 
 /** Constants related to Feedback entity. */
+@SuppressWarnings({"PMD.DataClass", "PMD.LongVariable"})
 public final class FeedbackConstants {
 
   public static final String TABLE = "feedback";

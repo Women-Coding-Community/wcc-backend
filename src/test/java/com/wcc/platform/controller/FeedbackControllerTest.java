@@ -117,9 +117,11 @@ class FeedbackControllerTest {
   void testUpdateFeedbackReturnsOk() throws Exception {
     Long feedbackId = 1L;
     FeedbackDto feedbackDto = createMentorReviewFeedbackDtoTest();
-    Feedback updatedFeedback = createMentorReviewFeedbackTest();
-    updatedFeedback.setFeedbackText("Updated feedback text");
-    updatedFeedback.setRating(4);
+    Feedback updatedFeedback =
+        createMentorReviewFeedbackTest().toBuilder()
+            .feedbackText("Updated feedback text")
+            .rating(4)
+            .build();
 
     when(feedbackService.updateFeedback(eq(feedbackId), any(FeedbackDto.class)))
         .thenReturn(updatedFeedback);
@@ -160,7 +162,7 @@ class FeedbackControllerTest {
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.put(API_FEEDBACK + "/" + feedbackId + "/approve")
+            MockMvcRequestBuilders.patch(API_FEEDBACK + "/" + feedbackId + "/approve")
                 .header(API_KEY_HEADER, API_KEY_VALUE))
         .andExpect(status().isOk());
 
@@ -176,41 +178,41 @@ class FeedbackControllerTest {
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.put(API_FEEDBACK + "/" + nonExistentFeedbackId + "/approve")
+            MockMvcRequestBuilders.patch(API_FEEDBACK + "/" + nonExistentFeedbackId + "/approve")
                 .header(API_KEY_HEADER, API_KEY_VALUE))
         .andExpect(status().isNotFound());
   }
 
   @Test
-  void testSetFeedbackAnonymousStatusReturnsOk() throws Exception {
+  void testUpdateFeedbackAnonymousStatusReturnsOk() throws Exception {
     Long feedbackId = 1L;
     Boolean isAnonymous = true;
-    doNothing().when(feedbackService).setFeedbackAnonymousStatus(feedbackId, isAnonymous);
+    doNothing().when(feedbackService).updateFeedbackAnonymousStatus(feedbackId, isAnonymous);
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.put(API_FEEDBACK + "/" + feedbackId + "/anonymous-status")
+            MockMvcRequestBuilders.patch(API_FEEDBACK + "/" + feedbackId + "/anonymous-status")
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .param("isAnonymous", isAnonymous.toString()))
         .andExpect(status().isOk());
 
-    verify(feedbackService).setFeedbackAnonymousStatus(feedbackId, isAnonymous);
+    verify(feedbackService).updateFeedbackAnonymousStatus(feedbackId, isAnonymous);
   }
 
   @Test
-  void testSetFeedbackAnonymousStatusToFalseReturnsOk() throws Exception {
+  void testUpdateFeedbackAnonymousStatusToFalseReturnsOk() throws Exception {
     Long feedbackId = 1L;
     Boolean isAnonymous = false;
-    doNothing().when(feedbackService).setFeedbackAnonymousStatus(feedbackId, isAnonymous);
+    doNothing().when(feedbackService).updateFeedbackAnonymousStatus(feedbackId, isAnonymous);
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.put(API_FEEDBACK + "/" + feedbackId + "/anonymous-status")
+            MockMvcRequestBuilders.patch(API_FEEDBACK + "/" + feedbackId + "/anonymous-status")
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .param("isAnonymous", isAnonymous.toString()))
         .andExpect(status().isOk());
 
-    verify(feedbackService).setFeedbackAnonymousStatus(feedbackId, isAnonymous);
+    verify(feedbackService).updateFeedbackAnonymousStatus(feedbackId, isAnonymous);
   }
 
   @Test

@@ -8,21 +8,26 @@ import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /** Feedback for tracking member feedback. */
-@Data
-@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Getter
+@Builder(toBuilder = true)
 public class Feedback {
 
-  private Long id;
+  @Setter private Long id;
   @NotNull private Long reviewerId;
-  private String reviewerName;
+  @Setter private String reviewerName;
   private Long revieweeId; // For MENTOR_REVIEW
-  private String revieweeName;
+  @Setter private String revieweeName;
   private Long mentorshipCycleId; // For MENTORSHIP_PROGRAM
   @NotNull private FeedbackType feedbackType;
 
@@ -32,8 +37,8 @@ public class Feedback {
 
   @NotBlank private String feedbackText;
   private Integer year;
-  private Boolean isAnonymous;
-  private Boolean isApproved;
+  @Setter private Boolean isAnonymous;
+  @Setter private Boolean isApproved;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;
 }

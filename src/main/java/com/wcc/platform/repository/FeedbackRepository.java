@@ -31,5 +31,5 @@ public interface FeedbackRepository extends CrudRepository<Feedback, Long> {
    * @param feedbackId the ID of the feedback
    * @param isAnonymous true to hide reviewer name, false to show reviewer name
    */
-  void setAnonymousStatus(Long feedbackId, Boolean isAnonymous);
+  void updateAnonymousStatus(Long feedbackId, Boolean isAnonymous);
 }

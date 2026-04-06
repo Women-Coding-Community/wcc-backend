@@ -3,13 +3,17 @@ package com.wcc.platform.domain.platform.feedback;
 import com.wcc.platform.domain.platform.type.FeedbackType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Getter
+@Builder
 public class FeedbackSearchCriteria {
   private Long reviewerId;
   private Long revieweeId;

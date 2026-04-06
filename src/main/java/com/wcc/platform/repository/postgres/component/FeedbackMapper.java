@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 /** Maps database result sets to Feedback domain objects. */
 @Component
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.TooManyStaticImports")
 public class FeedbackMapper {
   private static final String INSERT_SQL =
       "INSERT INTO feedback ("

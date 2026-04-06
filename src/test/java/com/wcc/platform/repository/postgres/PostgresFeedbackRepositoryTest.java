@@ -28,6 +28,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 /** PostgresFeedbackRepositoryTest class for testing the PostgresFeedbackRepository. */
+@SuppressWarnings("PMD.TooManyMethods")
 class PostgresFeedbackRepositoryTest {
 
   private static final String DELETE_SQL = "DELETE FROM feedback WHERE id = ?";
@@ -72,8 +73,8 @@ class PostgresFeedbackRepositoryTest {
 
   @Test
   void testUpdate() {
-    Feedback feedback = createMentorReviewFeedbackTest();
-    feedback.setFeedbackText("Updated feedback text");
+    Feedback feedback =
+        createMentorReviewFeedbackTest().toBuilder().feedbackText("Updated feedback text").build();
     doNothing().when(feedbackMapper).updateFeedback(any(), anyLong());
 
     Feedback result = repository.update(1L, feedback);
@@ -131,23 +132,23 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
-  void testSetAnonymousStatus() {
+  void testUpdateAnonymousStatus() {
     Long feedbackId = 1L;
     Boolean isAnonymous = true;
     when(jdbc.update(SET_ANONYMOUS_STATUS, isAnonymous, feedbackId)).thenReturn(1);
 
-    repository.setAnonymousStatus(feedbackId, isAnonymous);
+    repository.updateAnonymousStatus(feedbackId, isAnonymous);
 
     verify(jdbc).update(SET_ANONYMOUS_STATUS, isAnonymous, feedbackId);
   }
 
   @Test
-  void testSetAnonymousStatusToFalse() {
+  void testUpdateAnonymousStatusToFalse() {
     Long feedbackId = 1L;
     Boolean isAnonymous = false;
     when(jdbc.update(SET_ANONYMOUS_STATUS, isAnonymous, feedbackId)).thenReturn(1);
 
-    repository.setAnonymousStatus(feedbackId, isAnonymous);
+    repository.updateAnonymousStatus(feedbackId, isAnonymous);
 
     verify(jdbc).update(SET_ANONYMOUS_STATUS, isAnonymous, feedbackId);
   }
@@ -159,6 +160,19 @@ class PostgresFeedbackRepositoryTest {
         .thenThrow(new RuntimeException("DB error"));
 
     assertThrows(RuntimeException.class, () -> repository.findById(feedbackId));
+  }
+
+  @Test
+  void testGetAllThrowsFeedbackNotFoundException() {
+    FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().reviewerId(1L).build();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenThrow(
+            new com.wcc.platform.domain.exceptions.FeedbackNotFoundException(
+                "Invalid search criteria"));
+
+    assertThrows(
+        com.wcc.platform.domain.exceptions.FeedbackNotFoundException.class,
+        () -> repository.getAll(criteria));
   }
 
   @Test
@@ -194,10 +208,7 @@ class PostgresFeedbackRepositoryTest {
     assertNotNull(result);
     assertTrue(result.isEmpty());
     verify(jdbc)
-        .query(
-            eq("SELECT * FROM feedback WHERE 1=1"),
-            any(org.springframework.jdbc.core.RowMapper.class),
-            eq(new Object[0]));
+        .query(eq("SELECT * FROM feedback WHERE 1=1"), any(RowMapper.class), eq(new Object[0]));
   }
 
   @Test
@@ -229,5 +240,281 @@ class PostgresFeedbackRepositoryTest {
                 "SELECT * FROM feedback WHERE 1=1 AND reviewer_id = ? AND reviewee_id = ? AND feedback_year = ?"),
             any(RowMapper.class),
             eq(new Object[] {reviewerId, revieweeId, year}));
+  }
+
+  @Test
+  void testGetAllWithReviewerIdOnly() {
+    Long reviewerId = 1L;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder().reviewerId(reviewerId).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND reviewer_id = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {reviewerId}));
+  }
+
+  @Test
+  void testGetAllWithRevieweeIdOnly() {
+    Long revieweeId = 2L;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder().revieweeId(revieweeId).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND reviewee_id = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {revieweeId}));
+  }
+
+  @Test
+  void testGetAllWithFeedbackTypeOnly() {
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder()
+            .feedbackType(com.wcc.platform.domain.platform.type.FeedbackType.MENTOR_REVIEW)
+            .build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND feedback_type_id = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {1}));
+  }
+
+  @Test
+  void testGetAllWithYearOnly() {
+    Integer year = 2026;
+    FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().year(year).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND feedback_year = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {year}));
+  }
+
+  @Test
+  void testGetAllWithMentorshipCycleIdOnly() {
+    Long mentorshipCycleId = 5L;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder().mentorshipCycleId(mentorshipCycleId).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND mentorship_cycle_id = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {mentorshipCycleId}));
+  }
+
+  @Test
+  void testGetAllWithIsApprovedTrue() {
+    Boolean isApproved = true;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder().isApproved(isApproved).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND is_approved = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {isApproved}));
+  }
+
+  @Test
+  void testGetAllWithIsApprovedFalse() {
+    Boolean isApproved = false;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder().isApproved(isApproved).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND is_approved = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {isApproved}));
+  }
+
+  @Test
+  void testGetAllWithIsAnonymousTrue() {
+    Boolean isAnonymous = true;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder().isAnonymous(isAnonymous).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND is_anonymous = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {isAnonymous}));
+  }
+
+  @Test
+  void testGetAllWithIsAnonymousFalse() {
+    Boolean isAnonymous = false;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder().isAnonymous(isAnonymous).build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND is_anonymous = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {isAnonymous}));
+  }
+
+  @Test
+  void testGetAllWithAllCriteria() {
+    Long reviewerId = 1L;
+    Long revieweeId = 2L;
+    Long mentorshipCycleId = 3L;
+    Integer year = 2026;
+    Boolean isApproved = true;
+    Boolean isAnonymous = false;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder()
+            .reviewerId(reviewerId)
+            .revieweeId(revieweeId)
+            .feedbackType(com.wcc.platform.domain.platform.type.FeedbackType.MENTOR_REVIEW)
+            .year(year)
+            .mentorshipCycleId(mentorshipCycleId)
+            .isApproved(isApproved)
+            .isAnonymous(isAnonymous)
+            .build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(jdbc)
+        .query(
+            eq(
+                "SELECT * FROM feedback WHERE 1=1 AND reviewer_id = ? AND reviewee_id = ?"
+                    + " AND feedback_type_id = ? AND feedback_year = ? AND mentorship_cycle_id = ?"
+                    + " AND is_approved = ? AND is_anonymous = ?"),
+            any(RowMapper.class),
+            eq(
+                new Object[] {
+                  reviewerId, revieweeId, 1, year, mentorshipCycleId, isApproved, isAnonymous
+                }));
+  }
+
+  @Test
+  void testGetAllWithFeedbackTypeAndYear() {
+    Integer year = 2026;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder()
+            .feedbackType(com.wcc.platform.domain.platform.type.FeedbackType.COMMUNITY_GENERAL)
+            .year(year)
+            .build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND feedback_type_id = ? AND feedback_year = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {2, year}));
+  }
+
+  @Test
+  void testGetAllWithMentorshipCycleAndApproved() {
+    Long mentorshipCycleId = 10L;
+    Boolean isApproved = true;
+    FeedbackSearchCriteria criteria =
+        FeedbackSearchCriteria.builder()
+            .mentorshipCycleId(mentorshipCycleId)
+            .isApproved(isApproved)
+            .build();
+
+    Feedback feedback = createMentorReviewFeedbackTest();
+    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+        .thenReturn(java.util.List.of(feedback));
+
+    var result = repository.getAll(criteria);
+
+    assertNotNull(result);
+    verify(jdbc)
+        .query(
+            eq("SELECT * FROM feedback WHERE 1=1 AND mentorship_cycle_id = ? AND is_approved = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {mentorshipCycleId, isApproved}));
   }
 }

@@ -16,8 +16,13 @@ public class FeedbackValidator implements ConstraintValidator<ValidFeedback, Fee
 
     context.disableDefaultConstraintViolation();
 
-    boolean isValid = true;
+    return validateMentorshipCycle(dto, context)
+        && validateRevieweeId(dto, context)
+        && validateRating(dto, context);
+  }
 
+  private boolean validateMentorshipCycle(
+      final FeedbackDto dto, final ConstraintValidatorContext context) {
     // Validate mentorshipCycleId for MENTORSHIP_PROGRAM and MENTOR_REVIEW
     if ((dto.getFeedbackType() == FeedbackType.MENTORSHIP_PROGRAM
             || dto.getFeedbackType() == FeedbackType.MENTOR_REVIEW)
@@ -27,18 +32,25 @@ public class FeedbackValidator implements ConstraintValidator<ValidFeedback, Fee
               "mentorshipCycleId is required for " + dto.getFeedbackType() + " feedback")
           .addPropertyNode("mentorshipCycleId")
           .addConstraintViolation();
-      isValid = false;
+      return false;
     }
+    return true;
+  }
 
+  private boolean validateRevieweeId(
+      final FeedbackDto dto, final ConstraintValidatorContext context) {
     // Validate revieweeId for MENTOR_REVIEW
     if (dto.getFeedbackType() == FeedbackType.MENTOR_REVIEW && dto.getRevieweeId() == null) {
       context
           .buildConstraintViolationWithTemplate("revieweeId is required for MENTOR_REVIEW feedback")
           .addPropertyNode("revieweeId")
           .addConstraintViolation();
-      isValid = false;
+      return false;
     }
+    return true;
+  }
 
+  private boolean validateRating(final FeedbackDto dto, final ConstraintValidatorContext context) {
     // Validate rating for MENTOR_REVIEW and MENTORSHIP_PROGRAM
     if ((dto.getFeedbackType() == FeedbackType.MENTOR_REVIEW
             || dto.getFeedbackType() == FeedbackType.MENTORSHIP_PROGRAM)
@@ -48,9 +60,8 @@ public class FeedbackValidator implements ConstraintValidator<ValidFeedback, Fee
               "rating is required for " + dto.getFeedbackType() + " feedback")
           .addPropertyNode("rating")
           .addConstraintViolation();
-      isValid = false;
+      return false;
     }
-
-    return isValid;
+    return true;
   }
 }

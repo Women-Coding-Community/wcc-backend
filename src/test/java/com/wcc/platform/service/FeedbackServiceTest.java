@@ -83,7 +83,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should create community general feedback without reviewee")
-  void testCreateCommunityGeneralFeedback_NoReviewee() {
+  void testCreateCommunityGeneralFeedbackNoReviewee() {
     when(memberRepository.findById(communityFeedbackDto.getReviewerId()))
         .thenReturn(Optional.of(reviewer));
     when(feedbackRepository.create(any(Feedback.class))).thenReturn(communityFeedback);
@@ -98,7 +98,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should create mentorship program feedback")
-  void testCreateMentorshipProgramFeedback_Success() {
+  void testCreateMentorshipProgramFeedbackSuccess() {
     when(memberRepository.findById(mentorshipFeedbackDto.getReviewerId()))
         .thenReturn(Optional.of(reviewer));
     when(feedbackRepository.create(any(Feedback.class))).thenReturn(mentorshipFeedback);
@@ -114,7 +114,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should throw MemberNotFoundException when reviewer not found")
-  void testCreateFeedback_ReviewerNotFound() {
+  void testCreateFeedbackReviewerNotFound() {
     when(memberRepository.findById(feedbackDto.getReviewerId())).thenReturn(Optional.empty());
 
     assertThrows(MemberNotFoundException.class, () -> service.createFeedback(feedbackDto));
@@ -123,7 +123,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should throw MemberNotFoundException when reviewee not found")
-  void testCreateFeedback_RevieweeNotFound() {
+  void testCreateFeedbackRevieweeNotFound() {
     when(memberRepository.findById(feedbackDto.getReviewerId())).thenReturn(Optional.of(reviewer));
     when(memberRepository.findById(feedbackDto.getRevieweeId())).thenReturn(Optional.empty());
 
@@ -151,7 +151,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should throw FeedbackNotFoundException when updating non-existent feedback")
-  void testUpdateFeedback_NotFound() {
+  void testUpdateFeedbackNotFound() {
     final Long feedbackId = 999L;
     when(feedbackRepository.findById(feedbackId)).thenReturn(Optional.empty());
 
@@ -174,7 +174,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should throw FeedbackNotFoundException when getting non-existent feedback")
-  void testGetFeedbackById_NotFound() {
+  void testGetFeedbackByIdNotFound() {
     final Long feedbackId = 999L;
     when(feedbackRepository.findById(feedbackId)).thenReturn(Optional.empty());
 
@@ -194,7 +194,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should throw FeedbackNotFoundException when approving non-existent feedback")
-  void testApproveFeedback_NotFound() {
+  void testApproveFeedbackNotFound() {
     final Long feedbackId = 999L;
     when(feedbackRepository.findById(feedbackId)).thenReturn(Optional.empty());
 
@@ -204,13 +204,13 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should set feedback anonymous status successfully")
-  void testSetFeedbackAnonymousStatus() {
+  void testUpdateFeedbackAnonymousStatus() {
     final Long feedbackId = 1L;
     when(feedbackRepository.findById(feedbackId)).thenReturn(Optional.of(feedback));
 
-    service.setFeedbackAnonymousStatus(feedbackId, true);
+    service.updateFeedbackAnonymousStatus(feedbackId, true);
 
-    verify(feedbackRepository, times(1)).setAnonymousStatus(feedbackId, true);
+    verify(feedbackRepository, times(1)).updateAnonymousStatus(feedbackId, true);
   }
 
   @Test
@@ -226,7 +226,7 @@ class FeedbackServiceTest {
 
   @Test
   @DisplayName("Should throw FeedbackNotFoundException when deleting non-existent feedback")
-  void testDeleteFeedback_NotFound() {
+  void testDeleteFeedbackNotFound() {
     final Long feedbackId = 999L;
     when(feedbackRepository.findById(feedbackId)).thenReturn(Optional.empty());
 

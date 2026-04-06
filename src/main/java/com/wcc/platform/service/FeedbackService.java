@@ -99,13 +99,13 @@ public class FeedbackService {
     feedbackRepository.approveFeedback(feedbackId);
   }
 
-  /** Set anonymous status of feedback (to hide/show reviewer name). */
-  public void setFeedbackAnonymousStatus(final Long feedbackId, final Boolean isAnonymous) {
+  /** Update anonymous status of feedback (to hide/show reviewer name). */
+  public void updateFeedbackAnonymousStatus(final Long feedbackId, final Boolean isAnonymous) {
     feedbackRepository
         .findById(feedbackId)
         .orElseThrow(() -> new FeedbackNotFoundException(feedbackId));
 
-    feedbackRepository.setAnonymousStatus(feedbackId, isAnonymous);
+    feedbackRepository.updateAnonymousStatus(feedbackId, isAnonymous);
   }
 
   /** Delete feedback by ID. */
