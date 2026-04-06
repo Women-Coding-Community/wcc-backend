@@ -195,8 +195,8 @@ class PostgresMenteeApplicationRepositoryNewMethodsIntegrationTest extends Defau
         applicationRepository.findPendingByMenteeId(mentee.getId());
 
     assertThat(result).hasSize(2);
-    assertThat(result.get(0).getPriorityOrder()).isEqualTo(1);
-    assertThat(result.get(1).getPriorityOrder()).isEqualTo(2);
+    assertThat(result.getFirst().getPriorityOrder()).isEqualTo(1);
+    assertThat(result.getLast().getPriorityOrder()).isEqualTo(2);
   }
 
   private MenteeApplication createApplication(
