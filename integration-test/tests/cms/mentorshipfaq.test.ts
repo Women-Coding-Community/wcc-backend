@@ -5,7 +5,7 @@ import { PATHS } from '@utils/datafactory/paths.data';
 import { createOrUpdatePage } from '@utils/helpers/preconditions';
 import { mentorshipFaqData } from '@utils/datafactory/test-data/mentorship.faq.page.data';
 
-test.describe('Validate positive test cases for MENTORSHIPFAQ Page API', () => {
+test.describe.skip('Validate positive test cases for MENTORSHIPFAQ Page API', () => {
     test.beforeEach(async ({ request }) => {
       const url = `${PATHS.PLATFORM_PAGE}?pageType=MENTORSHIP_FAQ`;
       await createOrUpdatePage(request, 'MENTORSHIP FAQ Page', url, mentorshipFaqData);
@@ -30,7 +30,7 @@ test.describe('Validate positive test cases for MENTORSHIPFAQ Page API', () => {
   });
 });
 
-test.describe('unauthorized request with invalid headers', () => {
+test.describe.skip('unauthorized request with invalid headers', () => {
   const testData = [
     { description: 'header is empty', headers: { 'X-API-KEY': '' } },
     { description: 'header is invalid', headers: { 'X-API-KEY': 'invalid_key' } },

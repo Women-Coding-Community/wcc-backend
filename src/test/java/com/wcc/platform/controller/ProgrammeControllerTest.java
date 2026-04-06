@@ -1,6 +1,7 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.platform.type.ProgramType.BOOK_CLUB;
+import static com.wcc.platform.factories.SetUpProgrammesFactories.createProgrammesPageTest;
 import static com.wcc.platform.factories.SetupProgrammeFactories.createProgrammePageTest;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(ProgrammeController.class)
 class ProgrammeControllerTest {
   public static final String API_PROGRAMME = "/api/cms/v1/program";
+  public static final String API_PROGRAMMES = "/api/cms/v1/programmes";
   public static final String PROG_TYPE_BOOK_CLUB = "?type=BOOK_CLUB";
   private static final String PROG_BOOK_CLUB = "init-data/bookClubPage.json";
 
@@ -65,6 +67,19 @@ class ProgrammeControllerTest {
             MockMvcRequestFactory.getRequest(
                     String.format("%s%s", API_PROGRAMME, PROG_TYPE_BOOK_CLUB))
                 .contentType(APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().json(expectedJson));
+  }
+
+  @Test
+  void testGetProgrammesPage() throws Exception {
+    var page = createProgrammesPageTest();
+    var expectedJson = objectMapper.writeValueAsString(page);
+
+    when(service.getAllProgrammes()).thenReturn(page);
+
+    mockMvc
+        .perform(MockMvcRequestFactory.getRequest(API_PROGRAMMES).contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
   }

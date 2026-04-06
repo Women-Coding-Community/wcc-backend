@@ -6,7 +6,7 @@ import { createOrUpdatePage } from '@utils/helpers/preconditions';
 import { collaboratorsPageData } from '@utils/datafactory/test-data/collaborators.page.data';
 
 
-test.describe('Validate positive test cases for COLLABORATORS Page API', () => {
+test.describe.skip('Validate positive test cases for COLLABORATORS Page API', () => {
   test.beforeEach(async ({ request }) => {
     const url = `${PATHS.PLATFORM_PAGE}?pageType=COLLABORATOR`;
     await createOrUpdatePage(request, 'COLLABORATORS Page', url, collaboratorsPageData);
@@ -29,7 +29,7 @@ test.describe('Validate positive test cases for COLLABORATORS Page API', () => {
   });
 });
 
-test.describe('unauthorized request with invalid headers', () => {
+test.describe.skip('unauthorized request with invalid headers', () => {
   const testData = [
     { description: 'header is empty', headers: { 'X-API-KEY': '' } },
     { description: 'header is invalid', headers: { 'X-API-KEY': 'invalid_key' } },

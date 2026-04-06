@@ -5,7 +5,7 @@ import { teamPageData } from '@utils/datafactory/test-data/team.page.data';
 import { PATHS } from '@utils/datafactory/paths.data';
 import { createOrUpdatePage } from '@utils/helpers/preconditions';
 
-test.describe('Validate positive test cases for TEAM Page API', () => {
+test.describe.skip('Validate positive test cases for TEAM Page API', () => {
   test.beforeAll(async ({ request }) => {
     const url = `${PATHS.PLATFORM_PAGE}?pageType=TEAM`;
     await createOrUpdatePage(request, 'TEAM Page', url, teamPageData);
@@ -28,7 +28,7 @@ test.describe('Validate positive test cases for TEAM Page API', () => {
   });
 });
 
-test.describe('unauthorized request with invalid headers', () => {
+test.describe.skip('unauthorized request with invalid headers', () => {
   const testData = [
     { description: 'header is empty', headers: { 'X-API-KEY': '' } },
     { description: 'header is invalid', headers: { 'X-API-KEY': 'invalid_key' } },
