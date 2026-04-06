@@ -1,7 +1,10 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.domain.cms.PageType.PROGRAMMES;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
+import com.wcc.platform.domain.cms.pages.programme.ProgrammesPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.type.ProgramType;
@@ -27,7 +30,7 @@ public class ProgrammeService {
   }
 
   /**
-   * API to fetch details about different type of programmes.
+   * API to fetch details about different types of programmes.
    *
    * @return Programme Page json response
    */
@@ -62,5 +65,18 @@ public class ProgrammeService {
       log.error("Error while creating page: {}, {}", programType, page.toString(), e);
       throw new PlatformInternalException(programType, e);
     }
+  }
+
+  /** Get the page with all programmes. */
+  public ProgrammesPage getAllProgrammes() {
+    final var page = pageRepository.findById(PROGRAMMES.getId());
+    if (page.isPresent()) {
+      try {
+        return objectMapper.convertValue(page.get(), ProgrammesPage.class);
+      } catch (IllegalArgumentException e) {
+        throw new PlatformInternalException(e.getMessage(), e);
+      }
+    }
+    return pageRepository.getFallback(PROGRAMMES, ProgrammesPage.class, objectMapper);
   }
 }
