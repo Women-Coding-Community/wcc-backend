@@ -7,7 +7,8 @@ groups warrant separate pull requests.
 ## When to apply
 
 Run this workflow when the user asks to split changes into separate commits,
-wants help organising a large diff before committing, or invokes `/split-commits`.
+wants help organising a large diff before committing, or uses an
+agent-specific shortcut such as `/split-commits` in Claude Code.
 
 ---
 
@@ -170,7 +171,7 @@ After all groups are committed, output:
 
 PR suggestions:
   • <description of which commits to bundle into each PR and why>
-  • Use /open-pr to generate the PR description for each branch.
+  • Use the `open-pr` workflow to generate the PR description for each branch.
 ```
 
 If groups with `depends on` relationships exist, suggest the order in which to
@@ -186,4 +187,5 @@ open PRs and whether to stack them or wait for the dependency to merge first.
 - Stop immediately if sensitive data is detected
 - Never force-push
 - Do not create commits until the user confirms the grouping in Step 4
-- If only one logical group exists, tell the user and suggest `/commit` instead
+- If only one logical group exists, tell the user and suggest the `commit`
+  workflow instead

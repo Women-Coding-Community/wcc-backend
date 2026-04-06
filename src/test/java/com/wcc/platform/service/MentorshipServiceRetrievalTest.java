@@ -2,7 +2,7 @@ package com.wcc.platform.service;
 
 import static com.wcc.platform.factories.SetupMentorFactories.createMemberProfilePictureTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createResourceTest;
-import static com.wcc.platform.service.MentorshipService.CYCLE_CLOSED;
+import static com.wcc.platform.service.MentorshipService.CLOSED_CYCLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
@@ -13,16 +13,17 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import com.wcc.platform.domain.cms.attributes.ImageType;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Month;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,7 @@ class MentorshipServiceRetrievalTest {
 
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
+  @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private UserProvisionService userProvisionService;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
@@ -45,17 +47,15 @@ class MentorshipServiceRetrievalTest {
 
   @BeforeEach
   void setUp() {
-    final var daysOpen = 10;
-
     MockitoAnnotations.openMocks(this);
     service =
         spy(
             new MentorshipService(
                 mentorRepository,
                 memberRepository,
+                cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                daysOpen,
                 notificationService));
   }
 
@@ -63,13 +63,14 @@ class MentorshipServiceRetrievalTest {
   void whenGetAllMentorsGivenCycleClosedThenReturnDtos() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(mentor.toDto()).thenReturn(dto);
     when(mentorRepository.getAll()).thenReturn(List.of(mentor));
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    doReturn(CLOSED_CYCLE).when(service).getCurrentCycle();
 
-    var result = service.getAllMentors();
+    var result = service.getAllActiveMentors();
 
     assertThat(result).hasSize(1);
   }
@@ -78,14 +79,19 @@ class MentorshipServiceRetrievalTest {
   void whenGetAllMentorsGivenAdHocCycleOpenThenReturnDtos() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(mentor.toDto(any())).thenReturn(dto);
     when(dto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(mentor));
 
-    var cycle = new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY);
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .mentorshipType(MentorshipType.AD_HOC)
+            .cycleMonth(Month.MAY)
+            .build();
     doReturn(cycle).when(service).getCurrentCycle();
 
-    var result = service.getAllMentors();
+    var result = service.getAllActiveMentors();
 
     assertThat(result).hasSize(1);
   }
@@ -94,15 +100,20 @@ class MentorshipServiceRetrievalTest {
   void whenGetAllMentorsGivenLongTermCycleOpenThenReturnDtos() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(mentor.toDto(any())).thenReturn(dto);
     when(dto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(mentor));
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
 
-    var cycle = new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .mentorshipType(MentorshipType.LONG_TERM)
+            .cycleMonth(Month.MARCH)
+            .build();
     doReturn(cycle).when(service).getCurrentCycle();
 
-    var result = service.getAllMentors();
+    var result = service.getAllActiveMentors();
 
     assertThat(result).hasSize(1);
   }
@@ -112,42 +123,30 @@ class MentorshipServiceRetrievalTest {
   }
 
   @Test
-  void testGetCurrentCycleReturnsLongTermDuringMarchWithinOpenDays() {
-    var marchDate = ZonedDateTime.of(2024, 3, 5, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(marchDate).when(service).nowLondon();
+  void testGetCurrentCycleReturnsOpenCycle() {
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .mentorshipType(MentorshipType.LONG_TERM)
+            .cycleMonth(Month.MARCH)
+            .status(CycleStatus.OPEN)
+            .build();
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
 
     var result = service.getCurrentCycle();
 
-    assertEquals(MentorshipType.LONG_TERM, result.cycle());
+    assertEquals(MentorshipType.LONG_TERM, result.getMentorshipType());
+    assertEquals(Month.MARCH, result.getCycleMonth());
   }
 
   @Test
-  void testGetCurrentCycleReturnsAdHocFromMayWithinOpenDays() {
-    var mayDate = ZonedDateTime.of(2024, 5, 5, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(mayDate).when(service).nowLondon();
+  void testGetCurrentCycleReturnsClosedWhenNoOpenCycle() {
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.empty());
 
-    var result = service.getCurrentCycle();
-
-    assertEquals(MentorshipType.AD_HOC, result.cycle());
-    assertEquals(Month.MAY, result.month());
-  }
-
-  @Test
-  void testGetCurrentCycleReturnsClosedOutsideWindows() {
-    // January - Closed
-    var janDate = ZonedDateTime.of(2024, 1, 5, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(janDate).when(service).nowLondon();
-    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
-
-    // March after 10 days - Closed
-    var marchLateDate = ZonedDateTime.of(2024, 3, 15, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(marchLateDate).when(service).nowLondon();
-    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
-
-    // April - Closed
-    var aprilDate = ZonedDateTime.of(2024, 4, 5, 12, 0, 0, 0, ZoneId.of("Europe/London"));
-    doReturn(aprilDate).when(service).nowLondon();
-    assertEquals(CYCLE_CLOSED, service.getCurrentCycle());
+    try {
+      service.getCurrentCycle();
+    } catch (com.wcc.platform.domain.exceptions.MentorshipCycleClosedException e) {
+      assertEquals("Mentorship cycle is closed", e.getMessage());
+    }
   }
 
   @Test
@@ -157,6 +156,7 @@ class MentorshipServiceRetrievalTest {
   void shouldMergeProfilePictureIntoImagesWhenMentorHasProfilePicture() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(mentor.toDto()).thenReturn(dto);
     when(dto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(mentor));
@@ -166,9 +166,9 @@ class MentorshipServiceRetrievalTest {
     var profilePicture = createMemberProfilePictureTest(1L).toBuilder().resource(resource).build();
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.of(profilePicture));
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    doReturn(CLOSED_CYCLE).when(service).getCurrentCycle();
 
-    var result = service.getAllMentors();
+    var result = service.getAllActiveMentors();
 
     assertThat(result).hasSize(1);
     var mentorDtoResult = result.getFirst();
@@ -185,14 +185,15 @@ class MentorshipServiceRetrievalTest {
   void shouldReturnEmptyImagesWhenMentorHasNoProfilePicture() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(mentor.toDto()).thenReturn(dto);
     when(dto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(mentor));
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    doReturn(CLOSED_CYCLE).when(service).getCurrentCycle();
 
-    var result = service.getAllMentors();
+    var result = service.getAllActiveMentors();
 
     assertThat(result).hasSize(1);
     var mentorDto = result.getFirst();
@@ -206,14 +207,15 @@ class MentorshipServiceRetrievalTest {
   void shouldHandleExceptionWhenFetchingProfilePictureFails() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(mentor.toDto()).thenReturn(dto);
     when(dto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(mentor));
     when(profilePicRepo.findByMemberId(1L)).thenThrow(new RuntimeException("Database error"));
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    doReturn(CLOSED_CYCLE).when(service).getCurrentCycle();
 
-    var result = service.getAllMentors();
+    var result = service.getAllActiveMentors();
 
     assertThat(result).hasSize(1);
     var mentorDtoResult = result.getFirst();
@@ -226,6 +228,7 @@ class MentorshipServiceRetrievalTest {
   void shouldPreservePronounsWhenEnrichedWithProfilePicture() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
     when(mentor.toDto()).thenReturn(dto);
     when(dto.getId()).thenReturn(1L);
     when(dto.getPronouns()).thenReturn("they/them");
@@ -237,9 +240,9 @@ class MentorshipServiceRetrievalTest {
     var profilePicture = createMemberProfilePictureTest(1L).toBuilder().resource(resource).build();
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.of(profilePicture));
 
-    doReturn(CYCLE_CLOSED).when(service).getCurrentCycle();
+    doReturn(CLOSED_CYCLE).when(service).getCurrentCycle();
 
-    var result = service.getAllMentors();
+    var result = service.getAllActiveMentors();
 
     assertThat(result).hasSize(1);
     var mentorDtoResult = result.getFirst();

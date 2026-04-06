@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,7 +35,7 @@ class EmailTemplateServiceTest {
 
   @BeforeEach
   void setUp() {
-    emailTemplateService = new EmailTemplateService(yamlObjectMapper);
+    emailTemplateService = new EmailTemplateService(yamlObjectMapper, "WCC Mentorship Team");
   }
 
   @Test
@@ -78,6 +79,47 @@ class EmailTemplateServiceTest {
             () -> emailTemplateService.renderTemplate(TemplateType.FEEDBACK_MENTOR_ADHOC, params))
         .isInstanceOf(TemplateValidationException.class)
         .hasMessageContaining("Missing required parameters: [menteeName]");
+  }
+
+  @Test
+  @DisplayName(
+      "Given template contains teamEmailSignature placeholder and caller omits it, when rendering template, then should use default signature")
+  void shouldUseDefaultTeamEmailSignatureWhenNotProvided() throws IOException {
+    var subject = "Hello";
+    var body = "Body with {{teamEmailSignature}}";
+    Template template = new Template(subject, body);
+
+    Map<String, Template> templates = new HashMap<>();
+    templates.put(TemplateType.FEEDBACK_MENTOR_ADHOC.name(), template);
+
+    when(yamlObjectMapper.readValue(any(InputStream.class), any(TypeReference.class)))
+        .thenReturn(templates);
+
+    RenderedTemplate result =
+        emailTemplateService.renderTemplate(TemplateType.FEEDBACK_MENTOR_ADHOC, Map.of());
+
+    assertThat(result.body()).contains("WCC Mentorship Team");
+  }
+
+  @Test
+  @DisplayName(
+      "Given caller provides teamEmailSignature, when rendering template, then caller value overrides the default")
+  void shouldAllowCallerToOverrideTeamEmailSignature() throws IOException {
+    var subject = "Hello";
+    var body = "Body with {{teamEmailSignature}}";
+    Template template = new Template(subject, body);
+
+    Map<String, Template> templates = new HashMap<>();
+    templates.put(TemplateType.FEEDBACK_MENTOR_ADHOC.name(), template);
+
+    when(yamlObjectMapper.readValue(any(InputStream.class), any(TypeReference.class)))
+        .thenReturn(templates);
+
+    RenderedTemplate result =
+        emailTemplateService.renderTemplate(
+            TemplateType.FEEDBACK_MENTOR_ADHOC, Map.of("teamEmailSignature", "Custom Team"));
+
+    assertThat(result.body()).contains("Custom Team");
   }
 
   @Test

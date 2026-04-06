@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
@@ -51,7 +52,8 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     cleanupMentor(setupMentor);
     pageRepository.deleteById(MENTORS.getId());
     pageService.create(MENTORS, page);
-    service.create(setupMentor);
+    setupMentor = service.create(setupMentor);
+    repository.updateProfileStatus(setupMentor.getId(), ProfileStatus.ACTIVE);
   }
 
   @AfterEach
@@ -66,7 +68,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
   void shouldReturnMentorsPageWithMentorsAndOpenCycle() {
     var mentorsPage = service.getMentorsPage(page);
 
-    assertThat(service.getAllMentors()).isNotEmpty();
+    assertThat(service.getAllActiveMentors()).isNotEmpty();
     assertThat(mentorsPage.openCycle()).isNotNull();
     var mentors = mentorsPage.mentors();
     assertThat(mentors).isNotEmpty();
@@ -81,6 +83,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
     var createdMentor = repository.create(mentor);
+    repository.updateProfileStatus(createdMentor.getId(), ProfileStatus.ACTIVE);
 
     var resource =
         createResourceTest().toBuilder()
@@ -97,7 +100,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             .build();
     profilePicRepository.create(profilePicture);
 
-    var mentors = service.getAllMentors();
+    var mentors = service.getAllActiveMentors();
 
     var mentorWithPicture =
         mentors.stream()
@@ -125,8 +128,9 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
     var createdMentor = repository.create(mentor);
+    repository.updateProfileStatus(createdMentor.getId(), ProfileStatus.ACTIVE);
 
-    var mentors = service.getAllMentors();
+    var mentors = service.getAllActiveMentors();
 
     var mentorWithoutPicture =
         mentors.stream()
@@ -207,6 +211,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
     var createdMentor = repository.create(mentor);
+    repository.updateProfileStatus(createdMentor.getId(), ProfileStatus.ACTIVE);
 
     var resource =
         createResourceTest().toBuilder()
@@ -223,7 +228,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             .build();
     profilePicRepository.create(profilePicture);
 
-    var mentors = service.getAllMentors();
+    var mentors = service.getAllActiveMentors();
 
     var mentorResult =
         mentors.stream()

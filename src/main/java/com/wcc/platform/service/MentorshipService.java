@@ -8,66 +8,44 @@ import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.utils.FiltersUtil;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /** Platform Service. */
 @Slf4j
 @Service
+@AllArgsConstructor
 @SuppressWarnings({
   "PMD.ExcessiveImports",
   "PMD.TooManyMethods"
 }) // TODO: https://github.com/Women-Coding-Community/wcc-backend/issues/520
 public class MentorshipService {
 
-  /* package */ static final MentorshipCycle CYCLE_CLOSED = new MentorshipCycle(null, null);
+  public static final MentorshipCycleEntity CLOSED_CYCLE =
+      MentorshipCycleEntity.builder().status(CycleStatus.CLOSED).build();
 
-  private static final String EUROPE_LONDON = "Europe/London";
-  private static final MentorshipCycle ACTIVE_LONG_TERM =
-      new MentorshipCycle(MentorshipType.LONG_TERM, Month.MARCH);
   private static final int MINIMUM_HOURS = 2;
-
   private final MentorRepository mentorRepository;
   private final MemberRepository memberRepository;
+  private final MentorshipCycleRepository cycleRepository;
   private final UserProvisionService userProvisionService;
   private final MemberProfilePictureRepository profilePicRepo;
-  private final int daysCycleOpen;
   private final MentorshipNotificationService notificationService;
-
-  @Autowired
-  public MentorshipService(
-      final MentorRepository mentorRepository,
-      final MemberRepository memberRepository,
-      final UserProvisionService userProvisionService,
-      final MemberProfilePictureRepository profilePicRepo,
-      final @Value("${mentorship.daysCycleOpen}") int daysCycleOpen,
-      final MentorshipNotificationService notificationService) {
-    this.mentorRepository = mentorRepository;
-    this.memberRepository = memberRepository;
-    this.userProvisionService = userProvisionService;
-    this.profilePicRepo = profilePicRepo;
-    this.daysCycleOpen = daysCycleOpen;
-    this.notificationService = notificationService;
-  }
 
   /**
    * Create a mentor record.
@@ -133,10 +111,10 @@ public class MentorshipService {
       final MentorsPage mentorsPage, final MentorAppliedFilters filters) {
     final var currentCycle = getCurrentCycle();
 
-    final var mentors = FiltersUtil.applyFilters(getAllMentors(currentCycle), filters);
+    final var mentors = FiltersUtil.applyFilters(getAllActiveMentors(currentCycle), filters);
 
     return mentorsPage.updateUpdate(
-        currentCycle.toOpenCycle(), FiltersUtil.mentorshipAllFilters(), mentors);
+        currentCycle.toOpenCycleValue(), FiltersUtil.mentorshipAllFilters(), mentors);
   }
 
   public MentorsPage getMentorsPage(final MentorsPage mentorsPage) {
@@ -144,48 +122,51 @@ public class MentorshipService {
   }
 
   /**
-   * Return all stored mentors in the current cycle.
+   * Return all mentors ignoring their status and the current cycle. Intended for privileged
+   * (admin/leader) use only.
    *
-   * @return List of mentors.
+   * @return list of all mentor DTOs regardless of {@link ProfileStatus}.
    */
   public List<MentorDto> getAllMentors() {
-    return getAllMentors(getCurrentCycle());
-  }
-
-  private List<MentorDto> getAllMentors(final MentorshipCycle currentCycle) {
-    final var allMentors = mentorRepository.getAll();
-
-    if (currentCycle == CYCLE_CLOSED) {
-      return allMentors.stream().map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
-    }
-
-    return allMentors.stream()
-        .map(mentor -> enrichWithProfilePicture(mentor.toDto(currentCycle)))
+    return mentorRepository.getAll().stream()
+        .map(mentor -> enrichWithProfilePicture(mentor.toDto()))
         .toList();
   }
 
-  /* package */ MentorshipCycle getCurrentCycle() {
-    final ZonedDateTime londonTime = nowLondon();
-    final LocalDate currentDate = londonTime.toLocalDate();
+  /**
+   * Retrieves the mentorship cycle for the given mentorship type and cycle year. If no open cycle
+   * is found, returns a default closed cycle.
+   *
+   * @return The MentorshipCycleEntity
+   */
+  public MentorshipCycleEntity getCurrentCycle() {
+    final var openCycle = cycleRepository.findOpenCycle();
 
-    final var currentMonth = currentDate.getMonth();
-    final int dayOfMonth = currentDate.getDayOfMonth();
-
-    if (currentMonth == Month.MARCH && dayOfMonth <= daysCycleOpen) {
-      return ACTIVE_LONG_TERM;
-    }
-
-    if (currentMonth.getValue() >= Month.MAY.getValue()
-        && currentMonth.getValue() <= Month.NOVEMBER.getValue()
-        && dayOfMonth <= daysCycleOpen) {
-      return new MentorshipCycle(MentorshipType.AD_HOC, currentMonth);
-    }
-
-    return CYCLE_CLOSED;
+    return openCycle.orElse(CLOSED_CYCLE);
   }
 
-  /* package */ ZonedDateTime nowLondon() {
-    return ZonedDateTime.now(ZoneId.of(EUROPE_LONDON));
+  /**
+   * Return all ACTIVE mentors in the current cycle. Mentors with PENDING or REJECTED status are
+   * always excluded regardless of the cycle state.
+   *
+   * @return List of active mentor DTOs.
+   */
+  public List<MentorDto> getAllActiveMentors() {
+    return getAllActiveMentors(getCurrentCycle());
+  }
+
+  private List<MentorDto> getAllActiveMentors(final MentorshipCycleEntity currentCycle) {
+    final var allActiveMentors =
+        mentorRepository.getAll().stream()
+            .filter(m -> m.getProfileStatus() == ProfileStatus.ACTIVE);
+
+    if (currentCycle.getStatus() == CycleStatus.CLOSED) {
+      return allActiveMentors.map(mentor -> enrichWithProfilePicture(mentor.toDto())).toList();
+    }
+
+    return allActiveMentors
+        .map(mentor -> enrichWithProfilePicture(mentor.toDto(currentCycle.toMentorshipCycle())))
+        .toList();
   }
 
   private MentorDto enrichWithProfilePicture(final MentorDto dto) {

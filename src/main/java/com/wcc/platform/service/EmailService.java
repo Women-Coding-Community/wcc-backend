@@ -2,13 +2,16 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
+import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
+import com.wcc.platform.domain.template.RenderedTemplate;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -28,13 +31,16 @@ public class EmailService {
   private final JavaMailSender javaMailSender;
 
   private final String fromEmail;
+  private final EmailTemplateService emailTemplateService;
 
   @Autowired
   public EmailService(
       final JavaMailSender javaMailSender,
-      final @Value("${spring.mail.username}") String fromEmail) {
+      final @Value("${spring.mail.username}") String fromEmail,
+      final EmailTemplateService emailTemplateService) {
     this.javaMailSender = javaMailSender;
     this.fromEmail = fromEmail;
+    this.emailTemplateService = emailTemplateService;
   }
 
   /**
@@ -49,7 +55,8 @@ public class EmailService {
       log.info("Attempting to send email to: {}", emailRequest.getTo());
 
       final MimeMessage message = javaMailSender.createMimeMessage();
-      final var mimeMessageHelper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+      final var mimeMessageHelper =
+          new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
       mimeMessageHelper.setFrom(fromEmail);
       mimeMessageHelper.setTo(emailRequest.getTo());
@@ -83,6 +90,40 @@ public class EmailService {
       log.error("Failed to send email to: {}. Error: {}", emailRequest.getTo(), e.getMessage(), e);
       throw new EmailSendException("Failed to send email to: " + emailRequest.getTo(), e);
     }
+  }
+
+  /**
+   * Sends an email using a pre-defined template with dynamic parameters.
+   *
+   * @param request the template email request containing recipient, template type, parameters and
+   *     optional CC, BCC and reply-to fields
+   * @return an {@link EmailResponse} indicating whether the email was sent successfully
+   */
+  public EmailResponse sendTemplateEmail(final TemplateEmailRequest request) {
+    final RenderedTemplate renderedTemplate =
+        emailTemplateService.renderTemplate(
+            request.getTemplateType(), request.getTemplateParameters());
+
+    final EmailRequest.EmailRequestBuilder emailBuilder =
+        EmailRequest.builder()
+            .to(request.getTo())
+            .subject(renderedTemplate.subject())
+            .body(renderedTemplate.body())
+            .html(request.isHtml());
+
+    if (request.getCc() != null && !request.getCc().isEmpty()) {
+      emailBuilder.cc(request.getCc());
+    }
+
+    if (request.getBcc() != null && !request.getBcc().isEmpty()) {
+      emailBuilder.bcc(request.getBcc());
+    }
+
+    if (StringUtils.isNotBlank(request.getReplyTo())) {
+      emailBuilder.replyTo(request.getReplyTo());
+    }
+
+    return sendEmail(emailBuilder.build());
   }
 
   /**

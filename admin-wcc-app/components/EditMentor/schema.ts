@@ -31,7 +31,7 @@ const linkSchema = z.object({
 
 export const editMentorSchema = z.object({
   fullName: z.string().min(1, 'Full name is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email format'),
+  email: z.email('Invalid email format'),
   position: z.string().min(1, 'Position is required'),
   slackDisplayName: z.string().min(1, 'Slack display name is required'),
   companyName: z.string().optional().default(''),

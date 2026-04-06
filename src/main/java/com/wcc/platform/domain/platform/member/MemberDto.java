@@ -26,6 +26,7 @@ public class MemberDto {
   @Schema(accessMode = Schema.AccessMode.READ_ONLY)
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
+
   private String fullName;
   private String position;
   private String email;

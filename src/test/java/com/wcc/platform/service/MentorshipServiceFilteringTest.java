@@ -17,9 +17,10 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycle;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
@@ -29,6 +30,7 @@ import com.wcc.platform.factories.SetupMentorshipPagesFactories;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
+import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.time.Month;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +45,7 @@ class MentorshipServiceFilteringTest {
 
   @Mock private MentorRepository mentorRepository;
   @Mock private MemberRepository memberRepository;
+  @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private UserProvisionService userProvisionService;
   @Mock private MentorshipNotificationService notificationService;
@@ -55,8 +58,19 @@ class MentorshipServiceFilteringTest {
     service =
         spy(
             new MentorshipService(
-                mentorRepository, memberRepository, userProvisionService, profilePicRepo, 10, notificationService));
-    doReturn(new MentorshipCycle(MentorshipType.AD_HOC, Month.MAY)).when(service).getCurrentCycle();
+                mentorRepository,
+                memberRepository,
+                cycleRepository,
+                userProvisionService,
+                profilePicRepo,
+                notificationService));
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .mentorshipType(MentorshipType.AD_HOC)
+            .cycleMonth(Month.MAY)
+            .status(CycleStatus.OPEN)
+            .build();
+    doReturn(cycle).when(service).getCurrentCycle();
     mentorsPage = SetupMentorshipPagesFactories.createMentorPageTest();
     mentor1 =
         buildMentor(

@@ -5,6 +5,7 @@ import static com.wcc.platform.factories.MockMvcRequestFactory.postRequest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,12 +18,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -406,5 +409,18 @@ class MentorControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].isWomen", is(true)))
         .andExpect(jsonPath("$[1].isWomen", is(false)));
+  }
+
+  @Test
+  @DisplayName(
+      "Given getAllMentors method, when inspecting its annotations,"
+          + " then it should require ADMIN, LEADER or MENTORSHIP_ADMIN role")
+  void shouldRequireAdminLeaderOrMentorshipAdminRoleOnGetAllMentors() throws NoSuchMethodException {
+    var method = MentorController.class.getDeclaredMethod("getAllMentors");
+    var annotation = method.getAnnotation(RequiresRole.class);
+
+    assertThat(annotation).isNotNull();
+    assertThat(annotation.value())
+        .containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN);
   }
 }
