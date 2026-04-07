@@ -193,21 +193,17 @@ export default function MenteesPage() {
                   <TableCell>{mentee.email}</TableCell>
                   <TableCell>{mentee.position ?? '—'}</TableCell>
                   <TableCell>
-                    <Box display="flex" flexDirection="column" gap={0.5}>
-                      {mentee.slackDisplayName && (
-                        <Chip label={mentee.slackDisplayName} size="small" variant="outlined" />
-                      )}
-                      {linkedInUrl(mentee) && (
-                        <Link
-                          href={linkedInUrl(mentee)}
-                          target="_blank"
-                          rel="noreferrer"
-                          variant="body2"
-                        >
-                          LinkedIn
-                        </Link>
-                      )}
-                    </Box>
+                    {mentee.slackDisplayName} |{' '}
+                    {linkedInUrl(mentee) && (
+                      <Link
+                        href={linkedInUrl(mentee)}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant="body2"
+                      >
+                        LinkedIn
+                      </Link>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Chip label="PENDING" color="warning" size="small" />
@@ -277,21 +273,17 @@ export default function MenteesPage() {
                   <TableCell>{mentee.email}</TableCell>
                   <TableCell>{mentee.position ?? '—'}</TableCell>
                   <TableCell>
-                    <Box display="flex" flexDirection="column" gap={0.5}>
-                      {mentee.slackDisplayName && (
-                        <Chip label={mentee.slackDisplayName} size="small" variant="outlined" />
-                      )}
-                      {linkedInUrl(mentee) && (
-                        <Link
-                          href={linkedInUrl(mentee)}
-                          target="_blank"
-                          rel="noreferrer"
-                          variant="body2"
-                        >
-                          LinkedIn
-                        </Link>
-                      )}
-                    </Box>
+                    {mentee.slackDisplayName} |{' '}
+                    {linkedInUrl(mentee) && (
+                      <Link
+                        href={linkedInUrl(mentee)}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant="body2"
+                      >
+                        LinkedIn
+                      </Link>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Chip label="ACTIVE" color="success" size="small" />
