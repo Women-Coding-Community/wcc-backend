@@ -24,7 +24,7 @@ import {
 import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/components/AuthProvider';
 import { getErrorMessage } from '@/lib/api';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
 import {
   acceptApplication,
@@ -49,8 +49,6 @@ function getInitials(name: string): string {
 
 export default function MentorDashboardPage() {
   const { token, member, roles } = useAuth();
-  const router = useRouter();
-
   const [assignedApplications, setAssignedApplications] = useState<MenteeApplication[]>([]);
   const [pendingApplications, setPendingApplications] = useState<MenteeApplication[]>([]);
   const [loading, setLoading] = useState(true);

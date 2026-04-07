@@ -24,7 +24,7 @@ import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/components/AuthProvider';
 import { getErrorMessage } from '@/lib/api';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import {
   activateMentee,
   getActiveMentees,
@@ -40,8 +40,6 @@ function linkedInUrl(mentee: DashboardMentee): string | undefined {
 
 export default function MenteesPage() {
   const { token, roles } = useAuth();
-  const router = useRouter();
-
   const [pendingMentees, setPendingMentees] = useState<DashboardMentee[]>([]);
   const [activeMentees, setActiveMentees] = useState<DashboardMentee[]>([]);
   const [loading, setLoading] = useState(true);
