@@ -83,26 +83,6 @@ public class MenteeApplicationController {
   }
 
   /**
-   * API for admin to reject all PENDING applications of a mentee by mentee ID.
-   *
-   * @param menteeId The mentee ID
-   * @param request Rejection request containing the reason
-   * @return list of all rejected applications
-   */
-  @PatchMapping("/mentees/{menteeId}/reject")
-  @RequiresPermission(Permission.MENTEE_APPROVE)
-  @Operation(
-      summary = "Admin rejects all pending applications for a mentee by mentee ID",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<MenteeApplication>> rejectMenteeByMenteeId(
-      @Parameter(description = "Mentee ID") @PathVariable final Long menteeId,
-      @Valid @RequestBody final ApplicationRejectRequest request) {
-    return ResponseEntity.ok(
-        applicationService.rejectMenteeByMenteeId(menteeId, request.reason()));
-  }
-
-  /**
    * API to get all applications submitted by a mentee for a specific cycle.
    *
    * @param menteeId The mentee ID

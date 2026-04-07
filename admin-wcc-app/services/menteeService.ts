@@ -1,5 +1,9 @@
 import { apiFetch } from '@/lib/api';
-import { MenteeApplication, MenteeApplicationReview } from '@/types/menteeApplication';
+import {
+  DashboardMentee,
+  MenteeApplication,
+  MenteeApplicationReview,
+} from '@/types/menteeApplication';
 
 const BASE = '/api/platform/v1';
 
@@ -84,8 +88,8 @@ export async function rejectMenteeByMenteeId(
   menteeId: number,
   reason: string,
   token: string
-): Promise<MenteeApplication[]> {
-  return apiFetch<MenteeApplication[]>(`${BASE}/mentees/${menteeId}/reject`, {
+): Promise<DashboardMentee> {
+  return apiFetch<DashboardMentee>(`${BASE}/mentees/${menteeId}/reject`, {
     method: 'PATCH',
     body: { reason },
     token,
