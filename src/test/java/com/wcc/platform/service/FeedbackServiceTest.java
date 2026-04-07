@@ -245,8 +245,7 @@ class FeedbackServiceTest {
 
     List<Feedback> result = service.getAllFeedback(null);
 
-    assertThat(result).isNotNull();
-    assertThat(result).hasSize(2);
+    assertThat(result).isNotNull().hasSize(2);
     assertEquals(expectedList, result);
     verify(feedbackRepository).getAll(null);
   }
@@ -263,8 +262,7 @@ class FeedbackServiceTest {
 
     List<Feedback> result = service.getAllFeedback(criteria);
 
-    assertThat(result).isNotNull();
-    assertThat(result).hasSize(2);
+    assertThat(result).isNotNull().hasSize(2);
     assertEquals(expectedList, result);
     verify(feedbackRepository).getAll(criteria);
   }
@@ -293,8 +291,7 @@ class FeedbackServiceTest {
 
     List<Feedback> result = service.getAllFeedback(criteria);
 
-    assertThat(result).isNotNull();
-    assertThat(result).hasSize(2);
+    assertThat(result).isNotNull().hasSize(2);
     assertEquals(expectedList, result);
     verify(memberRepository).findById(reviewerId);
     verify(memberRepository).findById(revieweeId);

@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -158,28 +157,27 @@ class FeedbackMapperTest {
             .isApproved(false)
             .build();
 
-    when(jdbc.queryForObject(eq("SELECT LASTVAL()"), eq(Long.class))).thenReturn(100L);
+    when(jdbc.queryForObject("SELECT LASTVAL()", Long.class)).thenReturn(100L);
 
     Long feedbackId = feedbackMapper.addFeedback(feedback);
 
     assertEquals(100L, feedbackId);
     verify(jdbc)
         .update(
-            eq(
-                "INSERT INTO feedback ("
-                    + "reviewer_id, reviewee_id, mentorship_cycle_id, feedback_type_id, "
-                    + "rating, feedback_text, feedback_year, is_anonymous, is_approved) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
-            eq(1L),
-            eq(2L),
-            eq(5L),
-            eq(1),
-            eq(5),
-            eq("Excellent mentor!"),
-            eq(2026),
-            eq(true),
-            eq(false));
-    verify(jdbc).queryForObject(eq("SELECT LASTVAL()"), eq(Long.class));
+            "INSERT INTO feedback ("
+                + "reviewer_id, reviewee_id, mentorship_cycle_id, feedback_type_id, "
+                + "rating, feedback_text, feedback_year, is_anonymous, is_approved) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            1L,
+            2L,
+            5L,
+            1,
+            5,
+            "Excellent mentor!",
+            2026,
+            true,
+            false);
+    verify(jdbc).queryForObject("SELECT LASTVAL()", Long.class);
   }
 
   @Test
@@ -193,27 +191,26 @@ class FeedbackMapperTest {
             .isApproved(true)
             .build();
 
-    when(jdbc.queryForObject(eq("SELECT LASTVAL()"), eq(Long.class))).thenReturn(200L);
+    when(jdbc.queryForObject("SELECT LASTVAL()", Long.class)).thenReturn(200L);
 
     Long feedbackId = feedbackMapper.addFeedback(feedback);
 
     assertEquals(200L, feedbackId);
     verify(jdbc)
         .update(
-            eq(
-                "INSERT INTO feedback ("
-                    + "reviewer_id, reviewee_id, mentorship_cycle_id, feedback_type_id, "
-                    + "rating, feedback_text, feedback_year, is_anonymous, is_approved) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
-            eq(1L),
-            eq(null),
-            eq(null),
-            eq(2),
-            eq(null),
-            eq("Great community!"),
-            eq(null),
-            eq(false),
-            eq(true));
+            "INSERT INTO feedback ("
+                + "reviewer_id, reviewee_id, mentorship_cycle_id, feedback_type_id, "
+                + "rating, feedback_text, feedback_year, is_anonymous, is_approved) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            1L,
+            null,
+            null,
+            2,
+            null,
+            "Great community!",
+            null,
+            false,
+            true);
   }
 
   @Test
@@ -236,23 +233,22 @@ class FeedbackMapperTest {
 
     verify(jdbc)
         .update(
-            eq(
-                "UPDATE feedback SET "
-                    + "reviewer_id = ?, reviewee_id = ?, mentorship_cycle_id = ?, "
-                    + "feedback_type_id = ?, rating = ?, feedback_text = ?, "
-                    + "feedback_year = ?, is_anonymous = ?, is_approved = ?, "
-                    + "updated_at = CURRENT_TIMESTAMP "
-                    + "WHERE id = ?"),
-            eq(1L),
-            eq(2L),
-            eq(5L),
-            eq(1),
-            eq(4),
-            eq("Updated feedback text"),
-            eq(2026),
-            eq(false),
-            eq(true),
-            eq(feedbackId));
+            "UPDATE feedback SET "
+                + "reviewer_id = ?, reviewee_id = ?, mentorship_cycle_id = ?, "
+                + "feedback_type_id = ?, rating = ?, feedback_text = ?, "
+                + "feedback_year = ?, is_anonymous = ?, is_approved = ?, "
+                + "updated_at = CURRENT_TIMESTAMP "
+                + "WHERE id = ?",
+            1L,
+            2L,
+            5L,
+            1,
+            4,
+            "Updated feedback text",
+            2026,
+            false,
+            true,
+            feedbackId);
   }
 
   @Test
@@ -271,22 +267,21 @@ class FeedbackMapperTest {
 
     verify(jdbc)
         .update(
-            eq(
-                "UPDATE feedback SET "
-                    + "reviewer_id = ?, reviewee_id = ?, mentorship_cycle_id = ?, "
-                    + "feedback_type_id = ?, rating = ?, feedback_text = ?, "
-                    + "feedback_year = ?, is_anonymous = ?, is_approved = ?, "
-                    + "updated_at = CURRENT_TIMESTAMP "
-                    + "WHERE id = ?"),
-            eq(10L),
-            eq(null),
-            eq(null),
-            eq(3),
-            eq(null),
-            eq("Updated program feedback"),
-            eq(null),
-            eq(true),
-            eq(false),
-            eq(feedbackId));
+            "UPDATE feedback SET "
+                + "reviewer_id = ?, reviewee_id = ?, mentorship_cycle_id = ?, "
+                + "feedback_type_id = ?, rating = ?, feedback_text = ?, "
+                + "feedback_year = ?, is_anonymous = ?, is_approved = ?, "
+                + "updated_at = CURRENT_TIMESTAMP "
+                + "WHERE id = ?",
+            10L,
+            null,
+            null,
+            3,
+            null,
+            "Updated program feedback",
+            null,
+            true,
+            false,
+            feedbackId);
   }
 }
