@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MenteesPage from '@/pages/admin/mentees/index';
 import * as AuthProvider from '@/components/AuthProvider';
@@ -141,6 +141,9 @@ describe('MenteesPage', () => {
 
       const rejectBtn = await screen.findByRole('button', { name: /^reject$/i });
       await user.click(rejectBtn);
+
+      const dialog = await screen.findByRole('dialog');
+      expect(within(dialog).getByText('Jane Doe')).toBeInTheDocument();
 
       const reasonField = await screen.findByLabelText(/reason for rejection/i);
       await user.type(

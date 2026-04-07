@@ -49,6 +49,7 @@ export default function MenteesPage() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [rejectTargetId, setRejectTargetId] = useState<number | null>(null);
+  const [rejectTargetName, setRejectTargetName] = useState<string>('');
 
   const canAccess = roles.includes('ADMIN') || roles.includes('MENTORSHIP_ADMIN');
 
@@ -101,8 +102,9 @@ export default function MenteesPage() {
     }
   }
 
-  function openRejectDialog(menteeId: number) {
+  function openRejectDialog(menteeId: number, menteeName: string) {
     setRejectTargetId(menteeId);
+    setRejectTargetName(menteeName);
     setRejectReason('');
     setRejectDialogOpen(true);
   }
@@ -110,6 +112,7 @@ export default function MenteesPage() {
   function closeRejectDialog() {
     setRejectDialogOpen(false);
     setRejectTargetId(null);
+    setRejectTargetName('');
     setRejectReason('');
   }
 
@@ -225,7 +228,7 @@ export default function MenteesPage() {
                         variant="contained"
                         color="error"
                         disabled={submitting}
-                        onClick={() => openRejectDialog(mentee.id)}
+                        onClick={() => openRejectDialog(mentee.id, mentee.fullName)}
                       >
                         Reject
                       </Button>
@@ -303,6 +306,9 @@ export default function MenteesPage() {
       <Dialog open={rejectDialogOpen} onClose={closeRejectDialog} maxWidth="sm" fullWidth>
         <DialogTitle>Reject Mentee</DialogTitle>
         <DialogContent>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Rejecting: <strong>{rejectTargetName}</strong>
+          </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             This will set the mentee status to REJECTED and reject all their pending applications. A
             reason is required (minimum 50 characters).
