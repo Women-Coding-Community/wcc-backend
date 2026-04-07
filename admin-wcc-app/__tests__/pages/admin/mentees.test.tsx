@@ -13,26 +13,27 @@ jest.mock('@/services/menteeService');
 jest.mock('@/lib/auth');
 
 const mockUseAuth = AuthProvider.useAuth as jest.Mock;
-const mockGetPending = menteeService.getPendingMenteeApplications as jest.Mock;
-const mockApprove = menteeService.approveApplicationByAdmin as jest.Mock;
-const mockReject = menteeService.rejectApplicationByAdmin as jest.Mock;
+const mockGetPendingMentees = menteeService.getPendingMentees as jest.Mock;
+const mockGetActiveMentees = menteeService.getActiveMentees as jest.Mock;
+const mockActivateMentee = menteeService.activateMentee as jest.Mock;
+const mockRejectMenteeByMenteeId = menteeService.rejectMenteeByMenteeId as jest.Mock;
 const mockGetStoredToken = auth.getStoredToken as jest.Mock;
 const mockIsTokenExpired = auth.isTokenExpired as jest.Mock;
 
-const sampleApplication = {
-  applicationId: 1,
-  menteeId: 42,
-  mentorId: 10,
-  cycleId: 3,
-  priorityOrder: 1,
-  status: 'PENDING',
-  whyMentor: 'I want to learn from you',
-  appliedAt: '2026-01-15T10:00:00Z',
-  createdAt: '2026-01-15T10:00:00Z',
-  updatedAt: '2026-01-15T10:00:00Z',
-  reviewed: false,
-  matched: false,
-  daysSinceApplied: 5,
+const pendingMentee = {
+  id: 42,
+  fullName: 'Jane Doe',
+  email: 'jane@wcc.com',
+  position: 'Software Engineer',
+  profileStatus: 'PENDING',
+};
+
+const activeMentee = {
+  id: 10,
+  fullName: 'Alice Smith',
+  email: 'alice@wcc.com',
+  position: 'Tech Lead',
+  profileStatus: 'ACTIVE',
 };
 
 function setupAuth(roles: string[]) {
@@ -45,56 +46,71 @@ describe('MenteesPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockRouter.setCurrentUrl('/admin/mentees');
+    mockGetActiveMentees.mockResolvedValue([]);
   });
 
   describe('Given user is ADMIN', () => {
-    it('when loaded with pending applications, then they are displayed in a table', async () => {
+    it('when loaded with pending mentees, then they are shown in the pending table', async () => {
       setupAuth(['ADMIN']);
-      mockGetPending.mockResolvedValue([sampleApplication]);
+      mockGetPendingMentees.mockResolvedValue([pendingMentee]);
 
       render(<MenteesPage />);
 
       await waitFor(() => {
-        expect(screen.getByText('1')).toBeInTheDocument();
-        expect(screen.getByText('42')).toBeInTheDocument();
-        expect(screen.getByText('I want to learn from you')).toBeInTheDocument();
+        expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+        expect(screen.getByText('jane@wcc.com')).toBeInTheDocument();
+        expect(screen.getByText('PENDING')).toBeInTheDocument();
       });
     });
 
-    it('when there are no pending applications, then empty state message is shown', async () => {
+    it('when there are no pending mentees, then empty state message is shown', async () => {
       setupAuth(['ADMIN']);
-      mockGetPending.mockResolvedValue([]);
+      mockGetPendingMentees.mockResolvedValue([]);
 
       render(<MenteesPage />);
 
       await waitFor(() => {
-        expect(screen.getByText(/no pending mentee applications/i)).toBeInTheDocument();
+        expect(screen.getByText(/no pending mentees awaiting review/i)).toBeInTheDocument();
       });
     });
 
-    it('when Approve is clicked, then approveApplicationByAdmin is called', async () => {
+    it('when loaded with active mentees, then they are shown in the active table', async () => {
+      setupAuth(['ADMIN']);
+      mockGetPendingMentees.mockResolvedValue([]);
+      mockGetActiveMentees.mockResolvedValue([activeMentee]);
+
+      render(<MenteesPage />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Alice Smith')).toBeInTheDocument();
+        expect(screen.getByText('alice@wcc.com')).toBeInTheDocument();
+        expect(screen.getByText('ACTIVE')).toBeInTheDocument();
+      });
+    });
+
+    it('when Activate is clicked, then activateMentee is called with mentee ID', async () => {
       const user = userEvent.setup();
       setupAuth(['ADMIN']);
-      mockGetPending.mockResolvedValue([sampleApplication]);
-      mockApprove.mockResolvedValue({ ...sampleApplication, status: 'MENTOR_REVIEWING' });
-      mockGetPending.mockResolvedValueOnce([sampleApplication]).mockResolvedValue([]);
+      mockGetPendingMentees.mockResolvedValue([pendingMentee]);
+      mockActivateMentee.mockResolvedValue({ ...pendingMentee, profileStatus: 'ACTIVE' });
+      mockGetPendingMentees.mockResolvedValueOnce([pendingMentee]).mockResolvedValue([]);
 
       render(<MenteesPage />);
 
-      const approveBtn = await screen.findByRole('button', { name: /approve/i });
-      await user.click(approveBtn);
+      const activateBtn = await screen.findByRole('button', { name: /activate/i });
+      await user.click(activateBtn);
 
       await waitFor(() => {
-        expect(mockApprove).toHaveBeenCalledWith(1, 'mock-token');
+        expect(mockActivateMentee).toHaveBeenCalledWith(42, 'mock-token');
       });
     });
 
-    it('when Reject is clicked and reason entered, then rejectApplicationByAdmin is called', async () => {
+    it('when Reject is clicked and reason entered, then rejectMenteeByMenteeId is called', async () => {
       const user = userEvent.setup();
       setupAuth(['ADMIN']);
-      mockGetPending.mockResolvedValue([sampleApplication]);
-      mockReject.mockResolvedValue({ ...sampleApplication, status: 'REJECTED' });
-      mockGetPending.mockResolvedValueOnce([sampleApplication]).mockResolvedValue([]);
+      mockGetPendingMentees.mockResolvedValue([pendingMentee]);
+      mockRejectMenteeByMenteeId.mockResolvedValue({ ...pendingMentee, profileStatus: 'REJECTED' });
+      mockGetPendingMentees.mockResolvedValueOnce([pendingMentee]).mockResolvedValue([]);
 
       render(<MenteesPage />);
 
@@ -102,19 +118,26 @@ describe('MenteesPage', () => {
       await user.click(rejectBtn);
 
       const reasonField = await screen.findByLabelText(/reason for rejection/i);
-      await user.type(reasonField, 'Not a good fit');
+      await user.type(
+        reasonField,
+        'Does not meet the eligibility criteria for this mentorship cycle at this time.'
+      );
 
       const confirmBtn = screen.getByRole('button', { name: /confirm reject/i });
       await user.click(confirmBtn);
 
       await waitFor(() => {
-        expect(mockReject).toHaveBeenCalledWith(1, 'Not a good fit', 'mock-token');
+        expect(mockRejectMenteeByMenteeId).toHaveBeenCalledWith(
+          42,
+          'Does not meet the eligibility criteria for this mentorship cycle at this time.',
+          'mock-token'
+        );
       });
     });
 
-    it('when API fails, then error message is displayed', async () => {
+    it('when API fails on load, then error message is displayed', async () => {
       setupAuth(['ADMIN']);
-      mockGetPending.mockRejectedValue(new Error('Server error'));
+      mockGetPendingMentees.mockRejectedValue(new Error('Server error'));
 
       render(<MenteesPage />);
 
@@ -125,14 +148,14 @@ describe('MenteesPage', () => {
   });
 
   describe('Given user is MENTORSHIP_ADMIN', () => {
-    it('when loaded, then page is accessible and shows applications', async () => {
+    it('when loaded, then page is accessible and shows pending section', async () => {
       setupAuth(['MENTORSHIP_ADMIN']);
-      mockGetPending.mockResolvedValue([sampleApplication]);
+      mockGetPendingMentees.mockResolvedValue([pendingMentee]);
 
       render(<MenteesPage />);
 
       await waitFor(() => {
-        expect(screen.getByText(/pending mentee applications/i)).toBeInTheDocument();
+        expect(screen.getByText(/pending mentees/i)).toBeInTheDocument();
       });
     });
   });
@@ -140,7 +163,7 @@ describe('MenteesPage', () => {
   describe('Given user has no admin role', () => {
     it('when loaded with MENTOR role, then redirects to /admin', async () => {
       setupAuth(['MENTOR']);
-      mockGetPending.mockResolvedValue([]);
+      mockGetPendingMentees.mockResolvedValue([]);
 
       render(<MenteesPage />);
 

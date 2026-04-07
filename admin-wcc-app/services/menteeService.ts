@@ -95,3 +95,18 @@ export async function rejectMenteeByMenteeId(
     token,
   });
 }
+
+export async function getPendingMentees(token: string): Promise<DashboardMentee[]> {
+  return apiFetch<DashboardMentee[]>(`${BASE}/mentees/pending`, { token });
+}
+
+export async function getActiveMentees(token: string): Promise<DashboardMentee[]> {
+  return apiFetch<DashboardMentee[]>(`${BASE}/mentees`, { token });
+}
+
+export async function activateMentee(menteeId: number, token: string): Promise<DashboardMentee> {
+  return apiFetch<DashboardMentee>(`${BASE}/mentees/${menteeId}/activate`, {
+    method: 'PATCH',
+    token,
+  });
+}

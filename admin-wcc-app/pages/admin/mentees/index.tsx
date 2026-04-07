@@ -9,7 +9,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Link,
   Paper,
   Table,
   TableBody,
@@ -24,17 +23,19 @@ import { useAuth } from '@/components/AuthProvider';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
 import { useRouter } from 'next/router';
 import {
-  approveMenteeByMenteeId,
-  getPendingPriorityOneReviews,
+  activateMentee,
+  getActiveMentees,
+  getPendingMentees,
   rejectMenteeByMenteeId,
 } from '@/services/menteeService';
-import { MenteeApplicationReview } from '@/types/menteeApplication';
+import { DashboardMentee } from '@/types/menteeApplication';
 
 export default function MenteesPage() {
   const { token, roles } = useAuth();
   const router = useRouter();
 
-  const [items, setItems] = useState<MenteeApplicationReview[]>([]);
+  const [pendingMentees, setPendingMentees] = useState<DashboardMentee[]>([]);
+  const [activeMentees, setActiveMentees] = useState<DashboardMentee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -55,7 +56,8 @@ export default function MenteesPage() {
     if (roles.length > 0 && !canAccess) {
       router.replace('/admin');
     }
-  }, [router, roles, canAccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roles, canAccess]);
 
   useEffect(() => {
     if (!token || !canAccess) return;
@@ -67,24 +69,28 @@ export default function MenteesPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getPendingPriorityOneReviews(token);
-      setItems(data);
+      const [pending, active] = await Promise.all([
+        getPendingMentees(token),
+        getActiveMentees(token),
+      ]);
+      setPendingMentees(pending);
+      setActiveMentees(active);
     } catch (e: any) {
-      setError(e.message ?? 'Failed to load pending mentee applications');
+      setError(e.message ?? 'Failed to load mentees');
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleApprove(menteeId: number) {
+  async function handleActivate(menteeId: number) {
     if (!token) return;
     setActionError(null);
     setSubmitting(true);
     try {
-      await approveMenteeByMenteeId(menteeId, token);
+      await activateMentee(menteeId, token);
       await loadData();
     } catch (e: any) {
-      setActionError(e.message ?? 'Failed to approve application');
+      setActionError(e.message ?? 'Failed to activate mentee');
     } finally {
       setSubmitting(false);
     }
@@ -111,7 +117,7 @@ export default function MenteesPage() {
       closeRejectDialog();
       await loadData();
     } catch (e: any) {
-      setActionError(e.message ?? 'Failed to reject application');
+      setActionError(e.message ?? 'Failed to reject mentee');
     } finally {
       setSubmitting(false);
     }
@@ -121,9 +127,12 @@ export default function MenteesPage() {
 
   return (
     <AdminLayout>
-      <Paper sx={{ p: 3 }}>
+      <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Pending Mentee Applications (Priority 1)
+          Pending Mentees
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Mentees awaiting admin review. Activate to grant access or reject with a reason.
         </Typography>
 
         {actionError && (
@@ -142,29 +151,23 @@ export default function MenteesPage() {
           <Box display="flex" justifyContent="center" mt={4}>
             <CircularProgress />
           </Box>
-        ) : items.length === 0 ? (
-          <Typography color="text.secondary">No pending mentee applications.</Typography>
+        ) : pendingMentees.length === 0 ? (
+          <Typography color="text.secondary">No pending mentees awaiting review.</Typography>
         ) : (
           <Table size="small">
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.50' }}>
                 <TableCell>
-                  <strong>App ID</strong>
+                  <strong>Name</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Full Name</strong>
+                  <strong>Email</strong>
                 </TableCell>
                 <TableCell>
                   <strong>Position</strong>
                 </TableCell>
                 <TableCell>
-                  <strong>Experience</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Contact</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Mentorship Goal</strong>
+                  <strong>Status</strong>
                 </TableCell>
                 <TableCell align="right">
                   <strong>Actions</strong>
@@ -172,36 +175,13 @@ export default function MenteesPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((app) => (
-                <TableRow key={app.applicationId} hover>
-                  <TableCell>{app.applicationId}</TableCell>
-                  <TableCell>{app.fullName}</TableCell>
-                  <TableCell>{app.position}</TableCell>
+              {pendingMentees.map((mentee) => (
+                <TableRow key={mentee.id} hover>
+                  <TableCell>{mentee.fullName}</TableCell>
+                  <TableCell>{mentee.email}</TableCell>
+                  <TableCell>{mentee.position ?? '—'}</TableCell>
                   <TableCell>
-                    {app.yearsExperience != null
-                      ? `${app.yearsExperience} yr${app.yearsExperience !== 1 ? 's' : ''}`
-                      : '—'}
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" flexDirection="column" gap={0.5}>
-                      <Typography variant="body2">{app.email}</Typography>
-                      <Chip label={app.slackDisplayName} size="small" variant="outlined" />
-                      {app.linkedinUrl && (
-                        <Link
-                          href={app.linkedinUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          variant="body2"
-                        >
-                          LinkedIn
-                        </Link>
-                      )}
-                    </Box>
-                  </TableCell>
-                  <TableCell sx={{ maxWidth: 300 }}>
-                    <Typography variant="body2" noWrap title={app.mentorshipGoal}>
-                      {app.mentorshipGoal}
-                    </Typography>
+                    <Chip label="PENDING" color="warning" size="small" />
                   </TableCell>
                   <TableCell align="right">
                     <Box display="flex" gap={1} justifyContent="flex-end">
@@ -210,18 +190,18 @@ export default function MenteesPage() {
                         variant="contained"
                         color="success"
                         disabled={submitting}
-                        onClick={() => handleApprove(app.menteeId)}
+                        onClick={() => handleActivate(mentee.id)}
                       >
-                        Approve
+                        Activate
                       </Button>
                       <Button
                         size="small"
                         variant="contained"
                         color="error"
                         disabled={submitting}
-                        onClick={() => openRejectDialog(app.menteeId)}
+                        onClick={() => openRejectDialog(mentee.id)}
                       >
-                        Reject All
+                        Reject
                       </Button>
                     </Box>
                   </TableCell>
@@ -232,11 +212,53 @@ export default function MenteesPage() {
         )}
       </Paper>
 
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Active Mentees
+        </Typography>
+
+        {!loading && activeMentees.length === 0 ? (
+          <Typography color="text.secondary">No active mentees.</Typography>
+        ) : !loading ? (
+          <Table size="small">
+            <TableHead>
+              <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableCell>
+                  <strong>Name</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Email</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Position</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Status</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {activeMentees.map((mentee) => (
+                <TableRow key={mentee.id} hover>
+                  <TableCell>{mentee.fullName}</TableCell>
+                  <TableCell>{mentee.email}</TableCell>
+                  <TableCell>{mentee.position ?? '—'}</TableCell>
+                  <TableCell>
+                    <Chip label="ACTIVE" color="success" size="small" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : null}
+      </Paper>
+
       <Dialog open={rejectDialogOpen} onClose={closeRejectDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>Reject All Applications</DialogTitle>
+        <DialogTitle>Reject Mentee</DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            This will reject all pending applications for this mentee. A reason is required.
+            This will set the mentee status to REJECTED and reject all their pending applications. A
+            reason is required (minimum 50 characters).
           </Typography>
           <TextField
             autoFocus
@@ -261,7 +283,7 @@ export default function MenteesPage() {
             color="error"
             disabled={rejectReason.trim().length < 50 || submitting}
           >
-            {submitting ? <CircularProgress size={18} /> : 'Confirm Reject All'}
+            {submitting ? <CircularProgress size={18} /> : 'Confirm Reject'}
           </Button>
         </DialogActions>
       </Dialog>
