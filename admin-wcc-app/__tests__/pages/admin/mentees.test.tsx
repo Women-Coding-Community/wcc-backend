@@ -63,6 +63,31 @@ describe('MenteesPage', () => {
       });
     });
 
+    it('when loaded with 1 pending mentee, then pending count badge shows 1', async () => {
+      setupAuth(['ADMIN']);
+      mockGetPendingMentees.mockResolvedValue([pendingMentee]);
+
+      render(<MenteesPage />);
+
+      await waitFor(() => {
+        const headings = screen.getAllByText('1');
+        expect(headings.length).toBeGreaterThanOrEqual(1);
+      });
+    });
+
+    it('when loaded with 1 active mentee, then active count badge shows 1', async () => {
+      setupAuth(['ADMIN']);
+      mockGetPendingMentees.mockResolvedValue([]);
+      mockGetActiveMentees.mockResolvedValue([activeMentee]);
+
+      render(<MenteesPage />);
+
+      await waitFor(() => {
+        const badges = screen.getAllByText('1');
+        expect(badges.length).toBeGreaterThanOrEqual(1);
+      });
+    });
+
     it('when there are no pending mentees, then empty state message is shown', async () => {
       setupAuth(['ADMIN']);
       mockGetPendingMentees.mockResolvedValue([]);
