@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Chip, CircularProgress, Paper, Typography } from '
 
 interface ProfilePictureSectionProps {
   fullName: string;
-  profileStatus: string;
+  profileStatus?: string;
   imageUrl?: string;
   onPictureChange?: (file: File) => void;
   uploading?: boolean;
@@ -20,10 +20,11 @@ export default function ProfilePictureSection({
 
   const statusColor =
     profileStatus === 'ACTIVE' ? 'success' : profileStatus === 'PENDING' ? 'warning' : 'default';
-  const statusLabel =
-    profileStatus === 'ACTIVE'
+  const statusLabel = profileStatus
+    ? profileStatus === 'ACTIVE'
       ? 'Approved'
-      : profileStatus.charAt(0) + profileStatus.slice(1).toLowerCase();
+      : profileStatus.charAt(0) + profileStatus.slice(1).toLowerCase()
+    : 'Unknown';
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

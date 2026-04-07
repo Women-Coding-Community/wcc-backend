@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, Avatar, Box, Button, Chip, Link, Paper, Stack, Typography } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, getErrorMessage } from '@/lib/api';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
 import { useRouter } from 'next/router';
 
@@ -25,7 +25,7 @@ interface MemberItem {
   city?: string;
   companyName?: string;
   memberTypes?: string[];
-  images?: any[];
+  images?: unknown[];
   network?: MemberNetwork[];
 }
 
@@ -44,30 +44,33 @@ export default function MembersPage() {
   const [items, setItems] = useState<MemberItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const normalize = useCallback((resp: MembersResponse): MemberItem[] => {
+    if (Array.isArray(resp)) return resp;
+    if (resp?.items && Array.isArray(resp.items)) return resp.items;
+    if (resp?.content && Array.isArray(resp.content)) return resp.content;
+    if (resp?.data && Array.isArray(resp.data)) return resp.data;
+    return [];
+  }, []);
+
+  const load = useCallback(
+    async (token: string) => {
+      try {
+        const data = await apiFetch<MembersResponse>(MEMBERS_PATH, { token });
+        setItems(normalize(data));
+      } catch (error: unknown) {
+        setError(getErrorMessage(error, 'Failed to load members'));
+      }
+    },
+    [normalize]
+  );
+
   useEffect(() => {
     const token = getStoredToken();
     if (!token || isTokenExpired(token)) router.replace('/login');
     else {
       load(token);
     }
-  }, [router]);
-
-  const normalize = (resp: MembersResponse): MemberItem[] => {
-    if (Array.isArray(resp)) return resp;
-    if (resp?.items && Array.isArray(resp.items)) return resp.items;
-    if (resp?.content && Array.isArray(resp.content)) return resp.content;
-    if (resp?.data && Array.isArray(resp.data)) return resp.data;
-    return [];
-  };
-
-  const load = async (t: string) => {
-    try {
-      const data = await apiFetch<MembersResponse>(MEMBERS_PATH, { token: t });
-      setItems(normalize(data));
-    } catch (e: any) {
-      setError(e.message);
-    }
-  };
+  }, [load, router]);
 
   const prettyLocation = (m: MemberItem) => {
     const parts = [m.city, m.country?.countryName || m.country?.countryCode].filter(Boolean);

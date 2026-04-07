@@ -51,12 +51,18 @@ export interface MenteeImage {
   name?: string;
 }
 
+export { SocialNetworkType } from '@/types/member';
+export type { SocialNetwork, SocialNetworkTypeValue } from '@/types/member';
+import type { SocialNetwork } from '@/types/member';
+
 export interface DashboardMentee {
   id: number;
   fullName: string;
   position?: string;
   email?: string;
   profileStatus?: string;
+  slackDisplayName?: string;
+  network?: SocialNetwork[];
   skills?: MenteeSkills;
   images?: MenteeImage[];
   bio?: string;

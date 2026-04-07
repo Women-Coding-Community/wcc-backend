@@ -35,6 +35,7 @@ src/main/resources/application-local.yml
 /admin-wcc-app/.vite/
 /admin-wcc-app/node_modules/
 /admin-wcc-app/.next/
+/admin-wcc-app/tsconfig.tsbuildinfo
 /scripts/init-dev-env.sh
 .vercel
 /scripts/init-prod-env.sh

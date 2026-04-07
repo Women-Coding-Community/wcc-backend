@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Alert, Box, Button, CircularProgress, Paper, Stack, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import { useRouter } from 'next/router';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { API_BASE, API_KEY, apiFetch } from '@/lib/api';
 import { getStoredToken } from '@/lib/auth';
 import { EditMentorFormData, editMentorSchema } from './schema';
-import { MOCK_MENTOR } from './mockData';
 import ProfilePictureSection from './ProfilePictureSection';
 import PersonalInfoSection from './PersonalInfoSection';
 import BioSection from './BioSection';
 import SkillsSection from './SkillsSection';
 import MentorshipAvailabilitySection from './MentorshipAvailabilitySection';
 import ResourcesSection from './ResourcesSection';
+import { getMentorById } from '@/services/mentorService';
+import { MentorItem } from '@/types/mentor';
 
 const MONTHS = [
   'JANUARY',
@@ -30,34 +31,55 @@ const MONTHS = [
   'DECEMBER',
 ];
 
-function buildDefaultValues(mentor: typeof MOCK_MENTOR): EditMentorFormData {
-  const adHocMap = new Map((mentor.menteeSection.adHoc || []).map((a) => [a.month, a.hours]));
+function deriveMentorshipType(menteeSection?: MentorItem['menteeSection']): string[] {
+  const types: string[] = [];
+  if (menteeSection?.longTerm) types.push('LONG_TERM');
+  if (menteeSection?.adHoc?.length) types.push('AD_HOC');
+  return types;
+}
+
+function buildDefaultValues(mentor: MentorItem): EditMentorFormData {
+  const adHocMap = new Map((mentor.menteeSection?.adHoc ?? []).map((a) => [a.month, a.hours]));
+
+  const booksRaw = mentor.resources?.books;
+  const booksString = Array.isArray(booksRaw) ? booksRaw.join('\n') : (booksRaw ?? '');
 
   return {
-    fullName: mentor.fullName,
-    email: mentor.email,
-    position: mentor.position,
-    slackDisplayName: mentor.slackDisplayName,
-    companyName: mentor.companyName,
-    city: mentor.city,
-    country: mentor.country,
-    spokenLanguages: mentor.spokenLanguages,
-    bio: mentor.bio,
-    yearsExperience: mentor.skills.yearsExperience,
-    technicalAreas: mentor.skills.areas,
-    programmingLanguages: mentor.skills.languages,
-    mentorshipFocus: mentor.skills.mentorshipFocus,
-    mentorshipType: mentor.menteeSection.mentorshipType,
-    idealMentee: mentor.menteeSection.idealMentee,
-    additionalInfo: mentor.menteeSection.additional,
+    fullName: mentor.fullName ?? '',
+    email: mentor.email ?? '',
+    position: mentor.position ?? '',
+    slackDisplayName: mentor.slackDisplayName ?? '',
+    companyName: mentor.companyName ?? '',
+    city: mentor.city ?? '',
+    country: mentor.country
+      ? {
+          countryCode: mentor.country.countryCode ?? '',
+          countryName: mentor.country.countryName ?? '',
+        }
+      : null,
+    spokenLanguages: mentor.spokenLanguages ?? [],
+    bio: mentor.bio ?? '',
+    yearsExperience: mentor.skills?.yearsExperience ?? 0,
+    technicalAreas: (mentor.skills?.areas ?? []).map((a) => ({
+      technicalArea: a.technicalArea,
+      proficiencyLevel: a.proficiencyLevel ?? '',
+    })),
+    programmingLanguages: (mentor.skills?.languages ?? []).map((l) => ({
+      language: l.language,
+      proficiencyLevel: l.proficiencyLevel ?? '',
+    })),
+    mentorshipFocus: mentor.skills?.mentorshipFocus ?? [],
+    mentorshipType: deriveMentorshipType(mentor.menteeSection),
+    idealMentee: mentor.menteeSection?.idealMentee ?? '',
+    additionalInfo: mentor.menteeSection?.additional ?? '',
     monthAvailability: MONTHS.map((month) => ({
       month,
-      hours: adHocMap.get(month) || 0,
-      enabled: adHocMap.has(month) && (adHocMap.get(month) || 0) > 0,
+      hours: adHocMap.get(month) ?? 0,
+      enabled: adHocMap.has(month) && (adHocMap.get(month) ?? 0) > 0,
     })),
-    books: mentor.resources.books,
-    links: mentor.resources.links,
-    network: mentor.network,
+    books: booksString,
+    links: mentor.resources?.links ?? [],
+    network: mentor.network ?? [],
   };
 }
 
@@ -66,34 +88,55 @@ interface EditMentorFormProps {
 }
 
 export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
-  const router = useRouter();
+  const [mentor, setMentor] = useState<MentorItem | null>(null);
+  const [fetchLoading, setFetchLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>(undefined);
   const [profilePictureUploading, setProfilePictureUploading] = useState(false);
 
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EditMentorFormData>({
+    resolver: zodResolver(editMentorSchema),
+    mode: 'onBlur',
+  });
+
   useEffect(() => {
     const token = getStoredToken();
     if (!token) return;
 
-    apiFetch<{ resource: { driveFileLink: string } }>(
-      `/api/platform/v1/resources/member-profile-picture/${mentorId}`,
-      { token }
-    )
-      .then((data) => setProfilePictureUrl(data.resource.driveFileLink))
-      .catch(() => {});
-  }, [mentorId]);
+    setFetchLoading(true);
+    setFetchError(null);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EditMentorFormData>({
-    resolver: zodResolver(editMentorSchema),
-    defaultValues: buildDefaultValues(MOCK_MENTOR),
-    mode: 'onBlur',
-  });
+    Promise.all([
+      getMentorById(mentorId, token),
+      apiFetch<{ resource: { driveFileLink: string } }>(
+        `/api/platform/v1/resources/member-profile-picture/${mentorId}`,
+        { token }
+      ).catch(() => null),
+    ])
+      .then(([fetchedMentor, pictureData]) => {
+        if (!fetchedMentor) {
+          setFetchError(`Mentor with ID ${mentorId} not found`);
+          return;
+        }
+        setMentor(fetchedMentor);
+        reset(buildDefaultValues(fetchedMentor));
+        if (pictureData?.resource?.driveFileLink) {
+          setProfilePictureUrl(pictureData.resource.driveFileLink);
+        }
+      })
+      .catch((e: unknown) => {
+        setFetchError(e instanceof Error ? e.message : 'Failed to load mentor data');
+      })
+      .finally(() => setFetchLoading(false));
+  }, [mentorId, reset]);
 
   const transformFormData = (data: EditMentorFormData) => ({
     fullName: data.fullName,
@@ -209,7 +252,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
       type="submit"
       variant="contained"
       color="primary"
-      disabled={loading}
+      disabled={loading || fetchLoading}
       startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
       size="large"
       fullWidth={fullWidth}
@@ -218,6 +261,22 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
       {loading ? 'Saving...' : 'Save Profile'}
     </Button>
   );
+
+  if (fetchLoading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={6}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        {fetchError}
+      </Alert>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -254,8 +313,8 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
 
       <Stack spacing={3}>
         <ProfilePictureSection
-          fullName={MOCK_MENTOR.fullName}
-          profileStatus={MOCK_MENTOR.profileStatus}
+          fullName={mentor?.fullName ?? ''}
+          profileStatus={mentor?.profileStatus}
           imageUrl={profilePictureUrl}
           onPictureChange={handleProfilePictureUpload}
           uploading={profilePictureUploading}

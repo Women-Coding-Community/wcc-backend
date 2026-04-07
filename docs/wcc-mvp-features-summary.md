@@ -277,68 +277,74 @@ POST /api/platform/v1/mentors                   - Create mentor profile
 
 #### 8. Mentorship Matching System
 
-**Status**: DESIGN PHASE | NOT IMPLEMENTED ❌
+**Status**: BACKEND 70% | FRONTEND 55% 🚧
 
-**Planned Capabilities**:
+**Implemented**:
 
-**1. Mentee Application Flow** ❌:
+- ✅ Mentee registration creates a profile with `profileStatus = PENDING`
+- ✅ Mentee application storage with priority order
+- ✅ Mentorship Team pending-mentee queue: `GET /api/platform/v1/mentees/pending`
+- ✅ Mentee profile activation: `PATCH /api/platform/v1/mentees/{menteeId}/activate`
+- ✅ Mentee profile rejection: `PATCH /api/platform/v1/mentees/{menteeId}/reject`
+- ✅ Mentor application review endpoints
+- ✅ Admin application approval workflow moves applications to `MENTOR_REVIEWING`
+- ✅ Mentor dashboard can accept or decline reviewed applications
+- ✅ Match confirmation endpoint and match tracking
+- ✅ Admin mentee review page in `admin-wcc-app`
+- ✅ Mentor application dashboard in `admin-wcc-app`
 
-- Mentee submits application (learning goals, career stage, preferences)
-- Application stored with PENDING status
-- Mentorship Team reviews and approves/rejects
-- Approved mentees can browse mentors
+**Current workflow split**:
 
-**2. Mentor Selection** ❌:
+**1. Mentee Profile Review** ✅:
 
-- Option 1: Mentee manually selects multiple mentors with priority order
-- Option 2: API suggests matching mentors based on:
-    - Skills overlap
-    - Focus area alignment
-    - Availability
-    - Experience level compatibility
-    - Mentorship type preference
+- Mentee submits mentorship registration
+- Profile is created with `profileStatus = PENDING`
+- Mentorship Team can activate or reject the mentee profile
+- Profile approval is separate from individual application approval
 
-**3. Application Assignment** ❌:
+**2. Mentee Application Review** ✅:
 
-- System assigns to first priority mentor
-- Check mentor availability
-- Email mentor to accept/decline
-- If declined or unavailable, move to next priority
-- If no mentors in list, trigger suggestion API
+- Applications are stored with `status = PENDING`
+- Mentorship Team approves or rejects each application individually
+- Approved applications move to `MENTOR_REVIEWING`
+- Rejected applications move to `REJECTED`
 
-**4. Matching Confirmation** ❌:
+**3. Mentor Decision Flow** ✅:
 
-- Mentor accepts/declines via email or platform
-- On accept: Create mentorship relationship
-- Send cycle emails to both parties
-- Track in database
+- Mentors fetch their assigned applications
+- Mentors accept or decline applications in review
+- Accepted applications can later be confirmed into matches
+- Declined applications can be forwarded through the priority flow
 
-**Required APIs** ❌:
+**4. Matching Confirmation** 🚧:
+
+- Match creation and tracking are implemented
+- Session lifecycle admin endpoints exist
+- Notification and end-to-end automation still need completion in some areas
+
+**Current APIs**:
 
 ```
-POST /api/platform/v1/mentees                          - Create mentee application
-PATCH /api/platform/v1/mentees/{id}/approve            - Approve mentee (Team)
-PATCH /api/platform/v1/mentees/{id}/reject             - Reject mentee
-POST /api/platform/v1/mentees/{id}/apply               - Apply to mentors with priority
-GET /api/platform/v1/mentees/{id}/applications         - View application status
-GET /api/platform/v1/mentors/suggest?menteeId={id}     - Suggest matching mentors
-POST /api/platform/v1/mentorship/matches               - Create match
-POST /api/platform/v1/mentorship/cycle-emails          - Send cycle emails
+POST /api/platform/v1/mentees                                  - Create mentee registration/profile
+GET /api/platform/v1/mentees/pending                           - List pending mentee profiles
+PATCH /api/platform/v1/mentees/{menteeId}/activate             - Activate mentee profile
+PATCH /api/platform/v1/mentees/{menteeId}/reject               - Reject mentee profile
+PATCH /api/platform/v1/mentees/applications/{applicationId}/approve - Approve individual application
+PATCH /api/platform/v1/mentees/applications/{applicationId}/reject  - Reject individual application
+GET /api/platform/v1/mentors/{mentorId}/applications           - View mentee applications for mentor
+PATCH /api/platform/v1/mentors/applications/{applicationId}/accept  - Mentor accepts application
+PATCH /api/platform/v1/mentors/applications/{applicationId}/decline - Mentor declines application
+POST /api/platform/v1/admin/mentorship/matches/confirm/{applicationId} - Confirm match
 ```
 
-**Required Database Tables** ❌:
+**Still missing / incomplete for MVP**:
 
-- `mentee_applications` (mentee_id, mentor_id, priority_order, status, applied_at)
-- `mentorship_matches` (mentor_id, mentee_id, cycle_id, start_date, status)
+- 🚧 Matching suggestion API
+- 🚧 Full mentee-facing application status dashboard
+- 🚧 Complete notification flow for every mentee review transition
+- 🚧 Documentation and integration tests aligned to the latest profile-vs-application split
 
-**Required Frontend Views** ❌:
-
-- Mentorship Team: Approve mentors/mentees dashboard
-- Mentee: Application form and status dashboard
-- Mentor: View/accept applications dashboard
-- Admin: View all applications with priority order
-
-**Priority**: CRITICAL - This is the core value proposition of the MVP
+**Priority**: CRITICAL - This remains the core value proposition of the MVP
 
 ---
 

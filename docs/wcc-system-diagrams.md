@@ -134,17 +134,20 @@ flowchart TD
     TeamReview1 -->|Approve| MentorActive[Status: ACTIVE<br/>Visible in Platform]
     TeamReview1 -->|Reject| MentorRejected[Notify Mentor<br/>Provide Feedback]
     MenteeStart([Mentee Registration]) --> MenteeApp[Mentee Submits Application<br/>Learning Goals, Career Stage<br/>Preferences]
-    MenteeApp --> MenteePending[Status: PENDING]
-    MenteePending --> TeamReview2{Mentorship Team<br/>Reviews Application}
-    TeamReview2 -->|Approve| MenteeActive[Status: ACTIVE]
-    TeamReview2 -->|Reject| MenteeRejected[Notify Mentee<br/>Provide Feedback]
+    MenteeApp --> MenteePending[Profile Status: PENDING]
+    MenteePending --> TeamReview2{Mentorship Team<br/>Reviews Mentee Profile}
+    TeamReview2 -->|Activate| MenteeActive[Profile Status: ACTIVE]
+    TeamReview2 -->|Reject| MenteeRejected[Profile Status: REJECTED<br/>Reject all pending applications]
     MenteeActive --> SelectMentors{Mentee Selects<br/>Mentors?}
     SelectMentors -->|Yes| MenteeChooses[Mentee Applies to<br/>Multiple Mentors<br/>with Priority Order]
     SelectMentors -->|No| AutoMatch[API: Suggest<br/>Matching Mentors<br/>Based on Compatibility]
     AutoMatch --> MatchScore[Calculate Match Score<br/>Skills, Focus, Availability<br/>Experience Level]
     MatchScore --> MenteeChooses
     MenteeChooses --> StoreApps[Store Applications<br/>with Priority Order]
-    StoreApps --> AssignFirst[Assign to<br/>First Priority Mentor]
+    StoreApps --> AppPending[Application Status: PENDING]
+    AppPending --> TeamReview3{Mentorship Team<br/>Reviews Each Application}
+    TeamReview3 -->|Approve| AssignFirst[Application Status: MENTOR_REVIEWING<br/>Assign to First Priority Mentor]
+    TeamReview3 -->|Reject| AppRejected[Application Status: REJECTED]
     AssignFirst --> CheckAvail1{Mentor<br/>Available?}
     CheckAvail1 -->|Yes| NotifyMentor1[Email Mentor<br/>to Accept/Decline]
     CheckAvail1 -->|No| AssignNext[Assign to<br/>Next Priority Mentor]
@@ -163,11 +166,35 @@ flowchart TD
     style MenteeStart fill: #E1BEE7
     style TeamReview1 fill: #FFCC80
     style TeamReview2 fill: #FFCC80
+    style TeamReview3 fill: #FFCC80
     style CreateMatch fill: #C5E1A5
     style End fill: #81C784
     style MentorActive fill: #C5E1A5
     style MenteeActive fill: #C5E1A5
 ```
+
+### Current MVP status
+
+- Mentor profile approval is active: mentor profiles move from `PENDING` to `ACTIVE` or `REJECTED`.
+- Mentee profile review is now active: the Mentorship Team can list pending mentees, activate them, or reject them at the profile level.
+- Application review remains separate from profile review: mentee applications still move through their own workflow and are approved/rejected individually.
+
+### Latest mentee approval and rejection behavior
+
+- `POST /api/platform/v1/mentees` creates a mentee profile with `profileStatus = PENDING`.
+- `GET /api/platform/v1/mentees/pending` returns mentees awaiting Mentorship Team review.
+- `PATCH /api/platform/v1/mentees/{menteeId}/activate` changes only the mentee profile status to `ACTIVE`.
+- `PATCH /api/platform/v1/mentees/{menteeId}/reject` changes the mentee profile status to `REJECTED` and rejects that mentee's pending applications.
+- Individual application decisions still belong to the application workflow:
+  `PATCH /api/platform/v1/mentees/applications/{applicationId}/approve` moves an application from `PENDING` to `MENTOR_REVIEWING`.
+- Individual application rejections remain application-scoped:
+  `PATCH /api/platform/v1/mentees/applications/{applicationId}/reject` changes that application to `REJECTED`.
+
+### Status model to keep in mind
+
+- `profileStatus` answers whether the mentee profile itself is pending, active, or rejected.
+- `application.status` answers where a specific mentor application is in the matching workflow.
+- A mentee can be `ACTIVE` while individual applications are still `PENDING`, `MENTOR_REVIEWING`, `MENTOR_ACCEPTED`, `MENTOR_DECLINED`, `MATCHED`, or `REJECTED`.
 
 ## 7. Deployment Architecture
 
@@ -315,4 +342,3 @@ style MentorshipTeam fill: #95E1D3
 style Mentor fill: #C7CEEA
 style Mentee fill: #FFDAB9
 ```
-

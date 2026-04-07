@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.*;
 import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MenteeService {
   private static final int MAX_MENTORS = 5;
+
   private final MentorshipCycleRepository cycleRepository;
   private final MenteeApplicationRepository registrationsRepo;
   private final MenteeRepository menteeRepository;
@@ -32,16 +34,13 @@ public class MenteeService {
   private final UserProvisionService userProvisionService;
 
   /**
-   * Return all stored mentees.
+   * Return all active mentees (status_id = 1).
    *
-   * @return List of mentees.
+   * @return List of active mentees.
    */
   public List<Mentee> getAllMentees() {
-    final var allMentees = menteeRepository.getAll();
-    if (allMentees == null) {
-      return List.of();
-    }
-    return allMentees;
+    final var activeMentees = menteeRepository.findByStatus(ProfileStatus.ACTIVE);
+    return activeMentees == null ? List.of() : activeMentees;
   }
 
   /**
