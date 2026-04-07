@@ -102,6 +102,27 @@ Do NOT add any co-author or AI-attribution trailer lines.
 
 After committing, run `git status` to confirm.
 
+## Step 7 — Run pre-push build check
+
+After a successful commit, simulate the `.husky/pre-push` hook to verify the build would pass before an actual push.
+
+Determine whether frontend files were included in the commit:
+
+```bash
+base_ref=$(git merge-base HEAD @{u} 2>/dev/null || git rev-parse HEAD^ 2>/dev/null || echo HEAD)
+git diff --name-only "$base_ref" HEAD | grep -q "^admin-wcc-app/"
+```
+
+If frontend files are present, run:
+
+```bash
+cd admin-wcc-app && npm run build
+```
+
+- **Passes** → tell the user the push is safe.
+- **Fails** → show the build errors and stop. Do NOT suggest pushing until the build is fixed.
+- **No frontend files** → skip this step silently.
+
 ## Rules
 
 - Never `git add .` or `git add -A`

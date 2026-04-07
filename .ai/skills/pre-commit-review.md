@@ -114,7 +114,31 @@ After applying all auto-fixes, check for issues that require human judgement. Ap
 - **`@DisplayName`**: every test must have one in Given-when-then format
 - **Assertions**: use AssertJ for complex/multi-property assertions; JUnit 5 (`assertEquals`, `assertTrue`, `assertThrows`) for simple single-value or boolean checks
 
-## Step 5 — Output format
+## Step 5 — Run pre-commit quality gate checks
+
+Run the same checks that `.husky/pre-commit` executes, so issues are caught during review before staging begins.
+
+### PMD (Java files)
+
+If any `.java` files appear in the diff, run:
+
+```bash
+./gradlew :pmdAll --quiet
+```
+
+- **Passes** → note "✅ PMD passed" in the Overall Summary.
+- **Fails** → list each violation as a `[CRITICAL]` finding in the per-file output. The commit hook will block until these are resolved.
+
+### lint-staged (frontend files)
+
+If any `admin-wcc-app/**` files appear in the diff:
+
+- If there are **staged** frontend files, run: `(cd admin-wcc-app && npx lint-staged)`
+  - **Passes** → note "✅ lint-staged passed" in the Overall Summary.
+  - **Fails** → surface lint/prettier errors as `[CRITICAL]` findings.
+- If **no frontend files are staged yet**, note in the summary that lint-staged will run automatically at commit time.
+
+## Step 6 — Output format
 
 ### Auto-fixes applied
 List every file edited and the type of fix applied (one line per file). If nothing was fixed, say so.
@@ -146,7 +170,7 @@ Severity levels:
 ### What looks good
 Briefly call out 1-3 things done well — keep the developer motivated.
 
-## Step 6 — Finding quality bar
+## Step 7 — Finding quality bar
 
 Every reported finding must:
 - State the **concrete risk** (what could go wrong)
