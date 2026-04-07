@@ -51,18 +51,6 @@ export interface MenteeImage {
   name?: string;
 }
 
-export interface MenteeApplicationReview {
-  applicationId: number;
-  menteeId: number;
-  fullName: string;
-  position: string;
-  yearsExperience?: number;
-  linkedinUrl?: string;
-  slackDisplayName: string;
-  email: string;
-  mentorshipGoal: string;
-}
-
 export interface SocialNetwork {
   type: string;
   link: string;

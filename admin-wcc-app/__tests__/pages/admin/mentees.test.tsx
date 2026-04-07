@@ -113,6 +113,45 @@ describe('MenteesPage', () => {
       });
     });
 
+    it('when mentee has LINKEDIN network entry, then LinkedIn link is shown', async () => {
+      setupAuth(['ADMIN']);
+      mockGetPendingMentees.mockResolvedValue([
+        { ...pendingMentee, network: [{ type: 'LINKEDIN', link: 'https://linkedin.com/in/jane' }] },
+      ]);
+
+      render(<MenteesPage />);
+
+      await waitFor(() => {
+        const link = screen.getByRole('link', { name: /linkedin/i });
+        expect(link).toBeInTheDocument();
+        expect(link).toHaveAttribute('href', 'https://linkedin.com/in/jane');
+      });
+    });
+
+    it('when mentee has no network, then LinkedIn link is not shown', async () => {
+      setupAuth(['ADMIN']);
+      mockGetPendingMentees.mockResolvedValue([{ ...pendingMentee, network: [] }]);
+
+      render(<MenteesPage />);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('link', { name: /linkedin/i })).not.toBeInTheDocument();
+      });
+    });
+
+    it('when mentee network type is lowercase linkedin, then LinkedIn link is not shown', async () => {
+      setupAuth(['ADMIN']);
+      mockGetPendingMentees.mockResolvedValue([
+        { ...pendingMentee, network: [{ type: 'linkedin', link: 'https://linkedin.com/in/jane' }] },
+      ]);
+
+      render(<MenteesPage />);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('link', { name: /linkedin/i })).not.toBeInTheDocument();
+      });
+    });
+
     it('when Activate is clicked, then activateMentee is called with mentee ID', async () => {
       const user = userEvent.setup();
       setupAuth(['ADMIN']);
