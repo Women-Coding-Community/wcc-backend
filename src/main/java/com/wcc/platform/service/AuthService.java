@@ -11,6 +11,7 @@ import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
 import java.security.SecureRandom;
+import java.util.Locale;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Base64;
@@ -42,7 +43,7 @@ public class AuthService {
   private int tokenTtlMinutes;
 
   public Optional<UserAccount> findUserByEmail(final String email) {
-    return userAccountRepository.findByEmail(email);
+    return userAccountRepository.findByEmail(email.toLowerCase(Locale.ENGLISH));
   }
 
   /**
@@ -70,7 +71,7 @@ public class AuthService {
    *     successful, or an empty {@code Optional} if authentication fails
    */
   public Optional<UserToken> authenticateAndIssueToken(final String email, final String password) {
-    final Optional<UserAccount> userOpt = userAccountRepository.findByEmail(email);
+    final Optional<UserAccount> userOpt = userAccountRepository.findByEmail(email.toLowerCase(Locale.ENGLISH));
     if (userOpt.isEmpty()) {
       return Optional.empty();
     }

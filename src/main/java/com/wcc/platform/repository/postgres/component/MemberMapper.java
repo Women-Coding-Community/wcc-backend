@@ -82,7 +82,8 @@ public class MemberMapper {
 
   /** Adds a new member to the database and returns the member ID. */
   public Long addMember(final Member member) {
-    final var existingMemberId = findMemberIdByEmail(member.getEmail());
+    final var email = member.getEmail().toLowerCase(Locale.ENGLISH);
+    final var existingMemberId = findMemberIdByEmail(email);
     if (existingMemberId != null) {
       updateMember(member, existingMemberId);
       return existingMemberId;
@@ -95,7 +96,7 @@ public class MemberMapper {
         member.getSlackDisplayName(),
         member.getPosition(),
         member.getCompanyName(),
-        member.getEmail(),
+        email,
         member.getCity(),
         getCountryId(member.getCountry()),
         defaultStatusPending,
@@ -112,10 +113,10 @@ public class MemberMapper {
               }
               return null;
             },
-            member.getEmail());
+            email);
 
     if (memberId == null) {
-      throw new IllegalStateException("Failed to retrieve member ID after insertion: " + member.getEmail());
+      throw new IllegalStateException("Failed to retrieve member ID after insertion: " + email);
     }
 
     addMemberTypes(memberId, member);
