@@ -9,7 +9,6 @@ import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.ApplicationWithdrawRequest;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
-import com.wcc.platform.domain.platform.mentorship.MenteeApplicationReviewDto;
 import com.wcc.platform.service.MenteeWorkflowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,44 +42,9 @@ import org.springframework.web.bind.annotation.RestController;
             + "and the mentee itself.")
 @AllArgsConstructor
 @Validated
-@SuppressWarnings({"PMD.ExcessiveImports"})
 public class MenteeApplicationController {
 
   private final MenteeWorkflowService applicationService;
-
-  /**
-   * API for admin to retrieve all pending priority-1 mentee applications with enriched mentee
-   * profile data for review.
-   *
-   * @return list of review DTOs containing application and mentee profile details
-   */
-  @GetMapping("/mentees/applications/review")
-  @RequiresPermission(Permission.MENTEE_APPROVE)
-  @Operation(
-      summary = "Get pending priority-1 mentee applications for admin review",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<MenteeApplicationReviewDto>> getPendingPriorityOneReviews() {
-    return ResponseEntity.ok(applicationService.getPendingPriorityOneReviews());
-  }
-
-  /**
-   * API for admin to approve a mentee by mentee ID. Only the priority-1 PENDING application is
-   * approved; all other PENDING applications remain unchanged (waiting).
-   *
-   * @param menteeId The mentee ID
-   * @return the approved application
-   */
-  @PatchMapping("/mentees/{menteeId}/approve")
-  @RequiresPermission(Permission.MENTEE_APPROVE)
-  @Operation(
-      summary = "Admin approves mentee priority-1 application by mentee ID",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MenteeApplication> approveMenteeByMenteeId(
-      @Parameter(description = "Mentee ID") @PathVariable final Long menteeId) {
-    return ResponseEntity.ok(applicationService.approveMenteeByMenteeId(menteeId));
-  }
 
   /**
    * API to get all applications submitted by a mentee for a specific cycle.
@@ -149,7 +113,7 @@ public class MenteeApplicationController {
   }
 
   /**
-   * API for admin to approve the application and make it available for the mentor to review
+   * API for admin to approve the application and make it available for the mentor to review.
    *
    * @param applicationId The application ID
    * @return Updated application

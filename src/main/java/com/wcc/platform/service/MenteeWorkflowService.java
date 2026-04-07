@@ -4,11 +4,8 @@ import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
-import com.wcc.platform.domain.platform.SocialNetwork;
-import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
-import com.wcc.platform.domain.platform.mentorship.MenteeApplicationReviewDto;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
@@ -202,122 +199,6 @@ public class MenteeWorkflowService {
    */
   public List<MenteeApplication> getApplicationsByStatus(final ApplicationStatus status) {
     return applicationRepository.findByStatus(status);
-  }
-
-  /**
-   * Returns all PENDING priority-1 mentee applications enriched with mentee profile data, for admin
-   * review.
-   *
-   * @return list of review DTOs containing application and mentee details
-   */
-  public List<MenteeApplicationReviewDto> getPendingPriorityOneReviews() {
-    return applicationRepository
-        .findByStatusAndPriorityOrder(ApplicationStatus.PENDING, 1)
-        .stream()
-        .map(this::toReviewDto)
-        .toList();
-  }
-
-  /**
-   * Admin approves a mentee by mentee ID. Only the priority-1 PENDING application is moved to
-   * MENTOR_REVIEWING; all other PENDING applications remain unchanged.
-   *
-   * @param menteeId the mentee ID
-   * @return the approved application
-   * @throws ContentNotFoundException if no priority-1 PENDING application exists for the mentee
-   */
-  @Transactional
-  public MenteeApplication approveMenteeByMenteeId(final Long menteeId) {
-    final List<MenteeApplication> pending = applicationRepository.findPendingByMenteeId(menteeId);
-
-    final MenteeApplication priorityOne =
-        pending.stream()
-            .filter(app -> app.getPriorityOrder() == 1)
-            .findFirst()
-            .orElseThrow(
-                () ->
-                    new ContentNotFoundException(
-                        "No pending priority-1 application found for mentee " + menteeId));
-
-    final MenteeApplication updated =
-        applicationRepository.updateStatus(
-            priorityOne.getApplicationId(), ApplicationStatus.MENTOR_REVIEWING, null);
-
-    log.info(
-        "Mentee {} priority-1 application {} approved and forwarded to mentor {}",
-        menteeId,
-        priorityOne.getApplicationId(),
-        priorityOne.getMentorId());
-
-    return updated;
-  }
-
-  /**
-   * Admin rejects all PENDING applications for a mentee by mentee ID.
-   *
-   * @param menteeId the mentee ID
-   * @param reason the reason for rejection
-   * @return list of all rejected applications
-   * @throws ContentNotFoundException if no PENDING applications exist for the mentee
-   */
-  @Transactional
-  public List<MenteeApplication> rejectMenteeByMenteeId(
-      final Long menteeId, final String reason) {
-    final List<MenteeApplication> pending = applicationRepository.findPendingByMenteeId(menteeId);
-
-    if (pending.isEmpty()) {
-      throw new ContentNotFoundException(
-          "No pending applications found for mentee " + menteeId);
-    }
-
-    final List<MenteeApplication> rejected =
-        pending.stream()
-            .map(
-                app ->
-                    applicationRepository.updateStatus(
-                        app.getApplicationId(), ApplicationStatus.REJECTED, reason))
-            .toList();
-
-    log.info(
-        "All {} pending applications for mentee {} rejected by the Mentorship Team",
-        rejected.size(),
-        menteeId);
-
-    return rejected;
-  }
-
-  private MenteeApplicationReviewDto toReviewDto(final MenteeApplication application) {
-    return menteeRepository
-        .findById(application.getMenteeId())
-        .map(
-            mentee -> {
-              final String linkedinUrl =
-                  mentee.getNetwork() == null
-                      ? null
-                      : mentee.getNetwork().stream()
-                          .filter(n -> n.type() == SocialNetworkType.LINKEDIN)
-                          .findFirst()
-                          .map(SocialNetwork::link)
-                          .orElse(null);
-
-              final Integer yearsExperience =
-                  mentee.getSkills() != null ? mentee.getSkills().yearsExperience() : null;
-
-              return new MenteeApplicationReviewDto(
-                  application.getApplicationId(),
-                  mentee.getId(),
-                  mentee.getFullName(),
-                  mentee.getPosition(),
-                  yearsExperience,
-                  linkedinUrl,
-                  mentee.getSlackDisplayName(),
-                  mentee.getEmail(),
-                  application.getWhyMentor());
-            })
-        .orElseThrow(
-            () ->
-                new ContentNotFoundException(
-                    "Mentee not found for application " + application.getApplicationId()));
   }
 
   private MenteeApplication getApplicationOrThrow(final Long applicationId) {

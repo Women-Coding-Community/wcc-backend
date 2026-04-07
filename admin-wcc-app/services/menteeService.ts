@@ -1,9 +1,5 @@
 import { apiFetch } from '@/lib/api';
-import {
-  DashboardMentee,
-  MenteeApplication,
-  MenteeApplicationReview,
-} from '@/types/menteeApplication';
+import { DashboardMentee, MenteeApplication } from '@/types/menteeApplication';
 
 const BASE = '/api/platform/v1';
 
@@ -38,48 +34,6 @@ export async function declineApplication(
   return apiFetch<MenteeApplication>(`${BASE}/mentors/applications/${applicationId}/decline`, {
     method: 'PATCH',
     body: { reason },
-    token,
-  });
-}
-
-export async function getPendingMenteeApplications(token: string): Promise<MenteeApplication[]> {
-  return apiFetch<MenteeApplication[]>(`${BASE}/applications?status=PENDING`, { token });
-}
-
-export async function approveApplicationByAdmin(
-  applicationId: number,
-  token: string
-): Promise<MenteeApplication> {
-  return apiFetch<MenteeApplication>(`${BASE}/mentees/applications/${applicationId}/approve`, {
-    method: 'PATCH',
-    token,
-  });
-}
-
-export async function rejectApplicationByAdmin(
-  applicationId: number,
-  reason: string,
-  token: string
-): Promise<MenteeApplication> {
-  return apiFetch<MenteeApplication>(`${BASE}/mentees/applications/${applicationId}/reject`, {
-    method: 'PATCH',
-    body: { reason },
-    token,
-  });
-}
-
-export async function getPendingPriorityOneReviews(
-  token: string
-): Promise<MenteeApplicationReview[]> {
-  return apiFetch<MenteeApplicationReview[]>(`${BASE}/mentees/applications/review`, { token });
-}
-
-export async function approveMenteeByMenteeId(
-  menteeId: number,
-  token: string
-): Promise<MenteeApplication> {
-  return apiFetch<MenteeApplication>(`${BASE}/mentees/${menteeId}/approve`, {
-    method: 'PATCH',
     token,
   });
 }
