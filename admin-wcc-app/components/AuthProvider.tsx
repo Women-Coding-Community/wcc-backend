@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { apiFetch } from '@/lib/api';
 import {
@@ -48,28 +48,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const res = await apiFetch<{
-      member: Member;
-      token: string;
-      roles: string[];
-      expiresAt?: string;
-    }>(`/api/auth/login`, {
-      method: 'POST',
-      body: { email, password },
-    });
+  const login = useCallback(
+    async (email: string, password: string) => {
+      const res = await apiFetch<{
+        member: Member;
+        token: string;
+        roles: string[];
+        expiresAt?: string;
+      }>(`/api/auth/login`, {
+        method: 'POST',
+        body: { email, password },
+      });
 
-    storeToken(res.token);
-    storeTokenExpiry(res.expiresAt);
+      storeToken(res.token);
+      storeTokenExpiry(res.expiresAt);
 
-    setToken(res.token);
-    setRoles(res.roles);
-    setMember(res.member);
+      setToken(res.token);
+      setRoles(res.roles);
+      setMember(res.member);
 
-    await router.push('/admin');
-  };
+      await router.push('/admin');
+    },
+    [router]
+  );
 
-  const logout = () => {
+  const logout = useCallback(() => {
     clearToken();
 
     setToken(null);
@@ -77,9 +80,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setMember(null);
 
     router.push('/login');
-  };
+  }, [router]);
 
-  const value = useMemo(() => ({ token, member, roles, login, logout }), [member, token, roles]);
+  const value = useMemo(
+    () => ({ token, member, roles, login, logout }),
+    [login, logout, member, token, roles]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

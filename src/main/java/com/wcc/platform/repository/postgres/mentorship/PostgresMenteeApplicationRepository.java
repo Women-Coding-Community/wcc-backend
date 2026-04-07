@@ -43,10 +43,6 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
       "SELECT * FROM mentee_applications WHERE application_status = ?::application_status "
           + "ORDER BY applied_at DESC";
 
-  private static final String SEL_BY_STATUS_PRIO =
-      "SELECT * FROM mentee_applications WHERE application_status = ?::application_status "
-          + "AND priority_order = ? ORDER BY applied_at DESC";
-
   private static final String SEL_PENDING_MENTEE =
       "SELECT * FROM mentee_applications WHERE mentee_id = ? "
           + "AND application_status = 'pending' ORDER BY priority_order";
@@ -173,16 +169,6 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   @Override
   public Long countMenteeApplications(final Long menteeId, final Long cycleId) {
     return jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
-  }
-
-  @Override
-  public List<MenteeApplication> findByStatusAndPriorityOrder(
-      final ApplicationStatus status, final Integer priorityOrder) {
-    return jdbc.query(
-        SEL_BY_STATUS_PRIO,
-        (rs, rowNum) -> mapRow(rs),
-        status.getValue(),
-        priorityOrder);
   }
 
   @Override

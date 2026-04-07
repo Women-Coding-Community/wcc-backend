@@ -8,6 +8,7 @@ import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenteeWorkflowService {
 
   private final MenteeApplicationRepository applicationRepository;
+  private final MenteeRepository menteeRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
 

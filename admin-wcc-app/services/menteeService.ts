@@ -38,6 +38,29 @@ export async function declineApplication(
   });
 }
 
-export async function getMentees(token: string): Promise<DashboardMentee[]> {
+export async function rejectMenteeByMenteeId(
+  menteeId: number,
+  reason: string,
+  token: string
+): Promise<DashboardMentee> {
+  return apiFetch<DashboardMentee>(`${BASE}/mentees/${menteeId}/reject`, {
+    method: 'PATCH',
+    body: { reason },
+    token,
+  });
+}
+
+export async function getPendingMentees(token: string): Promise<DashboardMentee[]> {
+  return apiFetch<DashboardMentee[]>(`${BASE}/mentees/pending`, { token });
+}
+
+export async function getActiveMentees(token: string): Promise<DashboardMentee[]> {
   return apiFetch<DashboardMentee[]>(`${BASE}/mentees`, { token });
+}
+
+export async function activateMentee(menteeId: number, token: string): Promise<DashboardMentee> {
+  return apiFetch<DashboardMentee>(`${BASE}/mentees/${menteeId}/activate`, {
+    method: 'PATCH',
+    token,
+  });
 }

@@ -9,6 +9,7 @@ import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.repository.MenteeApplicationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.Optional;
@@ -24,6 +25,7 @@ class MenteeWorkflowServiceTest {
       "Application does not meet the eligibility criteria for this mentorship cycle";
 
   @Mock private MenteeApplicationRepository applicationRepository;
+  @Mock private MenteeRepository menteeRepository;
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
 
@@ -32,7 +34,9 @@ class MenteeWorkflowServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    service = new MenteeWorkflowService(applicationRepository, matchRepository, cycleRepository);
+    service =
+        new MenteeWorkflowService(
+            applicationRepository, menteeRepository, matchRepository, cycleRepository);
   }
 
   @Test
@@ -145,8 +149,7 @@ class MenteeWorkflowServiceTest {
         .build();
   }
 
-  private MenteeApplication reviewingApplication(
-      final Long applicationId, final Long menteeId) {
+  private MenteeApplication reviewingApplication(final Long applicationId, final Long menteeId) {
     return MenteeApplication.builder()
         .applicationId(applicationId)
         .menteeId(menteeId)
@@ -158,8 +161,7 @@ class MenteeWorkflowServiceTest {
         .build();
   }
 
-  private MenteeApplication rejectedApplication(
-      final Long applicationId, final Long menteeId) {
+  private MenteeApplication rejectedApplication(final Long applicationId, final Long menteeId) {
     return MenteeApplication.builder()
         .applicationId(applicationId)
         .menteeId(menteeId)

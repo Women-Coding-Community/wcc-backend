@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Integration tests for the new query methods added to PostgresMenteeApplicationRepository:
- * findByStatusAndPriorityOrder and findPendingByMenteeId.
+ * findPendingByMenteeId.
  */
 class PostgresMenteeApplicationRepositoryNewMethodsIntegrationTest extends DefaultDatabaseSetup {
 
@@ -99,47 +99,6 @@ class PostgresMenteeApplicationRepositoryNewMethodsIntegrationTest extends Defau
 
   @Test
   @DisplayName(
-      "Given PENDING priority-1 application, when finding by status and priority, then returned")
-  void shouldFindByStatusAndPriorityOrder() {
-    final MenteeApplication created = createApplication(mentorA.getId(), 1, ApplicationStatus.PENDING);
-
-    final List<MenteeApplication> result =
-        applicationRepository.findByStatusAndPriorityOrder(ApplicationStatus.PENDING, 1);
-
-    assertThat(result)
-        .anyMatch(app -> app.getApplicationId().equals(created.getApplicationId()));
-  }
-
-  @Test
-  @DisplayName(
-      "Given priority-2 app, when finding by status and priority-1, then it is not returned")
-  void shouldNotReturnWrongPriorityWhenFindingByStatusAndPriority() {
-    final MenteeApplication created = createApplication(mentorA.getId(), 2, ApplicationStatus.PENDING);
-
-    final List<MenteeApplication> result =
-        applicationRepository.findByStatusAndPriorityOrder(ApplicationStatus.PENDING, 1);
-
-    assertThat(result)
-        .noneMatch(app -> app.getApplicationId().equals(created.getApplicationId()));
-  }
-
-  @Test
-  @DisplayName(
-      "Given MENTOR_REVIEWING app, when finding PENDING by priority-1, then it is not returned")
-  void shouldNotReturnWrongStatusWhenFindingByStatusAndPriority() {
-    final MenteeApplication created = createApplication(mentorA.getId(), 1, ApplicationStatus.PENDING);
-    applicationRepository.updateStatus(
-        created.getApplicationId(), ApplicationStatus.MENTOR_REVIEWING, null);
-
-    final List<MenteeApplication> result =
-        applicationRepository.findByStatusAndPriorityOrder(ApplicationStatus.PENDING, 1);
-
-    assertThat(result)
-        .noneMatch(app -> app.getApplicationId().equals(created.getApplicationId()));
-  }
-
-  @Test
-  @DisplayName(
       "Given mentee has two PENDING apps to different mentors, when finding pending by menteeId, "
           + "then both are returned")
   void shouldFindPendingByMenteeId() {
@@ -160,8 +119,8 @@ class PostgresMenteeApplicationRepositoryNewMethodsIntegrationTest extends Defau
       "Given mentee has PENDING and REJECTED apps, when finding pending by menteeId, "
           + "then only PENDING is returned")
   void shouldReturnOnlyPendingWhenFindingPendingByMenteeId() {
-    final MenteeApplication pending = createApplication(mentorA.getId(), 1, ApplicationStatus.PENDING);
-    final MenteeApplication toReject = createApplication(mentorB.getId(), 2, ApplicationStatus.PENDING);
+    var pending = createApplication(mentorA.getId(), 1, ApplicationStatus.PENDING);
+    var toReject = createApplication(mentorB.getId(), 2, ApplicationStatus.PENDING);
     applicationRepository.updateStatus(
         toReject.getApplicationId(), ApplicationStatus.REJECTED, "Does not qualify");
 
