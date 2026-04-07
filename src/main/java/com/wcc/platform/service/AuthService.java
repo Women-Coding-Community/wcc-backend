@@ -4,6 +4,7 @@ import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.auth.UserToken;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
@@ -11,9 +12,11 @@ import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
 import java.security.SecureRandom;
+import java.util.Objects;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +46,42 @@ public class AuthService {
 
   public Optional<UserAccount> findUserByEmail(final String email) {
     return userAccountRepository.findByEmail(email);
+  }
+
+  /**
+   * Updates the roles assigned to an existing user account, fully replacing existing roles.
+   * Callers may not modify their own roles. Leaders may not target ADMIN accounts or assign ADMIN.
+   *
+   * @param userId the ID of the user account to update
+   * @param roles the new roles to assign
+   * @return the updated {@link UserAccount}
+   * @throws MemberNotFoundException if no user account exists with the given ID
+   * @throws ForbiddenException if the caller modifies their own roles, or a LEADER targets an ADMIN
+   */
+  @org.springframework.transaction.annotation.Transactional
+  public UserAccount updateUserRoles(final Integer userId, final List<RoleType> roles) {
+    final UserAccount userAccount =
+        userAccountRepository
+            .findById(userId)
+            .orElseThrow(() -> new MemberNotFoundException("User not found with id: " + userId));
+
+    final UserAccount.User caller = getCurrentUser();
+    if (Objects.equals(caller.userAccount().getId(), userId)) {
+      throw new ForbiddenException("Users cannot modify their own roles");
+    }
+
+    if (!caller.hasAnyRole(RoleType.ADMIN)) {
+      if (userAccount.getRoles() != null && userAccount.getRoles().contains(RoleType.ADMIN)) {
+        throw new ForbiddenException("Leaders cannot modify accounts with the ADMIN role");
+      }
+      if (roles.contains(RoleType.ADMIN)) {
+        throw new ForbiddenException("Leaders cannot assign the ADMIN role");
+      }
+    }
+
+    userAccountRepository.updateRole(userId, roles);
+    userAccount.setRoles(roles);
+    return userAccount;
   }
 
   /**

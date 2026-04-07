@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,10 +16,12 @@ import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.controller.platform.AuthController.LoginRequest;
-import com.wcc.platform.controller.platform.AuthController.LoginResponse;
+import com.wcc.platform.domain.auth.LoginResponse;
+import com.wcc.platform.domain.auth.UpdateUserRolesRequest;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.auth.UserToken;
 import com.wcc.platform.domain.exceptions.InvalidTokenException;
+import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
@@ -205,5 +208,60 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName(
+      "Given a valid user ID and roles with API key, when PUT /api/auth/users/{id}/roles,"
+          + " then return 200 OK with the updated user account")
+  void shouldReturn200WhenUpdatingUserRoles() throws Exception {
+    var userId = 1;
+    var request = new UpdateUserRolesRequest(List.of(RoleType.MENTOR, RoleType.LEADER));
+    var updated = new UserAccount(userId, null, "user@wcc.dev", null, request.roles(), true);
+
+    when(authService.updateUserRoles(userId, request.roles())).thenReturn(updated);
+
+    mockMvc
+        .perform(
+            put(USERS_PATH + "/" + userId + "/roles")
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.email").value("user@wcc.dev"));
+  }
+
+  @Test
+  @DisplayName(
+      "Given a user ID that does not exist, when PUT /api/auth/users/{id}/roles,"
+          + " then return 404 Not Found")
+  void shouldReturn404WhenUpdatingRolesForNonExistentUser() throws Exception {
+    var userId = 999;
+    var request = new UpdateUserRolesRequest(List.of(RoleType.MENTOR));
+
+    when(authService.updateUserRoles(userId, request.roles()))
+        .thenThrow(new MemberNotFoundException("User not found with id: " + userId));
+
+    mockMvc
+        .perform(
+            put(USERS_PATH + "/" + userId + "/roles")
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @DisplayName(
+      "Given updateUserRoles method, when inspecting its annotations,"
+          + " then it should require ADMIN or LEADER role")
+  void shouldRequireAdminOrLeaderRoleOnUpdateUserRolesEndpoint() throws NoSuchMethodException {
+    var method =
+        AuthController.class.getDeclaredMethod(
+            "updateUserRoles", Integer.class, UpdateUserRolesRequest.class);
+    var annotation = method.getAnnotation(RequiresRole.class);
+
+    assertThat(annotation).isNotNull();
+    assertThat(annotation.value()).containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.LEADER);
   }
 }
