@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { Box, Button, Paper, Typography } from '@mui/material';
+import Router, { useRouter } from 'next/router';
+import { Button, Paper, Typography } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/components/AuthProvider';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
@@ -15,14 +15,13 @@ export default function MenteeApplicationDetailPage() {
   useEffect(() => {
     const storedToken = getStoredToken();
     if (!storedToken || isTokenExpired(storedToken)) {
-      router.replace('/login');
+      Router.replace('/login');
       return;
     }
     if (roles.length > 0 && !canAccess) {
-      router.replace('/admin');
+      Router.replace('/admin');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roles, canAccess]);
+  }, [canAccess, roles]);
 
   if (!canAccess && roles.length > 0) return null;
 

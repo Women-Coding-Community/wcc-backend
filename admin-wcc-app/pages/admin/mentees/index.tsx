@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -22,8 +22,9 @@ import {
 } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/components/AuthProvider';
+import { getErrorMessage } from '@/lib/api';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import {
   activateMentee,
   getActiveMentees,
@@ -55,24 +56,7 @@ export default function MenteesPage() {
 
   const canAccess = roles.includes('ADMIN') || roles.includes('MENTORSHIP_ADMIN');
 
-  useEffect(() => {
-    const storedToken = getStoredToken();
-    if (!storedToken || isTokenExpired(storedToken)) {
-      router.replace('/login');
-      return;
-    }
-    if (roles.length > 0 && !canAccess) {
-      router.replace('/admin');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roles, canAccess]);
-
-  useEffect(() => {
-    if (!token || !canAccess) return;
-    loadData();
-  }, [token, canAccess]);
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     if (!token) return;
     setLoading(true);
     setError(null);
@@ -83,12 +67,28 @@ export default function MenteesPage() {
       ]);
       setPendingMentees(pending);
       setActiveMentees(active);
-    } catch (e: any) {
-      setError(e.message ?? 'Failed to load mentees');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to load mentees'));
     } finally {
       setLoading(false);
     }
-  }
+  }, [token]);
+
+  useEffect(() => {
+    const storedToken = getStoredToken();
+    if (!storedToken || isTokenExpired(storedToken)) {
+      Router.replace('/login');
+      return;
+    }
+    if (roles.length > 0 && !canAccess) {
+      Router.replace('/admin');
+    }
+  }, [canAccess, roles]);
+
+  useEffect(() => {
+    if (!token || !canAccess) return;
+    loadData();
+  }, [canAccess, loadData, token]);
 
   async function handleActivate(menteeId: number) {
     if (!token) return;
@@ -97,8 +97,8 @@ export default function MenteesPage() {
     try {
       await activateMentee(menteeId, token);
       await loadData();
-    } catch (e: any) {
-      setActionError(e.message ?? 'Failed to activate mentee');
+    } catch (error: unknown) {
+      setActionError(getErrorMessage(error, 'Failed to activate mentee'));
     } finally {
       setSubmitting(false);
     }
@@ -126,8 +126,8 @@ export default function MenteesPage() {
       await rejectMenteeByMenteeId(rejectTargetId, rejectReason.trim(), token);
       closeRejectDialog();
       await loadData();
-    } catch (e: any) {
-      setActionError(e.message ?? 'Failed to reject mentee');
+    } catch (error: unknown) {
+      setActionError(getErrorMessage(error, 'Failed to reject mentee'));
     } finally {
       setSubmitting(false);
     }
@@ -192,21 +192,25 @@ export default function MenteesPage() {
               {pendingMentees.map((mentee) => (
                 <TableRow key={mentee.id} hover>
                   <TableCell>{mentee.fullName}</TableCell>
-                  <TableCell>
-                    {linkedInUrl(mentee) && (
-                      <Link
-                        href={linkedInUrl(mentee)}
-                        target="_blank"
-                        rel="noreferrer"
-                        variant="body2"
-                      >
-                        LinkedIn
-                      </Link>
-                    )}{' '}
-                    | {mentee.email}
-                  </TableCell>
+                  <TableCell>{mentee.email}</TableCell>
                   <TableCell>{mentee.position ?? '—'}</TableCell>
-                  <TableCell>{mentee.slackDisplayName}</TableCell>
+                  <TableCell>
+                    <Box display="flex" flexDirection="column" gap={0.5}>
+                      {mentee.slackDisplayName && (
+                        <Chip label={mentee.slackDisplayName} size="small" variant="outlined" />
+                      )}
+                      {linkedInUrl(mentee) && (
+                        <Link
+                          href={linkedInUrl(mentee)}
+                          target="_blank"
+                          rel="noreferrer"
+                          variant="body2"
+                        >
+                          LinkedIn
+                        </Link>
+                      )}
+                    </Box>
+                  </TableCell>
                   <TableCell>
                     <Chip label="PENDING" color="warning" size="small" />
                   </TableCell>
@@ -272,21 +276,25 @@ export default function MenteesPage() {
               {activeMentees.map((mentee) => (
                 <TableRow key={mentee.id} hover>
                   <TableCell>{mentee.fullName}</TableCell>
-                  <TableCell>
-                    {linkedInUrl(mentee) && (
-                      <Link
-                        href={linkedInUrl(mentee)}
-                        target="_blank"
-                        rel="noreferrer"
-                        variant="body2"
-                      >
-                        LinkedIn
-                      </Link>
-                    )}{' '}
-                    | {mentee.email}
-                  </TableCell>
+                  <TableCell>{mentee.email}</TableCell>
                   <TableCell>{mentee.position ?? '—'}</TableCell>
-                  <TableCell>{mentee.slackDisplayName}</TableCell>
+                  <TableCell>
+                    <Box display="flex" flexDirection="column" gap={0.5}>
+                      {mentee.slackDisplayName && (
+                        <Chip label={mentee.slackDisplayName} size="small" variant="outlined" />
+                      )}
+                      {linkedInUrl(mentee) && (
+                        <Link
+                          href={linkedInUrl(mentee)}
+                          target="_blank"
+                          rel="noreferrer"
+                          variant="body2"
+                        >
+                          LinkedIn
+                        </Link>
+                      )}
+                    </Box>
+                  </TableCell>
                   <TableCell>
                     <Chip label="ACTIVE" color="success" size="small" />
                   </TableCell>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Avatar,
@@ -23,7 +23,8 @@ import {
 } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
 import { useAuth } from '@/components/AuthProvider';
-import { useRouter } from 'next/router';
+import { getErrorMessage } from '@/lib/api';
+import Router, { useRouter } from 'next/router';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
 import {
   acceptApplication,
@@ -64,24 +65,7 @@ export default function MentorDashboardPage() {
   const mentorId = (member as MemberWithId | null)?.id;
   const canAccess = roles.includes('ADMIN') || roles.includes('MENTOR');
 
-  useEffect(() => {
-    const storedToken = getStoredToken();
-    if (!storedToken || isTokenExpired(storedToken)) {
-      router.replace('/login');
-      return;
-    }
-    if (roles.length > 0 && !canAccess) {
-      router.replace('/admin');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roles, canAccess]);
-
-  useEffect(() => {
-    if (!token || !mentorId || !canAccess) return;
-    loadData();
-  }, [token, mentorId, canAccess]);
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     if (!token || !mentorId) return;
     setLoading(true);
     setError(null);
@@ -89,12 +73,28 @@ export default function MentorDashboardPage() {
       const allApplications = await getMentorApplications(mentorId, token);
       setAssignedApplications(allApplications.filter((a) => a.status === 'MATCHED'));
       setPendingApplications(allApplications.filter((a) => a.status === 'MENTOR_REVIEWING'));
-    } catch (e: any) {
-      setError(e.message ?? 'Failed to load dashboard data');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to load dashboard data'));
     } finally {
       setLoading(false);
     }
-  }
+  }, [mentorId, token]);
+
+  useEffect(() => {
+    const storedToken = getStoredToken();
+    if (!storedToken || isTokenExpired(storedToken)) {
+      Router.replace('/login');
+      return;
+    }
+    if (roles.length > 0 && !canAccess) {
+      Router.replace('/admin');
+    }
+  }, [canAccess, roles]);
+
+  useEffect(() => {
+    if (!token || !mentorId || !canAccess) return;
+    loadData();
+  }, [canAccess, loadData, mentorId, token]);
 
   function openDeclineDialog(applicationId: number) {
     setDeclineTargetId(applicationId);
@@ -115,8 +115,8 @@ export default function MentorDashboardPage() {
     try {
       await acceptApplication(applicationId, token);
       await loadData();
-    } catch (e: any) {
-      setActionError(e.message ?? 'Failed to accept application');
+    } catch (error: unknown) {
+      setActionError(getErrorMessage(error, 'Failed to accept application'));
     } finally {
       setSubmitting(false);
     }
@@ -130,8 +130,8 @@ export default function MentorDashboardPage() {
       await declineApplication(declineTargetId, declineReason.trim(), token);
       closeDeclineDialog();
       await loadData();
-    } catch (e: any) {
-      setActionError(e.message ?? 'Failed to decline application');
+    } catch (error: unknown) {
+      setActionError(getErrorMessage(error, 'Failed to decline application'));
     } finally {
       setSubmitting(false);
     }
