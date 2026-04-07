@@ -133,10 +133,11 @@ export default function MenteesPage() {
   return (
     <AdminLayout>
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Pending Mentees
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+          <Typography variant="h5">Pending Mentees</Typography>
+          {!loading && <Chip label={pendingMentees.length} color="warning" size="small" />}
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2, mt: 0.5 }}>
           Mentees awaiting admin review. Activate to grant access or reject with a reason.
         </Typography>
 
@@ -238,9 +239,10 @@ export default function MenteesPage() {
       </Paper>
 
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Active Mentees
-        </Typography>
+        <Box display="flex" alignItems="center" gap={1} mb={2}>
+          <Typography variant="h5">Active Mentees</Typography>
+          {!loading && <Chip label={activeMentees.length} color="success" size="small" />}
+        </Box>
 
         {!loading && activeMentees.length === 0 ? (
           <Typography color="text.secondary">No active mentees.</Typography>
