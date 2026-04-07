@@ -63,12 +63,19 @@ export interface MenteeApplicationReview {
   mentorshipGoal: string;
 }
 
+export interface SocialNetwork {
+  type: string;
+  link: string;
+}
+
 export interface DashboardMentee {
   id: number;
   fullName: string;
   position?: string;
   email?: string;
   profileStatus?: string;
+  slackDisplayName?: string;
+  network?: SocialNetwork[];
   skills?: MenteeSkills;
   images?: MenteeImage[];
   bio?: string;
