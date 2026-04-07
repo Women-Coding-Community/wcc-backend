@@ -1,7 +1,5 @@
-export interface MentorNetwork {
-  type: string;
-  link: string;
-}
+import type { SocialNetwork } from '@/types/member';
+export type { SocialNetwork, SocialNetworkType, SocialNetworkTypeValue } from '@/types/member';
 
 export interface MentorSkillArea {
   technicalArea: string;
@@ -58,7 +56,7 @@ export interface MentorItem {
   city?: string;
   companyName?: string;
   images?: string[];
-  network?: MentorNetwork[];
+  network?: SocialNetwork[];
   skills?: MentorSkills;
   spokenLanguages?: string[];
   bio?: string;

@@ -19,6 +19,19 @@ Load [project-config.md](project-config.md) before starting — it contains all 
 
 ---
 
+## Splitting into backend + frontend issues
+
+When a feature spans both backend (Java/Spring Boot) and frontend (Next.js/admin-wcc-app), **always create two separate issues** in the same repo (`Women-Coding-Community/wcc-backend`):
+
+1. **Backend issue** — covers only Java/Spring Boot changes (controllers, services, repositories, DB migrations, tests). Label: `java/springboot` (plus `enhancement` / `bug`). Title prefix: `feat(backend):` or `fix(backend):`.
+2. **Frontend issue** — covers only Next.js/admin-wcc-app changes (pages, components, services, types, frontend tests). Label: `frontend` (plus `enhancement` / `bug`). Title prefix: `feat(frontend):` or `fix(frontend):`. The Dependencies section must reference the backend issue as a blocker.
+
+**Never mix backend and frontend changes in one issue.**
+
+For each issue: generate the body, preview it, get user approval, then create it and add it to the project board before moving to the next one.
+
+---
+
 ## Step 1 — Determine issue type and title
 
 If `$ARGUMENTS` was provided, use it to infer the issue type from the prefix (`feat:` → feature, `bug:` / `fix:` → bug) and extract the core subject as the title. Otherwise ask:
@@ -207,7 +220,7 @@ Ask for (or infer from context):
 
 | Field     | Required | Default / Options                                              |
 |-----------|----------|----------------------------------------------------------------|
-| Labels    | Yes      | `enhancement`+tech label for features; `bug`+tech label for bugs |
+| Labels    | Yes      | `enhancement`+`java/springboot` for backend features; `enhancement`+`frontend` for frontend features; `bug`+tech label for bugs. Never mix `java/springboot` and `frontend` in the same issue. |
 | Epic      | Yes      | From Epics table in project-config.md                          |
 | Status    | Yes      | `Todo`                                                         |
 | Priority  | No       | Suggest based on impact (bugs with critical impact → P0/P1)    |

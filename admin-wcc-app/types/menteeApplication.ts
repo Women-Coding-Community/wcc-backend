@@ -51,10 +51,9 @@ export interface MenteeImage {
   name?: string;
 }
 
-export interface SocialNetwork {
-  type: string;
-  link: string;
-}
+export { SocialNetworkType } from '@/types/member';
+export type { SocialNetwork, SocialNetworkTypeValue } from '@/types/member';
+import type { SocialNetwork } from '@/types/member';
 
 export interface DashboardMentee {
   id: number;

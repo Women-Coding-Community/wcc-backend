@@ -31,9 +31,10 @@ import {
   rejectMenteeByMenteeId,
 } from '@/services/menteeService';
 import { DashboardMentee } from '@/types/menteeApplication';
+import { SocialNetworkType } from '@/types/member';
 
 function linkedInUrl(mentee: DashboardMentee): string | undefined {
-  return mentee.network?.find((n) => n.type === 'LINKEDIN')?.link;
+  return mentee.network?.find((n) => n.type === SocialNetworkType.LINKEDIN)?.link;
 }
 
 export default function MenteesPage() {
@@ -191,25 +192,21 @@ export default function MenteesPage() {
               {pendingMentees.map((mentee) => (
                 <TableRow key={mentee.id} hover>
                   <TableCell>{mentee.fullName}</TableCell>
-                  <TableCell>{mentee.email}</TableCell>
-                  <TableCell>{mentee.position ?? '—'}</TableCell>
                   <TableCell>
-                    <Box display="flex" flexDirection="column" gap={0.5}>
-                      {mentee.slackDisplayName && (
-                        <Chip label={mentee.slackDisplayName} size="small" variant="outlined" />
-                      )}
-                      {linkedInUrl(mentee) && (
-                        <Link
-                          href={linkedInUrl(mentee)}
-                          target="_blank"
-                          rel="noreferrer"
-                          variant="body2"
-                        >
-                          LinkedIn
-                        </Link>
-                      )}
-                    </Box>
+                    {linkedInUrl(mentee) && (
+                      <Link
+                        href={linkedInUrl(mentee)}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant="body2"
+                      >
+                        LinkedIn
+                      </Link>
+                    )}{' '}
+                    | {mentee.email}
                   </TableCell>
+                  <TableCell>{mentee.position ?? '—'}</TableCell>
+                  <TableCell>{mentee.slackDisplayName}</TableCell>
                   <TableCell>
                     <Chip label="PENDING" color="warning" size="small" />
                   </TableCell>
@@ -275,25 +272,21 @@ export default function MenteesPage() {
               {activeMentees.map((mentee) => (
                 <TableRow key={mentee.id} hover>
                   <TableCell>{mentee.fullName}</TableCell>
-                  <TableCell>{mentee.email}</TableCell>
-                  <TableCell>{mentee.position ?? '—'}</TableCell>
                   <TableCell>
-                    <Box display="flex" flexDirection="column" gap={0.5}>
-                      {mentee.slackDisplayName && (
-                        <Chip label={mentee.slackDisplayName} size="small" variant="outlined" />
-                      )}
-                      {linkedInUrl(mentee) && (
-                        <Link
-                          href={linkedInUrl(mentee)}
-                          target="_blank"
-                          rel="noreferrer"
-                          variant="body2"
-                        >
-                          LinkedIn
-                        </Link>
-                      )}
-                    </Box>
+                    {linkedInUrl(mentee) && (
+                      <Link
+                        href={linkedInUrl(mentee)}
+                        target="_blank"
+                        rel="noreferrer"
+                        variant="body2"
+                      >
+                        LinkedIn
+                      </Link>
+                    )}{' '}
+                    | {mentee.email}
                   </TableCell>
+                  <TableCell>{mentee.position ?? '—'}</TableCell>
+                  <TableCell>{mentee.slackDisplayName}</TableCell>
                   <TableCell>
                     <Chip label="ACTIVE" color="success" size="small" />
                   </TableCell>

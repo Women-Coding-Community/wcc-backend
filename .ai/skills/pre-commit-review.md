@@ -87,6 +87,34 @@ For every changed Java file, scan for the style violations below and **edit the 
 
 - Replace `.get(0)` on `List` with `.getFirst()` (Java 21) in new or changed test code.
 
+### Auto-fix: deprecated TypeScript / React APIs (frontend)
+
+Scan every changed `*.ts` / `*.tsx` file for these patterns and apply the replacement directly:
+
+| Deprecated | Replacement |
+|---|---|
+| `ReactDOM.render(` | `createRoot(container).render(…)` |
+| `componentWillMount` | `componentDidMount` |
+| `componentWillReceiveProps` | `static getDerivedStateFromProps` or `componentDidUpdate` |
+| `componentWillUpdate` | `getSnapshotBeforeUpdate` or `componentDidUpdate` |
+| `new String(` / `new Number(` / `new Boolean(` | remove wrapper constructor |
+| `makeStyles(` / `withStyles(` (MUI) | `sx` prop or `styled()` |
+| `createMuiTheme(` | `createTheme(` |
+
+If the replacement is a **direct find-and-replace**, apply it. If it requires non-trivial restructuring, report it as `[WARNING]` instead.
+
+### Auto-fix: deprecated Java APIs (backend)
+
+Scan every changed `.java` file for these patterns and apply the replacement directly:
+
+| Deprecated | Replacement |
+|---|---|
+| `new java.util.Date()` | `Instant.now()` / `LocalDate.now()` / `LocalDateTime.now()` |
+| `Calendar.getInstance()` | `ZonedDateTime.now()` or `LocalDate.now()` |
+| `new java.util.Date(long)` | `Instant.ofEpochMilli(…)` |
+
+Also scan the diff for calls to methods or classes that are annotated `@Deprecated` **within this repository**. If a replacement is noted in the Javadoc `@deprecated` tag, apply it when it is a straightforward swap; otherwise report as `[WARNING]`.
+
 ## Step 4 — Review for non-auto-fixable issues
 
 After applying all auto-fixes, check for issues that require human judgement. Apply only the checks relevant to what was actually changed.
@@ -99,12 +127,14 @@ After applying all auto-fixes, check for issues that require human judgement. Ap
 - No business logic in controllers; no data access in services directly
 - Lombok usage aligns with project patterns
 - **`@SuppressWarnings` in `src/main`**: never suppress PMD or other warnings in production code without explicit user approval — find an architectural fix instead (extract method, delegate to another service, reduce class complexity)
+- **Remaining deprecated usage**: any call to a `@Deprecated` API not auto-fixed in Step 3 → `[WARNING]`; include the replacement from the Javadoc if available
 
 ### Frontend (React / TypeScript)
 - Component boundaries and single responsibility
 - Typing quality — avoid `any`, prefer explicit interfaces
 - State and effect hygiene — no unnecessary re-renders, correct dependency arrays
 - Project style conventions
+- **Remaining deprecated usage**: any deprecated React/Next.js/MUI pattern not auto-fixed in Step 3 → `[WARNING]`; also flag `@deprecated` JSDoc on any symbol being imported or called from within the diff
 
 ### Tests (Java)
 - New logic paths have corresponding unit tests

@@ -6,6 +6,7 @@ import * as AuthProvider from '@/components/AuthProvider';
 import * as menteeService from '@/services/menteeService';
 import * as auth from '@/lib/auth';
 import mockRouter from 'next-router-mock';
+import { SocialNetworkType } from '@/types/member';
 
 jest.mock('next/router', () => jest.requireActual('next-router-mock'));
 jest.mock('@/components/AuthProvider');
@@ -113,10 +114,13 @@ describe('MenteesPage', () => {
       });
     });
 
-    it('when mentee has LINKEDIN network entry, then LinkedIn link is shown', async () => {
+    it('when mentee has linkedin network entry, then LinkedIn link is shown', async () => {
       setupAuth(['ADMIN']);
       mockGetPendingMentees.mockResolvedValue([
-        { ...pendingMentee, network: [{ type: 'LINKEDIN', link: 'https://linkedin.com/in/jane' }] },
+        {
+          ...pendingMentee,
+          network: [{ type: SocialNetworkType.LINKEDIN, link: 'https://linkedin.com/in/jane' }],
+        },
       ]);
 
       render(<MenteesPage />);
@@ -139,10 +143,10 @@ describe('MenteesPage', () => {
       });
     });
 
-    it('when mentee network type is lowercase linkedin, then LinkedIn link is not shown', async () => {
+    it('when mentee network type is unknown, then LinkedIn link is not shown', async () => {
       setupAuth(['ADMIN']);
       mockGetPendingMentees.mockResolvedValue([
-        { ...pendingMentee, network: [{ type: 'linkedin', link: 'https://linkedin.com/in/jane' }] },
+        { ...pendingMentee, network: [{ type: 'github', link: 'https://github.com/jane' }] },
       ]);
 
       render(<MenteesPage />);
