@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import EditMentorForm from '@/components/EditMentor/EditMentorForm';
 import * as mentorService from '@/services/mentorService';
 import * as api from '@/lib/api';
@@ -110,6 +111,7 @@ describe('EditMentorForm', () => {
   });
 
   it('Given form is loaded, when Save Profile is clicked, then PUT request is made with mentor data', async () => {
+    const user = userEvent.setup();
     mockGetMentorById.mockResolvedValue(fakeMentor);
     mockApiFetch.mockResolvedValueOnce(null).mockResolvedValueOnce({});
 
@@ -118,7 +120,7 @@ describe('EditMentorForm', () => {
     await screen.findByDisplayValue('Jane Smith');
 
     const saveBtn = screen.getAllByRole('button', { name: /save profile/i })[0];
-    saveBtn.click();
+    await user.click(saveBtn);
 
     await waitFor(() => {
       const calls = mockApiFetch.mock.calls.filter(
@@ -129,6 +131,7 @@ describe('EditMentorForm', () => {
   });
 
   it('Given form is loaded, when Save Profile succeeds, then success message is shown', async () => {
+    const user = userEvent.setup();
     mockGetMentorById.mockResolvedValue(fakeMentor);
     mockApiFetch.mockResolvedValueOnce(null).mockResolvedValueOnce({});
 
@@ -137,7 +140,7 @@ describe('EditMentorForm', () => {
     await screen.findByDisplayValue('Jane Smith');
 
     const saveBtn = screen.getAllByRole('button', { name: /save profile/i })[0];
-    saveBtn.click();
+    await user.click(saveBtn);
 
     await waitFor(() => {
       expect(screen.getByText('Profile updated successfully!')).toBeInTheDocument();
@@ -145,6 +148,7 @@ describe('EditMentorForm', () => {
   });
 
   it('Given form is loaded, when Save Profile fails, then error message is shown', async () => {
+    const user = userEvent.setup();
     mockGetMentorById.mockResolvedValue(fakeMentor);
     mockApiFetch.mockResolvedValueOnce(null).mockRejectedValueOnce(new Error('Save failed'));
 
@@ -153,7 +157,7 @@ describe('EditMentorForm', () => {
     await screen.findByDisplayValue('Jane Smith');
 
     const saveBtn = screen.getAllByRole('button', { name: /save profile/i })[0];
-    saveBtn.click();
+    await user.click(saveBtn);
 
     await waitFor(() => {
       expect(screen.getByText('Save failed')).toBeInTheDocument();
