@@ -34,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,6 +42,7 @@ import org.springframework.web.context.request.WebRequest;
 
 /** Global controller to handle all exceptions for the API. */
 @SuppressWarnings({"PMD.ExcessiveImports"})
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -70,6 +72,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorDetails> handleInternalError(
       final RuntimeException ex, final WebRequest request) {
+    log.error("Internal error: {}", ex.getMessage(), ex);
     final var errorDetails =
         new ErrorDetails(
             INTERNAL_SERVER_ERROR.value(), ex.getMessage(), request.getDescription(false));
