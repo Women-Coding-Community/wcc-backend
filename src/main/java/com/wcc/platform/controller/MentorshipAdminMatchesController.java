@@ -2,9 +2,11 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchCancelRequest;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipMatchingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +40,7 @@ public class MentorshipAdminMatchesController {
 
   private final MentorshipMatchingService matchingService;
   private final MentorshipCycleRepository cycleRepository;
+  private final MenteeService menteeService;
 
   // ==================== Match Management ====================
 
@@ -184,5 +187,19 @@ public class MentorshipAdminMatchesController {
   public ResponseEntity<List<MentorshipCycleEntity>> getAllCycles() {
     final List<MentorshipCycleEntity> cycles = cycleRepository.getAll();
     return ResponseEntity.ok(cycles);
+  }
+
+  /**
+   * API to get all mentees for a specific cycle whose applications exhausted all options and is
+   * PENDING_MANUAL_MATCH.
+   *
+   * @return List of mentees
+   */
+  @GetMapping("/mentees/pending-manual-match")
+  @Operation(summary = "Get all mentees for a cycle whose application pending manual match")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<Mentee>> getMenteesPendingManualMatch() {
+    final List<Mentee> matches = menteeService.getMenteePendingManualMatch();
+    return ResponseEntity.ok(matches);
   }
 }

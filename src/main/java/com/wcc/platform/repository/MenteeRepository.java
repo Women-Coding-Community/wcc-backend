@@ -15,4 +15,12 @@ public interface MenteeRepository extends CrudRepository<Mentee, Long> {
    * @return list of mentees
    */
   List<Mentee> getAll();
+
+  /**
+   * Return all mentees matching by IDs
+   *
+   * @param menteeIds
+   * @return list of mentees
+   */
+  List<Mentee> findAllById(List<Long> menteeIds);
 }

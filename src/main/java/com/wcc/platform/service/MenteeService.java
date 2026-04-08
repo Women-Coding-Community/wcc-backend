@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.*;
 import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
@@ -273,5 +274,21 @@ public class MenteeService {
               "Mentee has already reached the limit of 5 registrations for %d",
               registrationsCount));
     }
+  }
+
+  /**
+   * Get all mentees having applications pending for manual match for the current cycle
+   *
+   * @return list of mentees
+   */
+  public List<Mentee> getMenteePendingManualMatch() {
+    List<MenteeApplication> applnPendingManualMatch =
+        registrationsRepo.findByStatusAndCycle(
+            ApplicationStatus.PENDING_MANUAL_MATCH, getCurrentCycle().getCycleId());
+
+    return menteeRepository.findAllById(
+        applnPendingManualMatch.stream()
+            .map(MenteeApplication::getMenteeId)
+            .collect(Collectors.toList()));
   }
 }

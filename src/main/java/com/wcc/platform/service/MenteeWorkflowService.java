@@ -57,7 +57,8 @@ public class MenteeWorkflowService {
   }
 
   /**
-   * Admin rejects a mentee application.
+   * Admin rejects a mentee application. If all applications for the mentee are now in
+   * non-forwardable states, creates a pending manual match request.
    *
    * @param applicationId the application ID
    * @param reason reason for rejection
@@ -79,6 +80,8 @@ public class MenteeWorkflowService {
         "Application {} from mentee {} rejected by the Mentorship Team",
         applicationId,
         application.getMenteeId());
+
+    checkAndTriggerManualMatch(application.getMenteeId(), application.getCycleId());
 
     return updated;
   }
@@ -139,6 +142,8 @@ public class MenteeWorkflowService {
 
     // Auto-notify next priority mentor
     notifyNextPriorityMentor(application);
+
+    checkAndTriggerManualMatch(application.getMenteeId(), application.getCycleId());
 
     return updated;
   }
@@ -246,5 +251,48 @@ public class MenteeWorkflowService {
                   nextApp.getMenteeId());
               // TODO: Send email notification to next priority mentor
             });
+  }
+
+  /**
+   * Checks if all applications for a mentee in a cycle are in non-forwardable states (cannot lead
+   * to a match). If so, creates a PENDING_MANUAL_MATCH application to indicate the mentee needs
+   * manual matching by the mentorship team.
+   *
+   * @param menteeId the mentee ID
+   * @param cycleId the cycle ID
+   */
+  private void checkAndTriggerManualMatch(final Long menteeId, final Long cycleId) {
+    final List<MenteeApplication> allApplications =
+        applicationRepository.findByMenteeAndCycleOrderByPriority(menteeId, cycleId);
+
+    final boolean allNonForwardable =
+        allApplications.stream()
+            .filter(app -> app.getMentorId() != null)
+            .allMatch(app -> app.getStatus().isNonForwardable());
+
+    if (allNonForwardable) {
+      final var existingManualMatch =
+          applicationRepository.findPendingManualMatchByMenteeAndCycle(menteeId, cycleId);
+
+      if (existingManualMatch.isEmpty()) {
+        final MenteeApplication manualMatchApp =
+            MenteeApplication.builder()
+                .menteeId(menteeId)
+                .mentorId(null)
+                .cycleId(cycleId)
+                .priorityOrder(null)
+                .status(ApplicationStatus.PENDING_MANUAL_MATCH)
+                .applicationMessage("All mentor applications exhausted - requires manual matching")
+                .build();
+
+        applicationRepository.create(manualMatchApp);
+
+        log.info(
+            "Created PENDING_MANUAL_MATCH application for mentee {} in cycle {} "
+                + "as all applications are non-forwardable",
+            menteeId,
+            cycleId);
+      }
+    }
   }
 }

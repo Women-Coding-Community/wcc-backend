@@ -59,15 +59,33 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
           + "VALUES (?, ?, ?, ?, ?::application_status, ?, ?) "
           + "RETURNING application_id";
 
+  private static final String SEL_BY_STATUS_PENDING_MANUAL_MATCH =
+      "SELECT * FROM mentee_applications "
+          + "WHERE mentee_id = ? AND cycle_id = ? "
+          + "AND application_status = 'pending_manual_match'";
+
+  private static final String SELECT_BY_STATUS_AND_CYCLE =
+      "SELECT * FROM mentee_applications "
+          + "WHERE application_status = ?::application_status "
+          + "AND cycle_id = ?";
+
   private final JdbcTemplate jdbc;
 
   @Transactional
   @Override
   public MenteeApplication create(final MenteeApplication entity) {
-    final var existing =
-        findByMenteeMentorCycle(entity.getMenteeId(), entity.getMentorId(), entity.getCycleId());
-    if (existing.isPresent()) {
-      return existing.get();
+    if (entity.getMentorId() != null) {
+      final var existing =
+          findByMenteeMentorCycle(entity.getMenteeId(), entity.getMentorId(), entity.getCycleId());
+      if (existing.isPresent()) {
+        return existing.get();
+      }
+    } else {
+      final var existingManualMatch =
+          findPendingManualMatchByMenteeAndCycle(entity.getMenteeId(), entity.getCycleId());
+      if (existingManualMatch.isPresent()) {
+        return existingManualMatch.get();
+      }
     }
 
     final Long generatedId =
@@ -167,13 +185,33 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
     return jdbc.queryForObject(COUNT_MENTEE_APPS, Long.class, menteeId, cycleId);
   }
 
+  @Override
+  public Optional<MenteeApplication> findPendingManualMatchByMenteeAndCycle(
+      final Long menteeId, final Long cycleId) {
+    return jdbc.query(
+        SEL_BY_STATUS_PENDING_MANUAL_MATCH,
+        rs -> rs.next() ? Optional.of(mapRow(rs)) : Optional.empty(),
+        menteeId,
+        cycleId);
+  }
+
+  @Override
+  public List<MenteeApplication> findByStatusAndCycle(ApplicationStatus status, Long cycleId) {
+    return jdbc.query(
+        SELECT_BY_STATUS_AND_CYCLE, (rs, rowNum) -> mapRow(rs), status.getValue(), cycleId);
+  }
+
   private MenteeApplication mapRow(final ResultSet rs) throws SQLException {
+    final Long mentorId = rs.getObject("mentor_id") != null ? rs.getLong("mentor_id") : null;
+    final Integer priorityOrder =
+        rs.getObject("priority_order") != null ? rs.getInt("priority_order") : null;
+
     return MenteeApplication.builder()
         .applicationId(rs.getLong("application_id"))
         .menteeId(rs.getLong("mentee_id"))
-        .mentorId(rs.getLong("mentor_id"))
+        .mentorId(mentorId)
         .cycleId(rs.getLong("cycle_id"))
-        .priorityOrder(rs.getInt("priority_order"))
+        .priorityOrder(priorityOrder)
         .status(ApplicationStatus.fromValue(rs.getString("application_status")))
         .applicationMessage(rs.getString("application_message"))
         .whyMentor(rs.getString("why_mentor"))

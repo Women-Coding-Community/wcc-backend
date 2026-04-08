@@ -2,7 +2,6 @@ package com.wcc.platform.domain.platform.mentorship;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import lombok.Builder;
@@ -20,11 +19,10 @@ public class MenteeApplication {
 
   @NotNull private Long menteeId;
 
-  @NotNull private Long mentorId;
+  private Long mentorId;
 
   @NotNull private Long cycleId;
 
-  @NotNull
   @Min(1)
   @Max(5)
   private Integer priorityOrder;
@@ -32,7 +30,7 @@ public class MenteeApplication {
   @NotNull private ApplicationStatus status;
 
   private String applicationMessage;
-  @NotBlank private String whyMentor;
+  private String whyMentor;
   private ZonedDateTime appliedAt;
   private ZonedDateTime reviewedAt;
   private ZonedDateTime matchedAt;
