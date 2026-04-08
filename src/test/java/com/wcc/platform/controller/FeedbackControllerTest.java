@@ -31,6 +31,7 @@ import com.wcc.platform.domain.platform.feedback.FeedbackSearchCriteria;
 import com.wcc.platform.domain.platform.type.FeedbackType;
 import com.wcc.platform.service.FeedbackService;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -55,6 +56,8 @@ class FeedbackControllerTest {
   @MockBean private FeedbackService feedbackService;
 
   @Test
+  @DisplayName(
+      "Given valid feedback ID, when getting feedback by ID, then returns OK with feedback")
   void testGetFeedbackByIdReturnsOk() throws Exception {
     Long feedbackId = 1L;
     Feedback mockFeedback = createMentorReviewFeedbackTest();
@@ -71,6 +74,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given non-existent feedback ID, when getting feedback by ID, then returns not found")
   void testGetFeedbackByIdNotFound() throws Exception {
     Long feedbackId = 999L;
     when(feedbackService.getFeedbackById(feedbackId))
@@ -82,6 +87,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given valid mentor review feedback DTO, when creating feedback, then returns created with feedback")
   void testCreateFeedbackReturnsCreated() throws Exception {
     FeedbackDto feedbackDto = createMentorReviewFeedbackDtoTest();
     Feedback mockFeedback = createMentorReviewFeedbackTest();
@@ -99,6 +106,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given valid community general feedback DTO, when creating feedback, then returns created with feedback")
   void testCreateCommunityFeedbackReturnsCreated() throws Exception {
     FeedbackDto feedbackDto = createCommunityGeneralFeedbackDtoTest();
     Feedback mockFeedback = createCommunityGeneralFeedbackTest();
@@ -114,6 +123,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given valid feedback ID and update DTO, when updating feedback, then returns OK with updated feedback")
   void testUpdateFeedbackReturnsOk() throws Exception {
     Long feedbackId = 1L;
     FeedbackDto feedbackDto = createMentorReviewFeedbackDtoTest();
@@ -139,6 +150,7 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName("Given non-existent feedback ID, when updating feedback, then returns not found")
   void testUpdateNonExistentFeedbackThrowsException() throws Exception {
     Long nonExistentFeedbackId = 999L;
     FeedbackDto feedbackDto = createMentorReviewFeedbackDtoTest();
@@ -156,6 +168,7 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName("Given valid feedback ID, when approving feedback, then returns OK")
   void testApproveFeedbackReturnsOk() throws Exception {
     Long feedbackId = 1L;
     doNothing().when(feedbackService).approveFeedback(feedbackId);
@@ -170,6 +183,7 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName("Given non-existent feedback ID, when approving feedback, then returns not found")
   void testApproveNonExistentFeedbackThrowsException() throws Exception {
     Long nonExistentFeedbackId = 999L;
     doThrow(new FeedbackNotFoundException(nonExistentFeedbackId))
@@ -184,6 +198,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given valid feedback ID and anonymous status true, when updating anonymous status, then returns OK")
   void testUpdateFeedbackAnonymousStatusReturnsOk() throws Exception {
     Long feedbackId = 1L;
     Boolean isAnonymous = true;
@@ -200,6 +216,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given valid feedback ID and anonymous status false, when updating anonymous status, then returns OK")
   void testUpdateFeedbackAnonymousStatusToFalseReturnsOk() throws Exception {
     Long feedbackId = 1L;
     Boolean isAnonymous = false;
@@ -216,6 +234,7 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName("Given valid feedback ID, when deleting feedback, then returns no content")
   void testDeleteFeedbackReturnsNoContent() throws Exception {
     Long feedbackId = 1L;
     doNothing().when(feedbackService).deleteFeedback(feedbackId);
@@ -230,6 +249,7 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName("Given non-existent feedback ID, when deleting feedback, then returns not found")
   void testDeleteNonExistentFeedbackThrowsException() throws Exception {
     Long nonExistentFeedbackId = 999L;
     doThrow(new FeedbackNotFoundException(nonExistentFeedbackId))
@@ -244,6 +264,7 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName("Given no query filters, when getting all feedback, then returns all feedback")
   void testGetAllFeedbackNoFilters() throws Exception {
     Feedback feedback1 = createMentorReviewFeedbackTest();
     Feedback feedback2 = createCommunityGeneralFeedbackTest();
@@ -275,6 +296,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given reviewer ID filter, when getting all feedback, then returns feedback for reviewer")
   void testGetAllFeedbackWithReviewerId() throws Exception {
     Long reviewerId = 1L;
     Feedback feedback1 = createMentorReviewFeedbackTest();
@@ -305,6 +328,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given reviewee ID filter, when getting all feedback, then returns feedback for reviewee")
   void testGetAllFeedbackWithRevieweeId() throws Exception {
     Long revieweeId = 2L;
     Feedback feedback1 = createMentorReviewFeedbackTest();
@@ -332,6 +357,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given feedback type filter, when getting all feedback, then returns feedback of specified type")
   void testGetAllFeedbackWithType() throws Exception {
     Feedback feedback1 = createMentorReviewFeedbackTest();
     Feedback feedback2 = createMentorReviewFeedbackTest();
@@ -361,6 +388,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given year filter, when getting all feedback, then returns feedback for specified year")
   void testGetAllFeedbackWithYear() throws Exception {
     Integer year = 2026;
     Feedback feedback1 = createMentorReviewFeedbackTest();
@@ -389,6 +418,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given multiple filters, when getting all feedback, then returns feedback matching all filters")
   void testGetAllFeedbackMultipleFilters() throws Exception {
     Long reviewerId = 1L;
     Integer year = 2026;
@@ -421,6 +452,8 @@ class FeedbackControllerTest {
   }
 
   @Test
+  @DisplayName(
+      "Given service throws exception, when getting all feedback, then returns internal server error")
   void testInternalServerError() throws Exception {
     when(feedbackService.getAllFeedback(any(FeedbackSearchCriteria.class)))
         .thenThrow(new PlatformInternalException("Invalid Json", new RuntimeException()));

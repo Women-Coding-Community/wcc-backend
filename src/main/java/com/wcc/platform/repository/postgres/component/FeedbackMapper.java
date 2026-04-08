@@ -27,13 +27,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @SuppressWarnings("PMD.TooManyStaticImports")
 public class FeedbackMapper {
-  private static final String INSERT_SQL =
+  /* default */
+  static final String INSERT_SQL =
       "INSERT INTO feedback ("
           + "reviewer_id, reviewee_id, mentorship_cycle_id, feedback_type_id, "
           + "rating, feedback_text, feedback_year, is_anonymous, is_approved) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
 
-  private static final String UPDATE_SQL =
+  /* default */
+  static final String UPDATE_SQL =
       "UPDATE feedback SET "
           + "reviewer_id = ?, reviewee_id = ?, mentorship_cycle_id = ?, "
           + "feedback_type_id = ?, rating = ?, feedback_text = ?, "
@@ -75,8 +77,9 @@ public class FeedbackMapper {
 
   /** Adds a new feedback to the database and returns the feedback ID. */
   public Long addFeedback(final Feedback feedback) {
-    jdbc.update(
+    return jdbc.queryForObject(
         INSERT_SQL,
+        Long.class,
         feedback.getReviewerId(),
         feedback.getRevieweeId(),
         feedback.getMentorshipCycleId(),
@@ -86,9 +89,6 @@ public class FeedbackMapper {
         feedback.getYear(),
         feedback.getIsAnonymous(),
         feedback.getIsApproved());
-
-    // Return the last inserted ID
-    return jdbc.queryForObject("SELECT LASTVAL()", Long.class);
   }
 
   /**

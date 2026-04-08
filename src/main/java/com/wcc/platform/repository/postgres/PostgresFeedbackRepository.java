@@ -41,7 +41,7 @@ public class PostgresFeedbackRepository implements FeedbackRepository {
   @Override
   public Feedback update(final Long id, final Feedback entity) {
     feedbackMapper.updateFeedback(entity, id);
-    return entity;
+    return findById(id).orElseThrow();
   }
 
   @Override

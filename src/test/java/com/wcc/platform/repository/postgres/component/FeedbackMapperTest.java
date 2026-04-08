@@ -1,5 +1,7 @@
 package com.wcc.platform.repository.postgres.component;
 
+import static com.wcc.platform.repository.postgres.component.FeedbackMapper.INSERT_SQL;
+import static com.wcc.platform.repository.postgres.component.FeedbackMapper.UPDATE_SQL;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_CREATED_AT;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_FEEDBACK_TEXT;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_FEEDBACK_TYPE_ID;
@@ -25,6 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -45,6 +48,8 @@ class FeedbackMapperTest {
   }
 
   @Test
+  @DisplayName(
+      "Given ResultSet with all fields, when mapping row to feedback, then returns complete feedback")
   void testMapRowToFeedback() throws SQLException {
     Long feedbackId = 1L;
     Long reviewerId = 10L;
@@ -98,6 +103,8 @@ class FeedbackMapperTest {
   }
 
   @Test
+  @DisplayName(
+      "Given ResultSet with nullable fields, when mapping row to feedback, then returns feedback with nulls")
   void testMapRowToFeedbackWithNullableFields() throws SQLException {
     Long feedbackId = 2L;
     Long reviewerId = 10L;
@@ -137,12 +144,14 @@ class FeedbackMapperTest {
   }
 
   @Test
+  @DisplayName("Given ResultSet throws SQLException, when mapping, then propagates exception")
   void handlesSqlExceptionGracefully() throws Exception {
     when(resultSet.getLong(COLUMN_ID)).thenThrow(SQLException.class);
     assertThrows(SQLException.class, () -> feedbackMapper.mapRowToFeedback(resultSet));
   }
 
   @Test
+  @DisplayName("Given feedback with all fields, when adding, then inserts and returns ID")
   void testAddFeedback() {
     Feedback feedback =
         Feedback.builder()
@@ -157,30 +166,21 @@ class FeedbackMapperTest {
             .isApproved(false)
             .build();
 
-    when(jdbc.queryForObject("SELECT LASTVAL()", Long.class)).thenReturn(100L);
+    when(jdbc.queryForObject(
+            INSERT_SQL, Long.class, 1L, 2L, 5L, 1, 5, "Excellent mentor!", 2026, true, false))
+        .thenReturn(100L);
 
     Long feedbackId = feedbackMapper.addFeedback(feedback);
 
     assertEquals(100L, feedbackId);
     verify(jdbc)
-        .update(
-            "INSERT INTO feedback ("
-                + "reviewer_id, reviewee_id, mentorship_cycle_id, feedback_type_id, "
-                + "rating, feedback_text, feedback_year, is_anonymous, is_approved) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            1L,
-            2L,
-            5L,
-            1,
-            5,
-            "Excellent mentor!",
-            2026,
-            true,
-            false);
-    verify(jdbc).queryForObject("SELECT LASTVAL()", Long.class);
+        .queryForObject(
+            INSERT_SQL, Long.class, 1L, 2L, 5L, 1, 5, "Excellent mentor!", 2026, true, false);
   }
 
   @Test
+  @DisplayName(
+      "Given feedback with nullable fields, when adding, then inserts with nulls and returns ID")
   void testAddFeedbackWithNullableFields() {
     Feedback feedback =
         Feedback.builder()
@@ -191,29 +191,20 @@ class FeedbackMapperTest {
             .isApproved(true)
             .build();
 
-    when(jdbc.queryForObject("SELECT LASTVAL()", Long.class)).thenReturn(200L);
+    when(jdbc.queryForObject(
+            INSERT_SQL, Long.class, 1L, null, null, 2, null, "Great community!", null, false, true))
+        .thenReturn(200L);
 
     Long feedbackId = feedbackMapper.addFeedback(feedback);
 
     assertEquals(200L, feedbackId);
     verify(jdbc)
-        .update(
-            "INSERT INTO feedback ("
-                + "reviewer_id, reviewee_id, mentorship_cycle_id, feedback_type_id, "
-                + "rating, feedback_text, feedback_year, is_anonymous, is_approved) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            1L,
-            null,
-            null,
-            2,
-            null,
-            "Great community!",
-            null,
-            false,
-            true);
+        .queryForObject(
+            INSERT_SQL, Long.class, 1L, null, null, 2, null, "Great community!", null, false, true);
   }
 
   @Test
+  @DisplayName("Given feedback with all fields, when updating, then executes update query")
   void testUpdateFeedback() {
     Long feedbackId = 1L;
     Feedback feedback =
@@ -233,25 +224,12 @@ class FeedbackMapperTest {
 
     verify(jdbc)
         .update(
-            "UPDATE feedback SET "
-                + "reviewer_id = ?, reviewee_id = ?, mentorship_cycle_id = ?, "
-                + "feedback_type_id = ?, rating = ?, feedback_text = ?, "
-                + "feedback_year = ?, is_anonymous = ?, is_approved = ?, "
-                + "updated_at = CURRENT_TIMESTAMP "
-                + "WHERE id = ?",
-            1L,
-            2L,
-            5L,
-            1,
-            4,
-            "Updated feedback text",
-            2026,
-            false,
-            true,
-            feedbackId);
+            UPDATE_SQL, 1L, 2L, 5L, 1, 4, "Updated feedback text", 2026, false, true, feedbackId);
   }
 
   @Test
+  @DisplayName(
+      "Given feedback with nullable fields, when updating, then executes update query with nulls")
   void testUpdateFeedbackWithNullableFields() {
     Long feedbackId = 2L;
     Feedback feedback =
@@ -267,12 +245,7 @@ class FeedbackMapperTest {
 
     verify(jdbc)
         .update(
-            "UPDATE feedback SET "
-                + "reviewer_id = ?, reviewee_id = ?, mentorship_cycle_id = ?, "
-                + "feedback_type_id = ?, rating = ?, feedback_text = ?, "
-                + "feedback_year = ?, is_anonymous = ?, is_approved = ?, "
-                + "updated_at = CURRENT_TIMESTAMP "
-                + "WHERE id = ?",
+            UPDATE_SQL,
             10L,
             null,
             null,

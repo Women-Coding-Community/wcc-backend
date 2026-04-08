@@ -12,6 +12,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /** Test class for FeedbackDto validation. */
@@ -26,6 +27,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given valid mentor review feedback DTO, when validating, then validation passes")
   void testValidMentorReviewFeedback() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -43,6 +45,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given mentor review without reviewee ID, when validating, then validation fails")
   void testMentorReviewWithoutRevieweeIdFails() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -63,6 +66,8 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName(
+      "Given mentor review without mentorship cycle ID, when validating, then validation fails")
   void testMentorReviewWithoutMentorshipCycleIdFails() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -83,6 +88,8 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName(
+      "Given valid mentorship program feedback DTO, when validating, then validation passes")
   void testValidMentorshipProgramFeedback() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -99,6 +106,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given mentorship program without cycle ID, when validating, then validation fails")
   void testMentorshipProgramWithoutCycleIdFails() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -121,6 +129,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given mentor review without rating, when validating, then validation fails")
   void testMentorReviewWithoutRatingFails() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -141,6 +150,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given mentorship program without rating, when validating, then validation fails")
   void testMentorshipProgramWithoutRatingFails() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -160,6 +170,8 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName(
+      "Given valid community general feedback DTO, when validating, then validation passes")
   void testValidCommunityGeneralFeedback() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -175,6 +187,8 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName(
+      "Given community general feedback without rating, when validating, then validation passes")
   void testValidCommunityGeneralFeedbackWithoutRating() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -191,6 +205,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given DTO with missing required fields, when validating, then validation fails")
   void testMissingRequiredFieldsFails() {
     FeedbackDto dto = FeedbackDto.builder().build();
 
@@ -201,6 +216,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given DTO with invalid rating value, when validating, then validation fails")
   void testInvalidRatingFails() {
     FeedbackDto dto =
         FeedbackDto.builder()
@@ -217,6 +233,7 @@ class FeedbackDtoValidationTest {
   }
 
   @Test
+  @DisplayName("Given DTO with blank feedback text, when validating, then validation fails")
   void testBlankFeedbackTextFails() {
     FeedbackDto dto =
         FeedbackDto.builder()

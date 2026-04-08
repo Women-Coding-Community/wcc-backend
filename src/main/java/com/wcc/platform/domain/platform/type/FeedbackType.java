@@ -28,6 +28,6 @@ public enum FeedbackType {
         return type;
       }
     }
-    return COMMUNITY_GENERAL;
+    throw new IllegalArgumentException("Unknown FeedbackType id: " + typeId);
   }
 }

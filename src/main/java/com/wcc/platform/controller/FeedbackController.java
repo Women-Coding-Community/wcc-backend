@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -101,7 +102,8 @@ public class FeedbackController {
   @PostMapping
   @Operation(summary = "Create feedback")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Feedback> createFeedback(@RequestBody final FeedbackDto feedbackDto) {
+  public ResponseEntity<Feedback> createFeedback(
+      @Valid @RequestBody final FeedbackDto feedbackDto) {
     final Feedback feedback = feedbackService.createFeedback(feedbackDto);
     return new ResponseEntity<>(feedback, HttpStatus.CREATED);
   }
@@ -118,7 +120,7 @@ public class FeedbackController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Feedback> updateFeedback(
       @Parameter(description = "ID of the feedback") @PathVariable final Long feedbackId,
-      @RequestBody final FeedbackDto feedbackDto) {
+      @Valid @RequestBody final FeedbackDto feedbackDto) {
     final Feedback feedback = feedbackService.updateFeedback(feedbackId, feedbackDto);
     return ResponseEntity.ok(feedback);
   }

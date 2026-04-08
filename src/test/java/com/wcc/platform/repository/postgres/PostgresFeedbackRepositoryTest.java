@@ -22,6 +22,7 @@ import com.wcc.platform.repository.postgres.component.FeedbackMapper;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -49,6 +50,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given valid feedback, when creating, then returns created feedback with ID")
   void testCreate() {
     Feedback feedback = createMentorReviewFeedbackTest();
     when(feedbackMapper.addFeedback(any())).thenReturn(1L);
@@ -63,6 +65,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given feedback creation with empty findById result, when creating, then throws exception")
   void testCreateThrowsWhenFindByIdEmpty() {
     Feedback feedback = createMentorReviewFeedbackTest();
     when(feedbackMapper.addFeedback(any())).thenReturn(1L);
@@ -72,10 +76,12 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given feedback ID and updated data, when updating, then returns updated feedback")
   void testUpdate() {
     Feedback feedback =
         createMentorReviewFeedbackTest().toBuilder().feedbackText("Updated feedback text").build();
     doNothing().when(feedbackMapper).updateFeedback(any(), anyLong());
+    doReturn(Optional.of(feedback)).when(repository).findById(1L);
 
     Feedback result = repository.update(1L, feedback);
 
@@ -85,6 +91,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given valid feedback ID, when finding by ID, then returns feedback")
   void testFindById() {
     Long feedbackId = 1L;
     Feedback feedback = createMentorReviewFeedbackTest();
@@ -100,6 +107,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given non-existent feedback ID, when finding by ID, then returns empty")
   void testFindByIdNotFound() {
     Long feedbackId = 999L;
     when(jdbc.query(anyString(), (ResultSetExtractor<Object>) any(), eq(feedbackId)))
@@ -112,6 +120,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given valid feedback ID, when deleting, then executes delete query")
   void testDeleteById() {
     Long feedbackId = 1L;
     when(jdbc.update(DELETE_SQL, feedbackId)).thenReturn(1);
@@ -122,6 +131,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given valid feedback ID, when approving, then executes approve query")
   void testApproveFeedback() {
     Long feedbackId = 1L;
     when(jdbc.update(APPROVE_FEEDBACK, feedbackId)).thenReturn(1);
@@ -132,6 +142,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given feedback ID and anonymous true, when updating anonymous status, then executes update")
   void testUpdateAnonymousStatus() {
     Long feedbackId = 1L;
     Boolean isAnonymous = true;
@@ -143,6 +155,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given feedback ID and anonymous false, when updating anonymous status, then executes update")
   void testUpdateAnonymousStatusToFalse() {
     Long feedbackId = 1L;
     Boolean isAnonymous = false;
@@ -154,6 +168,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given JDBC throws exception, when finding by ID, then propagates exception")
   void testFindByIdJdbcThrows() {
     Long feedbackId = 1L;
     when(jdbc.query(anyString(), (ResultSetExtractor<Object>) any(), eq(feedbackId)))
@@ -163,6 +178,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given invalid search criteria, when getting all, then throws FeedbackNotFoundException")
   void testGetAllThrowsFeedbackNotFoundException() {
     FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().reviewerId(1L).build();
     when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
@@ -176,6 +193,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given non-existent feedback ID, when deleting, then executes delete query")
   void testDeleteByIdNonExistent() {
     Long feedbackId = 999L;
     when(jdbc.update(DELETE_SQL, feedbackId)).thenReturn(0);
@@ -186,6 +204,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given null criteria, when getting all, then returns all feedback")
   void testGetAllNullCriteria() {
     when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
         .thenReturn(java.util.Collections.emptyList());
@@ -198,6 +217,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given empty criteria, when getting all, then returns empty list")
   void testGetAllEmpty() {
     FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().build();
     when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
@@ -212,6 +232,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given multiple search criteria, when getting all, then returns matching feedback")
   void testGetAllWithMultipleCriteria() {
     Long reviewerId = 1L;
     Long revieweeId = 2L;
@@ -243,6 +264,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given reviewer ID filter, when getting all, then returns feedback by reviewer")
   void testGetAllWithReviewerIdOnly() {
     Long reviewerId = 1L;
     FeedbackSearchCriteria criteria =
@@ -264,6 +286,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given reviewee ID filter, when getting all, then returns feedback by reviewee")
   void testGetAllWithRevieweeIdOnly() {
     Long revieweeId = 2L;
     FeedbackSearchCriteria criteria =
@@ -285,6 +308,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given feedback type filter, when getting all, then returns feedback of specified type")
   void testGetAllWithFeedbackTypeOnly() {
     FeedbackSearchCriteria criteria =
         FeedbackSearchCriteria.builder()
@@ -307,6 +332,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given year filter, when getting all, then returns feedback for specified year")
   void testGetAllWithYearOnly() {
     Integer year = 2026;
     FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().year(year).build();
@@ -327,6 +353,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given mentorship cycle ID filter, when getting all, then returns feedback for cycle")
   void testGetAllWithMentorshipCycleIdOnly() {
     Long mentorshipCycleId = 5L;
     FeedbackSearchCriteria criteria =
@@ -348,6 +376,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given isApproved true filter, when getting all, then returns approved feedback")
   void testGetAllWithIsApprovedTrue() {
     Boolean isApproved = true;
     FeedbackSearchCriteria criteria =
@@ -369,6 +398,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given isApproved false filter, when getting all, then returns unapproved feedback")
   void testGetAllWithIsApprovedFalse() {
     Boolean isApproved = false;
     FeedbackSearchCriteria criteria =
@@ -390,6 +420,7 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given isAnonymous true filter, when getting all, then returns anonymous feedback")
   void testGetAllWithIsAnonymousTrue() {
     Boolean isAnonymous = true;
     FeedbackSearchCriteria criteria =
@@ -411,6 +442,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given isAnonymous false filter, when getting all, then returns non-anonymous feedback")
   void testGetAllWithIsAnonymousFalse() {
     Boolean isAnonymous = false;
     FeedbackSearchCriteria criteria =
@@ -432,6 +465,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given all search criteria, when getting all, then returns feedback matching all filters")
   void testGetAllWithAllCriteria() {
     Long reviewerId = 1L;
     Long revieweeId = 2L;
@@ -472,6 +507,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given feedback type and year filters, when getting all, then returns matching feedback")
   void testGetAllWithFeedbackTypeAndYear() {
     Integer year = 2026;
     FeedbackSearchCriteria criteria =
@@ -495,6 +532,8 @@ class PostgresFeedbackRepositoryTest {
   }
 
   @Test
+  @DisplayName(
+      "Given mentorship cycle and approved filters, when getting all, then returns matching feedback")
   void testGetAllWithMentorshipCycleAndApproved() {
     Long mentorshipCycleId = 10L;
     Boolean isApproved = true;
