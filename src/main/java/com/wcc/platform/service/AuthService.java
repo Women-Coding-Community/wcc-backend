@@ -12,6 +12,7 @@ import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
 import java.security.SecureRandom;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Locale;
 import java.time.OffsetDateTime;
@@ -37,6 +38,15 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
   private static final SecureRandom RANDOM = new SecureRandom();
+
+  /**
+   * Roles that a non-ADMIN caller (e.g. MENTORSHIP_ADMIN) is permitted to assign. Any role outside
+   * this set contains permissions beyond what those callers hold, so granting it would be a
+   * privilege-escalation path.
+   */
+  private static final Set<RoleType> ASSIGNABLE_ROLES =
+      EnumSet.of(RoleType.MENTOR, RoleType.MENTEE, RoleType.CONTRIBUTOR, RoleType.VIEWER);
+
   private final UserAccountRepository userAccountRepository;
   private final UserTokenRepository userTokenRepository;
   private final MemberRepository memberRepository;
@@ -51,13 +61,15 @@ public class AuthService {
 
   /**
    * Updates the roles assigned to an existing user account, fully replacing existing roles.
-   * Callers may not modify their own roles. Leaders may not target ADMIN accounts or assign ADMIN.
+   * Callers may not modify their own roles. Non-ADMIN callers may only assign roles from the
+   * {@link #ASSIGNABLE_ROLES} allowlist and cannot target accounts with elevated roles.
    *
    * @param userId the ID of the user account to update
    * @param roles the new roles to assign
    * @return the updated {@link UserAccount}
    * @throws MemberNotFoundException if no user account exists with the given ID
-   * @throws ForbiddenException if the caller modifies their own roles, or a LEADER targets an ADMIN
+   * @throws ForbiddenException if the caller modifies their own roles, targets an elevated account,
+   *     or assigns a role outside the permitted set
    */
   @org.springframework.transaction.annotation.Transactional
   public UserAccount updateUserRoles(final Integer userId, final List<RoleType> roles) {
@@ -72,11 +84,14 @@ public class AuthService {
     }
 
     if (!caller.hasAnyRole(RoleType.ADMIN)) {
-      if (userAccount.getRoles() != null && userAccount.getRoles().contains(RoleType.ADMIN)) {
-        throw new ForbiddenException("Leaders cannot modify accounts with the ADMIN role");
+      final Set<RoleType> elevatedRoles = EnumSet.of(RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN);
+      if (userAccount.getRoles() != null
+          && userAccount.getRoles().stream().anyMatch(elevatedRoles::contains)) {
+        throw new ForbiddenException("Only admins can modify accounts with elevated roles");
       }
-      if (roles.contains(RoleType.ADMIN)) {
-        throw new ForbiddenException("Leaders cannot assign the ADMIN role");
+      if (!ASSIGNABLE_ROLES.containsAll(roles)) {
+        throw new ForbiddenException(
+            "Role assignment is outside the permitted set: " + ASSIGNABLE_ROLES);
       }
     }
 

@@ -103,35 +103,64 @@ class AuthServiceUpdateUserRolesTest {
 
   @Test
   @DisplayName(
-      "Given a LEADER caller and a target user with ADMIN role, when updating roles, then throw ForbiddenException")
-  void shouldForbidLeaderFromModifyingAdminAccount() {
+      "Given a MENTORSHIP_ADMIN caller and a target user with ADMIN role, when updating roles, then throw ForbiddenException")
+  void shouldForbidMentorshipAdminFromModifyingElevatedAccount() {
     var userId = 2;
-    var leaderAccount = new UserAccount(1, 1L, "leader@wcc.dev", "hash", List.of(RoleType.LEADER), true);
+    var mentorshipAdminAccount =
+        new UserAccount(1, 1L, "mentorship@wcc.dev", "hash", List.of(RoleType.MENTORSHIP_ADMIN), true);
     var adminTarget = new UserAccount(userId, 2L, "admin@wcc.dev", "hash", List.of(RoleType.ADMIN), true);
-    var callerUser = new UserAccount.User(leaderAccount, Member.builder().id(1L).fullName("Leader").build());
+    var callerUser =
+        new UserAccount.User(
+            mentorshipAdminAccount, Member.builder().id(1L).fullName("MentorshipAdmin").build());
 
     setCallerInContext(callerUser);
     when(userAccountRepository.findById(userId)).thenReturn(Optional.of(adminTarget));
 
     assertThatThrownBy(() -> authService.updateUserRoles(userId, List.of(RoleType.VIEWER)))
         .isInstanceOf(ForbiddenException.class)
-        .hasMessageContaining("ADMIN");
+        .hasMessageContaining("elevated");
   }
 
   @Test
   @DisplayName(
-      "Given a LEADER caller and roles containing ADMIN, when updating roles, then throw ForbiddenException")
-  void shouldForbidLeaderFromAssigningAdminRole() {
+      "Given a MENTORSHIP_ADMIN caller assigning MENTORSHIP_ADMIN role, when updating roles, then throw ForbiddenException")
+  void shouldForbidMentorshipAdminFromEscalatingToMentorshipAdmin() {
     var userId = 2;
-    var leaderAccount = new UserAccount(1, 1L, "leader@wcc.dev", "hash", List.of(RoleType.LEADER), true);
-    var targetAccount = new UserAccount(userId, 2L, "user@wcc.dev", "hash", List.of(RoleType.VIEWER), true);
-    var callerUser = new UserAccount.User(leaderAccount, Member.builder().id(1L).fullName("Leader").build());
+    var mentorshipAdminAccount =
+        new UserAccount(1, 1L, "mentorship@wcc.dev", "hash", List.of(RoleType.MENTORSHIP_ADMIN), true);
+    var targetAccount =
+        new UserAccount(userId, 2L, "user@wcc.dev", "hash", List.of(RoleType.VIEWER), true);
+    var callerUser =
+        new UserAccount.User(
+            mentorshipAdminAccount, Member.builder().id(1L).fullName("MentorshipAdmin").build());
 
     setCallerInContext(callerUser);
     when(userAccountRepository.findById(userId)).thenReturn(Optional.of(targetAccount));
 
-    assertThatThrownBy(() -> authService.updateUserRoles(userId, List.of(RoleType.ADMIN)))
+    assertThatThrownBy(
+            () -> authService.updateUserRoles(userId, List.of(RoleType.MENTORSHIP_ADMIN)))
         .isInstanceOf(ForbiddenException.class)
-        .hasMessageContaining("ADMIN");
+        .hasMessageContaining("permitted set");
+  }
+
+  @Test
+  @DisplayName(
+      "Given a MENTORSHIP_ADMIN caller assigning LEADER role, when updating roles, then throw ForbiddenException")
+  void shouldForbidMentorshipAdminFromAssigningLeaderRole() {
+    var userId = 2;
+    var mentorshipAdminAccount =
+        new UserAccount(1, 1L, "mentorship@wcc.dev", "hash", List.of(RoleType.MENTORSHIP_ADMIN), true);
+    var targetAccount =
+        new UserAccount(userId, 2L, "user@wcc.dev", "hash", List.of(RoleType.VIEWER), true);
+    var callerUser =
+        new UserAccount.User(
+            mentorshipAdminAccount, Member.builder().id(1L).fullName("MentorshipAdmin").build());
+
+    setCallerInContext(callerUser);
+    when(userAccountRepository.findById(userId)).thenReturn(Optional.of(targetAccount));
+
+    assertThatThrownBy(() -> authService.updateUserRoles(userId, List.of(RoleType.LEADER)))
+        .isInstanceOf(ForbiddenException.class)
+        .hasMessageContaining("permitted set");
   }
 }

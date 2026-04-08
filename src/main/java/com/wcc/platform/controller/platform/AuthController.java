@@ -115,7 +115,8 @@ public class AuthController {
   /**
    * Updates the roles assigned to an existing user account.
    *
-   * <p>Restricted to ADMIN and LEADER roles. Replaces all existing roles with the provided list.
+   * <p>Restricted to ADMIN and MENTORSHIP_ADMIN roles. Replaces all existing roles with the
+   * provided list.
    *
    * @param userId the ID of the user account to update
    * @param request the request containing the new roles to assign
@@ -125,7 +126,7 @@ public class AuthController {
   @Operation(
       summary = "Update roles for an existing user account",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   public ResponseEntity<UserAccount> updateUserRoles(
       @PathVariable final Integer userId,
       @RequestBody @Valid final UpdateUserRolesRequest request) {
