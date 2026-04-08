@@ -233,7 +233,8 @@ class MenteeWorkflowServiceTest {
         .thenReturn(rejected);
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
         .thenReturn(List.of(rejected, anotherRejected));
-    when(applicationRepository.findPendingManualMatchByMenteeAndCycle(10L, 5L))
+    when(applicationRepository.findByMenteeCycleAndStatus(
+            10L, 5L, ApplicationStatus.PENDING_MANUAL_MATCH))
         .thenReturn(Optional.empty());
 
     service.rejectApplication(1L, REJECTION_REASON);
@@ -341,7 +342,8 @@ class MenteeWorkflowServiceTest {
         .thenReturn(rejected);
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
         .thenReturn(List.of(rejected, existingManualMatch));
-    when(applicationRepository.findPendingManualMatchByMenteeAndCycle(10L, 5L))
+    when(applicationRepository.findByMenteeCycleAndStatus(
+            10L, 5L, ApplicationStatus.PENDING_MANUAL_MATCH))
         .thenReturn(Optional.of(existingManualMatch));
 
     service.rejectApplication(1L, REJECTION_REASON);
@@ -392,7 +394,8 @@ class MenteeWorkflowServiceTest {
         .thenReturn(rejected);
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
         .thenReturn(List.of(declined, rejected));
-    when(applicationRepository.findPendingManualMatchByMenteeAndCycle(10L, 5L))
+    when(applicationRepository.findByMenteeCycleAndStatus(
+            10L, 5L, ApplicationStatus.PENDING_MANUAL_MATCH))
         .thenReturn(Optional.empty());
 
     service.rejectApplication(1L, REJECTION_REASON);

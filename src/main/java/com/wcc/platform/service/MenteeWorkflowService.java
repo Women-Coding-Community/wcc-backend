@@ -272,7 +272,8 @@ public class MenteeWorkflowService {
 
     if (allNonForwardable) {
       final var existingManualMatch =
-          applicationRepository.findPendingManualMatchByMenteeAndCycle(menteeId, cycleId);
+          applicationRepository.findByMenteeCycleAndStatus(
+              menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
 
       if (existingManualMatch.isEmpty()) {
         final MenteeApplication manualMatchApp =

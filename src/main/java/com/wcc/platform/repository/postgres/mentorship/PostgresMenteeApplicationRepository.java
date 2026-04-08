@@ -59,12 +59,12 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
           + "VALUES (?, ?, ?, ?, ?::application_status, ?, ?) "
           + "RETURNING application_id";
 
-  private static final String SEL_BY_STATUS_PENDING_MANUAL_MATCH =
+  private static final String SEL_BY_MNTE_CYC_STS =
       "SELECT * FROM mentee_applications "
           + "WHERE mentee_id = ? AND cycle_id = ? "
-          + "AND application_status = 'pending_manual_match'";
+          + "AND application_status = ?::application_status";
 
-  private static final String SELECT_BY_STATUS_AND_CYCLE =
+  private static final String SEL_BY_STS_CYC =
       "SELECT * FROM mentee_applications "
           + "WHERE application_status = ?::application_status "
           + "AND cycle_id = ?";
@@ -82,7 +82,8 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
       }
     } else {
       final var existingManualMatch =
-          findPendingManualMatchByMenteeAndCycle(entity.getMenteeId(), entity.getCycleId());
+          findByMenteeCycleAndStatus(
+              entity.getMenteeId(), entity.getCycleId(), ApplicationStatus.PENDING_MANUAL_MATCH);
       if (existingManualMatch.isPresent()) {
         return existingManualMatch.get();
       }
@@ -186,19 +187,20 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   }
 
   @Override
-  public Optional<MenteeApplication> findPendingManualMatchByMenteeAndCycle(
-      final Long menteeId, final Long cycleId) {
+  public Optional<MenteeApplication> findByMenteeCycleAndStatus(
+      final Long menteeId, final Long cycleId, final ApplicationStatus status) {
     return jdbc.query(
-        SEL_BY_STATUS_PENDING_MANUAL_MATCH,
+        SEL_BY_MNTE_CYC_STS,
         rs -> rs.next() ? Optional.of(mapRow(rs)) : Optional.empty(),
         menteeId,
-        cycleId);
+        cycleId,
+        status.getValue());
   }
 
   @Override
-  public List<MenteeApplication> findByStatusAndCycle(ApplicationStatus status, Long cycleId) {
-    return jdbc.query(
-        SELECT_BY_STATUS_AND_CYCLE, (rs, rowNum) -> mapRow(rs), status.getValue(), cycleId);
+  public List<MenteeApplication> findByStatusAndCycle(
+      final ApplicationStatus status, final Long cycleId) {
+    return jdbc.query(SEL_BY_STS_CYC, (rs, rowNum) -> mapRow(rs), status.getValue(), cycleId);
   }
 
   private MenteeApplication mapRow(final ResultSet rs) throws SQLException {

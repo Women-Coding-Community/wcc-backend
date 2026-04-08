@@ -87,9 +87,11 @@ public interface MenteeApplicationRepository extends CrudRepository<MenteeApplic
    *
    * @param menteeId the mentee ID
    * @param cycleId the cycle ID
+   * @param status the application status
    * @return Optional containing the manual match application if found
    */
-  Optional<MenteeApplication> findPendingManualMatchByMenteeAndCycle(Long menteeId, Long cycleId);
+  Optional<MenteeApplication> findByMenteeCycleAndStatus(
+      Long menteeId, Long cycleId, ApplicationStatus status);
 
   /**
    * Find all applications for a status and cycle

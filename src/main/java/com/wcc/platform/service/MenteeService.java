@@ -282,12 +282,12 @@ public class MenteeService {
    * @return list of mentees
    */
   public List<Mentee> getMenteePendingManualMatch() {
-    List<MenteeApplication> applnPendingManualMatch =
+    final List<MenteeApplication> pendingManualMatch =
         registrationsRepo.findByStatusAndCycle(
             ApplicationStatus.PENDING_MANUAL_MATCH, getCurrentCycle().getCycleId());
 
     return menteeRepository.findAllById(
-        applnPendingManualMatch.stream()
+        pendingManualMatch.stream()
             .map(MenteeApplication::getMenteeId)
             .collect(Collectors.toList()));
   }
