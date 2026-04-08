@@ -262,6 +262,6 @@ class AuthControllerTest {
     var annotation = method.getAnnotation(RequiresRole.class);
 
     assertThat(annotation).isNotNull();
-    assertThat(annotation.value()).containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.LEADER);
+    assertThat(annotation.value()).containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN);
   }
 }
