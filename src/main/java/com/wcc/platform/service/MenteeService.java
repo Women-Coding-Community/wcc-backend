@@ -285,6 +285,10 @@ public class MenteeService {
         registrationsRepo.findByStatusAndCycle(
             ApplicationStatus.PENDING_MANUAL_MATCH, getCurrentCycle().getCycleId());
 
+    if (pendingManualMatch == null || pendingManualMatch.isEmpty()) {
+      return List.of();
+    }
+
     return menteeRepository.findAllById(
         pendingManualMatch.stream()
             .map(MenteeApplication::getMenteeId)

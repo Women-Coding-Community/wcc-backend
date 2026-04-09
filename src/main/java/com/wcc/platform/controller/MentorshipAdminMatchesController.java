@@ -195,7 +195,7 @@ public class MentorshipAdminMatchesController {
    *
    * @return List of mentees
    */
-  @GetMapping("/mentees/pending-manual-match")
+  @GetMapping("/pending-manual-match")
   @Operation(summary = "Get all mentees for a cycle whose application pending manual match")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Mentee>> getMenteesPendingManualMatch() {
