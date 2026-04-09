@@ -1,8 +1,12 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.configuration.security.RequiresPermission;
+import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
 import com.wcc.platform.domain.email.TemplateEmailRequest;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.TemplateRequest;
 import com.wcc.platform.service.EmailService;
@@ -43,6 +47,7 @@ public class EmailController {
    * @return EmailResponse with the status of the email sending operation
    */
   @PostMapping("/send")
+  @RequiresPermission(Permission.CYCLE_EMAIL_SEND)
   @Operation(
       summary = "Send a single email",
       description = "Sends an email to the specified recipient")
@@ -71,6 +76,7 @@ public class EmailController {
    * @return list of EmailResponse objects with the status of each email
    */
   @PostMapping("/send/bulk")
+  @RequiresPermission(Permission.CYCLE_EMAIL_SEND)
   @Operation(
       summary = "Send multiple emails in bulk",
       description = "Sends multiple emails to different recipients")
@@ -98,6 +104,7 @@ public class EmailController {
    * @return RenderedTemplate with the subject and body of the rendered template
    */
   @PostMapping("/template/preview")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
   @Operation(summary = "Preview an email template", description = "Renders an email template")
   @ApiResponses({
     @ApiResponse(
@@ -126,6 +133,7 @@ public class EmailController {
    * @return EmailResponse with the status of the email sending operation
    */
   @PostMapping("/template/send")
+  @RequiresPermission(Permission.CYCLE_EMAIL_SEND)
   @Operation(
       summary = "Send a single email using a template",
       description = "Sends an email with a template to the specified recipient")
@@ -146,5 +154,4 @@ public class EmailController {
     final EmailResponse response = emailService.sendTemplateEmail(templateEmailRequest);
     return ResponseEntity.ok(response);
   }
-
 }

@@ -1,6 +1,10 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.configuration.security.RequiresPermission;
+import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.type.ResourceType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.resource.ExternalProfilePictureRequest;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -35,12 +39,14 @@ import org.springframework.web.multipart.MultipartFile;
     name = "Platform: Mentorship Resources",
     description = "APIs for managing overall resources like profile pictures")
 @AllArgsConstructor
+@SuppressWarnings("PMD.ExcessiveImports")
 public class ResourceController {
 
   private final ResourceService resourceService;
 
   /** Uploads a resource. */
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @Operation(summary = "Upload a resource")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Resource> uploadResource(
@@ -92,6 +98,7 @@ public class ResourceController {
 
   /** Deletes a resource. */
   @DeleteMapping("/{id}")
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @Operation(summary = "Delete a resource")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteResource(
@@ -103,6 +110,7 @@ public class ResourceController {
 
   /** Saves a member's profile picture from an external URL. */
   @PostMapping("/member-profile-picture/link")
+  @RequiresPermission(Permission.USER_WRITE)
   @Operation(summary = "Save a member's profile picture from an external URL")
   public ResponseEntity<MemberProfilePicture> saveExternalProfilePicture(
       @Valid @RequestBody final ExternalProfilePictureRequest request) {
@@ -114,6 +122,7 @@ public class ResourceController {
 
   /** Uploads a member's profile picture. */
   @PostMapping(value = "/member-profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @RequiresPermission(Permission.USER_WRITE)
   @Operation(summary = "Upload a member's profile picture")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MemberProfilePicture> uploadMemberProfilePicture(
@@ -138,6 +147,7 @@ public class ResourceController {
 
   /** Deletes a mentor's profile picture. */
   @DeleteMapping("/member-profile-picture/{memberId}")
+  @RequiresPermission(Permission.USER_WRITE)
   @Operation(summary = "Delete a member's profile picture")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteMemberProfilePicture(

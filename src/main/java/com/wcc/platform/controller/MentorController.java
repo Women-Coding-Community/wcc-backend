@@ -1,6 +1,8 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorRejectionRequest;
@@ -90,6 +92,7 @@ public class MentorController {
    * @return updated mentor with active status.
    */
   @PatchMapping("/mentors/{mentorId}/accept")
+  @RequiresPermission(Permission.MENTOR_APPROVE)
   @Operation(summary = "API to accept mentor registration")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> acceptMentor(@Valid @PathVariable final Long mentorId) {
@@ -103,6 +106,7 @@ public class MentorController {
    * @return updated mentor with rejected status.
    */
   @PatchMapping("/mentors/{mentorId}/reject")
+  @RequiresPermission(Permission.MENTOR_APPROVE)
   @Operation(summary = "API to reject mentor registration")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> rejectMentor(

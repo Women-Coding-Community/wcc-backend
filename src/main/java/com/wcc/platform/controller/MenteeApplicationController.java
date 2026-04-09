@@ -1,14 +1,14 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.configuration.security.LogicalOperator;
-import com.wcc.platform.configuration.security.RequiresPermission;
+import com.wcc.platform.configuration.security.*;
 import com.wcc.platform.domain.auth.Permission;
-import com.wcc.platform.domain.platform.mentorship.ApplicationAcceptRequest;
+import com.wcc.platform.domain.platform.mentorship.*;
 import com.wcc.platform.domain.platform.mentorship.ApplicationDeclineRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.ApplicationWithdrawRequest;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.MenteeWorkflowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
             + "and the mentee itself.")
 @AllArgsConstructor
 @Validated
+@SuppressWarnings("PMD.ExcessiveImports")
 public class MenteeApplicationController {
 
   private final MenteeWorkflowService applicationService;
@@ -194,6 +195,7 @@ public class MenteeApplicationController {
    * @return List of applications with the specified status
    */
   @GetMapping("/applications")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
   @Operation(summary = "Get all applications by status")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getApplicationsByStatus(
