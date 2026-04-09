@@ -45,6 +45,14 @@ jobs:
       - name: Deploy to Dev env
         uses: superfly/flyctl-actions/setup-flyctl@master
 
+      - name: Set Fly.io secrets
+        run: |
+          flyctl secrets set MAIL_USERNAME=${{ secrets.DEV_MAIL_USERNAME }} -a wcc-backend-dev
+          flyctl secrets set MAIL_PASSWORD=${{ secrets.DEV_MAIL_PASSWORD }} -a wcc-backend-dev
+          flyctl secrets set SECURITY_API_KEY=${{ secrets.API_KEY_DEV }} -a wcc-backend-dev
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_DEV }}
+
       - run: flyctl deploy --remote-only --config fly-dev.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_DEV }}
