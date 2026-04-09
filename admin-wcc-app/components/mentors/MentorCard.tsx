@@ -42,14 +42,19 @@ export default function MentorCard({ mentor }: MentorCardProps) {
             </Box>
           )}
 
-          {mentor.menteeSection?.mentorshipType &&
-            mentor.menteeSection.mentorshipType.length > 0 && (
+          {(() => {
+            const section = mentor.menteeSection;
+            const types: string[] = [];
+            if (section?.longTerm) types.push('LONG_TERM');
+            if (section?.adHoc?.length) types.push('AD_HOC');
+            return types.length > 0 ? (
               <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {mentor.menteeSection.mentorshipType.map((t) => (
+                {types.map((t) => (
                   <Chip key={`type-${t}`} label={t} size="small" color="success" />
                 ))}
               </Box>
-            )}
+            ) : null;
+          })()}
 
           {mentor.bio && <BioSection bio={mentor.bio} />}
 

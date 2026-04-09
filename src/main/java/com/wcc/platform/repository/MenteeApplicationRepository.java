@@ -71,7 +71,7 @@ public interface MenteeApplicationRepository extends CrudRepository<MenteeApplic
    * @return list of all applications
    */
   List<MenteeApplication> getAll();
-
+  
   /**
    * Counts the number of mentee applications for a specific mentee in a specific cycle.
    *
@@ -81,6 +81,14 @@ public interface MenteeApplicationRepository extends CrudRepository<MenteeApplic
    * @return the total number of applications submitted by the mentee in the specified cycle
    */
   Long countMenteeApplications(Long menteeId, Long cycleId);
+
+  /**
+   * Find all PENDING applications for a specific mentee across all cycles, ordered by priority.
+   *
+   * @param menteeId the mentee ID
+   * @return list of PENDING applications for the mentee ordered by priority
+   */
+  List<MenteeApplication> findPendingByMenteeId(Long menteeId);
 
   /**
    * Find a pending manual match application for a mentee in a cycle.

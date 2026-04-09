@@ -3,6 +3,8 @@ name: pre-commit-review
 description: Review local staged and unstaged changes before committing. Auto-fixes style violations (line length, @DisplayName casing, var, eq() wrappers, .get(0)), then outputs a summary of findings requiring human judgement.
 ---
 
+> **Scope**: Local — wcc-backend only
+
 # Pre-Commit Review
 
 > **Canonical runbook**: `.ai/skills/pre-commit-review.md`
@@ -33,11 +35,26 @@ description: Review local staged and unstaged changes before committing. Auto-fi
    - **Frontend (React/TypeScript)**: component boundaries, typing quality, state/effect hygiene, project style conventions.
    - **Tests (Java)**: coverage of new logic paths; method names use `should` prefix; every test has `@DisplayName("Given …, when …, then …")`; mocks only where appropriate.
 
-4. Output the review in three parts:
+4. **Run pre-commit quality gate checks** — same checks as `.husky/pre-commit`:
+
+   **PMD** (if any `.java` files in the diff):
+   ```bash
+   ./gradlew :pmdAll --quiet
+   ```
+   - Passes → note "✅ PMD passed" in the summary.
+   - Fails → list each violation as `[CRITICAL]`.
+
+   **lint-staged** (if any `admin-wcc-app/**` files in the diff):
+   - If staged frontend files exist → `(cd admin-wcc-app && npx lint-staged)`
+     - Passes → note "✅ lint-staged passed".
+     - Fails → surface errors as `[CRITICAL]`.
+   - If no staged frontend files yet → note that lint-staged runs at commit time.
+
+5. Output the review in three parts:
 
    **Auto-fixes applied** — list each file and what was fixed (one line per file).
 
-   **Overall Summary** — 2-5 sentences: what the change does, key remaining risks, and whether it is safe to commit.
+   **Overall Summary** — 2-5 sentences: what the change does, key remaining risks, and whether it is safe to commit. Include the PMD/lint-staged gate results here.
 
    **Per-file findings** — only for issues not auto-fixed, anchored to the changed line number:
 

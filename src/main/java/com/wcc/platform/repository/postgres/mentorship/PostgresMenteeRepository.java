@@ -26,6 +26,10 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentees WHERE mentee_id = ?";
   private static final String SQL_DELETE_BY_ID = "DELETE FROM mentees WHERE mentee_id = ?";
   private static final String SELECT_ALL_MENTEES = "SELECT * FROM mentees";
+  private static final String SELECT_BY_STATUS =
+      "SELECT * FROM mentees WHERE mentees_profile_status = ?";
+  private static final String SQL_SET_STATUS =
+      "UPDATE mentees SET mentees_profile_status = ? WHERE mentee_id = ?";
   private static final String SEL_MENTEES_BY_ID =
       "SELECT * FROM mentees WHERE mentee_id IN (:mentee_ids)";
   private static final String SQL_INSERT_MENTEE =
@@ -143,6 +147,20 @@ public class PostgresMenteeRepository implements MenteeRepository {
   @Override
   public void deleteById(final Long menteeId) {
     jdbc.update(SQL_DELETE_BY_ID, menteeId);
+  }
+
+  @Override
+  public List<Mentee> findByStatus(final ProfileStatus status) {
+    return jdbc.query(SELECT_BY_STATUS, (rs, rowNum) -> menteeMapper.mapRowToMentee(rs),
+        status.getStatusId());
+  }
+
+  @Override
+  public Mentee updateProfileStatus(final Long menteeId, final ProfileStatus status) {
+    jdbc.update(SQL_SET_STATUS, status.getStatusId(), menteeId);
+    return findById(menteeId)
+        .orElseThrow(
+            () -> new MenteeNotSavedException("Mentee not found after status update: " + menteeId));
   }
 
   private void updateMenteeDetails(final Mentee mentee, final Long memberId) {

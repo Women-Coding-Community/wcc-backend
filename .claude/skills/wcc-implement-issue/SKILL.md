@@ -5,6 +5,8 @@ argument-hint: "<issue-number>"
 allowed-tools: Bash(gh *), Bash(git *), Bash(./gradlew *), Bash(npm *), Grep, Glob, Read, Write, Edit, Agent
 ---
 
+> **Scope**: Local — wcc-backend only
+
 # WCC Issue Implementer
 
 Read a GitHub issue, analyse the codebase, produce a concrete implementation plan, and implement it on

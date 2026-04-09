@@ -113,7 +113,7 @@ public class MenteeApplicationController {
   }
 
   /**
-   * API for admin to approve the application and make it available for the mentor to review
+   * API for admin to approve the application and make it available for the mentor to review.
    *
    * @param applicationId The application ID
    * @return Updated application
