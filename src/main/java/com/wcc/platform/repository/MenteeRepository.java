@@ -1,5 +1,6 @@
 package com.wcc.platform.repository;
 
+import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import java.util.List;
 
