@@ -91,7 +91,6 @@ public class AuthController {
   @Operation(
       summary = "Get current authenticated user and member info",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   public ResponseEntity<LoginResponse> currentUser() {
     final var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !auth.isAuthenticated()) {
