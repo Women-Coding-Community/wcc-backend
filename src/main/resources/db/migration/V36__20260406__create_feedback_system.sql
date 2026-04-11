@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS feedback
     reviewee_id         INTEGER REFERENCES members (id) ON DELETE SET NULL,
     mentorship_cycle_id INTEGER REFERENCES mentorship_cycles (cycle_id) ON DELETE SET NULL,
     feedback_type_id    INTEGER NOT NULL REFERENCES feedback_types (id),
-    rating              INTEGER CHECK (rating >= 0 AND rating <= 5),
+    rating              INTEGER CHECK (rating >= 1 AND rating <= 5),
     feedback_text       TEXT    NOT NULL,
     feedback_year       INTEGER,
     is_anonymous        BOOLEAN                  DEFAULT TRUE,
@@ -32,6 +32,10 @@ CREATE TABLE IF NOT EXISTS feedback
     CONSTRAINT feedback_mentor_review_constraint CHECK (
         (feedback_type_id = 1 AND reviewee_id IS NOT NULL) -- MENTOR_REVIEW
             OR (feedback_type_id IN (2, 3))                -- COMMUNITY_GENERAL or MENTORSHIP_PROGRAM
+        ),
+
+    CONSTRAINT feedback_mentorship_program_constraint CHECK (
+        feedback_type_id != 3 OR mentorship_cycle_id IS NOT NULL
         )
 );
 
