@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, getErrorMessage } from '@/lib/api';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
 import { useRouter } from 'next/router';
 
@@ -21,23 +21,23 @@ export default function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const token = getStoredToken();
-    if (!token || isTokenExpired(token)) router.replace('/login');
-    else {
-      setToken(token);
-      loadUsers(token);
-    }
-  }, [router]);
-
-  const loadUsers = async (token: string) => {
+  const loadUsers = useCallback(async (authToken: string) => {
     try {
-      const data = await apiFetch<UserDto[]>(USERS_PATH, { token: token });
+      const data = await apiFetch<UserDto[]>(USERS_PATH, { token: authToken });
       setItems(data || []);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to load users'));
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const storedToken = getStoredToken();
+    if (!storedToken || isTokenExpired(storedToken)) router.replace('/login');
+    else {
+      setToken(storedToken);
+      loadUsers(storedToken);
+    }
+  }, [loadUsers, router]);
 
   const createUser = async () => {
     if (!token) return;
@@ -47,8 +47,8 @@ export default function UsersPage() {
       setEmail('');
       setRoles('USER');
       await loadUsers(token);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to create user'));
     }
   };
 
@@ -57,8 +57,8 @@ export default function UsersPage() {
     try {
       await apiFetch(USERS_PATH + `${USERS_PATH}/${id}`, { method: 'DELETE', token });
       await loadUsers(token);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to delete user'));
     }
   };
 

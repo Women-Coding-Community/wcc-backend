@@ -9,6 +9,7 @@ import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.repository.MenteeApplicationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.Optional;
@@ -21,9 +22,10 @@ import org.mockito.MockitoAnnotations;
 class MenteeWorkflowServiceTest {
 
   private static final String REJECTION_REASON =
-      "Application does not meet the eligibility criteria";
+      "Application does not meet the eligibility criteria for this mentorship cycle";
 
   @Mock private MenteeApplicationRepository applicationRepository;
+  @Mock private MenteeRepository menteeRepository;
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
 
@@ -32,34 +34,17 @@ class MenteeWorkflowServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    service = new MenteeWorkflowService(applicationRepository, matchRepository, cycleRepository);
+    service =
+        new MenteeWorkflowService(
+            applicationRepository, menteeRepository, matchRepository, cycleRepository);
   }
 
   @Test
   @DisplayName(
-      "Given a PENDING application, when admin approves it, then status is updated to MENTOR_REVIEWING")
+      "Given a PENDING application, when admin approves, then status becomes MENTOR_REVIEWING")
   void shouldApprovePendingApplicationAndUpdateStatusToMentorReviewing() {
-    final MenteeApplication pending =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.PENDING)
-            .whyMentor("Great mentor")
-            .build();
-
-    final MenteeApplication approved =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.MENTOR_REVIEWING)
-            .whyMentor("Great mentor")
-            .build();
+    final MenteeApplication pending = pendingApplication(1L, 10L, 1);
+    final MenteeApplication approved = reviewingApplication(1L, 10L);
 
     when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.MENTOR_REVIEWING, null))
@@ -72,7 +57,7 @@ class MenteeWorkflowServiceTest {
 
   @Test
   @DisplayName(
-      "Given a non-PENDING application, when admin approves it, then ContentNotFoundException is thrown")
+      "Given non-PENDING application, when admin approves, then ContentNotFoundException is thrown")
   void shouldThrowContentNotFoundExceptionWhenApprovedApplicationIsNotPending() {
     final MenteeApplication reviewing =
         MenteeApplication.builder()
@@ -94,7 +79,7 @@ class MenteeWorkflowServiceTest {
 
   @Test
   @DisplayName(
-      "Given an application that does not exist, when admin approves it, then ApplicationNotFoundException is thrown")
+      "Given application not found, when admin approves, then ApplicationNotFoundException thrown")
   void shouldThrowApplicationNotFoundExceptionWhenApprovedApplicationDoesNotExist() {
     when(applicationRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -104,30 +89,10 @@ class MenteeWorkflowServiceTest {
   }
 
   @Test
-  @DisplayName(
-      "Given a PENDING application, when admin rejects it, then status is updated to REJECTED")
+  @DisplayName("Given a PENDING application, when admin rejects, then status becomes REJECTED")
   void shouldRejectPendingApplicationAndUpdateStatusToRejected() {
-    final MenteeApplication pending =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.PENDING)
-            .whyMentor("Great mentor")
-            .build();
-
-    final MenteeApplication rejected =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.REJECTED)
-            .whyMentor("Great mentor")
-            .build();
+    final MenteeApplication pending = pendingApplication(1L, 10L, 1);
+    final MenteeApplication rejected = rejectedApplication(1L, 10L);
 
     when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
@@ -140,7 +105,7 @@ class MenteeWorkflowServiceTest {
 
   @Test
   @DisplayName(
-      "Given a non-PENDING application, when admin rejects it, then ContentNotFoundException is thrown")
+      "Given non-PENDING application, when admin rejects, then ContentNotFoundException is thrown")
   void shouldThrowContentNotFoundExceptionWhenRejectedApplicationIsNotPending() {
     final MenteeApplication rejected =
         MenteeApplication.builder()
@@ -162,12 +127,49 @@ class MenteeWorkflowServiceTest {
 
   @Test
   @DisplayName(
-      "Given an application that does not exist, when admin rejects it, then ApplicationNotFoundException is thrown")
+      "Given application not found, when admin rejects, then ApplicationNotFoundException thrown")
   void shouldThrowApplicationNotFoundExceptionWhenApplicationDoesNotExist() {
     when(applicationRepository.findById(99L)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> service.rejectApplication(99L, REJECTION_REASON))
         .isInstanceOf(ApplicationNotFoundException.class)
         .hasMessageContaining("Application not found with ID: 99");
+  }
+
+  private MenteeApplication pendingApplication(
+      final Long applicationId, final Long menteeId, final int priority) {
+    return MenteeApplication.builder()
+        .applicationId(applicationId)
+        .menteeId(menteeId)
+        .mentorId(20L)
+        .cycleId(5L)
+        .priorityOrder(priority)
+        .status(ApplicationStatus.PENDING)
+        .whyMentor("Great mentor")
+        .build();
+  }
+
+  private MenteeApplication reviewingApplication(final Long applicationId, final Long menteeId) {
+    return MenteeApplication.builder()
+        .applicationId(applicationId)
+        .menteeId(menteeId)
+        .mentorId(20L)
+        .cycleId(5L)
+        .priorityOrder(1)
+        .status(ApplicationStatus.MENTOR_REVIEWING)
+        .whyMentor("Great mentor")
+        .build();
+  }
+
+  private MenteeApplication rejectedApplication(final Long applicationId, final Long menteeId) {
+    return MenteeApplication.builder()
+        .applicationId(applicationId)
+        .menteeId(menteeId)
+        .mentorId(20L)
+        .cycleId(5L)
+        .priorityOrder(1)
+        .status(ApplicationStatus.REJECTED)
+        .whyMentor("Great mentor")
+        .build();
   }
 }
