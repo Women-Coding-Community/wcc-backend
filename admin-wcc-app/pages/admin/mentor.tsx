@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Avatar,
@@ -59,6 +59,9 @@ export default function MentorDashboardPage() {
   const [declineReason, setDeclineReason] = useState('');
   const [declineTargetId, setDeclineTargetId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [expandedMessageId, setExpandedMessageId] = useState<number | null>(null);
+  const [overflowingIds, setOverflowingIds] = useState<Set<number>>(new Set());
+  const textRefs = useRef<Map<number, HTMLElement>>(new Map());
 
   const mentorId = (member as MemberWithId | null)?.id;
   const canAccess = roles.includes('ADMIN') || roles.includes('MENTOR');
@@ -93,6 +96,19 @@ export default function MentorDashboardPage() {
     if (!token || !mentorId || !canAccess) return;
     loadData();
   }, [canAccess, loadData, mentorId, token]);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      const newOverflowing = new Set<number>();
+      textRefs.current.forEach((el, id) => {
+        if (el.scrollWidth > el.clientWidth) {
+          newOverflowing.add(id);
+        }
+      });
+      setOverflowingIds(newOverflowing);
+    };
+    requestAnimationFrame(checkOverflow);
+  }, [pendingApplications]);
 
   function openDeclineDialog(applicationId: number) {
     setDeclineTargetId(applicationId);
@@ -249,9 +265,46 @@ export default function MentorDashboardPage() {
                             </Stack>
                           </TableCell>
                           <TableCell sx={{ maxWidth: 300 }}>
-                            <Typography variant="body2" noWrap title={app.whyMentor}>
-                              {app.whyMentor}
-                            </Typography>
+                            {expandedMessageId === app.applicationId ? (
+                              <Box>
+                                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                                  {app.whyMentor}
+                                </Typography>
+                                <Button
+                                  size="small"
+                                  onClick={() => setExpandedMessageId(null)}
+                                  sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                >
+                                  Show less
+                                </Button>
+                              </Box>
+                            ) : (
+                              <Box>
+                                <Typography
+                                  variant="body2"
+                                  noWrap
+                                  title={app.whyMentor}
+                                  ref={(el) => {
+                                    if (el) {
+                                      textRefs.current.set(app.applicationId, el);
+                                    } else {
+                                      textRefs.current.delete(app.applicationId);
+                                    }
+                                  }}
+                                >
+                                  {app.whyMentor}
+                                </Typography>
+                                {overflowingIds.has(app.applicationId) && (
+                                  <Button
+                                    size="small"
+                                    onClick={() => setExpandedMessageId(app.applicationId)}
+                                    sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                  >
+                                    Show more
+                                  </Button>
+                                )}
+                              </Box>
+                            )}
                           </TableCell>
                           <TableCell>
                             <Typography variant="body2">
