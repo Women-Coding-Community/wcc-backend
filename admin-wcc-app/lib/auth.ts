@@ -1,6 +1,6 @@
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
-export type DecodedToken = { exp?: number; [k: string]: any };
+export type DecodedToken = { exp?: number } & Record<string, unknown>;
 
 const STORAGE_KEY = 'wcc_token';
 const EXPIRES_AT_KEY = 'wcc_token_expires_at';

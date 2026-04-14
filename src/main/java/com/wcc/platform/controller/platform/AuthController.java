@@ -1,16 +1,21 @@
 package com.wcc.platform.controller.platform;
 
 import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.domain.auth.LoginResponse;
 import com.wcc.platform.domain.auth.UserAccount;
-import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
+import com.wcc.platform.service.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.wcc.platform.domain.auth.UpdateUserRolesRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +23,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -40,6 +46,7 @@ public class AuthController {
       ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid credentials"));
   private final AuthService authService;
   private final MemberService memberService;
+  private final PasswordResetService passwordResetService;
 
   /**
    * Authenticates a user using their email and password and returns an access token upon successful
@@ -81,23 +88,48 @@ public class AuthController {
    * <p>The method fetches information about the logged-in user
    */
   @GetMapping("/me")
-  @Operation(summary = "Get current authenticated user and member info")
+  @Operation(
+      summary = "Get current authenticated user and member info",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   public ResponseEntity<LoginResponse> currentUser() {
     final var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !auth.isAuthenticated()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
-    final var userAccount = authService.findUserByEmail(auth.getName());
+    if (!(auth.getPrincipal() instanceof UserAccount.User user)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    final var userAccount = authService.findUserByEmail(user.userAccount().getEmail());
     if (userAccount.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    final UserAccount user = userAccount.get();
+    final UserAccount account = userAccount.get();
     final var response =
-        new LoginResponse(user.getRoles(), authService.getMember(user.getMemberId()));
+        new LoginResponse(account.getRoles(), authService.getMember(account.getMemberId()));
 
     return ResponseEntity.ok(response);
+  }
+
+  /**
+   * Updates the roles assigned to an existing user account.
+   *
+   * <p>Restricted to ADMIN and MENTORSHIP_ADMIN roles. Replaces all existing roles with the
+   * provided list.
+   *
+   * @param userId the ID of the user account to update
+   * @param request the request containing the new roles to assign
+   * @return the updated {@link UserAccount}
+   */
+  @PutMapping("/users/{userId}/roles")
+  @Operation(
+      summary = "Update roles for an existing user account",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
+  public ResponseEntity<UserAccount> updateUserRoles(
+      @PathVariable final Integer userId,
+      @RequestBody @Valid final UpdateUserRolesRequest request) {
+    return ResponseEntity.ok(authService.updateUserRoles(userId, request.roles()));
   }
 
   /**
@@ -108,49 +140,60 @@ public class AuthController {
   @GetMapping("/users")
   @Operation(
       summary = "API to retrieve users with access to restrict area",
-      security = {
-        @SecurityRequirement(name = "apiKey"),
-        @SecurityRequirement(name = "bearerAuth")
-      })
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<UserAccount>> getUsers() {
     return ResponseEntity.ok(memberService.getUsers());
   }
 
   /**
-   * Represents a login request that encapsulates the user's email and password used for
-   * authentication.
+   * Initiates a password reset by sending a reset link to the specified user's email. Restricted to
+   * ADMIN and LEADER roles.
+   *
+   * @param request the reset request containing the target email and recipient display name
+   * @return 200 OK with a message indicating whether the reset email was sent or the user was not
+   *     found
    */
-  public record LoginRequest(@NotNull String email, @NotNull String password) {}
+  @PostMapping("/reset-password/request")
+  @Operation(
+      summary = "Send a password reset link to a registered user (admin/leader only)",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  public ResponseEntity<PasswordResetResponse> requestPasswordReset(
+      @RequestBody @Valid final ResetPasswordRequest request) {
+    final String message =
+        passwordResetService.requestReset(request.email(), request.recipientName());
+    return ResponseEntity.ok(new PasswordResetResponse(message));
+  }
 
   /**
-   * Represents a response object returned after a successful or unsuccessful login attempt.
+   * Confirms a password reset by validating the single-use token and applying the new password.
+   * This endpoint is public — the token itself is the proof of identity.
    *
-   * <p>This class encapsulates details including authentication token, token expiry information,
-   * user roles, and associated member details if available. It also includes a message for cases
-   * such as unsuccessful login attempts or additional information about the response.
-   *
-   * <p>Primary constructors allow creating instances either with complete authentication details or
-   * with an error message indicating the result.
+   * @param request the confirmation request containing the reset token and the new password
+   * @return 200 OK with a confirmation message
    */
-  public record LoginResponse(
-      String token, String expiresAt, List<RoleType> roles, MemberDto member, String message) {
-
-    public LoginResponse(final String message) {
-      this(null, null, List.of(), null, message);
-    }
-
-    public LoginResponse(final List<RoleType> roles, final MemberDto member) {
-      this(null, null, roles, member, null);
-    }
-
-    public LoginResponse(
-        final String token,
-        final String expiresAt,
-        final List<RoleType> roles,
-        final MemberDto member) {
-      this(token, expiresAt, roles, member, null);
-    }
+  @PostMapping("/reset-password/confirm")
+  @Operation(summary = "Confirm password reset using a single-use token from the reset email")
+  public ResponseEntity<PasswordResetResponse> confirmPasswordReset(
+      @RequestBody @Valid final ConfirmPasswordResetRequest request) {
+    passwordResetService.confirmReset(request.token(), request.newPassword());
+    return ResponseEntity.ok(new PasswordResetResponse("Password has been reset successfully"));
   }
+
+  /** Request DTO for the password reset initiation endpoint. */
+  public record ResetPasswordRequest(
+      @NotBlank @Email String email, @NotBlank String recipientName) {}
+
+  /** Request DTO for the password reset confirmation endpoint. */
+  public record ConfirmPasswordResetRequest(
+      @NotBlank String token,
+      @NotBlank @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
+          String newPassword) {}
+
+  /** Response DTO returned from both password reset endpoints. */
+  public record PasswordResetResponse(String message) {}
+
+  /** Represents a login request that encapsulates the user's email and password. */
+  public record LoginRequest(@NotNull String email, @NotNull String password) {}
 }

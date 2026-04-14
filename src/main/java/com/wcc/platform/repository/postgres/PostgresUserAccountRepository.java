@@ -6,6 +6,7 @@ import com.wcc.platform.repository.UserAccountRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,8 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
 
   private static final String SQL_SELECT_ALL = "SELECT * FROM user_accounts;";
   private static final String SQL_SELECT_BY_ID = "SELECT * FROM user_accounts WHERE id = ?";
-  private static final String SQL_SELECT_BY_MAIL = "SELECT * FROM user_accounts WHERE email = ?";
+  private static final String SQL_SELECT_BY_MAIL =
+      "SELECT * FROM user_accounts WHERE email = ?";
   private static final String SQL_DELETE = "DELETE FROM user_accounts WHERE id = ?";
   private static final String SQL_INSERT =
       "INSERT INTO user_accounts (member_id, email, password_hash) VALUES (?,?,?)";
@@ -33,6 +35,8 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
       "INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)";
   private static final String SQL_SELECT_ROLES = "SELECT role_id FROM user_roles WHERE user_id = ?";
   private static final String SQL_DELETE_ROLES = "DELETE FROM user_roles WHERE user_id = ?";
+  private static final String SQL_UPDATE_PASSWORD =
+      "UPDATE user_accounts SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
 
   private final JdbcTemplate jdbc;
 
@@ -87,7 +91,7 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
   @Override
   public Optional<UserAccount> findByEmail(final String email) {
     final List<UserAccount> users =
-        jdbc.query(SQL_SELECT_BY_MAIL, (rs, rowNum) -> mapUser(rs), email);
+        jdbc.query(SQL_SELECT_BY_MAIL, (rs, rowNum) -> mapUser(rs), email.toLowerCase(Locale.ENGLISH));
     return users.stream().findFirst();
   }
 
@@ -108,6 +112,11 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
     for (final RoleType role : roles) {
       jdbc.update(SQL_INSERT_ROLE, userId, role.getTypeId());
     }
+  }
+
+  @Override
+  public void updatePassword(final Integer id, final String newPasswordHash) {
+    jdbc.update(SQL_UPDATE_PASSWORD, newPasswordHash, id);
   }
 
   private UserAccount mapUser(final ResultSet rs) throws SQLException {

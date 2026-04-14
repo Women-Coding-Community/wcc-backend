@@ -1,17 +1,17 @@
-import {useEffect, useState} from 'react';
-import {Alert, Box, Button, Paper, Stack, TextField, Typography} from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
-import {apiFetch} from '@/lib/api';
-import {getStoredToken, isTokenExpired} from '@/lib/auth';
-import {useRouter} from 'next/router';
+import { apiFetch, getErrorMessage } from '@/lib/api';
+import { getStoredToken, isTokenExpired } from '@/lib/auth';
+import { useRouter } from 'next/router';
 
 interface UserDto {
   id?: string;
   email: string;
-  roles?: string;
+  roles?: string[];
 }
 
-const USERS_PATH = '/api/platform/v1/users';
+const USERS_PATH = '/api/auth/users';
 
 export default function UsersPage() {
   const router = useRouter();
@@ -21,70 +21,84 @@ export default function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const token = getStoredToken();
-    if (!token || isTokenExpired(token)) router.replace('/login');
-    else {
-      setToken(token);
-      loadUsers(token);
-    }
-  }, [router]);
-
-  const loadUsers = async (token: string) => {
+  const loadUsers = useCallback(async (authToken: string) => {
     try {
-      const data = await apiFetch<UserDto[]>(USERS_PATH, {token: token});
+      const data = await apiFetch<UserDto[]>(USERS_PATH, { token: authToken });
       setItems(data || []);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to load users'));
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const storedToken = getStoredToken();
+    if (!storedToken || isTokenExpired(storedToken)) router.replace('/login');
+    else {
+      setToken(storedToken);
+      loadUsers(storedToken);
+    }
+  }, [loadUsers, router]);
 
   const createUser = async () => {
     if (!token) return;
     setError(null);
     try {
-      await apiFetch(USERS_PATH, {method: 'POST', body: {email, roles}, token});
+      await apiFetch(USERS_PATH, { method: 'POST', body: { email, roles }, token });
       setEmail('');
       setRoles('USER');
       await loadUsers(token);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to create user'));
     }
   };
 
   const deleteUser = async (id?: string) => {
     if (!token || !id) return;
     try {
-      await apiFetch(USERS_PATH + `${USERS_PATH}/${id}`, {method: 'DELETE', token});
+      await apiFetch(USERS_PATH + `${USERS_PATH}/${id}`, { method: 'DELETE', token });
       await loadUsers(token);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to delete user'));
     }
   };
 
   return (
-      <AdminLayout>
-        <Paper sx={{p: 3}}>
-          <Typography variant="h5" gutterBottom>Users</Typography>
-          {error && <Alert severity="error" sx={{mb: 2}}>{error}</Alert>}
-          <Stack direction={{xs: 'column', sm: 'row'}} spacing={2} sx={{mb: 3}}>
-            <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-            <TextField label="Roles" value={roles} onChange={(e) => setRoles(e.target.value)}/>
-            <Button variant="contained" onClick={createUser}>Create</Button>
-          </Stack>
-          <Box>
-            {items.map((u) => (
-                <Paper key={u.id}
-                       sx={{p: 2, mb: 1, display: 'flex', justifyContent: 'space-between'}}>
-                  <div>
-                    <Typography>{u.email}</Typography>
-                    <Typography variant="caption" color="text.secondary">{u.roles}</Typography>
-                  </div>
-                  <Button color="secondary" onClick={() => deleteUser(u.id)}>Delete</Button>
-                </Paper>
-            ))}
-          </Box>
-        </Paper>
-      </AdminLayout>
+    <AdminLayout>
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Users
+        </Typography>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
+          <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <TextField label="Roles" value={roles} onChange={(e) => setRoles(e.target.value)} />
+          <Button variant="contained" onClick={createUser}>
+            Create
+          </Button>
+        </Stack>
+        <Box>
+          {items.map((u) => (
+            <Paper
+              key={u.id}
+              sx={{ p: 2, mb: 1, display: 'flex', justifyContent: 'space-between' }}
+            >
+              <div>
+                <Typography>{u.email}</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {u.roles?.join(', ')}
+                </Typography>
+              </div>
+              <Button color="secondary" onClick={() => deleteUser(u.id)}>
+                Delete
+              </Button>
+            </Paper>
+          ))}
+        </Box>
+      </Paper>
+    </AdminLayout>
   );
 }

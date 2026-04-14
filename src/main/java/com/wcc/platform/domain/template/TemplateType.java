@@ -36,7 +36,8 @@ public enum TemplateType {
   ADHOC_SESSION_EMAIL("book_using_email_adhoc_session_with_mentor_mentee.yml"),
   MENTEE_LIST_LINK("potential_list_mentees_for_mentor_using_link.yml"),
   MENTEE_LIST_EMAIL("potential_list_mentees_for_mentor_using_email.yml"),
-  MENTEE_FEEDBACK_ADHOC("reminder_adhoc_mentorship_feedback_mentee.yml");
+  MENTEE_FEEDBACK_ADHOC("reminder_adhoc_mentorship_feedback_mentee.yml"),
+  RESET_PASSWORD("reset_password.yml");
 
   private final String templateFile;
 

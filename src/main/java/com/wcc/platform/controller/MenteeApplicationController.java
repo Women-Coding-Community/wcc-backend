@@ -5,6 +5,7 @@ import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.ApplicationAcceptRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationDeclineRequest;
+import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.ApplicationWithdrawRequest;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
@@ -94,10 +95,7 @@ public class MenteeApplicationController {
       operator = LogicalOperator.OR)
   @Operation(
       summary = "Get applications received by a mentor",
-      security = {
-        @SecurityRequirement(name = "apiKey"),
-        @SecurityRequirement(name = "bearerAuth")
-      })
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getMentorApplications(
       @Parameter(description = "ID of the mentor") @PathVariable final Long mentorId,
@@ -112,6 +110,45 @@ public class MenteeApplicationController {
             : applications;
 
     return ResponseEntity.ok(filtered);
+  }
+
+  /**
+   * API for admin to approve the application and make it available for the mentor to review.
+   *
+   * @param applicationId The application ID
+   * @return Updated application
+   */
+  @PatchMapping("/mentees/applications/{applicationId}/approve")
+  @RequiresPermission(Permission.MENTEE_APPROVE)
+  @Operation(
+      summary = "Admin approves mentee application",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MenteeApplication> approveApplication(
+      @Parameter(description = "Application ID") @PathVariable final Long applicationId) {
+    final MenteeApplication updated = applicationService.approveApplication(applicationId);
+    return ResponseEntity.ok(updated);
+  }
+
+  /**
+   * API for admin to reject a mentee application.
+   *
+   * @param applicationId The application ID
+   * @param request Rejection request with reason
+   * @return Updated application
+   */
+  @PatchMapping("/mentees/applications/{applicationId}/reject")
+  @RequiresPermission(Permission.MENTEE_APPROVE)
+  @Operation(
+      summary = "Admin rejects mentee application",
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MenteeApplication> rejectApplication(
+      @Parameter(description = "Application ID") @PathVariable final Long applicationId,
+      @Valid @RequestBody final ApplicationRejectRequest request) {
+    final MenteeApplication updated =
+        applicationService.rejectApplication(applicationId, request.reason());
+    return ResponseEntity.ok(updated);
   }
 
   /**
