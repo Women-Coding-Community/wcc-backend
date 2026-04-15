@@ -73,6 +73,8 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
           + "WHERE application_status = ?::application_status "
           + "AND cycle_id = ?";
 
+  private static final String DELETE_BY_ID = "DELETE FROM mentee_applications WHERE application_id = ?";
+
   private final JdbcTemplate jdbc;
 
   @Transactional
@@ -135,7 +137,7 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
 
   @Override
   public void deleteById(final Long id) {
-    throw new UnsupportedOperationException("Delete not yet implemented");
+    jdbc.update(DELETE_BY_ID, id);
   }
 
   @Override

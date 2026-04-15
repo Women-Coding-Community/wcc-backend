@@ -268,9 +268,10 @@ public class MenteeWorkflowService {
         applicationRepository.findByMenteeAndCycleOrderByPriority(menteeId, cycleId);
 
     final boolean allNonForwardable =
-        allApplications.stream()
-            .filter(app -> app.getMentorId() != null)
-            .allMatch(app -> app.getStatus().isNonForwardable());
+        !allApplications.isEmpty()
+            && allApplications.stream()
+                .filter(app -> app.getMentorId() != null)
+                .allMatch(app -> app.getStatus().isNonForwardable());
 
     if (allNonForwardable) {
       final var existingManualMatch =

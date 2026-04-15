@@ -17,6 +17,7 @@ import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -116,7 +117,10 @@ public class MenteeService {
     }
 
     final List<Integer> existingPriorities =
-        existingApplications.stream().map(MenteeApplication::getPriorityOrder).toList();
+        existingApplications.stream()
+            .map(MenteeApplication::getPriorityOrder)
+            .filter(Objects::nonNull)
+            .toList();
 
     for (final Integer priority : requestPriorities) {
       if (existingPriorities.contains(priority)) {
@@ -199,11 +203,27 @@ public class MenteeService {
 
   private Mentee createMenteeRegistrations(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    final var applications =
-        menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
+    final var menteeId = menteeRegistration.mentee().getId();
+    final var applications = menteeRegistration.toApplications(cycle, menteeId);
     applications.forEach(registrationsRepo::create);
 
-    return menteeRepository.findById(menteeRegistration.mentee().getId()).orElseThrow();
+    removePendingManualMatchIfExists(menteeId, cycle.getCycleId());
+
+    return menteeRepository.findById(menteeId).orElseThrow();
+  }
+
+  /**
+   * Removes the PENDING_MANUAL_MATCH application for a mentee if it exists. Called when new
+   * applications are submitted, since the mentee now has active options and no longer needs manual
+   * matching.
+   *
+   * @param menteeId the mentee ID
+   * @param cycleId the cycle ID
+   */
+  private void removePendingManualMatchIfExists(final Long menteeId, final Long cycleId) {
+    registrationsRepo
+        .findByMenteeCycleAndStatus(menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH)
+        .ifPresent(app -> registrationsRepo.deleteById(app.getApplicationId()));
   }
 
   /**
@@ -225,6 +245,7 @@ public class MenteeService {
     final var existingMentorIds =
         existingApplications.stream()
             .map(MenteeApplication::getMentorId)
+            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
     final var filteredApplications =
@@ -276,22 +297,19 @@ public class MenteeService {
   }
 
   /**
-   * Get all mentees having applications pending for manual match for the current cycle
+   * Get all mentees having applications pending for manual match for cycle
    *
    * @return list of mentees
    */
-  public List<Mentee> getMenteePendingManualMatch() {
+  public List<Mentee> getMenteePendingManualMatch(final Long cycleId) {
     final List<MenteeApplication> pendingManualMatch =
-        registrationsRepo.findByStatusAndCycle(
-            ApplicationStatus.PENDING_MANUAL_MATCH, getCurrentCycle().getCycleId());
+        registrationsRepo.findByStatusAndCycle(ApplicationStatus.PENDING_MANUAL_MATCH, cycleId);
 
-    if (pendingManualMatch == null || pendingManualMatch.isEmpty()) {
+    if (pendingManualMatch.isEmpty()) {
       return List.of();
     }
 
     return menteeRepository.findAllById(
-        pendingManualMatch.stream()
-            .map(MenteeApplication::getMenteeId)
-            .collect(Collectors.toList()));
+        pendingManualMatch.stream().map(MenteeApplication::getMenteeId).toList());
   }
 }

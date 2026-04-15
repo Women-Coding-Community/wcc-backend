@@ -1,5 +1,11 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.utils.MenteeApplicationTestBuilder.baseBuilder;
+import static com.wcc.platform.utils.MenteeApplicationTestBuilder.declined;
+import static com.wcc.platform.utils.MenteeApplicationTestBuilder.pending;
+import static com.wcc.platform.utils.MenteeApplicationTestBuilder.pendingManualMatch;
+import static com.wcc.platform.utils.MenteeApplicationTestBuilder.rejected;
+import static com.wcc.platform.utils.MenteeApplicationTestBuilder.reviewing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +34,9 @@ class MenteeWorkflowServiceTest {
 
   private static final String REJECTION_REASON =
       "Application does not meet the eligibility criteria for this mentorship cycle";
+  private static final String DECLINE_REASON = "Not a fit";
+  private static final Long MENTEE_ID = 10L;
+  private static final Long CYCLE_ID = 5L;
 
   @Mock private MenteeApplicationRepository applicationRepository;
   @Mock private MenteeRepository menteeRepository;
@@ -48,10 +57,10 @@ class MenteeWorkflowServiceTest {
   @DisplayName(
       "Given a PENDING application, when admin approves, then status becomes MENTOR_REVIEWING")
   void shouldApprovePendingApplicationAndUpdateStatusToMentorReviewing() {
-    final MenteeApplication pending = pendingApplication(1L, 10L, 1);
-    final MenteeApplication approved = reviewingApplication(1L, 10L);
+    final MenteeApplication pendingApp = pending(1L, MENTEE_ID, 1);
+    final MenteeApplication approved = reviewing(1L, MENTEE_ID, 1);
 
-    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pendingApp));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.MENTOR_REVIEWING, null))
         .thenReturn(approved);
 
@@ -64,18 +73,9 @@ class MenteeWorkflowServiceTest {
   @DisplayName(
       "Given non-PENDING application, when admin approves, then ContentNotFoundException is thrown")
   void shouldThrowContentNotFoundExceptionWhenApprovedApplicationIsNotPending() {
-    final MenteeApplication reviewing =
-        MenteeApplication.builder()
-            .applicationId(2L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.MENTOR_REVIEWING)
-            .whyMentor("Great mentor")
-            .build();
+    final MenteeApplication reviewingApp = reviewing(2L, MENTEE_ID, 1);
 
-    when(applicationRepository.findById(2L)).thenReturn(Optional.of(reviewing));
+    when(applicationRepository.findById(2L)).thenReturn(Optional.of(reviewingApp));
 
     assertThatThrownBy(() -> service.approveApplication(2L))
         .isInstanceOf(ContentNotFoundException.class)
@@ -96,15 +96,15 @@ class MenteeWorkflowServiceTest {
   @Test
   @DisplayName("Given a PENDING application, when admin rejects, then status becomes REJECTED")
   void shouldRejectPendingApplicationAndUpdateStatusToRejected() {
-    final MenteeApplication pending = pendingApplication(1L, 10L, 1);
-    final MenteeApplication rejected = rejectedApplication(1L, 10L);
-    final MenteeApplication anotherPending = pendingApplication(2L, 10L, 2);
+    final MenteeApplication pendingApp = pending(1L, MENTEE_ID, 1);
+    final MenteeApplication rejectedApp = rejected(1L, MENTEE_ID, 1);
+    final MenteeApplication anotherPending = pending(2L, MENTEE_ID, 2);
 
-    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pendingApp));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
-        .thenReturn(rejected);
-    when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
-        .thenReturn(List.of(rejected, anotherPending));
+        .thenReturn(rejectedApp);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(rejectedApp, anotherPending));
 
     final MenteeApplication result = service.rejectApplication(1L, REJECTION_REASON);
 
@@ -116,18 +116,9 @@ class MenteeWorkflowServiceTest {
   @DisplayName(
       "Given non-PENDING application, when admin rejects, then ContentNotFoundException is thrown")
   void shouldThrowContentNotFoundExceptionWhenRejectedApplicationIsNotPending() {
-    final MenteeApplication rejected =
-        MenteeApplication.builder()
-            .applicationId(2L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.REJECTED)
-            .whyMentor("Great mentor")
-            .build();
+    final MenteeApplication rejectedApp = rejected(2L, MENTEE_ID, 1);
 
-    when(applicationRepository.findById(2L)).thenReturn(Optional.of(rejected));
+    when(applicationRepository.findById(2L)).thenReturn(Optional.of(rejectedApp));
 
     assertThatThrownBy(() -> service.rejectApplication(2L, REJECTION_REASON))
         .isInstanceOf(ContentNotFoundException.class)
@@ -145,88 +136,23 @@ class MenteeWorkflowServiceTest {
         .hasMessageContaining("Application not found with ID: 99");
   }
 
-  private MenteeApplication pendingApplication(
-      final Long applicationId, final Long menteeId, final int priority) {
-    return MenteeApplication.builder()
-        .applicationId(applicationId)
-        .menteeId(menteeId)
-        .mentorId(20L)
-        .cycleId(5L)
-        .priorityOrder(priority)
-        .status(ApplicationStatus.PENDING)
-        .whyMentor("Great mentor")
-        .build();
-  }
-
-  private MenteeApplication reviewingApplication(final Long applicationId, final Long menteeId) {
-    return MenteeApplication.builder()
-        .applicationId(applicationId)
-        .menteeId(menteeId)
-        .mentorId(20L)
-        .cycleId(5L)
-        .priorityOrder(1)
-        .status(ApplicationStatus.MENTOR_REVIEWING)
-        .whyMentor("Great mentor")
-        .build();
-  }
-
-  private MenteeApplication rejectedApplication(final Long applicationId, final Long menteeId) {
-    return MenteeApplication.builder()
-        .applicationId(applicationId)
-        .menteeId(menteeId)
-        .mentorId(20L)
-        .cycleId(5L)
-        .priorityOrder(1)
-        .status(ApplicationStatus.REJECTED)
-        .whyMentor("Great mentor")
-        .build();
-  }
-
   @Test
   @DisplayName(
       "Given all applications are non-forwardable after rejection, when rejecting, "
           + "then a PENDING_MANUAL_MATCH application is created")
   void shouldCreateManualMatchApplicationWhenAllApplicationsAreNonForwardable() {
-    final MenteeApplication pending =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.PENDING)
-            .whyMentor("Great mentor")
-            .build();
-
-    final MenteeApplication rejected =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.REJECTED)
-            .whyMentor("Great mentor")
-            .build();
-
+    final MenteeApplication pendingApp = pending(1L, MENTEE_ID, 1);
+    final MenteeApplication rejectedApp = rejected(1L, MENTEE_ID, 1);
     final MenteeApplication anotherRejected =
-        MenteeApplication.builder()
-            .applicationId(2L)
-            .menteeId(10L)
-            .mentorId(30L)
-            .cycleId(5L)
-            .priorityOrder(2)
-            .status(ApplicationStatus.REJECTED)
-            .whyMentor("Another mentor")
-            .build();
+        baseBuilder(2L, MENTEE_ID, 30L, 2).status(ApplicationStatus.REJECTED).build();
 
-    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pendingApp));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
-        .thenReturn(rejected);
-    when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
-        .thenReturn(List.of(rejected, anotherRejected));
+        .thenReturn(rejectedApp);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(rejectedApp, anotherRejected));
     when(applicationRepository.findByMenteeCycleAndStatus(
-            10L, 5L, ApplicationStatus.PENDING_MANUAL_MATCH))
+            MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
         .thenReturn(Optional.empty());
 
     service.rejectApplication(1L, REJECTION_REASON);
@@ -236,9 +162,9 @@ class MenteeWorkflowServiceTest {
     verify(applicationRepository).create(captor.capture());
 
     final MenteeApplication createdApp = captor.getValue();
-    assertThat(createdApp.getMenteeId()).isEqualTo(10L);
+    assertThat(createdApp.getMenteeId()).isEqualTo(MENTEE_ID);
     assertThat(createdApp.getMentorId()).isNull();
-    assertThat(createdApp.getCycleId()).isEqualTo(5L);
+    assertThat(createdApp.getCycleId()).isEqualTo(CYCLE_ID);
     assertThat(createdApp.getPriorityOrder()).isNull();
     assertThat(createdApp.getStatus()).isEqualTo(ApplicationStatus.PENDING_MANUAL_MATCH);
   }
@@ -248,44 +174,16 @@ class MenteeWorkflowServiceTest {
       "Given mentee has a MATCHED application (not non-forwardable), when rejecting other application, "
           + "then no PENDING_MANUAL_MATCH application is created")
   void shouldNotCreateManualMatchWhenMenteeHasMatchedApplication() {
-    final MenteeApplication pending =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(2)
-            .status(ApplicationStatus.PENDING)
-            .whyMentor("Great mentor")
-            .build();
+    final MenteeApplication pendingApp = pending(1L, MENTEE_ID, 2);
+    final MenteeApplication rejectedApp = rejected(1L, MENTEE_ID, 2);
+    final MenteeApplication matchedApp =
+        baseBuilder(2L, MENTEE_ID, 30L, 1).status(ApplicationStatus.MATCHED).build();
 
-    final MenteeApplication rejected =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(2)
-            .status(ApplicationStatus.REJECTED)
-            .whyMentor("Great mentor")
-            .build();
-
-    final MenteeApplication matched =
-        MenteeApplication.builder()
-            .applicationId(2L)
-            .menteeId(10L)
-            .mentorId(30L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.MATCHED)
-            .whyMentor("Another mentor")
-            .build();
-
-    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pendingApp));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
-        .thenReturn(rejected);
-    when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
-        .thenReturn(List.of(matched, rejected));
+        .thenReturn(rejectedApp);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(matchedApp, rejectedApp));
 
     service.rejectApplication(1L, REJECTION_REASON);
 
@@ -297,45 +195,17 @@ class MenteeWorkflowServiceTest {
       "Given a PENDING_MANUAL_MATCH already exists, when rejecting another application, "
           + "then no duplicate PENDING_MANUAL_MATCH is created")
   void shouldNotCreateDuplicateManualMatchApplication() {
-    final MenteeApplication pending =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.PENDING)
-            .whyMentor("Great mentor")
-            .build();
+    final MenteeApplication pendingApp = pending(1L, MENTEE_ID, 1);
+    final MenteeApplication rejectedApp = rejected(1L, MENTEE_ID, 1);
+    final MenteeApplication existingManualMatch = pendingManualMatch(99L, MENTEE_ID);
 
-    final MenteeApplication rejected =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.REJECTED)
-            .whyMentor("Great mentor")
-            .build();
-
-    final MenteeApplication existingManualMatch =
-        MenteeApplication.builder()
-            .applicationId(99L)
-            .menteeId(10L)
-            .mentorId(null)
-            .cycleId(5L)
-            .priorityOrder(null)
-            .status(ApplicationStatus.PENDING_MANUAL_MATCH)
-            .build();
-
-    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pendingApp));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
-        .thenReturn(rejected);
-    when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
-        .thenReturn(List.of(rejected, existingManualMatch));
+        .thenReturn(rejectedApp);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(rejectedApp, existingManualMatch));
     when(applicationRepository.findByMenteeCycleAndStatus(
-            10L, 5L, ApplicationStatus.PENDING_MANUAL_MATCH))
+            MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
         .thenReturn(Optional.of(existingManualMatch));
 
     service.rejectApplication(1L, REJECTION_REASON);
@@ -348,46 +218,18 @@ class MenteeWorkflowServiceTest {
       "Given all applications include MENTOR_DECLINED status, when rejecting last pending, "
           + "then PENDING_MANUAL_MATCH application is created")
   void shouldCreateManualMatchWhenAllApplicationsIncludeMentorDeclined() {
-    final MenteeApplication pending =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(2)
-            .status(ApplicationStatus.PENDING)
-            .whyMentor("Great mentor")
-            .build();
+    final MenteeApplication pendingApp = pending(1L, MENTEE_ID, 2);
+    final MenteeApplication rejectedApp = rejected(1L, MENTEE_ID, 2);
+    final MenteeApplication declinedApp =
+        baseBuilder(2L, MENTEE_ID, 30L, 1).status(ApplicationStatus.MENTOR_DECLINED).build();
 
-    final MenteeApplication rejected =
-        MenteeApplication.builder()
-            .applicationId(1L)
-            .menteeId(10L)
-            .mentorId(20L)
-            .cycleId(5L)
-            .priorityOrder(2)
-            .status(ApplicationStatus.REJECTED)
-            .whyMentor("Great mentor")
-            .build();
-
-    final MenteeApplication declined =
-        MenteeApplication.builder()
-            .applicationId(2L)
-            .menteeId(10L)
-            .mentorId(30L)
-            .cycleId(5L)
-            .priorityOrder(1)
-            .status(ApplicationStatus.MENTOR_DECLINED)
-            .whyMentor("Another mentor")
-            .build();
-
-    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pending));
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(pendingApp));
     when(applicationRepository.updateStatus(1L, ApplicationStatus.REJECTED, REJECTION_REASON))
-        .thenReturn(rejected);
-    when(applicationRepository.findByMenteeAndCycleOrderByPriority(10L, 5L))
-        .thenReturn(List.of(declined, rejected));
+        .thenReturn(rejectedApp);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(declinedApp, rejectedApp));
     when(applicationRepository.findByMenteeCycleAndStatus(
-            10L, 5L, ApplicationStatus.PENDING_MANUAL_MATCH))
+            MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
         .thenReturn(Optional.empty());
 
     service.rejectApplication(1L, REJECTION_REASON);
@@ -398,5 +240,59 @@ class MenteeWorkflowServiceTest {
 
     final MenteeApplication createdApp = captor.getValue();
     assertThat(createdApp.getStatus()).isEqualTo(ApplicationStatus.PENDING_MANUAL_MATCH);
+  }
+
+  @Test
+  @DisplayName(
+      "Given all applications are non-forwardable after mentor decline, when declining, "
+          + "then a PENDING_MANUAL_MATCH application is created")
+  void shouldCreateManualMatchApplicationWhenAllApplicationsAreNonForwardableAfterDecline() {
+    final MenteeApplication reviewingApp = reviewing(1L, MENTEE_ID, 1);
+    final MenteeApplication declinedApp = declined(1L, MENTEE_ID, 1);
+    final MenteeApplication anotherDeclined =
+        baseBuilder(2L, MENTEE_ID, 30L, 2).status(ApplicationStatus.MENTOR_DECLINED).build();
+
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(reviewingApp));
+    when(applicationRepository.updateStatus(1L, ApplicationStatus.MENTOR_DECLINED, DECLINE_REASON))
+        .thenReturn(declinedApp);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(declinedApp, anotherDeclined));
+    when(applicationRepository.findByMenteeCycleAndStatus(
+            MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
+        .thenReturn(Optional.empty());
+
+    service.declineApplication(1L, DECLINE_REASON);
+
+    final ArgumentCaptor<MenteeApplication> captor =
+        ArgumentCaptor.forClass(MenteeApplication.class);
+    verify(applicationRepository).create(captor.capture());
+
+    final MenteeApplication createdApp = captor.getValue();
+    assertThat(createdApp.getMenteeId()).isEqualTo(MENTEE_ID);
+    assertThat(createdApp.getMentorId()).isNull();
+    assertThat(createdApp.getCycleId()).isEqualTo(CYCLE_ID);
+    assertThat(createdApp.getPriorityOrder()).isNull();
+    assertThat(createdApp.getStatus()).isEqualTo(ApplicationStatus.PENDING_MANUAL_MATCH);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentee has a MATCHED application, when mentor declines another application, "
+          + "then no PENDING_MANUAL_MATCH application is created")
+  void shouldNotCreateManualMatchWhenMenteeHasMatchedApplicationAfterDecline() {
+    final MenteeApplication reviewingApp = reviewing(1L, MENTEE_ID, 2);
+    final MenteeApplication declinedApp = declined(1L, MENTEE_ID, 2);
+    final MenteeApplication matchedApp =
+        baseBuilder(2L, MENTEE_ID, 30L, 1).status(ApplicationStatus.MATCHED).build();
+
+    when(applicationRepository.findById(1L)).thenReturn(Optional.of(reviewingApp));
+    when(applicationRepository.updateStatus(1L, ApplicationStatus.MENTOR_DECLINED, DECLINE_REASON))
+        .thenReturn(declinedApp);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(matchedApp, declinedApp));
+
+    service.declineApplication(1L, DECLINE_REASON);
+
+    verify(applicationRepository, never()).create(any());
   }
 }

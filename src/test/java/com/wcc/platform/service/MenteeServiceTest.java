@@ -21,6 +21,7 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
@@ -673,5 +674,89 @@ class MenteeServiceTest {
     verify(memberRepository).findByEmail("mentor@wcc.com");
     verify(memberRepository).findById(100L);
     verify(menteeRepository).create(any(Mentee.class));
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentee has PENDING_MANUAL_MATCH application, when submitting new applications, "
+          + "then the PENDING_MANUAL_MATCH should be removed")
+  void shouldRemovePendingManualMatchWhenNewApplicationsAreSubmitted() {
+    var currentYear = Year.now();
+    var existingMentee = createMenteeTest(5L, "Test Mentee", "test@wcc.com");
+    var registration =
+        new MenteeRegistration(
+            existingMentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(2L, 4, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    var pendingManualMatch =
+        MenteeApplication.builder()
+            .applicationId(99L)
+            .menteeId(5L)
+            .mentorId(null)
+            .cycleId(1L)
+            .priorityOrder(null)
+            .status(ApplicationStatus.PENDING_MANUAL_MATCH)
+            .build();
+
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(menteeRepository.findById(5L)).thenReturn(Optional.of(existingMentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+    when(applicationRepository.findByMenteeCycleAndStatus(
+            5L, 1L, ApplicationStatus.PENDING_MANUAL_MATCH))
+        .thenReturn(Optional.of(pendingManualMatch));
+    when(menteeRepository.update(eq(5L), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+
+    menteeService.saveRegistration(registration);
+
+    verify(applicationRepository).deleteById(99L);
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentee has no PENDING_MANUAL_MATCH application, when submitting new applications, "
+          + "then deleteById should not be called")
+  void shouldNotCallDeleteWhenNoPendingManualMatchExists() {
+    var currentYear = Year.now();
+    var existingMentee = createMenteeTest(5L, "Test Mentee", "test@wcc.com");
+    var registration =
+        new MenteeRegistration(
+            existingMentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(2L, 4, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(menteeRepository.findById(5L)).thenReturn(Optional.of(existingMentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+    when(applicationRepository.findByMenteeCycleAndStatus(
+            5L, 1L, ApplicationStatus.PENDING_MANUAL_MATCH))
+        .thenReturn(Optional.empty());
+    when(menteeRepository.update(eq(5L), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+
+    menteeService.saveRegistration(registration);
+
+    verify(applicationRepository, never()).deleteById(any());
   }
 }

@@ -195,11 +195,11 @@ public class MentorshipAdminMatchesController {
    *
    * @return List of mentees
    */
-  @GetMapping("/pending-manual-match")
+  @GetMapping("/cycles/{cycleId}/pending-manual-match")
   @Operation(summary = "Get all mentees for a cycle whose application pending manual match")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<Mentee>> getMenteesPendingManualMatch() {
-    final List<Mentee> matches = menteeService.getMenteePendingManualMatch();
+  public ResponseEntity<List<Mentee>> getMenteesPendingManualMatch(
+      @PathVariable final Long cycleId) {
+    final List<Mentee> matches = menteeService.getMenteePendingManualMatch(cycleId);
     return ResponseEntity.ok(matches);
   }
 }
