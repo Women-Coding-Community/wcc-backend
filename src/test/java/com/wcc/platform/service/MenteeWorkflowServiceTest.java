@@ -18,7 +18,7 @@ import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.repository.MenteeApplicationRepository;
-import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
@@ -39,7 +39,7 @@ class MenteeWorkflowServiceTest {
   private static final Long CYCLE_ID = 5L;
 
   @Mock private MenteeApplicationRepository applicationRepository;
-  @Mock private MenteeRepository menteeRepository;
+  @Mock private MentorRepository mentorRepository;
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
 
@@ -50,7 +50,7 @@ class MenteeWorkflowServiceTest {
     MockitoAnnotations.openMocks(this);
     service =
         new MenteeWorkflowService(
-            applicationRepository, menteeRepository, matchRepository, cycleRepository);
+            applicationRepository, mentorRepository, matchRepository, cycleRepository);
   }
 
   @Test

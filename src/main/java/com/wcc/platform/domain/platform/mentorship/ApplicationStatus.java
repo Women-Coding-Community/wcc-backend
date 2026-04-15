@@ -19,7 +19,8 @@ public enum ApplicationStatus {
   DROPPED("dropped", "Mentee withdrew application"),
   REJECTED("rejected", "Rejected by Mentorship Team"),
   EXPIRED("expired", "Application expired (no response within timeframe)"),
-  PENDING_MANUAL_MATCH("pending_manual_match", "All options exhausted, awaiting manual matching");
+  PENDING_MANUAL_MATCH("pending_manual_match", "All options exhausted, awaiting manual matching"),
+  NO_MATCH_FOUND("no_match_found", "Manual matching concluded with no suitable mentor found");
 
   private final String value;
 
@@ -47,7 +48,11 @@ public enum ApplicationStatus {
    * @return true if status is terminal
    */
   public boolean isTerminal() {
-    return this == MATCHED || this == REJECTED || this == DROPPED || this == EXPIRED;
+    return this == MATCHED
+        || this == REJECTED
+        || this == DROPPED
+        || this == EXPIRED
+        || this == NO_MATCH_FOUND;
   }
 
   /**

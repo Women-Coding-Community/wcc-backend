@@ -3,18 +3,19 @@
 -- ============================================================================
 
 ALTER TYPE application_status ADD VALUE 'pending_manual_match';
+ALTER TYPE application_status ADD VALUE 'no_match_found';
 
 -- ============================================================================
--- UPDATE TABLE TO ALLOW NULL MENTOR_ID FOR MANUAL MATCH REQUESTS
+-- UPDATE TABLE TO ALLOW NULL MENTOR_ID FOR MANUAL MATCH ORNO MATCH FOUND REQUESTS
 -- ============================================================================
 
 ALTER TABLE mentee_applications ALTER COLUMN mentor_id DROP NOT NULL;
 
 COMMENT ON COLUMN mentee_applications.mentor_id IS
-'ID of the mentor being applied to. NULL for pending_manual_match status.';
+'ID of the mentor being applied to. NULL for pending_manual_match (or) no_match_found status.';
 
 -- ============================================================================
--- UPDATE TABLE TO ALLOW NULL PRIORITY_ORDER FOR MANUAL MATCH REQUESTS
+-- UPDATE TABLE TO ALLOW NULL PRIORITY_ORDER FOR MANUAL MATCH OR NO MATCH FOUNDREQUESTS
 -- ============================================================================
 
 ALTER TABLE mentee_applications ALTER COLUMN priority_order DROP NOT NULL;

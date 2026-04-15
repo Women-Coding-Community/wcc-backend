@@ -17,6 +17,7 @@ import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
 import com.wcc.platform.service.MenteeAdminService;
 import com.wcc.platform.service.MenteeService;
+import com.wcc.platform.service.MenteeWorkflowService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,7 @@ class MenteeControllerTest {
   @Autowired private ObjectMapper objectMapper;
   @MockBean private MenteeService menteeService;
   @MockBean private MenteeAdminService menteeAdminService;
+  @MockBean private MenteeWorkflowService menteeWorkflowService;
 
   @Test
   @DisplayName("Given valid mentee registration, when creating mentee, then return 201 Created")

@@ -207,23 +207,7 @@ public class MenteeService {
     final var applications = menteeRegistration.toApplications(cycle, menteeId);
     applications.forEach(registrationsRepo::create);
 
-    removePendingManualMatchIfExists(menteeId, cycle.getCycleId());
-
     return menteeRepository.findById(menteeId).orElseThrow();
-  }
-
-  /**
-   * Removes the PENDING_MANUAL_MATCH application for a mentee if it exists. Called when new
-   * applications are submitted, since the mentee now has active options and no longer needs manual
-   * matching.
-   *
-   * @param menteeId the mentee ID
-   * @param cycleId the cycle ID
-   */
-  private void removePendingManualMatchIfExists(final Long menteeId, final Long cycleId) {
-    registrationsRepo
-        .findByMenteeCycleAndStatus(menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH)
-        .ifPresent(app -> registrationsRepo.deleteById(app.getApplicationId()));
   }
 
   /**
@@ -302,8 +286,11 @@ public class MenteeService {
    * @return list of mentees
    */
   public List<Mentee> getMenteePendingManualMatch(final Long cycleId) {
+
     final List<MenteeApplication> pendingManualMatch =
-        registrationsRepo.findByStatusAndCycle(ApplicationStatus.PENDING_MANUAL_MATCH, cycleId);
+        registrationsRepo.findByStatusAndCycle(
+            ApplicationStatus.PENDING_MANUAL_MATCH,
+            cycleId != null ? cycleId : getCurrentCycle().getCycleId());
 
     if (pendingManualMatch.isEmpty()) {
       return List.of();
