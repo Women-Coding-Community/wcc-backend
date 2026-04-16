@@ -3,6 +3,7 @@ package com.wcc.platform.service;
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.DuplicateApplicationException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
 import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
@@ -213,21 +214,29 @@ public class MenteeWorkflowService {
 
   /**
    * Manually assigns a mentor to a mentee from the manual match queue. Validates mentor exists and
-   * has capacity, closes the PENDING_MANUAL_MATCH placeholder, and creates a new application.
+   * has capacity, checks for existing applications, closes the PENDING_MANUAL_MATCH placeholder,
+   * and creates a new application.
    *
    * @param menteeId the mentee ID
    * @param cycleId the cycle ID
    * @param mentorId the mentor ID to assign
    * @param notes optional notes for the assignment
    * @return the newly created application
-   * @throws ContentNotFoundException if mentor not found or no pending manual match exists
-   * @throws MentorCapacityExceededException if mentor is at capacity
    */
   @Transactional
   public MenteeApplication assignMentor(
       final Long menteeId, final Long cycleId, final Long mentorId, final String notes) {
     if (mentorRepository.findById(mentorId).isEmpty()) {
       throw new MentorNotFoundException(mentorId);
+    }
+
+    final var existingApp =
+        applicationRepository.findByMenteeMentorCycle(menteeId, mentorId, cycleId);
+    if (existingApp.isPresent()) {
+      throw new DuplicateApplicationException(
+          String.format(
+              "Cannot assign mentor %d to mentee %d: application already exists with status %s",
+              mentorId, menteeId, existingApp.get().getStatus()));
     }
 
     checkMentorCapacity(mentorId, cycleId);

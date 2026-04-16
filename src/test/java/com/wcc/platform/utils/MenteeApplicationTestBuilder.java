@@ -143,4 +143,22 @@ public final class MenteeApplicationTestBuilder {
         .priorityOrder(priority)
         .whyMentor(DEFAULT_WHY_MENTOR);
   }
+
+  /**
+   * Creates a NO_MATCH_FOUND application (mentor_id and priority_order are null).
+   *
+   * @param applicationId the application ID
+   * @param menteeId the mentee ID
+   * @return a no match found MenteeApplication
+   */
+  public static MenteeApplication noMatchFound(final Long applicationId, final Long menteeId) {
+    return MenteeApplication.builder()
+        .applicationId(applicationId)
+        .menteeId(menteeId)
+        .mentorId(null)
+        .cycleId(DEFAULT_CYCLE_ID)
+        .priorityOrder(null)
+        .status(ApplicationStatus.NO_MATCH_FOUND)
+        .build();
+  }
 }
