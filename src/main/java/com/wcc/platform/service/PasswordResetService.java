@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,6 +32,7 @@ public class PasswordResetService {
 
   private static final SecureRandom RANDOM = new SecureRandom();
 
+  private final PasswordResetTokenPersistenceService tokenService;
   private final PasswordResetTokenRepository resetTokenRepository;
   private final UserAccountRepository userAccountRepository;
   private final UserTokenRepository userTokenRepository;
@@ -44,8 +44,8 @@ public class PasswordResetService {
    * Initiates the password reset flow for the given email address. Generates a single-use reset
    * token, persists it in its own committed transaction, then sends the reset link by email.
    *
-   * <p>The token is committed before the email is sent so that a transient email failure (e.g.
-   * SMTP misconfiguration) does not silently discard the token. If the email send fails the caller
+   * <p>The token is committed before the email is sent so that a transient email failure (e.g. SMTP
+   * misconfiguration) does not silently discard the token. If the email send fails the caller
    * receives a 500 and can retry; the token remains valid until it expires.
    *
    * @param email the email address of the user whose password should be reset
@@ -64,7 +64,7 @@ public class PasswordResetService {
     final OffsetDateTime expiresAt = now.plusMinutes(passwordResetConfig.getTtlMinutes());
     final String rawToken = generateToken();
 
-    persistToken(
+    tokenService.persistToken(
         PasswordResetToken.builder()
             .token(rawToken)
             .userId(user.getId())
@@ -91,17 +91,6 @@ public class PasswordResetService {
             .build());
 
     return "Password reset email sent";
-  }
-
-  /**
-   * Persists the reset token in its own transaction so it is immediately committed and visible to
-   * the confirm endpoint, independent of any outer transaction or subsequent email failure.
-   *
-   * @param token the token to persist
-   */
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void persistToken(final PasswordResetToken token) {
-    resetTokenRepository.create(token);
   }
 
   /**
@@ -136,5 +125,4 @@ public class PasswordResetService {
     RANDOM.nextBytes(bytes);
     return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
   }
-
 }
