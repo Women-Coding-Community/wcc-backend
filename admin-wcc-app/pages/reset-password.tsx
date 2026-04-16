@@ -26,12 +26,19 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isPasswordStrong = (pwd: string) => /[0-9]/.test(pwd) && /[!@#$%]/.test(pwd);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
+      return;
+    }
+
+    if (!isPasswordStrong(newPassword)) {
+      setError('Password must contain at least one digit and one special character (!@#$%).');
       return;
     }
 
@@ -94,7 +101,7 @@ export default function ResetPasswordPage() {
                 required
                 margin="normal"
                 inputProps={{ minLength: 8, maxLength: 128 }}
-                helperText="Must be 8–128 characters"
+                helperText="Must be 8–128 characters, include at least one digit and one special character (!@#$%)"
                 disabled={isInvalidToken || loading}
               />
               <TextField
