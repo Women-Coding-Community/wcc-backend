@@ -2,6 +2,7 @@ package com.wcc.platform.controller.platform;
 
 import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.auth.LoginResponse;
+import com.wcc.platform.domain.auth.UpdateUserRolesRequest;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
@@ -10,11 +11,11 @@ import com.wcc.platform.service.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import com.wcc.platform.domain.auth.UpdateUserRolesRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @Tag(name = "Platform: Authentication")
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.ExcessiveImports")
 public class AuthController {
   private static final ResponseEntity<LoginResponse> UNAUTHORIZED =
       ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid credentials"));
@@ -188,7 +190,11 @@ public class AuthController {
   /** Request DTO for the password reset confirmation endpoint. */
   public record ConfirmPasswordResetRequest(
       @NotBlank String token,
-      @NotBlank @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
+      @NotBlank
+          @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
+          @Pattern(
+              regexp = "^(?=.*[0-9])(?=.*[!@#$%]).*$",
+              message = "Password must contain at least one digit and one special character (!@#$%)")
           String newPassword) {}
 
   /** Response DTO returned from both password reset endpoints. */

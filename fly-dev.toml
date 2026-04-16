@@ -10,6 +10,8 @@ primary_region = 'lhr'
 
 [env]
 SPRING_PROFILES_ACTIVE = "flyio"
+# Required secrets (set via `fly secrets set -a wcc-backend-dev`):
+#   APP_RESET_PASSWORD_BASE_URL=https://dev-wcc-admin.vercel.app
 
 [http_service]
 internal_port = 8080

@@ -32,6 +32,7 @@ public class PasswordResetService {
 
   private static final SecureRandom RANDOM = new SecureRandom();
 
+  private final PasswordResetTokenPersistenceService tokenService;
   private final PasswordResetTokenRepository resetTokenRepository;
   private final UserAccountRepository userAccountRepository;
   private final UserTokenRepository userTokenRepository;
@@ -41,17 +42,16 @@ public class PasswordResetService {
 
   /**
    * Initiates the password reset flow for the given email address. Generates a single-use reset
-   * token, stores it, and emails the reset link to the user.
+   * token, persists it in its own committed transaction, then sends the reset link by email.
    *
-   * <p>Transactional to roll back the token insert if the email send fails. Trade-off: the email is
-   * sent before the transaction commits, so there is a negligible window where the token is not yet
-   * visible. A future improvement is to extract token creation to a separate service.
+   * <p>The token is committed before the email is sent so that a transient email failure (e.g. SMTP
+   * misconfiguration) does not silently discard the token. If the email send fails the caller
+   * receives a 500 and can retry; the token remains valid until it expires.
    *
    * @param email the email address of the user whose password should be reset
    * @param recipientName the display name to include in the email greeting
    * @return a message indicating whether the reset email was sent or the user was not found
    */
-  @Transactional
   public String requestReset(final String email, final String recipientName) {
     final Optional<UserAccount> userOpt = userAccountRepository.findByEmail(email);
     if (userOpt.isEmpty()) {
@@ -64,7 +64,7 @@ public class PasswordResetService {
     final OffsetDateTime expiresAt = now.plusMinutes(passwordResetConfig.getTtlMinutes());
     final String rawToken = generateToken();
 
-    resetTokenRepository.create(
+    tokenService.persistToken(
         PasswordResetToken.builder()
             .token(rawToken)
             .userId(user.getId())
@@ -125,5 +125,4 @@ public class PasswordResetService {
     RANDOM.nextBytes(bytes);
     return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
   }
-
 }
