@@ -242,17 +242,19 @@ public class MenteeWorkflowService {
     checkMentorCapacity(mentorId, cycleId);
 
     final var manualMatchApps =
-        applicationRepository.findByMenteeCycleAndStatus(
+        applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
 
-    if (manualMatchApps.isEmpty()) {
-      throw new ContentNotFoundException(
-          String.format(
-              "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
-              menteeId, cycleId));
-    }
+    final MenteeApplication manualMatchApp =
+        manualMatchApps.stream()
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ContentNotFoundException(
+                        String.format(
+                            "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
+                            menteeId, cycleId)));
 
-    final MenteeApplication manualMatchApp = manualMatchApps.get();
     applicationRepository.updateStatus(
         manualMatchApp.getApplicationId(), ApplicationStatus.REJECTED, "Manually assigned mentor");
 
@@ -289,17 +291,19 @@ public class MenteeWorkflowService {
       final Long menteeId, final Long cycleId, final String reason) {
 
     final var manualMatchApps =
-        applicationRepository.findByMenteeCycleAndStatus(
+        applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
 
-    if (manualMatchApps.isEmpty()) {
-      throw new ContentNotFoundException(
-          String.format(
-              "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
-              menteeId, cycleId));
-    }
+    final MenteeApplication manualMatchApp =
+        manualMatchApps.stream()
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ContentNotFoundException(
+                        String.format(
+                            "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
+                            menteeId, cycleId)));
 
-    final MenteeApplication manualMatchApp = manualMatchApps.get();
     final MenteeApplication updated =
         applicationRepository.updateStatus(
             manualMatchApp.getApplicationId(), ApplicationStatus.NO_MATCH_FOUND, reason);
@@ -397,7 +401,7 @@ public class MenteeWorkflowService {
 
     if (allNonForwardable) {
       final var existingManualMatch =
-          applicationRepository.findByMenteeCycleAndStatus(
+          applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
               menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
 
       if (existingManualMatch.isEmpty()) {

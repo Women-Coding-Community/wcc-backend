@@ -66,14 +66,16 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   private static final String SEL_BY_MNTE_CYC_STS =
       "SELECT * FROM mentee_applications "
           + "WHERE mentee_id = ? AND cycle_id = ? "
-          + "AND application_status = ?::application_status";
+          + "AND application_status = ?::application_status "
+          + "ORDER BY priority_order";
 
   private static final String SEL_BY_STS_CYC =
       "SELECT * FROM mentee_applications "
           + "WHERE application_status = ?::application_status "
           + "AND cycle_id = ?";
 
-  private static final String DELETE_BY_ID = "DELETE FROM mentee_applications WHERE application_id = ?";
+  private static final String DELETE_BY_ID =
+      "DELETE FROM mentee_applications WHERE application_id = ?";
 
   private final JdbcTemplate jdbc;
 
@@ -87,11 +89,12 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
         return existing.get();
       }
     } else {
-      final var existingManualMatch =
-          findByMenteeCycleAndStatus(
+      final var existingApps =
+          findByMenteeCycleAndStatusOrderByPriority(
               entity.getMenteeId(), entity.getCycleId(), ApplicationStatus.PENDING_MANUAL_MATCH);
-      if (existingManualMatch.isPresent()) {
-        return existingManualMatch.get();
+      final Optional<MenteeApplication> pendingManualMatch = existingApps.stream().findFirst();
+      if (pendingManualMatch.isPresent()) {
+        return pendingManualMatch.get();
       }
     }
 
@@ -198,14 +201,10 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   }
 
   @Override
-  public Optional<MenteeApplication> findByMenteeCycleAndStatus(
+  public List<MenteeApplication> findByMenteeCycleAndStatusOrderByPriority(
       final Long menteeId, final Long cycleId, final ApplicationStatus status) {
     return jdbc.query(
-        SEL_BY_MNTE_CYC_STS,
-        rs -> rs.next() ? Optional.of(mapRow(rs)) : Optional.empty(),
-        menteeId,
-        cycleId,
-        status.getValue());
+        SEL_BY_MNTE_CYC_STS, (rs, rowNum) -> mapRow(rs), menteeId, cycleId, status.getValue());
   }
 
   @Override

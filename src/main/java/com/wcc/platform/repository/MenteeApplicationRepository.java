@@ -91,14 +91,14 @@ public interface MenteeApplicationRepository extends CrudRepository<MenteeApplic
   List<MenteeApplication> findPendingByMenteeId(Long menteeId);
 
   /**
-   * Find a pending manual match application for a mentee in a cycle.
+   * Find applications for a mentee in a cycle with a specific status, ordered by priority.
    *
    * @param menteeId the mentee ID
    * @param cycleId the cycle ID
    * @param status the application status
-   * @return Optional containing the manual match application if found
+   * @return list of applications matching the criteria ordered by priority (1 = highest)
    */
-  Optional<MenteeApplication> findByMenteeCycleAndStatus(
+  List<MenteeApplication> findByMenteeCycleAndStatusOrderByPriority(
       Long menteeId, Long cycleId, ApplicationStatus status);
 
   /**

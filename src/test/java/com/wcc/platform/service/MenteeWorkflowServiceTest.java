@@ -161,9 +161,9 @@ class MenteeWorkflowServiceTest {
         .thenReturn(rejectedApp);
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
         .thenReturn(List.of(rejectedApp, anotherRejected));
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.empty());
+        .thenReturn(List.of());
 
     service.rejectApplication(1L, REJECTION_REASON);
 
@@ -214,9 +214,9 @@ class MenteeWorkflowServiceTest {
         .thenReturn(rejectedApp);
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
         .thenReturn(List.of(rejectedApp, existingManualMatch));
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.of(existingManualMatch));
+        .thenReturn(List.of(existingManualMatch));
 
     service.rejectApplication(1L, REJECTION_REASON);
 
@@ -238,9 +238,9 @@ class MenteeWorkflowServiceTest {
         .thenReturn(rejectedApp);
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
         .thenReturn(List.of(declinedApp, rejectedApp));
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.empty());
+        .thenReturn(List.of());
 
     service.rejectApplication(1L, REJECTION_REASON);
 
@@ -267,9 +267,9 @@ class MenteeWorkflowServiceTest {
         .thenReturn(declinedApp);
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
         .thenReturn(List.of(declinedApp, anotherDeclined));
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.empty());
+        .thenReturn(List.of());
 
     service.declineApplication(1L, DECLINE_REASON);
 
@@ -323,9 +323,9 @@ class MenteeWorkflowServiceTest {
         .thenReturn(Optional.empty());
     when(cycleRepository.findById(CYCLE_ID)).thenReturn(Optional.of(cycle));
     when(matchRepository.countActiveMenteesByMentorAndCycle(MENTOR_ID, CYCLE_ID)).thenReturn(0);
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.of(manualMatchApp));
+        .thenReturn(List.of(manualMatchApp));
     when(applicationRepository.create(any(MenteeApplication.class))).thenReturn(createdApp);
 
     final MenteeApplication result =
@@ -387,9 +387,9 @@ class MenteeWorkflowServiceTest {
         .thenReturn(Optional.empty());
     when(cycleRepository.findById(CYCLE_ID)).thenReturn(Optional.of(cycle));
     when(matchRepository.countActiveMenteesByMentorAndCycle(MENTOR_ID, CYCLE_ID)).thenReturn(0);
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.empty());
+        .thenReturn(List.of());
 
     assertThatThrownBy(() -> service.assignMentor(MENTEE_ID, CYCLE_ID, MENTOR_ID, ASSIGNMENT_NOTES))
         .isInstanceOf(ContentNotFoundException.class)
@@ -426,9 +426,9 @@ class MenteeWorkflowServiceTest {
     final MenteeApplication manualMatchApp = pendingManualMatch(99L, MENTEE_ID);
     final MenteeApplication updatedApp = noMatchFound(99L, MENTEE_ID);
 
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.of(manualMatchApp));
+        .thenReturn(List.of(manualMatchApp));
     when(applicationRepository.updateStatus(99L, ApplicationStatus.NO_MATCH_FOUND, NO_MATCH_REASON))
         .thenReturn(updatedApp);
 
@@ -444,9 +444,9 @@ class MenteeWorkflowServiceTest {
       "Given no PENDING_MANUAL_MATCH application, when confirming no match, "
           + "then ContentNotFoundException is thrown")
   void shouldThrowContentNotFoundWhenNoPendingManualMatchExistsForNoMatch() {
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.empty());
+        .thenReturn(List.of());
 
     assertThatThrownBy(() -> service.confirmNoMatch(MENTEE_ID, CYCLE_ID, NO_MATCH_REASON))
         .isInstanceOf(ContentNotFoundException.class)

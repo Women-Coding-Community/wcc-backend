@@ -702,9 +702,9 @@ class MenteeServiceTest {
     when(menteeRepository.findById(5L)).thenReturn(Optional.of(existingMentee));
     when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
     when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
-    when(applicationRepository.findByMenteeCycleAndStatus(
+    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
             5L, 1L, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(Optional.empty());
+        .thenReturn(List.of());
     when(menteeRepository.update(eq(5L), any(Mentee.class)))
         .thenAnswer(invocation -> invocation.getArgument(1));
 
