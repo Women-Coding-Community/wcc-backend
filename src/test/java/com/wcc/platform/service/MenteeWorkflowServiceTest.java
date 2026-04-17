@@ -10,7 +10,6 @@ import static com.wcc.platform.utils.MenteeApplicationTestBuilder.reviewing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -436,7 +435,7 @@ class MenteeWorkflowServiceTest {
 
     assertThat(result.getStatus()).isEqualTo(ApplicationStatus.NO_MATCH_FOUND);
     verify(applicationRepository)
-        .updateStatus(eq(99L), eq(ApplicationStatus.NO_MATCH_FOUND), eq(NO_MATCH_REASON));
+        .updateStatus(99L, ApplicationStatus.NO_MATCH_FOUND, NO_MATCH_REASON);
   }
 
   @Test
