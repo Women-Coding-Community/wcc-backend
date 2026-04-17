@@ -5,6 +5,7 @@ import com.wcc.platform.domain.platform.mentorship.MatchCancelRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipMatchingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +39,7 @@ public class MentorshipAdminMatchesController {
 
   private final MentorshipMatchingService matchingService;
   private final MentorshipCycleRepository cycleRepository;
+  private final MenteeService menteeService;
 
   // ==================== Match Management ====================
 

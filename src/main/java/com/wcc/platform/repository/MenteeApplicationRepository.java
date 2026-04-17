@@ -71,7 +71,7 @@ public interface MenteeApplicationRepository extends CrudRepository<MenteeApplic
    * @return list of all applications
    */
   List<MenteeApplication> getAll();
-
+  
   /**
    * Counts the number of mentee applications for a specific mentee in a specific cycle.
    *
@@ -89,4 +89,24 @@ public interface MenteeApplicationRepository extends CrudRepository<MenteeApplic
    * @return list of PENDING applications for the mentee ordered by priority
    */
   List<MenteeApplication> findPendingByMenteeId(Long menteeId);
+
+  /**
+   * Find applications for a mentee in a cycle with a specific status, ordered by priority.
+   *
+   * @param menteeId the mentee ID
+   * @param cycleId the cycle ID
+   * @param status the application status
+   * @return list of applications matching the criteria ordered by priority (1 = highest)
+   */
+  List<MenteeApplication> findByMenteeCycleAndStatusOrderByPriority(
+      Long menteeId, Long cycleId, ApplicationStatus status);
+
+  /**
+   * Find all applications for a status and cycle
+   *
+   * @param status The application status
+   * @param cycleId The current mentorship cycle
+   * @return List of applications
+   */
+  List<MenteeApplication> findByStatusAndCycle(ApplicationStatus status, Long cycleId);
 }
