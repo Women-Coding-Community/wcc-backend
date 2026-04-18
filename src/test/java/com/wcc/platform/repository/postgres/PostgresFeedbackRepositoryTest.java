@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 /** PostgresFeedbackRepositoryTest class for testing the PostgresFeedbackRepository. */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "unchecked"})
 class PostgresFeedbackRepositoryTest {
 
   private static final String DELETE_SQL = "DELETE FROM feedback WHERE id = ?";
@@ -552,7 +552,6 @@ class PostgresFeedbackRepositoryTest {
   @DisplayName(
       "Given mentorship cycle and approved filters, when getting all,"
           + "then returns matching feedback")
-  @SuppressWarnings("unchecked")
   void testGetAllWithMentorshipCycleAndApproved() {
     Long mentorshipCycleId = 10L;
     Boolean isApproved = true;
