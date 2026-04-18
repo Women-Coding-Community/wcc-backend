@@ -51,7 +51,8 @@ class FeedbackMapperTest {
 
   @Test
   @DisplayName(
-      "Given ResultSet with all fields, when mapping row to feedback, then returns complete feedback")
+      "Given ResultSet with all fields, when mapping row to feedback, "
+          + "then returns complete feedback")
   void testMapRowToFeedback() throws SQLException {
     Long feedbackId = 1L;
     Long reviewerId = 10L;
@@ -108,7 +109,8 @@ class FeedbackMapperTest {
 
   @Test
   @DisplayName(
-      "Given ResultSet with nullable fields, when mapping row to feedback, then returns feedback with nulls")
+      "Given ResultSet with nullable fields, when mapping row to feedback, "
+          + "then returns feedback with nulls")
   void testMapRowToFeedbackWithNullableFields() throws SQLException {
     Long feedbackId = 2L;
     Long reviewerId = 10L;

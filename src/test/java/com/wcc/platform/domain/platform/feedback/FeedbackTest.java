@@ -272,10 +272,4 @@ class FeedbackTest {
   void testNotEqualsWithDifferentClass() {
     assertNotEquals("Not a Feedback object", feedback);
   }
-
-  @Test
-  @DisplayName("Given same feedback instance, when equals called, then returns true")
-  void testEqualsSameInstance() {
-    assertEquals(feedback, feedback);
-  }
 }

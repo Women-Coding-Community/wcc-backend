@@ -128,11 +128,7 @@ public class FeedbackService {
     return feedbackRepository.getAll(criteria);
   }
 
-  /**
-   * Validate that reviewer with given ID exists.
-   *
-   * @return void, throws exception if reviewer not found
-   */
+  /** Validate that reviewer with given ID exists. */
   private void validateReviewerExists(final Long reviewerId) {
     memberRepository
         .findById(reviewerId)
@@ -143,11 +139,7 @@ public class FeedbackService {
             });
   }
 
-  /**
-   * Validate that reviewee with given ID exists.
-   *
-   * @return void, throws exception if reviewee not found
-   */
+  /** Validate that reviewee with given ID exists. */
   private void validateRevieweeExists(final Long revieweeId) {
     memberRepository
         .findById(revieweeId)

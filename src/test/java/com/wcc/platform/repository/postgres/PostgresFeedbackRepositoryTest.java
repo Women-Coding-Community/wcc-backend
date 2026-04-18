@@ -188,7 +188,7 @@ class PostgresFeedbackRepositoryTest {
       "Given invalid search criteria, when getting all, then throws FeedbackNotFoundException")
   void testGetAllThrowsFeedbackNotFoundException() {
     FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().reviewerId(1L).build();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenThrow(
             new com.wcc.platform.domain.exceptions.FeedbackNotFoundException(
                 "Invalid search criteria"));
@@ -212,29 +212,27 @@ class PostgresFeedbackRepositoryTest {
   @Test
   @DisplayName("Given null criteria, when getting all, then returns all feedback")
   void testGetAllNullCriteria() {
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.Collections.emptyList());
 
     var result = repository.getAll(null);
 
     assertNotNull(result);
-    verify(jdbc)
-        .query(eq(GET_ALL_BASE), any(RowMapper.class), eq(new Object[0]));
+    verify(jdbc).query(eq(GET_ALL_BASE), any(RowMapper.class), eq(new Object[0]));
   }
 
   @Test
   @DisplayName("Given empty criteria, when getting all, then returns empty list")
   void testGetAllEmpty() {
     FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().build();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.Collections.emptyList());
 
     var result = repository.getAll(criteria);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
-    verify(jdbc)
-        .query(eq(GET_ALL_BASE), any(RowMapper.class), eq(new Object[0]));
+    verify(jdbc).query(eq(GET_ALL_BASE), any(RowMapper.class), eq(new Object[0]));
   }
 
   @Test
@@ -254,7 +252,10 @@ class PostgresFeedbackRepositoryTest {
     Feedback feedback2 = createMentorReviewFeedbackTest();
     feedback2.setId(2L);
 
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(
+            eq(GET_ALL_BASE + " AND reviewer_id = ? AND reviewee_id = ? AND feedback_year = ?"),
+            any(RowMapper.class),
+            eq(new Object[] {reviewerId, revieweeId, year})))
         .thenReturn(java.util.List.of(feedback1, feedback2));
 
     var result = repository.getAll(criteria);
@@ -263,8 +264,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(2, result.size());
     verify(jdbc)
         .query(
-            eq(
-                GET_ALL_BASE + " AND reviewer_id = ? AND reviewee_id = ? AND feedback_year = ?"),
+            eq(GET_ALL_BASE + " AND reviewer_id = ? AND reviewee_id = ? AND feedback_year = ?"),
             any(RowMapper.class),
             eq(new Object[] {reviewerId, revieweeId, year}));
   }
@@ -277,7 +277,7 @@ class PostgresFeedbackRepositoryTest {
         FeedbackSearchCriteria.builder().reviewerId(reviewerId).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -299,7 +299,7 @@ class PostgresFeedbackRepositoryTest {
         FeedbackSearchCriteria.builder().revieweeId(revieweeId).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -323,7 +323,7 @@ class PostgresFeedbackRepositoryTest {
             .build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -344,7 +344,7 @@ class PostgresFeedbackRepositoryTest {
     FeedbackSearchCriteria criteria = FeedbackSearchCriteria.builder().year(year).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -367,7 +367,7 @@ class PostgresFeedbackRepositoryTest {
         FeedbackSearchCriteria.builder().mentorshipCycleId(mentorshipCycleId).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -389,7 +389,7 @@ class PostgresFeedbackRepositoryTest {
         FeedbackSearchCriteria.builder().isApproved(isApproved).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -411,7 +411,7 @@ class PostgresFeedbackRepositoryTest {
         FeedbackSearchCriteria.builder().isApproved(isApproved).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -433,7 +433,7 @@ class PostgresFeedbackRepositoryTest {
         FeedbackSearchCriteria.builder().isAnonymous(isAnonymous).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -456,7 +456,7 @@ class PostgresFeedbackRepositoryTest {
         FeedbackSearchCriteria.builder().isAnonymous(isAnonymous).build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -492,7 +492,17 @@ class PostgresFeedbackRepositoryTest {
             .build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(
+            eq(
+                GET_ALL_BASE
+                    + " AND reviewer_id = ? AND reviewee_id = ?"
+                    + " AND feedback_type_id = ? AND feedback_year = ? AND mentorship_cycle_id = ?"
+                    + " AND is_approved = ? AND is_anonymous = ?"),
+            any(RowMapper.class),
+            eq(
+                new Object[] {
+                  reviewerId, revieweeId, 1, year, mentorshipCycleId, isApproved, isAnonymous
+                })))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -502,7 +512,8 @@ class PostgresFeedbackRepositoryTest {
     verify(jdbc)
         .query(
             eq(
-                GET_ALL_BASE + " AND reviewer_id = ? AND reviewee_id = ?"
+                GET_ALL_BASE
+                    + " AND reviewer_id = ? AND reviewee_id = ?"
                     + " AND feedback_type_id = ? AND feedback_year = ? AND mentorship_cycle_id = ?"
                     + " AND is_approved = ? AND is_anonymous = ?"),
             any(RowMapper.class),
@@ -524,7 +535,7 @@ class PostgresFeedbackRepositoryTest {
             .build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
@@ -539,7 +550,8 @@ class PostgresFeedbackRepositoryTest {
 
   @Test
   @DisplayName(
-      "Given mentorship cycle and approved filters, when getting all, then returns matching feedback")
+      "Given mentorship cycle and approved filters, when getting all,"
+          + "then returns matching feedback")
   void testGetAllWithMentorshipCycleAndApproved() {
     Long mentorshipCycleId = 10L;
     Boolean isApproved = true;
@@ -550,7 +562,7 @@ class PostgresFeedbackRepositoryTest {
             .build();
 
     Feedback feedback = createMentorReviewFeedbackTest();
-    when(jdbc.query(anyString(), any(RowMapper.class), any(Object[].class)))
+    when(jdbc.query(anyString(), any(RowMapper.class), any()))
         .thenReturn(java.util.List.of(feedback));
 
     var result = repository.getAll(criteria);
