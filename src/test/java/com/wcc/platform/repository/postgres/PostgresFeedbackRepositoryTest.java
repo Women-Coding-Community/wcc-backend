@@ -552,6 +552,7 @@ class PostgresFeedbackRepositoryTest {
   @DisplayName(
       "Given mentorship cycle and approved filters, when getting all,"
           + "then returns matching feedback")
+  @SuppressWarnings("unchecked")
   void testGetAllWithMentorshipCycleAndApproved() {
     Long mentorshipCycleId = 10L;
     Boolean isApproved = true;
