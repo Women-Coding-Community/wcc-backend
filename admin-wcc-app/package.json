@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev -p ${PORT:-3000}",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start -p ${PORT:-3000}",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "test": "jest",
     "format": "prettier --write .",
