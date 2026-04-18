@@ -9,7 +9,9 @@ import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.C
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_MENTORSHIP_CYCLE_ID;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_RATING;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWEE_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWEE_NAME;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWER_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWER_NAME;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_UPDATED_AT;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_YEAR;
 
@@ -50,10 +52,10 @@ public class FeedbackMapper {
     return Feedback.builder()
         .id(rs.getLong(COLUMN_ID))
         .reviewerId(rs.getLong(COLUMN_REVIEWER_ID))
-        .reviewerName(null)
+        .reviewerName(rs.getString(COLUMN_REVIEWER_NAME))
         .revieweeId(
             rs.getObject(COLUMN_REVIEWEE_ID) != null ? rs.getLong(COLUMN_REVIEWEE_ID) : null)
-        .revieweeName(null)
+        .revieweeName(rs.getString(COLUMN_REVIEWEE_NAME))
         .mentorshipCycleId(
             rs.getObject(COLUMN_MENTORSHIP_CYCLE_ID) != null
                 ? rs.getLong(COLUMN_MENTORSHIP_CYCLE_ID)

@@ -168,14 +168,10 @@ class FeedbackTest {
   void testSetters() {
     // Only test setters that are actually available in production code
     feedback.setId(99L);
-    feedback.setReviewerName("New Reviewer");
-    feedback.setRevieweeName("New Reviewee");
     feedback.setIsAnonymous(false);
     feedback.setIsApproved(true);
 
     assertEquals(99L, feedback.getId());
-    assertEquals("New Reviewer", feedback.getReviewerName());
-    assertEquals("New Reviewee", feedback.getRevieweeName());
     assertFalse(feedback.getIsAnonymous());
     assertTrue(feedback.getIsApproved());
   }

@@ -11,7 +11,9 @@ import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.C
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_MENTORSHIP_CYCLE_ID;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_RATING;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWEE_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWEE_NAME;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWER_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWER_NAME;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_UPDATED_AT;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_YEAR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,8 +68,10 @@ class FeedbackMapperTest {
 
     when(resultSet.getLong(COLUMN_ID)).thenReturn(feedbackId);
     when(resultSet.getLong(COLUMN_REVIEWER_ID)).thenReturn(reviewerId);
+    when(resultSet.getString(COLUMN_REVIEWER_NAME)).thenReturn("Reviewer Name");
     when(resultSet.getObject(COLUMN_REVIEWEE_ID)).thenReturn(revieweeId);
     when(resultSet.getLong(COLUMN_REVIEWEE_ID)).thenReturn(revieweeId);
+    when(resultSet.getString(COLUMN_REVIEWEE_NAME)).thenReturn("Reviewee Name");
     when(resultSet.getObject(COLUMN_MENTORSHIP_CYCLE_ID)).thenReturn(mentorshipCycleId);
     when(resultSet.getLong(COLUMN_MENTORSHIP_CYCLE_ID)).thenReturn(mentorshipCycleId);
     when(resultSet.getInt(COLUMN_FEEDBACK_TYPE_ID)).thenReturn(feedbackTypeId);
@@ -98,8 +102,8 @@ class FeedbackMapperTest {
     assertEquals(isApproved, feedback.getIsApproved());
     assertEquals(createdAt, feedback.getCreatedAt());
     assertEquals(updatedAt, feedback.getUpdatedAt());
-    assertNull(feedback.getReviewerName());
-    assertNull(feedback.getRevieweeName());
+    assertEquals("Reviewer Name", feedback.getReviewerName());
+    assertEquals("Reviewee Name", feedback.getRevieweeName());
   }
 
   @Test
@@ -115,7 +119,9 @@ class FeedbackMapperTest {
 
     when(resultSet.getLong(COLUMN_ID)).thenReturn(feedbackId);
     when(resultSet.getLong(COLUMN_REVIEWER_ID)).thenReturn(reviewerId);
+    when(resultSet.getString(COLUMN_REVIEWER_NAME)).thenReturn("Reviewer Name");
     when(resultSet.getObject(COLUMN_REVIEWEE_ID)).thenReturn(null);
+    when(resultSet.getString(COLUMN_REVIEWEE_NAME)).thenReturn(null);
     when(resultSet.getObject(COLUMN_MENTORSHIP_CYCLE_ID)).thenReturn(null);
     when(resultSet.getInt(COLUMN_FEEDBACK_TYPE_ID)).thenReturn(feedbackTypeId);
     when(resultSet.getObject(COLUMN_RATING)).thenReturn(null);

@@ -37,6 +37,12 @@ class PostgresFeedbackRepositoryTest {
       "UPDATE feedback SET is_approved = true WHERE id = ?";
   private static final String SET_ANONYMOUS_STATUS =
       "UPDATE feedback SET is_anonymous = ? WHERE id = ?";
+  private static final String GET_ALL_BASE =
+      "SELECT f.*, m1.full_name AS reviewer_name, m2.full_name AS reviewee_name "
+          + "FROM feedback f "
+          + "LEFT JOIN members m1 ON m1.id = f.reviewer_id "
+          + "LEFT JOIN members m2 ON m2.id = f.reviewee_id "
+          + "WHERE 1 = 1";
 
   private JdbcTemplate jdbc;
   private FeedbackMapper feedbackMapper;
@@ -213,7 +219,7 @@ class PostgresFeedbackRepositoryTest {
 
     assertNotNull(result);
     verify(jdbc)
-        .query(eq("SELECT * FROM feedback WHERE 1=1"), any(RowMapper.class), eq(new Object[0]));
+        .query(eq(GET_ALL_BASE), any(RowMapper.class), eq(new Object[0]));
   }
 
   @Test
@@ -228,7 +234,7 @@ class PostgresFeedbackRepositoryTest {
     assertNotNull(result);
     assertTrue(result.isEmpty());
     verify(jdbc)
-        .query(eq("SELECT * FROM feedback WHERE 1=1"), any(RowMapper.class), eq(new Object[0]));
+        .query(eq(GET_ALL_BASE), any(RowMapper.class), eq(new Object[0]));
   }
 
   @Test
@@ -258,7 +264,7 @@ class PostgresFeedbackRepositoryTest {
     verify(jdbc)
         .query(
             eq(
-                "SELECT * FROM feedback WHERE 1=1 AND reviewer_id = ? AND reviewee_id = ? AND feedback_year = ?"),
+                GET_ALL_BASE + " AND reviewer_id = ? AND reviewee_id = ? AND feedback_year = ?"),
             any(RowMapper.class),
             eq(new Object[] {reviewerId, revieweeId, year}));
   }
@@ -280,7 +286,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND reviewer_id = ?"),
+            eq(GET_ALL_BASE + " AND reviewer_id = ?"),
             any(RowMapper.class),
             eq(new Object[] {reviewerId}));
   }
@@ -302,7 +308,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND reviewee_id = ?"),
+            eq(GET_ALL_BASE + " AND reviewee_id = ?"),
             any(RowMapper.class),
             eq(new Object[] {revieweeId}));
   }
@@ -326,7 +332,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND feedback_type_id = ?"),
+            eq(GET_ALL_BASE + " AND feedback_type_id = ?"),
             any(RowMapper.class),
             eq(new Object[] {1}));
   }
@@ -347,7 +353,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND feedback_year = ?"),
+            eq(GET_ALL_BASE + " AND feedback_year = ?"),
             any(RowMapper.class),
             eq(new Object[] {year}));
   }
@@ -370,7 +376,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND mentorship_cycle_id = ?"),
+            eq(GET_ALL_BASE + " AND mentorship_cycle_id = ?"),
             any(RowMapper.class),
             eq(new Object[] {mentorshipCycleId}));
   }
@@ -392,7 +398,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND is_approved = ?"),
+            eq(GET_ALL_BASE + " AND is_approved = ?"),
             any(RowMapper.class),
             eq(new Object[] {isApproved}));
   }
@@ -414,7 +420,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND is_approved = ?"),
+            eq(GET_ALL_BASE + " AND is_approved = ?"),
             any(RowMapper.class),
             eq(new Object[] {isApproved}));
   }
@@ -436,7 +442,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND is_anonymous = ?"),
+            eq(GET_ALL_BASE + " AND is_anonymous = ?"),
             any(RowMapper.class),
             eq(new Object[] {isAnonymous}));
   }
@@ -459,7 +465,7 @@ class PostgresFeedbackRepositoryTest {
     assertEquals(1, result.size());
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND is_anonymous = ?"),
+            eq(GET_ALL_BASE + " AND is_anonymous = ?"),
             any(RowMapper.class),
             eq(new Object[] {isAnonymous}));
   }
@@ -496,7 +502,7 @@ class PostgresFeedbackRepositoryTest {
     verify(jdbc)
         .query(
             eq(
-                "SELECT * FROM feedback WHERE 1=1 AND reviewer_id = ? AND reviewee_id = ?"
+                GET_ALL_BASE + " AND reviewer_id = ? AND reviewee_id = ?"
                     + " AND feedback_type_id = ? AND feedback_year = ? AND mentorship_cycle_id = ?"
                     + " AND is_approved = ? AND is_anonymous = ?"),
             any(RowMapper.class),
@@ -526,7 +532,7 @@ class PostgresFeedbackRepositoryTest {
     assertNotNull(result);
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND feedback_type_id = ? AND feedback_year = ?"),
+            eq(GET_ALL_BASE + " AND feedback_type_id = ? AND feedback_year = ?"),
             any(RowMapper.class),
             eq(new Object[] {2, year}));
   }
@@ -552,7 +558,7 @@ class PostgresFeedbackRepositoryTest {
     assertNotNull(result);
     verify(jdbc)
         .query(
-            eq("SELECT * FROM feedback WHERE 1=1 AND mentorship_cycle_id = ? AND is_approved = ?"),
+            eq(GET_ALL_BASE + " AND mentorship_cycle_id = ? AND is_approved = ?"),
             any(RowMapper.class),
             eq(new Object[] {mentorshipCycleId, isApproved}));
   }

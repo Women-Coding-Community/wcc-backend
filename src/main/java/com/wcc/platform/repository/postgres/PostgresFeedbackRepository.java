@@ -23,7 +23,11 @@ import org.springframework.stereotype.Repository;
 public class PostgresFeedbackRepository implements FeedbackRepository {
 
   private static final String DELETE_SQL = "DELETE FROM feedback WHERE id = ?";
-  private static final String SELECT_BY_ID = "SELECT * FROM feedback WHERE id = ?";
+  private static final String SELECT_BY_ID =
+      "SELECT f.*, m1.full_name AS reviewer_name, m2.full_name AS reviewee_name FROM feedback f "
+          + "LEFT JOIN members m1 ON m1.id = f.reviewer_id "
+          + "LEFT JOIN members m2 ON m2.id = f.reviewee_id "
+          + "WHERE f.id = ?";
   private static final String APPROVE_FEEDBACK =
       "UPDATE feedback SET is_approved = true WHERE id = ?";
   private static final String SET_ANONYMOUS_STATUS =
@@ -65,7 +69,13 @@ public class PostgresFeedbackRepository implements FeedbackRepository {
   @Override
   @SuppressWarnings({"PMD.InsufficientStringBufferDeclaration", "PMD.CognitiveComplexity"})
   public List<Feedback> getAll(final FeedbackSearchCriteria criteria) {
-    final StringBuilder sql = new StringBuilder("SELECT * FROM feedback WHERE 1=1");
+    final StringBuilder sql =
+        new StringBuilder(
+            "SELECT f.*, m1.full_name AS reviewer_name, m2.full_name AS reviewee_name "
+                + "FROM feedback f "
+                + "LEFT JOIN members m1 ON m1.id = f.reviewer_id "
+                + "LEFT JOIN members m2 ON m2.id = f.reviewee_id "
+                + "WHERE 1 = 1");
     final List<Object> params = new ArrayList<>();
 
     if (criteria != null) {

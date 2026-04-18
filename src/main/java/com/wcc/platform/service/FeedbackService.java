@@ -5,7 +5,6 @@ import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.feedback.Feedback;
 import com.wcc.platform.domain.platform.feedback.FeedbackDto;
 import com.wcc.platform.domain.platform.feedback.FeedbackSearchCriteria;
-import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.FeedbackRepository;
 import com.wcc.platform.repository.MemberRepository;
 import java.util.List;
@@ -32,14 +31,11 @@ public class FeedbackService {
    * @return created Feedback
    */
   public Feedback createFeedback(final FeedbackDto feedbackDto) {
-    final Member reviewer = validateReviewerExists(feedbackDto.getReviewerId());
+    validateReviewerExists(feedbackDto.getReviewerId());
     final Feedback feedback = feedbackDto.merge();
 
-    feedback.setReviewerName(reviewer.getFullName());
-
     if (feedback.getRevieweeId() != null) {
-      final Member reviewee = validateRevieweeExists(feedback.getRevieweeId());
-      feedback.setRevieweeName(reviewee.getFullName());
+      validateRevieweeExists(feedback.getRevieweeId());
     }
 
     log.info(
@@ -62,18 +58,16 @@ public class FeedbackService {
             .findById(feedbackId)
             .orElseThrow(() -> new FeedbackNotFoundException(feedbackId));
 
-    final Member reviewer = validateReviewerExists(feedbackDto.getReviewerId());
+    validateReviewerExists(feedbackDto.getReviewerId());
 
     final Feedback updatedFeedback = feedbackDto.merge();
 
     updatedFeedback.setId(feedbackId);
     updatedFeedback.setIsApproved(existing.getIsApproved());
     updatedFeedback.setIsAnonymous(existing.getIsAnonymous());
-    updatedFeedback.setReviewerName(reviewer.getFullName());
 
     if (updatedFeedback.getRevieweeId() != null) {
-      final Member reviewee = validateRevieweeExists(updatedFeedback.getRevieweeId());
-      updatedFeedback.setRevieweeName(reviewee.getFullName());
+      validateRevieweeExists(updatedFeedback.getRevieweeId());
     }
 
     return feedbackRepository.update(feedbackId, updatedFeedback);
@@ -137,10 +131,10 @@ public class FeedbackService {
   /**
    * Validate that reviewer with given ID exists.
    *
-   * @return Member
+   * @return void, throws exception if reviewer not found
    */
-  private Member validateReviewerExists(final Long reviewerId) {
-    return memberRepository
+  private void validateReviewerExists(final Long reviewerId) {
+    memberRepository
         .findById(reviewerId)
         .orElseThrow(
             () -> {
@@ -152,10 +146,10 @@ public class FeedbackService {
   /**
    * Validate that reviewee with given ID exists.
    *
-   * @return Member
+   * @return void, throws exception if reviewee not found
    */
-  private Member validateRevieweeExists(final Long revieweeId) {
-    return memberRepository
+  private void validateRevieweeExists(final Long revieweeId) {
+    memberRepository
         .findById(revieweeId)
         .orElseThrow(
             () -> {

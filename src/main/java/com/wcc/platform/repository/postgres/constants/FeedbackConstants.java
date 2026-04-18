@@ -8,6 +8,8 @@ public final class FeedbackConstants {
   public static final String COLUMN_ID = "id";
   public static final String COLUMN_REVIEWER_ID = "reviewer_id";
   public static final String COLUMN_REVIEWEE_ID = "reviewee_id";
+  public static final String COLUMN_REVIEWER_NAME = "reviewer_name";
+  public static final String COLUMN_REVIEWEE_NAME = "reviewee_name";
   public static final String COLUMN_MENTORSHIP_CYCLE_ID = "mentorship_cycle_id";
   public static final String COLUMN_FEEDBACK_TYPE_ID = "feedback_type_id";
   public static final String COLUMN_RATING = "rating";

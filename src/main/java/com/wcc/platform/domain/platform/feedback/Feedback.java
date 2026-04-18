@@ -25,9 +25,9 @@ public class Feedback {
 
   @Setter private Long id;
   @NotNull private Long reviewerId;
-  @Setter private String reviewerName;
+  private String reviewerName;
   private Long revieweeId; // For MENTOR_REVIEW
-  @Setter private String revieweeName;
+  private String revieweeName;
   private Long mentorshipCycleId; // For MENTORSHIP_PROGRAM
   @NotNull private FeedbackType feedbackType;
 
