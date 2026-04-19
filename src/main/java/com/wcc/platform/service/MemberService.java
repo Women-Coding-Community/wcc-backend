@@ -43,7 +43,7 @@ public class MemberService {
           createdMember.getId(), createdMember.getEmail(), RoleType.VIEWER);
     }
     // Note: Profile picture saving is now handled automatically by MemberProfilePictureAspect
-    return createdMember;
+    return enrichWithProfilePicture(createdMember);
   }
 
   /**
@@ -89,7 +89,8 @@ public class MemberService {
     final var member = memberOptional.orElseThrow(() -> new MemberNotFoundException(memberId));
 
     final Member updatedMember = memberDto.merge(member);
-    return memberRepository.update(memberId, updatedMember);
+    final Member result = memberRepository.update(memberId, updatedMember);
+    return enrichWithProfilePicture(result);
   }
 
   /**
