@@ -42,6 +42,7 @@ public class MemberService {
       userProvisionService.provisionUserRole(
           createdMember.getId(), createdMember.getEmail(), RoleType.VIEWER);
     }
+    // Note: Profile picture saving is now handled automatically by MemberProfilePictureAspect
     return createdMember;
   }
 
