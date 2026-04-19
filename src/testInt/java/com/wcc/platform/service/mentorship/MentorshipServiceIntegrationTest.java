@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
@@ -43,11 +44,14 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
   @Autowired private PageRepository pageRepository;
   @Autowired private ResourceRepository resourceRepository;
   @Autowired private MemberProfilePictureRepository profilePicRepository;
+  @Autowired private JdbcTemplate jdbcTemplate;
 
   private Mentor setupMentor;
 
   @BeforeEach
   void setUp() {
+    jdbcTemplate.update("DELETE FROM member_profile_picture");
+
     setupMentor = createMentorTestWithoutImages(4L, "mentor postgres", "postgres@domain.com");
     cleanupMentor(setupMentor);
     pageRepository.deleteById(MENTORS.getId());
