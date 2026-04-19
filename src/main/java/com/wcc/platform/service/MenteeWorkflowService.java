@@ -3,12 +3,14 @@ package com.wcc.platform.service;
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.DuplicateApplicationException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
-import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
@@ -27,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenteeWorkflowService {
 
   private final MenteeApplicationRepository applicationRepository;
-  private final MenteeRepository menteeRepository;
+  private final MentorRepository mentorRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
 
@@ -59,7 +61,8 @@ public class MenteeWorkflowService {
   }
 
   /**
-   * Admin rejects a mentee application.
+   * Admin rejects a mentee application. Automatically forwards to next priority mentor if
+   * available. If no next mentor is available, triggers manual match.
    *
    * @param applicationId the application ID
    * @param reason reason for rejection
@@ -81,6 +84,11 @@ public class MenteeWorkflowService {
         "Application {} from mentee {} rejected by the Mentorship Team",
         applicationId,
         application.getMenteeId());
+
+    final boolean forwarded = forwardToNextPriorityMentor(application);
+    if (!forwarded) {
+      checkAndTriggerManualMatch(application.getMenteeId(), application.getCycleId());
+    }
 
     return updated;
   }
@@ -117,7 +125,8 @@ public class MenteeWorkflowService {
   }
 
   /**
-   * Mentor declines an application. Automatically notifies next priority mentor if available.
+   * Mentor declines an application. Automatically forwards to next priority mentor if available. If
+   * no next mentor is available, triggers manual match.
    *
    * @param applicationId the application ID
    * @param reason reason for declining
@@ -139,8 +148,10 @@ public class MenteeWorkflowService {
         applicationId,
         application.getMenteeId());
 
-    // Auto-notify next priority mentor
-    notifyNextPriorityMentor(application);
+    final boolean forwarded = forwardToNextPriorityMentor(application);
+    if (!forwarded) {
+      checkAndTriggerManualMatch(application.getMenteeId(), application.getCycleId());
+    }
 
     return updated;
   }
@@ -201,6 +212,111 @@ public class MenteeWorkflowService {
     return applicationRepository.findByStatus(status);
   }
 
+  /**
+   * Manually assigns a mentor to a mentee from the manual match queue. Validates mentor exists and
+   * has capacity, checks for existing applications, closes the PENDING_MANUAL_MATCH placeholder,
+   * and creates a new application.
+   *
+   * @param menteeId the mentee ID
+   * @param cycleId the cycle ID
+   * @param mentorId the mentor ID to assign
+   * @param notes optional notes for the assignment
+   * @return the newly created application
+   */
+  @Transactional
+  public MenteeApplication assignMentor(
+      final Long menteeId, final Long cycleId, final Long mentorId, final String notes) {
+    if (mentorRepository.findById(mentorId).isEmpty()) {
+      throw new MentorNotFoundException(mentorId);
+    }
+
+    final var existingApp =
+        applicationRepository.findByMenteeMentorCycle(menteeId, mentorId, cycleId);
+    if (existingApp.isPresent()) {
+      throw new DuplicateApplicationException(
+          String.format(
+              "Cannot assign mentor %d to mentee %d: application already exists with status %s",
+              mentorId, menteeId, existingApp.get().getStatus()));
+    }
+
+    checkMentorCapacity(mentorId, cycleId);
+
+    final var manualMatchApps =
+        applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
+            menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
+
+    final MenteeApplication manualMatchApp =
+        manualMatchApps.stream()
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ContentNotFoundException(
+                        String.format(
+                            "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
+                            menteeId, cycleId)));
+
+    applicationRepository.updateStatus(
+        manualMatchApp.getApplicationId(), ApplicationStatus.REJECTED, "Manually assigned mentor");
+
+    final MenteeApplication newApplication =
+        MenteeApplication.builder()
+            .menteeId(menteeId)
+            .mentorId(mentorId)
+            .cycleId(cycleId)
+            .priorityOrder(null)
+            .status(ApplicationStatus.PENDING)
+            .applicationMessage(notes)
+            .build();
+
+    final MenteeApplication created = applicationRepository.create(newApplication);
+
+    log.info("Manually assigned mentor {} to mentee {} in cycle {}", mentorId, menteeId, cycleId);
+
+    return created;
+  }
+
+  /**
+   * Confirms that no match was found for a mentee in the manual match queue. Sets the
+   * PENDING_MANUAL_MATCH application to NO_MATCH_FOUND status. This is a terminal state - no
+   * further actions possible for this mentee in this cycle.
+   *
+   * @param menteeId the mentee ID
+   * @param cycleId the cycle ID
+   * @param reason the reason no match was found
+   * @return the updated application
+   * @throws ContentNotFoundException if no pending manual match exists
+   */
+  @Transactional
+  public MenteeApplication confirmNoMatch(
+      final Long menteeId, final Long cycleId, final String reason) {
+
+    final var manualMatchApps =
+        applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
+            menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
+
+    final MenteeApplication manualMatchApp =
+        manualMatchApps.stream()
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ContentNotFoundException(
+                        String.format(
+                            "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
+                            menteeId, cycleId)));
+
+    final MenteeApplication updated =
+        applicationRepository.updateStatus(
+            manualMatchApp.getApplicationId(), ApplicationStatus.NO_MATCH_FOUND, reason);
+
+    log.info(
+        "Confirmed no match found for mentee {} in cycle {}. Reason: {}",
+        menteeId,
+        cycleId,
+        reason);
+
+    return updated;
+  }
+
   private MenteeApplication getApplicationOrThrow(final Long applicationId) {
     return applicationRepository
         .findById(applicationId)
@@ -231,22 +347,82 @@ public class MenteeWorkflowService {
     }
   }
 
-  private void notifyNextPriorityMentor(final MenteeApplication declinedApplication) {
+  /**
+   * Forwards to the next priority mentor by finding the next pending application with a higher
+   * priority order and moves it to MENTOR_REVIEWING status.
+   *
+   * @param currentApplication the application that was just rejected/declined
+   * @return true if forwarding succeeded, false if no next mentor available
+   */
+  private boolean forwardToNextPriorityMentor(final MenteeApplication currentApplication) {
     final List<MenteeApplication> allApplications =
         applicationRepository.findByMenteeAndCycleOrderByPriority(
-            declinedApplication.getMenteeId(), declinedApplication.getCycleId());
+            currentApplication.getMenteeId(), currentApplication.getCycleId());
 
-    allApplications.stream()
-        .filter(app -> app.getStatus() == ApplicationStatus.PENDING)
-        .filter(app -> app.getPriorityOrder() > declinedApplication.getPriorityOrder())
-        .findFirst()
-        .ifPresent(
-            nextApp -> {
-              log.info(
-                  "Next priority mentor {} will be notified for mentee {}",
-                  nextApp.getMentorId(),
-                  nextApp.getMenteeId());
-              // TODO: Send email notification to next priority mentor
-            });
+    final var nextApplication =
+        allApplications.stream()
+            .filter(app -> app.getStatus() == ApplicationStatus.PENDING)
+            .filter(app -> app.getPriorityOrder() > currentApplication.getPriorityOrder())
+            .findFirst();
+
+    if (nextApplication.isPresent()) {
+      final MenteeApplication nextApp = nextApplication.get();
+      applicationRepository.updateStatus(
+          nextApp.getApplicationId(), ApplicationStatus.MENTOR_REVIEWING, null);
+
+      log.info(
+          "Forwarded application to next priority mentor {} for mentee {}",
+          nextApp.getMentorId(),
+          nextApp.getMenteeId());
+      // TODO: Send email notification to next priority mentor
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks if all applications for a mentee in a cycle are in non-forwardable states (cannot lead
+   * to a match). If so, creates a PENDING_MANUAL_MATCH application to indicate the mentee needs
+   * manual matching by the mentorship team.
+   *
+   * @param menteeId the mentee ID
+   * @param cycleId the cycle ID
+   */
+  private void checkAndTriggerManualMatch(final Long menteeId, final Long cycleId) {
+    final List<MenteeApplication> allApplications =
+        applicationRepository.findByMenteeAndCycleOrderByPriority(menteeId, cycleId);
+
+    final boolean allNonForwardable =
+        !allApplications.isEmpty()
+            && allApplications.stream()
+                .filter(app -> app.getMentorId() != null)
+                .allMatch(app -> app.getStatus().isNonForwardable());
+
+    if (allNonForwardable) {
+      final var existingManualMatch =
+          applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
+              menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
+
+      if (existingManualMatch.isEmpty()) {
+        final MenteeApplication manualMatchApp =
+            MenteeApplication.builder()
+                .menteeId(menteeId)
+                .mentorId(null)
+                .cycleId(cycleId)
+                .priorityOrder(null)
+                .status(ApplicationStatus.PENDING_MANUAL_MATCH)
+                .applicationMessage("All mentor applications exhausted - requires manual matching")
+                .build();
+
+        applicationRepository.create(manualMatchApp);
+
+        log.info(
+            "Created PENDING_MANUAL_MATCH application for mentee {} in cycle {} "
+                + "as all applications are non-forwardable",
+            menteeId,
+            cycleId);
+      }
+    }
   }
 }

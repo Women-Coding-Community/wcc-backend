@@ -1,5 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Avatar, Box, Button, Chip, Link, Paper, Stack, Typography } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Link,
+  Paper,
+  Snackbar,
+  Stack,
+  Typography,
+} from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
 import { apiFetch, getErrorMessage } from '@/lib/api';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
@@ -38,11 +55,29 @@ type MembersResponse =
     };
 
 const MEMBERS_PATH = '/api/platform/v1/members';
+const RESET_PASSWORD_PATH = '/api/auth/reset-password/request';
+
+interface ResetDialogState {
+  open: boolean;
+  member: MemberItem | null;
+}
 
 export default function MembersPage() {
   const router = useRouter();
   const [items, setItems] = useState<MemberItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [resetDialog, setResetDialog] = useState<ResetDialogState>({ open: false, member: null });
+  const [resetLoading, setResetLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   const normalize = useCallback((resp: MembersResponse): MemberItem[] => {
     if (Array.isArray(resp)) return resp;
@@ -65,12 +100,49 @@ export default function MembersPage() {
   );
 
   useEffect(() => {
-    const token = getStoredToken();
-    if (!token || isTokenExpired(token)) router.replace('/login');
+    const storedToken = getStoredToken();
+    if (!storedToken || isTokenExpired(storedToken)) router.replace('/login');
     else {
-      load(token);
+      setToken(storedToken);
+      load(storedToken);
     }
   }, [load, router]);
+
+  const openResetDialog = (member: MemberItem) => {
+    setResetDialog({ open: true, member });
+  };
+
+  const closeResetDialog = () => {
+    setResetDialog({ open: false, member: null });
+  };
+
+  const handleSendResetEmail = async () => {
+    const member = resetDialog.member;
+    if (!member?.email || !token) return;
+
+    setResetLoading(true);
+    try {
+      await apiFetch(RESET_PASSWORD_PATH, {
+        method: 'POST',
+        token,
+        body: { email: member.email, recipientName: member.fullName },
+      });
+      setSnackbar({
+        open: true,
+        message: `Reset password email sent to ${member.email}`,
+        severity: 'success',
+      });
+    } catch (err: unknown) {
+      setSnackbar({
+        open: true,
+        message: getErrorMessage(err, 'Failed to send reset email'),
+        severity: 'error',
+      });
+    } finally {
+      setResetLoading(false);
+      closeResetDialog();
+    }
+  };
 
   const prettyLocation = (m: MemberItem) => {
     const parts = [m.city, m.country?.countryName || m.country?.countryCode].filter(Boolean);
@@ -155,6 +227,20 @@ export default function MembersPage() {
                     </Stack>
                   )}
                 </Box>
+
+                {/* Actions */}
+                {m.email && (
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', pt: 0.5 }}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      color="warning"
+                      onClick={() => openResetDialog(m)}
+                    >
+                      Reset Password
+                    </Button>
+                  </Box>
+                )}
               </Stack>
             </Paper>
           ))}
@@ -163,6 +249,49 @@ export default function MembersPage() {
           )}
         </Box>
       </Paper>
+
+      {/* Confirm reset password dialog */}
+      <Dialog open={resetDialog.open} onClose={closeResetDialog}>
+        <DialogTitle>Send Password Reset Email</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Send a password reset link to <strong>{resetDialog.member?.email}</strong> for{' '}
+            <strong>{resetDialog.member?.fullName}</strong>?
+            <br />
+            The link will expire in 60 minutes.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeResetDialog} disabled={resetLoading}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSendResetEmail}
+            variant="contained"
+            color="warning"
+            disabled={resetLoading}
+            startIcon={resetLoading ? <CircularProgress size={16} color="inherit" /> : null}
+          >
+            {resetLoading ? 'Sending…' : 'Send Reset Email'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Success / error snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={5000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </AdminLayout>
   );
 }

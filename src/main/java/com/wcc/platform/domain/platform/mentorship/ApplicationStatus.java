@@ -18,7 +18,9 @@ public enum ApplicationStatus {
   MATCHED("matched", "Successfully matched and confirmed"),
   DROPPED("dropped", "Mentee withdrew application"),
   REJECTED("rejected", "Rejected by Mentorship Team"),
-  EXPIRED("expired", "Application expired (no response within timeframe)");
+  EXPIRED("expired", "Application expired (no response within timeframe)"),
+  PENDING_MANUAL_MATCH("pending_manual_match", "All options exhausted, awaiting manual matching"),
+  NO_MATCH_FOUND("no_match_found", "Manual matching concluded with no suitable mentor found");
 
   private final String value;
 
@@ -46,7 +48,11 @@ public enum ApplicationStatus {
    * @return true if status is terminal
    */
   public boolean isTerminal() {
-    return this == MATCHED || this == REJECTED || this == DROPPED || this == EXPIRED;
+    return this == MATCHED
+        || this == REJECTED
+        || this == DROPPED
+        || this == EXPIRED
+        || this == NO_MATCH_FOUND;
   }
 
   /**
@@ -70,5 +76,14 @@ public enum ApplicationStatus {
   @Override
   public String toString() {
     return value;
+  }
+
+  /**
+   * Check if the application is in a non-forwardable state (cannot lead to a match).
+   *
+   * @return true if the application cannot lead to a match
+   */
+  public boolean isNonForwardable() {
+    return this == REJECTED || this == MENTOR_DECLINED || this == DROPPED || this == EXPIRED;
   }
 }

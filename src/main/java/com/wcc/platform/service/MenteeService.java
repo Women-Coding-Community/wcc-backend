@@ -3,6 +3,7 @@ package com.wcc.platform.service;
 import com.wcc.platform.domain.exceptions.*;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
@@ -16,6 +17,7 @@ import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -115,7 +117,10 @@ public class MenteeService {
     }
 
     final List<Integer> existingPriorities =
-        existingApplications.stream().map(MenteeApplication::getPriorityOrder).toList();
+        existingApplications.stream()
+            .map(MenteeApplication::getPriorityOrder)
+            .filter(Objects::nonNull)
+            .toList();
 
     for (final Integer priority : requestPriorities) {
       if (existingPriorities.contains(priority)) {
@@ -198,11 +203,11 @@ public class MenteeService {
 
   private Mentee createMenteeRegistrations(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
-    final var applications =
-        menteeRegistration.toApplications(cycle, menteeRegistration.mentee().getId());
+    final var menteeId = menteeRegistration.mentee().getId();
+    final var applications = menteeRegistration.toApplications(cycle, menteeId);
     applications.forEach(registrationsRepo::create);
 
-    return menteeRepository.findById(menteeRegistration.mentee().getId()).orElseThrow();
+    return menteeRepository.findById(menteeId).orElseThrow();
   }
 
   /**
@@ -224,6 +229,7 @@ public class MenteeService {
     final var existingMentorIds =
         existingApplications.stream()
             .map(MenteeApplication::getMentorId)
+            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
     final var filteredApplications =
@@ -272,5 +278,25 @@ public class MenteeService {
               "Mentee has already reached the limit of 5 registrations for %d",
               registrationsCount));
     }
+  }
+
+  /**
+   * Get all mentees having applications pending for manual match for cycle
+   *
+   * @return list of mentees
+   */
+  public List<Mentee> getMenteePendingManualMatch(final Long cycleId) {
+
+    final List<MenteeApplication> pendingManualMatch =
+        registrationsRepo.findByStatusAndCycle(
+            ApplicationStatus.PENDING_MANUAL_MATCH,
+            cycleId != null ? cycleId : getCurrentCycle().getCycleId());
+
+    if (pendingManualMatch.isEmpty()) {
+      return List.of();
+    }
+
+    return menteeRepository.findAllById(
+        pendingManualMatch.stream().map(MenteeApplication::getMenteeId).toList());
   }
 }
