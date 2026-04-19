@@ -155,7 +155,8 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @Test
   @DisplayName(
-      "Given existing member with email, when creating mentor with same email, then it should use existing member")
+      "Given existing member with email, when creating mentor with same email, "
+          + "then it should use existing member")
   void shouldUseExistingMemberWhenMentorEmailAlreadyExists() {
     // Create a regular member first
     final Member existingMember =

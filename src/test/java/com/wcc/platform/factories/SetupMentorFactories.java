@@ -98,6 +98,11 @@ public class SetupMentorFactories {
     return mentorBuilder.build();
   }
 
+  /** Mentor Builder. */
+  public static Mentor createMentorTest(final String mentorName) {
+    return createMentorTest(1L, mentorName, "member@wcc.com");
+  }
+
   /**
    * Convenience method to create a Mentor without images. Useful for integration tests where
    * MemberProfilePictureAspect would otherwise auto-create profile pictures from the images list.
@@ -110,11 +115,6 @@ public class SetupMentorFactories {
   public static Mentor createMentorTestWithoutImages(
       final Long mentorId, final String name, final String email) {
     return createMentorTest(mentorId, name, email, false);
-  }
-
-  /** Mentor Builder. */
-  public static Mentor createMentorTest(final String mentorName) {
-    return createMentorTest(1L, mentorName, "member@wcc.com");
   }
 
   /** Factory test to create MemberDto object. */
