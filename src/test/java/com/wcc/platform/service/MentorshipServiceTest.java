@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -88,6 +89,9 @@ class MentorshipServiceTest {
                 userProvisionService,
                 profilePicRepo,
                 notificationService));
+
+    // Lenient stub: no profile pictures for any member (avoids UnnecessaryStubbingException)
+    lenient().when(profilePicRepo.findByMemberId(anyLong())).thenReturn(Optional.empty());
   }
 
   @Test

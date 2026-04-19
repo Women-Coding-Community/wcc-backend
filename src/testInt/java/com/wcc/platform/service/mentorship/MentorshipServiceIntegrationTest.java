@@ -1,7 +1,7 @@
 package com.wcc.platform.service.mentorship;
 
 import static com.wcc.platform.domain.cms.PageType.MENTORS;
-import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
+import static com.wcc.platform.factories.SetupMentorFactories.createMentorTestWithoutImages;
 import static com.wcc.platform.factories.SetupMentorFactories.createResourceTest;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorsPageTest;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +48,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @BeforeEach
   void setUp() {
-    setupMentor = createMentorTest(4L, "mentor postgres", "postgres@domain.com");
+    setupMentor = createMentorTestWithoutImages(4L, "mentor postgres", "postgres@domain.com");
     cleanupMentor(setupMentor);
     pageRepository.deleteById(MENTORS.getId());
     pageService.create(MENTORS, page);
@@ -58,7 +58,9 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
   @AfterEach
   void tearDown() {
-    cleanupMentor(setupMentor);
+    if (setupMentor != null) {
+      cleanupMentor(setupMentor);
+    }
   }
 
   @Test
@@ -79,7 +81,8 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
       "Given mentor with uploaded profile picture in database, when getAllMentors is called, then"
           + " DTO images should contain profile picture with correct URL")
   void shouldFetchMentorsWithProfilePicturesFromDatabase() {
-    var mentor = createMentorTest(5L, "mentor with picture", "picture@domain.com");
+    var mentor = createMentorTestWithoutImages(5L, "mentor with picture", "picture@domain.com");
+
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
     var createdMentor = repository.create(mentor);
@@ -124,7 +127,9 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
       "Given mentor without profile picture in database, when getAllMentors is called, then images"
           + " list should be empty")
   void shouldHandleMentorsWithoutProfilePicturesInDatabase() {
-    var mentor = createMentorTest(6L, "mentor without picture", "nopicture@domain.com");
+    var mentor =
+        createMentorTestWithoutImages(6L, "mentor without picture", "nopicture@domain.com");
+
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
     var createdMentor = repository.create(mentor);
@@ -165,9 +170,9 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
 
     final Member savedMember = memberRepository.create(existingMember);
 
-    // Create a mentor with the same email
     final Mentor mentor =
-        createMentorTest(null, "Mentor From Existing Member", "existing-mentor-member@test.com");
+        createMentorTestWithoutImages(
+            null, "Mentor From Existing Member", "existing-mentor-member@test.com");
 
     // Should successfully create mentor using existing member's ID
     final Mentor savedMentor = service.create(mentor);
@@ -186,26 +191,35 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
       "Given mentor with pronouns in database, when getAllMentors is called, then DTO should"
           + " contain pronouns and pronoun category")
   void shouldReturnMentorsWithPronounsFromDatabase() {
-    var mentor = createMentorTest(7L, "mentor with pronouns", "pronouns@domain.com");
-    mentor =
+    var baseMentor =
+        createMentorTestWithoutImages(7L, "mentor with pronouns", "pronouns@domain.com");
+
+    // Only customize pronouns and pronoun category
+    var mentor =
         Mentor.mentorBuilder()
-            .id(mentor.getId())
-            .fullName(mentor.getFullName())
-            .position(mentor.getPosition())
-            .email(mentor.getEmail())
-            .slackDisplayName(mentor.getSlackDisplayName())
-            .country(mentor.getCountry())
-            .city(mentor.getCity())
-            .companyName(mentor.getCompanyName())
-            .images(mentor.getImages())
-            .network(mentor.getNetwork())
+            .id(baseMentor.getId())
+            .fullName(baseMentor.getFullName())
+            .position(baseMentor.getPosition())
+            .email(baseMentor.getEmail())
+            .slackDisplayName(baseMentor.getSlackDisplayName())
+            .country(baseMentor.getCountry())
+            .city(baseMentor.getCity())
+            .companyName(baseMentor.getCompanyName())
+            .images(baseMentor.getImages())
+            .network(baseMentor.getNetwork())
             .pronouns("they/them")
             .pronounCategory(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL)
-            .profileStatus(mentor.getProfileStatus())
-            .spokenLanguages(mentor.getSpokenLanguages())
-            .bio(mentor.getBio())
-            .skills(mentor.getSkills())
-            .menteeSection(mentor.getMenteeSection())
+            .profileStatus(baseMentor.getProfileStatus())
+            .skills(baseMentor.getSkills())
+            .spokenLanguages(baseMentor.getSpokenLanguages())
+            .bio(baseMentor.getBio())
+            .menteeSection(baseMentor.getMenteeSection())
+            .feedbackSection(baseMentor.getFeedbackSection())
+            .resources(baseMentor.getResources())
+            .isWomen(baseMentor.getIsWomen())
+            .calendlyLink(baseMentor.getCalendlyLink())
+            .acceptMale(baseMentor.getAcceptMale())
+            .acceptPromotion(baseMentor.getAcceptPromotion())
             .build();
 
     memberRepository.deleteByEmail(mentor.getEmail());
@@ -247,6 +261,9 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
   }
 
   private void cleanupMentor(final Mentor mentor) {
+    if (mentor != null && mentor.getId() != null) {
+      profilePicRepository.deleteByMemberId(mentor.getId());
+    }
     memberRepository.deleteByEmail(mentor.getEmail());
     repository.deleteById(mentor.getId());
   }
