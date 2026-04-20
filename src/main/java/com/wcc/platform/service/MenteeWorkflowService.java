@@ -7,13 +7,19 @@ import com.wcc.platform.domain.exceptions.DuplicateApplicationException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
 import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationResponse;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +38,7 @@ public class MenteeWorkflowService {
   private final MentorRepository mentorRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
+  private final MenteeRepository menteeRepository;
 
   /**
    * Admin approves a mentee application.
@@ -193,13 +200,40 @@ public class MenteeWorkflowService {
   }
 
   /**
-   * Get all applications to a specific mentor.
+   * Get all applications to a specific mentor with enriched mentee information.
    *
    * @param mentorId the mentor ID
-   * @return list of applications
+   * @return list of enriched application responses
    */
-  public List<MenteeApplication> getMentorApplications(final Long mentorId) {
-    return applicationRepository.findByMentor(mentorId);
+  public List<MenteeApplicationResponse> getMentorApplications(final Long mentorId) {
+    final List<MenteeApplication> applications = applicationRepository.findByMentor(mentorId);
+    return enrichApplications(applications);
+  }
+
+  private List<MenteeApplicationResponse> enrichApplications(
+      final List<MenteeApplication> applications) {
+    if (applications.isEmpty()) {
+      return List.of();
+    }
+
+    final List<Long> menteeIds =
+        applications.stream().map(MenteeApplication::getMenteeId).distinct().toList();
+
+    final Map<Long, Mentee> menteeMap =
+        menteeRepository.findAllById(menteeIds).stream()
+            .collect(Collectors.toMap(Mentee::getId, Function.identity()));
+
+    return applications.stream()
+        .map(
+            app -> {
+              final Mentee mentee = menteeMap.get(app.getMenteeId());
+              if (mentee != null) {
+                return MenteeApplicationResponse.from(
+                    app, mentee.getFullName(), mentee.getNetwork(), mentee.getBio());
+              }
+              return MenteeApplicationResponse.from(app);
+            })
+        .toList();
   }
 
   /**
