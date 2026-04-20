@@ -42,6 +42,13 @@ jobs:
       - name: Deploy to Prod env
         uses: superfly/flyctl-actions/setup-flyctl@master
 
+      - name: Set Fly.io secrets
+        run: |
+          flyctl secrets set MAIL_USERNAME=${{ secrets.PROD_MAIL_USERNAME }} -a wcc-backend-prod
+          flyctl secrets set MAIL_PASSWORD=${{ secrets.PROD_MAIL_PASSWORD }} -a wcc-backend-prod
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PROD }}
+
       - run: flyctl deploy --remote-only --config fly-prod.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PROD }}
