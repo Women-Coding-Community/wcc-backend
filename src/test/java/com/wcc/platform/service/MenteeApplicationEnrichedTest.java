@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class MenteeApplicationEnrichedTest {
+class MenteeApplicationEnrichedTest {
 
   private static final Long MENTEE_ID = 10L;
   private static final Long MENTOR_ID = 20L;
