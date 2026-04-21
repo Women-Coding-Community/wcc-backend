@@ -1,12 +1,14 @@
 package com.wcc.platform.controller;
 
 import com.wcc.platform.configuration.security.RequiresPermission;
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
 import com.wcc.platform.domain.platform.mentorship.AssignMentorRequest;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.platform.mentorship.NoMatchRequest;
 import com.wcc.platform.service.MenteeAdminService;
 import com.wcc.platform.service.MenteeService;
@@ -59,6 +61,7 @@ public class MenteeController {
    * @return a list of active mentees
    */
   @GetMapping("/mentees")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
   @Operation(summary = "API to list all active mentees")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Mentee>> listMentees() {
