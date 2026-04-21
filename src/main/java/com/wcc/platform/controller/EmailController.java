@@ -1,8 +1,6 @@
 package com.wcc.platform.controller;
 
-import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
-import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
 import com.wcc.platform.domain.email.TemplateEmailRequest;
@@ -47,7 +45,7 @@ public class EmailController {
    * @return EmailResponse with the status of the email sending operation
    */
   @PostMapping("/send")
-  @RequiresPermission(Permission.CYCLE_EMAIL_SEND)
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Send a single email",
       description = "Sends an email to the specified recipient")
@@ -76,7 +74,7 @@ public class EmailController {
    * @return list of EmailResponse objects with the status of each email
    */
   @PostMapping("/send/bulk")
-  @RequiresPermission(Permission.CYCLE_EMAIL_SEND)
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Send multiple emails in bulk",
       description = "Sends multiple emails to different recipients")
@@ -128,25 +126,25 @@ public class EmailController {
   /**
    * API to send a single email using a template.
    *
-   * @param templateEmailRequest the email request containing recipient,
-   *                             template type and template parameters
+   * @param templateEmailRequest the email request containing recipient, template type and template
+   *     parameters
    * @return EmailResponse with the status of the email sending operation
    */
   @PostMapping("/template/send")
-  @RequiresPermission(Permission.CYCLE_EMAIL_SEND)
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Send a single email using a template",
       description = "Sends an email with a template to the specified recipient")
   @ApiResponses({
-      @ApiResponse(
-          responseCode = "200",
-          description = "Email sent successfully",
-          content =
-          @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = EmailResponse.class))),
-      @ApiResponse(responseCode = "400", description = "Invalid email request", content = @Content),
-      @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content)
+    @ApiResponse(
+        responseCode = "200",
+        description = "Email sent successfully",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = EmailResponse.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid email request", content = @Content),
+    @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content)
   })
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<EmailResponse> sendTemplateEmail(
