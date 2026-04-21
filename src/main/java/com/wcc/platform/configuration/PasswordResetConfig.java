@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 public class PasswordResetConfig {
 
   /** Base URL of the frontend application. Used to construct the reset link sent by email. */
-  private String baseUrl = "http://localhost:3000";
+  private String baseUrl;
 
   /** Time-to-live for a password reset token, in minutes. Defaults to 60. */
   private int ttlMinutes = 60;

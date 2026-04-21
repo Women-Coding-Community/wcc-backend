@@ -40,7 +40,30 @@ Please remove the sensitive data before committing.
 Consider using environment variables or a secrets manager instead.
 ```
 
-## Step 3 — Check Java test conventions (if Java test files are changed)
+## Step 3 — Check for deprecated API usage
+
+Scan the diff for deprecated patterns in both frontend and backend files and **attempt to auto-fix simple cases** (direct find-and-replace). For non-trivial deprecations, list them and ask the user whether to fix before committing or proceed as-is.
+
+**Frontend (`*.ts`, `*.tsx`) — auto-fix if straightforward:**
+
+| Deprecated | Replacement |
+|---|---|
+| `ReactDOM.render(` | `createRoot(container).render(…)` |
+| `componentWillMount` / `componentWillReceiveProps` / `componentWillUpdate` | modern lifecycle equivalent |
+| `makeStyles(` / `withStyles(` / `createMuiTheme(` (MUI) | `sx` prop / `styled()` / `createTheme(` |
+| `new String(` / `new Number(` / `new Boolean(` | remove wrapper constructor |
+
+**Backend (`.java`) — auto-fix if straightforward:**
+
+| Deprecated | Replacement |
+|---|---|
+| `new java.util.Date()` | `Instant.now()` / `LocalDate.now()` / `LocalDateTime.now()` |
+| `Calendar.getInstance()` | `ZonedDateTime.now()` or `LocalDate.now()` |
+| Call to a `@Deprecated` method in this repository | replacement noted in the Javadoc `@deprecated` tag |
+
+If violations remain after attempting fixes, list them clearly with `[WARNING]` severity and ask the user whether to fix or proceed.
+
+## Step 4 — Check Java test conventions (if Java test files are changed)
 
 Scan the diff for any changed or added Java test files (`src/test/**`, `src/testInt/**`). For each, check:
 
@@ -55,7 +78,7 @@ Scan the diff for any changed or added Java test files (`src/test/**`, `src/test
 
 If violations are found, list them clearly and ask the user whether to fix before committing or proceed as-is. Do not auto-fix without confirmation.
 
-## Step 4 — Draft the commit message
+## Step 5 — Draft the commit message
 
 Analyze the diff to write a commit message following Conventional Commits:
 
@@ -101,6 +124,27 @@ git commit -m "<subject>
 Do NOT add any co-author or AI-attribution trailer lines.
 
 After committing, run `git status` to confirm.
+
+## Step 7 — Run pre-push build check
+
+After a successful commit, simulate the `.husky/pre-push` hook to verify the build would pass before an actual push.
+
+Determine whether frontend files were included in the commit:
+
+```bash
+base_ref=$(git merge-base HEAD @{u} 2>/dev/null || git rev-parse HEAD^ 2>/dev/null || echo HEAD)
+git diff --name-only "$base_ref" HEAD | grep -q "^admin-wcc-app/"
+```
+
+If frontend files are present, run:
+
+```bash
+cd admin-wcc-app && npm run build
+```
+
+- **Passes** → tell the user the push is safe.
+- **Fails** → show the build errors and stop. Do NOT suggest pushing until the build is fixed.
+- **No frontend files** → skip this step silently.
 
 ## Rules
 

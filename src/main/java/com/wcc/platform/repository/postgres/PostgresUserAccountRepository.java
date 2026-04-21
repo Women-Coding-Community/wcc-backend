@@ -6,6 +6,7 @@ import com.wcc.platform.repository.UserAccountRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,8 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
 
   private static final String SQL_SELECT_ALL = "SELECT * FROM user_accounts;";
   private static final String SQL_SELECT_BY_ID = "SELECT * FROM user_accounts WHERE id = ?";
-  private static final String SQL_SELECT_BY_MAIL = "SELECT * FROM user_accounts WHERE email = ?";
+  private static final String SQL_SELECT_BY_MAIL =
+      "SELECT * FROM user_accounts WHERE email = ?";
   private static final String SQL_DELETE = "DELETE FROM user_accounts WHERE id = ?";
   private static final String SQL_INSERT =
       "INSERT INTO user_accounts (member_id, email, password_hash) VALUES (?,?,?)";
@@ -89,7 +91,7 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
   @Override
   public Optional<UserAccount> findByEmail(final String email) {
     final List<UserAccount> users =
-        jdbc.query(SQL_SELECT_BY_MAIL, (rs, rowNum) -> mapUser(rs), email);
+        jdbc.query(SQL_SELECT_BY_MAIL, (rs, rowNum) -> mapUser(rs), email.toLowerCase(Locale.ENGLISH));
     return users.stream().findFirst();
   }
 

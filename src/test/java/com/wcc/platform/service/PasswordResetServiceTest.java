@@ -37,6 +37,7 @@ class PasswordResetServiceTest {
   private static final String NEW_PASSWORD = "NewP@ssword1";
   private static final String HASHED_PASSWORD = "hashed-new-password";
 
+  @Mock private PasswordResetTokenPersistenceService tokenPersistenceService;
   @Mock private PasswordResetTokenRepository resetTokenRepository;
   @Mock private UserAccountRepository userAccountRepository;
   @Mock private UserTokenRepository userTokenRepository;
@@ -53,6 +54,7 @@ class PasswordResetServiceTest {
 
     passwordResetService =
         new PasswordResetService(
+            tokenPersistenceService,
             resetTokenRepository,
             userAccountRepository,
             userTokenRepository,
@@ -67,11 +69,10 @@ class PasswordResetServiceTest {
   void shouldCreateTokenAndSendEmailForValidEmail() {
     var user = new UserAccount(1, null, EMAIL, "hash", List.of(RoleType.MENTOR), true);
     when(userAccountRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
-    when(resetTokenRepository.create(any())).thenAnswer(inv -> inv.getArgument(0));
 
     passwordResetService.requestReset(EMAIL, RECIPIENT_NAME);
 
-    verify(resetTokenRepository).create(any(PasswordResetToken.class));
+    verify(tokenPersistenceService).persistToken(any(PasswordResetToken.class));
     verify(emailService).sendTemplateEmail(any(TemplateEmailRequest.class));
   }
 
@@ -83,7 +84,7 @@ class PasswordResetServiceTest {
 
     passwordResetService.requestReset(EMAIL, RECIPIENT_NAME);
 
-    verify(resetTokenRepository, never()).create(any());
+    verify(tokenPersistenceService, never()).persistToken(any());
     verify(emailService, never()).sendTemplateEmail(any());
   }
 

@@ -87,6 +87,34 @@ For every changed Java file, scan for the style violations below and **edit the 
 
 - Replace `.get(0)` on `List` with `.getFirst()` (Java 21) in new or changed test code.
 
+### Auto-fix: deprecated TypeScript / React APIs (frontend)
+
+Scan every changed `*.ts` / `*.tsx` file for these patterns and apply the replacement directly:
+
+| Deprecated | Replacement |
+|---|---|
+| `ReactDOM.render(` | `createRoot(container).render(…)` |
+| `componentWillMount` | `componentDidMount` |
+| `componentWillReceiveProps` | `static getDerivedStateFromProps` or `componentDidUpdate` |
+| `componentWillUpdate` | `getSnapshotBeforeUpdate` or `componentDidUpdate` |
+| `new String(` / `new Number(` / `new Boolean(` | remove wrapper constructor |
+| `makeStyles(` / `withStyles(` (MUI) | `sx` prop or `styled()` |
+| `createMuiTheme(` | `createTheme(` |
+
+If the replacement is a **direct find-and-replace**, apply it. If it requires non-trivial restructuring, report it as `[WARNING]` instead.
+
+### Auto-fix: deprecated Java APIs (backend)
+
+Scan every changed `.java` file for these patterns and apply the replacement directly:
+
+| Deprecated | Replacement |
+|---|---|
+| `new java.util.Date()` | `Instant.now()` / `LocalDate.now()` / `LocalDateTime.now()` |
+| `Calendar.getInstance()` | `ZonedDateTime.now()` or `LocalDate.now()` |
+| `new java.util.Date(long)` | `Instant.ofEpochMilli(…)` |
+
+Also scan the diff for calls to methods or classes that are annotated `@Deprecated` **within this repository**. If a replacement is noted in the Javadoc `@deprecated` tag, apply it when it is a straightforward swap; otherwise report as `[WARNING]`.
+
 ## Step 4 — Review for non-auto-fixable issues
 
 After applying all auto-fixes, check for issues that require human judgement. Apply only the checks relevant to what was actually changed.
@@ -99,12 +127,14 @@ After applying all auto-fixes, check for issues that require human judgement. Ap
 - No business logic in controllers; no data access in services directly
 - Lombok usage aligns with project patterns
 - **`@SuppressWarnings` in `src/main`**: never suppress PMD or other warnings in production code without explicit user approval — find an architectural fix instead (extract method, delegate to another service, reduce class complexity)
+- **Remaining deprecated usage**: any call to a `@Deprecated` API not auto-fixed in Step 3 → `[WARNING]`; include the replacement from the Javadoc if available
 
 ### Frontend (React / TypeScript)
 - Component boundaries and single responsibility
 - Typing quality — avoid `any`, prefer explicit interfaces
 - State and effect hygiene — no unnecessary re-renders, correct dependency arrays
 - Project style conventions
+- **Remaining deprecated usage**: any deprecated React/Next.js/MUI pattern not auto-fixed in Step 3 → `[WARNING]`; also flag `@deprecated` JSDoc on any symbol being imported or called from within the diff
 
 ### Tests (Java)
 - New logic paths have corresponding unit tests
@@ -114,7 +144,31 @@ After applying all auto-fixes, check for issues that require human judgement. Ap
 - **`@DisplayName`**: every test must have one in Given-when-then format
 - **Assertions**: use AssertJ for complex/multi-property assertions; JUnit 5 (`assertEquals`, `assertTrue`, `assertThrows`) for simple single-value or boolean checks
 
-## Step 5 — Output format
+## Step 5 — Run pre-commit quality gate checks
+
+Run the same checks that `.husky/pre-commit` executes, so issues are caught during review before staging begins.
+
+### PMD (Java files)
+
+If any `.java` files appear in the diff, run:
+
+```bash
+./gradlew :pmdAll --quiet
+```
+
+- **Passes** → note "✅ PMD passed" in the Overall Summary.
+- **Fails** → list each violation as a `[CRITICAL]` finding in the per-file output. The commit hook will block until these are resolved.
+
+### lint-staged (frontend files)
+
+If any `admin-wcc-app/**` files appear in the diff:
+
+- If there are **staged** frontend files, run: `(cd admin-wcc-app && npx lint-staged)`
+  - **Passes** → note "✅ lint-staged passed" in the Overall Summary.
+  - **Fails** → surface lint/prettier errors as `[CRITICAL]` findings.
+- If **no frontend files are staged yet**, note in the summary that lint-staged will run automatically at commit time.
+
+## Step 6 — Output format
 
 ### Auto-fixes applied
 List every file edited and the type of fix applied (one line per file). If nothing was fixed, say so.
@@ -146,7 +200,7 @@ Severity levels:
 ### What looks good
 Briefly call out 1-3 things done well — keep the developer motivated.
 
-## Step 6 — Finding quality bar
+## Step 7 — Finding quality bar
 
 Every reported finding must:
 - State the **concrete risk** (what could go wrong)

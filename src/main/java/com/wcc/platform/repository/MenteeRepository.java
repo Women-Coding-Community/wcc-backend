@@ -33,4 +33,12 @@ public interface MenteeRepository extends CrudRepository<Mentee, Long> {
    * @return the updated mentee
    */
   Mentee updateProfileStatus(Long menteeId, ProfileStatus status);
+
+  /**
+   * Return all mentees matching by IDs
+   *
+   * @param menteeIds
+   * @return list of mentees
+   */
+  List<Mentee> findAllById(List<Long> menteeIds);
 }

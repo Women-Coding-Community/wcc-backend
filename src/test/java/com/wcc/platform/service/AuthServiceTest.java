@@ -1,6 +1,7 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.factories.SetupUserAccountFactories.createAdminUserTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -72,6 +73,19 @@ class AuthServiceTest {
     result = authService.findUserByEmail(email);
 
     assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldNormalizeMixedCaseEmailToLowercaseWhenFindingUserByEmail() {
+    var mixedCaseEmail = "User@Example.COM";
+    var normalizedEmail = "user@example.com";
+    var userAccount = new UserAccount(1, 1L, normalizedEmail, "hash", List.of(RoleType.ADMIN), true);
+    when(userAccountRepository.findByEmail(normalizedEmail)).thenReturn(Optional.of(userAccount));
+
+    var result = authService.findUserByEmail(mixedCaseEmail);
+
+    assertThat(result).isPresent();
+    verify(userAccountRepository).findByEmail(normalizedEmail);
   }
 
   // ==================== authenticateAndIssueToken Tests ====================

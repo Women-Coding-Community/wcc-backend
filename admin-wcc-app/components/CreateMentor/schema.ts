@@ -7,6 +7,16 @@ const countrySchema = z
   })
   .nullable();
 
+const technicalAreaProficiencySchema = z.object({
+  technicalArea: z.string().min(1, 'Technical area is required'),
+  proficiencyLevel: z.string().min(1, 'Proficiency level is required'),
+});
+
+const languageProficiencySchema = z.object({
+  language: z.string().min(1, 'Language is required'),
+  proficiencyLevel: z.string().min(1, 'Proficiency level is required'),
+});
+
 export const mentorSchema = z.object({
   fullName: z.string().min(1, 'Full name is required'),
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
@@ -22,8 +32,12 @@ export const mentorSchema = z.object({
   yearsExperience: z
     .union([z.number().min(0), z.literal('')])
     .refine((val) => val !== '', { message: 'Years of experience is required' }),
-  technicalAreas: z.array(z.string()).min(1, 'At least one technical area is required'),
-  programmingLanguages: z.array(z.string()).min(1, 'At least one programming language is required'),
+  technicalAreas: z
+    .array(technicalAreaProficiencySchema)
+    .min(1, 'At least one technical area is required'),
+  programmingLanguages: z
+    .array(languageProficiencySchema)
+    .min(1, 'At least one programming language is required'),
   mentorshipFocus: z.array(z.string()).min(1, 'At least one mentorship focus area is required'),
   mentorshipType: z.array(z.string()).min(1, 'At least one mentorship type is required'),
   idealMentee: z.string().min(1, 'Ideal mentee description is required'),

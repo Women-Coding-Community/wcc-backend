@@ -5,6 +5,8 @@ disable-model-invocation: true
 allowed-tools: Bash, Read, Glob
 ---
 
+> **Scope**: Local — wcc-backend only
+
 # Open PR Skill
 
 > **Canonical runbook**: `.ai/skills/open-pr.md`

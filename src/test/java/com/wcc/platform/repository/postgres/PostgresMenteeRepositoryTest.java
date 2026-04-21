@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 class PostgresMenteeRepositoryTest {
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentees WHERE mentee_id = ?";
@@ -47,6 +48,8 @@ class PostgresMenteeRepositoryTest {
     menteeMapper = mock(MenteeMapper.class);
     memberMapper = mock(MemberMapper.class);
     var validator = mock(Validator.class);
+    NamedParameterJdbcTemplate paramJdbcTemplate = mock(NamedParameterJdbcTemplate.class);
+
     when(validator.validate(any())).thenReturn(Collections.emptySet());
     repository =
         spy(
@@ -55,7 +58,8 @@ class PostgresMenteeRepositoryTest {
                 menteeMapper,
                 memberMapper,
                 mock(com.wcc.platform.repository.MemberRepository.class),
-                validator));
+                validator,
+                paramJdbcTemplate));
   }
 
   @Test
