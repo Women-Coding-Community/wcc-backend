@@ -64,7 +64,7 @@ file:
 
 app:
   cors:
-    allowed-origins: http://localhost:3000,https://localhost:3000
+    allowed-origins: http://localhost:3000,https://localhost:3000,http://localhost:3001,https://localhost:3001
   email:
     team-signature: "WCC Mentorship Team"
   reset-password:
