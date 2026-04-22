@@ -67,6 +67,7 @@ dependencies {
     implementation("com.google.api-client:google-api-client:2.8.1")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-drive:v3-rev20230822-2.0.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.23.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.skyscreamer:jsonassert:1.5.3")
