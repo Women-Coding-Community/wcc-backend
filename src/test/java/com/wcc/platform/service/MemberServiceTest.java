@@ -19,6 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.auth.UserAccount;
+import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
@@ -87,6 +88,23 @@ class MemberServiceTest {
     assertThrows(DuplicatedMemberException.class, () -> service.createMember(member));
 
     verify(memberRepository, never()).create(any());
+  }
+
+  @Test
+  @DisplayName("Given member with images, when created, then member is created successfully")
+  void testCreateMemberWithImages() {
+    final var imageUrl = "https://example.com/profile.jpg";
+    final var image = new Image(imageUrl, "Profile picture", ImageType.DESKTOP);
+    final var memberWithImage = member.toBuilder().images(List.of(image)).build();
+
+    when(memberRepository.findByEmail(memberWithImage.getEmail())).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(memberWithImage.getEmail())).thenReturn(Optional.empty());
+    when(memberRepository.create(any(Member.class))).thenReturn(memberWithImage);
+
+    final var result = service.createMember(memberWithImage);
+
+    assertEquals(memberWithImage, result);
+    verify(memberRepository).create(any(Member.class));
   }
 
   @Test

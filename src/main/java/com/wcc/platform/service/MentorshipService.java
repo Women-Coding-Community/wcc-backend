@@ -99,7 +99,7 @@ public class MentorshipService {
       userProvisionService.provisionUserRole(
           mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
     }
-    return mentorCreated;
+    return enrichMentorWithProfilePicture(mentorCreated);
   }
 
   /**
@@ -180,19 +180,60 @@ public class MentorshipService {
         .id(dto.getId())
         .fullName(dto.getFullName())
         .position(dto.getPosition())
+        .email(dto.getEmail())
+        .slackDisplayName(dto.getSlackDisplayName())
         .country(dto.getCountry())
         .city(dto.getCity())
         .companyName(dto.getCompanyName())
         .images(List.of(profilePicture.get()))
         .network(dto.getNetwork())
+        .profileStatus(dto.getProfileStatus())
         .pronouns(dto.getPronouns())
         .pronounCategory(dto.getPronounCategory())
+        .isWomen(dto.getIsWomen())
         .skills(dto.getSkills())
         .spokenLanguages(dto.getSpokenLanguages())
         .bio(dto.getBio())
         .menteeSection(dto.getMenteeSection())
         .feedbackSection(dto.getFeedbackSection())
         .resources(dto.getResources())
+        .calendlyLink(dto.getCalendlyLink())
+        .acceptMale(dto.getAcceptMale())
+        .acceptPromotion(dto.getAcceptPromotion())
+        .build();
+  }
+
+  private Mentor enrichMentorWithProfilePicture(final Mentor mentor) {
+    final Optional<Image> profilePicture = fetchProfilePicture(mentor.getId());
+
+    if (profilePicture.isEmpty()) {
+      return mentor;
+    }
+
+    return Mentor.mentorBuilder()
+        .id(mentor.getId())
+        .fullName(mentor.getFullName())
+        .position(mentor.getPosition())
+        .email(mentor.getEmail())
+        .slackDisplayName(mentor.getSlackDisplayName())
+        .country(mentor.getCountry())
+        .city(mentor.getCity())
+        .companyName(mentor.getCompanyName())
+        .images(List.of(profilePicture.get()))
+        .network(mentor.getNetwork())
+        .pronouns(mentor.getPronouns())
+        .pronounCategory(mentor.getPronounCategory())
+        .profileStatus(mentor.getProfileStatus())
+        .skills(mentor.getSkills())
+        .spokenLanguages(mentor.getSpokenLanguages())
+        .bio(mentor.getBio())
+        .menteeSection(mentor.getMenteeSection())
+        .feedbackSection(mentor.getFeedbackSection())
+        .resources(mentor.getResources())
+        .isWomen(mentor.getIsWomen())
+        .calendlyLink(mentor.getCalendlyLink())
+        .acceptMale(mentor.getAcceptMale())
+        .acceptPromotion(mentor.getAcceptPromotion())
         .build();
   }
 
@@ -235,7 +276,8 @@ public class MentorshipService {
 
     final Mentor updatedMentor = mentorDto.merge(mentor);
     validateMentorCommitment(updatedMentor);
-    return mentorRepository.update(mentorId, updatedMentor);
+    final Mentor result = mentorRepository.update(mentorId, updatedMentor);
+    return enrichMentorWithProfilePicture(result);
   }
 
   /**

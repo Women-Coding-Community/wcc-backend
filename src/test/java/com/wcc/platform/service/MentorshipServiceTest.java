@@ -3,7 +3,6 @@ package com.wcc.platform.service;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorDtoTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createUpdatedMentorTest;
-import static com.wcc.platform.factories.SetupUserAccountFactories.createUserAccountTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,13 +10,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
 import com.wcc.platform.domain.cms.pages.mentorship.MenteeSection;
@@ -65,7 +64,6 @@ class MentorshipServiceTest {
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
-  private UserAccount userAccount;
   private MentorshipService service;
 
   public MentorshipServiceTest() {
@@ -78,7 +76,6 @@ class MentorshipServiceTest {
     mentor = createMentorTest();
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
     updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
-    userAccount = createUserAccountTest(mentor);
     service =
         spy(
             new MentorshipService(
@@ -88,11 +85,15 @@ class MentorshipServiceTest {
                 userProvisionService,
                 profilePicRepo,
                 notificationService));
+
+    // Lenient stub: no profile pictures for any member (avoids UnnecessaryStubbingException)
+    lenient().when(profilePicRepo.findByMemberId(anyLong())).thenReturn(Optional.empty());
   }
 
   @Test
   @DisplayName(
-      "Given mentor with existing ID, when creating mentor with no matching email, then throw DuplicatedMemberException")
+      "Given mentor with existing ID, when creating mentor with no matching email, "
+          + "then throw DuplicatedMemberException")
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
@@ -200,7 +201,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given existing member with same email, when re-registering as mentor, then all fields are preserved")
+      "Given existing member with same email, when re-registering as mentor, "
+          + "then all fields are preserved")
   void shouldPreserveAllFieldsWhenMentorReRegistersWithExistingEmail() {
     var country = mock(com.wcc.platform.domain.cms.attributes.Country.class);
     var skills = mock(Skills.class);
@@ -443,8 +445,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given active and pending mentors with an open cycle, when getAllActiveMentors is called, then only"
-          + " active mentors are returned")
+      "Given active and pending mentors with an open cycle, when getAllActiveMentors is called, "
+          + "then only active mentors are returned")
   void shouldReturnOnlyActiveMentorsWhenCycleIsOpen() {
     var activeMentor = mock(Mentor.class);
     var pendingMentor = mock(Mentor.class);
