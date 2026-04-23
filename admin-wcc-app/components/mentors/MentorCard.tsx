@@ -2,6 +2,7 @@ import { Avatar, Box, Chip, Link, Paper, Stack, Typography } from '@mui/material
 import BioSection from '@/components/mentors/BioSection';
 import SkillsSection from '@/components/mentors/SkillsSection';
 import { MentorItem } from '@/types/mentor';
+import { MENTORSHIP_TYPES } from '@/lib/mentorshipTypes';
 
 interface MentorCardProps {
   mentor: MentorItem;
@@ -50,7 +51,12 @@ export default function MentorCard({ mentor }: MentorCardProps) {
             return types.length > 0 ? (
               <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {types.map((t) => (
-                  <Chip key={`type-${t}`} label={t} size="small" color="success" />
+                  <Chip
+                    key={`type-${t}`}
+                    label={MENTORSHIP_TYPES.find((m) => m.value === t)?.label ?? t}
+                    size="small"
+                    color="success"
+                  />
                 ))}
               </Box>
             ) : null;
