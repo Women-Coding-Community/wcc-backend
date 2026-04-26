@@ -76,7 +76,7 @@ export default function MentorDashboardPage() {
     setError(null);
     try {
       const allApplications = await getMentorApplications(mentorId, token);
-      setAssignedApplications(allApplications.filter((a) => a.status === 'MATCHED'));
+      setAssignedApplications(allApplications.filter((a) => a.status === 'MENTOR_ACCEPTED'));
       setPendingApplications(allApplications.filter((a) => a.status === 'MENTOR_REVIEWING'));
     } catch (error: unknown) {
       setError(getErrorMessage(error, 'Failed to load dashboard data'));
