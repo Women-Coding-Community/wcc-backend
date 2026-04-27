@@ -26,6 +26,7 @@ public class PostgresMemberRepository implements MemberRepository {
   private static final String DELETE_BY_SQL = "DELETE FROM members WHERE email = ?";
   private static final String SELECT_BY_EMAIL = "SELECT * FROM members WHERE email = ?";
   private static final String SELECT_BY_ID = "SELECT * FROM members WHERE id = ?";
+  private static final String COUNT_BY_ID = "SELECT count(1) FROM members WHERE id = ?";
   private static final String SELECT_ALL_MEMBERS = "SELECT * FROM members";
 
   private final JdbcTemplate jdbc;
@@ -96,5 +97,10 @@ public class PostgresMemberRepository implements MemberRepository {
   @Override
   public void deleteByEmail(final String email) {
     jdbc.update(DELETE_BY_SQL, email);
+  }
+
+  @Override
+  public boolean existsById(final Long id) {
+    return jdbc.queryForObject(COUNT_BY_ID, Integer.class, id).equals(1);
   }
 }

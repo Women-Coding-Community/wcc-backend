@@ -5,12 +5,16 @@ import static com.wcc.platform.repository.postgres.constants.MemberConstants.COL
 
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.ImageType;
 import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.type.MemberType;
+import com.wcc.platform.domain.resource.MemberProfilePicture;
+import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberMemberTypeRepository;
+import com.wcc.platform.repository.postgres.PostgresMemberProfilePictureRepository;
 import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,13 +52,20 @@ public class MemberMapper {
   private final PostgresCountryRepository countryRepository;
   private final PostgresMemberMemberTypeRepository memberTypeRepo;
   private final PostgresSocialNetworkRepository socialNetworkRepo;
+  private final PostgresMemberProfilePictureRepository profilePictureRepo;
 
   /** Mapper method to convert ResultSet to Member object. */
   public Member mapRowToMember(final ResultSet rs) throws SQLException {
     final Long memberId = rs.getLong("id");
     final Country country = countryRepository.findById(rs.getLong("country_id")).orElse(null);
     final List<MemberType> memberTypes = memberTypeRepo.findByMemberId(memberId);
-    final List<Image> images = List.of();
+    final List<Image> images =
+        profilePictureRepo
+            .findByMemberId(memberId)
+            .map(MemberProfilePicture::getResource)
+            .map(this::convertResourceToImage)
+            .stream()
+            .toList();
     final List<SocialNetwork> networks = socialNetworkRepo.findByMemberId(memberId);
 
     final String pronouns = rs.getString("pronouns");
@@ -193,5 +204,12 @@ public class MemberMapper {
   /** Retrieves the pronoun category ID or null if not specified. */
   private Integer getPronounCategoryId(final PronounCategory pronounCategory) {
     return pronounCategory != null ? pronounCategory.getCategoryId() : null;
+  }
+
+  private Image convertResourceToImage(final Resource resource) {
+    return new Image(
+        resource.getDriveFileLink(),
+        resource.getName().isEmpty() ? "Profile picture" : resource.getName(),
+        ImageType.DESKTOP);
   }
 }

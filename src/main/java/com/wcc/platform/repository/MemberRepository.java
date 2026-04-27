@@ -37,4 +37,6 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
    * @param email member's email
    */
   void deleteByEmail(String email);
+
+  boolean existsById(Long memberId);
 }
