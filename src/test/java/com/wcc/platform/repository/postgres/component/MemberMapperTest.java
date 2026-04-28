@@ -15,6 +15,7 @@ import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.postgres.PostgresCountryRepository;
 import com.wcc.platform.repository.postgres.PostgresMemberMemberTypeRepository;
+import com.wcc.platform.repository.postgres.PostgresMemberProfilePictureRepository;
 import com.wcc.platform.repository.postgres.PostgresSocialNetworkRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,13 +37,16 @@ class MemberMapperTest {
   @Mock private PostgresCountryRepository countryRepository;
   @Mock private PostgresMemberMemberTypeRepository memberTypeRepo;
   @Mock private PostgresSocialNetworkRepository socialNetworkRepo;
+  @Mock private PostgresMemberProfilePictureRepository profilePictureRepo;
 
   @InjectMocks private MemberMapper memberMapper;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    memberMapper = new MemberMapper(jdbc, countryRepository, memberTypeRepo, socialNetworkRepo);
+    memberMapper =
+        new MemberMapper(
+            jdbc, countryRepository, memberTypeRepo, socialNetworkRepo, profilePictureRepo);
   }
 
   @Test
