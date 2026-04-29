@@ -136,6 +136,7 @@ class MemberServiceTest {
           + "Then should update member attributes and return updated member")
   void testUpdateMember() {
     long memberId = 1L;
+    when(memberRepository.existsById(memberId)).thenReturn(true);
     when(memberRepository.update(anyLong(), any())).thenReturn(updatedMember);
     when(memberRepository.findById(memberId)).thenReturn(Optional.ofNullable(member));
     Member result = service.updateMember(memberId, memberDto);

@@ -26,6 +26,9 @@ export interface MenteeApplication {
   reviewed: boolean;
   matched: boolean;
   daysSinceApplied: number;
+  menteeName?: string;
+  menteeLinkedIn?: string;
+  menteeBio?: string;
 }
 
 export interface MenteeSkillArea {

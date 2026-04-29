@@ -61,6 +61,7 @@ class MentorshipServiceTest {
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
   @Mock private MentorshipCycleRepository cycleRepository;
+  @Mock private ResourceService resourceService;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
@@ -84,7 +85,8 @@ class MentorshipServiceTest {
                 cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                notificationService));
+                notificationService,
+                resourceService));
 
     // Lenient stub: no profile pictures for any member (avoids UnnecessaryStubbingException)
     lenient().when(profilePicRepo.findByMemberId(anyLong())).thenReturn(Optional.empty());

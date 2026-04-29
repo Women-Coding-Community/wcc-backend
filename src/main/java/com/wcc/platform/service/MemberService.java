@@ -81,8 +81,8 @@ public class MemberService {
    * @return Updated member.
    */
   public Member updateMember(final Long memberId, final MemberDto memberDto) {
-    if (!memberId.equals(memberDto.getId())) {
-      throw new IllegalArgumentException("Member ID does not match the provided memberId");
+    if (!memberRepository.existsById(memberId)) {
+      throw new IllegalArgumentException("Member ID in DB, does not match the provided memberId");
     }
 
     final Optional<Member> memberOptional = memberRepository.findById(memberId);

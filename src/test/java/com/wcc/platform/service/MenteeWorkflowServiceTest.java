@@ -24,6 +24,7 @@ import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
@@ -51,6 +52,7 @@ class MenteeWorkflowServiceTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
+  @Mock private MenteeRepository menteeRepository;
 
   private MenteeWorkflowService service;
 
@@ -59,7 +61,11 @@ class MenteeWorkflowServiceTest {
     MockitoAnnotations.openMocks(this);
     service =
         new MenteeWorkflowService(
-            applicationRepository, mentorRepository, matchRepository, cycleRepository);
+            applicationRepository,
+            mentorRepository,
+            matchRepository,
+            cycleRepository,
+            menteeRepository);
   }
 
   @Test
@@ -414,8 +420,6 @@ class MenteeWorkflowServiceTest {
         .isInstanceOf(MentorCapacityExceededException.class)
         .hasMessageContaining("maximum capacity");
   }
-
-  // ==================== confirmNoMatch tests ====================
 
   @Test
   @DisplayName(

@@ -43,6 +43,7 @@ class MentorshipServiceRetrievalTest {
   @Mock private UserProvisionService userProvisionService;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
+  @Mock private ResourceService resourceService;
   private MentorshipService service;
 
   @BeforeEach
@@ -56,7 +57,8 @@ class MentorshipServiceRetrievalTest {
                 cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                notificationService));
+                notificationService,
+                resourceService));
   }
 
   @Test
