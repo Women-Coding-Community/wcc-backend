@@ -62,6 +62,7 @@ class MentorshipServiceTest {
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
   @Mock private MentorshipCycleRepository cycleRepository;
+  @Mock private ResourceService resourceService;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
@@ -87,7 +88,8 @@ class MentorshipServiceTest {
                 cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                notificationService));
+                notificationService,
+                resourceService));
   }
 
   @Test
