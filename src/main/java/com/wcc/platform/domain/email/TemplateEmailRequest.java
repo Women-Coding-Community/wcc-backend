@@ -12,7 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
+/** Request object for sending an email using a template. */
 @Getter
 @Builder
 @NoArgsConstructor
@@ -20,23 +20,24 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Request object for sending an email using template")
 public class TemplateEmailRequest {
 
-    @NotBlank(message = "Recipient email is required")
-    @Email(message = "Recipient email must be valid")
-    @Schema(description = "Recipient email address", example = "recipient@example.com")
-    private String to;
+  @NotBlank(message = "Recipient email is required")
+  @Email(message = "Recipient email must be valid")
+  @Schema(
+      description = "Recipient email address always send as BCC",
+      example = "recipient@example.com")
+  private String to;
 
-    @Schema(description = "CC recipients", example = "[\"cc1@example.com\", \"cc2@example.com\"]")
-    private List<String> cc;
+  @Schema(description = "BCC recipients", example = "[\"bcc@example.com\"]")
+  private List<String> bcc;
 
-    @Schema(description = "BCC recipients", example = "[\"bcc@example.com\"]")
-    private List<String> bcc;
+  @NotNull(message = "Template type is required")
+  private TemplateType templateType;
 
-    @NotNull(message = "Template type is required")
-    private TemplateType templateType;
-
-    @NotNull(message = "Template parameters are required")
-    @Schema(description = "Key-value pairs used to replace placeholders inside the email template",
-        example = """
+  @NotNull(message = "Template parameters are required")
+  @Schema(
+      description = "Key-value pairs used to replace placeholders inside the email template",
+      example =
+          """
             {
               "mentorName": "Mike",
               "program": "Ad-hoc mentorship",
@@ -44,14 +45,14 @@ public class TemplateEmailRequest {
               "deadline": "27/09/25"
             }
             """)
-    private Map<String, String> templateParameters;
+  private Map<String, Object> templateParameters;
 
-    @Schema(
-        description = "Whether the email body contains HTML content",
-        example = "false",
-        defaultValue = "false")
-    private boolean html;
+  @Schema(
+      description = "Whether the email body contains HTML content",
+      example = "false",
+      defaultValue = "false")
+  private boolean html;
 
-    @Schema(description = "Reply-to email address", example = "noreply@womencodingcommunity.com")
-    private String replyTo;
+  @Schema(description = "Reply-to email address", example = "noreply@womencodingcommunity.com")
+  private String replyTo;
 }

@@ -26,7 +26,7 @@ public class EmailTemplateServiceTest extends DefaultDatabaseSetup {
   @Test
   void rendersTemplateWithParams() {
     var templateType = TemplateType.FEEDBACK_MENTOR_ADHOC;
-    var parameters =
+    Map<String, Object> parameters =
         Map.of(
             "mentorName", "Alice Mentor",
             "menteeName", "Bob Mentee",

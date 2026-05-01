@@ -10,6 +10,7 @@ import static com.wcc.platform.utils.MenteeApplicationTestBuilder.reviewing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,6 +24,7 @@ import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -33,17 +35,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
+@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class MenteeWorkflowServiceTest {
 
   private static final String REJECTION_REASON =
       "Application does not meet the eligibility criteria for this mentorship cycle";
   private static final String DECLINE_REASON = "Not a fit";
   private static final String NO_MATCH_REASON = "No suitable mentor available";
-  private static final String ASSIGNMENT_NOTES = "Manual assignment by admin";
+  private static final String ASSIGNMENT_NOTES = "Manually assigned mentor";
   private static final Long MENTEE_ID = 10L;
   private static final Long MENTOR_ID = 20L;
   private static final Long CYCLE_ID = 5L;
@@ -54,18 +58,18 @@ class MenteeWorkflowServiceTest {
   @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MenteeRepository menteeRepository;
 
-  private MenteeWorkflowService service;
+  @Mock private MemberRepository memberRepository;
+  @Mock private MentorshipService mentorshipService;
+
+  @Mock private MentorshipNotificationService notificationService;
+
+  @InjectMocks private MenteeWorkflowService service;
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.openMocks(this);
-    service =
-        new MenteeWorkflowService(
-            applicationRepository,
-            mentorRepository,
-            matchRepository,
-            cycleRepository,
-            menteeRepository);
+    lenient().when(mentorshipService.getNotificationService()).thenReturn(notificationService);
+    lenient().when(mentorshipService.getMentorRepository()).thenReturn(mentorRepository);
+    lenient().when(mentorshipService.getMemberRepository()).thenReturn(memberRepository);
   }
 
   @Test
@@ -338,7 +342,10 @@ class MenteeWorkflowServiceTest {
 
     assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
     verify(applicationRepository)
-        .updateStatus(99L, ApplicationStatus.REJECTED, "Manually assigned mentor");
+        .updateStatus(
+            99L,
+            ApplicationStatus.REJECTED,
+            "Manual assignment by admin [" + ASSIGNMENT_NOTES + "]");
 
     final ArgumentCaptor<MenteeApplication> captor =
         ArgumentCaptor.forClass(MenteeApplication.class);
