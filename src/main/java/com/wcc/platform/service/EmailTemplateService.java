@@ -9,7 +9,6 @@ import com.wcc.platform.domain.template.TemplateType;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -57,7 +56,8 @@ public class EmailTemplateService {
   }
 
   private Map<String, Object> mergeWithDefaults(final Map<String, Object> params) {
-    final Map<String, Object> merged = new ConcurrentHashMap<>();
+    @SuppressWarnings("PMD.UseConcurrentHashMap") // HashMap is used to support null values
+    final Map<String, Object> merged = new java.util.HashMap<>();
     merged.put(SIGNATURE_KEY, teamEmailSignature);
     merged.putAll(params);
     return merged;
