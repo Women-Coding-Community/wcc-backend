@@ -7,18 +7,20 @@ import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.Template;
 import com.wcc.platform.domain.template.TemplateType;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+/** Service for rendering email templates with placeholders replaced by actual values. */
 @Slf4j
 @Service
 public class EmailTemplateService {
@@ -37,24 +39,25 @@ public class EmailTemplateService {
   }
 
   /**
-   * Renders an email template by replacing all placeholders with the actual values
-   * provided in the parameters map.
+   * Renders an email template by replacing all placeholders with the actual values provided in the
+   * parameters map.
    *
    * @param templateType the type of the email template to render
    * @param params a map of placeholder names to their replacement values
-   * @return a {@link RenderedTemplate} containing the subject and body with all placeholders replaced
+   * @return a {@link RenderedTemplate} containing the subject and body with all placeholders
+   *     replaced
    * @throws IllegalArgumentException if required placeholders are missing in {@code params}
    */
   public RenderedTemplate renderTemplate(
-      final TemplateType templateType, final Map<String, String> params) {
+      final TemplateType templateType, final Map<String, Object> params) {
     final Template template = loadTemplate(templateType);
-    final Map<String, String> mergedParams = mergeWithDefaults(params);
+    final Map<String, Object> mergedParams = mergeWithDefaults(params);
     validateTemplateParams(template, mergedParams);
     return RenderedTemplate.from(replacePlaceholders(template, mergedParams));
   }
 
-  private Map<String, String> mergeWithDefaults(final Map<String, String> params) {
-    final Map<String, String> merged = new ConcurrentHashMap<>();
+  private Map<String, Object> mergeWithDefaults(final Map<String, Object> params) {
+    final Map<String, Object> merged = new ConcurrentHashMap<>();
     merged.put(SIGNATURE_KEY, teamEmailSignature);
     merged.putAll(params);
     return merged;
@@ -74,7 +77,7 @@ public class EmailTemplateService {
     }
   }
 
-  private void validateTemplateParams(final Template template, final Map<String, String> params) {
+  private void validateTemplateParams(final Template template, final Map<String, Object> params) {
     final Set<String> requiredParams = extractPlaceholders(template);
     final Set<String> missingParams =
         requiredParams.stream()
@@ -97,17 +100,25 @@ public class EmailTemplateService {
     return matcher.results().map(result -> result.group(1)).collect(Collectors.toSet());
   }
 
-  private Template replacePlaceholders(final Template template, final Map<String, String> params) {
+  private Template replacePlaceholders(final Template template, final Map<String, Object> params) {
     return new Template(
         replacePlaceholdersInText(template.subject(), params),
         replacePlaceholdersInText(template.body(), params));
   }
 
-  private String replacePlaceholdersInText(final String text, final Map<String, String> params) {
+  private String replacePlaceholdersInText(final String text, final Map<String, Object> params) {
     String result = text;
-    for (final Map.Entry<String, String> entry : params.entrySet()) {
-      result = result.replace("{{" + entry.getKey() + "}}", entry.getValue());
+    for (final Map.Entry<String, Object> entry : params.entrySet()) {
+      result = result.replace("{{" + entry.getKey() + "}}", paramToValue(entry.getValue()));
     }
     return result;
+  }
+
+  private String paramToValue(final Object paramValue) {
+    if (paramValue == null) {
+      return StringUtils.EMPTY;
+    }
+
+    return paramValue instanceof String ? (String) paramValue : paramValue.toString();
   }
 }

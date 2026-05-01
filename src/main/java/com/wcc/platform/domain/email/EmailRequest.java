@@ -1,8 +1,8 @@
 package com.wcc.platform.domain.email;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -21,16 +21,9 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Request object for sending emails")
 public class EmailRequest {
 
-  @NotBlank(message = "Recipient email is required")
-  @Email(message = "Recipient email must be valid")
-  @Schema(description = "Recipient email address", example = "recipient@example.com")
-  private String to;
-
-  @Schema(description = "CC recipients", example = "[\"cc1@example.com\", \"cc2@example.com\"]")
-  private List<String> cc;
-
   @Schema(description = "BCC recipients", example = "[\"bcc@example.com\"]")
-  private List<String> bcc;
+  @NotEmpty(message = "Recipient emails are required")
+  private List<String> recipients = List.of();
 
   @NotBlank(message = "Subject is required")
   @Size(max = 255, message = "Subject must not exceed 255 characters")
@@ -46,8 +39,8 @@ public class EmailRequest {
   @Schema(
       description = "Whether the email body contains HTML content",
       example = "false",
-      defaultValue = "false")
-  private boolean html;
+      defaultValue = "true")
+  private boolean html = true;
 
   @Schema(description = "Reply-to email address", example = "noreply@womencodingcommunity.com")
   private String replyTo;
