@@ -43,6 +43,7 @@ mentorship:
 notification:
   mentor-profile-url: https://www.womencodingcommunity.com/mentors?keywords=
   volunteer-url: https://www.womencodingcommunity.com/volunteer
+  mentorship-email: mentorship@womencodingcommunity.com
 
 logging:
   level:

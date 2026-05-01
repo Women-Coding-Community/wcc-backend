@@ -18,6 +18,16 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
   Optional<Member> findByEmail(String email);
 
   /**
+   * Find member by email.
+   *
+   * @param memberIds list of member ids
+   * @return list of emails corresponding to the provided member ids
+   * @throws com.wcc.platform.domain.exceptions.MemberNotFoundException if any member id does not
+   *     exist in the database
+   */
+  List<String> findEmails(List<Long> memberIds);
+
+  /**
    * Return all saved members.
    *
    * @return list of members

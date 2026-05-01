@@ -65,6 +65,17 @@ public class PostgresMemberRepository implements MemberRepository {
   }
 
   @Override
+  public List<String> findEmails(final List<Long> memberIds) {
+    if (memberIds == null || memberIds.isEmpty()) {
+      return List.of();
+    }
+    final String sql =
+        "SELECT email FROM members WHERE id IN (%s)"
+            .formatted(String.join(",", memberIds.stream().map(String::valueOf).toList()));
+    return jdbc.query(sql, (rs, rowNum) -> rs.getString("email"));
+  }
+
+  @Override
   public Optional<Member> findById(final Long id) {
     return jdbc.query(
         SELECT_BY_ID,
