@@ -1,4 +1,4 @@
-MENTEE_REJECTION_BY_ADMIN:
+MENTEE_LONG_REJECTED_BY_ADMIN:
   subject: "Update on Your {{year}} Mentorship Application – Women Coding Community"
   body: |
     <p>Dear {{menteeName}},</p>
