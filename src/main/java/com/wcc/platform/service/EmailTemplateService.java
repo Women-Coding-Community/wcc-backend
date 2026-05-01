@@ -8,6 +8,7 @@ import com.wcc.platform.domain.template.Template;
 import com.wcc.platform.domain.template.TemplateType;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -118,7 +119,6 @@ public class EmailTemplateService {
     if (paramValue == null) {
       return StringUtils.EMPTY;
     }
-
-    return paramValue instanceof String ? (String) paramValue : paramValue.toString();
+    return Objects.toString(paramValue);
   }
 }
