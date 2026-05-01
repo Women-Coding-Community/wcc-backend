@@ -62,6 +62,7 @@ class MentorshipServiceTest {
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
   @Mock private MentorshipCycleRepository cycleRepository;
+  @Mock private ResourceService resourceService;
   private Mentor mentor;
   private Mentor updatedMentor;
   private MentorDto mentorDto;
@@ -87,7 +88,8 @@ class MentorshipServiceTest {
                 cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                notificationService));
+                notificationService,
+                resourceService));
   }
 
   @Test
@@ -124,8 +126,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and 4+ hours commitment for 1 mentee When creating"
-          + " Then create mentor and return it")
+      "Given mentor with long-term mentorship and 4+ hours commitment for 1 mentee, when creating,"
+          + " then create mentor and return it")
   void testCreateAvailableLongTermMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
@@ -143,7 +145,7 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with ad-hoc mentorship only When creating Then create mentor and return it")
+      "Given mentor with ad-hoc mentorship only, when creating, then create mentor and return it")
   void testCreateAdHocOnlyMentor() {
     var mentor = mock(Mentor.class);
     var menteeSection = mock(MenteeSection.class);
@@ -161,7 +163,7 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and under 2 hours per mentee When creating Then throw"
+      "Given mentor with long-term mentorship and under 2 hours per mentee, when creating, then throw"
           + " IllegalArgumentException")
   void testCreateUnavailableLongTermMentor() {
     var mentor = mock(Mentor.class);
@@ -181,7 +183,7 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and exactly 2 hours per mentee When creating Then"
+      "Given mentor with long-term mentorship and exactly 2 hours per mentee, when creating, then"
           + " create mentor and return it")
   void testCreateLongTermMentorWithMinimumHours() {
     var mentor = mock(Mentor.class);
@@ -253,7 +255,7 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor exists When updating the mentor Then should update mentor attributes and return"
+      "Given mentor exists, when updating the mentor, then should update mentor attributes and return"
           + " updated mentor")
   void testUpdateMentor() {
     long mentorId = 1L;
@@ -269,7 +271,7 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor does not exist When updating the mentor Then should throw"
+      "Given mentor does not exist, when updating the mentor, then should throw"
           + " MemberNotFoundException")
   void testUpdateMentorNotFound() {
     long mentorId = 1L;
@@ -284,7 +286,7 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor exists When updating with mismatched mentor ID Then should throw"
+      "Given mentor exists, when updating with mismatched mentor ID, then should throw"
           + " IllegalArgumentException")
   void testUpdateMentorIllegalIdMismatch() {
     long mentorId = 1L;
@@ -299,8 +301,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and 4+ hours per mentee When updating the mentor"
-          + " Then update and return it")
+      "Given mentor with long-term mentorship and 4+ hours per mentee, when updating the mentor,"
+          + " then update and return it")
   void testUpdateLongTermMentorAvailableHours() {
     final var updatedMentor =
         createUpdatedMentorTest(
@@ -320,7 +322,7 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with ad-hoc mentorship only When updating the mentor Then update and return it")
+      "Given mentor with ad-hoc mentorship only, when updating the mentor, then update and return it")
   void testUpdateAdHocOnlyMentor() {
     final var updatedMentor =
         createUpdatedMentorTest(
@@ -495,8 +497,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor with long-term mentorship and under 2 hours per mentee When updating the mentor"
-          + " Then throw IllegalArgumentException")
+      "Given mentor with long-term mentorship and under 2 hours per mentee, when updating the mentor,"
+          + " then throw IllegalArgumentException")
   void testUpdateUnavailableLongTermMentorIllegalArgumentException() {
     long mentorId = 1L;
     // 2 mentees with only 2 total hours = 1 hour per mentee (below minimum)

@@ -140,6 +140,11 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   @Override
+  public boolean existsById(Long memberId) {
+    return false;
+  }
+
+  @Override
   public void deleteById(final Long id) {
     // not implemented
   }

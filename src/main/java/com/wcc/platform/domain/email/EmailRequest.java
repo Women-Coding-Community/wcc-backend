@@ -23,7 +23,8 @@ public class EmailRequest {
 
   @Schema(description = "BCC recipients", example = "[\"bcc@example.com\"]")
   @NotEmpty(message = "Recipient emails are required")
-  private List<String> recipients = List.of();
+  private List<@jakarta.validation.constraints.Email(message = "Invalid email format") String>
+      recipients = List.of();
 
   @NotBlank(message = "Subject is required")
   @Size(max = 255, message = "Subject must not exceed 255 characters")

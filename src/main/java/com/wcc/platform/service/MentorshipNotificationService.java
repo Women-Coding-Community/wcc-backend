@@ -70,8 +70,11 @@ public class MentorshipNotificationService {
   public void sendApplicationUpdate(
       final Optional<MenteeApplication> application, final MenteeApplication updated) {
 
+    @SuppressWarnings(
+        "PMD.UseConcurrentHashMap") // HashMap is used to support null values from domain model
+    // fields
     final Map<String, Object> params =
-        new java.util.concurrent.ConcurrentHashMap<>(
+        new java.util.HashMap<>(
             Map.of(
                 "applicationId", updated.getApplicationId(),
                 "menteeId", updated.getMenteeId(),
@@ -151,8 +154,11 @@ public class MentorshipNotificationService {
   public void sendMatchUpdate(
       final Optional<MentorshipMatch> previous, final MentorshipMatch updated) {
 
+    @SuppressWarnings(
+        "PMD.UseConcurrentHashMap") // HashMap is used to support null values from domain model
+    // fields
     final Map<String, Object> params =
-        new java.util.concurrent.ConcurrentHashMap<>(
+        new java.util.HashMap<>(
             Map.of(
                 "matchId", Optional.ofNullable(updated.getMatchId()).orElse(0L),
                 "mentorId", updated.getMentorId(),

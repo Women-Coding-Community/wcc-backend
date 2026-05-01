@@ -47,4 +47,12 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
    * @param email member's email
    */
   void deleteByEmail(String email);
+
+  /**
+   * Returns whether a member with the given ID exists in the data source.
+   *
+   * @param memberId the member's unique identifier
+   * @return {@code true} if a member with this ID exists, {@code false} otherwise
+   */
+  boolean existsById(Long memberId);
 }

@@ -119,7 +119,7 @@ class EmailControllerTest {
   void shouldReturnBadRequestForInvalidEmail() throws Exception {
     EmailRequest invalidRequest =
         EmailRequest.builder()
-            .recipients(List.of(""))
+            .recipients(List.of())
             .subject("Test Subject")
             .body("Test Body")
             .build();
