@@ -1,0 +1,33 @@
+MENTEE_REJECTION_BY_ADMIN:
+  subject: "Update on Your {{year}} Mentorship Application – Women Coding Community"
+  body: |
+    <p>Dear {{menteeName}},</p>
+
+    <p>Thank you for your interest in the <strong>{{year}} Women Coding Community Mentorship Programme</strong>.</p>
+
+    <p>
+      After careful review, we regret to inform you that your application has not been successful for this cycle.
+      As part of our selection process, we look for adherence to mandatory requirements (e.g. being a part of our
+      <a href="{{slackUrl}}">Slack</a> community) and clear mentorship goals reflected in applications.
+      Unfortunately, your application did not meet these criteria at this time.
+    </p>
+
+    <p>
+      We understand this may be disappointing, but we encourage you to take this as an opportunity to refine your goals and approach.
+      Being specific about what you hope to gain from mentorship, tailoring your application to mentors, and ensuring your application
+      meets stated requirements can significantly strengthen future applications.
+    </p>
+
+    <p>
+      In the meantime, we encourage you to attend the upcoming <a href="{{launchEventUrl}}">{{year}} Launch Event</a> to hear from previous mentors & mentees and benefit from the panel session.
+      You can also stay involved by joining us on <a href="{{slackUrl}}">Slack</a> (if you haven’t already), and you may find our
+      upcoming monthly <a href="{{adhocMentorshipUrl}}">ad-hoc mentorship</a> helpful as a starting point to gain guidance and build clarity in your learning journey.
+    </p>
+
+    <p>
+      Thank you again for your interest, and we hope to see you actively engaged in the community.
+    </p>
+
+    <p>
+      {{teamEmailSignature}}
+    </p>
