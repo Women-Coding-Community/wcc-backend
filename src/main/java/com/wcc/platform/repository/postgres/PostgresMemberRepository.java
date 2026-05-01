@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -70,10 +71,9 @@ public class PostgresMemberRepository implements MemberRepository {
     if (memberIds == null || memberIds.isEmpty()) {
       return List.of();
     }
-    final String sql =
-        "SELECT email FROM members WHERE id IN (%s)"
-            .formatted(String.join(",", memberIds.stream().map(String::valueOf).toList()));
-    return jdbc.query(sql, (rs, rowNum) -> rs.getString("email"));
+    final String placeholders = String.join(",", Collections.nCopies(memberIds.size(), "?"));
+    final String sql = "SELECT email FROM members WHERE id IN (" + placeholders + ")";
+    return jdbc.query(sql, (rs, rowNum) -> rs.getString("email"), memberIds.toArray());
   }
 
   @Override

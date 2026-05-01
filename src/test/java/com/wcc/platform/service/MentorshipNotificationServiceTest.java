@@ -84,7 +84,7 @@ class MentorshipNotificationServiceTest {
     assertThat(emailRequest.getRecipients()).contains(recipient);
     assertThat(emailRequest.getSubject()).isEqualTo(rendered.subject());
     assertThat(emailRequest.getBody()).isEqualTo(rendered.body());
-    assertThat(emailRequest.isHtml()).isFalse();
+    assertThat(emailRequest.isHtml()).isTrue();
   }
 
   @Test

@@ -10,12 +10,15 @@ import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.MemberRepository;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -74,7 +77,7 @@ public class MentorshipNotificationService {
         "PMD.UseConcurrentHashMap") // HashMap is used to support null values from domain model
     // fields
     final Map<String, Object> params =
-        new java.util.HashMap<>(
+        new HashMap<>(
             Map.of(
                 "applicationId", updated.getApplicationId(),
                 "menteeId", updated.getMenteeId(),
@@ -94,10 +97,12 @@ public class MentorshipNotificationService {
     params.put("createdAt", updated.getCreatedAt());
     params.put("updatedAt", updated.getUpdatedAt());
 
-    sendNotificationByMemberId(
-        TemplateType.MENTEE_APPLICATIONS,
-        params,
-        List.of(updated.getMentorId(), updated.getMenteeId()));
+    final var memberIds = new ArrayList<Long>();
+    if (updated.getMentorId() != null) {
+      memberIds.add(updated.getMentorId());
+    }
+    memberIds.add(updated.getMenteeId());
+    sendNotificationByMemberId(TemplateType.MENTEE_APPLICATIONS, params, memberIds);
   }
 
   /**
@@ -107,7 +112,7 @@ public class MentorshipNotificationService {
    * @param templateType the type of template to render
    * @param templateParams the parameters to use for rendering the template
    */
-  public void sendNotification(
+  /* default */ void sendNotification(
       final TemplateType templateType,
       final Map<String, Object> templateParams,
       final List<String> recipientEmails) {
@@ -119,6 +124,7 @@ public class MentorshipNotificationService {
               .recipients(recipientEmails)
               .subject(template.subject())
               .body(template.body())
+              .html(true)
               .build();
 
       emailService.sendEmail(emailRequest);
@@ -136,16 +142,19 @@ public class MentorshipNotificationService {
    * @param templateType the type of template to render
    * @param templateParams the parameters to use for rendering the template
    */
-  public void sendNotificationByMemberId(
+  /* default */ void sendNotificationByMemberId(
       final TemplateType templateType,
       final Map<String, Object> templateParams,
       final List<Long> memberIds) {
 
     final var recipientEmails =
-        new java.util.ArrayList<>(
+        new ArrayList<>(
             memberRepository.findEmails(memberIds).stream().filter(Objects::nonNull).toList());
 
-    recipientEmails.add(notificationConfig.getMentorshipEmail());
+    final String teamEmail = notificationConfig.getMentorshipEmail();
+    if (StringUtils.isNotBlank(teamEmail)) {
+      recipientEmails.add(teamEmail);
+    }
 
     sendNotification(templateType, templateParams, recipientEmails);
   }
@@ -158,7 +167,7 @@ public class MentorshipNotificationService {
         "PMD.UseConcurrentHashMap") // HashMap is used to support null values from domain model
     // fields
     final Map<String, Object> params =
-        new java.util.HashMap<>(
+        new HashMap<>(
             Map.of(
                 "matchId", Optional.ofNullable(updated.getMatchId()).orElse(0L),
                 "mentorId", updated.getMentorId(),
