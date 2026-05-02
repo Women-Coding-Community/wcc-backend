@@ -13,11 +13,11 @@ import com.wcc.platform.domain.platform.mentorship.MenteeApplicationResponse;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
-import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenteeWorkflowService {
 
   private final MenteeApplicationRepository applicationRepository;
-  private final MentorRepository mentorRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
   private final MenteeRepository menteeRepository;
+  private final MentorshipService mentorshipService;
 
   /**
    * Admin approves a mentee application.
@@ -63,6 +63,10 @@ public class MenteeWorkflowService {
         applicationId,
         application.getMenteeId(),
         application.getMentorId());
+
+    mentorshipService
+        .getNotificationService()
+        .sendApplicationUpdate(Optional.of(application), updated);
 
     return updated;
   }
@@ -91,6 +95,10 @@ public class MenteeWorkflowService {
         "Application {} from mentee {} rejected by the Mentorship Team",
         applicationId,
         application.getMenteeId());
+
+    mentorshipService
+        .getNotificationService()
+        .sendApplicationUpdate(Optional.of(application), updated);
 
     final boolean forwarded = forwardToNextPriorityMentor(application);
     if (!forwarded) {
@@ -128,6 +136,10 @@ public class MenteeWorkflowService {
         applicationId,
         application.getMenteeId());
 
+    mentorshipService
+        .getNotificationService()
+        .sendApplicationUpdate(Optional.of(application), updated);
+
     return updated;
   }
 
@@ -154,6 +166,10 @@ public class MenteeWorkflowService {
         application.getMentorId(),
         applicationId,
         application.getMenteeId());
+
+    mentorshipService
+        .getNotificationService()
+        .sendApplicationUpdate(Optional.of(application), updated);
 
     final boolean forwarded = forwardToNextPriorityMentor(application);
     if (!forwarded) {
@@ -260,7 +276,7 @@ public class MenteeWorkflowService {
   @Transactional
   public MenteeApplication assignMentor(
       final Long menteeId, final Long cycleId, final Long mentorId, final String notes) {
-    if (mentorRepository.findById(mentorId).isEmpty()) {
+    if (mentorshipService.getMentorRepository().findById(mentorId).isEmpty()) {
       throw new MentorNotFoundException(mentorId);
     }
 
@@ -288,9 +304,10 @@ public class MenteeWorkflowService {
                         String.format(
                             "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
                             menteeId, cycleId)));
+    final var reason = "Manual assignment by admin [" + notes + "]";
 
     applicationRepository.updateStatus(
-        manualMatchApp.getApplicationId(), ApplicationStatus.REJECTED, "Manually assigned mentor");
+        manualMatchApp.getApplicationId(), ApplicationStatus.REJECTED, reason);
 
     final MenteeApplication newApplication =
         MenteeApplication.builder()
@@ -299,12 +316,14 @@ public class MenteeWorkflowService {
             .cycleId(cycleId)
             .priorityOrder(null)
             .status(ApplicationStatus.PENDING)
-            .applicationMessage(notes)
+            .applicationMessage(reason)
             .build();
 
     final MenteeApplication created = applicationRepository.create(newApplication);
 
     log.info("Manually assigned mentor {} to mentee {} in cycle {}", mentorId, menteeId, cycleId);
+
+    mentorshipService.getNotificationService().sendApplicationUpdate(Optional.empty(), created);
 
     return created;
   }
@@ -347,6 +366,10 @@ public class MenteeWorkflowService {
         menteeId,
         cycleId,
         reason);
+
+    mentorshipService
+        .getNotificationService()
+        .sendApplicationUpdate(Optional.of(manualMatchApp), updated);
 
     return updated;
   }
@@ -401,14 +424,19 @@ public class MenteeWorkflowService {
 
     if (nextApplication.isPresent()) {
       final MenteeApplication nextApp = nextApplication.get();
-      applicationRepository.updateStatus(
-          nextApp.getApplicationId(), ApplicationStatus.MENTOR_REVIEWING, null);
+      final var nextAppUpdated =
+          applicationRepository.updateStatus(
+              nextApp.getApplicationId(), ApplicationStatus.MENTOR_REVIEWING, "[Next Priority]");
 
       log.info(
           "Forwarded application to next priority mentor {} for mentee {}",
           nextApp.getMentorId(),
           nextApp.getMenteeId());
-      // TODO: Send email notification to next priority mentor
+
+      mentorshipService
+          .getNotificationService()
+          .sendApplicationUpdate(Optional.of(nextApp), nextAppUpdated);
+
       return true;
     }
 
@@ -456,6 +484,10 @@ public class MenteeWorkflowService {
                 + "as all applications are non-forwardable",
             menteeId,
             cycleId);
+
+        mentorshipService
+            .getNotificationService()
+            .sendApplicationUpdate(Optional.empty(), manualMatchApp);
       }
     }
   }

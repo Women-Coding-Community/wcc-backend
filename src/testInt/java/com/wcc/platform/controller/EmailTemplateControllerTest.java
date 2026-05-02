@@ -32,7 +32,7 @@ class EmailTemplateControllerTest extends DefaultDatabaseSetup {
 
   @Test
   void previewValidRequestReturnsRenderedTemplate() {
-    var params =
+    Map<String, Object> params =
         Map.of(
             "mentorName", "Alice",
             "menteeName", "Bob",

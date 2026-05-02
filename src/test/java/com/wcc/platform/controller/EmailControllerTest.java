@@ -55,18 +55,17 @@ class EmailControllerTest {
   @BeforeEach
   void setUp() {
 
-    Map<String, String> templateParams = Map.of(
-        "mentorName", "Mike",
-        "program", "Ad-hoc mentorship",
-        "menteeName", "Alice",
-        "deadline", "27/09/25",
-        "teamEmailSignature", "Best Regards"
-    );
-
+    Map<String, Object> templateParams =
+        Map.of(
+            "mentorName", "Mike",
+            "program", "Ad-hoc mentorship",
+            "menteeName", "Alice",
+            "deadline", "27/09/25",
+            "teamEmailSignature", "Best Regards");
 
     emailRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("Test Body")
             .html(false)
@@ -119,7 +118,11 @@ class EmailControllerTest {
       "Given invalid email request without recipient, when sending email, then should return bad request")
   void shouldReturnBadRequestForInvalidEmail() throws Exception {
     EmailRequest invalidRequest =
-        EmailRequest.builder().to("").subject("Test Subject").body("Test Body").build();
+        EmailRequest.builder()
+            .recipients(List.of())
+            .subject("Test Subject")
+            .body("Test Body")
+            .build();
 
     mockMvc
         .perform(
@@ -135,7 +138,7 @@ class EmailControllerTest {
   void shouldReturnBadRequestForInvalidEmailFormat() throws Exception {
     EmailRequest invalidRequest =
         EmailRequest.builder()
-            .to("invalid-email")
+            .recipients(List.of("invalid-email"))
             .subject("Test Subject")
             .body("Test Body")
             .build();
@@ -171,14 +174,14 @@ class EmailControllerTest {
   void shouldSendBulkEmails() throws Exception {
     EmailRequest request1 =
         EmailRequest.builder()
-            .to("recipient1@example.com")
+            .recipients(List.of("recipient1@example.com"))
             .subject("Subject 1")
             .body("Body 1")
             .build();
 
     EmailRequest request2 =
         EmailRequest.builder()
-            .to("recipient2@example.com")
+            .recipients(List.of("recipient2@example.com"))
             .subject("Subject 2")
             .body("Body 2")
             .build();
@@ -220,7 +223,7 @@ class EmailControllerTest {
   void shouldSendHtmlEmail() throws Exception {
     EmailRequest htmlRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("<h1>HTML Content</h1>")
             .html(true)
@@ -244,11 +247,9 @@ class EmailControllerTest {
   void shouldSendEmailWithCcAndBcc() throws Exception {
     EmailRequest ccBccRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("Test Body")
-            .cc(List.of("cc@example.com"))
-            .bcc(List.of("bcc@example.com"))
             .build();
 
     when(emailService.sendEmail(any(EmailRequest.class))).thenReturn(emailResponse);
@@ -293,6 +294,4 @@ class EmailControllerTest {
                 .content(objectMapper.writeValueAsString(invalidTempEmailReq)))
         .andExpect(status().isBadRequest());
   }
-
-
 }

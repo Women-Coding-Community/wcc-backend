@@ -2,12 +2,18 @@ package com.wcc.platform.domain.template;
 
 import lombok.Getter;
 
+/**
+ * Enum representing different types of email templates. Each enum constant corresponds to a
+ * specific template file used for generating email content.
+ */
 @Getter
 @SuppressWarnings("PMD.LongVariable")
 public enum TemplateType {
   FEEDBACK_MENTOR_ADHOC("feedback_mentor_adhoc.yml"),
   FEEDBACK_MENTOR_LONG("feedback_mentor_long_term.yml"),
   NEW_CYCLE_MENTOR_LONG("joining_new_mentorship_cycle_mentor_long_term.yml"),
+  MATCH_APPLICATIONS("match_applications.yml"),
+  MENTEE_APPLICATIONS("mentee_applications.yml"),
   WELCOME_LONG("welcome_mentorship_mentee_mentor_long_term.yml"),
   KICK_OFF_MEETING_LONG("kick_off_meeting_mentor_mentee_long_term.yml"),
   MENTEE_APP_LONG("long_term_mentorship_application_received_mentee.yml"),

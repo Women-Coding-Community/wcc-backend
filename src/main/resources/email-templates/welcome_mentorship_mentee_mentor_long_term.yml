@@ -1,5 +1,5 @@
 WELCOME_LONG:
-  subject: "Welcome to the {{year}} Mentorship Programme"
+  subject: "You are paired up in WCC Mentorship Program {{year}}"
   body: |
     <p>Dear {{mentorName}} and {{menteeName}},</p>
 
@@ -7,28 +7,33 @@ WELCOME_LONG:
 
     <p>Mentorship is a powerful tool for personal and professional growth, and we hope this relationship is a meaningful opportunity for you to learn, grow, and achieve your goals.</p>
     
-    <p><strong>--- Your Pairing ---</strong></p>
+    <p><strong>Your Pairing</strong></p>
 
     <ul>
       <li><strong>Mentor:</strong> {{mentorName}} (<a href="mailto:{{mentorEmail}}">{{mentorEmail}}</a>)</li>
       <li><strong>Mentee:</strong> {{menteeName}} (<a href="mailto:{{menteeEmail}}">{{menteeEmail}}</a>)</li>
-      <li><strong>Google Meet Link:</strong> <a href="{{mentorshipMeetingLink}}">{{mentorshipMeetingLink}}</a></li>
+      <li><strong>Google Meet Link:</strong> <a href="{{googleMeetLink}}">{{googleMeetLink}}</a></li>
     </ul>
 
-    <p>We've provided the Google Meet link above for your sessions (please ignore the corresponding calendar invite). You're welcome to use a personal or alternative communication method instead if you prefer.</p>
-    <p>You may choose whether to record, transcribe, or take notes during your calls. Please be aware that if you choose to record or keep notes, WCC will automatically receive a copy. This information is fully confidential and will not be shared with anyone.</p>
-
-    <p><strong>--- Programme Overview ---</strong></p>
     <p>
-    The programme runs from May to October. You'll decide the frequency and format of your meetings together during your first session.
-    We recommend at least two sessions per month (45 minutes to 1 hour each) to build a meaningful relationship.
+    We've provided the Google Meet link above for your sessions (please ignore the corresponding calendar invite).
+    <strong>Note:</strong> You're welcome to use a personal meeting link or alternative communication method instead if you prefer. 
+    If you use the provided meeting link, you may choose whether to record, transcribe, or take notes during your calls. 
+    Please be aware that if you choose to record or keep notes, WCC will automatically receive a copy. 
+    This information is fully confidential and will not be shared with anyone.
+    </p>
+    
+    <p>
+    The programme will run from <strong>May to October</strong>.
+    The frequency and format of the meetings will be decided by you during your initial meeting.
+    We recommend at least <strong>two mentoring sessions per month</strong> (45 minutes to 1 hour each) to build a meaningful relationship.
     </p>
 
-    <p><strong>--- Getting Started ---</strong></p>
+    <p><strong>Getting Started</strong></p>
     <ol>
       <li>
         Schedule your initial meeting with your mentor. {{menteeName}}, please take the lead on booking this first session using the mentor’s scheduling link:
-        <a href="{{mentorSchedulingLink}}">Schedule your first meeting</a>
+        <a href="{{googleMeetLink}}">Schedule your first meeting</a>
       </li>
       <li>Define specific and measurable goals for the mentorship relationship.</li>
       <li>Develop an action plan to achieve those goals.</li>
@@ -36,7 +41,7 @@ WELCOME_LONG:
     </ol>
     <p>We also encourage you to stay in touch between sessions through your preferred channel (Slack or email) to get the most out of the programme.</p>
 
-    <p><strong>--- Resources ---</strong></p>
+    <p><strong>Resources</strong></p>
     <p>To support you along the way:</p>
     <ul>
       <li>
@@ -46,10 +51,9 @@ WELCOME_LONG:
         <a href="{{codeOfConductUrl}}">Code of Conduct</a>
       </li>
     </ul>
-
-    <p>If you have any questions, please reach out to us by email or in our Slack channel <strong>#mentorship</strong>.</p>
-    <p>Wishing you a rewarding mentorship journey!</p>
     
+    <p>We hope these resources help you make the most of this mentorship opportunity. If you have any questions or concerns, please don’t hesitate to reach out to us via email or the Slack channel <strong>#mentorship</strong>.</p>
+    <p>Wishing you a rewarding mentorship journey!</p>
     <p>
     {{teamEmailSignature}}
     </p>

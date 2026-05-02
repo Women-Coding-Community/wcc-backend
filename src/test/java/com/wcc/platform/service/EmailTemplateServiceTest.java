@@ -40,7 +40,7 @@ class EmailTemplateServiceTest {
 
   @Test
   void renderTemplateValidParametersSuccess() throws IOException {
-    Map<String, String> params = new HashMap<>();
+    Map<String, Object> params = new HashMap<>();
     params.put("mentorName", "Doe");
     params.put("menteeName", "Smith");
 
@@ -64,7 +64,7 @@ class EmailTemplateServiceTest {
   @Test
   void renderTemplateMissingParametersException() throws IOException {
     // Given
-    Map<String, String> params = new HashMap<>();
+    Map<String, Object> params = new HashMap<>();
     params.put("mentorName", "John Doe");
 
     Template template = createFeedbackTemplate();
@@ -124,7 +124,7 @@ class EmailTemplateServiceTest {
 
   @Test
   void invalidTemplateThrowsException() throws IOException {
-    Map<String, String> params = new HashMap<>();
+    Map<String, Object> params = new HashMap<>();
     params.put("mentorName", "John Doe");
 
     when(yamlObjectMapper.readValue(any(InputStream.class), any(TypeReference.class)))
