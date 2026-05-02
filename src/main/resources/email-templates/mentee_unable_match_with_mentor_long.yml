@@ -25,7 +25,7 @@ NO_MATCH_MENTOR_LONG:
       and you can apply during the <strong>first 10 days of each month</strong>.
     </p>
 
-    <p>If you have any questions or concerns, please do not hesitate to contact us via email or Slack.</p>
+    <p>If you have any questions or concerns, please do not hesitate to contact us via email or <a href="{{slackUrl}}">Slack</a>.</p>
     <p>Thank you again for your interest in the mentorship programme. We appreciate your patience and understanding, and we look forward to connecting you with a mentor soon.</p>
 
     <p>
