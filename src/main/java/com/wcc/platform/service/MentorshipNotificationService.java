@@ -136,7 +136,7 @@ public class MentorshipNotificationService {
    * @param templateType the type of template to render
    * @param templateParams the parameters to use for rendering the template
    */
-  /* default */ void sendNotificationByMemberId(
+  public void sendNotificationByMemberId(
       final TemplateType templateType,
       final Map<String, Object> templateParams,
       final List<Long> memberIds) {
