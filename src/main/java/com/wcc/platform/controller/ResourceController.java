@@ -121,7 +121,7 @@ public class ResourceController {
       @Parameter(description = "Profile picture file") @RequestParam("file")
           final MultipartFile file) {
 
-    final var profilePicture = resourceService.uploadMentorProfilePicture(memberId, file);
+    final var profilePicture = resourceService.uploadMemberProfilePicture(memberId, file);
     return new ResponseEntity<>(profilePicture, HttpStatus.CREATED);
   }
 
@@ -129,7 +129,7 @@ public class ResourceController {
   @GetMapping("/member-profile-picture/{memberId}")
   @Operation(summary = "Get a member's profile picture")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<MemberProfilePicture> getMentorProfilePicture(
+  public ResponseEntity<MemberProfilePicture> getMemberProfilePicture(
       @Parameter(description = "Id of the member") @PathVariable final Long memberId) {
 
     final var profilePicture = resourceService.getMemberProfilePicture(memberId);
