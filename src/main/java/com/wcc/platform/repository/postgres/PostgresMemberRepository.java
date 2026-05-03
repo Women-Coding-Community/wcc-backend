@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class PostgresMemberRepository implements MemberRepository {
   private static final String DELETE_BY_SQL = "DELETE FROM members WHERE email = ?";
   private static final String SELECT_BY_EMAIL = "SELECT * FROM members WHERE email = ?";
   private static final String SELECT_BY_ID = "SELECT * FROM members WHERE id = ?";
+  private static final String COUNT_BY_ID = "SELECT count(1) FROM members WHERE id = ?";
   private static final String SELECT_ALL_MEMBERS = "SELECT * FROM members";
 
   private final JdbcTemplate jdbc;
@@ -65,6 +67,16 @@ public class PostgresMemberRepository implements MemberRepository {
   }
 
   @Override
+  public List<String> findEmails(final List<Long> memberIds) {
+    if (memberIds == null || memberIds.isEmpty()) {
+      return List.of();
+    }
+    final String placeholders = String.join(",", Collections.nCopies(memberIds.size(), "?"));
+    final String sql = "SELECT email FROM members WHERE id IN (" + placeholders + ")";
+    return jdbc.query(sql, (rs, rowNum) -> rs.getString("email"), memberIds.toArray());
+  }
+
+  @Override
   public Optional<Member> findById(final Long id) {
     return jdbc.query(
         SELECT_BY_ID,
@@ -96,5 +108,10 @@ public class PostgresMemberRepository implements MemberRepository {
   @Override
   public void deleteByEmail(final String email) {
     jdbc.update(DELETE_BY_SQL, email);
+  }
+
+  @Override
+  public boolean existsById(final Long id) {
+    return jdbc.queryForObject(COUNT_BY_ID, Integer.class, id).equals(1);
   }
 }

@@ -80,7 +80,7 @@ class MemberServiceTest {
 
   @Test
   @DisplayName(
-      "Given Member email exist When try create Then should throws DuplicatedMemberException")
+      "Given Member email exist, when try create, then should throws DuplicatedMemberException")
   void testCreateMemberDuplicated() {
     when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.of(member));
 
@@ -90,7 +90,7 @@ class MemberServiceTest {
   }
 
   @Test
-  @DisplayName("Given has members When getting all members, then should return all")
+  @DisplayName("Given has members, when getting all members, then should return all")
   void testGetAllMembers() {
     List<Member> members = List.of(member);
     when(memberRepository.getAll()).thenReturn(members);
@@ -102,7 +102,7 @@ class MemberServiceTest {
   }
 
   @Test
-  @DisplayName("Given no member exist When getting all members, then should return empty list")
+  @DisplayName("Given no member exist, when getting all members, then should return empty list")
   void testGetAllMembersEmpty() {
     when(memberRepository.getAll()).thenReturn(null);
 
@@ -114,10 +114,11 @@ class MemberServiceTest {
 
   @Test
   @DisplayName(
-      "Given member exist When updating the member "
-          + "Then should update member attributes and return updated member")
+      "Given member exist, when updating the member, "
+          + "then should update member attributes and return updated member")
   void testUpdateMember() {
     long memberId = 1L;
+    when(memberRepository.existsById(memberId)).thenReturn(true);
     when(memberRepository.update(anyLong(), any())).thenReturn(updatedMember);
     when(memberRepository.findById(memberId)).thenReturn(Optional.ofNullable(member));
     Member result = service.updateMember(memberId, memberDto);
@@ -128,8 +129,8 @@ class MemberServiceTest {
 
   @Test
   @DisplayName(
-      "Given member exist When updating the member with incorrect id object "
-          + "Then throws IllegalArgumentException ")
+      "Given member does not exist in DB, when updating the member, "
+          + "then throws IllegalArgumentException")
   void testUpdateMemberIllegalId() {
     long memberId = 2L;
 
@@ -141,8 +142,8 @@ class MemberServiceTest {
 
   @Test
   @DisplayName(
-      "Given member does not exist When try to delete member "
-          + "Then throws MemberNotFoundException ")
+      "Given member does not exist, when try to delete member, "
+          + "then throws MemberNotFoundException")
   void deleteUserThrowsException() {
     Long memberId = memberDto.getId();
     when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
@@ -153,7 +154,7 @@ class MemberServiceTest {
   }
 
   @Test
-  @DisplayName("Given member exist When try to delete member Then user is deleted")
+  @DisplayName("Given member exist, when try to delete member, then user is deleted")
   void deleteUserSuccess() {
     Long memberId = memberDto.getId();
     when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
@@ -178,10 +179,10 @@ class MemberServiceTest {
     var result = service.getAllMembers();
 
     assertThat(result).hasSize(1);
-    var memberResult = result.get(0);
+    var memberResult = result.getFirst();
     assertThat(memberResult.getImages()).hasSize(1);
-    assertThat(memberResult.getImages().get(0).path()).isEqualTo(resource.getDriveFileLink());
-    assertThat(memberResult.getImages().get(0).type()).isEqualTo(ImageType.DESKTOP);
+    assertThat(memberResult.getImages().getFirst().path()).isEqualTo(resource.getDriveFileLink());
+    assertThat(memberResult.getImages().getFirst().type()).isEqualTo(ImageType.DESKTOP);
   }
 
   @Test

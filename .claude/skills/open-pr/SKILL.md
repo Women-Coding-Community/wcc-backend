@@ -37,7 +37,7 @@ allowed-tools: Bash, Read, Glob
 
 3. Suggest a PR title using Conventional Commits format: `<type>: <short imperative description>` (50–72 chars). When multiple types apply, use the most significant: `feat` > `fix` > `refactor` > `test` > `docs` > `chore`.
 
-4. Generate the filled-in PR description. Pre-check only the applicable change type boxes; remove the inapplicable ones entirely. Write all prose sections (Description, Related Issue) as flowing paragraphs — do NOT wrap lines at any character limit. Each sentence or logical thought should continue on the same line so that GitHub renders the text correctly without unwanted line breaks.
+4. Generate the filled-in PR description. Pre-check only the applicable change type boxes; remove the inapplicable ones entirely. Write all prose sections (Description, Related Issue) as flowing paragraphs where **each paragraph is a single unbroken line** — do NOT insert newlines within a paragraph for any reason. Blank lines between paragraphs are fine; newlines inside a paragraph are not. When the user pastes the description into GitHub, mid-sentence newlines are preserved literally in the text area and break the visual layout.
 
 5. **Screenshots section** — decide based on changed files:
    - Frontend changes (`admin-wcc-app/**`, `*.tsx`, `*.css`, components, pages): include the section and list the specific screenshots needed (before/after UI, error states, label/title changes, GIF for interactions). Emphasise that screenshots are required for the reviewer to assess visual changes.
@@ -61,7 +61,11 @@ allowed-tools: Bash, Read, Glob
 
 ## Rules
 
-- **Never hard-wrap prose** — description text must not have forced line breaks mid-sentence or mid-paragraph; let GitHub reflow the text naturally
+- **Each prose paragraph must be a single unbroken line** — never wrap text at 72, 80, or any column width. The only newlines inside prose sections must be blank lines separating paragraphs. Mid-sentence newlines paste literally into the GitHub text area and break the rendered layout.
+
+  ✅ Correct: `This PR adds email notifications. Notifications are sent to both mentor and mentee when an application changes.`
+
+  ❌ Wrong: `This PR adds email notifications.\nNotifications are sent to both mentor\nand mentee when an application changes.`
 
 - Always target `main` on `Women-Coding-Community/wcc-backend` (upstream)
 - Never use `gh pr create` — fork permissions require the user to open the PR through the browser

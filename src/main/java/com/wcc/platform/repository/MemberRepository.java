@@ -18,6 +18,16 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
   Optional<Member> findByEmail(String email);
 
   /**
+   * Find member by email.
+   *
+   * @param memberIds list of member ids
+   * @return list of emails corresponding to the provided member ids
+   * @throws com.wcc.platform.domain.exceptions.MemberNotFoundException if any member id does not
+   *     exist in the database
+   */
+  List<String> findEmails(List<Long> memberIds);
+
+  /**
    * Return all saved members.
    *
    * @return list of members
@@ -37,4 +47,12 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
    * @param email member's email
    */
   void deleteByEmail(String email);
+
+  /**
+   * Returns whether a member with the given ID exists in the data source.
+   *
+   * @param memberId the member's unique identifier
+   * @return {@code true} if a member with this ID exists, {@code false} otherwise
+   */
+  boolean existsById(Long memberId);
 }

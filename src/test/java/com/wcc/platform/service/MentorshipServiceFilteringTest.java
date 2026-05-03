@@ -49,6 +49,7 @@ class MentorshipServiceFilteringTest {
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private UserProvisionService userProvisionService;
   @Mock private MentorshipNotificationService notificationService;
+  @Mock private ResourceService resourceService;
   private MentorshipService service;
   private Mentor mentor1;
   private MentorsPage mentorsPage;
@@ -63,7 +64,8 @@ class MentorshipServiceFilteringTest {
                 cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                notificationService));
+                notificationService,
+                resourceService));
     var cycle =
         MentorshipCycleEntity.builder()
             .mentorshipType(MentorshipType.AD_HOC)
@@ -103,8 +105,8 @@ class MentorshipServiceFilteringTest {
 
   @Test
   @DisplayName(
-      "Given mentors page search When all filters are matched "
-          + "Then returned only matched mentors")
+      "Given mentors page search, when all filters are matched, "
+          + "then returned only matched mentors")
   void whenApplyAllFiltersInCombinationThenReturnOnlyMatchingMentors() {
     var filters =
         new MentorAppliedFilters(
@@ -123,8 +125,8 @@ class MentorshipServiceFilteringTest {
 
   @Test
   @DisplayName(
-      "Given mentors page search When keyword does not match with any mentor "
-          + "Then return empty")
+      "Given mentors page search, when keyword does not match with any mentor, "
+          + "then return empty")
   void givenMentorSearchWhenKeywordDoesNotMatchWithAnyMentorThenReturnEmpty() {
     var filters = new MentorAppliedFilters("John", List.of(), 0, List.of(), List.of(), List.of());
 
@@ -135,8 +137,8 @@ class MentorshipServiceFilteringTest {
 
   @Test
   @DisplayName(
-      "Given mentors page search When keyword does not match with any mentor "
-          + "Then return empty")
+      "Given mentors page search, when keyword does not match with any mentor, "
+          + "then return empty")
   void giveMentorSearchWhenTechnicalAreaDoesNotMatchWithAnyMentorThenReturnEmpty() {
     var filters =
         new MentorAppliedFilters(

@@ -23,6 +23,7 @@ import com.wcc.platform.utils.FiltersUtil;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -40,12 +41,15 @@ public class MentorshipService {
       MentorshipCycleEntity.builder().status(CycleStatus.CLOSED).build();
 
   private static final int MINIMUM_HOURS = 2;
-  private final MentorRepository mentorRepository;
-  private final MemberRepository memberRepository;
+
+  @Getter private final MentorRepository mentorRepository;
+  @Getter private final MemberRepository memberRepository;
+
   private final MentorshipCycleRepository cycleRepository;
   private final UserProvisionService userProvisionService;
   private final MemberProfilePictureRepository profilePicRepo;
-  private final MentorshipNotificationService notificationService;
+  @Getter private final MentorshipNotificationService notificationService;
+  private final ResourceService resourceService;
 
   /**
    * Create a mentor record.
@@ -232,6 +236,15 @@ public class MentorshipService {
 
     final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
     final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
+    if (mentor.getImages().isEmpty() && !mentorDto.getImages().isEmpty()) {
+      resourceService.saveExternalProfilePicture(
+          mentorId,
+          mentorDto.getImages().stream()
+              .filter(i -> i.alt().startsWith("Profile"))
+              .map(Image::path)
+              .findFirst()
+              .orElseThrow(() -> new IllegalArgumentException("No profile picture found")));
+    }
 
     final Mentor updatedMentor = mentorDto.merge(mentor);
     validateMentorCommitment(updatedMentor);

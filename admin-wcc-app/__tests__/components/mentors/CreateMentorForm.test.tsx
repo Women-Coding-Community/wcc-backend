@@ -39,17 +39,23 @@ const fillRequiredFields = async (user: ReturnType<typeof userEvent.setup>) => {
   const activeOption = await screen.findByRole('option', { name: /active/i });
   await user.click(activeOption);
 
-  const technicalAreasInput = screen.getByLabelText(/technical areas/i);
-  await user.click(technicalAreasInput);
+  // Select first technical area
+  await waitFor(() => expect(screen.queryByRole('listbox')).not.toBeInTheDocument());
+  const areaLabels = screen.getAllByText('Area');
+  const areaFormControl = areaLabels[0].closest('.MuiFormControl-root');
+  const areaSelect = areaFormControl?.querySelector('[role="combobox"]') as HTMLElement;
+  fireEvent.mouseDown(areaSelect);
   const backendOption = await screen.findByRole('option', { name: /backend/i });
   await user.click(backendOption);
-  await user.click(screen.getByText('Skills & Experience'));
 
-  const progLangInput = screen.getByLabelText(/programming languages/i);
-  await user.click(progLangInput);
+  // Select first programming language
+  await waitFor(() => expect(screen.queryByRole('listbox')).not.toBeInTheDocument());
+  const langLabels = screen.getAllByText('Language');
+  const langFormControl = langLabels[0].closest('.MuiFormControl-root');
+  const langSelect = langFormControl?.querySelector('[role="combobox"]') as HTMLElement;
+  fireEvent.mouseDown(langSelect);
   const javaOption = await screen.findByRole('option', { name: /^java$/i });
   await user.click(javaOption);
-  await user.click(screen.getByText('Skills & Experience'));
 
   const focusInput = screen.getByLabelText(/mentorship focus/i);
   await user.click(focusInput);
@@ -164,8 +170,12 @@ describe('CreateMentorForm', () => {
       bio: 'Experienced developer',
       skills: {
         yearsExperience: 5,
-        areas: expect.arrayContaining(['BACKEND']),
-        languages: expect.arrayContaining(['JAVA']),
+        areas: expect.arrayContaining([
+          expect.objectContaining({ technicalArea: 'BACKEND', proficiencyLevel: 'INTERMEDIATE' }),
+        ]),
+        languages: expect.arrayContaining([
+          expect.objectContaining({ language: 'JAVA', proficiencyLevel: 'INTERMEDIATE' }),
+        ]),
         mentorshipFocus: expect.any(Array),
       },
       menteeSection: {

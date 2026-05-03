@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Avatar,
@@ -32,6 +32,7 @@ import {
   getMentorApplications,
 } from '@/services/menteeService';
 import { MenteeApplication } from '@/types/menteeApplication';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 interface MemberWithId {
   id: number;
@@ -59,6 +60,12 @@ export default function MentorDashboardPage() {
   const [declineReason, setDeclineReason] = useState('');
   const [declineTargetId, setDeclineTargetId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [expandedMessageId, setExpandedMessageId] = useState<number | null>(null);
+  const [expandedBioId, setExpandedBioId] = useState<number | null>(null);
+  const [overflowingIds, setOverflowingIds] = useState<Set<number>>(new Set());
+  const [overflowingBioIds, setOverflowingBioIds] = useState<Set<number>>(new Set());
+  const textRefs = useRef<Map<number, HTMLElement>>(new Map());
+  const bioRefs = useRef<Map<number, HTMLElement>>(new Map());
 
   const mentorId = (member as MemberWithId | null)?.id;
   const canAccess = roles.includes('ADMIN') || roles.includes('MENTOR');
@@ -93,6 +100,27 @@ export default function MentorDashboardPage() {
     if (!token || !mentorId || !canAccess) return;
     loadData();
   }, [canAccess, loadData, mentorId, token]);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      const newOverflowing = new Set<number>();
+      textRefs.current.forEach((el, id) => {
+        if (el.scrollWidth > el.clientWidth) {
+          newOverflowing.add(id);
+        }
+      });
+      setOverflowingIds(newOverflowing);
+
+      const newOverflowingBios = new Set<number>();
+      bioRefs.current.forEach((el, id) => {
+        if (el.scrollHeight > el.clientHeight) {
+          newOverflowingBios.add(id);
+        }
+      });
+      setOverflowingBioIds(newOverflowingBios);
+    };
+    requestAnimationFrame(checkOverflow);
+  }, [pendingApplications, assignedApplications]);
 
   function openDeclineDialog(applicationId: number) {
     setDeclineTargetId(applicationId);
@@ -158,7 +186,7 @@ export default function MentorDashboardPage() {
             ) : (
               <Stack spacing={2}>
                 {assignedApplications.map((app) => {
-                  const name = `Mentee #${app.menteeId}`;
+                  const name = app.menteeName || `Mentee #${app.menteeId}`;
                   return (
                     <Paper key={app.applicationId} variant="outlined" sx={{ p: 2 }}>
                       <Stack
@@ -168,18 +196,86 @@ export default function MentorDashboardPage() {
                         flexWrap="wrap"
                         gap={1}
                       >
-                        <Stack direction="row" alignItems="center" spacing={2}>
+                        <Stack direction="row" alignItems="flex-start" spacing={2}>
                           <Avatar sx={{ bgcolor: 'primary.main' }}>{getInitials(name)}</Avatar>
-                          <Typography fontWeight={600}>{name}</Typography>
-                          <Chip
-                            label="Active"
-                            size="small"
-                            sx={{
-                              bgcolor: 'success.light',
-                              color: 'success.dark',
-                              fontWeight: 600,
-                            }}
-                          />
+                          <Box>
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <Typography fontWeight={600}>{name}</Typography>
+                              {app.menteeLinkedIn && (
+                                <Button
+                                  href={app.menteeLinkedIn}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  size="small"
+                                  sx={{ minWidth: 'auto', p: 0.5 }}
+                                >
+                                  <LinkedInIcon fontSize="small" sx={{ color: '#0077b5' }} />
+                                </Button>
+                              )}
+                              <Chip
+                                label="Active"
+                                size="small"
+                                sx={{
+                                  bgcolor: 'success.light',
+                                  color: 'success.dark',
+                                  fontWeight: 600,
+                                }}
+                              />
+                            </Stack>
+                            {app.menteeBio && (
+                              <Box sx={{ mt: 0.5 }}>
+                                {expandedBioId === app.applicationId ? (
+                                  <>
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                      sx={{ whiteSpace: 'pre-wrap' }}
+                                    >
+                                      {app.menteeBio}
+                                    </Typography>
+                                    <Button
+                                      size="small"
+                                      onClick={() => setExpandedBioId(null)}
+                                      sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                    >
+                                      Show less
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                      sx={{
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: 'vertical',
+                                        overflow: 'hidden',
+                                      }}
+                                      ref={(el) => {
+                                        if (el) {
+                                          bioRefs.current.set(app.applicationId, el);
+                                        } else {
+                                          bioRefs.current.delete(app.applicationId);
+                                        }
+                                      }}
+                                    >
+                                      {app.menteeBio}
+                                    </Typography>
+                                    {overflowingBioIds.has(app.applicationId) && (
+                                      <Button
+                                        size="small"
+                                        onClick={() => setExpandedBioId(app.applicationId)}
+                                        sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                      >
+                                        Show more
+                                      </Button>
+                                    )}
+                                  </>
+                                )}
+                              </Box>
+                            )}
+                          </Box>
                         </Stack>
                         <Stack direction="row" spacing={1} alignItems="center">
                           <Button size="small" variant="outlined">
@@ -218,6 +314,9 @@ export default function MentorDashboardPage() {
                         <strong>Mentee</strong>
                       </TableCell>
                       <TableCell>
+                        <strong>Bio</strong>
+                      </TableCell>
+                      <TableCell>
                         <strong>Message</strong>
                       </TableCell>
                       <TableCell>
@@ -230,7 +329,7 @@ export default function MentorDashboardPage() {
                   </TableHead>
                   <TableBody>
                     {pendingApplications.map((app) => {
-                      const name = `Mentee #${app.menteeId}`;
+                      const name = app.menteeName || `Mentee #${app.menteeId}`;
                       return (
                         <TableRow key={app.applicationId} hover>
                           <TableCell>
@@ -246,12 +345,112 @@ export default function MentorDashboardPage() {
                                 {getInitials(name)}
                               </Avatar>
                               <Typography variant="body2">{name}</Typography>
+                              {app.menteeLinkedIn && (
+                                <Button
+                                  href={app.menteeLinkedIn}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  size="small"
+                                  sx={{ minWidth: 'auto', p: 0.5 }}
+                                >
+                                  <LinkedInIcon fontSize="small" sx={{ color: '#0077b5' }} />
+                                </Button>
+                              )}
                             </Stack>
                           </TableCell>
+                          <TableCell sx={{ maxWidth: 250 }}>
+                            {app.menteeBio ? (
+                              expandedBioId === app.applicationId ? (
+                                <Box>
+                                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                                    {app.menteeBio}
+                                  </Typography>
+                                  <Button
+                                    size="small"
+                                    onClick={() => setExpandedBioId(null)}
+                                    sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                  >
+                                    Show less
+                                  </Button>
+                                </Box>
+                              ) : (
+                                <Box>
+                                  <Typography
+                                    variant="body2"
+                                    ref={(el) => {
+                                      if (el) {
+                                        bioRefs.current.set(app.applicationId, el);
+                                      } else {
+                                        bioRefs.current.delete(app.applicationId);
+                                      }
+                                    }}
+                                    sx={{
+                                      display: '-webkit-box',
+                                      WebkitLineClamp: 2,
+                                      WebkitBoxOrient: 'vertical',
+                                      overflow: 'hidden',
+                                    }}
+                                  >
+                                    {app.menteeBio}
+                                  </Typography>
+                                  {overflowingBioIds.has(app.applicationId) && (
+                                    <Button
+                                      size="small"
+                                      onClick={() => setExpandedBioId(app.applicationId)}
+                                      sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                    >
+                                      Show more
+                                    </Button>
+                                  )}
+                                </Box>
+                              )
+                            ) : (
+                              <Typography variant="body2" color="text.secondary">
+                                -
+                              </Typography>
+                            )}
+                          </TableCell>
                           <TableCell sx={{ maxWidth: 300 }}>
-                            <Typography variant="body2" noWrap title={app.whyMentor}>
-                              {app.whyMentor}
-                            </Typography>
+                            {expandedMessageId === app.applicationId ? (
+                              <Box>
+                                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                                  {app.whyMentor}
+                                </Typography>
+                                <Button
+                                  size="small"
+                                  onClick={() => setExpandedMessageId(null)}
+                                  sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                >
+                                  Show less
+                                </Button>
+                              </Box>
+                            ) : (
+                              <Box>
+                                <Typography
+                                  variant="body2"
+                                  noWrap
+                                  title={app.whyMentor}
+                                  ref={(el) => {
+                                    if (el) {
+                                      textRefs.current.set(app.applicationId, el);
+                                    } else {
+                                      textRefs.current.delete(app.applicationId);
+                                    }
+                                  }}
+                                >
+                                  {app.whyMentor}
+                                </Typography>
+                                {overflowingIds.has(app.applicationId) && (
+                                  <Button
+                                    size="small"
+                                    onClick={() => setExpandedMessageId(app.applicationId)}
+                                    sx={{ p: 0, minWidth: 'auto', textTransform: 'none' }}
+                                  >
+                                    Show more
+                                  </Button>
+                                )}
+                              </Box>
+                            )}
                           </TableCell>
                           <TableCell>
                             <Typography variant="body2">

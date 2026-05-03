@@ -14,6 +14,7 @@ import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class MentorshipMatchingService {
   private final MentorshipMatchRepository matchRepository;
   private final MenteeApplicationRepository applicationRepository;
   private final MentorshipCycleRepository cycleRepository;
+  private final MentorshipService mentorshipService;
 
   /**
    * Confirm a match from an accepted application. This is typically done by mentorship team after
@@ -82,6 +84,8 @@ public class MentorshipMatchingService {
     applicationRepository.updateStatus(
         applicationId, ApplicationStatus.MATCHED, "Match confirmed by mentorship team");
 
+    mentorshipService.getNotificationService().sendMatchUpdate(Optional.empty(), created);
+
     // Reject all other pending applications for this mentee in this cycle
     rejectOtherApplications(application.getMenteeId(), application.getCycleId(), applicationId);
 
@@ -126,6 +130,8 @@ public class MentorshipMatchingService {
             .build();
 
     final MentorshipMatch result = matchRepository.update(matchId, updated);
+
+    mentorshipService.getNotificationService().sendMatchUpdate(Optional.of(match), updated);
 
     log.info(
         "Match {} completed between mentor {} and mentee {} {}",
@@ -177,6 +183,8 @@ public class MentorshipMatchingService {
     final MentorshipMatch result = matchRepository.update(matchId, updated);
 
     log.info("Match {} cancelled by {} - reason: {}", matchId, cancelledBy, reason);
+
+    mentorshipService.getNotificationService().sendMatchUpdate(Optional.of(match), updated);
 
     return result;
   }

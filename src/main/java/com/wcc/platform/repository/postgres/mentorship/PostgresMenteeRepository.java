@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,8 @@ public class PostgresMenteeRepository implements MenteeRepository {
       "SELECT * FROM mentees WHERE mentees_profile_status = ?";
   private static final String SQL_SET_STATUS =
       "UPDATE mentees SET mentees_profile_status = ? WHERE mentee_id = ?";
+  private static final String SEL_MENTEES_BY_ID =
+      "SELECT * FROM mentees WHERE mentee_id IN (:mentee_ids)";
   private static final String SQL_INSERT_MENTEE =
       "INSERT INTO mentees (mentee_id, mentees_profile_status, bio, years_experience, "
           + "spoken_languages, available_hs_month) VALUES (?, ?, ?, ?, ?, ?)";
@@ -52,6 +56,7 @@ public class PostgresMenteeRepository implements MenteeRepository {
   private final MemberMapper memberMapper;
   private final MemberRepository memberRepository;
   private final Validator validator;
+  private final NamedParameterJdbcTemplate paramJdbcTemplate;
 
   @Override
   @Transactional
@@ -128,6 +133,15 @@ public class PostgresMenteeRepository implements MenteeRepository {
   @Override
   public List<Mentee> getAll() {
     return jdbc.query(SELECT_ALL_MENTEES, (rs, rowNum) -> menteeMapper.mapRowToMentee(rs));
+  }
+
+  @Override
+  public List<Mentee> findAllById(final List<Long> menteeIds) {
+    final MapSqlParameterSource params = new MapSqlParameterSource();
+    params.addValue("mentee_ids", menteeIds);
+
+    return paramJdbcTemplate.query(
+        SEL_MENTEES_BY_ID, params, (rs, rowNum) -> menteeMapper.mapRowToMentee(rs));
   }
 
   @Override

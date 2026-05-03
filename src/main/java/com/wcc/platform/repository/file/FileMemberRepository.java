@@ -73,6 +73,20 @@ public class FileMemberRepository implements MemberRepository {
   }
 
   @Override
+  public List<String> findEmails(final List<Long> memberIds) {
+    final var members = getAll();
+
+    if (!members.isEmpty()) {
+      return members.stream()
+          .filter(member -> memberIds.contains(member.getId()))
+          .map(Member::getEmail)
+          .toList();
+    }
+
+    return List.of();
+  }
+
+  @Override
   public Member create(final Member member) {
     final var members = getAll();
     members.add(member);
@@ -123,6 +137,11 @@ public class FileMemberRepository implements MemberRepository {
   @Override
   public void deleteByEmail(String email) {
     // not implemented
+  }
+
+  @Override
+  public boolean existsById(Long memberId) {
+    return false;
   }
 
   @Override
