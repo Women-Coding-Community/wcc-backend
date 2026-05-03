@@ -53,7 +53,7 @@ public class ResourceService {
     deleteResourceBy(id);
   }
 
-  /** Uploads a mentor's profile picture. */
+  /** Uploads a member's profile picture. */
   @Transactional
   public MemberProfilePicture uploadMemberProfilePicture(
       final Long memberId, final MultipartFile file) {
