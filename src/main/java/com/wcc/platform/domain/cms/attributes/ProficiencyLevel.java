@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.attributes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,8 @@ import lombok.Getter;
  */
 @Schema(
     description =
-        "Proficiency level can be populated using the enum NAME (e.g., BEGINNER), description (e.g., Beginner), or id (e.g., 1).",
+        "Proficiency level can be populated using the enum NAME (e.g., BEGINNER),"
+            + " description (e.g., Beginner), or id (e.g., 1).",
     example = "ADVANCED")
 @Getter
 @AllArgsConstructor
@@ -41,7 +43,8 @@ public enum ProficiencyLevel {
   }
 
   @Override
+  @JsonValue
   public String toString() {
-    return description;
+    return name();
   }
 }

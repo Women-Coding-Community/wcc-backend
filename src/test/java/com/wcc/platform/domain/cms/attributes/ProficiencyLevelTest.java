@@ -35,10 +35,10 @@ class ProficiencyLevelTest {
 
   @Test
   void testToString() {
-    assertEquals("Beginner", ProficiencyLevel.BEGINNER.toString());
-    assertEquals("Intermediate", ProficiencyLevel.INTERMEDIATE.toString());
-    assertEquals("Advanced", ProficiencyLevel.ADVANCED.toString());
-    assertEquals("Expert", ProficiencyLevel.EXPERT.toString());
+    assertEquals("BEGINNER", ProficiencyLevel.BEGINNER.toString());
+    assertEquals("INTERMEDIATE", ProficiencyLevel.INTERMEDIATE.toString());
+    assertEquals("ADVANCED", ProficiencyLevel.ADVANCED.toString());
+    assertEquals("EXPERT", ProficiencyLevel.EXPERT.toString());
   }
 
   @Test
