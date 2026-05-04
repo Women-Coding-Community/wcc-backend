@@ -4,7 +4,7 @@ MENTEE_APP_LONG:
     <p>Dear {{menteeName}},</p>
 
     <p>
-    Thank you for your interest in being part of the <strong>Mentorship Programme</strong>.
+    Thank you for your interest in being part of the <strong>{{year}} WCC Mentorship Programme</strong>.
     We look forward to connecting you with a mentor who has similar interests and experience in the field.
     </p>
 
@@ -15,7 +15,7 @@ MENTEE_APP_LONG:
 
     <p>
     Please note that you can apply for up to <strong>5 mentors</strong>.
-    If your first-choice mentor is not available, we will try to match you with one of your other preferred mentors.
+    If your first-choice mentor is not available, we will forward your application to your other preferred mentors.
     </p>
 
     <p>
