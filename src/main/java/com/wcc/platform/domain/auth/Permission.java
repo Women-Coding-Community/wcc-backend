@@ -10,6 +10,11 @@ public enum Permission {
   USER_WRITE("user:write", "Create and update users"),
   USER_DELETE("user:delete", "Delete users"),
 
+  // Member Management
+  MEMBER_READ("member:read", "View member information"),
+  MEMBER_WRITE("member:write", "Create and update member information"),
+  MEMBER_DELETE("member:delete", "Delete member information"),
+
   // Mentor Operations
   MENTOR_APPL_READ("mentor:application:read", "View mentor applications"),
   MENTOR_APPL_WRITE("mentor:application:write", "Accept/decline mentee applications"),
@@ -18,6 +23,10 @@ public enum Permission {
   // Mentee Operations
   MENTEE_APPL_SUBMIT("mentee:application:submit", "Submit mentee applications"),
   MENTEE_APPL_READ("mentee:application:read", "View own application status"),
+
+  // Email Operations
+  EMAIL_TEMPLATE_MANAGE("email:template:manage", "Create and update email templates"),
+  SEND_EMAIL("email:send", "Send emails to members"),
 
   // Admin Operations
   MENTOR_APPROVE("admin:mentor:approve", "Approve/reject mentors"),

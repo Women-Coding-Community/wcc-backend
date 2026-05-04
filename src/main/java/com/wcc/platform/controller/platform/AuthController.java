@@ -1,10 +1,14 @@
 package com.wcc.platform.controller.platform;
 
-import com.wcc.platform.configuration.security.RequiresRole;
+import static com.wcc.platform.domain.auth.Permission.MEMBER_WRITE;
+import static com.wcc.platform.domain.auth.Permission.USER_READ;
+import static com.wcc.platform.domain.auth.Permission.USER_WRITE;
+
+import com.wcc.platform.configuration.security.LogicalOperator;
+import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.domain.auth.LoginResponse;
 import com.wcc.platform.domain.auth.UpdateUserRolesRequest;
 import com.wcc.platform.domain.auth.UserAccount;
-import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
 import com.wcc.platform.service.PasswordResetService;
@@ -127,7 +131,7 @@ public class AuthController {
   @Operation(
       summary = "Update roles for an existing user account",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
+  @RequiresPermission({USER_WRITE})
   public ResponseEntity<UserAccount> updateUserRoles(
       @PathVariable final Integer userId,
       @RequestBody @Valid final UpdateUserRolesRequest request) {
@@ -143,7 +147,7 @@ public class AuthController {
   @Operation(
       summary = "API to retrieve users with access to restrict area",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @RequiresPermission(USER_READ)
   public ResponseEntity<List<UserAccount>> getUsers() {
     return ResponseEntity.ok(memberService.getUsers());
   }
@@ -160,7 +164,9 @@ public class AuthController {
   @Operation(
       summary = "Send a password reset link to a registered user (admin/leader only)",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
-  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @RequiresPermission(
+      value = {MEMBER_WRITE, USER_WRITE},
+      operator = LogicalOperator.OR)
   public ResponseEntity<PasswordResetResponse> requestPasswordReset(
       @RequestBody @Valid final ResetPasswordRequest request) {
     final String message =
@@ -194,7 +200,8 @@ public class AuthController {
           @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
           @Pattern(
               regexp = "^(?=.*[0-9])(?=.*[!@#$%]).*$",
-              message = "Password must contain at least one digit and one special character (!@#$%)")
+              message =
+                  "Password must contain at least one digit and one special character (!@#$%)")
           String newPassword) {}
 
   /** Response DTO returned from both password reset endpoints. */

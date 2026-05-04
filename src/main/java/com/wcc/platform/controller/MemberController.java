@@ -1,8 +1,10 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.domain.auth.Permission.MEMBER_DELETE;
+import static com.wcc.platform.domain.auth.Permission.MEMBER_WRITE;
+
 import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
-import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
@@ -44,7 +46,7 @@ public class MemberController {
    * @return List of all members.
    */
   @GetMapping("/members")
-  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "API to retrieve a list of all members")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Member>> getAllMembers() {
@@ -58,7 +60,7 @@ public class MemberController {
    * @return Create a new member.
    */
   @PostMapping("/members")
-  @RequiresPermission(Permission.USER_WRITE)
+  @RequiresPermission(MEMBER_WRITE)
   @Operation(summary = "API to submit member registration")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Member> createMember(@Valid @RequestBody final Member member) {
@@ -73,7 +75,7 @@ public class MemberController {
    * @return Updated member
    */
   @PutMapping("/members/{memberId}")
-  @RequiresPermission(Permission.USER_WRITE)
+  @RequiresPermission(MEMBER_WRITE)
   @Operation(summary = "API to update member data")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
@@ -83,7 +85,7 @@ public class MemberController {
 
   /** Deletes a member. */
   @DeleteMapping("/members/{memberId}")
-  @RequiresPermission(Permission.USER_DELETE)
+  @RequiresPermission(MEMBER_DELETE)
   @Operation(summary = "Delete a member")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteMember(
