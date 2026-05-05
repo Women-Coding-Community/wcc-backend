@@ -10,10 +10,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "apiKey")
 @Tag(name = "Feedback", description = "Feedback management APIs")
 @AllArgsConstructor
+@Validated
 public class FeedbackController {
 
   private final FeedbackService feedbackService;
@@ -58,7 +62,8 @@ public class FeedbackController {
           final Long mentorshipCycleId,
       @Parameter(description = "Feedback Type") @RequestParam(required = false)
           final FeedbackType feedbackType,
-      @Parameter(description = "Year") @RequestParam(required = false) final Integer year,
+      @Parameter(description = "Year") @RequestParam(required = false) @Min(2000) @Max(2100)
+          final Integer year,
       @Parameter(description = "Anonymous status") @RequestParam(required = false)
           final Boolean isAnonymous,
       @Parameter(description = "Approved status") @RequestParam(required = false)

@@ -36,7 +36,11 @@ public class Feedback {
   private Integer rating;
 
   @NotBlank private String feedbackText;
+
+  @Min(2000)
+  @Max(2100)
   private Integer year;
+
   @Setter private Boolean isAnonymous;
   @Setter private Boolean isApproved;
   private OffsetDateTime createdAt;

@@ -249,4 +249,63 @@ class FeedbackDtoValidationTest {
     assertTrue(
         violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("feedbackText")));
   }
+
+  @Test
+  @DisplayName("Given DTO with year below 2000, when validating, then validation fails")
+  void testYearBelowMinFails() {
+    FeedbackDto dto =
+        FeedbackDto.builder()
+            .reviewerId(1L)
+            .feedbackType(FeedbackType.COMMUNITY_GENERAL)
+            .feedbackText("Great!")
+            .isAnonymous(false)
+            .year(1999)
+            .build();
+
+    Set<ConstraintViolation<FeedbackDto>> violations = validator.validate(dto);
+    assertFalse(violations.isEmpty(), "Year below 2000 should fail");
+    assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("year")));
+  }
+
+  @Test
+  @DisplayName("Given DTO with year above 2100, when validating, then validation fails")
+  void testYearAboveMaxFails() {
+    FeedbackDto dto =
+        FeedbackDto.builder()
+            .reviewerId(1L)
+            .feedbackType(FeedbackType.COMMUNITY_GENERAL)
+            .feedbackText("Great!")
+            .isAnonymous(false)
+            .year(2101)
+            .build();
+
+    Set<ConstraintViolation<FeedbackDto>> violations = validator.validate(dto);
+    assertFalse(violations.isEmpty(), "Year above 2100 should fail");
+    assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("year")));
+  }
+
+  @Test
+  @DisplayName("Given DTO with valid year boundary values, when validating, then validation passes")
+  void testYearBoundaryValuesPass() {
+    FeedbackDto dtoMin =
+        FeedbackDto.builder()
+            .reviewerId(1L)
+            .feedbackType(FeedbackType.COMMUNITY_GENERAL)
+            .feedbackText("Great!")
+            .isAnonymous(false)
+            .year(2000)
+            .build();
+
+    FeedbackDto dtoMax =
+        FeedbackDto.builder()
+            .reviewerId(1L)
+            .feedbackType(FeedbackType.COMMUNITY_GENERAL)
+            .feedbackText("Great!")
+            .isAnonymous(false)
+            .year(2100)
+            .build();
+
+    assertTrue(validator.validate(dtoMin).isEmpty(), "Year 2000 (min boundary) should be valid");
+    assertTrue(validator.validate(dtoMax).isEmpty(), "Year 2100 (max boundary) should be valid");
+  }
 }

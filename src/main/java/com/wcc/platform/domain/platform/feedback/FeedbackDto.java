@@ -29,7 +29,11 @@ public class FeedbackDto {
   private Integer rating;
 
   @NotBlank private String feedbackText;
+
+  @Min(2000)
+  @Max(2100)
   private Integer year;
+
   @NotNull private Boolean isAnonymous;
 
   /**

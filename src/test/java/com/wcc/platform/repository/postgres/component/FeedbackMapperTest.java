@@ -2,20 +2,20 @@ package com.wcc.platform.repository.postgres.component;
 
 import static com.wcc.platform.repository.postgres.component.FeedbackMapper.INSERT_SQL;
 import static com.wcc.platform.repository.postgres.component.FeedbackMapper.UPDATE_SQL;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_CREATED_AT;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_FEEDBACK_TEXT;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_FEEDBACK_TYPE_ID;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_ID;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_IS_ANONYMOUS;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_IS_APPROVED;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_MENTORSHIP_CYCLE_ID;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_RATING;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWEE_ID;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWEE_NAME;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWER_ID;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_REVIEWER_NAME;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_UPDATED_AT;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COLUMN_YEAR;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_CREATED_AT;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_FEEDBACK_TEXT;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_FB_TYPE_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_IS_ANONYMOUS;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_IS_APPROVED;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_MS_CYCLE_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_RATING;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_REVIEWEE_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_REVIEWEE_NAME;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_REVIEWER_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_REVIEWER_NAME;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_UPDATED_AT;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_YEAR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -67,26 +67,26 @@ class FeedbackMapperTest {
     OffsetDateTime createdAt = OffsetDateTime.now();
     OffsetDateTime updatedAt = OffsetDateTime.now();
 
-    when(resultSet.getLong(COLUMN_ID)).thenReturn(feedbackId);
-    when(resultSet.getLong(COLUMN_REVIEWER_ID)).thenReturn(reviewerId);
-    when(resultSet.getString(COLUMN_REVIEWER_NAME)).thenReturn("Reviewer Name");
-    when(resultSet.getObject(COLUMN_REVIEWEE_ID)).thenReturn(revieweeId);
-    when(resultSet.getLong(COLUMN_REVIEWEE_ID)).thenReturn(revieweeId);
-    when(resultSet.getString(COLUMN_REVIEWEE_NAME)).thenReturn("Reviewee Name");
-    when(resultSet.getObject(COLUMN_MENTORSHIP_CYCLE_ID)).thenReturn(mentorshipCycleId);
-    when(resultSet.getLong(COLUMN_MENTORSHIP_CYCLE_ID)).thenReturn(mentorshipCycleId);
-    when(resultSet.getInt(COLUMN_FEEDBACK_TYPE_ID)).thenReturn(feedbackTypeId);
-    when(resultSet.getObject(COLUMN_RATING)).thenReturn(rating);
-    when(resultSet.getInt(COLUMN_RATING)).thenReturn(rating);
-    when(resultSet.getString(COLUMN_FEEDBACK_TEXT)).thenReturn(feedbackText);
-    when(resultSet.getObject(COLUMN_YEAR)).thenReturn(year);
-    when(resultSet.getInt(COLUMN_YEAR)).thenReturn(year);
-    when(resultSet.getBoolean(COLUMN_IS_ANONYMOUS)).thenReturn(isAnonymous);
-    when(resultSet.getBoolean(COLUMN_IS_APPROVED)).thenReturn(isApproved);
-    when(resultSet.getObject(COLUMN_CREATED_AT)).thenReturn(createdAt);
-    when(resultSet.getObject(COLUMN_CREATED_AT, OffsetDateTime.class)).thenReturn(createdAt);
-    when(resultSet.getObject(COLUMN_UPDATED_AT)).thenReturn(updatedAt);
-    when(resultSet.getObject(COLUMN_UPDATED_AT, OffsetDateTime.class)).thenReturn(updatedAt);
+    when(resultSet.getLong(COL_ID)).thenReturn(feedbackId);
+    when(resultSet.getLong(COL_REVIEWER_ID)).thenReturn(reviewerId);
+    when(resultSet.getString(COL_REVIEWER_NAME)).thenReturn("Reviewer Name");
+    when(resultSet.getObject(COL_REVIEWEE_ID)).thenReturn(revieweeId);
+    when(resultSet.getLong(COL_REVIEWEE_ID)).thenReturn(revieweeId);
+    when(resultSet.getString(COL_REVIEWEE_NAME)).thenReturn("Reviewee Name");
+    when(resultSet.getObject(COL_MS_CYCLE_ID)).thenReturn(mentorshipCycleId);
+    when(resultSet.getLong(COL_MS_CYCLE_ID)).thenReturn(mentorshipCycleId);
+    when(resultSet.getInt(COL_FB_TYPE_ID)).thenReturn(feedbackTypeId);
+    when(resultSet.getObject(COL_RATING)).thenReturn(rating);
+    when(resultSet.getInt(COL_RATING)).thenReturn(rating);
+    when(resultSet.getString(COL_FEEDBACK_TEXT)).thenReturn(feedbackText);
+    when(resultSet.getObject(COL_YEAR)).thenReturn(year);
+    when(resultSet.getInt(COL_YEAR)).thenReturn(year);
+    when(resultSet.getBoolean(COL_IS_ANONYMOUS)).thenReturn(isAnonymous);
+    when(resultSet.getBoolean(COL_IS_APPROVED)).thenReturn(isApproved);
+    when(resultSet.getObject(COL_CREATED_AT)).thenReturn(createdAt);
+    when(resultSet.getObject(COL_CREATED_AT, OffsetDateTime.class)).thenReturn(createdAt);
+    when(resultSet.getObject(COL_UPDATED_AT)).thenReturn(updatedAt);
+    when(resultSet.getObject(COL_UPDATED_AT, OffsetDateTime.class)).thenReturn(updatedAt);
 
     Feedback feedback = feedbackMapper.mapRowToFeedback(resultSet);
 
@@ -119,20 +119,20 @@ class FeedbackMapperTest {
     Boolean isAnonymous = true;
     Boolean isApproved = false;
 
-    when(resultSet.getLong(COLUMN_ID)).thenReturn(feedbackId);
-    when(resultSet.getLong(COLUMN_REVIEWER_ID)).thenReturn(reviewerId);
-    when(resultSet.getString(COLUMN_REVIEWER_NAME)).thenReturn("Reviewer Name");
-    when(resultSet.getObject(COLUMN_REVIEWEE_ID)).thenReturn(null);
-    when(resultSet.getString(COLUMN_REVIEWEE_NAME)).thenReturn(null);
-    when(resultSet.getObject(COLUMN_MENTORSHIP_CYCLE_ID)).thenReturn(null);
-    when(resultSet.getInt(COLUMN_FEEDBACK_TYPE_ID)).thenReturn(feedbackTypeId);
-    when(resultSet.getObject(COLUMN_RATING)).thenReturn(null);
-    when(resultSet.getString(COLUMN_FEEDBACK_TEXT)).thenReturn(feedbackText);
-    when(resultSet.getObject(COLUMN_YEAR)).thenReturn(null);
-    when(resultSet.getBoolean(COLUMN_IS_ANONYMOUS)).thenReturn(isAnonymous);
-    when(resultSet.getBoolean(COLUMN_IS_APPROVED)).thenReturn(isApproved);
-    when(resultSet.getObject(COLUMN_CREATED_AT)).thenReturn(null);
-    when(resultSet.getObject(COLUMN_UPDATED_AT)).thenReturn(null);
+    when(resultSet.getLong(COL_ID)).thenReturn(feedbackId);
+    when(resultSet.getLong(COL_REVIEWER_ID)).thenReturn(reviewerId);
+    when(resultSet.getString(COL_REVIEWER_NAME)).thenReturn("Reviewer Name");
+    when(resultSet.getObject(COL_REVIEWEE_ID)).thenReturn(null);
+    when(resultSet.getString(COL_REVIEWEE_NAME)).thenReturn(null);
+    when(resultSet.getObject(COL_MS_CYCLE_ID)).thenReturn(null);
+    when(resultSet.getInt(COL_FB_TYPE_ID)).thenReturn(feedbackTypeId);
+    when(resultSet.getObject(COL_RATING)).thenReturn(null);
+    when(resultSet.getString(COL_FEEDBACK_TEXT)).thenReturn(feedbackText);
+    when(resultSet.getObject(COL_YEAR)).thenReturn(null);
+    when(resultSet.getBoolean(COL_IS_ANONYMOUS)).thenReturn(isAnonymous);
+    when(resultSet.getBoolean(COL_IS_APPROVED)).thenReturn(isApproved);
+    when(resultSet.getObject(COL_CREATED_AT)).thenReturn(null);
+    when(resultSet.getObject(COL_UPDATED_AT)).thenReturn(null);
 
     Feedback feedback = feedbackMapper.mapRowToFeedback(resultSet);
 
@@ -154,7 +154,7 @@ class FeedbackMapperTest {
   @Test
   @DisplayName("Given ResultSet throws SQLException, when mapping, then propagates exception")
   void handlesSqlExceptionGracefully() throws Exception {
-    when(resultSet.getLong(COLUMN_ID)).thenThrow(SQLException.class);
+    when(resultSet.getLong(COL_ID)).thenThrow(SQLException.class);
     assertThrows(SQLException.class, () -> feedbackMapper.mapRowToFeedback(resultSet));
   }
 

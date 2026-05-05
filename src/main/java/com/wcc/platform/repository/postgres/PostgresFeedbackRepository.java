@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Repository;
  * the result sets to Feedback objects with the help of FeedbackRowMapper.
  */
 @Repository
-@Primary
 @RequiredArgsConstructor
 public class PostgresFeedbackRepository implements FeedbackRepository {
 
