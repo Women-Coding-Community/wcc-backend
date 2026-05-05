@@ -184,7 +184,7 @@ public class MenteeApplicationController {
    * @return List of applications with the specified status
    */
   @GetMapping("/applications")
-  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get all applications by status")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getApplicationsByStatus(
