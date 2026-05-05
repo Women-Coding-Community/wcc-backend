@@ -12,6 +12,7 @@ import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
+import com.wcc.platform.domain.exceptions.FeedbackNotFoundException;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.InvalidTokenException;
@@ -50,7 +51,8 @@ public class GlobalExceptionHandler {
     NoSuchElementException.class,
     MemberNotFoundException.class,
     MentorNotFoundException.class,
-    ApplicationNotFoundException.class
+    ApplicationNotFoundException.class,
+    FeedbackNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
