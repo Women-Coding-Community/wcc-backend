@@ -1,8 +1,8 @@
 package com.wcc.platform.repository.postgres.component;
 
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_CREATED_AT;
-import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_FEEDBACK_TEXT;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_FB_TYPE_ID;
+import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_FEEDBACK_TEXT;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_ID;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_IS_ANONYMOUS;
 import static com.wcc.platform.repository.postgres.constants.FeedbackConstants.COL_IS_APPROVED;
@@ -56,9 +56,7 @@ public class FeedbackMapper {
         .revieweeId(rs.getObject(COL_REVIEWEE_ID) != null ? rs.getLong(COL_REVIEWEE_ID) : null)
         .revieweeName(rs.getString(COL_REVIEWEE_NAME))
         .mentorshipCycleId(
-            rs.getObject(COL_MS_CYCLE_ID) != null
-                ? rs.getLong(COL_MS_CYCLE_ID)
-                : null)
+            rs.getObject(COL_MS_CYCLE_ID) != null ? rs.getLong(COL_MS_CYCLE_ID) : null)
         .feedbackType(FeedbackType.fromId(rs.getInt(COL_FB_TYPE_ID)))
         .rating(rs.getObject(COL_RATING) != null ? rs.getInt(COL_RATING) : null)
         .feedbackText(rs.getString(COL_FEEDBACK_TEXT))
