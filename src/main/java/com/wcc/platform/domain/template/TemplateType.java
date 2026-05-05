@@ -18,6 +18,7 @@ public enum TemplateType {
   KICK_OFF_MEETING_LONG("kick_off_meeting_mentor_mentee_long_term.yml"),
   MENTEE_APP_LONG("long_term_mentorship_application_received_mentee.yml"),
   NO_MATCH_MENTOR_LONG("mentee_unable_match_with_mentor_long.yml"),
+  MENTEE_LONG_REJECTED_BY_ADMIN("mentee_long_term_rejected_by_admin.yml"),
   REMINDER_MENTEE_LONG("reminder_long_term_mentorship_mentee.yml"),
   MENTEES_MENTOR_LONG("list_potential_mentees_mentor_long.yml"),
   FOLLOWUP_MENTEES_LONG("list_potential_mentees_follow_up_mentor_long.yml"),

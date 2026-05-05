@@ -4,7 +4,6 @@ import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.utils.MenteeApplicationTestBuilder.baseBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -69,6 +68,7 @@ class MentorshipNotificationServiceTest {
     var rendered = new RenderedTemplate("Mentor Profile Approval Confirmation", expectedBody);
 
     when(notificationConfig.getMentorProfileUrl()).thenReturn(mentorProfilePath);
+    when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
 
     when(emailTemplateService.renderTemplate(eq(templateType), any(Map.class)))
         .thenReturn(rendered);
@@ -94,6 +94,7 @@ class MentorshipNotificationServiceTest {
   void sendNotificationWhenRenderFailsThenDoesNotSendEmail() {
     when(notificationConfig.getMentorProfileUrl())
         .thenReturn("https://www.womencodingcommunity.com/mentors?keywords=Jane+Doe");
+    when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new EmailSendException("Template not found"));
 
@@ -110,8 +111,6 @@ class MentorshipNotificationServiceTest {
         Optional.of(baseBuilder(1L, 10L, 20L, 5).status(ApplicationStatus.PENDING).build());
     var updated = baseBuilder(1L, 10L, 20L, 5).status(ApplicationStatus.MENTOR_REVIEWING).build();
 
-    when(memberRepository.findEmails(anyList()))
-        .thenReturn(List.of("mentor@test.com", "mentee@test.com"));
     when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
@@ -135,8 +134,6 @@ class MentorshipNotificationServiceTest {
             .startDate(java.time.LocalDate.now())
             .build();
 
-    when(memberRepository.findEmails(anyList()))
-        .thenReturn(List.of("mentor@test.com", "mentee@test.com"));
     when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
@@ -145,5 +142,64 @@ class MentorshipNotificationServiceTest {
 
     verify(emailTemplateService).renderTemplate(eq(TemplateType.MATCH_APPLICATIONS), anyMap());
     verify(emailService).sendEmail(any());
+  }
+
+  @Test
+  @DisplayName("Given mentor and reason, when sendMentorRejectionEmail, then sends notification")
+  void shouldSendMentorRejectionEmail() {
+    var reason = "Incomplete profile";
+    when(notificationConfig.getVolunteerUrl()).thenReturn("https://test.com/volunteer");
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendMentorRejectionEmail(mentor, reason);
+
+    verify(emailTemplateService).renderTemplate(eq(TemplateType.MENTOR_PROFILE_REJECT), anyMap());
+    verify(emailService).sendEmail(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given member IDs, when sendNotificationByMemberId, then fetches emails and sends notification")
+  void shouldSendNotificationByMemberId() {
+    var memberIds = List.of(1L, 2L);
+    var emails = List.of("user1@test.com", "user2@test.com");
+    when(memberRepository.findEmails(memberIds)).thenReturn(emails);
+    when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendNotificationByMemberId(
+        TemplateType.MENTOR_APPROVED, Map.of(), memberIds);
+
+    verify(memberRepository).findEmails(memberIds);
+    ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
+    verify(emailService).sendEmail(emailCaptor.capture());
+
+    var emailRequest = emailCaptor.getValue();
+    assertThat(emailRequest.getRecipients()).containsAll(emails);
+    assertThat(emailRequest.getRecipients()).contains("team@test.com");
+  }
+
+  @Test
+  @DisplayName(
+      "Given member IDs and no team email, when sendNotificationByMemberId, then sends only to members")
+  void shouldSendNotificationByMemberIdWithoutTeamEmail() {
+    var memberIds = List.of(1L);
+    var emails = List.of("user1@test.com");
+    when(memberRepository.findEmails(memberIds)).thenReturn(emails);
+    when(notificationConfig.getMentorshipEmail()).thenReturn("");
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendNotificationByMemberId(
+        TemplateType.MENTOR_APPROVED, Map.of(), memberIds);
+
+    ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
+    verify(emailService).sendEmail(emailCaptor.capture());
+
+    var emailRequest = emailCaptor.getValue();
+    assertThat(emailRequest.getRecipients()).hasSize(1);
+    assertThat(emailRequest.getRecipients()).containsExactly("user1@test.com");
   }
 }

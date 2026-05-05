@@ -48,7 +48,7 @@ public class MentorshipNotificationService {
     sendNotification(
         TemplateType.MENTOR_APPROVED,
         Map.of("mentorName", mentor.getFullName(), "mentorProfileUrl", mentorBaseUrl),
-        List.of(mentor.getEmail()));
+        List.of(mentor.getEmail(), notificationConfig.getMentorshipEmail()));
   }
 
   /**
@@ -70,12 +70,10 @@ public class MentorshipNotificationService {
   }
 
   /** Sends a notification email to the mentor regarding mentee applications updates. */
+  @SuppressWarnings("PMD.UseConcurrentHashMap") // HashMap is used to support null values
   public void sendApplicationUpdate(
       final Optional<MenteeApplication> application, final MenteeApplication updated) {
 
-    @SuppressWarnings(
-        "PMD.UseConcurrentHashMap") // HashMap is used to support null values from domain model
-    // fields
     final Map<String, Object> params =
         new HashMap<>(
             Map.of(
@@ -97,12 +95,8 @@ public class MentorshipNotificationService {
     params.put("createdAt", updated.getCreatedAt());
     params.put("updatedAt", updated.getUpdatedAt());
 
-    final var memberIds = new ArrayList<Long>();
-    if (updated.getMentorId() != null) {
-      memberIds.add(updated.getMentorId());
-    }
-    memberIds.add(updated.getMenteeId());
-    sendNotificationByMemberId(TemplateType.MENTEE_APPLICATIONS, params, memberIds);
+    sendNotification(
+        TemplateType.MENTEE_APPLICATIONS, params, List.of(notificationConfig.getMentorshipEmail()));
   }
 
   /**
@@ -142,7 +136,7 @@ public class MentorshipNotificationService {
    * @param templateType the type of template to render
    * @param templateParams the parameters to use for rendering the template
    */
-  /* default */ void sendNotificationByMemberId(
+  public void sendNotificationByMemberId(
       final TemplateType templateType,
       final Map<String, Object> templateParams,
       final List<Long> memberIds) {
@@ -160,12 +154,10 @@ public class MentorshipNotificationService {
   }
 
   /** Sends a notification email to the mentor regarding mentee applications updates. */
+  @SuppressWarnings("PMD.UseConcurrentHashMap") // HashMap is used to support null values
   public void sendMatchUpdate(
       final Optional<MentorshipMatch> previous, final MentorshipMatch updated) {
 
-    @SuppressWarnings(
-        "PMD.UseConcurrentHashMap") // HashMap is used to support null values from domain model
-    // fields
     final Map<String, Object> params =
         new HashMap<>(
             Map.of(
@@ -189,7 +181,7 @@ public class MentorshipNotificationService {
     params.put("createdAt", updated.getCreatedAt());
     params.put("updatedAt", updated.getUpdatedAt());
 
-    final var memberIds = List.of(updated.getMentorId(), updated.getMenteeId());
-    sendNotificationByMemberId(TemplateType.MATCH_APPLICATIONS, params, memberIds);
+    sendNotification(
+        TemplateType.MATCH_APPLICATIONS, params, List.of(notificationConfig.getMentorshipEmail()));
   }
 }
