@@ -1,5 +1,9 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.domain.auth.Permission.MENTOR_APPROVE;
+import static com.wcc.platform.domain.auth.Permission.MENTOR_PROFILE_UPDATE;
+
+import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
@@ -77,6 +81,7 @@ public class MentorController {
    */
   @PutMapping("/mentors/{mentorId}")
   @Operation(summary = "API to update mentor data")
+  @RequiresPermission(MENTOR_PROFILE_UPDATE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> updateMentor(
       @Valid @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
@@ -90,6 +95,7 @@ public class MentorController {
    * @return updated mentor with active status.
    */
   @PatchMapping("/mentors/{mentorId}/accept")
+  @RequiresPermission(MENTOR_APPROVE)
   @Operation(summary = "API to accept mentor registration")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> acceptMentor(@Valid @PathVariable final Long mentorId) {
@@ -103,6 +109,7 @@ public class MentorController {
    * @return updated mentor with rejected status.
    */
   @PatchMapping("/mentors/{mentorId}/reject")
+  @RequiresPermission(MENTOR_APPROVE)
   @Operation(summary = "API to reject mentor registration")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> rejectMentor(

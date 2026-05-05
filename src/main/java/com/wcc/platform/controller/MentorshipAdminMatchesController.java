@@ -1,9 +1,13 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.configuration.security.RequiresPermission;
+import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchCancelRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipMatchingService;
@@ -51,6 +55,7 @@ public class MentorshipAdminMatchesController {
    * @return Created match
    */
   @PostMapping("/matches/confirm/{applicationId}")
+  @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Admin confirms a mentorship match from accepted application")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MentorshipMatch> confirmMatch(
@@ -67,6 +72,7 @@ public class MentorshipAdminMatchesController {
    * @return List of matches
    */
   @GetMapping("/matches")
+  @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Get all matches for a cycle")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipMatch>> getCycleMatches(
@@ -83,6 +89,7 @@ public class MentorshipAdminMatchesController {
    * @return Updated match
    */
   @PatchMapping("/matches/{matchId}/complete")
+  @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Complete a mentorship match")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> completeMatch(
@@ -101,6 +108,7 @@ public class MentorshipAdminMatchesController {
    * @return Updated match
    */
   @PatchMapping("/matches/{matchId}/cancel")
+  @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Cancel a mentorship match")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> cancelMatch(
@@ -118,6 +126,7 @@ public class MentorshipAdminMatchesController {
    * @return Updated match
    */
   @PatchMapping("/matches/{matchId}/increment-session")
+  @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Increment session count for a match")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> incrementSessionCount(
@@ -134,6 +143,7 @@ public class MentorshipAdminMatchesController {
    * @return Current open cycle, or 404 if none is open
    */
   @GetMapping("/cycles/current")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get the currently open mentorship cycle")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCurrentCycle() {
@@ -150,6 +160,7 @@ public class MentorshipAdminMatchesController {
    * @return List of cycles with the specified status
    */
   @GetMapping("/cycles")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get cycles by status")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipCycleEntity>> getCyclesByStatus(
@@ -165,6 +176,7 @@ public class MentorshipAdminMatchesController {
    * @return The cycle, or 404 if not found
    */
   @GetMapping("/cycles/{cycleId}")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get a cycle by ID")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCycleById(
@@ -181,6 +193,7 @@ public class MentorshipAdminMatchesController {
    * @return List of all cycles
    */
   @GetMapping("/cycles/all")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get all mentorship cycles")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipCycleEntity>> getAllCycles() {

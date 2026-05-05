@@ -15,19 +15,26 @@ public enum RoleType {
       "Mentorship Administrator",
       Set.of(
           Permission.USER_READ,
+          Permission.MEMBER_READ,
+          Permission.MEMBER_WRITE,
           Permission.MENTOR_APPROVE,
           Permission.MENTEE_APPROVE,
           Permission.CYCLE_EMAIL_SEND,
           Permission.MATCH_MANAGE,
-          Permission.MENTOR_APPL_READ)),
+          Permission.MENTOR_APPL_READ,
+          Permission.MENTOR_APPL_WRITE,
+          Permission.MENTOR_PROFILE_UPDATE,
+          Permission.EMAIL_TEMPLATE_MANAGE,
+          Permission.SEND_EMAIL)),
   LEADER(
       4,
       "Platform Leader",
       Set.of(
           Permission.USER_READ,
           Permission.USER_WRITE,
-          Permission.MENTOR_APPL_READ,
-          Permission.MENTOR_PROFILE_UPDATE)),
+          Permission.MEMBER_READ,
+          Permission.MEMBER_WRITE,
+          Permission.EMAIL_TEMPLATE_MANAGE)),
   MENTEE(
       5, "Mentee In Community", Set.of(Permission.MENTEE_APPL_SUBMIT, Permission.MENTEE_APPL_READ)),
   MENTOR(
@@ -38,8 +45,11 @@ public enum RoleType {
           Permission.MENTOR_APPL_WRITE,
           Permission.MENTOR_PROFILE_UPDATE)),
 
-  CONTRIBUTOR(2, "Contributor In Community", Set.of(Permission.USER_READ)),
-  VIEWER(7, "Member In Community", Set.of(Permission.USER_READ));
+  CONTRIBUTOR(
+      2,
+      "Contributor In Community",
+      Set.of(Permission.MEMBER_READ, Permission.EMAIL_TEMPLATE_MANAGE)),
+  VIEWER(7, "Member In Community", Set.of(Permission.MEMBER_READ));
 
   private final int typeId;
   private final String description;
