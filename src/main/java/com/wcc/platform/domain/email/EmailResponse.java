@@ -29,7 +29,9 @@ public class EmailResponse {
       example = "2025-11-16T10:48:50.992574288Z")
   private OffsetDateTime timestamp;
 
-  @Schema(description = "Email address of the recipient", example = "recipient@example.com")
+  @Schema(
+      description = "Emails address of the recipients",
+      example = "recipient@example.com;recipient2@example.com")
   private String recipient;
 
   @Schema(description = "Error details if the email failed to send", example = "SMTP server error")

@@ -17,7 +17,7 @@ public class SetUpTemplateFactories {
 
   /** Creates a template request.* */
   public static TemplateRequest createTemplateRequest(
-      final TemplateType type, final Map<String, String> parameters) {
+      final TemplateType type, final Map<String, Object> parameters) {
     return new TemplateRequest(type, parameters);
   }
 }

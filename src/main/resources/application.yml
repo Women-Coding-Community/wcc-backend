@@ -41,7 +41,8 @@ mentorship:
     enabled: false
 
 notification:
-  mentor-profile-url: https://www.womencodingcommunity.com/mentors?keywords=
+  mentorship-email: mentorship@womencodingcommunity.com
+  mentor-profile-url: https://mentorship.womencodingcommunity.com/mentorship/mentors?keyword=
   volunteer-url: https://www.womencodingcommunity.com/volunteer
 
 logging:

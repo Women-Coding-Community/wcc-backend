@@ -147,3 +147,28 @@ Tell the user to:
 - Never include change type checkboxes for types not present in the diff
 - Never include the Screenshots section for pure test/docs/chore/ci changes
 - Never include "I have tested my changes locally" for pure docs/chore/ci changes
+
+### Prose formatting — NO line wrapping
+
+Every prose paragraph (Description, Related Issue, any explanatory text) **must be a single unbroken line**. Do NOT wrap text at 72, 80, or any other column width. The only newlines allowed inside prose sections are **blank lines** that separate paragraphs.
+
+**Why:** When the user pastes the description into the GitHub PR text area, any mid-sentence newline is preserved literally. GitHub's markdown preview converts single newlines to spaces, but the raw editor shows them as broken lines and some renderers (email notifications, API consumers) do not reflow the text, making the description look fragmented.
+
+✅ Correct — each paragraph is one long line:
+```
+## Description
+
+This PR introduces email notifications for the mentorship workflow and fixes profile picture loading. Notifications are sent to both mentor and mentee with a copy to the mentorship team whenever an application status changes or a match is created.
+
+Supporting fixes include narrowing the email catch block and adding per-element @Email validation to recipient lists.
+```
+
+❌ Wrong — lines wrapped at ~72 chars:
+```
+## Description
+
+This PR introduces email notifications for the mentorship workflow
+and fixes profile picture loading. Notifications are sent to both
+mentor and mentee with a copy to the mentorship team whenever an
+application status changes or a match is created.
+```

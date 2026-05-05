@@ -1,0 +1,30 @@
+MATCH_APPLICATIONS:
+  subject: "[{{cycleId}}][match_applications]: {{applicationId}}-{{status}}"
+  body: |
+    <p>Dear Mentorship Team,</p>
+
+    <p>Check the mentorship match latest details.</p>
+    <ul>
+      <li><strong>Match ID:</strong> {{matchId}}</li>
+      <li><strong>Mentor ID:</strong> {{mentorId}}</li>
+      <li><strong>Mentee ID:</strong> {{menteeId}}</li>
+      <li><strong>Cycle ID:</strong> {{cycleId}}</li>
+      <li><strong>Application ID:</strong> {{applicationId}}</li>
+      <li><strong>Status:</strong> {{status}}</li>
+      <li><strong>Status Updated:</strong> {{statusUpdated}}</li>
+      <li><strong>Start Date:</strong> {{startDate}}</li>
+      <li><strong>End Date:</strong> {{endDate}}</li>
+      <li><strong>Expected End Date:</strong> {{expectedEndDate}}</li>
+      <li><strong>Session Frequency:</strong> {{sessionFrequency}}</li>
+      <li><strong>Total Sessions:</strong> {{totalSessions}}</li>
+      <li><strong>Cancellation Reason:</strong> {{cancellationReason}}</li>
+      <li><strong>Cancelled By:</strong> {{cancelledBy}}</li>
+      <li><strong>Cancelled At:</strong> {{cancelledAt}}</li>
+      <li><strong>Created At:</strong> {{createdAt}}</li>
+      <li><strong>Updated At:</strong> {{updatedAt}}</li>
+    </ul>
+    <p>
+    {{teamEmailSignature}}
+    </p>
+
+    <p>[Automated Message]</p>

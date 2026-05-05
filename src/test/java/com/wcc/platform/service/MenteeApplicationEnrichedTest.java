@@ -9,18 +9,21 @@ import com.wcc.platform.domain.platform.SocialNetworkType;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationResponse;
+import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class MenteeApplicationEnrichedTest {
 
   private static final Long MENTEE_ID = 10L;
@@ -32,19 +35,10 @@ class MenteeApplicationEnrichedTest {
   @Mock private MentorshipCycleRepository cycleRepository;
   @Mock private MenteeRepository menteeRepository;
 
-  private MenteeWorkflowService service;
+  @Mock private MemberRepository memberRepository;
+  @Mock private MentorshipService mentorshipService;
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-    service =
-        new MenteeWorkflowService(
-            applicationRepository,
-            mentorRepository,
-            matchRepository,
-            cycleRepository,
-            menteeRepository);
-  }
+  @InjectMocks private MenteeWorkflowService service;
 
   @Test
   @DisplayName(

@@ -8,4 +8,4 @@ import java.util.Map;
  * @param templateType
  * @param params
  */
-public record TemplateRequest(TemplateType templateType, Map<String, String> params) {}
+public record TemplateRequest(TemplateType templateType, Map<String, Object> params) {}

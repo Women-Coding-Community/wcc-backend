@@ -37,15 +37,11 @@ class EmailServiceTest {
 
   @Mock private MimeMessage mimeMessage;
 
-  @Mock
-  private EmailTemplateService emailTemplateService;
+  @Mock private EmailTemplateService emailTemplateService;
 
-  @Mock
-  private EmailResponse emailResponse;
+  @Mock private EmailResponse emailResponse;
 
-  @InjectMocks
-  @Spy
-  private EmailService emailService;
+  @InjectMocks @Spy private EmailService emailService;
 
   private EmailRequest emailRequest;
 
@@ -56,7 +52,7 @@ class EmailServiceTest {
 
     emailRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("Test Body")
             .html(false)
@@ -85,7 +81,7 @@ class EmailServiceTest {
   void shouldSendHtmlEmail() {
     EmailRequest htmlRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("<h1>Test HTML</h1>")
             .html(true)
@@ -106,10 +102,9 @@ class EmailServiceTest {
   void shouldSendEmailWithCc() {
     EmailRequest ccRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("Test Body")
-            .cc(List.of("cc1@example.com", "cc2@example.com"))
             .build();
 
     when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
@@ -127,10 +122,9 @@ class EmailServiceTest {
   void shouldSendEmailWithBcc() {
     EmailRequest bccRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("Test Body")
-            .bcc(List.of("bcc@example.com"))
             .build();
 
     when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
@@ -148,7 +142,7 @@ class EmailServiceTest {
   void shouldSendEmailWithReplyTo() {
     EmailRequest replyToRequest =
         EmailRequest.builder()
-            .to("recipient@example.com")
+            .recipients(List.of("recipient@example.com"))
             .subject("Test Subject")
             .body("Test Body")
             .replyTo("noreply@wcc.dev")
@@ -174,7 +168,7 @@ class EmailServiceTest {
 
     assertThatThrownBy(() -> emailService.sendEmail(emailRequest))
         .isInstanceOf(EmailSendException.class)
-        .hasMessageContaining("Failed to send email to: recipient@example.com");
+        .hasMessageContaining("Failed to send email to:");
   }
 
   @Test
@@ -183,14 +177,14 @@ class EmailServiceTest {
   void shouldSendBulkEmails() {
     EmailRequest request1 =
         EmailRequest.builder()
-            .to("recipient1@example.com")
+            .recipients(List.of("recipient1@example.com"))
             .subject("Subject 1")
             .body("Body 1")
             .build();
 
     EmailRequest request2 =
         EmailRequest.builder()
-            .to("recipient2@example.com")
+            .recipients(List.of("recipient2@example.com"))
             .subject("Subject 2")
             .body("Body 2")
             .build();
@@ -212,14 +206,14 @@ class EmailServiceTest {
   void shouldHandlePartialFailuresInBulkEmails() {
     EmailRequest request1 =
         EmailRequest.builder()
-            .to("recipient1@example.com")
+            .recipients(List.of("recipient1@example.com"))
             .subject("Subject 1")
             .body("Body 1")
             .build();
 
     EmailRequest request2 =
         EmailRequest.builder()
-            .to("recipient2@example.com")
+            .recipients(List.of("recipient2@example.com"))
             .subject("Subject 2")
             .body("Body 2")
             .build();
@@ -243,42 +237,36 @@ class EmailServiceTest {
       "Given a template email request with all optional fields, when sending template email, then should build and send email with all fields")
   void shouldSendTemplateEmailWithAllFields() {
 
-    TemplateEmailRequest request = TemplateEmailRequest.builder()
-        .to("recipient@example.com")
-        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
-        .templateParameters(Map.of("mentorName", "John"))
-        .cc(List.of("cc@example.com"))
-        .bcc(List.of("bcc@example.com"))
-        .replyTo("reply@example.com")
-        .html(true)
-        .build();
+    TemplateEmailRequest request =
+        TemplateEmailRequest.builder()
+            .to("recipient@example.com")
+            .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+            .templateParameters(Map.of("mentorName", "John"))
+            .bcc(List.of("bcc@example.com"))
+            .replyTo("reply@example.com")
+            .html(true)
+            .build();
 
-    RenderedTemplate renderedTemplate =
-        new RenderedTemplate("Subject", "Body");
+    RenderedTemplate renderedTemplate = new RenderedTemplate("Subject", "Body");
 
-    when(emailTemplateService.renderTemplate(any(), any()))
-        .thenReturn(renderedTemplate);
+    when(emailTemplateService.renderTemplate(any(), any())).thenReturn(renderedTemplate);
 
-    doReturn(emailResponse)
-        .when(emailService)
-        .sendEmail(any(EmailRequest.class));
+    doReturn(emailResponse).when(emailService).sendEmail(any(EmailRequest.class));
 
     EmailResponse result = emailService.sendTemplateEmail(request);
 
     assertThat(result).isEqualTo(emailResponse);
 
-    ArgumentCaptor<EmailRequest> captor =
-        ArgumentCaptor.forClass(EmailRequest.class);
+    ArgumentCaptor<EmailRequest> captor = ArgumentCaptor.forClass(EmailRequest.class);
 
     verify(emailService).sendEmail(captor.capture());
 
     EmailRequest sentRequest = captor.getValue();
 
-    assertThat(sentRequest.getTo()).isEqualTo("recipient@example.com");
+    assertThat(sentRequest.getRecipients()).contains("recipient@example.com");
     assertThat(sentRequest.getSubject()).isEqualTo("Subject");
     assertThat(sentRequest.getBody()).isEqualTo("Body");
-    assertThat(sentRequest.getCc()).contains("cc@example.com");
-    assertThat(sentRequest.getBcc()).contains("bcc@example.com");
+    assertThat(sentRequest.getRecipients()).contains("bcc@example.com");
     assertThat(sentRequest.getReplyTo()).isEqualTo("reply@example.com");
     assertThat(sentRequest.isHtml()).isTrue();
   }
@@ -288,38 +276,32 @@ class EmailServiceTest {
       "Given a template email request without optional fields, when sending template email, then should build and send email with only required fields")
   void shouldSendTemplateEmailWithoutOptionalFields() {
 
-    TemplateEmailRequest request = TemplateEmailRequest.builder()
-        .to("recipient@example.com")
-        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
-        .templateParameters(Map.of("mentorName", "John"))
-        .build();
+    TemplateEmailRequest request =
+        TemplateEmailRequest.builder()
+            .to("recipient@example.com")
+            .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+            .templateParameters(Map.of("mentorName", "John"))
+            .build();
 
-    RenderedTemplate renderedTemplate =
-        new RenderedTemplate("Subject", "Body");
+    RenderedTemplate renderedTemplate = new RenderedTemplate("Subject", "Body");
 
-    when(emailTemplateService.renderTemplate(any(), any()))
-        .thenReturn(renderedTemplate);
+    when(emailTemplateService.renderTemplate(any(), any())).thenReturn(renderedTemplate);
 
-    doReturn(emailResponse)
-        .when(emailService)
-        .sendEmail(any(EmailRequest.class));
+    doReturn(emailResponse).when(emailService).sendEmail(any(EmailRequest.class));
 
     EmailResponse result = emailService.sendTemplateEmail(request);
 
     assertThat(result).isEqualTo(emailResponse);
 
-    ArgumentCaptor<EmailRequest> captor =
-        ArgumentCaptor.forClass(EmailRequest.class);
+    ArgumentCaptor<EmailRequest> captor = ArgumentCaptor.forClass(EmailRequest.class);
 
     verify(emailService).sendEmail(captor.capture());
 
     EmailRequest sentRequest = captor.getValue();
 
-    assertThat(sentRequest.getTo()).isEqualTo("recipient@example.com");
+    assertThat(sentRequest.getRecipients()).contains("recipient@example.com");
     assertThat(sentRequest.getSubject()).isEqualTo("Subject");
     assertThat(sentRequest.getBody()).isEqualTo("Body");
-    assertThat(sentRequest.getCc()).isNull();
-    assertThat(sentRequest.getBcc()).isNull();
     assertThat(sentRequest.getReplyTo()).isNull();
     assertThat(sentRequest.isHtml()).isFalse();
   }
@@ -328,11 +310,12 @@ class EmailServiceTest {
   @DisplayName(
       "Given provided template type is not found, when sending template email, then should throw an Exception")
   void shouldThrowExceptionWhenTemplateEmailFails() {
-    TemplateEmailRequest request = TemplateEmailRequest.builder()
-        .to("test@example.com")
-        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
-        .templateParameters(Map.of("name", "John"))
-        .build();
+    TemplateEmailRequest request =
+        TemplateEmailRequest.builder()
+            .to("test@example.com")
+            .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+            .templateParameters(Map.of("name", "John"))
+            .build();
 
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenThrow(new RuntimeException("Template not found."));
@@ -348,36 +331,30 @@ class EmailServiceTest {
   @DisplayName(
       "Given a template email request with empty optional fields, when sending template email, then should omit cc, bcc and replyTo from the built request")
   void shouldSendTemplateEmailWhenOptionalFieldsAreEmpty() {
-    TemplateEmailRequest request = TemplateEmailRequest.builder()
-        .to("test@example.com")
-        .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
-        .templateParameters(Map.of("key", "value"))
-        .cc(null)
-        .bcc(Collections.emptyList())
-        .replyTo("")
-        .build();
+    TemplateEmailRequest request =
+        TemplateEmailRequest.builder()
+            .to("test@example.com")
+            .templateType(TemplateType.FEEDBACK_MENTOR_ADHOC)
+            .templateParameters(Map.of("key", "value"))
+            .bcc(Collections.emptyList())
+            .replyTo("")
+            .build();
 
-    RenderedTemplate renderedTemplate =
-        new RenderedTemplate("Subject", "Body");
+    RenderedTemplate renderedTemplate = new RenderedTemplate("Subject", "Body");
 
-    when(emailTemplateService.renderTemplate(any(), any()))
-        .thenReturn(renderedTemplate);
+    when(emailTemplateService.renderTemplate(any(), any())).thenReturn(renderedTemplate);
 
-    doReturn(EmailResponse.builder().success(true).build())
-        .when(emailService)
-        .sendEmail(any());
+    doReturn(EmailResponse.builder().success(true).build()).when(emailService).sendEmail(any());
 
     emailService.sendTemplateEmail(request);
 
-    ArgumentCaptor<EmailRequest> captor =
-        ArgumentCaptor.forClass(EmailRequest.class);
+    ArgumentCaptor<EmailRequest> captor = ArgumentCaptor.forClass(EmailRequest.class);
 
     verify(emailService).sendEmail(captor.capture());
 
     EmailRequest sentRequest = captor.getValue();
 
-    assertThat(sentRequest.getCc()).isNull();
-    assertThat(sentRequest.getBcc()).isNull();
+    assertThat(sentRequest.getRecipients()).contains("test@example.com");
     assertThat(sentRequest.getReplyTo()).isNull();
   }
 }

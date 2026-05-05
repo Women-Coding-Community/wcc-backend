@@ -423,4 +423,18 @@ class MentorControllerTest {
     assertThat(annotation.value())
         .containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN);
   }
+
+  @Test
+  @DisplayName("Given POST request with id in body, when creating mentor, then id in body is ignored")
+  void shouldIgnoreIdInRequestBodyWhenCreatingMentor() throws Exception {
+    var requestWithId = createMentorDtoTest(999L, MemberType.MENTOR);
+    var savedMentor = createMentorTest("Jane");
+
+    when(mentorshipService.create(any())).thenReturn(savedMentor);
+
+    mockMvc
+        .perform(postRequest(API_MENTORS, requestWithId))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(is(1)));
+  }
 }

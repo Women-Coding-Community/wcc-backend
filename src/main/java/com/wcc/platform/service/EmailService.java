@@ -18,6 +18,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -33,6 +34,7 @@ public class EmailService {
   private final String fromEmail;
   private final EmailTemplateService emailTemplateService;
 
+  /** Constructor for EmailService. */
   @Autowired
   public EmailService(
       final JavaMailSender javaMailSender,
@@ -44,7 +46,7 @@ public class EmailService {
   }
 
   /**
-   * Sends an email based on the provided email request.
+   * Sends an email based on the provided email request always sending as BCC.
    *
    * @param emailRequest the email request containing recipient, subject, body, and other details
    * @return EmailResponse containing the status of the email sending operation
@@ -52,24 +54,17 @@ public class EmailService {
    */
   public EmailResponse sendEmail(final EmailRequest emailRequest) {
     try {
-      log.info("Attempting to send email to: {}", emailRequest.getTo());
+      log.info("Attempting to send email to: {}", emailRequest.getRecipients());
 
       final MimeMessage message = javaMailSender.createMimeMessage();
       final var mimeMessageHelper =
           new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
       mimeMessageHelper.setFrom(fromEmail);
-      mimeMessageHelper.setTo(emailRequest.getTo());
       mimeMessageHelper.setSubject(emailRequest.getSubject());
       mimeMessageHelper.setText(emailRequest.getBody(), emailRequest.isHtml());
 
-      if (!ObjectUtils.isEmpty(emailRequest.getCc())) {
-        mimeMessageHelper.setCc(emailRequest.getCc().toArray(new String[0]));
-      }
-
-      if (!ObjectUtils.isEmpty(emailRequest.getBcc())) {
-        mimeMessageHelper.setBcc(emailRequest.getBcc().toArray(new String[0]));
-      }
+      mimeMessageHelper.setBcc(emailRequest.getRecipients().toArray(new String[0]));
 
       if (!ObjectUtils.isEmpty(emailRequest.getReplyTo())) {
         mimeMessageHelper.setReplyTo(emailRequest.getReplyTo());
@@ -77,18 +72,21 @@ public class EmailService {
 
       javaMailSender.send(message);
 
-      log.info("Email sent successfully to: {}", emailRequest.getTo());
+      log.info("Email sent successfully to: {}", emailRequest.getRecipients());
 
       return EmailResponse.builder()
           .success(true)
           .message("Email sent successfully")
           .timestamp(OffsetDateTime.now())
-          .recipient(emailRequest.getTo())
+          .recipient(String.join(";", emailRequest.getRecipients()))
           .build();
-
     } catch (MessagingException | MailException e) {
-      log.error("Failed to send email to: {}. Error: {}", emailRequest.getTo(), e.getMessage(), e);
-      throw new EmailSendException("Failed to send email to: " + emailRequest.getTo(), e);
+      log.error(
+          "Failed to send email to: {}. Error: {}",
+          emailRequest.getRecipients(),
+          e.getMessage(),
+          e);
+      throw new EmailSendException("Failed to send email to: " + emailRequest.getRecipients(), e);
     }
   }
 
@@ -104,19 +102,19 @@ public class EmailService {
         emailTemplateService.renderTemplate(
             request.getTemplateType(), request.getTemplateParameters());
 
-    final EmailRequest.EmailRequestBuilder emailBuilder =
+    final var emailBuilder =
         EmailRequest.builder()
-            .to(request.getTo())
             .subject(renderedTemplate.subject())
             .body(renderedTemplate.body())
             .html(request.isHtml());
 
-    if (request.getCc() != null && !request.getCc().isEmpty()) {
-      emailBuilder.cc(request.getCc());
-    }
-
-    if (request.getBcc() != null && !request.getBcc().isEmpty()) {
-      emailBuilder.bcc(request.getBcc());
+    if (CollectionUtils.isEmpty(request.getBcc())) {
+      emailBuilder.recipients(List.of(request.getTo()));
+    } else {
+      final var recipients = new java.util.ArrayList<String>();
+      recipients.add(request.getTo());
+      recipients.addAll(request.getBcc());
+      emailBuilder.recipients(recipients);
     }
 
     if (StringUtils.isNotBlank(request.getReplyTo())) {
@@ -141,12 +139,12 @@ public class EmailService {
               try {
                 return sendEmail(request);
               } catch (EmailSendException e) {
-                log.error("Failed to send bulk email to: {}", request.getTo(), e);
+                log.error("Failed to send bulk email to: {}", request.getRecipients(), e);
                 return EmailResponse.builder()
                     .success(false)
                     .message("Failed to send email")
                     .timestamp(OffsetDateTime.now())
-                    .recipient(request.getTo())
+                    .recipient(String.join(";", request.getRecipients()))
                     .error(e.getMessage())
                     .build();
               }

@@ -174,7 +174,7 @@ class ResourceControllerTest {
 
   @Test
   void uploadMemberProfilePictureShouldReturnCreatedProfilePicture() throws Exception {
-    when(resourceService.uploadMentorProfilePicture(eq(memberId), any(MultipartFile.class)))
+    when(resourceService.uploadMemberProfilePicture(eq(memberId), any(MultipartFile.class)))
         .thenReturn(profilePicture);
 
     mockMvc
@@ -190,7 +190,7 @@ class ResourceControllerTest {
   }
 
   @Test
-  void testGetMentorProfilePictureShouldReturnProfilePicture() throws Exception {
+  void testGetMemberProfilePictureShouldReturnProfilePicture() throws Exception {
     when(resourceService.getMemberProfilePicture(memberId)).thenReturn(profilePicture);
 
     mockMvc
@@ -237,8 +237,7 @@ class ResourceControllerTest {
   }
 
   @Test
-  @DisplayName(
-      "Given invalid URL, when saving external profile picture link, then returns 400")
+  @DisplayName("Given invalid URL, when saving external profile picture link, then returns 400")
   void shouldReturn400WhenExternalUrlIsInvalid() throws Exception {
     var request = new ExternalProfilePictureRequest(memberId, "not-a-valid-url");
 

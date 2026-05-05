@@ -1,0 +1,28 @@
+MENTEE_APPLICATIONS:
+  subject: "[{{cycleId}}][mentee_applications]: {{applicationId}}-{{status}}"
+  body: |
+    <p>Dear Mentorship Team,</p>
+
+    <p>Check the mentee application latest details.</p>
+    <ul>
+      <li><strong>Application ID:</strong> {{applicationId}}</li>
+      <li><strong>Mentee ID:</strong> {{menteeId}}</li>
+      <li><strong>Mentor ID:</strong> {{mentorId}}</li>
+      <li><strong>Cycle ID:</strong> {{cycleId}}</li>
+      <li><strong>Priority Order:</strong> {{priorityOrder}}</li>
+      <li><strong>Status:</strong> {{status}}</li>
+      <li><strong>Status Updated:</strong> {{statusUpdated}}</li>
+      <li><strong>Application Message:</strong> {{applicationMessage}}</li>
+      <li><strong>Why Mentor:</strong> {{whyMentor}}</li>
+      <li><strong>Applied At:</strong> {{appliedAt}}</li>
+      <li><strong>Reviewed At:</strong> {{reviewedAt}}</li>
+      <li><strong>Matched At:</strong> {{matchedAt}}</li>
+      <li><strong>Mentor Response:</strong> {{mentorResponse}}</li>
+      <li><strong>Created At:</strong> {{createdAt}}</li>
+      <li><strong>Updated At:</strong> {{updatedAt}}</li>
+    </ul>
+    <p>
+    {{teamEmailSignature}}
+    </p>
+
+    <p>[Automated Message]</p>

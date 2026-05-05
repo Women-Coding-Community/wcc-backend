@@ -195,7 +195,7 @@ class ResourceServiceTest {
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
     when(repository.create(any(MemberProfilePicture.class))).thenReturn(profilePicture);
 
-    var result = resourceService.uploadMentorProfilePicture(memberId, multipartFile);
+    var result = resourceService.uploadMemberProfilePicture(memberId, multipartFile);
 
     assertNotNull(result);
     assertEquals(memberId, result.getMemberId());
@@ -350,7 +350,7 @@ class ResourceServiceTest {
   }
 
   @Test
-  void uploadMentorProfilePictureShouldReplaceExistingPicture() {
+  void uploadMemberProfilePictureShouldReplaceExistingPicture() {
     when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
     when(repository.findByMemberId(memberId)).thenReturn(Optional.of(profilePicture));
     when(resourceRepository.findById(resourceId)).thenReturn(Optional.of(resource));
@@ -362,7 +362,7 @@ class ResourceServiceTest {
     when(resourceRepository.create(any(Resource.class))).thenReturn(resource);
     when(repository.create(any(MemberProfilePicture.class))).thenReturn(profilePicture);
 
-    var result = resourceService.uploadMentorProfilePicture(memberId, multipartFile);
+    var result = resourceService.uploadMemberProfilePicture(memberId, multipartFile);
 
     assertNotNull(result);
     assertEquals(memberId, result.getMemberId());
