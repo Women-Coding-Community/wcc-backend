@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Avatar, Box, Button, Chip, CircularProgress, Paper, Typography } from '@mui/material';
+import { Avatar, Box, Button, CircularProgress, Paper, Typography } from '@mui/material';
 
 interface ProfilePictureSectionProps {
   fullName: string;
@@ -17,14 +17,6 @@ export default function ProfilePictureSection({
   uploading = false,
 }: ProfilePictureSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const statusColor =
-    profileStatus === 'ACTIVE' ? 'success' : profileStatus === 'PENDING' ? 'warning' : 'default';
-  const statusLabel = profileStatus
-    ? profileStatus === 'ACTIVE'
-      ? 'Approved'
-      : profileStatus.charAt(0) + profileStatus.slice(1).toLowerCase()
-    : 'Unknown';
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -64,17 +56,6 @@ export default function ProfilePictureSection({
           >
             Change Picture
           </Button>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            gap: 1,
-          }}
-        >
-          <Typography variant="h6">Profile Status</Typography>
-          <Chip label={statusLabel} color={statusColor} sx={{ display: 'flex' }} />
         </Box>
       </Box>
     </Paper>
