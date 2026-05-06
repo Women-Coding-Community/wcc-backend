@@ -277,15 +277,6 @@ public class MentorshipService {
 
     final Optional<Mentor> mentorOptional = mentorRepository.findById(mentorId);
     final var mentor = mentorOptional.orElseThrow(() -> new MemberNotFoundException(mentorId));
-    if (mentor.getImages().isEmpty() && !mentorDto.getImages().isEmpty()) {
-      resourceService.saveExternalProfilePicture(
-          mentorId,
-          mentorDto.getImages().stream()
-              .filter(i -> i.alt().startsWith("Profile"))
-              .map(Image::path)
-              .findFirst()
-              .orElseThrow(() -> new IllegalArgumentException("No profile picture found")));
-    }
 
     final Mentor updatedMentor = mentorDto.merge(mentor);
     validateMentorCommitment(updatedMentor);

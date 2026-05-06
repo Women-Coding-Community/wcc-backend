@@ -51,7 +51,7 @@ public class MemberProfilePictureAspect {
       returning = "memberId")
   public void afterMemberCreation(final Member member, final Long memberId) {
     log.debug("Aspect triggered: afterMemberCreation for memberId={}", memberId);
-    saveProfilePictureIfPresent(memberId, member.getImages());
+    saveProfilePicture(memberId, member.getImages());
   }
 
   /**
@@ -76,7 +76,7 @@ public class MemberProfilePictureAspect {
    * @param images the list of images provided in the member creation request
    */
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void saveProfilePictureIfPresent(final Long memberId, final List<Image> images) {
+  private void saveProfilePicture(final Long memberId, final List<Image> images) {
     if (CollectionUtils.isEmpty(images)) {
       return;
     }
@@ -134,7 +134,6 @@ public class MemberProfilePictureAspect {
     }
 
     try {
-      // Check if profile picture already exists
       final var existingPicture = profilePicRepo.findByMemberId(memberId);
 
       if (existingPicture.isPresent()) {
@@ -143,18 +142,15 @@ public class MemberProfilePictureAspect {
                 ? existingPicture.get().getResource().getDriveFileLink()
                 : null;
 
-        // Only update if URL has changed
         if (newProfileImage.path().equals(existingUrl)) {
           log.debug("Profile picture URL unchanged for member {}, skipping update", memberId);
           return;
         }
 
-        // Delete old profile picture
         deleteExistingProfilePicture(memberId);
       }
 
-      // Save new profile picture
-      saveProfilePictureIfPresent(memberId, images);
+      saveProfilePicture(memberId, images);
     } catch (Exception e) {
       log.error("Failed to update profile picture for member {}: {}", memberId, e.getMessage(), e);
     }
@@ -162,6 +158,9 @@ public class MemberProfilePictureAspect {
 
   /**
    * Deletes the existing profile picture for a member.
+   *
+   * <p>Profile picture deletion failures should not stop member update. This is why the generic
+   * Exception is used and @SupressWarnings.
    *
    * @param memberId the member's identifier
    */
@@ -176,7 +175,6 @@ public class MemberProfilePictureAspect {
         log.info("Deleted existing profile picture for member {}", memberId);
       }
     } catch (Exception e) {
-      // Profile picture deletion failures should not break the entire member update operation
       log.warn(
           "Failed to delete existing profile picture for member {}: {}", memberId, e.getMessage());
     }

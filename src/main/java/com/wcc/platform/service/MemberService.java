@@ -30,7 +30,11 @@ public class MemberService {
   private final MemberProfilePictureRepository profilePicRepo;
   private final UserProvisionService userProvisionService;
 
-  /** Save Member into storage. */
+  /**
+   * Save Member into storage.
+   *
+   * <p>Profile picture saving is now handled automatically by MemberProfilePictureAspect
+   */
   public Member createMember(final Member member) {
     final Optional<Member> memberOptional = emailExists(member.getEmail());
     final var userExists = userRepository.findByEmail(member.getEmail()).isPresent();
@@ -42,7 +46,7 @@ public class MemberService {
       userProvisionService.provisionUserRole(
           createdMember.getId(), createdMember.getEmail(), RoleType.VIEWER);
     }
-    // Note: Profile picture saving is now handled automatically by MemberProfilePictureAspect
+
     return enrichWithProfilePicture(createdMember);
   }
 
