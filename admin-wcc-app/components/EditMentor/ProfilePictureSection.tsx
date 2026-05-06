@@ -57,11 +57,12 @@ export default function ProfilePictureSection({
           <Button
             variant="outlined"
             size="small"
-            disabled={uploading}
+            disabled={true}
             startIcon={uploading ? <CircularProgress size={14} /> : undefined}
             onClick={() => fileInputRef.current?.click()}
+            title="Picture upload is not available yet"
           >
-            {uploading ? 'Uploading...' : 'Change Picture'}
+            Change Picture
           </Button>
         </Box>
         <Box
