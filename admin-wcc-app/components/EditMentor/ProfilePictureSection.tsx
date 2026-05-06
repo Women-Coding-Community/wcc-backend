@@ -3,7 +3,6 @@ import { Avatar, Box, Button, CircularProgress, Paper, Typography } from '@mui/m
 
 interface ProfilePictureSectionProps {
   fullName: string;
-  profileStatus?: string;
   imageUrl?: string;
   onPictureChange?: (file: File) => void;
   uploading?: boolean;
@@ -11,7 +10,6 @@ interface ProfilePictureSectionProps {
 
 export default function ProfilePictureSection({
   fullName,
-  profileStatus,
   imageUrl,
   onPictureChange,
   uploading = false,
@@ -29,7 +27,7 @@ export default function ProfilePictureSection({
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Profile Picture & Status
+        Profile Picture
       </Typography>
       <Box sx={{ display: 'flex', gap: 3 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
