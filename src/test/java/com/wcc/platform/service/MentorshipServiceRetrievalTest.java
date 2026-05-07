@@ -226,6 +226,34 @@ class MentorshipServiceRetrievalTest {
 
   @Test
   @DisplayName(
+      "Given mentor with email and slack name, when enriched with profile picture, then email and slackDisplayName should be preserved")
+  void shouldPreserveEmailAndSlackNameWhenEnrichedWithProfilePicture() {
+    var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
+    var dto = mock(MentorDto.class);
+    when(mentor.getProfileStatus()).thenReturn(ProfileStatus.ACTIVE);
+    when(mentor.toDto()).thenReturn(dto);
+    when(dto.getId()).thenReturn(1L);
+    when(dto.getEmail()).thenReturn("mentor@womencodingcommunity.com");
+    when(dto.getSlackDisplayName()).thenReturn("@MentorSlack");
+    when(mentorRepository.getAll()).thenReturn(List.of(mentor));
+
+    var resource = createResourceTest();
+    var profilePicture = createMemberProfilePictureTest(1L).toBuilder().resource(resource).build();
+    when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.of(profilePicture));
+
+    doReturn(CLOSED_CYCLE).when(service).getCurrentCycle();
+
+    var result = service.getAllActiveMentors();
+
+    assertThat(result).hasSize(1);
+    var mentorDtoResult = result.getFirst();
+    assertThat(mentorDtoResult.getEmail()).isEqualTo("mentor@womencodingcommunity.com");
+    assertThat(mentorDtoResult.getSlackDisplayName()).isEqualTo("@MentorSlack");
+    assertThat(mentorDtoResult.getImages()).hasSize(1);
+  }
+
+  @Test
+  @DisplayName(
       "Given mentor with pronouns, when enriched with profile picture, then pronouns should be preserved")
   void shouldPreservePronounsWhenEnrichedWithProfilePicture() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
