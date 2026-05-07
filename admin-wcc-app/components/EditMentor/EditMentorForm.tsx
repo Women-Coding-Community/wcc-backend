@@ -314,7 +314,6 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
       <Stack spacing={3}>
         <ProfilePictureSection
           fullName={mentor?.fullName ?? ''}
-          profileStatus={mentor?.profileStatus}
           imageUrl={profilePictureUrl}
           onPictureChange={handleProfilePictureUpload}
           uploading={profilePictureUploading}

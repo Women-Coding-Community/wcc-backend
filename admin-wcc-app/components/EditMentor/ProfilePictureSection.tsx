@@ -1,9 +1,8 @@
 import { useRef } from 'react';
-import { Avatar, Box, Button, Chip, CircularProgress, Paper, Typography } from '@mui/material';
+import { Avatar, Box, Button, CircularProgress, Paper, Typography } from '@mui/material';
 
 interface ProfilePictureSectionProps {
   fullName: string;
-  profileStatus?: string;
   imageUrl?: string;
   onPictureChange?: (file: File) => void;
   uploading?: boolean;
@@ -11,20 +10,11 @@ interface ProfilePictureSectionProps {
 
 export default function ProfilePictureSection({
   fullName,
-  profileStatus,
   imageUrl,
   onPictureChange,
   uploading = false,
 }: ProfilePictureSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const statusColor =
-    profileStatus === 'ACTIVE' ? 'success' : profileStatus === 'PENDING' ? 'warning' : 'default';
-  const statusLabel = profileStatus
-    ? profileStatus === 'ACTIVE'
-      ? 'Approved'
-      : profileStatus.charAt(0) + profileStatus.slice(1).toLowerCase()
-    : 'Unknown';
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,7 +27,7 @@ export default function ProfilePictureSection({
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Profile Picture & Status
+        Profile Picture
       </Typography>
       <Box sx={{ display: 'flex', gap: 3 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
@@ -57,23 +47,13 @@ export default function ProfilePictureSection({
           <Button
             variant="outlined"
             size="small"
-            disabled={uploading}
+            disabled={true}
             startIcon={uploading ? <CircularProgress size={14} /> : undefined}
             onClick={() => fileInputRef.current?.click()}
+            title="Picture upload is not available yet"
           >
-            {uploading ? 'Uploading...' : 'Change Picture'}
+            Change Picture
           </Button>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            gap: 1,
-          }}
-        >
-          <Typography variant="h6">Profile Status</Typography>
-          <Chip label={statusLabel} color={statusColor} sx={{ display: 'flex' }} />
         </Box>
       </Box>
     </Paper>
