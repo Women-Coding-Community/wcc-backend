@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.cms.attributes;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +39,8 @@ public enum MentorshipFocusArea {
   }
 
   @Override
+  @JsonValue
   public String toString() {
-    return description;
+    return name();
   }
 }
