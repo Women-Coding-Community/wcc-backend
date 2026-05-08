@@ -8,7 +8,7 @@ NEW_MENTEES_LONG:
 
     <p>
     You have new mentee applications currently pending your review. 
-    Could you please log into your <a href="{{dashboardUrl}}"><strong>Mentor Dashboard</strong></a> today to check? 
+    Could you please log into your <a href="https://wcc-admin.vercel.app/"><strong>Mentor Dashboard</strong></a> today to check? 
     </p>
 
     <p>
@@ -16,7 +16,12 @@ NEW_MENTEES_LONG:
     </p>
 
     <p>
-    If you do not see the application(s) or have any trouble accessing your account, please feel free to reply to this email.
+    <strong>Please note:</strong> If you have not logged into the dashboard before, you should have received a password reset email from <strong>admin@womencodingcommunity.com</strong> prior to this email. 
+    If you cannot find it, please check your spam/junk folder first. If you still haven’t received it, please reply to this email and we’ll resend it for you.
+    </p>
+
+    <p>
+    If you do not see the application(s) or have any other trouble accessing your account, please feel free to reply to this email.
     </p>
 
     <p>
