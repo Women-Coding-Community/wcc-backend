@@ -24,14 +24,32 @@
   "skills": {
     "yearsExperience": 15,
     "areas": [
-      "BACKEND",
-      "FULLSTACK",
-      "DISTRIBUTED_SYSTEMS"
+      {
+        "technicalArea": "BACKEND",
+        "proficiencyLevel": "ADVANCED"
+      },
+      {
+        "technicalArea": "FULLSTACK",
+        "proficiencyLevel": "ADVANCED"
+      },
+      {
+        "technicalArea": "DISTRIBUTED_SYSTEMS",
+        "proficiencyLevel": "ADVANCED"
+      }
     ],
     "languages": [
-      "java",
-      "javascript",
-      "Kotlin"
+      {
+        "language": "java",
+        "proficiencyLevel": "ADVANCED"
+      },
+      {
+        "language": "javascript",
+        "proficiencyLevel": "ADVANCED"
+      },
+      {
+        "language": "Kotlin",
+        "proficiencyLevel": "ADVANCED"
+      }
     ],
     "mentorshipFocus": [
       "Grow from beginner to mid-level",

@@ -1,8 +1,10 @@
 package com.wcc.platform.controller;
 
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammePage;
 import com.wcc.platform.domain.cms.pages.programme.ProgrammesPage;
 import com.wcc.platform.domain.platform.type.ProgramType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.ProgrammeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -62,6 +64,7 @@ public class ProgrammeController {
   @Operation(
       summary = "Create program page content by program type",
       description = "Create program new page with any content type.")
+  @RequiresRole({RoleType.ADMIN, RoleType.CONTRIBUTOR, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> createPage(
       @Parameter(description = "Program Type, for example: BOOK_CLUB", required = true)
@@ -77,6 +80,7 @@ public class ProgrammeController {
   @Operation(
       summary = "Update program page content by program type",
       description = "Update the content of existent program page.")
+  @RequiresRole({RoleType.ADMIN, RoleType.CONTRIBUTOR, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> updatePage(
       @Parameter(description = "Program Type, for example: BOOK_CLUB", required = true)

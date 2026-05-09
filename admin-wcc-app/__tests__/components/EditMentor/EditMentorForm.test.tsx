@@ -80,13 +80,13 @@ describe('EditMentorForm', () => {
     });
   });
 
-  it('Given a valid mentorId with ACTIVE status, when form loads, then Approved status chip is shown', async () => {
+  it('Given a valid mentorId, when form loads, then profile picture section is shown', async () => {
     mockGetMentorById.mockResolvedValue(fakeMentor);
 
     render(<EditMentorForm mentorId="7" />);
 
     await waitFor(() => {
-      expect(screen.getByText('Approved')).toBeInTheDocument();
+      expect(screen.getByText('Profile Picture')).toBeInTheDocument();
     });
   });
 

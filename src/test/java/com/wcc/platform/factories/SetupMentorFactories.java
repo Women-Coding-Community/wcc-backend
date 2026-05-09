@@ -43,6 +43,21 @@ public class SetupMentorFactories {
   /** Test factory for Mentor. */
   public static Mentor createMentorTest(
       final Long mentorId, final String name, final String email) {
+    return createMentorTest(mentorId, name, email, true);
+  }
+
+  /**
+   * Test factory for Mentor with option to include or exclude images.
+   *
+   * @param mentorId the mentor ID (can be null)
+   * @param name the mentor name
+   * @param email the mentor email
+   * @param includeImages whether to include default images (set false to prevent
+   *     MemberProfilePictureAspect from auto-creating profile pictures)
+   * @return a Mentor test instance
+   */
+  public static Mentor createMentorTest(
+      final Long mentorId, final String name, final String email, final boolean includeImages) {
     final Member member = createMemberTest(MemberType.MENTOR);
 
     MentorBuilder mentorBuilder =
@@ -53,7 +68,7 @@ public class SetupMentorFactories {
             .slackDisplayName(member.getSlackDisplayName())
             .country(member.getCountry())
             .city("City")
-            .images(member.getImages())
+            .images(includeImages ? member.getImages() : List.of())
             .memberTypes(member.getMemberTypes())
             .pronouns(null)
             .pronounCategory(null)
@@ -88,6 +103,20 @@ public class SetupMentorFactories {
   /** Mentor Builder. */
   public static Mentor createMentorTest(final String mentorName) {
     return createMentorTest(1L, mentorName, "member@wcc.com");
+  }
+
+  /**
+   * Convenience method to create a Mentor without images. Useful for integration tests where
+   * MemberProfilePictureAspect would otherwise auto-create profile pictures from the images list.
+   *
+   * @param mentorId the mentor ID (can be null)
+   * @param name the mentor name
+   * @param email the mentor email
+   * @return a Mentor test instance without images
+   */
+  public static Mentor createMentorTestWithoutImages(
+      final Long mentorId, final String name, final String email) {
+    return createMentorTest(mentorId, name, email, false);
   }
 
   /** Factory test to create MemberDto object. */
