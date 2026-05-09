@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 public @interface RequiresRole {
   RoleType[] value();
 
-  LogicalOperator operator() default LogicalOperator.AND;
+  LogicalOperator operator() default LogicalOperator.OR;
 }

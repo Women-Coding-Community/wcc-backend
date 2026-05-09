@@ -1,6 +1,8 @@
 package com.wcc.platform.controller.platform;
 
+import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.cms.PageType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.PageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,6 +32,7 @@ public class PageController {
 
   /** Create Page Content and store into database. */
   @PostMapping
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Create page content by page type",
       description = "Create new page with any content type.")
@@ -44,6 +47,7 @@ public class PageController {
 
   /** Update Page and store into database. */
   @PutMapping
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Update page content by page type",
       description = "Update the content of existent page.")
@@ -58,6 +62,7 @@ public class PageController {
 
   /** Delete Page By ID. */
   @DeleteMapping
+  @RequiresRole(RoleType.ADMIN)
   @Operation(summary = "Delete page by id")
   public ResponseEntity<Void> deletePage(@RequestParam(name = "id") final String pageId) {
     service.deletePageById(pageId);

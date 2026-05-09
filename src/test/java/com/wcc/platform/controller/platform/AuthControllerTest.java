@@ -1,5 +1,7 @@
 package com.wcc.platform.controller.platform;
 
+import static com.wcc.platform.domain.auth.Permission.MEMBER_WRITE;
+import static com.wcc.platform.domain.auth.Permission.USER_WRITE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -14,8 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
-import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.configuration.security.RequiresPermission;
+import com.wcc.platform.controller.platform.AuthController.ConfirmPasswordResetRequest;
 import com.wcc.platform.controller.platform.AuthController.LoginRequest;
+import com.wcc.platform.controller.platform.AuthController.ResetPasswordRequest;
 import com.wcc.platform.domain.auth.LoginResponse;
 import com.wcc.platform.domain.auth.UpdateUserRolesRequest;
 import com.wcc.platform.domain.auth.UserAccount;
@@ -26,8 +30,6 @@ import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MemberService;
-import com.wcc.platform.controller.platform.AuthController.ConfirmPasswordResetRequest;
-import com.wcc.platform.controller.platform.AuthController.ResetPasswordRequest;
 import com.wcc.platform.service.PasswordResetService;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -147,15 +149,14 @@ class AuthControllerTest {
   @Test
   @DisplayName(
       "Given requestPasswordReset method, when inspecting its annotations,"
-          + " then it should require ADMIN or LEADER role")
-  void shouldRequireAdminOrLeaderRoleOnPasswordResetRequestEndpoint() throws NoSuchMethodException {
+          + " then it should require USER or MEMBER write permission")
+  void requireMemberUserWritePermOnPasswordResetRequest() throws NoSuchMethodException {
     var method =
         AuthController.class.getDeclaredMethod("requestPasswordReset", ResetPasswordRequest.class);
-    var annotation = method.getAnnotation(RequiresRole.class);
+    var annotation = method.getAnnotation(RequiresPermission.class);
 
     assertThat(annotation).isNotNull();
-    assertThat(annotation.value())
-        .containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.LEADER);
+    assertThat(annotation.value()).containsExactlyInAnyOrder(USER_WRITE, MEMBER_WRITE);
   }
 
   @Test
@@ -254,14 +255,14 @@ class AuthControllerTest {
   @Test
   @DisplayName(
       "Given updateUserRoles method, when inspecting its annotations,"
-          + " then it should require ADMIN or LEADER role")
-  void shouldRequireAdminOrLeaderRoleOnUpdateUserRolesEndpoint() throws NoSuchMethodException {
+          + " then it should require USER_WRITE permission")
+  void shouldRequireUserWritePermissionOnUpdateUserRoles() throws NoSuchMethodException {
     var method =
         AuthController.class.getDeclaredMethod(
             "updateUserRoles", Integer.class, UpdateUserRolesRequest.class);
-    var annotation = method.getAnnotation(RequiresRole.class);
+    var annotation = method.getAnnotation(RequiresPermission.class);
 
     assertThat(annotation).isNotNull();
-    assertThat(annotation.value()).containsExactlyInAnyOrder(RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN);
+    assertThat(annotation.value()).containsExactlyInAnyOrder(USER_WRITE);
   }
 }
