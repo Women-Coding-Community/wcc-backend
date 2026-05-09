@@ -59,6 +59,7 @@ public class PostgresMentorRepository implements MentorRepository {
       "SELECT mentors.* FROM mentors LEFT JOIN members ON mentors.mentor_id = members.id "
           + "WHERE members.email = ?";
   private static final String SQL_GET_ALL = "SELECT * FROM mentors";
+  private static final String SQL_GET_BY_STATUS = "SELECT * FROM mentors WHERE profile_status = ?";
   private static final String SQL_FIND_ID_BY_EMAIL =
       "SELECT mentors.mentor_id FROM mentors LEFT JOIN members ON mentors.mentor_id = members.id"
           + " WHERE members.email = ?";
@@ -98,6 +99,12 @@ public class PostgresMentorRepository implements MentorRepository {
           return null;
         },
         email);
+  }
+
+  @Override
+  public List<Mentor> findAvailableMentors(final ProfileStatus status) {
+    return jdbc.query(
+        SQL_GET_BY_STATUS, (rs, rowNum) -> mentorMapper.mapRowToMentor(rs), status.getStatusId());
   }
 
   @Override

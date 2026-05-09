@@ -7,10 +7,11 @@ import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchCancelRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
+import com.wcc.platform.domain.platform.mentorship.recommendation.MentorshipRecommendationResponse;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
-import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MentorshipMatchingService;
+import com.wcc.platform.service.MentorshipRecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -43,9 +43,23 @@ public class MentorshipAdminMatchesController {
 
   private final MentorshipMatchingService matchingService;
   private final MentorshipCycleRepository cycleRepository;
-  private final MenteeService menteeService;
+  private final MentorshipRecommendationService recommendationService;
 
   // ==================== Match Management ====================
+
+  /**
+   * API to get suggested mentee matches for unmatched mentors.
+   *
+   * @return Recommended matches
+   */
+  @GetMapping("/matches/recommendations/{cycleId}")
+  //  @RequiresRole({RoleType.ADMIN})
+  @Operation(summary = "Get suggested mentee matches for unmatched mentors")
+  public ResponseEntity<MentorshipRecommendationResponse> getMatchRecommendations(
+      @Parameter(description = "Cycle ID") @PathVariable final Long cycleId) {
+    final var recommendations = recommendationService.getRecommendations(cycleId);
+    return ResponseEntity.ok(recommendations);
+  }
 
   /**
    * API for admin to confirm a match from an accepted application. This creates the official
@@ -57,7 +71,6 @@ public class MentorshipAdminMatchesController {
   @PostMapping("/matches/confirm/{applicationId}")
   @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Admin confirms a mentorship match from accepted application")
-  @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MentorshipMatch> confirmMatch(
       @Parameter(description = "Application ID to confirm as match") @PathVariable
           final Long applicationId) {
@@ -74,7 +87,6 @@ public class MentorshipAdminMatchesController {
   @GetMapping("/matches")
   @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Get all matches for a cycle")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipMatch>> getCycleMatches(
       @Parameter(description = "Cycle ID") @RequestParam final Long cycleId) {
     final List<MentorshipMatch> matches = matchingService.getCycleMatches(cycleId);
@@ -91,7 +103,6 @@ public class MentorshipAdminMatchesController {
   @PatchMapping("/matches/{matchId}/complete")
   @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Complete a mentorship match")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> completeMatch(
       @Parameter(description = "Match ID") @PathVariable final Long matchId,
       @Parameter(description = "Completion notes") @RequestParam(required = false)
@@ -110,7 +121,6 @@ public class MentorshipAdminMatchesController {
   @PatchMapping("/matches/{matchId}/cancel")
   @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Cancel a mentorship match")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> cancelMatch(
       @Parameter(description = "Match ID") @PathVariable final Long matchId,
       @Valid @RequestBody final MatchCancelRequest request) {
@@ -128,7 +138,6 @@ public class MentorshipAdminMatchesController {
   @PatchMapping("/matches/{matchId}/increment-session")
   @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Increment session count for a match")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> incrementSessionCount(
       @Parameter(description = "Match ID") @PathVariable final Long matchId) {
     final MentorshipMatch updated = matchingService.incrementSessionCount(matchId);
@@ -145,7 +154,6 @@ public class MentorshipAdminMatchesController {
   @GetMapping("/cycles/current")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get the currently open mentorship cycle")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCurrentCycle() {
     return cycleRepository
         .findOpenCycle()
@@ -162,7 +170,6 @@ public class MentorshipAdminMatchesController {
   @GetMapping("/cycles")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get cycles by status")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipCycleEntity>> getCyclesByStatus(
       @Parameter(description = "Cycle status") @RequestParam final CycleStatus status) {
     final List<MentorshipCycleEntity> cycles = cycleRepository.findByStatus(status);
@@ -178,7 +185,6 @@ public class MentorshipAdminMatchesController {
   @GetMapping("/cycles/{cycleId}")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get a cycle by ID")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCycleById(
       @Parameter(description = "Cycle ID") @PathVariable final Long cycleId) {
     return cycleRepository
@@ -195,7 +201,6 @@ public class MentorshipAdminMatchesController {
   @GetMapping("/cycles/all")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
   @Operation(summary = "Get all mentorship cycles")
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipCycleEntity>> getAllCycles() {
     final List<MentorshipCycleEntity> cycles = cycleRepository.getAll();
     return ResponseEntity.ok(cycles);
