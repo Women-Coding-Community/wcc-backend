@@ -71,7 +71,7 @@ class MentorControllerTest {
   void shouldCreateMentorAndReturnCreated() throws Exception {
     var mentorRequestBody = createMentorDtoTest(1L, MemberType.MENTOR);
     var returnedMentor = createMentorTest("Jane");
-    when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor);
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor.toDto());
 
     mockMvc
         .perform(postRequest(API_MENTORS, mentorRequestBody))
@@ -354,7 +354,7 @@ class MentorControllerTest {
             .isWomen(true)
             .build();
 
-    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor.toDto());
 
     mockMvc
         .perform(postRequest(API_MENTORS, mentor))
@@ -425,12 +425,13 @@ class MentorControllerTest {
   }
 
   @Test
-  @DisplayName("Given POST request with id in body, when creating mentor, then id in body is ignored")
+  @DisplayName(
+      "Given POST request with id in body, when creating mentor, then id in body is ignored")
   void shouldIgnoreIdInRequestBodyWhenCreatingMentor() throws Exception {
     var requestWithId = createMentorDtoTest(999L, MemberType.MENTOR);
     var savedMentor = createMentorTest("Jane");
 
-    when(mentorshipService.create(any())).thenReturn(savedMentor);
+    when(mentorshipService.create(any())).thenReturn(savedMentor.toDto());
 
     mockMvc
         .perform(postRequest(API_MENTORS, requestWithId))

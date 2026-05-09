@@ -59,7 +59,7 @@ public class MentorshipService {
    *
    * @return Mentor record created successfully.
    */
-  public Mentor create(final Mentor mentor) {
+  public MentorDto create(final Mentor mentor) {
     final var existingMember = memberRepository.findByEmail(mentor.getEmail());
 
     final var memberTypeMentor = MemberType.MENTOR;
@@ -99,7 +99,7 @@ public class MentorshipService {
               .acceptPromotion(mentor.getAcceptPromotion())
               .build();
 
-      return mentorRepository.create(mentorWithExistingId);
+      return mentorRepository.create(mentorWithExistingId).toDto();
     }
 
     if (mentor.getId() != null) {
@@ -115,7 +115,7 @@ public class MentorshipService {
       userProvisionService.provisionUserRole(
           mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
     }
-    return enrichMentorWithProfilePicture(mentorCreated);
+    return enrichMentorWithProfilePicture(mentorCreated).toDto();
   }
 
   /**
