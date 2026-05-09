@@ -133,7 +133,7 @@ class MentorshipServiceTest {
 
     var result = service.create(mentor);
 
-    assertEquals(mentor, result);
+    assertEquals(mentor.toDto(), result);
     verify(mentorRepository).create(mentor);
   }
 
@@ -151,7 +151,7 @@ class MentorshipServiceTest {
 
     var result = service.create(mentor);
 
-    assertEquals(mentor, result);
+    assertEquals(mentor.toDto(), result);
     verify(mentorRepository).create(mentor);
   }
 
@@ -190,7 +190,7 @@ class MentorshipServiceTest {
 
     var result = service.create(mentor);
 
-    assertEquals(mentor, result);
+    assertEquals(mentor.toDto(), result);
     verify(mentorRepository).create(mentor);
   }
 

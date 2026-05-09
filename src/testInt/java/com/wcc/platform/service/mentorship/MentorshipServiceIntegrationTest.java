@@ -11,6 +11,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
@@ -49,6 +50,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
   @Autowired private JdbcTemplate jdbcTemplate;
 
   private Mentor setupMentor;
+  private MentorDto mentorDTO;
 
   @BeforeEach
   void setUp() {
@@ -58,13 +60,13 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     cleanupMentor(setupMentor);
     pageRepository.deleteById(MENTORS.getId());
     pageService.create(MENTORS, page);
-    setupMentor = service.create(setupMentor);
-    repository.updateProfileStatus(setupMentor.getId(), ProfileStatus.ACTIVE);
+    mentorDTO = service.create(setupMentor);
+    repository.updateProfileStatus(mentorDTO.getId(), ProfileStatus.ACTIVE);
   }
 
   @AfterEach
   void tearDown() {
-    if (setupMentor != null) {
+    if (setupMentor != null || mentorDTO != null) {
       cleanupMentor(setupMentor);
     }
   }
@@ -182,7 +184,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             null, "Mentor From Existing Member", "existing-mentor-member@test.com");
 
     // Should successfully create mentor using existing member's ID
-    final Mentor savedMentor = service.create(mentor);
+    final var savedMentor = service.create(mentor);
 
     assertThat(savedMentor).isNotNull();
     assertThat(savedMentor.getId()).isEqualTo(savedMember.getId());

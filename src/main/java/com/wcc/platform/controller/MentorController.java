@@ -68,7 +68,7 @@ public class MentorController {
   @PostMapping("/mentors")
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Mentor> createMentor(@Valid @RequestBody final MentorDto mentorDto) {
+  public ResponseEntity<MentorDto> createMentor(@Valid @RequestBody final MentorDto mentorDto) {
     return new ResponseEntity<>(mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
   }
 
