@@ -1,7 +1,11 @@
 package com.wcc.platform.controller;
 
+import static com.wcc.platform.domain.auth.Permission.MENTEE_APPROVE;
+import static com.wcc.platform.domain.auth.Permission.MENTOR_APPL_READ;
+import static com.wcc.platform.domain.auth.Permission.MENTOR_APPL_WRITE;
+import static com.wcc.platform.domain.auth.Permission.MENTOR_APPROVE;
+
 import com.wcc.platform.configuration.security.*;
-import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.*;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.MenteeWorkflowService;
@@ -80,11 +84,11 @@ public class MenteeApplicationController {
    */
   @GetMapping("/mentors/{mentorId}/applications")
   @RequiresPermission(
-      value = {Permission.MENTOR_APPL_READ, Permission.MENTOR_APPROVE},
+      value = {MENTOR_APPL_READ, MENTOR_APPROVE},
       operator = LogicalOperator.OR)
   @Operation(
       summary = "Get applications received by a mentor",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplicationResponse>> getMentorApplications(
       @Parameter(description = "ID of the mentor") @PathVariable final Long mentorId,
@@ -109,10 +113,10 @@ public class MenteeApplicationController {
    * @return Updated application
    */
   @PatchMapping("/mentees/applications/{applicationId}/approve")
-  @RequiresPermission(Permission.MENTEE_APPROVE)
+  @RequiresPermission(MENTEE_APPROVE)
   @Operation(
       summary = "Admin approves mentee application",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MenteeApplication> approveApplication(
       @Parameter(description = "Application ID") @PathVariable final Long applicationId) {
@@ -128,10 +132,10 @@ public class MenteeApplicationController {
    * @return Updated application
    */
   @PatchMapping("/mentees/applications/{applicationId}/reject")
-  @RequiresPermission(Permission.MENTEE_APPROVE)
+  @RequiresPermission(MENTEE_APPROVE)
   @Operation(
       summary = "Admin rejects mentee application",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MenteeApplication> rejectApplication(
       @Parameter(description = "Application ID") @PathVariable final Long applicationId,
@@ -149,7 +153,10 @@ public class MenteeApplicationController {
    * @return Updated application
    */
   @PatchMapping("/mentors/applications/{applicationId}/accept")
-  @Operation(summary = "Mentor accepts an application")
+  @RequiresPermission(MENTOR_APPL_WRITE)
+  @Operation(
+      summary = "Mentor accepts an application",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MenteeApplication> acceptApplication(
       @Parameter(description = "Application ID") @PathVariable final Long applicationId,
@@ -167,7 +174,10 @@ public class MenteeApplicationController {
    * @return Updated application
    */
   @PatchMapping("/mentors/applications/{applicationId}/decline")
-  @Operation(summary = "Mentor declines an application")
+  @RequiresPermission(MENTOR_APPL_WRITE)
+  @Operation(
+      summary = "Mentor declines an application",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MenteeApplication> declineApplication(
       @Parameter(description = "Application ID") @PathVariable final Long applicationId,
@@ -185,7 +195,9 @@ public class MenteeApplicationController {
    */
   @GetMapping("/applications")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
-  @Operation(summary = "Get all applications by status")
+  @Operation(
+      summary = "Get all applications by status",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MenteeApplication>> getApplicationsByStatus(
       @Parameter(description = "Application status") @RequestParam final ApplicationStatus status) {

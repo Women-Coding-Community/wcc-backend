@@ -63,7 +63,8 @@ public class ProgrammeController {
   @PostMapping("/api/platform/v1/program")
   @Operation(
       summary = "Create program page content by program type",
-      description = "Create program new page with any content type.")
+      description = "Create program new page with any content type.",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.CONTRIBUTOR, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> createPage(
@@ -79,7 +80,8 @@ public class ProgrammeController {
   @PutMapping("/api/platform/v1/program")
   @Operation(
       summary = "Update program page content by program type",
-      description = "Update the content of existent program page.")
+      description = "Update the content of existent program page.",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.CONTRIBUTOR, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> updatePage(

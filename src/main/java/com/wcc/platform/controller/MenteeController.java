@@ -8,8 +8,8 @@ import com.wcc.platform.domain.platform.mentorship.AssignMentorRequest;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
-import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.platform.mentorship.NoMatchRequest;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.MenteeAdminService;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MenteeWorkflowService;
@@ -62,7 +62,9 @@ public class MenteeController {
    */
   @GetMapping("/mentees")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN, RoleType.LEADER})
-  @Operation(summary = "API to list all active mentees")
+  @Operation(
+      summary = "API to list all active mentees",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Mentee>> listMentees() {
     return new ResponseEntity<>(menteeService.getAllMentees(), HttpStatus.OK);
@@ -77,7 +79,7 @@ public class MenteeController {
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
       summary = "Get all pending mentees awaiting admin activation",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Mentee>> getPendingMentees() {
     return ResponseEntity.ok(menteeAdminService.getPendingMentees());
@@ -93,7 +95,7 @@ public class MenteeController {
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
       summary = "Admin activates a mentee (sets status to ACTIVE)",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentee> activateMentee(
       @Parameter(description = "Mentee ID") @PathVariable final Long menteeId) {
@@ -112,7 +114,7 @@ public class MenteeController {
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
       summary = "Admin rejects a mentee (sets status to REJECTED and rejects all applications)",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentee> rejectMentee(
       @Parameter(description = "Mentee ID") @PathVariable final Long menteeId,
@@ -128,7 +130,7 @@ public class MenteeController {
   @GetMapping("/mentees/pending-manual-match")
   @Operation(
       summary = "Get all mentees for a cycle whose application pending manual match",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Mentee>> getMenteesPendingManualMatch(
@@ -150,7 +152,7 @@ public class MenteeController {
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
       summary = "Manually assign a mentor to a mentee from the manual match queue",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MenteeApplication> assignMentor(
       @Parameter(description = "Mentee ID") @PathVariable final Long menteeId,
@@ -173,7 +175,7 @@ public class MenteeController {
   @RequiresPermission(Permission.MENTEE_APPROVE)
   @Operation(
       summary = "Confirm no match found for a mentee (terminal state)",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MenteeApplication> confirmNoMatch(
       @Parameter(description = "Mentee ID") @PathVariable final Long menteeId,

@@ -50,7 +50,7 @@ public class MentorController {
   @GetMapping("/mentors")
   @Operation(
       summary = "API to retrieve a list of all mentors with access to restricted area",
-      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorDto>> getAllMentors() {
@@ -80,7 +80,9 @@ public class MentorController {
    * @return Updated mentor
    */
   @PutMapping("/mentors/{mentorId}")
-  @Operation(summary = "API to update mentor data")
+  @Operation(
+      summary = "API to update mentor data",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @RequiresPermission(MENTOR_PROFILE_UPDATE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> updateMentor(
@@ -96,7 +98,9 @@ public class MentorController {
    */
   @PatchMapping("/mentors/{mentorId}/accept")
   @RequiresPermission(MENTOR_APPROVE)
-  @Operation(summary = "API to accept mentor registration")
+  @Operation(
+      summary = "API to accept mentor registration",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> acceptMentor(@Valid @PathVariable final Long mentorId) {
     return new ResponseEntity<>(mentorshipService.activateMentor(mentorId), HttpStatus.OK);
@@ -110,7 +114,9 @@ public class MentorController {
    */
   @PatchMapping("/mentors/{mentorId}/reject")
   @RequiresPermission(MENTOR_APPROVE)
-  @Operation(summary = "API to reject mentor registration")
+  @Operation(
+      summary = "API to reject mentor registration",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> rejectMentor(
       @Valid @PathVariable final Long mentorId,
