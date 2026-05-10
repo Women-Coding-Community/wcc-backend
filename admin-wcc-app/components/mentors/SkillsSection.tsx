@@ -33,21 +33,6 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
           {skills.yearsExperience} years experience
         </Typography>
       )}
-      {skills.areas && skills.areas.length > 0 && (
-        <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          {skills.areas.map((a) => (
-            <Chip
-              key={a.technicalArea}
-              label={
-                a.proficiencyLevel
-                  ? `${areaLabel(a.technicalArea)} · ${profLabel(a.proficiencyLevel)}`
-                  : areaLabel(a.technicalArea)
-              }
-              size="small"
-            />
-          ))}
-        </Box>
-      )}
       {skills.languages && skills.languages.length > 0 && (
         <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {skills.languages.map((l) => (
@@ -60,6 +45,21 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
               }
               size="small"
               color="secondary"
+            />
+          ))}
+        </Box>
+      )}
+      {skills.areas && skills.areas.length > 0 && (
+        <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          {skills.areas.map((a) => (
+            <Chip
+              key={a.technicalArea}
+              label={
+                a.proficiencyLevel
+                  ? `${areaLabel(a.technicalArea)} · ${profLabel(a.proficiencyLevel)}`
+                  : areaLabel(a.technicalArea)
+              }
+              size="small"
             />
           ))}
         </Box>
