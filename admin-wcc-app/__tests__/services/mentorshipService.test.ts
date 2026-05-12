@@ -21,7 +21,7 @@ describe('mentorshipService', () => {
       };
       (apiFetch as jest.Mock).mockResolvedValue(mockResponse);
 
-      const result = await getMentorshipRecommendations(1);
+      const result = await getMentorshipRecommendations(token);
 
       expect(apiFetch).toHaveBeenCalledWith(
         '/api/platform/v1/admin/mentorship/matches/recommendations/1',

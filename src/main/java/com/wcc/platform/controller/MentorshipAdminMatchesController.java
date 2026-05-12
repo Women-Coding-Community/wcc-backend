@@ -53,7 +53,7 @@ public class MentorshipAdminMatchesController {
    * @return Recommended matches
    */
   @GetMapping("/matches/recommendations/{cycleId}")
-  //  @RequiresRole({RoleType.ADMIN})
+  @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(summary = "Get suggested mentee matches for unmatched mentors")
   public ResponseEntity<MentorshipRecommendationResponse> getMatchRecommendations(
       @Parameter(description = "Cycle ID") @PathVariable final Long cycleId) {
