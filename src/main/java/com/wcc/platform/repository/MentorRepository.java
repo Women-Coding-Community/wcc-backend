@@ -36,6 +36,22 @@ public interface MentorRepository extends CrudRepository<Mentor, Long> {
   Mentor updateProfileStatus(Long mentorId, ProfileStatus profileStatus);
 
   /**
+   * Return all mentors with a specific profile status.
+   *
+   * @param status profile status
+   * @return list of mentors
+   */
+  List<Mentor> findAvailableMentors(ProfileStatus status);
+
+  /**
+   * Find mentors who are ACTIVE and have remaining capacity in the given cycle.
+   *
+   * @param cycleId the mentorship cycle ID
+   * @return list of mentors with availability
+   */
+  List<Mentor> findMentorsWithAvailabilityForCycle(Long cycleId);
+
+  /**
    * Reject a mentor by setting their profile status to REJECTED and recording the reason.
    *
    * @param mentorId the mentor's unique identifier

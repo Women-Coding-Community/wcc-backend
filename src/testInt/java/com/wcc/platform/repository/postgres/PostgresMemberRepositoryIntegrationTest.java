@@ -40,6 +40,7 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
             .build();
 
     repository.deleteByEmail(member.getEmail());
+    repository.deleteById(Long.MAX_VALUE);
   }
 
   @Test

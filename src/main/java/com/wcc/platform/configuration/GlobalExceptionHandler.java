@@ -18,6 +18,7 @@ import com.wcc.platform.domain.exceptions.InvalidTokenException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
+import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
 import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
@@ -120,11 +121,14 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
-  /** Receive MentorStatusException and return {@link HttpStatus#CONFLICT}. */
-  @ExceptionHandler(MentorStatusException.class)
+  /**
+   * Receive MentorStatusException or MentorCapacityExceededException and return {@link
+   * HttpStatus#CONFLICT}.
+   */
+  @ExceptionHandler({MentorStatusException.class, MentorCapacityExceededException.class})
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorDetails> handleMentorStatus(
-      final MentorStatusException ex, final WebRequest request) {
+      final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
             HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false));

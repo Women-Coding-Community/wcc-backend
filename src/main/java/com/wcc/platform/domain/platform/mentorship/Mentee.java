@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+/** Represents a mentee in the platform. */
 @Getter
 @NoArgsConstructor
 @ToString(callSuper = true)
@@ -34,6 +35,7 @@ public class Mentee extends Member {
   @Min(1)
   private Integer availableHsMonth;
 
+  /** Mentee Builder. */
   @Builder(builderMethodName = "menteeBuilder")
   public Mentee(
       final Long id,

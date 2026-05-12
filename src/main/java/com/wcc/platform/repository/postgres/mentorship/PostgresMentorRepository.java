@@ -4,6 +4,7 @@ import static com.wcc.platform.repository.postgres.constants.MentorConstants.COL
 
 import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.MatchStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -14,6 +15,8 @@ import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,9 +62,21 @@ public class PostgresMentorRepository implements MentorRepository {
       "SELECT mentors.* FROM mentors LEFT JOIN members ON mentors.mentor_id = members.id "
           + "WHERE members.email = ?";
   private static final String SQL_GET_ALL = "SELECT * FROM mentors";
+  private static final String SQL_GET_BY_STATUS = "SELECT * FROM mentors WHERE profile_status = ?";
   private static final String SQL_FIND_ID_BY_EMAIL =
       "SELECT mentors.mentor_id FROM mentors LEFT JOIN members ON mentors.mentor_id = members.id"
           + " WHERE members.email = ?";
+  private static final String SQL_MENTOR_CAPACITY =
+      "SELECT m.* FROM mentors m "
+          + "JOIN mentor_mentee_section mms ON m.mentor_id = mms.mentor_id "
+          + "LEFT JOIN mentorship_matches mm ON m.mentor_id = mm.mentor_id "
+          + "AND mm.cycle_id = ? AND mm.match_status = '"
+          + MatchStatus.ACTIVE.getValue()
+          + "' WHERE m.profile_status = "
+          + ProfileStatus.ACTIVE.getStatusId()
+          + " AND mms.long_term_num_mentee IS NOT NULL "
+          + "GROUP BY m.mentor_id, mms.long_term_num_mentee "
+          + "HAVING COUNT(mm.match_id) < mms.long_term_num_mentee";
 
   private final JdbcTemplate jdbc;
   private final MentorMapper mentorMapper;
@@ -101,7 +116,24 @@ public class PostgresMentorRepository implements MentorRepository {
   }
 
   @Override
+  @Cacheable(value = "mentorsStatus", key = "#status.getStatusId()")
+  public List<Mentor> findAvailableMentors(final ProfileStatus status) {
+    return jdbc.query(
+        SQL_GET_BY_STATUS, (rs, rowNum) -> mentorMapper.mapRowToMentor(rs), status.getStatusId());
+  }
+
+  @Override
+  @Cacheable(value = "mentorsAvailable", key = "#cycleId")
+  public List<Mentor> findMentorsWithAvailabilityForCycle(final Long cycleId) {
+    return jdbc.query(
+        SQL_MENTOR_CAPACITY, (rs, rowNum) -> mentorMapper.mapRowToMentor(rs), cycleId);
+  }
+
+  @Override
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public Mentor create(final Mentor mentor) {
     validate(mentor);
 
