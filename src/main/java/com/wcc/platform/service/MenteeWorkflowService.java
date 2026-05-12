@@ -356,7 +356,7 @@ public class MenteeWorkflowService {
             .mentorId(mentorId)
             .cycleId(cycleId)
             .priorityOrder(null)
-            .status(ApplicationStatus.PENDING)
+            .status(ApplicationStatus.MENTOR_REVIEWING)
             .applicationMessage(reason)
             .whyMentor(reason)
             .build();
