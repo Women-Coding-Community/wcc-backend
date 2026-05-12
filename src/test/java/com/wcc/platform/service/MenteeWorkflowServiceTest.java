@@ -26,7 +26,6 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.MenteeApplicationRepository;
-import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
@@ -56,8 +55,6 @@ class MenteeWorkflowServiceTest {
   @Mock private MentorRepository mentorRepository;
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
-  @Mock private MenteeRepository menteeRepository;
-
   @Mock private MemberRepository memberRepository;
   @Mock private MentorshipService mentorshipService;
 
@@ -317,7 +314,7 @@ class MenteeWorkflowServiceTest {
 
   @Test
   @DisplayName(
-      "Given valid inputs and PENDING_MANUAL_MATCH exists, when assigning mentor, "
+      "Given valid inputs when assigning mentor, "
           + "then new application is created with PENDING status")
   void shouldAssignMentorSuccessfully() {
     final MenteeApplication manualMatchApp = pendingManualMatch(99L, MENTEE_ID);
@@ -332,20 +329,12 @@ class MenteeWorkflowServiceTest {
         .thenReturn(Optional.empty());
     when(cycleRepository.findById(CYCLE_ID)).thenReturn(Optional.of(cycle));
     when(matchRepository.countActiveMenteesByMentorAndCycle(MENTOR_ID, CYCLE_ID)).thenReturn(0);
-    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
-            MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(List.of(manualMatchApp));
     when(applicationRepository.create(any(MenteeApplication.class))).thenReturn(createdApp);
 
     final MenteeApplication result =
         service.assignMentor(MENTEE_ID, CYCLE_ID, MENTOR_ID, ASSIGNMENT_NOTES);
 
     assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
-    verify(applicationRepository)
-        .updateStatus(
-            99L,
-            ApplicationStatus.REJECTED,
-            "Manual assignment by admin [" + ASSIGNMENT_NOTES + "]");
 
     final ArgumentCaptor<MenteeApplication> captor =
         ArgumentCaptor.forClass(MenteeApplication.class);
@@ -383,29 +372,6 @@ class MenteeWorkflowServiceTest {
     assertThatThrownBy(() -> service.assignMentor(MENTEE_ID, CYCLE_ID, MENTOR_ID, ASSIGNMENT_NOTES))
         .isInstanceOf(DuplicateApplicationException.class)
         .hasMessageContaining("application already exists");
-  }
-
-  @Test
-  @DisplayName(
-      "Given no PENDING_MANUAL_MATCH application, when assigning mentor, "
-          + "then ContentNotFoundException is thrown")
-  void shouldThrowContentNotFoundWhenNoPendingManualMatchExists() {
-    final MentorshipCycleEntity cycle =
-        MentorshipCycleEntity.builder().cycleId(CYCLE_ID).maxMenteesPerMentor(3).build();
-
-    when(mentorRepository.findById(MENTOR_ID))
-        .thenReturn(Optional.of(Mentor.mentorBuilder().build()));
-    when(applicationRepository.findByMenteeMentorCycle(MENTEE_ID, MENTOR_ID, CYCLE_ID))
-        .thenReturn(Optional.empty());
-    when(cycleRepository.findById(CYCLE_ID)).thenReturn(Optional.of(cycle));
-    when(matchRepository.countActiveMenteesByMentorAndCycle(MENTOR_ID, CYCLE_ID)).thenReturn(0);
-    when(applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
-            MENTEE_ID, CYCLE_ID, ApplicationStatus.PENDING_MANUAL_MATCH))
-        .thenReturn(List.of());
-
-    assertThatThrownBy(() -> service.assignMentor(MENTEE_ID, CYCLE_ID, MENTOR_ID, ASSIGNMENT_NOTES))
-        .isInstanceOf(ContentNotFoundException.class)
-        .hasMessageContaining("PENDING_MANUAL_MATCH");
   }
 
   @Test

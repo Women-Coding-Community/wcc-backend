@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -45,6 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class MentorshipAdminMatchesController {
 
+  public static final String BEARER_AUTH = "bearerAuth";
   private final MentorshipMatchingService matchingService;
   private final MentorshipCycleRepository cycleRepository;
   private final MentorshipRecommendationService recommendationService;
@@ -61,7 +63,7 @@ public class MentorshipAdminMatchesController {
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Get suggested mentee matches for unmatched mentors",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
   public ResponseEntity<MentorshipRecommendationResponse> getMatchRecommendations() {
     final var recommendations = recommendationService.getRecommendations();
     return ResponseEntity.ok(recommendations);
@@ -76,10 +78,11 @@ public class MentorshipAdminMatchesController {
    * @return list of mentee applications
    */
   @GetMapping("/cycles/{cycleId}/applications")
-  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
+  @RequiresPermission(Permission.MATCH_MANAGE)
   @Operation(
-      summary = "Get mentee applications for a specific cycle and statuses",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      summary = "Admin confirms a mentorship match from accepted application",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<List<MenteeApplicationAdminResponse>> getApplications(
       @Parameter(description = "Cycle ID") @PathVariable final Long cycleId,
       @Parameter(description = "Application statuses") @RequestParam
@@ -100,7 +103,10 @@ public class MentorshipAdminMatchesController {
    */
   @PostMapping("/matches/confirm/{applicationId}")
   @RequiresPermission(Permission.MATCH_MANAGE)
-  @Operation(summary = "Admin confirms a mentorship match from accepted application")
+  @Operation(
+      summary = "Admin confirms a mentorship match from accepted application",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MentorshipMatch> confirmMatch(
       @Parameter(description = "Application ID to confirm as match") @PathVariable
           final Long applicationId) {
@@ -116,7 +122,10 @@ public class MentorshipAdminMatchesController {
    */
   @GetMapping("/matches")
   @RequiresPermission(Permission.MATCH_MANAGE)
-  @Operation(summary = "Get all matches for a cycle")
+  @Operation(
+      summary = "Get all matches for a cycle",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipMatch>> getCycleMatches(
       @Parameter(description = "Cycle ID") @RequestParam final Long cycleId) {
     final List<MentorshipMatch> matches = matchingService.getCycleMatches(cycleId);
@@ -132,7 +141,10 @@ public class MentorshipAdminMatchesController {
    */
   @PatchMapping("/matches/{matchId}/complete")
   @RequiresPermission(Permission.MATCH_MANAGE)
-  @Operation(summary = "Complete a mentorship match")
+  @Operation(
+      summary = "Complete a mentorship match",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> completeMatch(
       @Parameter(description = "Match ID") @PathVariable final Long matchId,
       @Parameter(description = "Completion notes") @RequestParam(required = false)
@@ -150,7 +162,10 @@ public class MentorshipAdminMatchesController {
    */
   @PatchMapping("/matches/{matchId}/cancel")
   @RequiresPermission(Permission.MATCH_MANAGE)
-  @Operation(summary = "Cancel a mentorship match")
+  @Operation(
+      summary = "Cancel a mentorship match",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> cancelMatch(
       @Parameter(description = "Match ID") @PathVariable final Long matchId,
       @Valid @RequestBody final MatchCancelRequest request) {
@@ -167,7 +182,10 @@ public class MentorshipAdminMatchesController {
    */
   @PatchMapping("/matches/{matchId}/increment-session")
   @RequiresPermission(Permission.MATCH_MANAGE)
-  @Operation(summary = "Increment session count for a match")
+  @Operation(
+      summary = "Increment session count for a match",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipMatch> incrementSessionCount(
       @Parameter(description = "Match ID") @PathVariable final Long matchId) {
     final MentorshipMatch updated = matchingService.incrementSessionCount(matchId);
@@ -183,7 +201,10 @@ public class MentorshipAdminMatchesController {
    */
   @GetMapping("/cycles/current")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
-  @Operation(summary = "Get the currently open mentorship cycle")
+  @Operation(
+      summary = "Get the currently open mentorship cycle",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCurrentCycle() {
     return cycleRepository
         .findOpenCycle()
@@ -199,7 +220,10 @@ public class MentorshipAdminMatchesController {
    */
   @GetMapping("/cycles")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
-  @Operation(summary = "Get cycles by status")
+  @Operation(
+      summary = "Get cycles by status",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipCycleEntity>> getCyclesByStatus(
       @Parameter(description = "Cycle status") @RequestParam final CycleStatus status) {
     final List<MentorshipCycleEntity> cycles = cycleRepository.findByStatus(status);
@@ -214,7 +238,10 @@ public class MentorshipAdminMatchesController {
    */
   @GetMapping("/cycles/{cycleId}")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
-  @Operation(summary = "Get a cycle by ID")
+  @Operation(
+      summary = "Get a cycle by ID",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipCycleEntity> getCycleById(
       @Parameter(description = "Cycle ID") @PathVariable final Long cycleId) {
     return cycleRepository
@@ -230,7 +257,10 @@ public class MentorshipAdminMatchesController {
    */
   @GetMapping("/cycles/all")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
-  @Operation(summary = "Get all mentorship cycles")
+  @Operation(
+      summary = "Get all mentorship cycles",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<MentorshipCycleEntity>> getAllCycles() {
     final List<MentorshipCycleEntity> cycles = cycleRepository.getAll();
     return ResponseEntity.ok(cycles);

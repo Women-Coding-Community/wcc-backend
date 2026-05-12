@@ -50,7 +50,8 @@ public class EmailController {
   @RequiresPermission({SEND_EMAIL})
   @Operation(
       summary = "Send a single email",
-      description = "Sends an email to the specified recipient")
+      description = "Sends an email to the specified recipient",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "200",
@@ -79,7 +80,8 @@ public class EmailController {
   @RequiresPermission(SEND_EMAIL)
   @Operation(
       summary = "Send multiple emails in bulk",
-      description = "Sends multiple emails to different recipients")
+      description = "Sends multiple emails to different recipients",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "200",
@@ -105,7 +107,10 @@ public class EmailController {
    */
   @PostMapping("/template/preview")
   @RequiresPermission(EMAIL_TEMPLATE_MANAGE)
-  @Operation(summary = "Preview an email template", description = "Renders an email template")
+  @Operation(
+      summary = "Preview an email template",
+      description = "Renders an email template",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "201",
@@ -136,7 +141,8 @@ public class EmailController {
   @RequiresPermission({EMAIL_TEMPLATE_MANAGE, SEND_EMAIL})
   @Operation(
       summary = "Send a single email using a template",
-      description = "Sends an email with a template to the specified recipient")
+      description = "Sends an email with a template to the specified recipient",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "200",
