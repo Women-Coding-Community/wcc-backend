@@ -7,8 +7,6 @@ import {
   Chip,
   Collapse,
   Divider,
-  Grid,
-  Grid2,
   IconButton,
   Link,
   Stack,
@@ -24,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import { MenteeItem } from '@/types/mentorship';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import SkillsSection, { langLabel, profLabel } from '@/components/mentors/SkillsSection';
 
 interface MenteeCardProps {
   mentee: MenteeItem;
@@ -93,6 +92,56 @@ export default function MenteeCard({ mentee, score }: MenteeCardProps) {
               <PublicIcon fontSize="small" />
               <Typography variant="body2">{location || 'N/A'}</Typography>
             </Stack>
+
+            {mentee.skills?.areas && mentee.skills.areas.length > 0 && (
+              <Box sx={{ mt: 1 }}>
+                <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+                  {mentee.skills.areas.slice(0, 3).map((a) => (
+                    <Chip
+                      key={a.technicalArea}
+                      label={a.technicalArea.replace(/_/g, ' ')}
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
+                  ))}
+                  {mentee.skills.areas.length > 3 && (
+                    <Chip
+                      label={`+${mentee.skills.areas.length - 3} more`}
+                      size="small"
+                      variant="outlined"
+                    />
+                  )}
+                </Stack>
+              </Box>
+            )}
+
+            {mentee.skills?.languages && mentee.skills.languages.length > 0 && (
+              <Box sx={{ mt: 0.5 }}>
+                <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+                  {mentee.skills.languages.slice(0, 3).map((l) => (
+                    <Chip
+                      key={l.language}
+                      label={
+                        l.proficiencyLevel
+                          ? `${langLabel(l.language)} · ${profLabel(l.proficiencyLevel)}`
+                          : langLabel(l.language)
+                      }
+                      size="small"
+                      color="secondary"
+                      variant="outlined"
+                    />
+                  ))}
+                  {mentee.skills.languages.length > 3 && (
+                    <Chip
+                      label={`+${mentee.skills.languages.length - 3} more`}
+                      size="small"
+                      variant="outlined"
+                    />
+                  )}
+                </Stack>
+              </Box>
+            )}
           </Box>
           <IconButton onClick={() => setExpand(!expanded)}>
             {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -110,53 +159,22 @@ export default function MenteeCard({ mentee, score }: MenteeCardProps) {
               {mentee.bio || 'No bio provided.'}
             </Typography>
 
-            <Grid2 container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Skills & Proficiency
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {mentee.skills?.areas?.map((a) => (
-                    <Chip
-                      key={a.technicalArea}
-                      label={`${a.technicalArea.replace(/_/g, ' ')} (${a.proficiencyLevel})`}
-                      size="small"
-                    />
-                  ))}
-                </Stack>
-              </Grid>
-
-              <Box sx={{ mt: 1 }}>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {mentee.skills?.mentorshipFocus?.map((f) => (
-                    <Chip
-                      key={f}
-                      label={f.replace(/_/g, ' ')}
-                      size="small"
-                      color="info"
-                      variant="outlined"
-                    />
-                  ))}
-                </Stack>
-              </Box>
-
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Languages
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {mentee.spokenLanguages?.map((l) => (
-                    <Chip key={l} label={l} size="small" icon={<LanguageIcon />} />
-                  ))}
-                </Stack>
-              </Grid>
-
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="body2">
-                  <strong>Available hours/month:</strong> {mentee.availableHsMonth || 'N/A'}
-                </Typography>
-              </Box>
-            </Grid2>
+            <Box sx={{ mt: 1 }}>{mentee.skills && <SkillsSection skills={mentee.skills} />}</Box>
+            <Box sx={{ mt: 1 }}>
+              <Typography variant="subtitle2" gutterBottom>
+                Languages
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                {mentee.spokenLanguages?.map((l) => (
+                  <Chip key={l} label={l} size="small" icon={<LanguageIcon />} />
+                ))}
+              </Stack>
+            </Box>
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2">
+                <strong>Available hours/month:</strong> {mentee.availableHsMonth || 'N/A'}
+              </Typography>
+            </Box>
           </Box>
         </Collapse>
       </CardContent>

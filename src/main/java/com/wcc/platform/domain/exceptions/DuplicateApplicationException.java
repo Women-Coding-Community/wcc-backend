@@ -3,7 +3,7 @@ package com.wcc.platform.domain.exceptions;
 /**
  * Exception thrown when a mentee attempts to submit a duplicate application.
  */
-public class DuplicateApplicationException extends RuntimeException {
+public class DuplicateApplicationException extends DuplicatedException {
 
     public DuplicateApplicationException(final String message) {
         super(message);

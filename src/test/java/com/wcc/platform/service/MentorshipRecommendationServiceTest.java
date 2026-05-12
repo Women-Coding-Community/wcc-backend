@@ -18,6 +18,7 @@ import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.mentorship.recommendation.MentorshipRecommendationResponse;
 import com.wcc.platform.factories.SetupMenteeFactories;
 import com.wcc.platform.factories.SetupMentorFactories;
+import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
@@ -40,12 +41,14 @@ class MentorshipRecommendationServiceTest {
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
 
+  @Mock private MenteeApplicationRepository applicationRepository;
+
   @InjectMocks private MentorshipRecommendationService service;
 
   @BeforeEach
   void setUp() {
     final var cycle = MentorshipCycleEntity.builder().cycleId(1L).build();
-    when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
   }
 
   @Test
@@ -94,12 +97,11 @@ class MentorshipRecommendationServiceTest {
                     List.of(MentorshipFocusArea.GROW_BEGINNER_TO_MID)))
             .build();
 
-    when(mentorRepository.findAvailableMentors(ProfileStatus.ACTIVE)).thenReturn(List.of(mentor));
-    when(menteeRepository.findByStatus(ProfileStatus.ACTIVE)).thenReturn(List.of(mentee));
-    when(matchRepository.countActiveMenteesByMentorAndCycle(anyLong(), anyLong())).thenReturn(0);
-    when(matchRepository.isMenteeMatchedInCycle(anyLong(), anyLong())).thenReturn(false);
+    when(mentorRepository.findMentorsWithAvailabilityForCycle(1L)).thenReturn(List.of(mentor));
+    when(menteeRepository.findUnmatchedMenteesForCycle(1L)).thenReturn(List.of(mentee));
+    when(applicationRepository.findByMenteeAndCycle(anyLong(), anyLong())).thenReturn(List.of());
 
-    MentorshipRecommendationResponse response = service.getRecommendations(1L);
+    MentorshipRecommendationResponse response = service.getRecommendations();
 
     assertThat(response.matchedMentors()).hasSize(1);
     assertThat(response.matchedMentors().getFirst().mentor().getId()).isEqualTo(1L);
@@ -115,32 +117,10 @@ class MentorshipRecommendationServiceTest {
   @DisplayName(
       "Given mentor at capacity, when getRecommendations is called, then mentor is not included in suggestions")
   void shouldNotRecommendWhenMentorAtCapacity() {
-    Mentor mentorBase = SetupMentorFactories.createMentorTest(1L, "Mentor Full", "mentor@test.com");
-    Mentor mentor =
-        Mentor.mentorBuilder()
-            .id(mentorBase.getId())
-            .fullName(mentorBase.getFullName())
-            .email(mentorBase.getEmail())
-            .profileStatus(ProfileStatus.ACTIVE)
-            .bio(mentorBase.getBio())
-            .skills(mentorBase.getSkills())
-            .menteeSection(mentorBase.getMenteeSection())
-            .build();
+    when(mentorRepository.findMentorsWithAvailabilityForCycle(1L)).thenReturn(List.of());
+    when(menteeRepository.findUnmatchedMenteesForCycle(1L)).thenReturn(List.of());
 
-    // Set capacity to 1
-    mentor
-        .getMenteeSection()
-        .longTerm()
-        .numMentee(); // this is record, so it might be final, let's see.
-
-    when(mentorRepository.findAvailableMentors(ProfileStatus.ACTIVE)).thenReturn(List.of(mentor));
-    when(menteeRepository.findByStatus(ProfileStatus.ACTIVE)).thenReturn(List.of());
-
-    // Assume capacity is 1 from SetupMentorFactories and it already has 1 match
-    int capacity = mentor.getMenteeSection().longTerm().numMentee();
-    when(matchRepository.countActiveMenteesByMentorAndCycle(1L, 1L)).thenReturn(capacity);
-
-    MentorshipRecommendationResponse response = service.getRecommendations(1L);
+    MentorshipRecommendationResponse response = service.getRecommendations();
 
     assertThat(response.matchedMentors()).isEmpty();
     assertThat(response.notMatchedMentors()).isEmpty();
@@ -151,14 +131,11 @@ class MentorshipRecommendationServiceTest {
       "Given mentee already matched, when getRecommendations is called, then mentee is not recommended")
   void shouldNotRecommendWhenMenteeAlreadyMatched() {
     Mentor mentor = SetupMentorFactories.createMentorTest(1L, "Mentor Java", "mentor@test.com");
-    Mentee mentee = SetupMenteeFactories.createMenteeTest(10L, "Mentee Java", "mentee@test.com");
 
-    when(mentorRepository.findAvailableMentors(ProfileStatus.ACTIVE)).thenReturn(List.of(mentor));
-    when(menteeRepository.findByStatus(ProfileStatus.ACTIVE)).thenReturn(List.of(mentee));
-    when(matchRepository.countActiveMenteesByMentorAndCycle(1L, 1L)).thenReturn(0);
-    when(matchRepository.isMenteeMatchedInCycle(10L, 1L)).thenReturn(true);
+    when(mentorRepository.findMentorsWithAvailabilityForCycle(1L)).thenReturn(List.of(mentor));
+    when(menteeRepository.findUnmatchedMenteesForCycle(1L)).thenReturn(List.of());
 
-    MentorshipRecommendationResponse response = service.getRecommendations(1L);
+    MentorshipRecommendationResponse response = service.getRecommendations();
 
     assertThat(response.matchedMentors()).isEmpty();
     assertThat(response.notMatchedMentors()).extracting(Mentor::getId).containsExactly(1L);
@@ -210,12 +187,11 @@ class MentorshipRecommendationServiceTest {
                     List.of(MentorshipFocusArea.SWITCH_TO_MANAGEMENT)))
             .build();
 
-    when(mentorRepository.findAvailableMentors(ProfileStatus.ACTIVE)).thenReturn(List.of(mentor));
-    when(menteeRepository.findByStatus(ProfileStatus.ACTIVE)).thenReturn(List.of(mentee));
-    when(matchRepository.countActiveMenteesByMentorAndCycle(1L, 1L)).thenReturn(0);
-    when(matchRepository.isMenteeMatchedInCycle(10L, 1L)).thenReturn(false);
+    when(mentorRepository.findMentorsWithAvailabilityForCycle(1L)).thenReturn(List.of(mentor));
+    when(menteeRepository.findUnmatchedMenteesForCycle(1L)).thenReturn(List.of(mentee));
+    when(applicationRepository.findByMenteeAndCycle(anyLong(), anyLong())).thenReturn(List.of());
 
-    MentorshipRecommendationResponse response = service.getRecommendations(1L);
+    MentorshipRecommendationResponse response = service.getRecommendations();
 
     assertThat(response.matchedMentors()).isEmpty();
     assertThat(response.notMatchedMentors()).extracting(Mentor::getId).containsExactly(1L);

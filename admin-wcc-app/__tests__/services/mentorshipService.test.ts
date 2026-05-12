@@ -1,5 +1,9 @@
-import { createManualMatch, getMentorshipRecommendations } from '../../services/mentorshipService';
-import { apiFetch } from '../../lib/api';
+import {
+  createManualMatch,
+  getMenteeApplications,
+  getMentorshipRecommendations,
+} from '@/services/mentorshipService';
+import { apiFetch } from '@/lib/api';
 
 jest.mock('../../lib/api', () => ({
   apiFetch: jest.fn(),
@@ -21,13 +25,39 @@ describe('mentorshipService', () => {
       };
       (apiFetch as jest.Mock).mockResolvedValue(mockResponse);
 
-      const result = await getMentorshipRecommendations(1, token);
+      const result = await getMentorshipRecommendations(token);
 
       expect(apiFetch).toHaveBeenCalledWith(
-        '/api/platform/v1/admin/mentorship/matches/recommendations/1',
+        '/api/platform/v1/admin/mentorship/matches/recommendations',
         { token }
       );
       expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('getMenteeApplications', () => {
+    it('should fetch mentee applications without mentor filter', async () => {
+      const mockApps = [{ menteeId: 1, status: 'PENDING' }];
+      (apiFetch as jest.Mock).mockResolvedValue(mockApps);
+
+      const result = await getMenteeApplications(5, ['PENDING', 'ACCEPTED'], token);
+
+      expect(apiFetch).toHaveBeenCalledWith(
+        '/api/platform/v1/admin/mentorship/cycles/5/applications?status=PENDING%2CACCEPTED',
+        { token }
+      );
+      expect(result).toEqual(mockApps);
+    });
+
+    it('should fetch mentee applications with mentor filter', async () => {
+      (apiFetch as jest.Mock).mockResolvedValue([]);
+
+      await getMenteeApplications(5, ['PENDING'], token, 10);
+
+      expect(apiFetch).toHaveBeenCalledWith(
+        '/api/platform/v1/admin/mentorship/cycles/5/applications?status=PENDING&mentorId=10',
+        { token }
+      );
     });
   });
 

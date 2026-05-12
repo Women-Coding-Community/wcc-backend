@@ -12,13 +12,13 @@ import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.UserAccountRepository;
 import com.wcc.platform.repository.UserTokenRepository;
 import java.security.SecureRandom;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Locale;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -246,7 +246,7 @@ public class AuthService {
       return (UserAccount.User) principal;
     }
 
-    throw new ForbiddenException("Invalid authentication principal");
+    throw new ForbiddenException("Invalid authentication");
   }
 
   /**

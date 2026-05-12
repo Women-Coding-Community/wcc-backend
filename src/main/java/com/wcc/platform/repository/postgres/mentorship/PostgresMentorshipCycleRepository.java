@@ -43,6 +43,9 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
   private static final String SELECT_BY_YEAR =
       "SELECT * FROM mentorship_cycles WHERE cycle_year = ? ORDER BY cycle_month";
 
+  private static final String SELECT_LAST_CYCLE =
+      "SELECT * FROM mentorship_cycles ORDER BY cycle_year DESC, cycle_month DESC LIMIT 1";
+
   private static final String INSERT_CYCLE =
       "INSERT INTO mentorship_cycles "
           + "(cycle_year, mentorship_type, cycle_month, registration_start_date, "
@@ -156,6 +159,12 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
   @Override
   public List<MentorshipCycleEntity> getAll() {
     return jdbc.query(SELECT_ALL, (rs, rowNum) -> mapRow(rs));
+  }
+
+  @Override
+  public Optional<MentorshipCycleEntity> findLastCompletedCycle() {
+    return jdbc.query(
+        SELECT_LAST_CYCLE, rs -> rs.next() ? Optional.of(mapRow(rs)) : Optional.empty());
   }
 
   private MentorshipCycleEntity mapRow(final ResultSet rs) throws SQLException {

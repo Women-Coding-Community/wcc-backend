@@ -7,9 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,10 +78,22 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
           + "WHERE application_status = ?::application_status "
           + "AND cycle_id = ?";
 
+  private static final String SQL_CYCLE_STATUSES =
+      "SELECT * FROM mentee_applications WHERE cycle_id = :cycleId "
+          + "AND application_status::text IN (:statuses) "
+          + "ORDER BY applied_at DESC";
+
+  private static final String SQL_STATUSES_MENTOR =
+      "SELECT * FROM mentee_applications WHERE cycle_id = :cycleId "
+          + "AND application_status::text IN (:statuses) "
+          + "AND mentor_id = :mentorId "
+          + "ORDER BY applied_at DESC";
+
   private static final String DELETE_BY_ID =
       "DELETE FROM mentee_applications WHERE application_id = ?";
 
   private final JdbcTemplate jdbc;
+  private final NamedParameterJdbcTemplate namedJdbc;
 
   @Transactional
   @Override
@@ -211,6 +227,29 @@ public class PostgresMenteeApplicationRepository implements MenteeApplicationRep
   public List<MenteeApplication> findByStatusAndCycle(
       final ApplicationStatus status, final Long cycleId) {
     return jdbc.query(SEL_BY_STS_CYC, (rs, rowNum) -> mapRow(rs), status.getValue(), cycleId);
+  }
+
+  @Override
+  @Cacheable(value = "menteeApplications", key = "{#cycleId, #statuses}")
+  public List<MenteeApplication> findByCycleAndStatuses(
+      final Long cycleId, final List<ApplicationStatus> statuses) {
+    final MapSqlParameterSource params = new MapSqlParameterSource();
+    params.addValue("cycleId", cycleId);
+    params.addValue("statuses", statuses.stream().map(s -> s.name().toLowerCase(Locale.ROOT)).toList());
+
+    return namedJdbc.query(SQL_CYCLE_STATUSES, params, (rs, rowNum) -> mapRow(rs));
+  }
+
+  @Override
+  @Cacheable(value = "menteeApplications", key = "{#cycleId, #statuses, #mentorId}")
+  public List<MenteeApplication> findByCycleAndStatusesAndMentor(
+      final Long cycleId, final List<ApplicationStatus> statuses, final Long mentorId) {
+    final MapSqlParameterSource params = new MapSqlParameterSource();
+    params.addValue("cycleId", cycleId);
+    params.addValue("statuses", statuses.stream().map(s -> s.name().toLowerCase(Locale.ROOT)).toList());
+    params.addValue("mentorId", mentorId);
+
+    return namedJdbc.query(SQL_STATUSES_MENTOR, params, (rs, rowNum) -> mapRow(rs));
   }
 
   private MenteeApplication mapRow(final ResultSet rs) throws SQLException {

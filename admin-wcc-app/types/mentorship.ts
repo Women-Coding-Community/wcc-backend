@@ -44,6 +44,16 @@ export interface MenteeItem {
 export interface MenteeMatchSuggestion {
   mentee: MenteeItem;
   score: number;
+  applicationStatus?: string | null;
+}
+
+export interface MenteeApplicationItem {
+  menteeId: number;
+  mentee: MenteeItem;
+  mentorId?: number;
+  status: string;
+  rejectionReason?: string;
+  appliedAt?: string;
 }
 
 export interface MentorMatches {

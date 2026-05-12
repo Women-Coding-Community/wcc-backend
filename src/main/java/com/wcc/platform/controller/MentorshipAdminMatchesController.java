@@ -3,13 +3,16 @@ package com.wcc.platform.controller;
 import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.auth.Permission;
+import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchCancelRequest;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationAdminResponse;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.domain.platform.mentorship.recommendation.MentorshipRecommendationResponse;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import com.wcc.platform.service.MenteeWorkflowService;
 import com.wcc.platform.service.MentorshipMatchingService;
 import com.wcc.platform.service.MentorshipRecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,11 +42,13 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "apiKey")
 @Tag(name = "Platform: Mentorship Admin", description = "Admin endpoints for mentorship management")
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.ExcessiveImports")
 public class MentorshipAdminMatchesController {
 
   private final MentorshipMatchingService matchingService;
   private final MentorshipCycleRepository cycleRepository;
   private final MentorshipRecommendationService recommendationService;
+  private final MenteeWorkflowService workflowService;
 
   // ==================== Match Management ====================
 
@@ -52,13 +57,38 @@ public class MentorshipAdminMatchesController {
    *
    * @return Recommended matches
    */
-  @GetMapping("/matches/recommendations/{cycleId}")
-  //  @RequiresRole({RoleType.ADMIN})
-  @Operation(summary = "Get suggested mentee matches for unmatched mentors")
-  public ResponseEntity<MentorshipRecommendationResponse> getMatchRecommendations(
-      @Parameter(description = "Cycle ID") @PathVariable final Long cycleId) {
-    final var recommendations = recommendationService.getRecommendations(cycleId);
+  @GetMapping("/matches/recommendations")
+  @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
+  @Operation(
+      summary = "Get suggested mentee matches for unmatched mentors",
+      security = {@SecurityRequirement(name = "bearerAuth")})
+  public ResponseEntity<MentorshipRecommendationResponse> getMatchRecommendations() {
+    final var recommendations = recommendationService.getRecommendations();
     return ResponseEntity.ok(recommendations);
+  }
+
+  /**
+   * API to get mentee applications for a specific cycle and statuses.
+   *
+   * @param cycleId the cycle ID
+   * @param status list of application statuses to filter by
+   * @param mentorId optional mentor ID filter
+   * @return list of mentee applications
+   */
+  @GetMapping("/cycles/{cycleId}/applications")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
+  @Operation(
+      summary = "Get mentee applications for a specific cycle and statuses",
+      security = {@SecurityRequirement(name = "bearerAuth")})
+  public ResponseEntity<List<MenteeApplicationAdminResponse>> getApplications(
+      @Parameter(description = "Cycle ID") @PathVariable final Long cycleId,
+      @Parameter(description = "Application statuses") @RequestParam
+          final List<ApplicationStatus> status,
+      @Parameter(description = "Mentor ID filter") @RequestParam(required = false)
+          final Long mentorId) {
+
+    final var applications = workflowService.getApplicationsForAdmin(cycleId, status, mentorId);
+    return ResponseEntity.ok(applications);
   }
 
   /**

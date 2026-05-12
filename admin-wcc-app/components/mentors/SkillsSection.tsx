@@ -13,11 +13,11 @@ function areaLabel(value: string): string {
   return TECHNICAL_AREAS.find((a) => a.value === value)?.label ?? value;
 }
 
-function langLabel(value: string): string {
+export function langLabel(value: string): string {
   return PROGRAMMING_LANGUAGES.find((l) => l.value === value)?.label ?? value;
 }
 
-function profLabel(value: string): string {
+export function profLabel(value: string): string {
   return PROFICIENCY_LEVELS.find((p) => p.value === value)?.label ?? value;
 }
 

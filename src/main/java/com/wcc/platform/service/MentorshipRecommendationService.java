@@ -2,19 +2,21 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.attributes.TechnicalArea;
-import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.mentorship.recommendation.MenteeMatchSuggestion;
 import com.wcc.platform.domain.platform.mentorship.recommendation.MentorMatchSuggestion;
 import com.wcc.platform.domain.platform.mentorship.recommendation.MentorshipRecommendationResponse;
+import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
-import com.wcc.platform.repository.MentorshipMatchRepository;
+import java.time.Year;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -36,41 +38,29 @@ public class MentorshipRecommendationService {
 
   private final MentorRepository mentorRepository;
   private final MenteeRepository menteeRepository;
-  private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
+  private final MenteeApplicationRepository applicationRepository;
 
   /**
    * Get suggested mentee matches for each mentor who has availability.
    *
-   * @param cycleId the ID of the mentorship cycle
    * @return recommendation response
    */
-  public MentorshipRecommendationResponse getRecommendations(final Long cycleId) {
-    final MentorshipCycleEntity cycle = cycleRepository.findById(cycleId).orElse(null);
-    if (cycle == null) {
-      log.warn("No open mentorship cycle found for recommendations");
+  public MentorshipRecommendationResponse getRecommendations() {
+    final var cycle = cycleRepository.findByYearAndType(Year.now(), MentorshipType.LONG_TERM);
+    if (cycle.isEmpty()) {
+      log.warn("No mentorship cycle found for recommendations");
       return new MentorshipRecommendationResponse(List.of(), List.of(), List.of());
     }
 
-    final var availableMentors =
-        mentorRepository.findAvailableMentors(ProfileStatus.ACTIVE).stream()
-            .filter(m -> m.getMenteeSection().longTerm() != null)
-            .filter(
-                m -> {
-                  final int currentMentees =
-                      matchRepository.countActiveMenteesByMentorAndCycle(m.getId(), cycleId);
-                  return currentMentees < m.getMenteeSection().longTerm().numMentee();
-                })
-            .toList();
+    final Long cycleId = cycle.get().getCycleId();
 
-    final var unmatchedMentees =
-        menteeRepository.findByStatus(ProfileStatus.ACTIVE).stream()
-            .filter(m -> !matchRepository.isMenteeMatchedInCycle(m.getId(), cycleId))
-            .toList();
+    final var availableMentors = mentorRepository.findMentorsWithAvailabilityForCycle(cycleId);
+    final var unmatchedMentees = menteeRepository.findUnmatchedMenteesForCycle(cycleId);
 
     final List<MentorMatchSuggestion> matchedMentors =
         availableMentors.stream()
-            .map(mentor -> buildMentorSuggestion(mentor, unmatchedMentees))
+            .map(mentor -> buildMentorSuggestion(mentor, unmatchedMentees, cycleId))
             .filter(s -> !s.mentees().isEmpty())
             .toList();
 
@@ -103,14 +93,27 @@ public class MentorshipRecommendationService {
   }
 
   private MentorMatchSuggestion buildMentorSuggestion(
-      final Mentor mentor, final List<Mentee> unmatchedMentees) {
+      final Mentor mentor, final List<Mentee> unmatchedMentees, final Long cycleId) {
     final List<MenteeMatchSuggestion> scoredMentees =
         unmatchedMentees.stream()
-            .map(mentee -> new MenteeMatchSuggestion(mentee, calculateScore(mentor, mentee)))
+            .map(mentee -> buildMenteeSuggestion(mentor, mentee, cycleId))
             .filter(s -> s.score() > 0)
             .sorted(Comparator.comparingInt(MenteeMatchSuggestion::score).reversed())
             .toList();
     return new MentorMatchSuggestion(mentor, scoredMentees);
+  }
+
+  private MenteeMatchSuggestion buildMenteeSuggestion(
+      final Mentor mentor, final Mentee mentee, final Long cycleId) {
+    final int score = calculateScore(mentor, mentee);
+    final ApplicationStatus status =
+        applicationRepository.findByMenteeAndCycle(mentee.getId(), cycleId).stream()
+            .filter(app -> mentor.getId().equals(app.getMentorId()))
+            .findFirst()
+            .map(MenteeApplication::getStatus)
+            .orElse(null);
+
+    return new MenteeMatchSuggestion(mentee, score, status);
   }
 
   private int calculateScore(final Mentor mentor, final Mentee mentee) {
