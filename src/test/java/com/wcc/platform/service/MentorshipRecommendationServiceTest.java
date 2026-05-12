@@ -13,6 +13,7 @@ import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.mentorship.recommendation.MentorshipRecommendationResponse;
@@ -22,7 +23,7 @@ import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
-import com.wcc.platform.repository.MentorshipMatchRepository;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,6 @@ class MentorshipRecommendationServiceTest {
 
   @Mock private MentorRepository mentorRepository;
   @Mock private MenteeRepository menteeRepository;
-  @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MentorshipCycleRepository cycleRepository;
 
   @Mock private MenteeApplicationRepository applicationRepository;
@@ -48,12 +48,14 @@ class MentorshipRecommendationServiceTest {
   @BeforeEach
   void setUp() {
     final var cycle = MentorshipCycleEntity.builder().cycleId(1L).build();
-    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(cycleRepository.findByYearAndType(Year.now(), MentorshipType.LONG_TERM))
+        .thenReturn(Optional.of(cycle));
   }
 
   @Test
   @DisplayName(
-      "Given active mentor and mentee with matching skills, when getRecommendations is called, then return suggestions with score")
+      "Given active mentor and mentee with matching skills, "
+          + "when getRecommendations is called, then return suggestions with score")
   void shouldReturnRecommendationsWhenSkillsMatch() {
     // Mentor with Java and Backend
     Mentor mentorBase = SetupMentorFactories.createMentorTest(1L, "Mentor Java", "mentor@test.com");
@@ -115,7 +117,8 @@ class MentorshipRecommendationServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor at capacity, when getRecommendations is called, then mentor is not included in suggestions")
+      "Given mentor at capacity, when getRecommendations is called, "
+          + "then mentor is not included in suggestions")
   void shouldNotRecommendWhenMentorAtCapacity() {
     when(mentorRepository.findMentorsWithAvailabilityForCycle(1L)).thenReturn(List.of());
     when(menteeRepository.findUnmatchedMenteesForCycle(1L)).thenReturn(List.of());
@@ -128,7 +131,8 @@ class MentorshipRecommendationServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentee already matched, when getRecommendations is called, then mentee is not recommended")
+      "Given mentee already matched, when getRecommendations is called, "
+          + "then mentee is not recommended")
   void shouldNotRecommendWhenMenteeAlreadyMatched() {
     Mentor mentor = SetupMentorFactories.createMentorTest(1L, "Mentor Java", "mentor@test.com");
 
