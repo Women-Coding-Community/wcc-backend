@@ -343,7 +343,7 @@ class MenteeWorkflowServiceTest {
     assertThat(created.getMenteeId()).isEqualTo(MENTEE_ID);
     assertThat(created.getMentorId()).isEqualTo(MENTOR_ID);
     assertThat(created.getCycleId()).isEqualTo(CYCLE_ID);
-    assertThat(created.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    assertThat(created.getStatus()).isEqualTo(ApplicationStatus.MENTOR_REVIEWING);
   }
 
   @Test
