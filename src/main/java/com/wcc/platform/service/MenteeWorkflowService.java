@@ -477,7 +477,7 @@ public class MenteeWorkflowService {
                 .applicationMessage("All mentor applications exhausted - requires manual matching")
                 .build();
 
-        MenteeApplication pendingManualMatchApp = applicationRepository.create(manualMatchApp);
+        final MenteeApplication created = applicationRepository.create(manualMatchApp);
 
         log.info(
             "Created PENDING_MANUAL_MATCH application for mentee {} in cycle {} "
@@ -485,9 +485,7 @@ public class MenteeWorkflowService {
             menteeId,
             cycleId);
 
-        mentorshipService
-            .getNotificationService()
-            .sendApplicationUpdate(Optional.empty(), pendingManualMatchApp);
+        mentorshipService.getNotificationService().sendApplicationUpdate(Optional.empty(), created);
       }
     }
   }
