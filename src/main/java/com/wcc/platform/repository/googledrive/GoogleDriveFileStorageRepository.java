@@ -1,21 +1,17 @@
 package com.wcc.platform.repository.googledrive;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.properties.FolderStorageProperties;
@@ -24,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -49,8 +44,7 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
   private static final String APPLICATION_NAME = "WCC Backend";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
-  private static final String CREDS_FILE_PATH = "/credentials.json";
-  private static final String TOKENS_DIR_PATH = "tokens";
+  private static final String SERVICE_ACCOUNT_PATH = "/service-account.json";
 
   private final Drive driveService;
 
@@ -63,68 +57,34 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
     this.folders = folders;
   }
 
-  /** Spring constructor: builds Drive client and reads folders from properties. */
+  /** Spring constructor: builds Drive client using service account credentials. */
   @Autowired
   public GoogleDriveFileStorageRepository(final FolderStorageProperties folders)
       throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
-        new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
+        new Drive.Builder(httpTransport, JSON_FACTORY, loadServiceAccountCredentials())
             .setApplicationName(APPLICATION_NAME)
             .build();
     this.folders = folders;
   }
 
-  /** Constructor that initializes the Google Drive service (no Spring). */
-  public GoogleDriveFileStorageRepository() throws GeneralSecurityException, IOException {
-    final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    this.driveService =
-        new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
-            .setApplicationName(APPLICATION_NAME)
-            .build();
-    this.folders = new FolderStorageProperties();
-  }
-
   /**
-   * Creates an authorized Credential object.
+   * Loads Google Drive credentials from a service account JSON file.
    *
-   * @param httpTransport The network HTTP Transport.
-   * @return An authorized Credential object.
-   * @throws IOException If the credentials.json file cannot be found.
+   * @return An {@link HttpCredentialsAdapter} wrapping the service account credentials.
+   * @throws IOException If the service account file cannot be found or read.
    */
-  private static Credential getCredentials(final NetHttpTransport httpTransport)
-      throws IOException {
+  private static HttpCredentialsAdapter loadServiceAccountCredentials() throws IOException {
     try (InputStream in =
-        GoogleDriveFileStorageRepository.class.getResourceAsStream(CREDS_FILE_PATH)) {
+        GoogleDriveFileStorageRepository.class.getResourceAsStream(SERVICE_ACCOUNT_PATH)) {
       if (in == null) {
-        throw new FileNotFoundException("Resource not found: " + CREDS_FILE_PATH);
+        throw new FileNotFoundException("Resource not found: " + SERVICE_ACCOUNT_PATH);
       }
-      final var clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-      final String clientId = clientSecrets.getDetails().getClientId();
-      final String userKey = "user-" + (clientId == null ? "unknown" : clientId);
-
-      final var flow =
-          new GoogleAuthorizationCodeFlow.Builder(
-                  httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-              .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIR_PATH)))
-              .setAccessType("offline")
-              .build();
-
-      final Credential credential = flow.loadCredential(userKey);
-      if (credential != null) {
-        log.info(
-            "Using existing Google Drive credentials from '{}' for clientId '{}'. "
-                + "No browser authorization needed.",
-            TOKENS_DIR_PATH,
-            clientId);
-        return credential;
-      }
-
-      log.info(
-          "No existing credentials found for clientId '{}'. Opening browser for authorization...",
-          clientId);
-      final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-      return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userKey);
+      final GoogleCredentials credentials =
+          GoogleCredentials.fromStream(in).createScoped(SCOPES);
+      log.info("Loaded Google Drive service account credentials.");
+      return new HttpCredentialsAdapter(credentials);
     }
   }
 
@@ -159,11 +119,15 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
           new InputStreamContent(contentType, new ByteArrayInputStream(fileData));
 
       final var file =
-          files().create(fileMetadata, mediaContent).setFields("id, name, webViewLink").execute();
+          files()
+              .create(fileMetadata, mediaContent)
+              .setSupportsAllDrives(true)
+              .setFields("id, name, webViewLink")
+              .execute();
 
       final var permission = new Permission().setType("anyone").setRole("reader");
 
-      permissions().create(file.getId(), permission).execute();
+      permissions().create(file.getId(), permission).setSupportsAllDrives(true).execute();
 
       return new FileStored(file.getId(), file.getWebViewLink());
     } catch (IOException e) {
