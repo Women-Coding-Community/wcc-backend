@@ -12,8 +12,8 @@ import com.wcc.platform.domain.platform.mentorship.MentorDto.MentorDtoBuilder;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.resource.MentorResource;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -22,12 +22,14 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 
 /** Represents the mentor members of the community. */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
+@Validated
 @SuppressWarnings("PMD.ImmutableField")
 public class Mentor extends Member {
 
@@ -36,6 +38,7 @@ public class Mentor extends Member {
   private List<String> spokenLanguages;
   @NotBlank private String bio;
   @NotNull private MenteeSection menteeSection;
+  @NotEmpty private List<MemberType> memberTypes;
   private FeedbackSection feedbackSection;
   private MentorResource resources;
   private String calendlyLink;
@@ -68,7 +71,8 @@ public class Mentor extends Member {
       final Boolean isWomen,
       final String calendlyLink,
       final Boolean acceptMale,
-      final Boolean acceptPromotion) {
+      final Boolean acceptPromotion,
+      final List<MemberType> memberTypes) {
     super(
         id,
         fullName,
@@ -78,7 +82,7 @@ public class Mentor extends Member {
         country,
         city,
         companyName,
-        Collections.singletonList(MemberType.MENTOR),
+        memberTypes,
         images,
         network,
         pronouns,
@@ -95,9 +99,10 @@ public class Mentor extends Member {
     this.calendlyLink = calendlyLink;
     this.acceptMale = acceptMale;
     this.acceptPromotion = acceptPromotion;
+    this.memberTypes = memberTypes;
   }
 
-  /** Checks for empty or null and returns capitalized list of string. */
+  /** Checks for empty or null and returns a capitalized list of string. */
   private static List<String> normalizeLanguages(final List<String> languages) {
     if (CollectionUtils.isEmpty(languages)) {
       return List.of();

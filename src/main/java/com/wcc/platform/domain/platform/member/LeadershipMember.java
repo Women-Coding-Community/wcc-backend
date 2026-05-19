@@ -1,17 +1,20 @@
 package com.wcc.platform.domain.platform.member;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
+import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Represents the core team of the community: {@link MemberType#DIRECTOR}, {@link MemberType#LEADER}
@@ -21,11 +24,12 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
+@Validated
 public class LeadershipMember extends Member {
 
   @SuppressWarnings("PMD.ImmutableField")
-  @JsonIgnore
-  @NotNull
+  @NotEmpty(message = "At least one member type must be provided: Leader/Director/Evangelist")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private List<MemberType> memberTypes;
 
   /** Leadership Builder. */
@@ -55,9 +59,9 @@ public class LeadershipMember extends Member {
         memberTypes,
         images,
         network,
-        null,
-        null,
-        null);
+        StringUtils.EMPTY,
+        PronounCategory.FEMININE,
+        Boolean.TRUE);
 
     this.memberTypes = memberTypes;
   }

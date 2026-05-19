@@ -9,6 +9,7 @@ import com.wcc.platform.domain.platform.type.MemberType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.validation.annotation.Validated;
 
 /** Member class with common attributes for all community members. */
 @NoArgsConstructor
@@ -26,20 +28,37 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Getter
 @Builder(toBuilder = true)
+@Validated
 public class Member {
   @Setter
   @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Auto-generated member ID")
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
 
-  @NotBlank private String fullName;
-  @NotBlank private String position;
-  @Setter @NotBlank @Email private String email;
-  @NotBlank private String slackDisplayName;
-  @NotNull private Country country;
+  @NotBlank(message = "Full name cannot be blank")
+  private String fullName;
+
+  @NotBlank(message = "Position cannot be blank")
+  private String position;
+
+  @Setter
+  @NotBlank(message = "Email cannot be blank")
+  @Email(message = "Email format is not valid")
+  private String email;
+
+  @NotBlank(message = "Slack name cannot be blank")
+  private String slackDisplayName;
+
+  @NotNull(message = "Country cannot be null")
+  private Country country;
+
   private String city;
   private String companyName;
-  @Setter @NotNull private List<MemberType> memberTypes;
+
+  @Setter
+  @NotEmpty(message = "At least one member type must be provided (e.g., Member, Volunteer, etc.)")
+  private List<MemberType> memberTypes;
+
   @Setter private List<Image> images;
   private List<SocialNetwork> network;
   private String pronouns;

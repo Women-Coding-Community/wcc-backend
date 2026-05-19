@@ -1,4 +1,4 @@
-import { MentorItem } from './mentor';
+import {MentorItem} from './mentor';
 
 export interface MenteeItem {
   id: number;

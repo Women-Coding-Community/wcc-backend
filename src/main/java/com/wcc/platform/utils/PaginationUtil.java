@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 
 /** Util class for pagination data for any page. */
 @Slf4j
@@ -19,6 +20,7 @@ public final class PaginationUtil {
    * @param pageSize items per page
    * @return list of items on the current page
    */
+  @Validated
   public static <T> List<T> getPaginatedResult(
       @NotEmpty(message = "Items list cannot be null or empty.") final List<T> items,
       final int currentPage,

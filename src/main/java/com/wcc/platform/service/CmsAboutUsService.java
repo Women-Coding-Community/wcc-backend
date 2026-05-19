@@ -12,10 +12,8 @@ import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.PaginationUtil;
-import java.util.List;
 import org.springframework.stereotype.Service;
 
 /** CMS service responsible for simple pages. */
@@ -61,7 +59,7 @@ public class CmsAboutUsService {
       try {
         final var page = objectMapper.convertValue(pageOptional.get(), CollaboratorPage.class);
         final var allCollaborators = page.collaborators();
-        final List<Member> pagCollaborators =
+        final var pagCollaborators =
             PaginationUtil.getPaginatedResult(allCollaborators, currentPage, pageSize);
 
         final Pagination paginationRecord =

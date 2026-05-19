@@ -9,6 +9,7 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.type.MemberType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
@@ -18,17 +19,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.validation.annotation.Validated;
 
-/** Represents a mentee in the platform. */
+/** Represents the mentee of the community. */
 @Getter
 @NoArgsConstructor
 @ToString(callSuper = true)
+@Validated
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
   private ProfileStatus profileStatus;
-  private @NotNull Skills skills;
+
+  @NotNull(message = "Skills must be provided")
+  private Skills skills;
+
   private @NotBlank String bio;
+
+  @NotEmpty(message = "At least one spoken language must be provided")
   private List<String> spokenLanguages;
 
   @NotNull

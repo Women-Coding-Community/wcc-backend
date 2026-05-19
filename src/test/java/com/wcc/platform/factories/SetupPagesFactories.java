@@ -32,7 +32,7 @@ import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.SocialNetworkType;
-import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.utils.FileUtil;
 import java.util.Collections;
@@ -86,7 +86,7 @@ public class SetupPagesFactories {
         createCommonSectionTest(),
         createContactTest(),
         List.of(
-            Member.builder()
+            MemberDto.builder()
                 .fullName("fullName " + MemberType.MEMBER.name())
                 .position("position " + MemberType.MEMBER.name())
                 .email("member@wcc.com")

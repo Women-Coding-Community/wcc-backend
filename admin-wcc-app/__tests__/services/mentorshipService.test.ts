@@ -3,7 +3,7 @@ import {
   getMenteeApplications,
   getMentorshipRecommendations,
 } from '@/services/mentorshipService';
-import { apiFetch } from '@/lib/api';
+import {apiFetch} from '@/lib/api';
 
 jest.mock('../../lib/api', () => ({
   apiFetch: jest.fn(),
@@ -28,8 +28,8 @@ describe('mentorshipService', () => {
       const result = await getMentorshipRecommendations(token);
 
       expect(apiFetch).toHaveBeenCalledWith(
-        '/api/platform/v1/admin/mentorship/matches/recommendations',
-        { token }
+          '/api/platform/v1/admin/mentorship/matches/recommendations',
+          {token}
       );
       expect(result).toEqual(mockResponse);
     });
@@ -37,14 +37,14 @@ describe('mentorshipService', () => {
 
   describe('getMenteeApplications', () => {
     it('should fetch mentee applications without mentor filter', async () => {
-      const mockApps = [{ menteeId: 1, status: 'PENDING' }];
+      const mockApps = [{menteeId: 1, status: 'PENDING'}];
       (apiFetch as jest.Mock).mockResolvedValue(mockApps);
 
       const result = await getMenteeApplications(5, ['PENDING', 'ACCEPTED'], token);
 
       expect(apiFetch).toHaveBeenCalledWith(
-        '/api/platform/v1/admin/mentorship/cycles/5/applications?status=PENDING%2CACCEPTED',
-        { token }
+          '/api/platform/v1/admin/mentorship/cycles/5/applications?status=PENDING%2CACCEPTED',
+          {token}
       );
       expect(result).toEqual(mockApps);
     });
@@ -55,8 +55,8 @@ describe('mentorshipService', () => {
       await getMenteeApplications(5, ['PENDING'], token, 10);
 
       expect(apiFetch).toHaveBeenCalledWith(
-        '/api/platform/v1/admin/mentorship/cycles/5/applications?status=PENDING&mentorId=10',
-        { token }
+          '/api/platform/v1/admin/mentorship/cycles/5/applications?status=PENDING&mentorId=10',
+          {token}
       );
     });
   });
@@ -69,7 +69,7 @@ describe('mentorshipService', () => {
 
       expect(apiFetch).toHaveBeenCalledWith('/api/platform/v1/mentees/20/cycles/5/assign-mentor', {
         method: 'POST',
-        body: { mentorId: 10, notes: undefined },
+        body: {mentorId: 10, notes: undefined},
         token,
       });
     });
@@ -81,7 +81,7 @@ describe('mentorshipService', () => {
 
       expect(apiFetch).toHaveBeenCalledWith('/api/platform/v1/mentees/20/cycles/5/assign-mentor', {
         method: 'POST',
-        body: { mentorId: 10, notes: 'Good match for React skills' },
+        body: {mentorId: 10, notes: 'Good match for React skills'},
         token,
       });
     });

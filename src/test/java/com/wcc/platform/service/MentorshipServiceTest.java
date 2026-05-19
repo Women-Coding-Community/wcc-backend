@@ -10,10 +10,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -78,24 +76,19 @@ class MentorshipServiceTest {
     mentorDto = createMentorDtoTest(1L, MemberType.DIRECTOR);
     updatedMentor = createUpdatedMentorTest(mentor, mentorDto);
     service =
-        spy(
-            new MentorshipService(
-                mentorRepository,
-                memberRepository,
-                cycleRepository,
-                userProvisionService,
-                profilePicRepo,
-                notificationService,
-                resourceService));
-
-    // Lenient stub: no profile pictures for any member (avoids UnnecessaryStubbingException)
-    lenient().when(profilePicRepo.findByMemberId(anyLong())).thenReturn(Optional.empty());
+        new MentorshipService(
+            mentorRepository,
+            memberRepository,
+            cycleRepository,
+            userProvisionService,
+            profilePicRepo,
+            notificationService,
+            resourceService);
   }
 
   @Test
   @DisplayName(
-      "Given mentor with existing ID, when creating mentor with no matching email, "
-          + "then throw DuplicatedMemberException")
+      "Given mentor with existing ID, when creating mentor with no matching email, then throw DuplicatedMemberException")
   void whenCreateGivenMentorAlreadyExistsThenThrowDuplicatedMemberException() {
     var mentor = mock(Mentor.class);
     when(mentor.getId()).thenReturn(1L);
@@ -140,7 +133,7 @@ class MentorshipServiceTest {
 
     var result = service.create(mentor);
 
-    assertEquals(mentor, result);
+    assertEquals(mentor.toDto(), result);
     verify(mentorRepository).create(mentor);
   }
 
@@ -158,7 +151,7 @@ class MentorshipServiceTest {
 
     var result = service.create(mentor);
 
-    assertEquals(mentor, result);
+    assertEquals(mentor.toDto(), result);
     verify(mentorRepository).create(mentor);
   }
 
@@ -197,14 +190,13 @@ class MentorshipServiceTest {
 
     var result = service.create(mentor);
 
-    assertEquals(mentor, result);
+    assertEquals(mentor.toDto(), result);
     verify(mentorRepository).create(mentor);
   }
 
   @Test
   @DisplayName(
-      "Given existing member with same email, when re-registering as mentor, "
-          + "then all fields are preserved")
+      "Given existing member with same email, when re-registering as mentor, then all fields are preserved")
   void shouldPreserveAllFieldsWhenMentorReRegistersWithExistingEmail() {
     var country = mock(com.wcc.platform.domain.cms.attributes.Country.class);
     var skills = mock(Skills.class);
@@ -232,7 +224,12 @@ class MentorshipServiceTest {
     when(mentor.getAcceptMale()).thenReturn(true);
     when(mentor.getAcceptPromotion()).thenReturn(false);
 
-    Member existingMember = Member.builder().id(999L).email("existing@test.com").build();
+    Member existingMember =
+        Member.builder()
+            .id(999L)
+            .email("existing@test.com")
+            .memberTypes(List.of(MemberType.MEMBER))
+            .build();
     when(memberRepository.findByEmail("existing@test.com")).thenReturn(Optional.of(existingMember));
     when(mentorRepository.create(any(Mentor.class))).thenReturn(mock(Mentor.class));
 
@@ -447,8 +444,8 @@ class MentorshipServiceTest {
 
   @Test
   @DisplayName(
-      "Given active and pending mentors with an open cycle, when getAllActiveMentors is called, "
-          + "then only active mentors are returned")
+      "Given active and pending mentors with an open cycle, when getAllActiveMentors is called, then only"
+          + " active mentors are returned")
   void shouldReturnOnlyActiveMentorsWhenCycleIsOpen() {
     var activeMentor = mock(Mentor.class);
     var pendingMentor = mock(Mentor.class);
@@ -477,7 +474,7 @@ class MentorshipServiceTest {
   @Test
   @DisplayName(
       "Given active and pending mentors with a closed cycle, "
-          + "when getAllActiveMentors is called, then exception is throws for closed cycle")
+          + "when getAllActiveMentors is called, then only active mentors are returned")
   void shouldReturnOnlyActiveMentorsWhenCycleIsClosed() {
     var activeMentor = mock(Mentor.class);
     var pendingMentor = mock(Mentor.class);
@@ -489,8 +486,7 @@ class MentorshipServiceTest {
     when(activeMentorDto.getId()).thenReturn(1L);
     when(mentorRepository.getAll()).thenReturn(List.of(activeMentor, pendingMentor));
     when(profilePicRepo.findByMemberId(1L)).thenReturn(Optional.empty());
-    when(service.getCurrentCycle())
-        .thenReturn(MentorshipCycleEntity.builder().status(CycleStatus.CLOSED).build());
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.empty());
 
     List<MentorDto> result = service.getAllActiveMentors();
 

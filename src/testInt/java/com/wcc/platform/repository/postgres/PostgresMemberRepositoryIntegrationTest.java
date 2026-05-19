@@ -71,7 +71,7 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
 
   @Test
   void createReturnEmptyForNotFoundMemberId() {
-    var optionalMember = repository.findById(Long.MAX_VALUE);
+    var optionalMember = repository.findById(7L);
 
     assertTrue(optionalMember.isEmpty(), "Should not find optionalMember with this id");
   }

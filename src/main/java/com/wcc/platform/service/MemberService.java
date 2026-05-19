@@ -7,6 +7,7 @@ import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.domain.resource.Resource;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /** Platform Service. */
 @Slf4j
@@ -36,6 +38,10 @@ public class MemberService {
    * <p>Profile picture saving is now handled automatically by MemberProfilePictureAspect
    */
   public Member createMember(final Member member) {
+    if (CollectionUtils.isEmpty(member.getMemberTypes())) {
+      member.setMemberTypes(List.of(MemberType.MEMBER));
+    }
+
     final Optional<Member> memberOptional = emailExists(member.getEmail());
     final var userExists = userRepository.findByEmail(member.getEmail()).isPresent();
     if (memberOptional.isPresent()) {

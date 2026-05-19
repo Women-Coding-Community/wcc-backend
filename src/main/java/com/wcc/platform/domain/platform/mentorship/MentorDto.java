@@ -10,6 +10,7 @@ import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.resource.MentorResource;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.Email;
@@ -23,12 +24,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 
 /** Represents the mentor members of the community. */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
+@Validated
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
@@ -88,7 +91,7 @@ public class MentorDto extends MemberDto {
         country,
         city,
         companyName,
-        null, // TODO to be fixe this will cleanup member types
+        List.of(MemberType.MENTOR),
         images,
         network,
         pronouns,

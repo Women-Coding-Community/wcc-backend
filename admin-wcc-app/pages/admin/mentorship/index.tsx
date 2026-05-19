@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Box,
@@ -10,10 +10,10 @@ import {
   Typography,
 } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
-import { getMenteeApplications, getMentorshipRecommendations } from '@/services/mentorshipService';
-import { MenteeApplicationItem, MentorshipRecommendationResponse } from '@/types/mentorship';
-import { getStoredToken, isTokenExpired } from '@/lib/auth';
-import { useRouter } from 'next/router';
+import {getMenteeApplications, getMentorshipRecommendations} from '@/services/mentorshipService';
+import {MenteeApplicationItem, MentorshipRecommendationResponse} from '@/types/mentorship';
+import {getStoredToken, isTokenExpired} from '@/lib/auth';
+import {useRouter} from 'next/router';
 import MatchCard from '@/components/mentorship/MatchCard';
 import MenteeCard from '@/components/mentorship/MenteeCard';
 import MentorInfoCard from '@/components/mentorship/MentorInfoCard';
@@ -26,18 +26,18 @@ interface TabPanelProps {
 }
 
 function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const {children, value, index, ...other} = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
-    </div>
+      <div
+          role="tabpanel"
+          hidden={value !== index}
+          id={`simple-tabpanel-${index}`}
+          aria-labelledby={`simple-tab-${index}`}
+          {...other}
+      >
+        {value === index && <Box sx={{py: 3}}>{children}</Box>}
+      </div>
   );
 }
 
@@ -63,14 +63,14 @@ export default function MentorshipAdminPage() {
     }
 
     getMentorshipRecommendations(token)
-      .then((res) => {
-        setData(respToRecommendationResponse(res));
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message || 'Failed to fetch recommendations');
-        setLoading(false);
-      });
+    .then((res) => {
+      setData(respToRecommendationResponse(res));
+      setLoading(false);
+    })
+    .catch((err) => {
+      setError(err.message || 'Failed to fetch recommendations');
+      setLoading(false);
+    });
   }, [router]);
 
   useEffect(() => {
@@ -87,8 +87,8 @@ export default function MentorshipAdminPage() {
     };
 
     const setterMap: Record<
-      number,
-      React.Dispatch<React.SetStateAction<MenteeApplicationItem[]>>
+        number,
+        React.Dispatch<React.SetStateAction<MenteeApplicationItem[]>>
     > = {
       3: setPendingApps,
       4: setAcceptedApps,
@@ -96,13 +96,13 @@ export default function MentorshipAdminPage() {
     };
 
     if (setterMap[tabValue]) {
-      setAppsLoading((prev) => ({ ...prev, [tabValue]: true }));
-      setAppsError((prev) => ({ ...prev, [tabValue]: '' }));
+      setAppsLoading((prev) => ({...prev, [tabValue]: true}));
+      setAppsError((prev) => ({...prev, [tabValue]: ''}));
 
       getMenteeApplications(cycleId, statusMap[tabValue], token)
-        .then(setterMap[tabValue])
-        .catch((err) => setAppsError((prev) => ({ ...prev, [tabValue]: err.message })))
-        .finally(() => setAppsLoading((prev) => ({ ...prev, [tabValue]: false })));
+      .then(setterMap[tabValue])
+      .catch((err) => setAppsError((prev) => ({...prev, [tabValue]: err.message})))
+      .finally(() => setAppsLoading((prev) => ({...prev, [tabValue]: false})));
     }
   }, [tabValue, loading]);
 
@@ -128,134 +128,135 @@ export default function MentorshipAdminPage() {
 
   if (loading) {
     return (
-      <AdminLayout>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-          <CircularProgress />
-        </Box>
-      </AdminLayout>
+        <AdminLayout>
+          <Box sx={{display: 'flex', justifyContent: 'center', mt: 8}}>
+            <CircularProgress/>
+          </Box>
+        </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout>
-      <Container maxWidth="xl">
-        <Typography variant="h4" gutterBottom sx={{ mt: 2, mb: 4 }}>
-          Mentorship - Manual Matching
-        </Typography>
+      <AdminLayout>
+        <Container maxWidth="xl">
+          <Typography variant="h4" gutterBottom sx={{mt: 2, mb: 4}}>
+            Mentorship - Manual Matching
+          </Typography>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 4 }}>
-            {error}
-          </Alert>
-        )}
+          {error && (
+              <Alert severity="error" sx={{mb: 4}}>
+                {error}
+              </Alert>
+          )}
 
-        <Paper sx={{ width: '100%', mb: 4 }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={tabValue} onChange={handleTabChange} aria-label="mentorship tabs">
-              <Tab label={`Recommendations (${data?.matchedMentors.length || 0})`} />
-              <Tab label={`Unmatched Mentors (${data?.notMatchedMentors.length || 0})`} />
-              <Tab label={`Unmatched Mentees (${data?.notMatchedMentees.length || 0})`} />
-              <Tab label="Pending Review" />
-              <Tab label="Accepted" />
-              <Tab label="Rejected" />
-            </Tabs>
-          </Box>
+          <Paper sx={{width: '100%', mb: 4}}>
+            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+              <Tabs value={tabValue} onChange={handleTabChange} aria-label="mentorship tabs">
+                <Tab label={`Recommendations (${data?.matchedMentors.length || 0})`}/>
+                <Tab label={`Unmatched Mentors (${data?.notMatchedMentors.length || 0})`}/>
+                <Tab label={`Unmatched Mentees (${data?.notMatchedMentees.length || 0})`}/>
+                <Tab label="Pending Review"/>
+                <Tab label="Accepted"/>
+                <Tab label="Rejected"/>
+              </Tabs>
+            </Box>
 
-          <CustomTabPanel value={tabValue} index={0}>
-            {data?.matchedMentors.map((match, idx) => (
-              <MatchCard
-                key={match.mentor.id || idx}
-                match={match}
-                cycleId={1}
-                token={getStoredToken() || ''}
-                onMenteeMatched={handleMenteeMatched}
-              />
-            ))}
-            {data?.matchedMentors.length === 0 && (
-              <Typography color="text.secondary" align="center">
-                No matches found.
-              </Typography>
-            )}
-          </CustomTabPanel>
-
-          <CustomTabPanel value={tabValue} index={1}>
-            <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-              {data?.notMatchedMentors.map((mentor) => (
-                <MentorInfoCard key={mentor.id} mentor={mentor} />
+            <CustomTabPanel value={tabValue} index={0}>
+              {data?.matchedMentors.map((match, idx) => (
+                  <MatchCard
+                      key={match.mentor.id || idx}
+                      match={match}
+                      cycleId={1}
+                      token={getStoredToken() || ''}
+                      onMenteeMatched={handleMenteeMatched}
+                  />
               ))}
-              {data?.notMatchedMentors.length === 0 && (
-                <Typography color="text.secondary" align="center">
-                  All mentors have recommendations.
-                </Typography>
+              {data?.matchedMentors.length === 0 && (
+                  <Typography color="text.secondary" align="center">
+                    No matches found.
+                  </Typography>
               )}
-            </Box>
-          </CustomTabPanel>
+            </CustomTabPanel>
 
-          <CustomTabPanel value={tabValue} index={2}>
-            <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-              {data?.notMatchedMentees.map((mentee) => (
-                <MenteeCard key={mentee.id} mentee={mentee} />
-              ))}
-              {data?.notMatchedMentees.length === 0 && (
-                <Typography color="text.secondary" align="center">
-                  All mentees have recommendations.
-                </Typography>
-              )}
-            </Box>
-          </CustomTabPanel>
+            <CustomTabPanel value={tabValue} index={1}>
+              <Box sx={{maxWidth: 800, mx: 'auto'}}>
+                {data?.notMatchedMentors.map((mentor) => (
+                    <MentorInfoCard key={mentor.id} mentor={mentor}/>
+                ))}
+                {data?.notMatchedMentors.length === 0 && (
+                    <Typography color="text.secondary" align="center">
+                      All mentors have recommendations.
+                    </Typography>
+                )}
+              </Box>
+            </CustomTabPanel>
 
-          <CustomTabPanel value={tabValue} index={3}>
-            <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-              {appsLoading[3] ? (
-                <CircularProgress />
-              ) : appsError[3] ? (
-                <Alert severity="error">{appsError[3]}</Alert>
-              ) : (
-                pendingApps.map((app) => (
-                  <MenteeApplicationCard key={app.menteeId} application={app} />
-                ))
-              )}
-              {!appsLoading[3] && pendingApps.length === 0 && (
-                <Typography>No pending applications.</Typography>
-              )}
-            </Box>
-          </CustomTabPanel>
+            <CustomTabPanel value={tabValue} index={2}>
+              <Box sx={{maxWidth: 800, mx: 'auto'}}>
+                {data?.notMatchedMentees.map((mentee) => (
+                    <MenteeCard key={mentee.id} mentee={mentee}/>
+                ))}
+                {data?.notMatchedMentees.length === 0 && (
+                    <Typography color="text.secondary" align="center">
+                      All mentees have recommendations.
+                    </Typography>
+                )}
+              </Box>
+            </CustomTabPanel>
 
-          <CustomTabPanel value={tabValue} index={4}>
-            <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-              {appsLoading[4] ? (
-                <CircularProgress />
-              ) : appsError[4] ? (
-                <Alert severity="error">{appsError[4]}</Alert>
-              ) : (
-                acceptedApps.map((app) => (
-                  <MenteeApplicationCard key={app.menteeId} application={app} />
-                ))
-              )}
-              {!appsLoading[4] && acceptedApps.length === 0 && (
-                <Typography>No accepted applications.</Typography>
-              )}
-            </Box>
-          </CustomTabPanel>
+            <CustomTabPanel value={tabValue} index={3}>
+              <Box sx={{maxWidth: 800, mx: 'auto'}}>
+                {appsLoading[3] ? (
+                    <CircularProgress/>
+                ) : appsError[3] ? (
+                    <Alert severity="error">{appsError[3]}</Alert>
+                ) : (
+                    pendingApps.map((app) => (
+                        <MenteeApplicationCard key={app.menteeId} application={app}/>
+                    ))
+                )}
+                {!appsLoading[3] && pendingApps.length === 0 && (
+                    <Typography>No pending applications.</Typography>
+                )}
+              </Box>
+            </CustomTabPanel>
 
-          <CustomTabPanel value={tabValue} index={5}>
-            <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-              {appsLoading[5] ? (
-                <CircularProgress />
-              ) : appsError[5] ? (
-                <Alert severity="error">{appsError[5]}</Alert>
-              ) : (
-                rejectedApps.map((app) => (
-                  <MenteeApplicationCard key={app.menteeId} application={app} showRejectionReason />
-                ))
-              )}
-              {!appsLoading[5] && rejectedApps.length === 0 && (
-                <Typography>No rejected applications.</Typography>
-              )}
-            </Box>
-          </CustomTabPanel>
-        </Paper>
-      </Container>
-    </AdminLayout>
+            <CustomTabPanel value={tabValue} index={4}>
+              <Box sx={{maxWidth: 800, mx: 'auto'}}>
+                {appsLoading[4] ? (
+                    <CircularProgress/>
+                ) : appsError[4] ? (
+                    <Alert severity="error">{appsError[4]}</Alert>
+                ) : (
+                    acceptedApps.map((app) => (
+                        <MenteeApplicationCard key={app.menteeId} application={app}/>
+                    ))
+                )}
+                {!appsLoading[4] && acceptedApps.length === 0 && (
+                    <Typography>No accepted applications.</Typography>
+                )}
+              </Box>
+            </CustomTabPanel>
+
+            <CustomTabPanel value={tabValue} index={5}>
+              <Box sx={{maxWidth: 800, mx: 'auto'}}>
+                {appsLoading[5] ? (
+                    <CircularProgress/>
+                ) : appsError[5] ? (
+                    <Alert severity="error">{appsError[5]}</Alert>
+                ) : (
+                    rejectedApps.map((app) => (
+                        <MenteeApplicationCard key={app.menteeId} application={app}
+                                               showRejectionReason/>
+                    ))
+                )}
+                {!appsLoading[5] && rejectedApps.length === 0 && (
+                    <Typography>No rejected applications.</Typography>
+                )}
+              </Box>
+            </CustomTabPanel>
+          </Paper>
+        </Container>
+      </AdminLayout>
   );
 }

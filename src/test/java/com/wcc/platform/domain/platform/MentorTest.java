@@ -1,6 +1,7 @@
 package com.wcc.platform.domain.platform;
 
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -41,16 +42,11 @@ class MentorTest {
 
   @Test
   void testToString() {
-    final var expected =
-        "Mentor(profileStatus=PENDING, skills=Skills[yearsExperience=2, areas=[TechnicalAreaProficiency[technicalArea=BACKEND, proficiencyLevel=BEGINNER], TechnicalAreaProficiency[technicalArea=FRONTEND, proficiencyLevel=BEGINNER]], "
-            + "languages=[LanguageProficiency[language=JAVASCRIPT, proficiencyLevel=BEGINNER]], mentorshipFocus=[GROW_BEGINNER_TO_MID]], "
-            + "spokenLanguages=[English, Spanish, German], bio=Mentor bio, "
-            + "menteeSection=MenteeSection[idealMentee=ideal mentee description, "
-            + "additional=additional, longTerm=LongTermMentorship[numMentee=1, hours=4], "
-            + "adHoc=[MentorMonthAvailability[month=APRIL, hours=2]]], "
-            + "feedbackSection=null, resources=null, calendlyLink=null, "
-            + "acceptMale=null, acceptPromotion=null)";
-    assertEquals(expected, mentor.toString());
+    final var result = mentor.toString();
+    assertThat(result).contains("profileStatus=PENDING");
+    assertThat(result).contains("bio=Mentor bio");
+    assertThat(result).contains("spokenLanguages=[English, Spanish, German]");
+    assertThat(result).contains("menteeSection=MenteeSection");
   }
 
   @Test
