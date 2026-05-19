@@ -9,6 +9,7 @@ import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationAdminResponse;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationResponse;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
@@ -18,10 +19,12 @@ import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,13 +44,52 @@ public class MenteeWorkflowService {
   private final MentorshipService mentorshipService;
 
   /**
+   * Find applications for admin view by cycle, statuses, and optionally mentor.
+   *
+   * @param cycleId the cycle ID
+   * @param statuses the list of statuses
+   * @param mentorId the optional mentor ID
+   * @return list of applications with mentee profile
+   */
+  public List<MenteeApplicationAdminResponse> getApplicationsForAdmin(
+      final Long cycleId, final List<ApplicationStatus> statuses, final Long mentorId) {
+
+    final List<MenteeApplication> applications =
+        mentorId != null
+            ? applicationRepository.findByCycleAndStatusesAndMentor(cycleId, statuses, mentorId)
+            : applicationRepository.findByCycleAndStatuses(cycleId, statuses);
+
+    final Set<Long> menteeIds =
+        applications.stream().map(MenteeApplication::getMenteeId).collect(Collectors.toSet());
+
+    final Map<Long, Mentee> menteeMap =
+        menteeRepository.findAllById(List.copyOf(menteeIds)).stream()
+            .collect(Collectors.toMap(Mentee::getId, Function.identity()));
+
+    return applications.stream()
+        .map(
+            app ->
+                new MenteeApplicationAdminResponse(
+                    app.getApplicationId(),
+                    app.getMenteeId(),
+                    menteeMap.get(app.getMenteeId()),
+                    app.getMentorId(),
+                    app.getStatus(),
+                    app.getMentorResponse(),
+                    app.getAppliedAt()))
+        .toList();
+  }
+
+  /**
    * Admin approves a mentee application.
    *
    * @param applicationId the application ID
    * @return updated application
-   * @throws ApplicationNotFoundException if application not found
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MenteeApplication approveApplication(final Long applicationId) {
     final MenteeApplication application = getApplicationOrThrow(applicationId);
 
@@ -81,6 +123,9 @@ public class MenteeWorkflowService {
    * @throws ApplicationNotFoundException if application not found
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MenteeApplication rejectApplication(final Long applicationId, final String reason) {
     final MenteeApplication application = getApplicationOrThrow(applicationId);
 
@@ -118,6 +163,9 @@ public class MenteeWorkflowService {
    * @throws MentorCapacityExceededException if mentor at capacity
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MenteeApplication acceptApplication(
       final Long applicationId, final String mentorResponse) {
 
@@ -153,6 +201,9 @@ public class MenteeWorkflowService {
    * @throws ApplicationNotFoundException if application not found
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MenteeApplication declineApplication(final Long applicationId, final String reason) {
 
     final MenteeApplication application = getApplicationOrThrow(applicationId);
@@ -188,6 +239,9 @@ public class MenteeWorkflowService {
    * @throws ApplicationNotFoundException if application not found
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MenteeApplication withdrawApplication(final Long applicationId, final String reason) {
 
     final MenteeApplication application = getApplicationOrThrow(applicationId);
@@ -274,6 +328,9 @@ public class MenteeWorkflowService {
    * @return the newly created application
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MenteeApplication assignMentor(
       final Long menteeId, final Long cycleId, final Long mentorId, final String notes) {
     if (mentorshipService.getMentorRepository().findById(mentorId).isEmpty()) {
@@ -291,23 +348,7 @@ public class MenteeWorkflowService {
 
     checkMentorCapacity(mentorId, cycleId);
 
-    final var manualMatchApps =
-        applicationRepository.findByMenteeCycleAndStatusOrderByPriority(
-            menteeId, cycleId, ApplicationStatus.PENDING_MANUAL_MATCH);
-
-    final MenteeApplication manualMatchApp =
-        manualMatchApps.stream()
-            .findFirst()
-            .orElseThrow(
-                () ->
-                    new ContentNotFoundException(
-                        String.format(
-                            "No PENDING_MANUAL_MATCH application found for mentee %d in cycle %d",
-                            menteeId, cycleId)));
     final var reason = "Manual assignment by admin [" + notes + "]";
-
-    applicationRepository.updateStatus(
-        manualMatchApp.getApplicationId(), ApplicationStatus.REJECTED, reason);
 
     final MenteeApplication newApplication =
         MenteeApplication.builder()
@@ -315,23 +356,27 @@ public class MenteeWorkflowService {
             .mentorId(mentorId)
             .cycleId(cycleId)
             .priorityOrder(null)
-            .status(ApplicationStatus.PENDING)
+            .status(ApplicationStatus.MENTOR_REVIEWING)
             .applicationMessage(reason)
+            .whyMentor(reason)
             .build();
 
-    final MenteeApplication created = applicationRepository.create(newApplication);
+    try {
+      final MenteeApplication created = applicationRepository.create(newApplication);
+      log.info("Manually assigned mentor {} to mentee {} in cycle {}", mentorId, menteeId, cycleId);
 
-    log.info("Manually assigned mentor {} to mentee {} in cycle {}", mentorId, menteeId, cycleId);
+      mentorshipService.getNotificationService().sendApplicationUpdate(Optional.empty(), created);
 
-    mentorshipService.getNotificationService().sendApplicationUpdate(Optional.empty(), created);
-
-    return created;
+      return created;
+    } catch (DuplicateApplicationException ex) {
+      throw new ApplicationMenteeWorkflowException(ex.getMessage(), ex);
+    }
   }
 
   /**
    * Confirms that no match was found for a mentee in the manual match queue. Sets the
    * PENDING_MANUAL_MATCH application to NO_MATCH_FOUND status. This is a terminal state - no
-   * further actions possible for this mentee in this cycle.
+   * further actions are possible for this mentee in this cycle.
    *
    * @param menteeId the mentee ID
    * @param cycleId the cycle ID
@@ -477,7 +522,7 @@ public class MenteeWorkflowService {
                 .applicationMessage("All mentor applications exhausted - requires manual matching")
                 .build();
 
-        applicationRepository.create(manualMatchApp);
+        final MenteeApplication created = applicationRepository.create(manualMatchApp);
 
         log.info(
             "Created PENDING_MANUAL_MATCH application for mentee {} in cycle {} "
@@ -485,9 +530,7 @@ public class MenteeWorkflowService {
             menteeId,
             cycleId);
 
-        mentorshipService
-            .getNotificationService()
-            .sendApplicationUpdate(Optional.empty(), manualMatchApp);
+        mentorshipService.getNotificationService().sendApplicationUpdate(Optional.empty(), created);
       }
     }
   }

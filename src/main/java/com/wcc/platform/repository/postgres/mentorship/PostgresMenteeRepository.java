@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres.mentorship;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.MatchStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.repository.MemberRepository;
@@ -14,6 +15,8 @@ import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -50,6 +53,15 @@ public class PostgresMenteeRepository implements MenteeRepository {
       "DELETE FROM mentee_languages WHERE mentee_id = ?";
   private static final String DELETE_FOCUS_AREAS =
       "DELETE FROM mentee_mentorship_focus_areas WHERE mentee_id = ?";
+  private static final String SQL_UNMATCHED_MENTEES =
+      "SELECT m.* FROM mentees m "
+          + "LEFT JOIN mentorship_matches mm ON m.mentee_id = mm.mentee_id "
+          + "AND mm.cycle_id = ? AND mm.match_status = '"
+          + MatchStatus.ACTIVE.getValue()
+          + "' WHERE m.mentees_profile_status = "
+          + ProfileStatus.ACTIVE.getStatusId()
+          + " GROUP BY m.mentee_id "
+          + "HAVING COUNT(mm.match_id) = 0";
 
   private final JdbcTemplate jdbc;
   private final MenteeMapper menteeMapper;
@@ -151,11 +163,22 @@ public class PostgresMenteeRepository implements MenteeRepository {
 
   @Override
   public List<Mentee> findByStatus(final ProfileStatus status) {
-    return jdbc.query(SELECT_BY_STATUS, (rs, rowNum) -> menteeMapper.mapRowToMentee(rs),
-        status.getStatusId());
+    return jdbc.query(
+        SELECT_BY_STATUS, (rs, rowNum) -> menteeMapper.mapRowToMentee(rs), status.getStatusId());
   }
 
   @Override
+  @Cacheable(value = "unmatchedMentees", key = "#cycleId")
+  public List<Mentee> findUnmatchedMenteesForCycle(final Long cycleId) {
+    return jdbc.query(
+        SQL_UNMATCHED_MENTEES, (rs, rowNum) -> menteeMapper.mapRowToMentee(rs), cycleId);
+  }
+
+  @Override
+  @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public Mentee updateProfileStatus(final Long menteeId, final ProfileStatus status) {
     jdbc.update(SQL_SET_STATUS, status.getStatusId(), menteeId);
     return findById(menteeId)

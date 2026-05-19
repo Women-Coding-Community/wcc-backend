@@ -50,7 +50,6 @@ public class EmailService {
    *
    * @param emailRequest the email request containing recipient, subject, body, and other details
    * @return EmailResponse containing the status of the email sending operation
-   * @throws EmailSendException if the email fails to send
    */
   public EmailResponse sendEmail(final EmailRequest emailRequest) {
     try {
@@ -70,6 +69,8 @@ public class EmailService {
         mimeMessageHelper.setReplyTo(emailRequest.getReplyTo());
       }
 
+      log.debug("Sending email content: {}", message);
+
       javaMailSender.send(message);
 
       log.info("Email sent successfully to: {}", emailRequest.getRecipients());
@@ -81,12 +82,13 @@ public class EmailService {
           .recipient(String.join(";", emailRequest.getRecipients()))
           .build();
     } catch (MessagingException | MailException e) {
-      log.error(
-          "Failed to send email to: {}. Error: {}",
-          emailRequest.getRecipients(),
-          e.getMessage(),
-          e);
-      throw new EmailSendException("Failed to send email to: " + emailRequest.getRecipients(), e);
+      final var errorMsg =
+          "Failed to send email to: "
+              + String.join(";", emailRequest.getRecipients())
+              + ". Error: "
+              + e.getMessage();
+      log.error(errorMsg, e);
+      throw new EmailSendException(errorMsg, e);
     }
   }
 

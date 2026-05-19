@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,9 @@ public class MentorshipMatchingService {
    * @throws MentorCapacityExceededException if mentor at capacity
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MentorshipMatch confirmMatch(final Long applicationId) {
     final MenteeApplication application =
         applicationRepository
@@ -107,6 +111,9 @@ public class MentorshipMatchingService {
    * @throws IllegalArgumentException if match not found
    */
   @Transactional
+  @CacheEvict(
+      value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
+      allEntries = true)
   public MentorshipMatch completeMatch(final Long matchId, final String notes) {
     final MentorshipMatch match = getMatchOrThrow(matchId);
 

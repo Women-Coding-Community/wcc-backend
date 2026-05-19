@@ -281,7 +281,7 @@ public class MenteeService {
   }
 
   /**
-   * Get all mentees having applications pending for manual match for cycle
+   * Get all mentees having applications pending for manual match for cycle.
    *
    * @return list of mentees
    */

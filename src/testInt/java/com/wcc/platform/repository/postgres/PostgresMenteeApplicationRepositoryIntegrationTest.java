@@ -1,9 +1,6 @@
 package com.wcc.platform.repository.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
@@ -108,13 +105,13 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
 
     MenteeApplication created = applicationRepository.create(application);
 
-    assertNotNull(created.getApplicationId());
-    assertEquals(mentee.getId(), created.getMenteeId());
-    assertEquals(mentor.getId(), created.getMentorId());
-    assertEquals(cycle.getCycleId(), created.getCycleId());
-    assertEquals(ApplicationStatus.PENDING, created.getStatus());
-    assertEquals("I want to learn", created.getApplicationMessage());
-    assertNotNull(created.getAppliedAt());
+    assertThat(created.getApplicationId()).isNotNull();
+    assertThat(created.getMenteeId()).isEqualTo(mentee.getId());
+    assertThat(created.getMentorId()).isEqualTo(mentor.getId());
+    assertThat(created.getCycleId()).isEqualTo(cycle.getCycleId());
+    assertThat(created.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    assertThat(created.getApplicationMessage()).isEqualTo("I want to learn");
+    assertThat(created.getAppliedAt()).isNotNull();
   }
 
   @Test
@@ -124,8 +121,8 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
 
     Optional<MenteeApplication> found = applicationRepository.findById(created.getApplicationId());
 
-    assertTrue(found.isPresent());
-    assertEquals(created.getApplicationId(), found.get().getApplicationId());
+    assertThat(found).isPresent();
+    assertThat(found.get().getApplicationId()).isEqualTo(created.getApplicationId());
   }
 
   @Test
@@ -138,9 +135,9 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
         applicationRepository.updateStatus(
             created.getApplicationId(), ApplicationStatus.MENTOR_ACCEPTED, "Welcome!");
 
-    assertEquals(ApplicationStatus.MENTOR_ACCEPTED, updated.getStatus());
-    assertEquals("Welcome!", updated.getMentorResponse());
-    assertNotNull(updated.getReviewedAt());
+    assertThat(updated.getStatus()).isEqualTo(ApplicationStatus.MENTOR_ACCEPTED);
+    assertThat(updated.getMentorResponse()).isEqualTo("Welcome!");
+    assertThat(updated.getReviewedAt()).isNotNull();
   }
 
   @Test
@@ -152,7 +149,7 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
         applicationRepository.findByMenteeAndCycle(mentee.getId(), cycle.getCycleId());
 
     assertThat(apps).hasSize(1);
-    assertEquals(mentee.getId(), apps.get(0).getMenteeId());
+    assertThat(apps.getFirst().getMenteeId()).isEqualTo(mentee.getId());
   }
 
   @Test
@@ -163,7 +160,35 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
     List<MenteeApplication> apps = applicationRepository.findByMentor(mentor.getId());
 
     assertThat(apps).hasSize(1);
-    assertEquals(mentor.getId(), apps.get(0).getMentorId());
+    assertThat(apps.getFirst().getMentorId()).isEqualTo(mentor.getId());
+  }
+
+  @Test
+  @DisplayName("Given applications exist, when finding by cycle and statuses, then return list")
+  void shouldFindByCycleAndStatuses() {
+    createTestApplication(1);
+
+    List<MenteeApplication> apps =
+        applicationRepository.findByCycleAndStatuses(
+            cycle.getCycleId(), List.of(ApplicationStatus.PENDING));
+
+    assertThat(apps).hasSize(1);
+    assertThat(apps.getFirst().getStatus()).isEqualTo(ApplicationStatus.PENDING);
+  }
+
+  @Test
+  @DisplayName(
+      "Given applications exist, when finding by cycle, statuses and mentor, then return list")
+  void shouldFindByCycleAndStatusesAndMentor() {
+    createTestApplication(1);
+
+    List<MenteeApplication> apps =
+        applicationRepository.findByCycleAndStatusesAndMentor(
+            cycle.getCycleId(), List.of(ApplicationStatus.PENDING), mentor.getId());
+
+    assertThat(apps).hasSize(1);
+    assertThat(apps.getFirst().getMentorId()).isEqualTo(mentor.getId());
+    assertThat(apps.getFirst().getStatus()).isEqualTo(ApplicationStatus.PENDING);
   }
 
   @Test
@@ -173,7 +198,7 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
 
     Long count = applicationRepository.countMenteeApplications(mentee.getId(), cycle.getCycleId());
 
-    assertEquals(1L, count);
+    assertThat(count).isEqualTo(1L);
   }
 
   @Test
@@ -192,8 +217,8 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
 
     MenteeApplication created = applicationRepository.create(application);
 
-    assertNotNull(created.getWhyMentor());
-    assertEquals("Because this mentor has expertise in my field", created.getWhyMentor());
+    assertThat(created.getWhyMentor()).isNotNull();
+    assertThat(created.getWhyMentor()).isEqualTo("Because this mentor has expertise in my field");
   }
 
   @Test
@@ -211,8 +236,8 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
 
     MenteeApplication created = applicationRepository.create(application);
 
-    assertNotNull(created.getApplicationId());
-    assertEquals("I want to learn", created.getApplicationMessage());
+    assertThat(created.getApplicationId()).isNotNull();
+    assertThat(created.getApplicationMessage()).isEqualTo("I want to learn");
   }
 
   private MenteeApplication createTestApplication(final int priority) {

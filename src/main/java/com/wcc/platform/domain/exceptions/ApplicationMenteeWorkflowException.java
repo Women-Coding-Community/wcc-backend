@@ -7,6 +7,10 @@ public class ApplicationMenteeWorkflowException extends RuntimeException {
     super(message);
   }
 
+  public ApplicationMenteeWorkflowException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
+
   public ApplicationMenteeWorkflowException(final Long applicationId) {
     super("Application is not allowed to be changed ID: " + applicationId);
   }

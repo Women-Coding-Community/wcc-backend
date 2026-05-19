@@ -41,4 +41,12 @@ public interface MenteeRepository extends CrudRepository<Mentee, Long> {
    * @return list of mentees
    */
   List<Mentee> findAllById(List<Long> menteeIds);
+
+  /**
+   * Find mentees who are ACTIVE and have no active matches in the given cycle.
+   *
+   * @param cycleId the mentorship cycle ID
+   * @return list of unmatched mentees
+   */
+  List<Mentee> findUnmatchedMenteesForCycle(Long cycleId);
 }

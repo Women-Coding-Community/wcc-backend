@@ -21,7 +21,7 @@ import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
-/** Represents the mentee members of the community. */
+/** Represents the mentee of the community. */
 @Getter
 @NoArgsConstructor
 @ToString(callSuper = true)

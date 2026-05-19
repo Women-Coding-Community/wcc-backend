@@ -35,7 +35,8 @@ public class PageController {
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Create page content by page type",
-      description = "Create new page with any content type.")
+      description = "Create new page with any content type.",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> createPage(
       @Parameter(description = "Page Type, for example: ABOUT_US", required = true)
@@ -50,7 +51,8 @@ public class PageController {
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER})
   @Operation(
       summary = "Update page content by page type",
-      description = "Update the content of existent page.")
+      description = "Update the content of existent page.",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> updatePage(
       @Parameter(description = "Page Type, for example: ABOUT_US", required = true)
@@ -63,7 +65,9 @@ public class PageController {
   /** Delete Page By ID. */
   @DeleteMapping
   @RequiresRole(RoleType.ADMIN)
-  @Operation(summary = "Delete page by id")
+  @Operation(
+      summary = "Delete page by id",
+      security = {@SecurityRequirement(name = "bearerAuth")})
   public ResponseEntity<Void> deletePage(@RequestParam(name = "id") final String pageId) {
     service.deletePageById(pageId);
     return ResponseEntity.noContent().build();

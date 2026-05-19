@@ -32,10 +32,11 @@ export async function apiFetch<T>(
     credentials: 'include',
   });
   if (!res.ok) {
-    let message = `${res.status} ${res.statusText}`;
+    let message = `${res.status} ${res.statusText || 'Error'}`;
     try {
-      const data = (await res.json()) as { message?: string };
+      const data = (await res.json()) as { message?: string; error?: string };
       if (data.message) message = data.message;
+      else if (data.error) message = `${res.status} ${data.error}`;
     } catch {}
     throw new Error(message);
   }

@@ -40,6 +40,7 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
             .build();
 
     repository.deleteByEmail(member.getEmail());
+    repository.deleteById(Long.MAX_VALUE);
   }
 
   @Test
@@ -70,7 +71,7 @@ class PostgresMemberRepositoryIntegrationTest extends DefaultDatabaseSetup {
 
   @Test
   void createReturnEmptyForNotFoundMemberId() {
-    var optionalMember = repository.findById(42L);
+    var optionalMember = repository.findById(7L);
 
     assertTrue(optionalMember.isEmpty(), "Should not find optionalMember with this id");
   }
