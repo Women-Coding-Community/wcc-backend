@@ -86,10 +86,12 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       // Given
       File expectedFile = createTestFile();
       when(mockFiles.create(any(File.class), any())).thenReturn(mockCreate);
+      when(mockCreate.setSupportsAllDrives(true)).thenReturn(mockCreate);
       when(mockCreate.setFields(any(String.class))).thenReturn(mockCreate);
       when(mockCreate.execute()).thenReturn(expectedFile);
       when(mockPermissions.create(eq(TEST_FILE_ID), any(Permission.class)))
           .thenReturn(mockPermissionCreate);
+      when(mockPermissionCreate.setSupportsAllDrives(true)).thenReturn(mockPermissionCreate);
       when(mockPermissionCreate.execute()).thenReturn(new Permission());
 
       // When
@@ -114,10 +116,12 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       File expectedFile = createTestFile();
 
       when(mockFiles.create(any(File.class), any())).thenReturn(mockCreate);
+      when(mockCreate.setSupportsAllDrives(true)).thenReturn(mockCreate);
       when(mockCreate.setFields(any(String.class))).thenReturn(mockCreate);
       when(mockCreate.execute()).thenReturn(expectedFile);
       when(mockPermissions.create(eq(TEST_FILE_ID), any(Permission.class)))
           .thenReturn(mockPermissionCreate);
+      when(mockPermissionCreate.setSupportsAllDrives(true)).thenReturn(mockPermissionCreate);
       when(mockPermissionCreate.execute()).thenReturn(new Permission());
 
       // When
@@ -134,6 +138,7 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
     void shouldThrowExceptionWhenUploadFails() throws IOException {
       // Given
       when(mockFiles.create(any(File.class), any())).thenReturn(mockCreate);
+      when(mockCreate.setSupportsAllDrives(true)).thenReturn(mockCreate);
       when(mockCreate.setFields(any(String.class))).thenReturn(mockCreate);
       when(mockCreate.execute()).thenThrow(new IOException("Upload failed"));
 
