@@ -51,12 +51,14 @@ class GoogleDriveFileStorageRepositoryTest {
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.create(any(File.class), any())).thenReturn(fileCreateMock);
+    when(fileCreateMock.setSupportsAllDrives(true)).thenReturn(fileCreateMock);
     when(fileCreateMock.setFields("id, name, webViewLink")).thenReturn(fileCreateMock);
     when(fileCreateMock.execute()).thenReturn(expectedFile);
 
     when(driveServiceMock.permissions()).thenReturn(permissionsMock);
     when(permissionsMock.create(eq(expectedFile.getId()), any(Permission.class)))
         .thenReturn(permissionCreateMock);
+    when(permissionCreateMock.setSupportsAllDrives(true)).thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
     var actualFile =
@@ -85,12 +87,14 @@ class GoogleDriveFileStorageRepositoryTest {
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.create(any(File.class), any())).thenReturn(fileCreateMock);
+    when(fileCreateMock.setSupportsAllDrives(true)).thenReturn(fileCreateMock);
     when(fileCreateMock.setFields("id, name, webViewLink")).thenReturn(fileCreateMock);
     when(fileCreateMock.execute()).thenReturn(expectedFile);
 
     when(driveServiceMock.permissions()).thenReturn(permissionsMock);
     when(permissionsMock.create(eq(expectedFile.getId()), any(Permission.class)))
         .thenReturn(permissionCreateMock);
+    when(permissionCreateMock.setSupportsAllDrives(true)).thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
     var googleDriveService = new GoogleDriveFileStorageRepository(driveServiceMock, properties);
@@ -110,6 +114,7 @@ class GoogleDriveFileStorageRepositoryTest {
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.create(any(File.class), any())).thenReturn(fileCreateMock);
+    when(fileCreateMock.setSupportsAllDrives(true)).thenReturn(fileCreateMock);
     when(fileCreateMock.setFields("id, name, webViewLink")).thenReturn(fileCreateMock);
     when(fileCreateMock.execute()).thenThrow(new IOException("Test exception"));
 

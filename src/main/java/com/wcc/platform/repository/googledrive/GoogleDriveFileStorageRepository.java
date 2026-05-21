@@ -12,14 +12,15 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.wcc.platform.configuration.GoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.domain.platform.filestorage.FileStored;
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.FileStorageRepository;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,6 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
   private static final String APPLICATION_NAME = "WCC Backend";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
   private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
-  private static final String SERVICE_ACCOUNT_PATH = "/service-account.json";
 
   private final Drive driveService;
 
@@ -57,33 +57,48 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
     this.folders = folders;
   }
 
-  /** Spring constructor: builds Drive client using service account credentials. */
+  /**
+   * Spring constructor: builds the Drive client using service account credentials supplied via
+   * {@link GoogleDriveConfig#getCredentialsJson()}, which is mapped from the {@code
+   * GOOGLE_DRIVE_CREDENTIALS_JSON} environment variable.
+   */
   @Autowired
-  public GoogleDriveFileStorageRepository(final FolderStorageProperties folders)
+  public GoogleDriveFileStorageRepository(
+      final FolderStorageProperties folders, final GoogleDriveConfig googleDriveConfig)
       throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.driveService =
-        new Drive.Builder(httpTransport, JSON_FACTORY, loadServiceAccountCredentials())
+        new Drive.Builder(
+                httpTransport,
+                JSON_FACTORY,
+                loadServiceAccountCredentials(googleDriveConfig.getCredentialsJson()))
             .setApplicationName(APPLICATION_NAME)
             .build();
     this.folders = folders;
   }
 
   /**
-   * Loads Google Drive credentials from a service account JSON file.
+   * Loads Google Drive service account credentials from a JSON string.
    *
-   * @return An {@link HttpCredentialsAdapter} wrapping the service account credentials.
-   * @throws IOException If the service account file cannot be found or read.
+   * <p>The JSON content is expected to be the full service account key file, provided via the
+   * {@code GOOGLE_DRIVE_CREDENTIALS_JSON} environment variable.
+   *
+   * @param credentialsJson the service account key JSON as a string
+   * @return an {@link HttpCredentialsAdapter} wrapping the scoped credentials
+   * @throws IOException if the JSON is blank or cannot be parsed
+   * @throws IllegalStateException if {@code credentialsJson} is blank
    */
-  private static HttpCredentialsAdapter loadServiceAccountCredentials() throws IOException {
+  private static HttpCredentialsAdapter loadServiceAccountCredentials(final String credentialsJson)
+      throws IOException {
+    if (StringUtils.isBlank(credentialsJson)) {
+      throw new IllegalStateException(
+          "Google Drive credentials are not configured. "
+              + "Set the GOOGLE_DRIVE_CREDENTIALS_JSON environment variable.");
+    }
     try (InputStream in =
-        GoogleDriveFileStorageRepository.class.getResourceAsStream(SERVICE_ACCOUNT_PATH)) {
-      if (in == null) {
-        throw new FileNotFoundException("Resource not found: " + SERVICE_ACCOUNT_PATH);
-      }
-      final GoogleCredentials credentials =
-          GoogleCredentials.fromStream(in).createScoped(SCOPES);
-      log.info("Loaded Google Drive service account credentials.");
+        new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8))) {
+      final GoogleCredentials credentials = GoogleCredentials.fromStream(in).createScoped(SCOPES);
+      log.info("Loaded Google Drive service account credentials from environment.");
       return new HttpCredentialsAdapter(credentials);
     }
   }
