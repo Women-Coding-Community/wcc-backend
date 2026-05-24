@@ -10,6 +10,7 @@ import static com.wcc.platform.utils.MenteeApplicationTestBuilder.reviewing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -315,16 +316,15 @@ class MenteeWorkflowServiceTest {
   @Test
   @DisplayName(
       "Given valid inputs when assigning mentor, "
-          + "then new application is created with PENDING status")
+          + "then new application is created with MENTOR_REVIEWING status and NEW_MENTEES_LONG email is sent")
   void shouldAssignMentorSuccessfully() {
-    final MenteeApplication manualMatchApp = pendingManualMatch(99L, MENTEE_ID);
+    final Mentor mentor = Mentor.mentorBuilder().id(MENTOR_ID).build();
     final MenteeApplication createdApp =
-        baseBuilder(100L, MENTEE_ID, MENTOR_ID, 0).status(ApplicationStatus.PENDING).build();
+        baseBuilder(100L, MENTEE_ID, MENTOR_ID, 0).status(ApplicationStatus.MENTOR_REVIEWING).build();
     final MentorshipCycleEntity cycle =
         MentorshipCycleEntity.builder().cycleId(CYCLE_ID).maxMenteesPerMentor(3).build();
 
-    when(mentorRepository.findById(MENTOR_ID))
-        .thenReturn(Optional.of(Mentor.mentorBuilder().build()));
+    when(mentorRepository.findById(MENTOR_ID)).thenReturn(Optional.of(mentor));
     when(applicationRepository.findByMenteeMentorCycle(MENTEE_ID, MENTOR_ID, CYCLE_ID))
         .thenReturn(Optional.empty());
     when(cycleRepository.findById(CYCLE_ID)).thenReturn(Optional.of(cycle));
@@ -334,7 +334,7 @@ class MenteeWorkflowServiceTest {
     final MenteeApplication result =
         service.assignMentor(MENTEE_ID, CYCLE_ID, MENTOR_ID, ASSIGNMENT_NOTES);
 
-    assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+    assertThat(result.getStatus()).isEqualTo(ApplicationStatus.MENTOR_REVIEWING);
 
     final ArgumentCaptor<MenteeApplication> captor =
         ArgumentCaptor.forClass(MenteeApplication.class);
@@ -344,6 +344,8 @@ class MenteeWorkflowServiceTest {
     assertThat(created.getMentorId()).isEqualTo(MENTOR_ID);
     assertThat(created.getCycleId()).isEqualTo(CYCLE_ID);
     assertThat(created.getStatus()).isEqualTo(ApplicationStatus.MENTOR_REVIEWING);
+
+    verify(notificationService).sendNewMenteesNotification(eq(mentor), any(Integer.class));
   }
 
   @Test

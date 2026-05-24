@@ -145,6 +145,23 @@ class MentorshipNotificationServiceTest {
   }
 
   @Test
+  @DisplayName(
+      "Given mentor and cycle year, when sendNewMenteesNotification, then sends NEW_MENTEES_LONG email to mentor")
+  void shouldSendNewMenteesNotification() {
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendNewMenteesNotification(mentor, 2025);
+
+    verify(emailTemplateService).renderTemplate(eq(TemplateType.NEW_MENTEES_LONG), anyMap());
+    ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
+    verify(emailService).sendEmail(emailCaptor.capture());
+
+    var emailRequest = emailCaptor.getValue();
+    assertThat(emailRequest.getRecipients()).containsExactly(mentor.getEmail());
+  }
+
+  @Test
   @DisplayName("Given mentor and reason, when sendMentorRejectionEmail, then sends notification")
   void shouldSendMentorRejectionEmail() {
     var reason = "Incomplete profile";
