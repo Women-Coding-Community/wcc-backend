@@ -15,7 +15,6 @@ import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
-import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MatchStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
@@ -181,7 +180,8 @@ class MentorshipNotificationServiceTest {
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
 
-    notificationService.sendConfirmLongTermPairing(mentorWithCalendly, mentee, 2025, googleMeetLink);
+    notificationService.sendConfirmLongTermPairing(
+        mentorWithCalendly, mentee, 2025, googleMeetLink);
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);

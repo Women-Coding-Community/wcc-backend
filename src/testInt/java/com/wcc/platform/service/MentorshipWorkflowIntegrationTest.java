@@ -191,7 +191,8 @@ class MentorshipWorkflowIntegrationTest extends DefaultDatabaseSetup
             List.of(
                 new MenteeApplicationDto(mentor1.getId(), 1, "Test application", "Test why mentor"),
                 new MenteeApplicationDto(mentor2.getId(), 2, "Test application", "Test why mentor"),
-                new MenteeApplicationDto(mentor3.getId(), 3, "Test application", "Test why mentor")));
+                new MenteeApplicationDto(
+                    mentor3.getId(), 3, "Test application", "Test why mentor")));
 
     var mentee = menteeService.saveRegistration(registration);
 
@@ -209,7 +210,9 @@ class MentorshipWorkflowIntegrationTest extends DefaultDatabaseSetup
     assertThat(accepted.getStatus()).isEqualTo(ApplicationStatus.MENTOR_ACCEPTED);
 
     // STEP 4: Admin/Mentorship team confirms the match
-    MentorshipMatch match = matchingService.confirmMatch(accepted.getApplicationId());
+    MentorshipMatch match =
+        matchingService.confirmMatch(
+            accepted.getApplicationId(), "https://meet.google.com/abc-xyz");
     assertThat(match.getStatus()).isEqualTo(MatchStatus.ACTIVE);
 
     // STEP 5: Verify other applications are rejected
