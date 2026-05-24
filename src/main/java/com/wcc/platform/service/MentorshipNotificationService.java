@@ -100,6 +100,19 @@ public class MentorshipNotificationService {
   }
 
   /**
+   * Sends a NEW_MENTEES_LONG notification email to a mentor when manually assigned a mentee.
+   *
+   * @param mentor the mentor to notify
+   * @param year the mentorship cycle year
+   */
+  public void sendNewMenteesNotification(final Mentor mentor, final int year) {
+    sendNotification(
+        TemplateType.NEW_MENTEES_LONG,
+        Map.of("mentorName", mentor.getFullName(), "year", year),
+        List.of(mentor.getEmail()));
+  }
+
+  /**
    * Renders an email template and sends a notification email to the specified recipient.
    *
    * @param recipientEmails the list of recipient's email address
