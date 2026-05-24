@@ -56,8 +56,8 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
       "INSERT INTO mentorship_matches "
           + "(mentor_id, mentee_id, cycle_id, application_id, match_status, start_date, "
           + "end_date, expected_end_date, session_frequency, total_sessions, "
-          + "cancellation_reason, cancelled_by, cancelled_at, created_at, updated_at) "
-          + "VALUES (?, ?, ?, ?, ?::match_status, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+          + "google_meet_link, cancellation_reason, cancelled_by, cancelled_at, created_at, updated_at) "
+          + "VALUES (?, ?, ?, ?, ?::match_status, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
           + "RETURNING match_id";
 
   private static final String UPDATE_SQL =
@@ -92,6 +92,7 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
             entity.getExpectedEndDate(),
             entity.getSessionFrequency(),
             entity.getTotalSessions(),
+            entity.getGoogleMeetLink(),
             entity.getCancellationReason(),
             entity.getCancelledBy(),
             entity.getCancelledAt() != null
@@ -201,6 +202,7 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
                 : null)
         .sessionFrequency(rs.getString("session_frequency"))
         .totalSessions(rs.getInt("total_sessions"))
+        .googleMeetLink(rs.getString("google_meet_link"))
         .cancellationReason(rs.getString("cancellation_reason"))
         .cancelledBy(rs.getString("cancelled_by"))
         .cancelledAt(

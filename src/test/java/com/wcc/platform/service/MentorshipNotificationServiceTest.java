@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import static com.wcc.platform.factories.SetupMenteeFactories.createMenteeTest;
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
 import static com.wcc.platform.utils.MenteeApplicationTestBuilder.baseBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +15,7 @@ import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MatchStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
@@ -159,6 +161,70 @@ class MentorshipNotificationServiceTest {
 
     var emailRequest = emailCaptor.getValue();
     assertThat(emailRequest.getRecipients()).containsExactly(mentor.getEmail());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with calendly link, mentee and google meet link, when sendConfirmLongTermPairing,"
+          + " then sends CONFIRM_LONG_TERM_PAIRING to both emails with all params")
+  void shouldSendConfirmLongTermPairing() {
+    var calendlyLink = "https://calendly.com/mentor-jane";
+    var googleMeetLink = "https://meet.google.com/abc-xyz";
+    var mentorWithCalendly =
+        Mentor.mentorBuilder()
+            .id(1L)
+            .fullName(mentor.getFullName())
+            .email(mentor.getEmail())
+            .calendlyLink(calendlyLink)
+            .build();
+    var mentee = createMenteeTest(2L, "Jane Mentee", "mentee@test.com");
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendConfirmLongTermPairing(mentorWithCalendly, mentee, 2025, googleMeetLink);
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
+    verify(emailTemplateService)
+        .renderTemplate(eq(TemplateType.CONFIRM_LONG_TERM_PAIRING), paramsCaptor.capture());
+
+    var params = paramsCaptor.getValue();
+    assertThat(params).containsEntry("mentor_calendly_link", calendlyLink);
+    assertThat(params).containsEntry("google_meet_link", googleMeetLink);
+    assertThat(params).containsEntry("year", 2025);
+    assertThat(params).containsEntry("mentor_name", mentorWithCalendly.getFullName());
+    assertThat(params).containsEntry("mentee_name", mentee.getFullName());
+
+    ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
+    verify(emailService).sendEmail(emailCaptor.capture());
+    assertThat(emailCaptor.getValue().getRecipients())
+        .containsExactlyInAnyOrder(mentorWithCalendly.getEmail(), mentee.getEmail());
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentor with null calendly link, when sendConfirmLongTermPairing,"
+          + " then mentor_calendly_link param defaults to empty string")
+  void shouldDefaultToEmptyStringWhenMentorCalendlyLinkIsNull() {
+    var mentorNoCalendly =
+        Mentor.mentorBuilder()
+            .id(1L)
+            .fullName(mentor.getFullName())
+            .email(mentor.getEmail())
+            .calendlyLink(null)
+            .build();
+    var mentee = createMenteeTest(2L, "Jane Mentee", "mentee@test.com");
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendConfirmLongTermPairing(
+        mentorNoCalendly, mentee, 2025, "https://meet.google.com/abc-xyz");
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
+    verify(emailTemplateService)
+        .renderTemplate(eq(TemplateType.CONFIRM_LONG_TERM_PAIRING), paramsCaptor.capture());
+    assertThat(paramsCaptor.getValue()).containsEntry("mentor_calendly_link", "");
   }
 
   @Test

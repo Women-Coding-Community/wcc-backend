@@ -5,6 +5,7 @@ import com.wcc.platform.configuration.security.RequiresRole;
 import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
+import com.wcc.platform.domain.platform.mentorship.ConfirmMatchRequest;
 import com.wcc.platform.domain.platform.mentorship.MatchCancelRequest;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationAdminResponse;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
@@ -96,9 +97,10 @@ public class MentorshipAdminMatchesController {
 
   /**
    * API for admin to confirm a match from an accepted application. This creates the official
-   * mentorship match record.
+   * mentorship match record and sends a pairing confirmation email to mentor and mentee.
    *
    * @param applicationId The application ID
+   * @param request The confirm match request containing the Google Meet link
    * @return Created match
    */
   @PostMapping("/matches/confirm/{applicationId}")
@@ -109,8 +111,9 @@ public class MentorshipAdminMatchesController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MentorshipMatch> confirmMatch(
       @Parameter(description = "Application ID to confirm as match") @PathVariable
-          final Long applicationId) {
-    final MentorshipMatch match = matchingService.confirmMatch(applicationId);
+          final Long applicationId,
+      @Valid @RequestBody final ConfirmMatchRequest request) {
+    final MentorshipMatch match = matchingService.confirmMatch(applicationId, request.googleMeetLink());
     return new ResponseEntity<>(match, HttpStatus.CREATED);
   }
 

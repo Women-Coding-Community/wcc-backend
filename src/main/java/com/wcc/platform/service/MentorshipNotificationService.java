@@ -4,6 +4,7 @@ import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.domain.template.TemplateType;
@@ -97,6 +98,30 @@ public class MentorshipNotificationService {
 
     sendNotification(
         TemplateType.MENTEE_APPLICATIONS, params, List.of(notificationConfig.getMentorshipEmail()));
+  }
+
+  /**
+   * Sends a CONFIRM_LONG_TERM_PAIRING notification email to both mentor and mentee when a match is
+   * confirmed.
+   *
+   * @param mentor the matched mentor
+   * @param mentee the matched mentee
+   * @param year the mentorship cycle year
+   * @param googleMeetLink the unique Google Meet link for the pair
+   */
+  public void sendConfirmLongTermPairing(
+      final Mentor mentor, final Mentee mentee, final int year, final String googleMeetLink) {
+    sendNotification(
+        TemplateType.CONFIRM_LONG_TERM_PAIRING,
+        Map.of(
+            "mentor_name", mentor.getFullName(),
+            "mentee_name", mentee.getFullName(),
+            "mentor_email", mentor.getEmail(),
+            "mentee_email", mentee.getEmail(),
+            "mentor_calendly_link", Optional.ofNullable(mentor.getCalendlyLink()).orElse(""),
+            "google_meet_link", googleMeetLink,
+            "year", year),
+        List.of(mentor.getEmail(), mentee.getEmail()));
   }
 
   /**

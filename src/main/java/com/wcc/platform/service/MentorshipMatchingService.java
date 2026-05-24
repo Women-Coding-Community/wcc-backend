@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchStatus;
@@ -9,6 +10,7 @@ import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.repository.MenteeApplicationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.time.LocalDate;
@@ -33,6 +35,7 @@ public class MentorshipMatchingService {
   private final MentorshipMatchRepository matchRepository;
   private final MenteeApplicationRepository applicationRepository;
   private final MentorshipCycleRepository cycleRepository;
+  private final MenteeRepository menteeRepository;
   private final MentorshipService mentorshipService;
 
   /**
@@ -40,6 +43,7 @@ public class MentorshipMatchingService {
    * mentor acceptance.
    *
    * @param applicationId the accepted application ID
+   * @param googleMeetLink the unique Google Meet link for the mentor-mentee pair
    * @return created match
    * @throws ApplicationNotFoundException if application not found
    * @throws IllegalStateException if application not in accepted state
@@ -49,7 +53,7 @@ public class MentorshipMatchingService {
   @CacheEvict(
       value = {"mentorsAvailable", "unmatchedMentees", "menteeApplications"},
       allEntries = true)
-  public MentorshipMatch confirmMatch(final Long applicationId) {
+  public MentorshipMatch confirmMatch(final Long applicationId, final String googleMeetLink) {
     final MenteeApplication application =
         applicationRepository
             .findById(applicationId)
@@ -76,21 +80,41 @@ public class MentorshipMatchingService {
             .status(MatchStatus.ACTIVE)
             .startDate(LocalDate.now())
             .expectedEndDate(cycle.getCycleEndDate())
-            .sessionFrequency("Weekly") // Default, can be customized
+            .sessionFrequency("Weekly")
             .totalSessions(0)
+            .googleMeetLink(googleMeetLink)
             .createdAt(ZonedDateTime.now())
             .updatedAt(ZonedDateTime.now())
             .build();
 
     final MentorshipMatch created = matchRepository.create(match);
 
-    // Update application status to MATCHED
     applicationRepository.updateStatus(
         applicationId, ApplicationStatus.MATCHED, "Match confirmed by mentorship team");
 
     mentorshipService.getNotificationService().sendMatchUpdate(Optional.empty(), created);
 
-    // Reject all other pending applications for this mentee in this cycle
+    final var mentor =
+        mentorshipService
+            .getMentorRepository()
+            .findById(application.getMentorId())
+            .orElseThrow(() -> new MentorNotFoundException(application.getMentorId()));
+
+    final var mentee =
+        menteeRepository
+            .findById(application.getMenteeId())
+            .orElseThrow(
+                () ->
+                    new IllegalArgumentException(
+                        "Mentee not found: " + application.getMenteeId()));
+
+    final int year =
+        cycle.getCycleYear() != null ? cycle.getCycleYear().getValue() : LocalDate.now().getYear();
+
+    mentorshipService
+        .getNotificationService()
+        .sendConfirmLongTermPairing(mentor, mentee, year, googleMeetLink);
+
     rejectOtherApplications(application.getMenteeId(), application.getCycleId(), applicationId);
 
     log.info(

@@ -33,6 +33,7 @@ public class MentorshipMatch {
   private LocalDate expectedEndDate;
   private String sessionFrequency;
   private Integer totalSessions;
+  private String googleMeetLink;
   private String cancellationReason;
   private String cancelledBy;
   private ZonedDateTime cancelledAt;
