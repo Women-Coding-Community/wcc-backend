@@ -2,9 +2,8 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
-import com.wcc.platform.domain.exceptions.EmailSendException;
-import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.domain.template.TemplateType;
@@ -121,7 +120,7 @@ public class MentorshipNotificationService {
             "mentor_calendly_link", Optional.ofNullable(mentor.getCalendlyLink()).orElse(""),
             "google_meet_link", googleMeetLink,
             "year", year),
-        List.of(mentor.getEmail(), mentee.getEmail()));
+        List.of(mentor.getEmail(), mentee.getEmail(), notificationConfig.getMentorshipEmail()));
   }
 
   /**
@@ -134,7 +133,7 @@ public class MentorshipNotificationService {
     sendNotification(
         TemplateType.NEW_MENTEES_LONG,
         Map.of("mentorName", mentor.getFullName(), "year", year),
-        List.of(mentor.getEmail()));
+        List.of(mentor.getEmail(), notificationConfig.getMentorshipEmail()));
   }
 
   /**
@@ -161,7 +160,7 @@ public class MentorshipNotificationService {
 
       emailService.sendEmail(emailRequest);
       log.info("{} notification successfully sent to {}", templateType, recipientEmails);
-    } catch (EmailSendException e) {
+    } catch (Exception e) {
       log.error("Failed to send {} notification to {}", templateType, recipientEmails, e);
     }
   }

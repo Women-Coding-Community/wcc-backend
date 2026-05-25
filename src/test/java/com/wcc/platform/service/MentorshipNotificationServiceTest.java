@@ -151,37 +151,39 @@ class MentorshipNotificationServiceTest {
   void shouldSendNewMenteesNotification() {
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
-
+    var teamEmail = "team@test.com";
     notificationService.sendNewMenteesNotification(mentor, 2025);
+    when(notificationConfig.getMentorshipEmail()).thenReturn(teamEmail);
 
     verify(emailTemplateService).renderTemplate(eq(TemplateType.NEW_MENTEES_LONG), anyMap());
     ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
     verify(emailService).sendEmail(emailCaptor.capture());
 
     var emailRequest = emailCaptor.getValue();
-    assertThat(emailRequest.getRecipients()).containsExactly(mentor.getEmail());
+    assertThat(emailRequest.getRecipients()).containsExactly(mentor.getEmail(), teamEmail);
   }
 
   @Test
   @DisplayName(
       "Given mentor with calendly link, mentee and google meet link, when sendConfirmLongTermPairing,"
-          + " then sends CONFIRM_LONG_TERM_PAIRING to both emails with all params")
+          + " then sends CONFIRM_LONG_TERM_PAIRING to mentor, mentee and mentorship team with all params")
   void shouldSendConfirmLongTermPairing() {
     var calendlyLink = "https://calendly.com/mentor-jane";
     var googleMeetLink = "https://meet.google.com/abc-xyz";
-    var mentorWithCalendly =
+    var teamEmail = "team@test.com";
+    var mentor =
         Mentor.mentorBuilder()
             .id(1L)
-            .fullName(mentor.getFullName())
-            .email(mentor.getEmail())
+            .fullName(this.mentor.getFullName())
+            .email(this.mentor.getEmail())
             .calendlyLink(calendlyLink)
             .build();
     var mentee = createMenteeTest(2L, "Jane Mentee", "mentee@test.com");
+    when(notificationConfig.getMentorshipEmail()).thenReturn(teamEmail);
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
 
-    notificationService.sendConfirmLongTermPairing(
-        mentorWithCalendly, mentee, 2025, googleMeetLink);
+    notificationService.sendConfirmLongTermPairing(mentor, mentee, 2025, googleMeetLink);
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
@@ -192,13 +194,13 @@ class MentorshipNotificationServiceTest {
     assertThat(params).containsEntry("mentor_calendly_link", calendlyLink);
     assertThat(params).containsEntry("google_meet_link", googleMeetLink);
     assertThat(params).containsEntry("year", 2025);
-    assertThat(params).containsEntry("mentor_name", mentorWithCalendly.getFullName());
+    assertThat(params).containsEntry("mentor_name", mentor.getFullName());
     assertThat(params).containsEntry("mentee_name", mentee.getFullName());
 
     ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
     verify(emailService).sendEmail(emailCaptor.capture());
     assertThat(emailCaptor.getValue().getRecipients())
-        .containsExactlyInAnyOrder(mentorWithCalendly.getEmail(), mentee.getEmail());
+        .containsExactlyInAnyOrder(mentor.getEmail(), mentee.getEmail(), teamEmail);
   }
 
   @Test
