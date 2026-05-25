@@ -161,7 +161,8 @@ class MentorshipNotificationServiceTest {
     verify(emailService).sendEmail(emailCaptor.capture());
 
     var emailRequest = emailCaptor.getValue();
-    assertThat(emailRequest.getRecipients()).containsExactlyInAnyOrder(mentor.getEmail(), teamEmail);
+    assertThat(emailRequest.getRecipients())
+        .containsExactlyInAnyOrder(mentor.getEmail(), teamEmail);
   }
 
   @Test
@@ -172,7 +173,7 @@ class MentorshipNotificationServiceTest {
     var calendlyLink = "https://calendly.com/mentor-jane";
     var googleMeetLink = "https://meet.google.com/abc-xyz";
     var teamEmail = "team@test.com";
-    var mentor =
+    var mentorWithCalendly =
         Mentor.mentorBuilder()
             .id(1L)
             .fullName(this.mentor.getFullName())
@@ -184,7 +185,8 @@ class MentorshipNotificationServiceTest {
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
 
-    notificationService.sendConfirmLongTermPairing(mentor, mentee, 2025, googleMeetLink);
+    notificationService.sendConfirmLongTermPairing(
+        mentorWithCalendly, mentee, 2025, googleMeetLink);
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
@@ -195,13 +197,13 @@ class MentorshipNotificationServiceTest {
     assertThat(params).containsEntry("mentor_calendly_link", calendlyLink);
     assertThat(params).containsEntry("google_meet_link", googleMeetLink);
     assertThat(params).containsEntry("year", 2025);
-    assertThat(params).containsEntry("mentor_name", mentor.getFullName());
+    assertThat(params).containsEntry("mentor_name", mentorWithCalendly.getFullName());
     assertThat(params).containsEntry("mentee_name", mentee.getFullName());
 
     ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
     verify(emailService).sendEmail(emailCaptor.capture());
     assertThat(emailCaptor.getValue().getRecipients())
-        .containsExactlyInAnyOrder(mentor.getEmail(), mentee.getEmail(), teamEmail);
+        .containsExactlyInAnyOrder(mentorWithCalendly.getEmail(), mentee.getEmail(), teamEmail);
   }
 
   @Test
