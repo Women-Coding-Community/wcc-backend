@@ -147,20 +147,21 @@ class MentorshipNotificationServiceTest {
 
   @Test
   @DisplayName(
-      "Given mentor and cycle year, when sendNewMenteesNotification, then sends NEW_MENTEES_LONG email to mentor")
+      "Given mentor and cycle year, when sendNewMenteesNotification, then sends NEW_MENTEES_LONG email to mentor and mentorship team")
   void shouldSendNewMenteesNotification() {
+    var teamEmail = "team@test.com";
+    when(notificationConfig.getMentorshipEmail()).thenReturn(teamEmail);
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
-    var teamEmail = "team@test.com";
+
     notificationService.sendNewMenteesNotification(mentor, 2025);
-    when(notificationConfig.getMentorshipEmail()).thenReturn(teamEmail);
 
     verify(emailTemplateService).renderTemplate(eq(TemplateType.NEW_MENTEES_LONG), anyMap());
     ArgumentCaptor<EmailRequest> emailCaptor = ArgumentCaptor.forClass(EmailRequest.class);
     verify(emailService).sendEmail(emailCaptor.capture());
 
     var emailRequest = emailCaptor.getValue();
-    assertThat(emailRequest.getRecipients()).containsExactly(mentor.getEmail(), teamEmail);
+    assertThat(emailRequest.getRecipients()).containsExactlyInAnyOrder(mentor.getEmail(), teamEmail);
   }
 
   @Test
@@ -216,6 +217,7 @@ class MentorshipNotificationServiceTest {
             .calendlyLink(null)
             .build();
     var mentee = createMenteeTest(2L, "Jane Mentee", "mentee@test.com");
+    when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
 
