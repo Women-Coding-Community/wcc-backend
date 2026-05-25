@@ -143,6 +143,7 @@ public class MentorshipNotificationService {
    * @param templateType the type of template to render
    * @param templateParams the parameters to use for rendering the template
    */
+  @SuppressWarnings("PMD.AvoidCatchingGenericException") // intentional: email failures must never break the calling flow
   /* default */ void sendNotification(
       final TemplateType templateType,
       final Map<String, Object> templateParams,
