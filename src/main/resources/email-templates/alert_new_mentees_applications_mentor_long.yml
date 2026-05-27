@@ -31,3 +31,5 @@ NEW_MENTEES_LONG:
     <p>
     {{teamEmailSignature}}
     </p>
+    
+    <p>[Automated Message]</p>
