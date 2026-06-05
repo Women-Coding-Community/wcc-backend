@@ -1,5 +1,5 @@
 # Stage 1: Build the application using Gradle and JDK 21 (Temurin)
-FROM gradle:8.7-jdk21 AS build
+FROM gradle:8.10-jdk21 AS build
 WORKDIR /app
 
 # Copy configuration files to cache dependencies

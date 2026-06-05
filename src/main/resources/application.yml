@@ -80,7 +80,7 @@ app:
 storage:
   type: local
   google-drive:
-    credentials-json: ${GOOGLE_DRIVE_CREDENTIALS_JSON:}
+    credentials-json:
   folders:
     main-folder: folder-id
     resources-folder: folder-id
