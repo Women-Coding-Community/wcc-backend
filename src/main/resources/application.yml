@@ -76,7 +76,8 @@ app:
   seed:
     enabled: true
     users:
-      - email: admin@wcc.dev
+      - enabled: true
+        email: admin@wcc.dev
         password: wcc-admin
         full-name: Platform Admin
         roles: [ ADMIN ]

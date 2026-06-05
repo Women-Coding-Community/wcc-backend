@@ -4,22 +4,26 @@ app:
   seed:
     enabled: true
     users:
-      - email: admin@wcc.dev
+      - enabled: true
+        email: admin@wcc.dev
         password: wcc-admin
         full-name: QA Admin
         roles: [ ADMIN ]
         member-types: [ MEMBER ]
-      - email: mentorship-admin@wcc.dev
+      - enabled: true
+        email: mentorship-admin@wcc.dev
         password: wcc-admin
         full-name: QA Mentorship Admin
         roles: [ MENTORSHIP_ADMIN ]
         member-types: [ MEMBER ]
-      - email: mentor@wcc.dev
+      - enabled: true
+        email: mentor@wcc.dev
         password: wcc-admin
         full-name: QA Mentor
         roles: [ MENTOR ]
         member-types: [ MENTOR ]
-      - email: leader@wcc.dev
+      - enabled: true
+        email: leader@wcc.dev
         password: wcc-admin
         full-name: QA Leader
         roles: [ LEADER ]
