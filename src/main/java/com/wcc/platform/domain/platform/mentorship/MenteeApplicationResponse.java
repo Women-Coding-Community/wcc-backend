@@ -29,7 +29,24 @@ public record MenteeApplicationResponse(
     long daysSinceApplied,
     String menteeName,
     String menteeLinkedIn,
-    String menteeBio) {
+    String menteeBio,
+    Mentee mentee) {
+
+  /**
+   * Creates an enriched response from a MenteeApplication and full mentee profile.
+   *
+   * @param application the base application
+   * @param mentee the mentee profile
+   * @return enriched response with mentee information
+   */
+  public static MenteeApplicationResponse from(
+      final MenteeApplication application, final Mentee mentee) {
+    if (mentee == null) {
+      return from(application);
+    }
+
+    return from(application, mentee.getFullName(), mentee.getNetwork(), mentee.getBio(), mentee);
+  }
 
   /**
    * Creates an enriched response from a MenteeApplication and mentee details.
@@ -45,6 +62,15 @@ public record MenteeApplicationResponse(
       final String menteeName,
       final List<SocialNetwork> networks,
       final String bio) {
+    return from(application, menteeName, networks, bio, null);
+  }
+
+  private static MenteeApplicationResponse from(
+      final MenteeApplication application,
+      final String menteeName,
+      final List<SocialNetwork> networks,
+      final String bio,
+      final Mentee mentee) {
 
     final String linkedIn = extractLinkedIn(networks);
 
@@ -68,7 +94,8 @@ public record MenteeApplicationResponse(
         application.getDaysSinceApplied(),
         menteeName,
         linkedIn,
-        bio);
+        bio,
+        mentee);
   }
 
   /**
@@ -79,7 +106,7 @@ public record MenteeApplicationResponse(
    * @return response without enriched mentee information
    */
   public static MenteeApplicationResponse from(final MenteeApplication application) {
-    return from(application, null, List.of(), null);
+    return from(application, null, List.of(), null, null);
   }
 
   private static String extractLinkedIn(final List<SocialNetwork> networks) {
