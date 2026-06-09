@@ -65,11 +65,18 @@ class MenteeApplicationEnrichedTest {
     final List<MenteeApplicationResponse> result = service.getMentorApplications(MENTOR_ID);
 
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).menteeName()).isEqualTo("Jane Doe");
-    assertThat(result.get(0).menteeLinkedIn()).isEqualTo("https://linkedin.com/in/janedoe");
-    assertThat(result.get(0).menteeBio()).isEqualTo("A passionate developer");
-    assertThat(result.get(0).applicationId()).isEqualTo(1L);
-    assertThat(result.get(0).menteeId()).isEqualTo(MENTEE_ID);
+    final MenteeApplicationResponse response = result.get(0);
+
+    assertThat(response.menteeName()).isEqualTo("Jane Doe");
+    assertThat(response.menteeLinkedIn()).isEqualTo("https://linkedin.com/in/janedoe");
+    assertThat(response.menteeBio()).isEqualTo("A passionate developer");
+    assertThat(response.applicationId()).isEqualTo(1L);
+    assertThat(response.menteeId()).isEqualTo(MENTEE_ID);
+
+    assertThat(response.mentee()).isNotNull();
+    assertThat(response.mentee().getId()).isEqualTo(MENTEE_ID);
+    assertThat(response.mentee().getFullName()).isEqualTo("Jane Doe");
+    assertThat(response.mentee().getBio()).isEqualTo("A passionate developer");
   }
 
   @Test
@@ -99,6 +106,7 @@ class MenteeApplicationEnrichedTest {
     assertThat(result.get(0).menteeName()).isNull();
     assertThat(result.get(0).menteeLinkedIn()).isNull();
     assertThat(result.get(0).menteeBio()).isNull();
+    assertThat(result.get(0).mentee()).isNull();
   }
 
   @Test
