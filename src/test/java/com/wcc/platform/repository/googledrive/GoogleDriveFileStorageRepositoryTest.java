@@ -1,5 +1,6 @@
 package com.wcc.platform.repository.googledrive;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,10 +12,12 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
+import com.wcc.platform.configuration.GoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.properties.FolderStorageProperties;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -43,6 +46,18 @@ class GoogleDriveFileStorageRepositoryTest {
   }
 
   @Test
+  @DisplayName("Given blank credentials JSON, when constructing the repository, then it should throw IllegalStateException")
+  void shouldThrowIllegalStateExceptionWhenCredentialsJsonIsBlank() {
+    var config = new GoogleDriveConfig();
+    config.setCredentialsJson("");
+
+    assertThatThrownBy(
+            () -> new GoogleDriveFileStorageRepository(new FolderStorageProperties(), config))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("GOOGLE_DRIVE_CREDENTIALS_JSON");
+  }
+
+  @Test
   void testUploadFileSuccess() throws Exception {
     File expectedFile = new File();
     expectedFile.setId("test-file-id");
@@ -51,12 +66,14 @@ class GoogleDriveFileStorageRepositoryTest {
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.create(any(File.class), any())).thenReturn(fileCreateMock);
+    when(fileCreateMock.setSupportsAllDrives(true)).thenReturn(fileCreateMock);
     when(fileCreateMock.setFields("id, name, webViewLink")).thenReturn(fileCreateMock);
     when(fileCreateMock.execute()).thenReturn(expectedFile);
 
     when(driveServiceMock.permissions()).thenReturn(permissionsMock);
     when(permissionsMock.create(eq(expectedFile.getId()), any(Permission.class)))
         .thenReturn(permissionCreateMock);
+    when(permissionCreateMock.setSupportsAllDrives(true)).thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
     var actualFile =
@@ -85,12 +102,14 @@ class GoogleDriveFileStorageRepositoryTest {
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.create(any(File.class), any())).thenReturn(fileCreateMock);
+    when(fileCreateMock.setSupportsAllDrives(true)).thenReturn(fileCreateMock);
     when(fileCreateMock.setFields("id, name, webViewLink")).thenReturn(fileCreateMock);
     when(fileCreateMock.execute()).thenReturn(expectedFile);
 
     when(driveServiceMock.permissions()).thenReturn(permissionsMock);
     when(permissionsMock.create(eq(expectedFile.getId()), any(Permission.class)))
         .thenReturn(permissionCreateMock);
+    when(permissionCreateMock.setSupportsAllDrives(true)).thenReturn(permissionCreateMock);
     when(permissionCreateMock.execute()).thenReturn(new Permission());
 
     var googleDriveService = new GoogleDriveFileStorageRepository(driveServiceMock, properties);
@@ -110,6 +129,7 @@ class GoogleDriveFileStorageRepositoryTest {
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.create(any(File.class), any())).thenReturn(fileCreateMock);
+    when(fileCreateMock.setSupportsAllDrives(true)).thenReturn(fileCreateMock);
     when(fileCreateMock.setFields("id, name, webViewLink")).thenReturn(fileCreateMock);
     when(fileCreateMock.execute()).thenThrow(new IOException("Test exception"));
 

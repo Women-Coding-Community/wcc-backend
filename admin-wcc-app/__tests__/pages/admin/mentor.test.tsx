@@ -49,6 +49,48 @@ const reviewingApp = {
   reviewed: false,
   matched: false,
   daysSinceApplied: 3,
+  mentee: {
+    id: 7,
+    fullName: 'Mentee #7',
+    position: 'Frontend Developer',
+    email: 'mentee7@example.com',
+    slackDisplayName: '@mentee7',
+    country: {
+      countryCode: 'GB',
+      countryName: 'United Kingdom',
+    },
+    city: 'London',
+    companyName: 'Test Company',
+    memberTypes: ['Mentee'],
+    images: [],
+    network: [
+      {
+        type: 'linkedin',
+        link: 'https://www.linkedin.com/in/test-mentee',
+      },
+    ],
+    isWomen: true,
+    profileStatus: 'ACTIVE',
+    skills: {
+      yearsExperience: 2,
+      areas: [
+        {
+          technicalArea: 'FRONTEND',
+          proficiencyLevel: 'INTERMEDIATE',
+        },
+      ],
+      languages: [
+        {
+          language: 'JAVASCRIPT',
+          proficiencyLevel: 'INTERMEDIATE',
+        },
+      ],
+      mentorshipFocus: ['GROW_BEGINNER_TO_MID'],
+    },
+    bio: 'Test mentee bio',
+    spokenLanguages: ['English'],
+    availableHsMonth: 4,
+  },
 };
 
 const pendingApp = {

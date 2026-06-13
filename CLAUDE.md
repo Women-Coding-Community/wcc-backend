@@ -253,9 +253,8 @@ spring.mail.username: ${MAIL_USERNAME}  # SMTP username (from env var)
 spring.mail.password: ${MAIL_PASSWORD}  # SMTP password (from env var)
 
 app.cors.allowed-origins: http://localhost:3000,https://your-frontend.com
-app.seed.admin.enabled: true        # Auto-create admin user
-app.seed.admin.email: admin@wcc.dev
-app.seed.admin.password: wcc-admin
+app.seed.enabled: true              # Enable user seeding at startup
+# app.seed.users: list of {email, password, full-name, roles, member-types} entries
 ```
 
 **CORS:** Update `app.cors.allowed-origins` when deploying frontend to include production URL.

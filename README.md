@@ -361,11 +361,8 @@ A default admin user is auto-created at startup for local testing:
 - Email: admin@wcc.dev
 - Password: wcc-admin
 
-You can change or disable this seeding with properties:
-
-- app.seed.admin.enabled=false (disable seeding)
-- app.seed.admin.email=your@email
-- app.seed.admin.password=yourpassword
+You can disable seeding with `app.seed.enabled=false`, or add/change users by editing
+the `app.seed.users` list in `application.yml` (or an environment-specific profile override).
 
 1. Copy env example and adjust as needed:
 

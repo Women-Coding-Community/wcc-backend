@@ -1,3 +1,6 @@
+import { MenteeItem } from '@/types/mentorship';
+import type { SocialNetwork } from '@/types/member';
+
 export type ApplicationStatus =
   | 'PENDING'
   | 'MENTOR_REVIEWING'
@@ -29,6 +32,7 @@ export interface MenteeApplication {
   menteeName?: string;
   menteeLinkedIn?: string;
   menteeBio?: string;
+  mentee: MenteeItem;
 }
 
 export interface MenteeSkillArea {
@@ -56,7 +60,6 @@ export interface MenteeImage {
 
 export { SocialNetworkType } from '@/types/member';
 export type { SocialNetwork, SocialNetworkTypeValue } from '@/types/member';
-import type { SocialNetwork } from '@/types/member';
 
 export interface DashboardMentee {
   id: number;
