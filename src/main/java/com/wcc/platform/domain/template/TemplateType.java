@@ -22,7 +22,7 @@ public enum TemplateType {
   REMINDER_MENTEE_LONG("reminder_long_term_mentorship_mentee.yml"),
   MENTEES_MENTOR_LONG("list_potential_mentees_mentor_long.yml"),
   FOLLOWUP_MENTEES_LONG("list_potential_mentees_follow_up_mentor_long.yml"),
-  NEW_MENTEES_LONG("alert_new_mentees_applications_mentor_long.yml"),
+  NEW_MENTEES_REVIEW("alert_new_mentees_applications_mentor.yml"),
   STUDY_GROUP_AVAIL("confirm_availability_study_group_mentor.yml"),
   STUDY_GROUPS_MENTEE("mentor_led_study_groups_mentee.yml"),
   STUDY_GROUP_INTRO("study_group_introduction_email_mentee.yml"),
@@ -44,7 +44,9 @@ public enum TemplateType {
   MENTEE_LIST_LINK("potential_list_mentees_for_mentor_using_link.yml"),
   MENTEE_LIST_EMAIL("potential_list_mentees_for_mentor_using_email.yml"),
   MENTEE_FEEDBACK_ADHOC("reminder_adhoc_mentorship_feedback_mentee.yml"),
-  RESET_PASSWORD("reset_password.yml");
+  RESET_PASSWORD("reset_password.yml"),
+  CONFIRM_LONG_TERM_PAIRING("confirm_long_term_pairing.yml"),
+  CONFIRM_ADHOC_PAIRING("confirm_adhoc_pairing.yml");
 
   private final String templateFile;
 

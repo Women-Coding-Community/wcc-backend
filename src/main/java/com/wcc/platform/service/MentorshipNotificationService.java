@@ -2,17 +2,23 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
-import com.wcc.platform.domain.exceptions.EmailSendException;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.MemberRepository;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -100,12 +106,63 @@ public class MentorshipNotificationService {
   }
 
   /**
+   * Sends a CONFIRM_LONG_TERM_PAIRING notification email to both mentor and mentee when a match is
+   * confirmed.
+   *
+   * @param mentor the matched mentor
+   * @param mentee the matched mentee
+   * @param cycle the mentorship cycle
+   */
+  public void sendPairingConfirmation(
+      final Mentor mentor, final Mentee mentee, final MentorshipCycleEntity cycle) {
+    final int year =
+        cycle.getCycleYear() != null ? cycle.getCycleYear().getValue() : LocalDate.now().getYear();
+    final Month month =
+        cycle.getCycleMonth() != null ? cycle.getCycleMonth() : LocalDate.now().getMonth();
+    sendNotification(
+        cycle.getMentorshipType() == MentorshipType.AD_HOC
+            ? TemplateType.CONFIRM_ADHOC_PAIRING
+            : TemplateType.CONFIRM_LONG_TERM_PAIRING,
+        Map.of(
+            "mentor_name", mentor.getFullName(),
+            "mentee_name", mentee.getFullName(),
+            "mentor_email", mentor.getEmail(),
+            "mentee_email", mentee.getEmail(),
+            "mentor_calendly_link", Optional.ofNullable(mentor.getCalendlyLink()).orElse(""),
+            "meeting_link", "",
+            "month", month.getDisplayName(TextStyle.FULL, Locale.ENGLISH),
+            "year", year),
+        List.of(mentor.getEmail(), mentee.getEmail(), notificationConfig.getMentorshipEmail()));
+  }
+
+  /**
+   * Sends a NEW_MENTEES_REVIEW notification email to a mentor when manually assigned a mentee.
+   *
+   * @param mentor the mentor to notify
+   * @param cycle the mentorship cycle
+   */
+  public void sendNewMenteesNotification(final Mentor mentor, final MentorshipCycleEntity cycle) {
+    final int year =
+        cycle.getCycleYear() != null ? cycle.getCycleYear().getValue() : LocalDate.now().getYear();
+    sendNotification(
+        TemplateType.NEW_MENTEES_REVIEW,
+        Map.of(
+            "mentorName", mentor.getFullName(),
+            "year", year,
+            "cycleType", cycle.getMentorshipType()),
+        List.of(mentor.getEmail(), notificationConfig.getMentorshipEmail()));
+  }
+
+  /**
    * Renders an email template and sends a notification email to the specified recipient.
    *
    * @param recipientEmails the list of recipient's email address
    * @param templateType the type of template to render
    * @param templateParams the parameters to use for rendering the template
    */
+  @SuppressWarnings(
+      "PMD.AvoidCatchingGenericException") // intentional: email failures must never break the
+  // calling flow
   /* default */ void sendNotification(
       final TemplateType templateType,
       final Map<String, Object> templateParams,
@@ -123,7 +180,7 @@ public class MentorshipNotificationService {
 
       emailService.sendEmail(emailRequest);
       log.info("{} notification successfully sent to {}", templateType, recipientEmails);
-    } catch (EmailSendException e) {
+    } catch (Exception e) {
       log.error("Failed to send {} notification to {}", templateType, recipientEmails, e);
     }
   }

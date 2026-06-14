@@ -11,6 +11,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationAdminResponse;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationResponse;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
@@ -333,9 +334,11 @@ public class MenteeWorkflowService {
       allEntries = true)
   public MenteeApplication assignMentor(
       final Long menteeId, final Long cycleId, final Long mentorId, final String notes) {
-    if (mentorshipService.getMentorRepository().findById(mentorId).isEmpty()) {
-      throw new MentorNotFoundException(mentorId);
-    }
+    final Mentor mentor =
+        mentorshipService
+            .getMentorRepository()
+            .findById(mentorId)
+            .orElseThrow(() -> new MentorNotFoundException(mentorId));
 
     final var existingApp =
         applicationRepository.findByMenteeMentorCycle(menteeId, mentorId, cycleId);
@@ -364,6 +367,13 @@ public class MenteeWorkflowService {
     try {
       final MenteeApplication created = applicationRepository.create(newApplication);
       log.info("Manually assigned mentor {} to mentee {} in cycle {}", mentorId, menteeId, cycleId);
+
+      final MentorshipCycleEntity cycle =
+          cycleRepository
+              .findById(cycleId)
+              .orElseThrow(() -> new IllegalArgumentException("Cycle not found: " + cycleId));
+
+      mentorshipService.getNotificationService().sendNewMenteesNotification(mentor, cycle);
 
       mentorshipService.getNotificationService().sendApplicationUpdate(Optional.empty(), created);
 

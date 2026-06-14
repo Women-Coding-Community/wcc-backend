@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
+import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchStatus;
@@ -9,6 +10,7 @@ import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.repository.MenteeApplicationRepository;
+import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.time.LocalDate;
@@ -34,6 +36,7 @@ public class MentorshipMatchingService {
   private final MenteeApplicationRepository applicationRepository;
   private final MentorshipCycleRepository cycleRepository;
   private final MentorshipService mentorshipService;
+  private final MenteeRepository menteeRepository;
 
   /**
    * Confirm a match from an accepted application. This is typically done by mentorship team after
@@ -92,6 +95,21 @@ public class MentorshipMatchingService {
 
     // Reject all other pending applications for this mentee in this cycle
     rejectOtherApplications(application.getMenteeId(), application.getCycleId(), applicationId);
+
+    final var mentor =
+        mentorshipService
+            .getMentorRepository()
+            .findById(application.getMentorId())
+            .orElseThrow(() -> new MentorNotFoundException(application.getMentorId()));
+
+    final var mentee =
+        menteeRepository
+            .findById(application.getMenteeId())
+            .orElseThrow(
+                () ->
+                    new IllegalArgumentException("Mentee not found: " + application.getMenteeId()));
+
+    mentorshipService.getNotificationService().sendPairingConfirmation(mentor, mentee, cycle);
 
     log.info(
         "Match confirmed: mentor {} with mentee {} for cycle {}",

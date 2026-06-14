@@ -1,9 +1,9 @@
-NEW_MENTEES_LONG:
-  subject: "[Action Required] Pending Mentee Application(s) for {{year}} WCC Mentorship Programme"
+NEW_MENTEES_REVIEW:
+  subject: "[Action Required] Pending Mentee Application(s) for {{year}} {{cycleType}} WCC Mentorship Programme"
   body: |
     <p>Dear {{mentorName}},</p>
     <p>
-    Thank you for being part of the <strong>Women Coding Community {{year}} Long-Term Mentorship Programme</strong>!
+    Thank you for being part of the <strong>Women Coding Community {{year}} {{cycle_type}} Mentorship Programme</strong>!
     </p>
 
     <p>
@@ -31,3 +31,5 @@ NEW_MENTEES_LONG:
     <p>
     {{teamEmailSignature}}
     </p>
+
+    <p>[Automated Message]</p>
