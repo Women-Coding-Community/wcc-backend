@@ -9,8 +9,8 @@ import {
   Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Controller } from 'react-hook-form';
-import { MENTORSHIP_TYPES } from '@/lib/mentorshipTypes';
+import { Controller, useWatch } from 'react-hook-form';
+import { MENTORSHIP_TYPE_VALUES, MENTORSHIP_TYPES } from '@/lib/mentorshipTypes';
 import { FormSectionProps } from './types';
 
 const MONTHS = [
@@ -31,6 +31,13 @@ const MONTHS = [
 const monthLabel = (month: string) => month.charAt(0) + month.slice(1).toLowerCase();
 
 export default function MentorshipAvailabilitySection({ control, errors }: FormSectionProps) {
+  const mentorshipType = useWatch({
+    control,
+    name: 'mentorshipType',
+  });
+
+  const hasAdHocMentorship = mentorshipType?.includes(MENTORSHIP_TYPE_VALUES.AD_HOC);
+
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
@@ -119,54 +126,56 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
           />
         </Grid>
 
-        <Grid size={12}>
-          <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
-            Month Availability
-          </Typography>
-          <Grid container spacing={2}>
-            {MONTHS.map((month, index) => (
-              <Grid size={{ xs: 12, sm: 4 }} key={month}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Controller
-                    name={`monthAvailability.${index}.enabled`}
-                    control={control}
-                    render={({ field }) => (
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={field.value}
-                            onChange={(e) => field.onChange(e.target.checked)}
-                            size="small"
-                          />
-                        }
-                        label={monthLabel(month)}
-                        sx={{ minWidth: 110 }}
-                      />
-                    )}
-                  />
-                  <Controller
-                    name={`monthAvailability.${index}.hours`}
-                    control={control}
-                    render={({ field: { onChange, value, ...field } }) => (
-                      <TextField
-                        {...field}
-                        value={value}
-                        onChange={(e) =>
-                          onChange(e.target.value === '' ? 0 : Number(e.target.value))
-                        }
-                        type="number"
-                        size="small"
-                        label="hours"
-                        slotProps={{ htmlInput: { min: 0, max: 200 } }}
-                        sx={{ width: 80 }}
-                      />
-                    )}
-                  />
-                </Box>
-              </Grid>
-            ))}
+        {hasAdHocMentorship && (
+          <Grid size={12}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+              Month Availability
+            </Typography>
+            <Grid container spacing={2}>
+              {MONTHS.map((month, index) => (
+                <Grid size={{ xs: 12, sm: 4 }} key={month}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Controller
+                      name={`monthAvailability.${index}.enabled`}
+                      control={control}
+                      render={({ field }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={field.value}
+                              onChange={(e) => field.onChange(e.target.checked)}
+                              size="small"
+                            />
+                          }
+                          label={monthLabel(month)}
+                          sx={{ minWidth: 110 }}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name={`monthAvailability.${index}.hours`}
+                      control={control}
+                      render={({ field: { onChange, value, ...field } }) => (
+                        <TextField
+                          {...field}
+                          value={value}
+                          onChange={(e) =>
+                            onChange(e.target.value === '' ? 0 : Number(e.target.value))
+                          }
+                          type="number"
+                          size="small"
+                          label="hours"
+                          slotProps={{ htmlInput: { min: 0, max: 200 } }}
+                          sx={{ width: 80 }}
+                        />
+                      )}
+                    />
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </Grid>
     </Paper>
   );

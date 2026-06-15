@@ -10,6 +10,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <React.Fragment>
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <link rel="icon" href="/favicon.ico" />
         <title>WCC Admin</title>
       </Head>
       <ThemeProvider theme={theme}>
