@@ -37,6 +37,7 @@ class MentorshipMatchingServiceTest {
   private static final Long CYCLE_ID = 5L;
   private static final Long APPLICATION_ID = 1L;
   private static final Long MATCH_ID = 100L;
+  private static final LocalDate FIXED_DATE = LocalDate.of(2026, 1, 1);
 
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MenteeApplicationRepository applicationRepository;
@@ -73,9 +74,8 @@ class MentorshipMatchingServiceTest {
             .cycleId(CYCLE_ID)
             .applicationId(APPLICATION_ID)
             .status(MatchStatus.ACTIVE)
-            .startDate(LocalDate.now())
+            .startDate(FIXED_DATE)
             .build();
-
     final Mentee mentee =
         Mentee.menteeBuilder().id(MENTEE_ID).spokenLanguages(List.of("ENGLISH")).build();
 
@@ -107,7 +107,6 @@ class MentorshipMatchingServiceTest {
     final MentorshipCycleEntity cycle =
         MentorshipCycleEntity.builder().cycleId(CYCLE_ID).maxMenteesPerMentor(3).build();
     final Mentor mentor = Mentor.mentorBuilder().build();
-
     final Mentee mentee =
         Mentee.menteeBuilder().id(MENTEE_ID).spokenLanguages(List.of("ENGLISH")).build();
 
@@ -124,7 +123,7 @@ class MentorshipMatchingServiceTest {
                 .cycleId(CYCLE_ID)
                 .applicationId(APPLICATION_ID)
                 .status(MatchStatus.ACTIVE)
-                .startDate(LocalDate.now())
+                .startDate(FIXED_DATE)
                 .build());
     when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
         .thenReturn(List.of(application));
