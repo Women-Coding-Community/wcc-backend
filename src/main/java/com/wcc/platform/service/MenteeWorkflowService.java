@@ -15,6 +15,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
@@ -43,6 +44,7 @@ public class MenteeWorkflowService {
   private final MentorshipCycleRepository cycleRepository;
   private final MenteeRepository menteeRepository;
   private final MentorshipService mentorshipService;
+  private final MentorRepository mentorRepository;
 
   /**
    * Find applications for admin view by cycle, statuses, and optionally mentor.
@@ -98,6 +100,12 @@ public class MenteeWorkflowService {
       throw new ContentNotFoundException("No pending application with id " + applicationId);
     }
 
+    final Long mentorId = application.getMentorId();
+    final Mentor mentor =
+        mentorRepository
+            .findById(mentorId)
+            .orElseThrow(() -> new MentorNotFoundException("Mentor not found for id: " + mentorId));
+
     final MenteeApplication updated =
         applicationRepository.updateStatus(applicationId, ApplicationStatus.MENTOR_REVIEWING, null);
 
@@ -105,11 +113,19 @@ public class MenteeWorkflowService {
         "Application {} from mentee {} approved and to be reviewed by mentor {}",
         applicationId,
         application.getMenteeId(),
-        application.getMentorId());
+        mentorId);
+
+    final Long cycleId = application.getCycleId();
+    final MentorshipCycleEntity cycle =
+        cycleRepository
+            .findById(cycleId)
+            .orElseThrow(() -> new IllegalArgumentException("Cycle not found: " + cycleId));
 
     mentorshipService
         .getNotificationService()
         .sendApplicationUpdate(Optional.of(application), updated);
+
+    mentorshipService.getNotificationService().sendNewMenteesNotification(mentor, cycle);
 
     return updated;
   }

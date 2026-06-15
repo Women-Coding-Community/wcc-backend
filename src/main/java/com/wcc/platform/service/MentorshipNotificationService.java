@@ -149,7 +149,7 @@ public class MentorshipNotificationService {
         Map.of(
             "mentorName", mentor.getFullName(),
             "year", year,
-            "cycleType", cycle.getMentorshipType()),
+            "cycleType", cycle.getMentorshipType().getDescription()),
         List.of(mentor.getEmail(), notificationConfig.getMentorshipEmail()));
   }
 

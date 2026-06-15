@@ -4,7 +4,7 @@ CONFIRM_ADHOC_PAIRING:
     <p>Dear {{mentor_name}} and {{mentee_name}},</p>
     
     <p>
-    Welcome to Women Coding Community Adhoc Mentorship programme for {{month}}, {{year}}.
+    Welcome to Women Coding Community <strong>Adhoc Mentorship programme for {{month}}, {{year}}</strong>.
     </p>
 
     <p>
@@ -31,7 +31,7 @@ CONFIRM_ADHOC_PAIRING:
     </p>
     
     <ol>
-      <li>Schedule your one-time session with your mentor. {{mentor_name}}, please take the lead on booking this session using the mentor’s scheduling link. These sessions are typically one hour long.</li>
+      <li>As a mentee, please take the lead on scheduling your one-time session with your mentor - {{mentor_name}} using the mentor’s scheduling link. These sessions are typically one hour long.</li>
       <li>We recommend writing down what you hope to accomplish beforehand. This will help make the session more impactful.</li>
       <li>Once you’ve booked your session, kindly reply to this email with the scheduled date.</li>
     </ol>

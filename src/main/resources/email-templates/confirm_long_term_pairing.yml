@@ -4,7 +4,7 @@ CONFIRM_LONG_TERM_PAIRING:
     <p>Dear {{mentor_name}} and {{mentee_name}},</p>
     
     <p>
-    Welcome to the Women Coding Community Mentorship Programme {{year}}. We're delighted to have you both on board!
+    Welcome to the <strong> Women Coding Community Mentorship Programme {{year}}</strong>. We're delighted to have you both on board!
     </p>
     
     <p>
