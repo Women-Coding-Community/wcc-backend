@@ -11,7 +11,6 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
@@ -50,7 +49,6 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
   @Autowired private JdbcTemplate jdbcTemplate;
 
   private Mentor setupMentor;
-  private MentorDto mentorDTO;
 
   @BeforeEach
   void setUp() {
@@ -60,13 +58,12 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     cleanupMentor(setupMentor);
     pageRepository.deleteById(MENTORS.getId());
     pageService.create(MENTORS, page);
-    mentorDTO = service.create(setupMentor);
-    repository.updateProfileStatus(mentorDTO.getId(), ProfileStatus.ACTIVE);
+    repository.updateProfileStatus(service.create(setupMentor).getId(), ProfileStatus.ACTIVE);
   }
 
   @AfterEach
   void tearDown() {
-    if (setupMentor != null || mentorDTO != null) {
+    if (setupMentor != null) {
       cleanupMentor(setupMentor);
     }
   }

@@ -52,14 +52,13 @@ public class MentorshipService {
   private final UserProvisionService userProvisionService;
   private final MemberProfilePictureRepository profilePicRepo;
   @Getter private final MentorshipNotificationService notificationService;
-  private final ResourceService resourceService;
 
   /**
    * Create a mentor record.
    *
    * @return Mentor record created successfully.
    */
-  public MentorDto create(final Mentor mentor) {
+  public Mentor create(final Mentor mentor) {
     final var existingMember = memberRepository.findByEmail(mentor.getEmail());
 
     final var memberTypeMentor = MemberType.MENTOR;
@@ -68,7 +67,9 @@ public class MentorshipService {
     if (existingMember.isPresent()) {
       final Member member = existingMember.get();
       final var memberTypes = new ArrayList<>(member.getMemberTypes());
-      memberTypes.add(memberTypeMentor);
+      if (!memberTypes.contains(memberTypeMentor)) {
+        memberTypes.add(memberTypeMentor);
+      }
 
       final var existingMemberId = member.getId();
       final var mentorWithExistingId =
@@ -99,7 +100,7 @@ public class MentorshipService {
               .acceptPromotion(mentor.getAcceptPromotion())
               .build();
 
-      return mentorRepository.create(mentorWithExistingId).toDto();
+      return mentorRepository.create(mentorWithExistingId);
     }
 
     if (mentor.getId() != null) {
@@ -115,7 +116,7 @@ public class MentorshipService {
       userProvisionService.provisionUserRole(
           mentorCreated.getId(), mentorCreated.getEmail(), RoleType.MENTOR);
     }
-    return enrichMentorWithProfilePicture(mentorCreated).toDto();
+    return enrichMentorWithProfilePicture(mentorCreated);
   }
 
   /**

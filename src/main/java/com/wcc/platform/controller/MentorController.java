@@ -69,7 +69,8 @@ public class MentorController {
   @Operation(summary = "API to submit mentor registration")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MentorDto> createMentor(@Valid @RequestBody final MentorDto mentorDto) {
-    return new ResponseEntity<>(mentorshipService.create(mentorDto.toMentor()), HttpStatus.CREATED);
+    final var savedMentor = mentorshipService.create(mentorDto.toMentor());
+    return new ResponseEntity<>(savedMentor.toDto(), HttpStatus.CREATED);
   }
 
   /**

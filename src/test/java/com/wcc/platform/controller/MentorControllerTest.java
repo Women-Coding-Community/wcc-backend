@@ -71,7 +71,7 @@ class MentorControllerTest {
   void shouldCreateMentorAndReturnCreated() throws Exception {
     var mentorRequestBody = createMentorDtoTest(1L, MemberType.MENTOR);
     var returnedMentor = createMentorTest("Jane");
-    when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor.toDto());
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(returnedMentor);
 
     mockMvc
         .perform(postRequest(API_MENTORS, mentorRequestBody))
@@ -354,7 +354,7 @@ class MentorControllerTest {
             .isWomen(true)
             .build();
 
-    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor.toDto());
+    when(mentorshipService.create(any(Mentor.class))).thenReturn(mentor);
 
     mockMvc
         .perform(postRequest(API_MENTORS, mentor))
@@ -431,7 +431,7 @@ class MentorControllerTest {
     var requestWithId = createMentorDtoTest(999L, MemberType.MENTOR);
     var savedMentor = createMentorTest("Jane");
 
-    when(mentorshipService.create(any())).thenReturn(savedMentor.toDto());
+    when(mentorshipService.create(any())).thenReturn(savedMentor);
 
     mockMvc
         .perform(postRequest(API_MENTORS, requestWithId))
