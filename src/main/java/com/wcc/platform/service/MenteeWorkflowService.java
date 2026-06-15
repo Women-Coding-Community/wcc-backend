@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MenteeWorkflowService {
 
+  public static final String CYCLE_NOT_FOUND = "Cycle not found: ";
   private final MenteeApplicationRepository applicationRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
@@ -119,7 +120,7 @@ public class MenteeWorkflowService {
     final MentorshipCycleEntity cycle =
         cycleRepository
             .findById(cycleId)
-            .orElseThrow(() -> new IllegalArgumentException("Cycle not found: " + cycleId));
+            .orElseThrow(() -> new IllegalArgumentException(CYCLE_NOT_FOUND + cycleId));
 
     mentorshipService
         .getNotificationService()
@@ -386,7 +387,7 @@ public class MenteeWorkflowService {
       final MentorshipCycleEntity cycle =
           cycleRepository
               .findById(cycleId)
-              .orElseThrow(() -> new IllegalArgumentException("Cycle not found: " + cycleId));
+              .orElseThrow(() -> new IllegalArgumentException(CYCLE_NOT_FOUND + cycleId));
 
       mentorshipService.getNotificationService().sendNewMenteesNotification(mentor, cycle);
 
@@ -461,7 +462,7 @@ public class MenteeWorkflowService {
     final MentorshipCycleEntity cycle =
         cycleRepository
             .findById(cycleId)
-            .orElseThrow(() -> new IllegalArgumentException("Cycle not found: " + cycleId));
+            .orElseThrow(() -> new IllegalArgumentException(CYCLE_NOT_FOUND + cycleId));
 
     final int currentMentees =
         matchRepository.countActiveMenteesByMentorAndCycle(mentorId, cycleId);

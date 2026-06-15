@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MentorshipNotificationService {
+
+  public static final ZoneId ZONE_ID = ZoneId.of("Europe/London");
   private final EmailTemplateService emailTemplateService;
   private final EmailService emailService;
   private final NotificationConfig notificationConfig;
@@ -116,9 +119,11 @@ public class MentorshipNotificationService {
   public void sendPairingConfirmation(
       final Mentor mentor, final Mentee mentee, final MentorshipCycleEntity cycle) {
     final int year =
-        cycle.getCycleYear() != null ? cycle.getCycleYear().getValue() : LocalDate.now().getYear();
+        cycle.getCycleYear() != null
+            ? cycle.getCycleYear().getValue()
+            : LocalDate.now(ZONE_ID).getYear();
     final Month month =
-        cycle.getCycleMonth() != null ? cycle.getCycleMonth() : LocalDate.now().getMonth();
+        cycle.getCycleMonth() != null ? cycle.getCycleMonth() : LocalDate.now(ZONE_ID).getMonth();
     sendNotification(
         cycle.getMentorshipType() == MentorshipType.AD_HOC
             ? TemplateType.CONFIRM_ADHOC_PAIRING
@@ -143,7 +148,9 @@ public class MentorshipNotificationService {
    */
   public void sendNewMenteesNotification(final Mentor mentor, final MentorshipCycleEntity cycle) {
     final int year =
-        cycle.getCycleYear() != null ? cycle.getCycleYear().getValue() : LocalDate.now().getYear();
+        cycle.getCycleYear() != null
+            ? cycle.getCycleYear().getValue()
+            : LocalDate.now(ZONE_ID).getYear();
     sendNotification(
         TemplateType.NEW_MENTEES_REVIEW,
         Map.of(
