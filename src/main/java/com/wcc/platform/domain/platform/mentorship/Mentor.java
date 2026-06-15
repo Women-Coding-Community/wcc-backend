@@ -15,11 +15,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +30,7 @@ import org.springframework.validation.annotation.Validated;
 @ToString
 @NoArgsConstructor
 @Validated
+@SuperBuilder(builderMethodName = "mentorBuilder", toBuilder = true)
 @SuppressWarnings("PMD.ImmutableField")
 public class Mentor extends Member {
 
@@ -45,8 +46,7 @@ public class Mentor extends Member {
   private Boolean acceptMale;
   private Boolean acceptPromotion;
 
-  /** Mentor Builder. */
-  @Builder(builderMethodName = "mentorBuilder")
+  /** Mentor Constructor. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public Mentor(
       final Long id,
@@ -159,11 +159,65 @@ public class Mentor extends Member {
         .acceptPromotion(mentor.getAcceptPromotion());
   }
 
-  /** Lombok builder hook to enforce normalization. */
-  public static class MentorBuilder {
-    public MentorBuilder spokenLanguages(final List<String> spokenLanguages) {
+  /** Mentor Builder implementation to ensure proper inheritance. */
+  @SuppressWarnings("unchecked")
+  public abstract static class MentorBuilder<C extends Mentor, B extends MentorBuilder<C, B>>
+      extends MemberBuilder<C, B> {
+
+    public B profileStatus(final ProfileStatus profileStatus) {
+      this.profileStatus = profileStatus;
+      return (B) this;
+    }
+
+    public B skills(final Skills skills) {
+      this.skills = skills;
+      return (B) this;
+    }
+
+    public B spokenLanguages(final List<String> spokenLanguages) {
       this.spokenLanguages = normalizeLanguages(spokenLanguages);
-      return this;
+      return (B) this;
+    }
+
+    public B bio(final String bio) {
+      this.bio = bio;
+      return (B) this;
+    }
+
+    public B menteeSection(final MenteeSection menteeSection) {
+      this.menteeSection = menteeSection;
+      return (B) this;
+    }
+
+    public B feedbackSection(final FeedbackSection feedbackSection) {
+      this.feedbackSection = feedbackSection;
+      return (B) this;
+    }
+
+    public B resources(final MentorResource resources) {
+      this.resources = resources;
+      return (B) this;
+    }
+
+    public B calendlyLink(final String calendlyLink) {
+      this.calendlyLink = calendlyLink;
+      return (B) this;
+    }
+
+    public B acceptMale(final Boolean acceptMale) {
+      this.acceptMale = acceptMale;
+      return (B) this;
+    }
+
+    public B acceptPromotion(final Boolean acceptPromotion) {
+      this.acceptPromotion = acceptPromotion;
+      return (B) this;
+    }
+
+    @Override
+    public B memberTypes(final List<MemberType> memberTypes) {
+      this.memberTypes = memberTypes;
+      return (B) this;
     }
   }
 }

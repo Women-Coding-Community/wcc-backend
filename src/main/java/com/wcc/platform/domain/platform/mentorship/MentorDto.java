@@ -18,11 +18,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 
@@ -32,6 +32,7 @@ import org.springframework.validation.annotation.Validated;
 @ToString
 @NoArgsConstructor
 @Validated
+@SuperBuilder(builderMethodName = "mentorDtoBuilder")
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
@@ -57,7 +58,6 @@ public class MentorDto extends MemberDto {
 
   /** Mentor Builder. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
-  @Builder(builderMethodName = "mentorDtoBuilder")
   public MentorDto(
       final Long id,
       @NotBlank final String fullName,

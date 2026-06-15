@@ -22,7 +22,7 @@ import org.springframework.validation.annotation.Validated;
  */
 @Getter
 @EqualsAndHashCode(callSuper = true)
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @Validated
 public class LeadershipMember extends Member {

@@ -6,7 +6,6 @@ import static io.swagger.v3.core.util.Constants.COMMA;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.Mentor.MentorBuilder;
 import com.wcc.platform.repository.postgres.PostgresMemberRepository;
 import com.wcc.platform.repository.postgres.mentorship.PostgresMenteeSectionRepository;
 import com.wcc.platform.repository.postgres.mentorship.PostgresSkillRepository;
@@ -29,7 +28,7 @@ public class MentorMapper {
   /** Maps a ResultSet row to a Mentor object. */
   public Mentor mapRowToMentor(final ResultSet rs) throws SQLException {
     final long mentorId = rs.getLong(COLUMN_MENTOR_ID);
-    final MentorBuilder builder = Mentor.mentorBuilder();
+    final Mentor.MentorBuilder<?, ?> builder = Mentor.mentorBuilder();
 
     final Optional<Member> memberOpt = memberRepository.findById(mentorId);
 
@@ -55,15 +54,16 @@ public class MentorMapper {
     final var menteeSection = menteeSectionRepo.findByMentorId(mentorId);
     menteeSection.ifPresent(builder::menteeSection);
 
-    return builder
+    builder
         .id(mentorId)
         .profileStatus(ProfileStatus.fromId(rs.getInt(COLUMN_PROFILE_STATUS)))
         .spokenLanguages(List.of(rs.getString(COLUMN_SPOKEN_LANG).split(COMMA)))
         .bio(rs.getString(COLUMN_BIO))
         .calendlyLink(rs.getString(COL_CALENDLY_LINK))
         .acceptMale(rs.getBoolean(COL_ACCEPT_MALE))
-        .acceptPromotion(rs.getBoolean(COL_ACCEPT_PROMO))
-        .build();
+        .acceptPromotion(rs.getBoolean(COL_ACCEPT_PROMO));
+
+    return builder.build();
   }
 
   public void addMentor(final Mentor mentor, final Long memberId) {
