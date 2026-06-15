@@ -19,6 +19,7 @@ import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ class MentorshipMatchingServiceTest {
   private static final Long CYCLE_ID = 5L;
   private static final Long APPLICATION_ID = 1L;
   private static final Long MATCH_ID = 100L;
-  private static final LocalDate FIXED_DATE = LocalDate.of(2026, 1, 1);
+  private static final LocalDate FIXED_DATE = LocalDate.of(2026, Month.JANUARY, 1);
 
   @Mock private MentorshipMatchRepository matchRepository;
   @Mock private MenteeApplicationRepository applicationRepository;
