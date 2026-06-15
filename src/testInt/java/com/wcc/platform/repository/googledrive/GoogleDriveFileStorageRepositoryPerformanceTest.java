@@ -63,10 +63,12 @@ class GoogleDriveFileStorageRepositoryPerformanceTest extends DefaultDatabaseSet
     mockFile.setName(fileName);
 
     when(mockFiles.create(any(File.class), any())).thenReturn(mockCreate);
+    when(mockCreate.setSupportsAllDrives(true)).thenReturn(mockCreate);
     when(mockCreate.setFields(any(String.class))).thenReturn(mockCreate);
     when(mockCreate.execute()).thenReturn(mockFile);
     when(mockPermissions.create(any(String.class), any(Permission.class)))
         .thenReturn(mockPermissionCreate);
+    when(mockPermissionCreate.setSupportsAllDrives(true)).thenReturn(mockPermissionCreate);
     when(mockPermissionCreate.execute()).thenReturn(new Permission());
 
     // When

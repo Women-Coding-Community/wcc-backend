@@ -25,5 +25,4 @@ GOOGLE_DRIVE_FOLDER_ID: "some value"
 
 app:
   seed:
-    admin:
-      enabled: false
+    enabled: false

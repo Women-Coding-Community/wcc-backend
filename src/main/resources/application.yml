@@ -86,14 +86,21 @@ app:
     base-url: ${APP_RESET_PASSWORD_BASE_URL:http://localhost:3000}
     ttl-minutes: 7200
     reset-path: /reset-password
+
   seed:
-    admin:
-      enabled: true
-      email: admin@wcc.dev
-      password: wcc-admin
+    enabled: true
+    users:
+      - enabled: true
+        email: admin@wcc.dev
+        password: wcc-admin
+        full-name: Platform Admin
+        roles: [ ADMIN ]
+        member-types: [ MEMBER ]
 
 storage:
   type: local
+  google-drive:
+    credentials-json:
   folders:
     main-folder: folder-id
     resources-folder: folder-id

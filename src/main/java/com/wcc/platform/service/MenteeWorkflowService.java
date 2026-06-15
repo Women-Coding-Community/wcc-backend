@@ -315,8 +315,7 @@ public class MenteeWorkflowService {
             app -> {
               final Mentee mentee = menteeMap.get(app.getMenteeId());
               if (mentee != null) {
-                return MenteeApplicationResponse.from(
-                    app, mentee.getFullName(), mentee.getNetwork(), mentee.getBio());
+                return MenteeApplicationResponse.from(app, mentee);
               }
               return MenteeApplicationResponse.from(app);
             })
