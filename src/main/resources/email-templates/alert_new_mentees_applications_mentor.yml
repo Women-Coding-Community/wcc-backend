@@ -16,7 +16,7 @@ NEW_MENTEES_REVIEW:
     </p>
 
     <p>
-    <strong>Please note:</strong> If you have not logged into the dashboard before, please reply to this email, so we can send a password reset email from <strong>admin@womencodingcommunity.com</strong>.
+    <strong>Please note:</strong> If you have not logged into the dashboard before, please reply to this email, so we can send a password reset email from <strong>{{mentorshipEmail}}</strong>.
     </p>
 
     <p>

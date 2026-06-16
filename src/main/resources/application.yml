@@ -76,11 +76,10 @@ app:
       <br>
       Follow us:<br>
       <a href="https://www.linkedin.com/company/womencodingcommunity/">LinkedIn</a> |
-      <a href="https://www.instagram.com/women_coding_community/">Instagram</a> |
       <a href="https://www.youtube.com/@womencodingcommunity">YouTube</a> |
       <a href="https://www.meetup.com/women-coding-community">Meetup</a> |
       <a href="https://github.com/Women-Coding-Community">GitHub</a> |
-      <a href="https://womencodingcommunity.slack.com/join">Slack</a> |
+      <a href="https://join.slack.com/t/womencodingcommunity/shared_invite/zt-2hpjwpx7l-rgceYBIWp6pCiwc0hVsX8A">Slack</a> |
       <a href="mailto:mentorship@womencodingcommunity.com">email</a>
   reset-password:
     base-url: ${APP_RESET_PASSWORD_BASE_URL:http://localhost:3000}

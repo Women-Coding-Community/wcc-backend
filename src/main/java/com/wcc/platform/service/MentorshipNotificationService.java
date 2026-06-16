@@ -2,6 +2,7 @@ package com.wcc.platform.service;
 
 import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
+import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -156,7 +158,8 @@ public class MentorshipNotificationService {
         Map.of(
             "mentorName", mentor.getFullName(),
             "year", year,
-            "cycleType", cycle.getMentorshipType().getDescription()),
+            "cycleType", cycle.getMentorshipType().getDescription(),
+            "mentorshipEmail", notificationConfig.getMentorshipEmail()),
         List.of(mentor.getEmail(), notificationConfig.getMentorshipEmail()));
   }
 
@@ -167,9 +170,6 @@ public class MentorshipNotificationService {
    * @param templateType the type of template to render
    * @param templateParams the parameters to use for rendering the template
    */
-  @SuppressWarnings(
-      "PMD.AvoidCatchingGenericException") // intentional: email failures must never break the
-  // calling flow
   /* default */ void sendNotification(
       final TemplateType templateType,
       final Map<String, Object> templateParams,
@@ -187,7 +187,7 @@ public class MentorshipNotificationService {
 
       emailService.sendEmail(emailRequest);
       log.info("{} notification successfully sent to {}", templateType, recipientEmails);
-    } catch (Exception e) {
+    } catch (EmailSendException | MailAuthenticationException e) {
       log.error("Failed to send {} notification to {}", templateType, recipientEmails, e);
     }
   }
