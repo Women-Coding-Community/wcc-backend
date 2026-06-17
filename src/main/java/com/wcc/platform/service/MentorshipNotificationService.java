@@ -136,7 +136,7 @@ public class MentorshipNotificationService {
             "mentor_email", mentor.getEmail(),
             "mentee_email", mentee.getEmail(),
             "mentor_calendly_link", Optional.ofNullable(mentor.getCalendlyLink()).orElse(""),
-            "meeting_link", "",
+            "meeting_link", Optional.ofNullable(mentor.getMeetingLink()).orElse(""),
             "month", month.getDisplayName(TextStyle.FULL, Locale.ENGLISH),
             "year", year),
         List.of(mentor.getEmail(), mentee.getEmail(), notificationConfig.getMentorshipEmail()));
