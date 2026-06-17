@@ -23,6 +23,7 @@ public class EmailRequest {
 
   @Schema(description = "BCC recipients", example = "[\"bcc@example.com\"]")
   @NotEmpty(message = "Recipient emails are required")
+  @Builder.Default
   private List<@jakarta.validation.constraints.Email(message = "Invalid email format") String>
       recipients = List.of();
 
@@ -41,6 +42,7 @@ public class EmailRequest {
       description = "Whether the email body contains HTML content",
       example = "false",
       defaultValue = "true")
+  @Builder.Default
   private boolean html = true;
 
   @Schema(description = "Reply-to email address", example = "noreply@womencodingcommunity.com")

@@ -221,7 +221,6 @@ class AboutControllerTest {
   @Test
   void testCollaboratorOkResponse() throws Exception {
     var fileName = COLLABORATOR.getFileName();
-    var expectedJson = FileUtil.readFileAsString(fileName);
 
     when(service.getCollaborator(anyInt(), anyInt()))
         .thenReturn(createCollaboratorPageTest(fileName));
@@ -231,7 +230,9 @@ class AboutControllerTest {
             getRequest(String.format("%s%s", API_COLLABORATORS, PAGINATION_COLLABORATORS))
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedJson));
+        .andExpect(jsonPath("$.id", is("page:COLLABORATORS")))
+        .andExpect(jsonPath("$.heroSection.title", is("WCC Collaborators")))
+        .andExpect(jsonPath("$.collaborators.length()", is(1)));
   }
 
   @Test

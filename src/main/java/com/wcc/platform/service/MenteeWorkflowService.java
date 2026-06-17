@@ -11,9 +11,11 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationAdminResponse;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationResponse;
+import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
+import com.wcc.platform.repository.MentorRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.MentorshipMatchRepository;
 import java.util.List;
@@ -37,11 +39,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MenteeWorkflowService {
 
+  public static final String CYCLE_NOT_FOUND = "Cycle not found: ";
   private final MenteeApplicationRepository applicationRepository;
   private final MentorshipMatchRepository matchRepository;
   private final MentorshipCycleRepository cycleRepository;
   private final MenteeRepository menteeRepository;
   private final MentorshipService mentorshipService;
+  private final MentorRepository mentorRepository;
 
   /**
    * Find applications for admin view by cycle, statuses, and optionally mentor.
@@ -97,6 +101,12 @@ public class MenteeWorkflowService {
       throw new ContentNotFoundException("No pending application with id " + applicationId);
     }
 
+    final Long mentorId = application.getMentorId();
+    final Mentor mentor =
+        mentorRepository
+            .findById(mentorId)
+            .orElseThrow(() -> new MentorNotFoundException("Mentor not found for id: " + mentorId));
+
     final MenteeApplication updated =
         applicationRepository.updateStatus(applicationId, ApplicationStatus.MENTOR_REVIEWING, null);
 
@@ -104,11 +114,19 @@ public class MenteeWorkflowService {
         "Application {} from mentee {} approved and to be reviewed by mentor {}",
         applicationId,
         application.getMenteeId(),
-        application.getMentorId());
+        mentorId);
+
+    final Long cycleId = application.getCycleId();
+    final MentorshipCycleEntity cycle =
+        cycleRepository
+            .findById(cycleId)
+            .orElseThrow(() -> new IllegalArgumentException(CYCLE_NOT_FOUND + cycleId));
 
     mentorshipService
         .getNotificationService()
         .sendApplicationUpdate(Optional.of(application), updated);
+
+    mentorshipService.getNotificationService().sendNewMenteesNotification(mentor, cycle);
 
     return updated;
   }
@@ -332,9 +350,11 @@ public class MenteeWorkflowService {
       allEntries = true)
   public MenteeApplication assignMentor(
       final Long menteeId, final Long cycleId, final Long mentorId, final String notes) {
-    if (mentorshipService.getMentorRepository().findById(mentorId).isEmpty()) {
-      throw new MentorNotFoundException(mentorId);
-    }
+    final Mentor mentor =
+        mentorshipService
+            .getMentorRepository()
+            .findById(mentorId)
+            .orElseThrow(() -> new MentorNotFoundException(mentorId));
 
     final var existingApp =
         applicationRepository.findByMenteeMentorCycle(menteeId, mentorId, cycleId);
@@ -363,6 +383,13 @@ public class MenteeWorkflowService {
     try {
       final MenteeApplication created = applicationRepository.create(newApplication);
       log.info("Manually assigned mentor {} to mentee {} in cycle {}", mentorId, menteeId, cycleId);
+
+      final MentorshipCycleEntity cycle =
+          cycleRepository
+              .findById(cycleId)
+              .orElseThrow(() -> new IllegalArgumentException(CYCLE_NOT_FOUND + cycleId));
+
+      mentorshipService.getNotificationService().sendNewMenteesNotification(mentor, cycle);
 
       mentorshipService.getNotificationService().sendApplicationUpdate(Optional.empty(), created);
 
@@ -435,7 +462,7 @@ public class MenteeWorkflowService {
     final MentorshipCycleEntity cycle =
         cycleRepository
             .findById(cycleId)
-            .orElseThrow(() -> new IllegalArgumentException("Cycle not found: " + cycleId));
+            .orElseThrow(() -> new IllegalArgumentException(CYCLE_NOT_FOUND + cycleId));
 
     final int currentMentees =
         matchRepository.countActiveMenteesByMentorAndCycle(mentorId, cycleId);

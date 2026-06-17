@@ -10,6 +10,7 @@ import com.wcc.platform.domain.exceptions.InvalidMentorException;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.resource.MentorResource;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.Email;
@@ -17,18 +18,21 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 
 /** Represents the mentor members of the community. */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @NoArgsConstructor
+@Validated
+@SuperBuilder(builderMethodName = "mentorDtoBuilder")
 @SuppressWarnings("PMD.ImmutableField")
 public class MentorDto extends MemberDto {
 
@@ -55,7 +59,6 @@ public class MentorDto extends MemberDto {
 
   /** Mentor Builder. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
-  @Builder(builderMethodName = "mentorDtoBuilder")
   public MentorDto(
       final Long id,
       @NotBlank final String fullName,
@@ -90,7 +93,7 @@ public class MentorDto extends MemberDto {
         country,
         city,
         companyName,
-        null, // TODO to be fixe this will cleanup member types
+        List.of(MemberType.MENTOR),
         images,
         network,
         pronouns,

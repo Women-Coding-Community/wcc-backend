@@ -1,0 +1,59 @@
+CONFIRM_ADHOC_PAIRING:
+  subject: "You are paired up in WCC Mentorship Adhoc session for {{month}}-{{year}}"
+  body: |
+    <p>Dear {{mentor_name}} and {{mentee_name}},</p>
+    
+    <p>
+    Welcome to Women Coding Community <strong>Adhoc Mentorship programme for {{month}}, {{year}}</strong>.
+    </p>
+
+    <p>
+    Mentorship is a powerful tool for personal and professional growth, and we hope this relationship is a meaningful opportunity for you to learn, grow, and achieve your goals.
+    </p>
+    
+    <p>
+      <strong>Your Pairing:</strong>
+    </p>
+    
+    <ul>
+      <li>Mentor: {{mentor_name}} (<a href="mailto:{{mentor_email}}">{{mentor_email}}</a>)</li>
+      <li>Mentee: {{mentee_name}} (<a href="mailto:{{mentee_email}}">{{mentee_email}}</a>)</li>
+      <li>Mentor's Scheduling Link: (<a href="{{mentor_calendly_link}}">{{mentor_calendly_link}}</a>)</li>
+      <li>Google Meet Link: (<a href="{{meeting_link}}">{{meeting_link}}</a>)</li>
+    </ul>
+    
+    <p>
+    We've provided the Google Meet link above for your sessions so you (please ignore the corresponding calendar invite). If you use the provided meeting link, you can choose whether to record, transcribe, or take notes during your call. Please be aware that if you choose to record or keep notes, WCC will automatically receive a copy. This information is fully confidential and will not be shared with anyone. <strong>Note:</strong> You're welcome to use a personal meeting link or alternative communication method instead if you prefer.
+    </p>
+    
+    <p>
+    <strong>Getting Started</strong>
+    </p>
+    
+    <ol>
+      <li>As a mentee, please take the lead on scheduling your one-time session with your mentor - {{mentor_name}} using the mentor’s scheduling link. These sessions are typically one hour long.</li>
+      <li>We recommend writing down what you hope to accomplish beforehand. This will help make the session more impactful.</li>
+      <li>Once you’ve booked your session, kindly reply to this email with the scheduled date.</li>
+    </ol>
+    
+    <p>
+    <strong>Helpful Resources</strong>
+    </p>
+    
+    <p>
+    To support you through this session:
+    </p>
+    
+    <ul>
+        <li><a href="https://mentorship.womencodingcommunity.com/mentorship/resources">Mentorship Resources</a></li>
+        <li><a href="https://mentorship.womencodingcommunity.com/mentorship/code-of-conduct">Code of Conduct for Mentors and Mentees</a></li>
+    </ul>
+    
+    <p>We hope these resources help you make the most of this mentorship opportunity. If you have any questions or concerns, please don’t hesitate to reach out to us via email or the Slack channel #mentorship.</p>
+    <p>Wishing you a rewarding mentorship session!</p>
+    
+    <p>
+    {{teamEmailSignature}}
+    </p>
+    
+    <p>[Automated Message]</p>

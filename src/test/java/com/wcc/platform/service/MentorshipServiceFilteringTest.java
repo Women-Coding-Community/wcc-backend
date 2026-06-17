@@ -49,7 +49,6 @@ class MentorshipServiceFilteringTest {
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private UserProvisionService userProvisionService;
   @Mock private MentorshipNotificationService notificationService;
-  @Mock private ResourceService resourceService;
   private MentorshipService service;
   private Mentor mentor1;
   private MentorsPage mentorsPage;
@@ -64,8 +63,7 @@ class MentorshipServiceFilteringTest {
                 cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                notificationService,
-                resourceService));
+                notificationService));
     var cycle =
         MentorshipCycleEntity.builder()
             .mentorshipType(MentorshipType.AD_HOC)

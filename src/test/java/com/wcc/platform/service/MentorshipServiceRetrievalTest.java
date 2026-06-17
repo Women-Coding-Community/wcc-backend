@@ -43,7 +43,6 @@ class MentorshipServiceRetrievalTest {
   @Mock private UserProvisionService userProvisionService;
   @Mock private MemberProfilePictureRepository profilePicRepo;
   @Mock private MentorshipNotificationService notificationService;
-  @Mock private ResourceService resourceService;
   private MentorshipService service;
 
   @BeforeEach
@@ -57,8 +56,7 @@ class MentorshipServiceRetrievalTest {
                 cycleRepository,
                 userProvisionService,
                 profilePicRepo,
-                notificationService,
-                resourceService));
+                notificationService));
   }
 
   @Test
@@ -226,7 +224,8 @@ class MentorshipServiceRetrievalTest {
 
   @Test
   @DisplayName(
-      "Given mentor with email and slack name, when enriched with profile picture, then email and slackDisplayName should be preserved")
+      "Given mentor with email and slack name, when enriched with profile picture, "
+          + "then email and slackDisplayName should be preserved")
   void shouldPreserveEmailAndSlackNameWhenEnrichedWithProfilePicture() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);
@@ -254,7 +253,8 @@ class MentorshipServiceRetrievalTest {
 
   @Test
   @DisplayName(
-      "Given mentor with pronouns, when enriched with profile picture, then pronouns should be preserved")
+      "Given mentor with pronouns, when enriched with profile picture, "
+          + "then pronouns should be preserved")
   void shouldPreservePronounsWhenEnrichedWithProfilePicture() {
     var mentor = mock(Mentor.class, withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
     var dto = mock(MentorDto.class);

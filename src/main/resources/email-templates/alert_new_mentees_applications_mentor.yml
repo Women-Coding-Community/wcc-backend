@@ -1,9 +1,9 @@
-NEW_MENTEES_LONG:
-  subject: "[Action Required] Pending Mentee Application(s) for {{year}} WCC Mentorship Programme"
+NEW_MENTEES_REVIEW:
+  subject: "[Action Required] Pending Mentee Application(s) for {{year}} {{cycleType}} WCC Mentorship Programme"
   body: |
     <p>Dear {{mentorName}},</p>
     <p>
-    Thank you for being part of the <strong>Women Coding Community {{year}} Long-Term Mentorship Programme</strong>!
+    Thank you for being part of the <strong>Women Coding Community {{year}} {{cycleType}} Mentorship Programme</strong>!
     </p>
 
     <p>
@@ -16,8 +16,7 @@ NEW_MENTEES_LONG:
     </p>
 
     <p>
-    <strong>Please note:</strong> If you have not logged into the dashboard before, you should have received a password reset email from <strong>admin@womencodingcommunity.com</strong> prior to this email. 
-    If you cannot find it, please check your spam/junk folder first. If you still haven’t received it, please reply to this email and we’ll resend it for you.
+    <strong>Please note:</strong> If you have not logged into the dashboard before, please reply to this email, so we can send a password reset email from <strong>{{mentorshipEmail}}</strong>.
     </p>
 
     <p>
@@ -31,3 +30,5 @@ NEW_MENTEES_LONG:
     <p>
     {{teamEmailSignature}}
     </p>
+
+    <p>[Automated Message]</p>

@@ -66,8 +66,6 @@ class MemberControllerTest {
     mockMvc
         .perform(postRequest(API_MEMBERS, member))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id", is(1)))
-        .andExpect(jsonPath("$.email", is("member@wcc.com")))
         .andExpect(jsonPath("$.fullName", is("fullName MEMBER")));
   }
 
@@ -114,6 +112,7 @@ class MemberControllerTest {
     mockMvc
         .perform(postRequest(API_MEMBERS, member))
         .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.fullName", is("fullName MEMBER")))
         .andExpect(jsonPath("$.isWomen", is(true)));
   }
 

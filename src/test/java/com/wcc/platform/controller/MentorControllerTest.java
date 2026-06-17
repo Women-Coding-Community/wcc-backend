@@ -425,7 +425,8 @@ class MentorControllerTest {
   }
 
   @Test
-  @DisplayName("Given POST request with id in body, when creating mentor, then id in body is ignored")
+  @DisplayName(
+      "Given POST request with id in body, when creating mentor, then id in body is ignored")
   void shouldIgnoreIdInRequestBodyWhenCreatingMentor() throws Exception {
     var requestWithId = createMentorDtoTest(999L, MemberType.MENTOR);
     var savedMentor = createMentorTest("Jane");

@@ -2,8 +2,6 @@ package com.wcc.platform.factories;
 
 import static com.wcc.platform.factories.SetUpStyleFactories.backgroundSecondary;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.ObjectMapperConfig;
 import com.wcc.platform.domain.cms.attributes.CmsIcon;
@@ -26,7 +24,6 @@ import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.MemberDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ProgramType;
-import com.wcc.platform.utils.FileUtil;
 import java.util.List;
 
 /** Setup Factory tests. */
@@ -170,17 +167,7 @@ public class SetupFactories {
         .network(memberDto.getNetwork())
         .build();
   }
-
-  /** Factory test to get a list of members for testing get members API. */
-  public static List<Member> createMembersTest(final String fileName) {
-    try {
-      final String content = FileUtil.readFileAsString(fileName);
-      return OBJECT_MAPPER.readValue(content, new TypeReference<>() {});
-    } catch (JsonProcessingException e) {
-      return List.of(createMemberTest(MemberType.MEMBER));
-    }
-  }
-
+  
   /** Factory test. */
   public static LeadershipMember createLeadershipMemberTest(final MemberType type) {
     return LeadershipMember.leadershipMemberBuilder()

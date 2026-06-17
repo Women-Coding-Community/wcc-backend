@@ -1,54 +1,46 @@
 package com.wcc.platform.domain.platform.member;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.PronounCategory;
 import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import org.springframework.validation.annotation.Validated;
 
 /** Member class with common attributes for all community members. */
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@EqualsAndHashCode
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Getter
-@Builder(toBuilder = true)
-public class Member {
-  @Setter
-  @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Auto-generated member ID")
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Long id;
+@SuperBuilder(toBuilder = true)
+@Validated
+public class Member extends MemberBase {
 
-  @NotBlank private String fullName;
-  @NotBlank private String position;
-  @Setter @NotBlank @Email private String email;
-  @NotBlank private String slackDisplayName;
-  @NotNull private Country country;
-  private String city;
-  private String companyName;
-  @Setter @NotNull private List<MemberType> memberTypes;
-  @Setter private List<Image> images;
-  private List<SocialNetwork> network;
-  private String pronouns;
-  private PronounCategory pronounCategory;
-  private Boolean isWomen;
-
-  /** Converts this Member entity to a MemberDto for data transfer purposes. */
-  public MemberDto toDto() {
-    return new MemberDto(
+  /** Constructor for SuperBuilder and manual use. */
+  @SuppressWarnings("PMD.ExcessiveParameterList")
+  public Member(
+      final Long id,
+      final String fullName,
+      final String position,
+      final String email,
+      final String slackDisplayName,
+      final Country country,
+      final String city,
+      final String companyName,
+      final List<MemberType> memberTypes,
+      final List<Image> images,
+      final List<SocialNetwork> network,
+      final String pronouns,
+      final PronounCategory pronounCategory,
+      final Boolean isWomen) {
+    super(
         id,
         fullName,
         position,
@@ -63,5 +55,31 @@ public class Member {
         pronouns,
         pronounCategory,
         isWomen);
+  }
+
+  @Override
+  @NotEmpty(message = "At least one member type must be provided (e.g., Member, Volunteer, etc.)")
+  public List<MemberType> getMemberTypes() {
+    return super.getMemberTypes();
+  }
+
+  /** Converts this Member entity to a MemberDto for data transfer purposes. */
+  @Override
+  public MemberDto toDto() {
+    return new MemberDto(
+        getId(),
+        getFullName(),
+        getPosition(),
+        getEmail(),
+        getSlackDisplayName(),
+        getCountry(),
+        getCity(),
+        getCompanyName(),
+        getMemberTypes(),
+        getImages(),
+        getNetwork(),
+        getPronouns(),
+        getPronounCategory(),
+        getIsWomen());
   }
 }

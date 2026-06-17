@@ -8,38 +8,70 @@ import com.wcc.platform.domain.platform.SocialNetwork;
 import com.wcc.platform.domain.platform.type.MemberType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import org.springframework.validation.annotation.Validated;
 
 /** MemberDto class with common attributes for all community members. */
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
-@Builder
-public class MemberDto {
-  @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Long id;
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@SuperBuilder
+@Validated
+public class MemberDto extends MemberBase {
 
-  private String fullName;
-  private String position;
-  private String email;
-  private String slackDisplayName;
-  private Country country;
-  private String city;
-  private String companyName;
-  private List<MemberType> memberTypes;
-  private List<Image> images;
-  private List<SocialNetwork> network;
-  private String pronouns;
-  private PronounCategory pronounCategory;
-  private Boolean isWomen;
+  /** Constructor for SuperBuilder and manual use. */
+  @SuppressWarnings("PMD.ExcessiveParameterList")
+  public MemberDto(
+      final Long id,
+      final String fullName,
+      final String position,
+      final String email,
+      final String slackDisplayName,
+      final Country country,
+      final String city,
+      final String companyName,
+      final List<MemberType> memberTypes,
+      final List<Image> images,
+      final List<SocialNetwork> network,
+      final String pronouns,
+      final PronounCategory pronounCategory,
+      final Boolean isWomen) {
+    super(
+        id,
+        fullName,
+        position,
+        email,
+        slackDisplayName,
+        country,
+        city,
+        companyName,
+        memberTypes,
+        images,
+        network,
+        pronouns,
+        pronounCategory,
+        isWomen);
+  }
+
+  @Schema(
+      accessMode = Schema.AccessMode.READ_ONLY,
+      description = "List of Member types (e.g., Mentor, Leader, Volunteer, etc.)")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  @Override
+  public List<MemberType> getMemberTypes() {
+    return super.getMemberTypes();
+  }
+
+  /** Converts this MemberDto entity to a MemberDto for data transfer purposes. */
+  @Override
+  public MemberDto toDto() {
+    return this;
+  }
 
   /**
    * Update member using attributes from his DTO.

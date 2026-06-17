@@ -2,6 +2,7 @@ package com.wcc.platform.domain.platform;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.wcc.platform.domain.platform.member.LeadershipMember;
 import com.wcc.platform.domain.platform.type.MemberType;
@@ -38,6 +39,6 @@ class LeadershipMemberTest {
             .memberTypes(List.of(MemberType.EVANGELIST))
             .build();
 
-    assertEquals("LeadershipMember(memberTypes=[EVANGELIST])", evangelist.toString());
+    assertTrue(evangelist.toString().contains("memberTypes=[EVANGELIST]"));
   }
 }

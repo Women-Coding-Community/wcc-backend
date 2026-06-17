@@ -11,6 +11,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.ResourceType;
 import com.wcc.platform.domain.resource.MemberProfilePicture;
 import com.wcc.platform.repository.MemberProfilePictureRepository;
@@ -21,6 +22,7 @@ import com.wcc.platform.repository.ResourceRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import com.wcc.platform.service.MentorshipService;
 import com.wcc.platform.service.PageService;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -56,8 +58,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
     cleanupMentor(setupMentor);
     pageRepository.deleteById(MENTORS.getId());
     pageService.create(MENTORS, page);
-    setupMentor = service.create(setupMentor);
-    repository.updateProfileStatus(setupMentor.getId(), ProfileStatus.ACTIVE);
+    repository.updateProfileStatus(service.create(setupMentor).getId(), ProfileStatus.ACTIVE);
   }
 
   @AfterEach
@@ -168,9 +169,9 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             .country(new com.wcc.platform.domain.cms.attributes.Country("US", "United States"))
             .city("New York")
             .companyName("Tech Corp")
-            .memberTypes(java.util.List.of(com.wcc.platform.domain.platform.type.MemberType.MEMBER))
-            .images(java.util.List.of())
-            .network(java.util.List.of())
+            .memberTypes(List.of(MemberType.MEMBER))
+            .images(List.of())
+            .network(List.of())
             .build();
 
     final Member savedMember = memberRepository.create(existingMember);
@@ -180,7 +181,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             null, "Mentor From Existing Member", "existing-mentor-member@test.com");
 
     // Should successfully create mentor using existing member's ID
-    final Mentor savedMentor = service.create(mentor);
+    final var savedMentor = service.create(mentor);
 
     assertThat(savedMentor).isNotNull();
     assertThat(savedMentor.getId()).isEqualTo(savedMember.getId());
@@ -211,6 +212,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             .city(baseMentor.getCity())
             .companyName(baseMentor.getCompanyName())
             .images(baseMentor.getImages())
+            .memberTypes(List.of(MemberType.MENTOR))
             .network(baseMentor.getNetwork())
             .pronouns("they/them")
             .pronounCategory(com.wcc.platform.domain.cms.attributes.PronounCategory.NEUTRAL)

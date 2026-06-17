@@ -67,7 +67,20 @@ app:
   cors:
     allowed-origins: http://localhost:3000,https://localhost:3000
   email:
-    team-signature: "WCC Mentorship Team"
+    team-signature: |
+      Best Regards<br>
+      <strong>Mentorship Programme Team</strong><br>
+      <a href="https://www.womencodingcommunity.com/">Women Coding Community</a><br>
+      <br>
+      <img src="https://www.womencodingcommunity.com/assets/images/logo.svg" alt="Women Coding Community Logo" width="50"><br>
+      <br>
+      Follow us:<br>
+      <a href="https://www.linkedin.com/company/womencodingcommunity/">LinkedIn</a> |
+      <a href="https://www.youtube.com/@womencodingcommunity">YouTube</a> |
+      <a href="https://www.meetup.com/women-coding-community">Meetup</a> |
+      <a href="https://github.com/Women-Coding-Community">GitHub</a> |
+      <a href="https://join.slack.com/t/womencodingcommunity/shared_invite/zt-2hpjwpx7l-rgceYBIWp6pCiwc0hVsX8A">Slack</a> |
+      <a href="mailto:mentorship@womencodingcommunity.com">email</a>
   reset-password:
     base-url: ${APP_RESET_PASSWORD_BASE_URL:http://localhost:3000}
     ttl-minutes: 7200

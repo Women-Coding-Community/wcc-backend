@@ -3,7 +3,7 @@ package com.wcc.platform.domain.cms.pages;
 import com.wcc.platform.domain.cms.attributes.CommonSection;
 import com.wcc.platform.domain.cms.attributes.Contact;
 import com.wcc.platform.domain.cms.attributes.HeroSection;
-import com.wcc.platform.domain.platform.member.Member;
+import com.wcc.platform.domain.platform.member.MemberDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -15,4 +15,4 @@ public record CollaboratorPage(
     @NotNull HeroSection heroSection,
     @NotNull CommonSection section,
     @NotNull Contact contact,
-    @NotEmpty List<Member> collaborators) {}
+    @NotEmpty List<MemberDto> collaborators) {}
