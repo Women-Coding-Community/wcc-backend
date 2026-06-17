@@ -41,6 +41,7 @@ public class Mentor extends Member {
   private String calendlyLink;
   private Boolean acceptMale;
   private Boolean acceptPromotion;
+  private String meetingLink;
 
   /** Mentor Builder. */
   @Builder(builderMethodName = "mentorBuilder")
@@ -68,7 +69,8 @@ public class Mentor extends Member {
       final Boolean isWomen,
       final String calendlyLink,
       final Boolean acceptMale,
-      final Boolean acceptPromotion) {
+      final Boolean acceptPromotion,
+      final String meetingLink) {
     super(
         id,
         fullName,
@@ -95,6 +97,7 @@ public class Mentor extends Member {
     this.calendlyLink = calendlyLink;
     this.acceptMale = acceptMale;
     this.acceptPromotion = acceptPromotion;
+    this.meetingLink = meetingLink;
   }
 
   /** Checks for empty or null and returns capitalized list of string. */
@@ -151,7 +154,8 @@ public class Mentor extends Member {
         .isWomen(mentor.getIsWomen())
         .calendlyLink(mentor.getCalendlyLink())
         .acceptMale(mentor.getAcceptMale())
-        .acceptPromotion(mentor.getAcceptPromotion());
+        .acceptPromotion(mentor.getAcceptPromotion())
+        .meetingLink(mentor.getMeetingLink());
   }
 
   /** Lombok builder hook to enforce normalization. */

@@ -225,6 +225,7 @@ class MentorshipServiceIntegrationTest extends DefaultDatabaseSetup {
             .calendlyLink(baseMentor.getCalendlyLink())
             .acceptMale(baseMentor.getAcceptMale())
             .acceptPromotion(baseMentor.getAcceptPromotion())
+            .meetingLink(baseMentor.getMeetingLink())
             .build();
 
     memberRepository.deleteByEmail(mentor.getEmail());

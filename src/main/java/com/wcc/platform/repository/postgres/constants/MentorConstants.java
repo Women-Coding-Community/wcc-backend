@@ -12,6 +12,7 @@ public final class MentorConstants {
   public static final String COL_CALENDLY_LINK = "calendly_link";
   public static final String COL_ACCEPT_MALE = "accept_male_mentee";
   public static final String COL_ACCEPT_PROMO = "accept_promote_social_media";
+  public static final String COL_MEET_LINK = "meeting_link";
 
   // MENTOR_MENTEE_SECTION table
   public static final String COLUMN_IDEAL_MENTEE = "ideal_mentee";

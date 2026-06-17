@@ -49,7 +49,7 @@ class MentorTest {
             + "additional=additional, longTerm=LongTermMentorship[numMentee=1, hours=4], "
             + "adHoc=[MentorMonthAvailability[month=APRIL, hours=2]]], "
             + "feedbackSection=null, resources=null, calendlyLink=null, "
-            + "acceptMale=null, acceptPromotion=null)";
+            + "acceptMale=null, acceptPromotion=null, meetingLink=null)";
     assertEquals(expected, mentor.toString());
   }
 

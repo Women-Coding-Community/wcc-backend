@@ -100,7 +100,7 @@ class MentorDtoTest {
             + "skills=null, spokenLanguages=[English, Spanish], bio=bio info,"
             + " menteeSection=null, feedbackSection=null, resources=null, "
             + "calendlyLink=null, acceptMale=null, acceptPromotion=null, "
-            + "isWomen=null)";
+            + "isWomen=null, meetingLink=null)";
 
     assertEquals(expected, mentor.toString());
   }

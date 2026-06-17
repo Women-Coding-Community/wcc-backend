@@ -51,6 +51,7 @@ public class MentorDto extends MemberDto {
   private Boolean acceptMale;
   private Boolean acceptPromotion;
   private Boolean isWomen;
+  private String meetingLink;
 
   /** Mentor Builder. */
   @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -78,7 +79,8 @@ public class MentorDto extends MemberDto {
       final Boolean isWomen,
       final String calendlyLink,
       final Boolean acceptMale,
-      final Boolean acceptPromotion) {
+      final Boolean acceptPromotion,
+      final String meetingLink) {
     super(
         id,
         fullName,
@@ -107,6 +109,7 @@ public class MentorDto extends MemberDto {
     this.acceptMale = acceptMale;
     this.acceptPromotion = acceptPromotion;
     this.isWomen = isWomen;
+    this.meetingLink = meetingLink;
   }
 
   /**
@@ -140,6 +143,7 @@ public class MentorDto extends MemberDto {
         .calendlyLink(getCalendlyLink())
         .acceptMale(getAcceptMale())
         .acceptPromotion(getAcceptPromotion())
+        .meetingLink(getMeetingLink())
         .build();
   }
 
@@ -180,6 +184,7 @@ public class MentorDto extends MemberDto {
         .calendlyLink(mergeString(this.getCalendlyLink(), mentor.getCalendlyLink()))
         .acceptMale(mergeNullable(this.getAcceptMale(), mentor.getAcceptMale()))
         .acceptPromotion(mergeNullable(this.getAcceptPromotion(), mentor.getAcceptPromotion()))
+        .meetingLink(mergeString(this.getMeetingLink(), mentor.getMeetingLink()))
         .build();
   }
 

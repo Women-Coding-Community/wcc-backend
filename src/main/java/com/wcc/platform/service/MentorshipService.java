@@ -86,6 +86,7 @@ public class MentorshipService {
               .calendlyLink(mentor.getCalendlyLink())
               .acceptMale(mentor.getAcceptMale())
               .acceptPromotion(mentor.getAcceptPromotion())
+              .meetingLink(mentor.getMeetingLink())
               .build();
 
       return mentorRepository.create(mentorWithExistingId);
@@ -204,6 +205,7 @@ public class MentorshipService {
         .calendlyLink(dto.getCalendlyLink())
         .acceptMale(dto.getAcceptMale())
         .acceptPromotion(dto.getAcceptPromotion())
+        .meetingLink(dto.getMeetingLink())
         .build();
   }
 
@@ -238,6 +240,7 @@ public class MentorshipService {
         .calendlyLink(mentor.getCalendlyLink())
         .acceptMale(mentor.getAcceptMale())
         .acceptPromotion(mentor.getAcceptPromotion())
+        .meetingLink(mentor.getMeetingLink())
         .build();
   }
 

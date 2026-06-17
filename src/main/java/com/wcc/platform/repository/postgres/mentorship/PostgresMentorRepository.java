@@ -46,7 +46,8 @@ public class PostgresMentorRepository implements MentorRepository {
           + "is_available = ?, "
           + "calendly_link = ?, "
           + "accept_male_mentee = ?, "
-          + "accept_promote_social_media = ? "
+          + "accept_promote_social_media = ?, "
+          + "meeting_link = ? "
           + "WHERE mentor_id = ?";
   private static final String SQL_SET_MENTOR_STATUS =
       "UPDATE mentors SET profile_status = ? WHERE mentor_id = ?";
@@ -55,7 +56,7 @@ public class PostgresMentorRepository implements MentorRepository {
   private static final String SQL_INSERT_MENTOR =
       "INSERT INTO mentors (mentor_id, profile_status, bio, years_experience, "
           + " spoken_languages, is_available, calendly_link, "
-          + " accept_male_mentee, accept_promote_social_media) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+          + " accept_male_mentee, accept_promote_social_media, meeting_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   private static final String SQL_GET_BY_ID = "SELECT * FROM mentors WHERE mentor_id = ?";
   private static final String SQL_DELETE_BY_ID = "DELETE FROM mentors WHERE mentor_id = ?";
   private static final String SQL_GET_BY_EMAIL =
@@ -227,7 +228,8 @@ public class PostgresMentorRepository implements MentorRepository {
         true,
         mentor.getCalendlyLink(),
         mentor.getAcceptMale(),
-        mentor.getAcceptPromotion());
+        mentor.getAcceptPromotion(),
+        mentor.getMeetingLink());
   }
 
   /**
@@ -251,6 +253,7 @@ public class PostgresMentorRepository implements MentorRepository {
         mentor.getCalendlyLink(),
         mentor.getAcceptMale(),
         mentor.getAcceptPromotion(),
+        mentor.getMeetingLink(),
         mentorId);
   }
 }
