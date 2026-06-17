@@ -105,6 +105,12 @@ public class Mentor extends Member {
     this.meetingLink = meetingLink;
   }
 
+  @Override
+  public void setMemberTypes(final List<MemberType> memberTypes) {
+    super.setMemberTypes(memberTypes);
+    this.memberTypes = memberTypes;
+  }
+
   /** Checks for empty or null and returns a capitalized list of string. */
   private static List<String> normalizeLanguages(final List<String> languages) {
     if (CollectionUtils.isEmpty(languages)) {

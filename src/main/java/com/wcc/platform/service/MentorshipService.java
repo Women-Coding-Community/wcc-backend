@@ -99,6 +99,7 @@ public class MentorshipService {
               .acceptMale(mentor.getAcceptMale())
               .acceptPromotion(mentor.getAcceptPromotion())
               .meetingLink(mentor.getMeetingLink())
+              .memberTypes(mentor.getMemberTypes())
               .build();
 
       return mentorRepository.create(mentorWithExistingId);
@@ -237,6 +238,7 @@ public class MentorshipService {
         .slackDisplayName(mentor.getSlackDisplayName())
         .country(mentor.getCountry())
         .city(mentor.getCity())
+        .memberTypes(mentor.getMemberTypes())
         .companyName(mentor.getCompanyName())
         .images(List.of(profilePicture.get()))
         .network(mentor.getNetwork())
