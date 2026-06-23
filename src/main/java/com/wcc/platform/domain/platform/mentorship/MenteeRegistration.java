@@ -38,12 +38,17 @@ public record MenteeRegistration(
                 builder.applicationMessage(application.applicationMessage());
               }
 
+              final var initialStatus =
+                  cycle.getMentorshipType() == MentorshipType.AD_HOC
+                      ? ApplicationStatus.MENTOR_REVIEWING
+                      : ApplicationStatus.PENDING;
+
               return builder
                   .menteeId(menteeId)
                   .mentorId(application.mentorId())
                   .whyMentor(application.whyMentor())
                   .priorityOrder(application.priorityOrder())
-                  .status(ApplicationStatus.PENDING)
+                  .status(initialStatus)
                   .cycleId(cycle.getCycleId())
                   .build();
             })

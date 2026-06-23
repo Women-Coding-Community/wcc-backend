@@ -73,6 +73,21 @@ public final class MenteeApplicationTestBuilder {
   }
 
   /**
+   * Creates a MENTOR_ACCEPTED application.
+   *
+   * @param applicationId the application ID
+   * @param menteeId the mentee ID
+   * @param priority the priority order
+   * @return a mentor-accepted MenteeApplication
+   */
+  public static MenteeApplication accepted(
+      final Long applicationId, final Long menteeId, final int priority) {
+    return baseBuilder(applicationId, menteeId, priority)
+        .status(ApplicationStatus.MENTOR_ACCEPTED)
+        .build();
+  }
+
+  /**
    * Creates a MATCHED application.
    *
    * @param applicationId the application ID

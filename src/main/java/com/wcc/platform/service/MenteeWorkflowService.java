@@ -13,6 +13,7 @@ import com.wcc.platform.domain.platform.mentorship.MenteeApplicationAdminRespons
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationResponse;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -46,6 +47,7 @@ public class MenteeWorkflowService {
   private final MenteeRepository menteeRepository;
   private final MentorshipService mentorshipService;
   private final MentorRepository mentorRepository;
+  private final MentorshipMatchingService mentorshipMatchingService;
 
   /**
    * Find applications for admin view by cycle, statuses, and optionally mentor.
@@ -190,7 +192,13 @@ public class MenteeWorkflowService {
     final MenteeApplication application = getApplicationOrThrow(applicationId);
 
     validateApplicationCanBeAccepted(application);
-    checkMentorCapacity(application.getMentorId(), application.getCycleId());
+    final MentorshipCycleEntity cycle =
+        checkMentorCapacity(application.getMentorId(), application.getCycleId());
+
+    if (cycle.getMentorshipType() == MentorshipType.AD_HOC) {
+      mentorshipMatchingService.confirmMatch(applicationId);
+      return getApplicationOrThrow(applicationId);
+    }
 
     final MenteeApplication updated =
         applicationRepository.updateStatus(
@@ -458,7 +466,7 @@ public class MenteeWorkflowService {
     }
   }
 
-  private void checkMentorCapacity(final Long mentorId, final Long cycleId) {
+  private MentorshipCycleEntity checkMentorCapacity(final Long mentorId, final Long cycleId) {
     final MentorshipCycleEntity cycle =
         cycleRepository
             .findById(cycleId)
@@ -473,6 +481,8 @@ public class MenteeWorkflowService {
               "Mentor %d has reached maximum capacity (%d) for cycle %d",
               mentorId, cycle.getMaxMenteesPerMentor(), cycleId));
     }
+
+    return cycle;
   }
 
   /**

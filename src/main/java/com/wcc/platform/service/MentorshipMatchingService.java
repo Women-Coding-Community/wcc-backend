@@ -9,6 +9,7 @@ import com.wcc.platform.domain.platform.mentorship.MatchStatus;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorshipCycleRepository;
@@ -37,7 +38,6 @@ public class MentorshipMatchingService {
   private final MentorshipCycleRepository cycleRepository;
   private final MentorshipService mentorshipService;
   private final MenteeRepository menteeRepository;
-
   /**
    * Confirm a match from an accepted application. This is typically done by mentorship team after
    * mentor acceptance.
@@ -58,10 +58,6 @@ public class MentorshipMatchingService {
             .findById(applicationId)
             .orElseThrow(() -> new ApplicationNotFoundException(applicationId));
 
-    validateApplicationCanBeMatched(application);
-    checkMentorCapacity(application.getMentorId(), application.getCycleId());
-    checkMenteeNotAlreadyMatched(application.getMenteeId(), application.getCycleId());
-
     final MentorshipCycleEntity cycle =
         cycleRepository
             .findById(application.getCycleId())
@@ -69,6 +65,10 @@ public class MentorshipMatchingService {
                 () ->
                     new MentorshipCycleClosedException(
                         "Cycle not found: " + application.getCycleId()));
+
+    validateApplicationCanBeMatched(application, cycle);
+    checkMentorCapacity(application.getMentorId(), application.getCycleId());
+    checkMenteeNotAlreadyMatched(application.getMenteeId(), application.getCycleId());
 
     final MentorshipMatch match =
         MentorshipMatch.builder()
@@ -289,11 +289,19 @@ public class MentorshipMatchingService {
         .orElseThrow(() -> new IllegalArgumentException("Match not found: " + matchId));
   }
 
-  private void validateApplicationCanBeMatched(final MenteeApplication application) {
-    if (application.getStatus() != ApplicationStatus.MENTOR_ACCEPTED) {
+  private void validateApplicationCanBeMatched(
+      final MenteeApplication application, final MentorshipCycleEntity cycle) {
+    final ApplicationStatus requiredStatus =
+        cycle.getMentorshipType() == MentorshipType.AD_HOC
+            ? ApplicationStatus.MENTOR_REVIEWING
+            : ApplicationStatus.MENTOR_ACCEPTED;
+
+    if (application.getStatus() != requiredStatus) {
       throw new IllegalStateException(
-          "Can only confirm matches from MENTOR_ACCEPTED applications, current status: "
-              + application.getStatus());
+          "Can only confirm matches from "
+              + requiredStatus.name()
+              + " applications, current status: "
+              + application.getStatus().name());
     }
   }
 

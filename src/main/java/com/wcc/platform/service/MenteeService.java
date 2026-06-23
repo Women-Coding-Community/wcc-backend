@@ -8,6 +8,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MemberRepository;
@@ -34,6 +35,7 @@ public class MenteeService {
   private final MemberRepository memberRepository;
   private final MentorRepository mentorRepository;
   private final UserProvisionService userProvisionService;
+  private final MentorshipService mentorshipService;
 
   /**
    * Return all active mentees (status_id = 1).
@@ -207,7 +209,22 @@ public class MenteeService {
     final var applications = menteeRegistration.toApplications(cycle, menteeId);
     applications.forEach(registrationsRepo::create);
 
+    if (cycle.getMentorshipType() == MentorshipType.AD_HOC) {
+      applications.forEach(app -> notifyMentorForAdHocApplication(app, cycle));
+    }
+
     return menteeRepository.findById(menteeId).orElseThrow();
+  }
+
+  private void notifyMentorForAdHocApplication(
+      final MenteeApplication application, final MentorshipCycleEntity cycle) {
+    mentorRepository
+        .findById(application.getMentorId())
+        .ifPresent(
+            mentor ->
+                mentorshipService
+                    .getNotificationService()
+                    .sendNewMenteesNotification(mentor, cycle));
   }
 
   /**
