@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.ExcessiveImports")
 public class MenteeWorkflowService {
 
   public static final String CYCLE_NOT_FOUND = "Cycle not found: ";
@@ -47,7 +48,7 @@ public class MenteeWorkflowService {
   private final MenteeRepository menteeRepository;
   private final MentorshipService mentorshipService;
   private final MentorRepository mentorRepository;
-  private final MentorshipMatchingService mentorshipMatchingService;
+  private final MentorshipMatchingService matchingService;
 
   /**
    * Find applications for admin view by cycle, statuses, and optionally mentor.
@@ -196,7 +197,7 @@ public class MenteeWorkflowService {
         checkMentorCapacity(application.getMentorId(), application.getCycleId());
 
     if (cycle.getMentorshipType() == MentorshipType.AD_HOC) {
-      mentorshipMatchingService.confirmMatch(applicationId);
+      matchingService.confirmMatch(applicationId);
       return getApplicationOrThrow(applicationId);
     }
 
