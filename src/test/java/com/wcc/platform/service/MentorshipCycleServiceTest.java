@@ -31,7 +31,8 @@ class MentorshipCycleServiceTest {
   }
 
   @Test
-  @DisplayName("Given cycle does not exist, when updating status, then throw NoSuchElementException")
+  @DisplayName(
+      "Given cycle does not exist, when updating status, then throw NoSuchElementException")
   void shouldThrowWhenCycleNotFound() {
     when(cycleRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -57,8 +58,7 @@ class MentorshipCycleServiceTest {
   }
 
   @Test
-  @DisplayName(
-      "Given cycle in DRAFT status, when transitioning to CANCELLED, then update succeeds")
+  @DisplayName("Given cycle in DRAFT status, when transitioning to CANCELLED, then update succeeds")
   void shouldAllowDraftToCancelled() {
     final var cycle = cycleWithStatus(1L, CycleStatus.DRAFT);
     final var updated = cycleWithStatus(1L, CycleStatus.CANCELLED);
@@ -175,7 +175,7 @@ class MentorshipCycleServiceTest {
         .hasMessageContaining("OPEN");
   }
 
-  private MentorshipCycleEntity cycleWithStatus(final Long id, final CycleStatus status) {
-    return MentorshipCycleEntity.builder().cycleId(id).status(status).build();
+  private MentorshipCycleEntity cycleWithStatus(final Long cycleId, final CycleStatus status) {
+    return MentorshipCycleEntity.builder().cycleId(cycleId).status(status).build();
   }
 }
