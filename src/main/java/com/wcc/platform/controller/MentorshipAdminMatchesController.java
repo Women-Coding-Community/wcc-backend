@@ -13,6 +13,7 @@ import com.wcc.platform.domain.platform.mentorship.recommendation.MentorshipReco
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.service.MenteeWorkflowService;
+import com.wcc.platform.service.MentorshipCycleService;
 import com.wcc.platform.service.MentorshipMatchingService;
 import com.wcc.platform.service.MentorshipRecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,6 +52,7 @@ public class MentorshipAdminMatchesController {
   private final MentorshipCycleRepository cycleRepository;
   private final MentorshipRecommendationService recommendationService;
   private final MenteeWorkflowService workflowService;
+  private final MentorshipCycleService cycleService;
 
   // ==================== Match Management ====================
 
@@ -264,5 +266,25 @@ public class MentorshipAdminMatchesController {
   public ResponseEntity<List<MentorshipCycleEntity>> getAllCycles() {
     final List<MentorshipCycleEntity> cycles = cycleRepository.getAll();
     return ResponseEntity.ok(cycles);
+  }
+
+  /**
+   * API to update the status of a mentorship cycle.
+   *
+   * @param cycleId the ID of the cycle to update
+   * @param request the status update request containing the new status
+   * @return the updated cycle entity
+   */
+  @PatchMapping("/cycles/status")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
+  @Operation(
+      summary = "Update the status of a mentorship cycle",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipCycleEntity> updateCycleStatus(
+      @Parameter(description = "Cycle ID") @RequestParam final Long cycleId,
+      @Parameter(description = "New cycle status") @RequestParam final CycleStatus status) {
+    final MentorshipCycleEntity updated = cycleService.updateStatus(cycleId, status);
+    return ResponseEntity.ok(updated);
   }
 }

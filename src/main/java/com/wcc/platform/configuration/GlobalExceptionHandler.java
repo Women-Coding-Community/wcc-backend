@@ -13,6 +13,7 @@ import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
+import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.InvalidTokenException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
@@ -30,12 +31,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -125,12 +126,16 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * Receive MentorStatusException or MentorCapacityExceededException and return {@link
-   * HttpStatus#CONFLICT}.
+   * Receive MentorStatusException, MentorCapacityExceededException or
+   * InvalidCycleStatusTransitionException and return {@link HttpStatus#CONFLICT}.
    */
-  @ExceptionHandler({MentorStatusException.class, MentorCapacityExceededException.class})
+  @ExceptionHandler({
+    MentorStatusException.class,
+    MentorCapacityExceededException.class,
+    InvalidCycleStatusTransitionException.class
+  })
   @ResponseStatus(HttpStatus.CONFLICT)
-  public ResponseEntity<ErrorDetails> handleMentorStatus(
+  public ResponseEntity<ErrorDetails> handleConflicts(
       final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
