@@ -83,10 +83,15 @@ public class PostgresMenteeRepository implements MenteeRepository {
       memberId = memberMapper.addMember(mentee);
     }
 
-    if (findById(memberId).isEmpty()) {
+    final var existing = findById(memberId);
+    if (existing.isEmpty()) {
       insertMenteeDetails(mentee, memberId);
     } else {
-      updateMenteeDetails(mentee, memberId);
+      final var profileStatus =
+          mentee.getProfileStatus() != null
+              ? mentee.getProfileStatus()
+              : existing.get().getProfileStatus();
+      updateMenteeDetails(mentee, memberId, profileStatus);
     }
 
     jdbc.update(SQL_DELETE_TECH_AREAS, memberId);
@@ -108,7 +113,11 @@ public class PostgresMenteeRepository implements MenteeRepository {
     validate(mentee);
     memberMapper.updateMember(mentee, id);
 
-    updateMenteeDetails(mentee, id);
+    final var profileStatus =
+        mentee.getProfileStatus() != null
+            ? mentee.getProfileStatus()
+            : findById(id).map(Mentee::getProfileStatus).orElse(ProfileStatus.PENDING);
+    updateMenteeDetails(mentee, id, profileStatus);
 
     jdbc.update(SQL_DELETE_TECH_AREAS, id);
     jdbc.update(SQL_DELETE_LANGUAGES, id);
@@ -186,8 +195,8 @@ public class PostgresMenteeRepository implements MenteeRepository {
             () -> new MenteeNotSavedException("Mentee not found after status update: " + menteeId));
   }
 
-  private void updateMenteeDetails(final Mentee mentee, final Long memberId) {
-    final var profileStatus = mentee.getProfileStatus();
+  private void updateMenteeDetails(
+      final Mentee mentee, final Long memberId, final ProfileStatus profileStatus) {
     final var skills = mentee.getSkills();
     jdbc.update(
         SQL_UPDATE_MENTEE,

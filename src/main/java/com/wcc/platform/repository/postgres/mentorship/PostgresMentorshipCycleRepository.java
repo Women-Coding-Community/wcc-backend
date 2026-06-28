@@ -24,6 +24,9 @@ import org.springframework.stereotype.Repository;
 public class PostgresMentorshipCycleRepository implements MentorshipCycleRepository {
   private static final String DELETE_SQL = "DELETE FROM mentorship_cycles WHERE cycle_id = ?";
 
+  private static final String UPDATE_STATUS_SQL =
+      "UPDATE mentorship_cycles SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE cycle_id = ?";
+
   private static final String SELECT_ALL =
       "SELECT * FROM mentorship_cycles ORDER BY cycle_year DESC, cycle_month";
 
@@ -165,6 +168,17 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
   public Optional<MentorshipCycleEntity> findLastCompletedCycle() {
     return jdbc.query(
         SELECT_LAST_CYCLE, rs -> rs.next() ? Optional.of(mapRow(rs)) : Optional.empty());
+  }
+
+  @Override
+  public MentorshipCycleEntity updateStatus(final Long cycleId, final CycleStatus status) {
+    final int rowsUpdated = jdbc.update(UPDATE_STATUS_SQL, status.getStatusId(), cycleId);
+    if (rowsUpdated == 0) {
+      throw new IllegalStateException("Failed to update status for cycle ID: " + cycleId);
+    }
+    return findById(cycleId)
+        .orElseThrow(
+            () -> new IllegalStateException("Failed to retrieve cycle after status update"));
   }
 
   private MentorshipCycleEntity mapRow(final ResultSet rs) throws SQLException {

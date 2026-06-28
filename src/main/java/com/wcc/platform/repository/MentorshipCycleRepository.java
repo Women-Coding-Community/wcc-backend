@@ -58,4 +58,13 @@ public interface MentorshipCycleRepository extends CrudRepository<MentorshipCycl
    * @return Optional containing the last cycle
    */
   Optional<MentorshipCycleEntity> findLastCompletedCycle();
+
+  /**
+   * Update only the status of a mentorship cycle.
+   *
+   * @param cycleId the cycle ID
+   * @param status the new status
+   * @return the updated cycle entity
+   */
+  MentorshipCycleEntity updateStatus(Long cycleId, CycleStatus status);
 }
