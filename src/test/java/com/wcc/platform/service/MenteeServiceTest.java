@@ -6,9 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,6 +57,8 @@ class MenteeServiceTest {
   @Mock private MemberRepository memberRepository;
   @Mock private MentorRepository mentorRepository;
   @Mock private UserProvisionService userProvisionService;
+  @Mock private MentorshipService mentorshipService;
+  @Mock private MentorshipNotificationService notificationService;
 
   private MenteeService menteeService;
   private Mentee mentee;
@@ -68,7 +73,9 @@ class MenteeServiceTest {
             menteeRepository,
             memberRepository,
             mentorRepository,
-            userProvisionService);
+            userProvisionService,
+            mentorshipService);
+    lenient().when(mentorshipService.getNotificationService()).thenReturn(notificationService);
     mentee = createMenteeTest(null, "Test Mentee", "test@wcc.com");
     when(mentorRepository.findById(any())).thenReturn(Optional.of(Mentor.mentorBuilder().build()));
 
@@ -374,7 +381,7 @@ class MenteeServiceTest {
     assertThat(result).isEqualTo(mentee);
     verify(menteeRepository).create(any(Mentee.class));
     verify(cycleRepository, atLeastOnce()).findOpenCycle();
-    verify(mentorRepository).findById(1L);
+    verify(mentorRepository, times(2)).findById(1L);
   }
 
   @Test
@@ -674,6 +681,112 @@ class MenteeServiceTest {
     verify(memberRepository).findByEmail("mentor@wcc.com");
     verify(memberRepository).findById(100L);
     verify(menteeRepository).create(any(Mentee.class));
+  }
+
+  @Test
+  @DisplayName(
+      "Given an AD_HOC cycle, when registering a mentee, "
+          + "then applications are created with MENTOR_REVIEWING status")
+  void shouldCreateApplicationsWithMentorReviewingStatusForAdHocCycle() {
+    var currentYear = Year.now();
+    var existingMentee = createMenteeTest(5L, "Test Mentee", "test@wcc.com");
+    var registration =
+        new MenteeRegistration(
+            existingMentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(1L, 1, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(menteeRepository.findById(5L)).thenReturn(Optional.of(existingMentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+    when(menteeRepository.update(eq(5L), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+
+    menteeService.saveRegistration(registration);
+
+    verify(applicationRepository)
+        .create(argThat(app -> app.getStatus() == ApplicationStatus.MENTOR_REVIEWING));
+  }
+
+  @Test
+  @DisplayName(
+      "Given an AD_HOC cycle, when registering a mentee, "
+          + "then sendNewMenteesNotification is sent to each mentor")
+  void shouldSendMentorNotificationForAdHocRegistration() {
+    var currentYear = Year.now();
+    var existingMentee = createMenteeTest(5L, "Test Mentee", "test@wcc.com");
+    var registration =
+        new MenteeRegistration(
+            existingMentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(1L, 1, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+    var mentor = Mentor.mentorBuilder().build();
+
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(menteeRepository.findById(5L)).thenReturn(Optional.of(existingMentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+    when(menteeRepository.update(eq(5L), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+    when(mentorRepository.findById(1L)).thenReturn(Optional.of(mentor));
+
+    menteeService.saveRegistration(registration);
+
+    verify(notificationService).sendNewMenteesNotification(mentor, cycle);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a LONG_TERM cycle, when registering a mentee, "
+          + "then applications are created with PENDING status")
+  void shouldCreateApplicationsWithPendingStatusForLongTermCycle() {
+    var currentYear = Year.now();
+    var existingMentee = createMenteeTest(5L, "Test Mentee", "test@wcc.com");
+    var registration =
+        new MenteeRegistration(
+            existingMentee,
+            MentorshipType.LONG_TERM,
+            currentYear,
+            List.of(new MenteeApplicationDto(1L, 1, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.LONG_TERM)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(menteeRepository.findById(5L)).thenReturn(Optional.of(existingMentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+    when(menteeRepository.update(eq(5L), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+
+    menteeService.saveRegistration(registration);
+
+    verify(applicationRepository)
+        .create(argThat(app -> app.getStatus() == ApplicationStatus.PENDING));
   }
 
   @Test

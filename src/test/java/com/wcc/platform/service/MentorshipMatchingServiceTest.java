@@ -1,6 +1,7 @@
 package com.wcc.platform.service;
 
 import static com.wcc.platform.utils.MenteeApplicationTestBuilder.baseBuilder;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
@@ -13,6 +14,7 @@ import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MenteeApplicationRepository;
 import com.wcc.platform.repository.MenteeRepository;
 import com.wcc.platform.repository.MentorRepository;
@@ -134,5 +136,73 @@ class MentorshipMatchingServiceTest {
     service.confirmMatch(APPLICATION_ID);
 
     verify(notificationService).sendPairingConfirmation(mentor, mentee, cycle);
+  }
+
+  @Test
+  @DisplayName(
+      "Given an AD_HOC cycle and MENTOR_REVIEWING application, "
+          + "when confirmMatch is called, then match is created successfully")
+  void shouldConfirmMatchForAdHocCycleWithMentorReviewingStatus() {
+    final MenteeApplication application =
+        baseBuilder(APPLICATION_ID, MENTEE_ID, MENTOR_ID, 1)
+            .status(ApplicationStatus.MENTOR_REVIEWING)
+            .build();
+    final MentorshipCycleEntity cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(CYCLE_ID)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .maxMenteesPerMentor(3)
+            .build();
+    final Mentee mentee =
+        Mentee.menteeBuilder().id(MENTEE_ID).spokenLanguages(List.of("ENGLISH")).build();
+    final MentorshipMatch createdMatch =
+        MentorshipMatch.builder()
+            .matchId(MATCH_ID)
+            .mentorId(MENTOR_ID)
+            .menteeId(MENTEE_ID)
+            .cycleId(CYCLE_ID)
+            .applicationId(APPLICATION_ID)
+            .status(MatchStatus.ACTIVE)
+            .startDate(FIXED_DATE)
+            .build();
+
+    when(applicationRepository.findById(APPLICATION_ID)).thenReturn(Optional.of(application));
+    when(cycleRepository.findById(CYCLE_ID)).thenReturn(Optional.of(cycle));
+    when(matchRepository.countActiveMenteesByMentorAndCycle(MENTOR_ID, CYCLE_ID)).thenReturn(0);
+    when(matchRepository.isMenteeMatchedInCycle(MENTEE_ID, CYCLE_ID)).thenReturn(false);
+    when(matchRepository.create(any(MentorshipMatch.class))).thenReturn(createdMatch);
+    when(applicationRepository.findByMenteeAndCycleOrderByPriority(MENTEE_ID, CYCLE_ID))
+        .thenReturn(List.of(application));
+    when(mentorRepository.findById(MENTOR_ID))
+        .thenReturn(Optional.of(Mentor.mentorBuilder().build()));
+    when(menteeRepository.findById(MENTEE_ID)).thenReturn(Optional.of(mentee));
+
+    service.confirmMatch(APPLICATION_ID);
+
+    verify(matchRepository).create(any(MentorshipMatch.class));
+  }
+
+  @Test
+  @DisplayName(
+      "Given a LONG_TERM cycle and MENTOR_REVIEWING application, "
+          + "when confirmMatch is called, then IllegalStateException is thrown")
+  void shouldThrowExceptionForLongTermCycleWithMentorReviewingStatus() {
+    final MenteeApplication application =
+        baseBuilder(APPLICATION_ID, MENTEE_ID, MENTOR_ID, 1)
+            .status(ApplicationStatus.MENTOR_REVIEWING)
+            .build();
+    final MentorshipCycleEntity cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(CYCLE_ID)
+            .mentorshipType(MentorshipType.LONG_TERM)
+            .maxMenteesPerMentor(3)
+            .build();
+
+    when(applicationRepository.findById(APPLICATION_ID)).thenReturn(Optional.of(application));
+    when(cycleRepository.findById(CYCLE_ID)).thenReturn(Optional.of(cycle));
+
+    assertThatThrownBy(() -> service.confirmMatch(APPLICATION_ID))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("MENTOR_ACCEPTED");
   }
 }
