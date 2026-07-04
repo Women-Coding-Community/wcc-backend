@@ -30,7 +30,11 @@ const MONTHS = [
 
 const monthLabel = (month: string) => month.charAt(0) + month.slice(1).toLowerCase();
 
-export default function MentorshipAvailabilitySection({ control, errors }: FormSectionProps) {
+export default function MentorshipAvailabilitySection({
+  control,
+  errors,
+  setValue,
+}: FormSectionProps) {
   const mentorshipType = useWatch({
     control,
     name: 'mentorshipType',
@@ -143,7 +147,12 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
                           control={
                             <Checkbox
                               checked={field.value}
-                              onChange={(e) => field.onChange(e.target.checked)}
+                              onChange={(e) => {
+                                field.onChange(e.target.checked);
+                                if (!e.target.checked) {
+                                  setValue?.(`monthAvailability.${index}.hours`, 0);
+                                }
+                              }}
                               size="small"
                             />
                           }
@@ -159,9 +168,11 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
                         <TextField
                           {...field}
                           value={value}
-                          onChange={(e) =>
-                            onChange(e.target.value === '' ? 0 : Number(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const nextHours = e.target.value === '' ? 0 : Number(e.target.value);
+                            onChange(nextHours);
+                            setValue?.(`monthAvailability.${index}.enabled`, nextHours > 0);
+                          }}
                           type="number"
                           size="small"
                           label="hours"
