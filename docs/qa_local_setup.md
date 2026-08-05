@@ -432,13 +432,6 @@ Valid `roles` values: `ADMIN`, `MENTORSHIP_ADMIN`, `LEADER`, `MENTOR`, `MENTEE`,
 | Password-reset email never arrives                         | Check MailHog at `http://localhost:8025`; mail is never sent externally in local runs. |
 | Reset email arrives for the wrong person                   | The member record still holds a placeholder email — update the member, then re-request. |
 
-### Admin portal
-
-| Symptom                                               | Cause / fix                                                                   |
-|-------------------------------------------------------|---------------------------------------------------------------------------------|
-| `npm error … ENOENT … open '…/wcc-backend/package.json'` | `npm install` was run from the repo root — `cd admin-wcc-app` first.         |
-| Admin portal loads but every request fails            | `NEXT_PUBLIC_API_BASE` missing or wrong in `admin-wcc-app/.env`.                |
-
 ## Next steps
 
 With the backend running and the accounts working, here's where to go next. Both need this
