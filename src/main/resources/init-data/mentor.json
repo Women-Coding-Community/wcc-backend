@@ -20,13 +20,16 @@
       "link": "https://www.linkedin.com/in/dricazenck/"
     }
   ],
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
+  "isWomen": true,
   "profileStatus": "ACTIVE",
   "skills": {
     "yearsExperience": 15,
     "areas": [
       {
         "technicalArea": "BACKEND",
-        "proficiencyLevel": "ADVANCED"
+        "proficiencyLevel": "EXPERT"
       },
       {
         "technicalArea": "FULLSTACK",
@@ -39,16 +42,16 @@
     ],
     "languages": [
       {
-        "language": "java",
+        "language": "JAVA",
+        "proficiencyLevel": "EXPERT"
+      },
+      {
+        "language": "JAVASCRIPT",
         "proficiencyLevel": "ADVANCED"
       },
       {
-        "language": "javascript",
-        "proficiencyLevel": "ADVANCED"
-      },
-      {
-        "language": "Kotlin",
-        "proficiencyLevel": "ADVANCED"
+        "language": "KOTLIN",
+        "proficiencyLevel": "INTERMEDIATE"
       }
     ],
     "mentorshipFocus": [
@@ -95,5 +98,8 @@
         "hours": 2
       }
     ]
-  }
+  },
+  "calendlyLink": "https://calendly.com/adriana-zencke",
+  "acceptMale": true,
+  "acceptPromotion": true
 }

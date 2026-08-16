@@ -1,0 +1,164 @@
+[
+  {
+    "mentee": {
+      "fullName": "Mentee1 Surname1",
+      "position": "Junior Software Developer",
+      "email": "mentee1@example.com",
+      "slackDisplayName": "@Mentee1",
+      "country": {
+        "countryCode": "SI",
+        "countryName": "Slovenia"
+      },
+      "city": "Ljubljana",
+      "companyName": "Tech Startup Inc",
+      "memberTypes": [
+        "MENTEE"
+      ],
+      "images": [
+        {
+          "path": "https://drive.google.com/file/d/mentee1-image-id",
+          "alt": "Mentee1 profile picture",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/mentee1"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/mentee1"
+        }
+      ],
+      "pronouns": "she/her",
+      "pronounCategory": "FEMININE",
+      "isWomen": true,
+      "profileStatus": "PENDING",
+      "skills": {
+        "yearsExperience": 2,
+        "areas": [
+          {
+            "technicalArea": "FRONTEND",
+            "proficiencyLevel": "INTERMEDIATE"
+          },
+          {
+            "technicalArea": "BACKEND",
+            "proficiencyLevel": "BEGINNER"
+          }
+        ],
+        "languages": [
+          {
+            "language": "JAVASCRIPT",
+            "proficiencyLevel": "INTERMEDIATE"
+          },
+          {
+            "language": "PYTHON",
+            "proficiencyLevel": "BEGINNER"
+          }
+        ],
+        "mentorshipFocus": [
+          "Grow from beginner to mid-level",
+          "Career Advice"
+        ]
+      },
+      "spokenLanguages": [
+        "English",
+        "Slovenian"
+      ],
+      "bio": "I'm a passionate junior developer eager to grow my skills in full-stack development. Looking for guidance in advancing my career and improving my technical skills.",
+      "availableHsMonth": 8
+    },
+    "mentorshipType": "LONG_TERM",
+    "cycleYear": 2026,
+    "applications": [
+      {
+        "mentorId": 3,
+        "whyMentor": "I'm interested in learning backend development and this mentor has extensive experience in Java and Spring Boot.",
+        "priorityOrder": 1,
+        "applicationMessage": "I would love to learn from your experience in building scalable backend systems."
+      }
+    ]
+  },
+  {
+    "mentee": {
+      "fullName": "Nevena Verbic",
+      "position": "Software Developer",
+      "email": "nevena.verbic@example.com",
+      "slackDisplayName": "@NevenaVerbic",
+      "country": {
+        "countryCode": "SI",
+        "countryName": "Slovenia"
+      },
+      "city": "Ljubljana",
+      "companyName": "Tech Startup Inc",
+      "memberTypes": [
+        "MENTEE"
+      ],
+      "images": [
+        {
+          "path": "https://drive.google.com/file/d/example-image-id",
+          "alt": "Nevena profile picture",
+          "type": "desktop"
+        }
+      ],
+      "network": [
+        {
+          "type": "linkedin",
+          "link": "https://www.linkedin.com/in/neve"
+        },
+        {
+          "type": "github",
+          "link": "https://github.com/neve"
+        }
+      ],
+      "pronouns": "she/her",
+      "pronounCategory": "FEMININE",
+      "isWomen": true,
+      "profileStatus": "PENDING",
+      "skills": {
+        "yearsExperience": 2,
+        "areas": [
+          {
+            "technicalArea": "FRONTEND",
+            "proficiencyLevel": "INTERMEDIATE"
+          },
+          {
+            "technicalArea": "BACKEND",
+            "proficiencyLevel": "BEGINNER"
+          }
+        ],
+        "languages": [
+          {
+            "language": "JAVASCRIPT",
+            "proficiencyLevel": "INTERMEDIATE"
+          },
+          {
+            "language": "PYTHON",
+            "proficiencyLevel": "BEGINNER"
+          }
+        ],
+        "mentorshipFocus": [
+          "Grow from beginner to mid-level",
+          "Career Advice"
+        ]
+      },
+      "spokenLanguages": [
+        "English",
+        "Slovenian"
+      ],
+      "bio": "I'm a passionate developer eager to grow my skills in full-stack development.",
+      "availableHsMonth": 8
+    },
+    "mentorshipType": "LONG_TERM",
+    "cycleYear": 2026,
+    "applications": [
+      {
+        "mentorId": 1,
+        "whyMentor": "Experienced in Java and Spring Boot, exactly what I want to learn",
+        "priorityOrder": 1,
+        "applicationMessage": "I would love to learn backend development from you!"
+      }
+    ]
+  }
+]
