@@ -11,6 +11,7 @@ import com.wcc.platform.domain.platform.mentorship.MentorRejectionRequest;
 import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -56,6 +57,25 @@ public class MentorController {
   public ResponseEntity<List<MentorDto>> getAllMentors() {
     final List<MentorDto> mentors = mentorshipService.getAllMentors();
     return ResponseEntity.ok(mentors);
+  }
+
+  /**
+   * API to retrieve a mentor by ID. Accessible by admins, mentorship admins, and the mentor
+   * themselves (via MENTOR_PROFILE_UPDATE permission).
+   *
+   * @param mentorId mentor's unique identifier
+   * @return mentor data
+   */
+  @GetMapping("/mentors/{mentorId}")
+  @Operation(
+      summary = "API to retrieve a mentor by mentor id with access to restricted area",
+      security = {@SecurityRequirement(name = "bearerAuth")})
+  @RequiresPermission(MENTOR_PROFILE_UPDATE)
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorDto> getMentorById(
+      @Parameter(description = "Mentor ID") @PathVariable final Long mentorId) {
+    final MentorDto mentor = mentorshipService.getMentorById(mentorId);
+    return ResponseEntity.ok(mentor);
   }
 
   /**
