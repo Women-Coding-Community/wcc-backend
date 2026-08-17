@@ -291,6 +291,19 @@ public class MentorshipService {
   }
 
   /**
+   * Retrieve a single mentor by ID, enriched with their profile picture.
+   *
+   * @param mentorId mentor's unique identifier
+   * @return MentorDto for the requested mentor
+   * @throws MemberNotFoundException if no mentor exists with the given ID
+   */
+  public MentorDto getMentorById(final Long mentorId) {
+    final Mentor mentor =
+        mentorRepository.findById(mentorId).orElseThrow(() -> new MemberNotFoundException(mentorId));
+    return enrichWithProfilePicture(mentor.toDto());
+  }
+
+  /**
    * Update a mentor record.
    *
    * @param mentorId mentor's unique identifier
