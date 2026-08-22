@@ -101,6 +101,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<EditMentorFormData>({
     resolver: zodResolver(editMentorSchema),
@@ -165,7 +166,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
       longTerm: data.mentorshipType.includes('LONG_TERM') ? { numMentee: 1, hours: 2 } : null,
       adHoc: data.mentorshipType.includes('AD_HOC')
         ? data.monthAvailability
-            .filter((m) => m.enabled)
+            .filter((m) => m.enabled && m.hours > 0)
             .map((m) => ({ month: m.month, hours: m.hours }))
         : [],
     },
@@ -321,7 +322,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
         <PersonalInfoSection control={control} errors={errors} />
         <BioSection control={control} errors={errors} />
         <SkillsSection control={control} errors={errors} />
-        <MentorshipAvailabilitySection control={control} errors={errors} />
+        <MentorshipAvailabilitySection control={control} errors={errors} setValue={setValue} />
         <ResourcesSection control={control} />
       </Stack>
 
