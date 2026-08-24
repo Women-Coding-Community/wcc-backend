@@ -37,6 +37,7 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
   });
 
   const hasAdHocMentorship = mentorshipType?.includes(MENTORSHIP_TYPE_VALUES.AD_HOC);
+  const hasLongTermMentorship = mentorshipType?.includes(MENTORSHIP_TYPE_VALUES.LONG_TERM);
 
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
@@ -88,6 +89,56 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
             )}
           />
         </Grid>
+
+        {hasLongTermMentorship && (
+          <Grid size={12}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+              Long-Term Availability
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Controller
+                  name="longTermNumMentee"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <TextField
+                      {...field}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value === '' ? 1 : Number(e.target.value))}
+                      fullWidth
+                      required
+                      type="number"
+                      label="Number of Mentees"
+                      slotProps={{ htmlInput: { min: 1 } }}
+                      error={!!errors.longTermNumMentee}
+                      helperText={errors.longTermNumMentee?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Controller
+                  name="longTermHours"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <TextField
+                      {...field}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value === '' ? 2 : Number(e.target.value))}
+                      fullWidth
+                      required
+                      type="number"
+                      label="Max Hours per Month"
+                      slotProps={{ htmlInput: { min: 2 } }}
+                      error={!!errors.longTermHours}
+                      helperText={errors.longTermHours?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
 
         <Grid size={12}>
           <Controller

@@ -55,21 +55,21 @@ export default function CreateMentorForm() {
   });
 
   const transformFormData = (data: MentorFormData) => ({
-    fullName: data.fullName,
-    position: data.position,
-    email: data.email,
-    slackDisplayName: data.slackDisplayName,
+    fullName: data.fullName.trim(),
+    position: data.position.trim(),
+    email: data.email.trim(),
+    slackDisplayName: data.slackDisplayName.trim(),
     country: {
       countryCode: data.country?.countryCode,
       countryName: data.country?.countryName,
     },
-    city: data.city,
-    companyName: data.companyName,
+    city: (data.city ?? '').trim(),
+    companyName: (data.companyName ?? '').trim(),
     memberTypes: data.memberTypes,
     images: data.images,
     network: data.network,
     profileStatus: data.profileStatus,
-    bio: data.bio,
+    bio: data.bio.trim(),
     spokenLanguages: data.spokenLanguages,
     skills: {
       yearsExperience: Number(data.yearsExperience),
@@ -80,8 +80,8 @@ export default function CreateMentorForm() {
     menteeSection: {
       mentorshipType: data.mentorshipType,
       availability: [],
-      idealMentee: data.idealMentee,
-      additional: data.additionalInfo,
+      idealMentee: data.idealMentee.trim(),
+      additional: (data.additionalInfo ?? '').trim(),
     },
   });
 

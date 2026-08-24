@@ -70,6 +70,8 @@ function buildDefaultValues(mentor: MentorItem): EditMentorFormData {
     })),
     mentorshipFocus: mentor.skills?.mentorshipFocus ?? [],
     mentorshipType: deriveMentorshipType(mentor.menteeSection),
+    longTermNumMentee: mentor.menteeSection?.longTerm?.numMentee ?? 1,
+    longTermHours: mentor.menteeSection?.longTerm?.hours ?? 2,
     idealMentee: mentor.menteeSection?.idealMentee ?? '',
     additionalInfo: mentor.menteeSection?.additional ?? '',
     monthAvailability: MONTHS.map((month) => ({
@@ -139,19 +141,19 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
   }, [mentorId, reset]);
 
   const transformFormData = (data: EditMentorFormData) => ({
-    fullName: data.fullName,
-    position: data.position,
-    email: data.email,
-    slackDisplayName: data.slackDisplayName,
+    fullName: data.fullName.trim(),
+    position: data.position.trim(),
+    email: data.email.trim(),
+    slackDisplayName: data.slackDisplayName.trim(),
     country: {
       countryCode: data.country?.countryCode,
       countryName: data.country?.countryName,
     },
-    city: data.city,
-    companyName: data.companyName,
+    city: data.city.trim(),
+    companyName: (data.companyName ?? '').trim(),
     memberTypes: ['MENTOR'],
     network: data.network,
-    bio: data.bio,
+    bio: data.bio.trim(),
     spokenLanguages: data.spokenLanguages,
     skills: {
       yearsExperience: Number(data.yearsExperience),
@@ -160,9 +162,11 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
       mentorshipFocus: data.mentorshipFocus,
     },
     menteeSection: {
-      idealMentee: data.idealMentee,
-      additional: data.additionalInfo,
-      longTerm: data.mentorshipType.includes('LONG_TERM') ? { numMentee: 1, hours: 2 } : null,
+      idealMentee: data.idealMentee.trim(),
+      additional: (data.additionalInfo ?? '').trim(),
+      longTerm: data.mentorshipType.includes('LONG_TERM')
+        ? { numMentee: data.longTermNumMentee, hours: data.longTermHours }
+        : null,
       adHoc: data.mentorshipType.includes('AD_HOC')
         ? data.monthAvailability
             .filter((m) => m.enabled)
@@ -322,7 +326,6 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
         <BioSection control={control} errors={errors} />
         <SkillsSection control={control} errors={errors} />
         <MentorshipAvailabilitySection control={control} errors={errors} />
-        <ResourcesSection control={control} />
       </Stack>
 
       <Box sx={{ mt: 3 }}>

@@ -52,6 +52,8 @@ export const editMentorSchema = z.object({
   mentorshipType: z.array(z.string()).min(1, 'At least one mentorship type is required'),
   idealMentee: z.string().min(1, 'Ideal mentee description is required'),
   additionalInfo: z.string().optional().default(''),
+  longTermNumMentee: z.number().min(1, 'Minimum 1 mentee').default(1),
+  longTermHours: z.number().min(2, 'Minimum 2 hours').default(2),
   monthAvailability: z.array(monthAvailabilitySchema),
   books: z.string().optional().default(''),
   links: z.array(linkSchema).default([]),

@@ -1,7 +1,6 @@
 package com.wcc.platform.controller;
 
 import static com.wcc.platform.domain.auth.Permission.MENTOR_APPROVE;
-import static com.wcc.platform.domain.auth.Permission.MENTOR_PROFILE_UPDATE;
 
 import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
@@ -9,6 +8,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.mentorship.MentorRejectionRequest;
 import com.wcc.platform.domain.platform.type.RoleType;
+import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MentorController {
 
   private final MentorshipService mentorshipService;
+  private final AuthService authService;
 
   /**
    * API to retrieve information about mentors.
@@ -60,8 +61,8 @@ public class MentorController {
   }
 
   /**
-   * API to retrieve a mentor by ID. Accessible by admins, mentorship admins, and the mentor
-   * themselves (via MENTOR_PROFILE_UPDATE permission).
+   * API to retrieve a mentor by ID. Accessible by ADMIN, LEADER, MENTORSHIP_ADMIN, or the mentor
+   * themselves (ownership check on memberId).
    *
    * @param mentorId mentor's unique identifier
    * @return mentor data
@@ -70,10 +71,11 @@ public class MentorController {
   @Operation(
       summary = "API to retrieve a mentor by mentor id with access to restricted area",
       security = {@SecurityRequirement(name = "bearerAuth")})
-  @RequiresPermission(MENTOR_PROFILE_UPDATE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorDto> getMentorById(
       @Parameter(description = "Mentor ID") @PathVariable final Long mentorId) {
+    authService.requireSelfOrRoles(
+        mentorId, RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN);
     final MentorDto mentor = mentorshipService.getMentorById(mentorId);
     return ResponseEntity.ok(mentor);
   }
@@ -104,10 +106,10 @@ public class MentorController {
   @Operation(
       summary = "API to update mentor data",
       security = {@SecurityRequirement(name = "bearerAuth")})
-  @RequiresPermission(MENTOR_PROFILE_UPDATE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Mentor> updateMentor(
       @Valid @PathVariable final Long mentorId, @RequestBody final MentorDto mentorDto) {
+    authService.requireSelfOrRoles(mentorId, RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN);
     return new ResponseEntity<>(mentorshipService.updateMentor(mentorId, mentorDto), HttpStatus.OK);
   }
 
