@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.auth.UserAccount;
 import com.wcc.platform.domain.auth.UserToken;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
@@ -251,5 +252,107 @@ class AuthServiceTest {
     when(authentication.getPrincipal()).thenReturn("invalid-principal");
 
     assertThrows(ForbiddenException.class, authService::getCurrentUser);
+  }
+
+  @Test
+  void testRequireAnyPermissionUserLacksPermissionForbiddenException() {
+    Integer userId = 1;
+    Long memberId = 1L;
+
+    UserAccount userAccount =
+        new UserAccount(
+            userId, memberId, "user@example.com", "passwordHash", List.of(RoleType.VIEWER), true);
+
+    Member member = Member.builder().id(memberId).fullName("John Doe").build();
+    UserAccount.User user = new UserAccount.User(userAccount, member);
+
+    SecurityContextHolder.setContext(securityContext);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    when(authentication.isAuthenticated()).thenReturn(true);
+    when(authentication.getPrincipal()).thenReturn(user);
+
+    assertThrows(
+        ForbiddenException.class,
+        () -> authService.requireAnyPermission(Permission.MENTOR_APPROVE));
+  }
+
+  // ==================== requireAllPermissions Tests ====================
+
+  @Test
+  void testRequireAllPermissionsUserHasAllPermissions() {
+    Integer userId = 1;
+    Long memberId = 1L;
+
+    UserAccount userAccount = createAdminUserTest();
+
+    Member member = Member.builder().id(memberId).fullName("John Doe").build();
+    UserAccount.User user = new UserAccount.User(userAccount, member);
+
+    SecurityContextHolder.setContext(securityContext);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    when(authentication.isAuthenticated()).thenReturn(true);
+    when(authentication.getPrincipal()).thenReturn(user);
+
+    authService.requireAllPermissions(Permission.MENTOR_APPROVE, Permission.MENTEE_APPROVE);
+  }
+
+  // ==================== requireRole Tests ====================
+
+  @Test
+  void testRequireRoleUserHasRequiredRole() {
+    Integer userId = 1;
+    Long memberId = 1L;
+
+    UserAccount userAccount = createAdminUserTest();
+
+    Member member = Member.builder().id(memberId).fullName("John Doe").build();
+    UserAccount.User user = new UserAccount.User(userAccount, member);
+
+    SecurityContextHolder.setContext(securityContext);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    when(authentication.isAuthenticated()).thenReturn(true);
+    when(authentication.getPrincipal()).thenReturn(user);
+
+    authService.requireRole(RoleType.ADMIN);
+  }
+
+  @Test
+  void testRequireRoleUserLacksRequiredRoleForbiddenException() {
+    Integer userId = 1;
+    Long memberId = 1L;
+
+    UserAccount userAccount =
+        new UserAccount(
+            userId, memberId, "user@example.com", "passwordHash", List.of(RoleType.VIEWER), true);
+
+    Member member = Member.builder().id(memberId).fullName("John Doe").build();
+    UserAccount.User user = new UserAccount.User(userAccount, member);
+
+    SecurityContextHolder.setContext(securityContext);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    when(authentication.isAuthenticated()).thenReturn(true);
+    when(authentication.getPrincipal()).thenReturn(user);
+
+    assertThrows(ForbiddenException.class, () -> authService.requireRole(RoleType.ADMIN));
+  }
+
+  @Test
+  void testRequireRoleUserHasAnyOfMultipleRoles() {
+    Integer userId = 1;
+    Long memberId = 1L;
+
+    UserAccount userAccount =
+        new UserAccount(
+            userId, memberId, "user@example.com", "passwordHash", List.of(RoleType.MENTOR), true);
+
+    Member member = Member.builder().id(memberId).fullName("John Doe").build();
+    UserAccount.User user = new UserAccount.User(userAccount, member);
+
+    SecurityContextHolder.setContext(securityContext);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    when(authentication.isAuthenticated()).thenReturn(true);
+    when(authentication.getPrincipal()).thenReturn(user);
+
+    authService.requireRole(RoleType.ADMIN, RoleType.MENTOR);
   }
 }
