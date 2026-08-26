@@ -98,11 +98,13 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | undefined>(undefined);
   const [profilePictureUploading, setProfilePictureUploading] = useState(false);
+  const [adHocWarning, setAdHocWarning] = useState<string | null>(null);
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<EditMentorFormData>({
     resolver: zodResolver(editMentorSchema),
@@ -227,6 +229,16 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
     setLoading(true);
     setApiError(null);
     setSuccessMessage(null);
+    setAdHocWarning(null);
+
+    const hasAdHoc = data.mentorshipType.includes('AD_HOC');
+    const hasEnabledMonth = data.monthAvailability.some((m) => m.enabled && m.hours > 0);
+
+    if (hasAdHoc && !hasEnabledMonth) {
+      setAdHocWarning('Please mark at least one month as available before saving.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const token = getStoredToken();
@@ -325,7 +337,12 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
         <PersonalInfoSection control={control} errors={errors} />
         <BioSection control={control} errors={errors} />
         <SkillsSection control={control} errors={errors} />
-        <MentorshipAvailabilitySection control={control} errors={errors} />
+        <MentorshipAvailabilitySection
+          control={control}
+          errors={errors}
+          setValue={setValue}
+          adHocError={adHocWarning}
+        />
       </Stack>
 
       <Box sx={{ mt: 3 }}>

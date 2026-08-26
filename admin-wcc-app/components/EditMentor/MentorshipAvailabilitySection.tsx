@@ -1,4 +1,5 @@
 import {
+  Alert,
   Autocomplete,
   Box,
   Checkbox,
@@ -30,11 +31,14 @@ const MONTHS = [
 
 const monthLabel = (month: string) => month.charAt(0) + month.slice(1).toLowerCase();
 
-export default function MentorshipAvailabilitySection({ control, errors }: FormSectionProps) {
-  const mentorshipType = useWatch({
-    control,
-    name: 'mentorshipType',
-  });
+export default function MentorshipAvailabilitySection({
+  control,
+  errors,
+  setValue,
+  adHocError,
+}: FormSectionProps) {
+  const mentorshipType = useWatch({ control, name: 'mentorshipType' });
+  const monthAvailability = useWatch({ control, name: 'monthAvailability' });
 
   const hasAdHocMentorship = mentorshipType?.includes(MENTORSHIP_TYPE_VALUES.AD_HOC);
   const hasLongTermMentorship = mentorshipType?.includes(MENTORSHIP_TYPE_VALUES.LONG_TERM);
@@ -182,6 +186,11 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
             <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Month Availability
             </Typography>
+            {adHocError && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                {adHocError}
+              </Alert>
+            )}
             <Grid container spacing={2}>
               {MONTHS.map((month, index) => (
                 <Grid size={{ xs: 12, sm: 4 }} key={month}>
@@ -194,7 +203,17 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
                           control={
                             <Checkbox
                               checked={field.value}
-                              onChange={(e) => field.onChange(e.target.checked)}
+                              onChange={(e) => {
+                                field.onChange(e.target.checked);
+                                if (e.target.checked && setValue) {
+                                  const currentHours = monthAvailability?.[index]?.hours ?? 0;
+                                  if (currentHours === 0) {
+                                    setValue(`monthAvailability.${index}.hours`, 1, {
+                                      shouldValidate: false,
+                                    });
+                                  }
+                                }
+                              }}
                               size="small"
                             />
                           }
@@ -216,7 +235,7 @@ export default function MentorshipAvailabilitySection({ control, errors }: FormS
                           type="number"
                           size="small"
                           label="hours"
-                          slotProps={{ htmlInput: { min: 0, max: 200 } }}
+                          slotProps={{ htmlInput: { min: 1, max: 200 } }}
                           sx={{ width: 80 }}
                         />
                       )}
