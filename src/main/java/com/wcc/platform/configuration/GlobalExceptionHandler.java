@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
+import com.wcc.platform.domain.exceptions.CycleNotFoundException;
 import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
@@ -51,6 +52,7 @@ public class GlobalExceptionHandler {
   /** Receive ContentNotFoundException and return {@link HttpStatus#NOT_FOUND}. */
   @ExceptionHandler({
     ContentNotFoundException.class,
+    CycleNotFoundException.class,
     NoSuchElementException.class,
     MemberNotFoundException.class,
     MentorNotFoundException.class,
