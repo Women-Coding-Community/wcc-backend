@@ -367,7 +367,7 @@ fly secrets set SECURITY_API_KEY=your-api-key -a wcc-backend
 # Set multiple secrets at once
 fly secrets set \
   SECURITY_ENABLED=true \
-  APP_CORS_ALLOWED_ORIGINS=https://dev-wcc-admin.vercel.app \
+  APP_CORS_ALLOWED_ORIGINS=https://wcc-admin.vercel.app,https://wcc-frontend.vercel.app \
   -a wcc-backend
 
 # Remove a secret
@@ -384,7 +384,7 @@ Required environment variables (see `application-flyio.yml`):
 - `SPRING_DATASOURCE_DRIVER_CLASS_NAME` - `org.postgresql.Driver`
 - `SECURITY_API_KEY` - API key for authentication
 - `SECURITY_ENABLED` - `true` or `false`
-- `APP_CORS_ALLOWED_ORIGINS` - Comma-separated frontend URLs (e.g., `https://dev-wcc-admin.vercel.app,https://prod-wcc-admin.vercel.app`)
+- `APP_CORS_ALLOWED_ORIGINS` - Comma-separated frontend URLs (e.g., `https://wcc-admin.vercel.app,https://wcc-frontend.vercel.app`)
 - `APP_SEED_ADMIN_EMAIL` - Admin user email
 - `APP_SEED_ADMIN_PASSWORD` - Admin user password
 - `APP_SEED_ADMIN_ENABLED` - `true` or `false`
@@ -401,7 +401,9 @@ fly postgres connect -a <db-name>  # Connect to PostgreSQL database
 
 ### Frontend Deployment (Vercel)
 
-**Prerequisites:**
+The admin frontend is deployed to Vercel via Vercel's native Git integration on push to `main`, or manually via Vercel CLI.
+
+**Prerequisites (for CLI):**
 - Vercel CLI installed: `npm install -g vercel`
 - Logged in: `vercel login`
 
@@ -418,9 +420,6 @@ vercel ls
 # Redeploy the latest production deployment
 # This rebuilds with updated environment variables
 echo "y" | vercel redeploy <deployment-url>
-
-# Example:
-echo "y" | vercel redeploy https://dev-wcc-admin-dd1zukrcf-women-coding-communitys-projects.vercel.app
 ```
 
 **Option 2: Fresh deployment**
@@ -441,7 +440,7 @@ vercel env ls --cwd admin-wcc-app
 vercel env rm NEXT_PUBLIC_API_BASE production --cwd admin-wcc-app --yes
 
 # Add a new environment variable
-echo "https://wcc-backend.fly.dev" | vercel env add NEXT_PUBLIC_API_BASE production --cwd admin-wcc-app
+echo "https://wcc-backend-prod.fly.dev" | vercel env add NEXT_PUBLIC_API_BASE production --cwd admin-wcc-app
 
 # Add for all environments (production, preview, development)
 echo "your-api-key" | vercel env add NEXT_PUBLIC_API_KEY --cwd admin-wcc-app
@@ -453,20 +452,9 @@ vercel env pull --cwd admin-wcc-app
 
 **Important Vercel Environment Variables:**
 Required for frontend (see `.env.example`):
-- `NEXT_PUBLIC_API_BASE` - Backend URL (e.g., `https://wcc-backend.fly.dev`)
+- `NEXT_PUBLIC_API_BASE` - Backend URL (e.g., `https://wcc-backend-prod.fly.dev`)
 - `NEXT_PUBLIC_API_KEY` - API key matching backend's `SECURITY_API_KEY`
-- `NEXT_PUBLIC_APP_URL` - Frontend URL (e.g., `https://dev-wcc-admin.vercel.app`)
-
-**GitHub Actions Deployment:**
-Automated deployment via `.github/workflows/deploy-admin-frontend-dev.yml`:
-- Triggers on push to `main` branch when `admin-wcc-app/**` files change
-- Requires GitHub secrets:
-  - `VERCEL_TOKEN` - Vercel API token
-  - `VERCEL_ORG_ID` - Vercel organization ID
-  - `VERCEL_PROJECT_ID` - Vercel project ID
-  - `NEXT_PUBLIC_API_BASE` - Backend URL
-  - `NEXT_PUBLIC_API_KEY` - API key
-  - `NEXT_PUBLIC_APP_URL` - Frontend URL
+- `NEXT_PUBLIC_APP_URL` - Frontend URL (e.g., `https://wcc-admin.vercel.app`)
 
 **Verify Deployment:**
 ```bash
@@ -477,7 +465,7 @@ vercel inspect <deployment-url> --cwd admin-wcc-app
 # https://vercel.com/<org>/<project>/deployments
 
 # Test the deployed app
-curl https://dev-wcc-admin.vercel.app/api/health
+curl https://wcc-admin.vercel.app/api/health
 ```
 
 ### Local with Docker

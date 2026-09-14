@@ -1,4 +1,4 @@
-# fly-dev.toml app configuration file generated for wcc-backend on 2025-09-21T19:00:40+02:00
+# fly-prod.toml app configuration file generated for wcc-backend
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -11,7 +11,7 @@ primary_region = 'lhr'
 [env]
 SPRING_PROFILES_ACTIVE = "flyio"
 # Required secrets (set via `fly secrets set -a wcc-backend-prod`):
-#   APP_RESET_PASSWORD_BASE_URL=https://prod-wcc-admin.vercel.app
+#   APP_RESET_PASSWORD_BASE_URL=https://wcc-admin.vercel.app
 
 [http_service]
 internal_port = 8080
