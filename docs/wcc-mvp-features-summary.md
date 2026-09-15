@@ -92,7 +92,7 @@ Mentees, Volunteers, and Community Leaders.
 - Token authentication
 - Deployed on Vercel
 
-**Access**: https://dev-wcc-admin.vercel.app
+**Access**: https://wcc-admin.vercel.app
 
 **Priority**: HIGH - Mentorship workflows are core MVP requirements
 
