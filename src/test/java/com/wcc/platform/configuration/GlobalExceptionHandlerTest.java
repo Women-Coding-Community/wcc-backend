@@ -175,4 +175,23 @@ class GlobalExceptionHandlerTest {
     assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
+
+  @Test
+  @DisplayName(
+      "Given MaxUploadSizeExceededException, when handling, then return PAYLOAD_TOO_LARGE with size error message")
+  void shouldReturnPayloadTooLargeForMaxUploadSizeExceededException() {
+    var exception = new org.springframework.web.multipart.MaxUploadSizeExceededException(10_000_000);
+
+    var response =
+        globalExceptionHandler.handleMaxUploadSizeExceededException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE.value(),
+            "Uploaded file exceeds the maximum allowed upload limit",
+            DETAILS);
+    assertEquals(
+        org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
 }

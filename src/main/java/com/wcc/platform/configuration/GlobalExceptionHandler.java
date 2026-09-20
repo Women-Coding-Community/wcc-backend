@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /** Global controller to handle all exceptions for the API. */
 @SuppressWarnings({"PMD.ExcessiveImports"})
@@ -212,6 +213,19 @@ public class GlobalExceptionHandler {
             HttpStatus.FORBIDDEN.value(), ex.getMessage(), request.getDescription(false));
 
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+  }
+
+  /** Return 413 Payload Too Large for MaxUploadSizeExceededException. */
+  @ExceptionHandler(MaxUploadSizeExceededException.class)
+  @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+  public ResponseEntity<ErrorDetails> handleMaxUploadSizeExceededException(
+      final MaxUploadSizeExceededException ex, final WebRequest request) {
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.PAYLOAD_TOO_LARGE.value(),
+            "Uploaded file exceeds the maximum allowed upload limit",
+            request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.PAYLOAD_TOO_LARGE);
   }
 
   private String extractReadableMessage(final HttpMessageNotReadableException ex) {
