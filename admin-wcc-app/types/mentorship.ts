@@ -48,6 +48,7 @@ export interface MenteeMatchSuggestion {
 }
 
 export interface MenteeApplicationItem {
+  applicationId: number;
   menteeId: number;
   mentee: MenteeItem;
   mentorId?: number;
