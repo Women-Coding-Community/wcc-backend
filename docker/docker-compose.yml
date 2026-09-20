@@ -23,6 +23,9 @@ services:
       - "5005:5005"
     depends_on:
       - postgres
+    env_file:
+      - path: ../.env.local
+        required: false
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker,qa}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/wcc
