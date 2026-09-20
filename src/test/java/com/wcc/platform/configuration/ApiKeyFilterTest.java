@@ -13,6 +13,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Value;
@@ -131,6 +132,45 @@ class ApiKeyFilterTest {
 
     verify(filterChain).doFilter(request, response);
     verifyNoInteractions(response);
+  }
+
+  @Test
+  @DisplayName("Given OPTIONS request, when filtering, then allow without API key")
+  void shouldAllowOptionsPreflightRequest() throws Exception {
+    ObjectMapper objectMapper = mock(ObjectMapper.class);
+    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getMethod()).thenReturn("OPTIONS");
+    when(request.getRequestURI()).thenReturn("/api/platform/v1/resources/member-profile-picture");
+
+    apiKeyFilter.doFilterInternal(request, response, filterChain);
+
+    verify(filterChain).doFilter(request, response);
+    verifyNoInteractions(response);
+  }
+
+  @Test
+  @DisplayName("Given request with Origin, when API key is missing, then attach CORS origin header to response")
+  void shouldAttachCorsHeadersWhenUnauthorizedWithOrigin() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    ObjectMapper objectMapper = mock(ObjectMapper.class);
+    ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+
+    when(request.getRequestURI()).thenReturn("/api/cms/v1/test");
+    when(request.getHeader("X-API-KEY")).thenReturn(null);
+    when(request.getHeader("Origin")).thenReturn("http://localhost:3001");
+    when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+    var apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
+    apiKeyFilter.doFilterInternal(request, response, filterChain);
+
+    verify(response).setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+    verify(response).setHeader("Access-Control-Allow-Credentials", "true");
+    verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Configuration

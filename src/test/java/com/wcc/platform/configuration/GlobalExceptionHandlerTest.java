@@ -160,4 +160,19 @@ class GlobalExceptionHandlerTest {
     assertEquals(BAD_REQUEST, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
+
+  @Test
+  @DisplayName(
+      "Given ResourceNotFoundException, when handling, then return NOT_FOUND with error message")
+  void shouldReturnNotFoundForResourceNotFoundException() {
+    var exception = new com.wcc.platform.domain.exceptions.ResourceNotFoundException("Resource not found");
+
+    var response = globalExceptionHandler.handleNotFoundException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            org.springframework.http.HttpStatus.NOT_FOUND.value(), "Resource not found", DETAILS);
+    assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
 }

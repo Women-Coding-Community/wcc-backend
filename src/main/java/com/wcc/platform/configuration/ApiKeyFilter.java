@@ -52,7 +52,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
     final String requestUri = request.getRequestURI();
 
-    if (!securityEnabled) {
+    if (!securityEnabled || "OPTIONS".equalsIgnoreCase(request.getMethod())) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -65,7 +65,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
       }
       if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
         final Map<String, String> errorBody = formatUnauthorizedError("Invalid API Key");
-        sendUnauthorizedResponse(response, errorBody);
+        sendUnauthorizedResponse(request, response, errorBody);
         return;
       }
     }
@@ -82,8 +82,15 @@ public class ApiKeyFilter extends OncePerRequestFilter {
   }
 
   private void sendUnauthorizedResponse(
-      final HttpServletResponse response, final Map<String, String> errorResponse)
+      final HttpServletRequest request,
+      final HttpServletResponse response,
+      final Map<String, String> errorResponse)
       throws IOException {
+    final String origin = request.getHeader("Origin");
+    if (origin != null && !origin.isBlank()) {
+      response.setHeader("Access-Control-Allow-Origin", origin);
+      response.setHeader("Access-Control-Allow-Credentials", "true");
+    }
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");

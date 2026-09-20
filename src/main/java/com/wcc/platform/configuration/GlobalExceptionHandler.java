@@ -24,6 +24,7 @@ import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
@@ -54,7 +55,8 @@ public class GlobalExceptionHandler {
     NoSuchElementException.class,
     MemberNotFoundException.class,
     MentorNotFoundException.class,
-    ApplicationNotFoundException.class
+    ApplicationNotFoundException.class,
+    ResourceNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
