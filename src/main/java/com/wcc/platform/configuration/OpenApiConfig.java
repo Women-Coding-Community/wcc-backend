@@ -71,7 +71,9 @@ public class OpenApiConfig implements WebMvcConfigurer {
   /** Customize servers for open API. */
   @Bean
   public OpenAPI customOpenApi() {
-    return new OpenAPI().addServersItem(new Server().url(appBaseUrl));
+    return new OpenAPI()
+        .addServersItem(new Server().url(appBaseUrl).description("Configured server"))
+        .addServersItem(new Server().url("/").description("Current host"));
   }
 
   /** Customize Actuator endpoint tag. */
