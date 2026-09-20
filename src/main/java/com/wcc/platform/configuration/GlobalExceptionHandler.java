@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
 /** Global controller to handle all exceptions for the API. */
 @SuppressWarnings({"PMD.ExcessiveImports"})
@@ -215,17 +216,25 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
   }
 
-  /** Return 413 Payload Too Large for MaxUploadSizeExceededException. */
-  @ExceptionHandler(MaxUploadSizeExceededException.class)
-  @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
-  public ResponseEntity<ErrorDetails> handleMaxUploadSizeExceededException(
-      final MaxUploadSizeExceededException ex, final WebRequest request) {
+  /** Return 413 Payload Too Large or 400 Bad Request for MultipartException. */
+  @ExceptionHandler({MaxUploadSizeExceededException.class, MultipartException.class})
+  public ResponseEntity<ErrorDetails> handleMultipartException(
+      final MultipartException ex, final WebRequest request) {
+    log.warn("Multipart request error: {}", ex.getMessage());
+    if (ex instanceof MaxUploadSizeExceededException) {
+      final var errorDetails =
+          new ErrorDetails(
+              HttpStatus.PAYLOAD_TOO_LARGE.value(),
+              "Uploaded file exceeds the maximum allowed upload limit of 2MB",
+              request.getDescription(false));
+      return new ResponseEntity<>(errorDetails, HttpStatus.PAYLOAD_TOO_LARGE);
+    }
     final var errorDetails =
         new ErrorDetails(
-            HttpStatus.PAYLOAD_TOO_LARGE.value(),
-            "Uploaded file exceeds the maximum allowed upload limit",
+            HttpStatus.BAD_REQUEST.value(),
+            "Failed to process multipart upload request: " + ex.getMessage(),
             request.getDescription(false));
-    return new ResponseEntity<>(errorDetails, HttpStatus.PAYLOAD_TOO_LARGE);
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
   private String extractReadableMessage(final HttpMessageNotReadableException ex) {

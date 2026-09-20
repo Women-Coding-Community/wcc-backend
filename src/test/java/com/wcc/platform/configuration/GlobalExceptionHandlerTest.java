@@ -180,18 +180,36 @@ class GlobalExceptionHandlerTest {
   @DisplayName(
       "Given MaxUploadSizeExceededException, when handling, then return PAYLOAD_TOO_LARGE with size error message")
   void shouldReturnPayloadTooLargeForMaxUploadSizeExceededException() {
-    var exception = new org.springframework.web.multipart.MaxUploadSizeExceededException(10_000_000);
+    var exception = new org.springframework.web.multipart.MaxUploadSizeExceededException(2_000_000);
 
     var response =
-        globalExceptionHandler.handleMaxUploadSizeExceededException(exception, webRequest);
+        globalExceptionHandler.handleMultipartException(exception, webRequest);
 
     var expectation =
         new ErrorDetails(
             org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE.value(),
-            "Uploaded file exceeds the maximum allowed upload limit",
+            "Uploaded file exceeds the maximum allowed upload limit of 2MB",
             DETAILS);
     assertEquals(
         org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given generic MultipartException, when handling, then return BAD_REQUEST with message")
+  void shouldReturnBadRequestForGenericMultipartException() {
+    var exception = new org.springframework.web.multipart.MultipartException("Failed to parse");
+
+    var response =
+        globalExceptionHandler.handleMultipartException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            BAD_REQUEST.value(),
+            "Failed to process multipart upload request: Failed to parse",
+            DETAILS);
+    assertEquals(BAD_REQUEST, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
 }

@@ -56,11 +56,17 @@ export async function getMentorProfilePicture(
   }
 }
 
+export const MAX_PROFILE_PICTURE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+
 export async function uploadMentorProfilePicture(
   mentorId: string | number,
   file: File,
   token: string
 ): Promise<string> {
+  if (file.size > MAX_PROFILE_PICTURE_SIZE_BYTES) {
+    throw new Error('File size exceeds the maximum allowed limit of 2MB');
+  }
+
   const formData = new FormData();
   formData.append('file', file);
 
@@ -77,6 +83,7 @@ export async function uploadMentorProfilePicture(
       method: 'POST',
       headers,
       body: formData,
+      credentials: 'include',
     }
   );
 
