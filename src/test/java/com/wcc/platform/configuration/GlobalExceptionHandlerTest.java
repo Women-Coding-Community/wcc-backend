@@ -160,4 +160,56 @@ class GlobalExceptionHandlerTest {
     assertEquals(BAD_REQUEST, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
+
+  @Test
+  @DisplayName(
+      "Given ResourceNotFoundException, when handling, then return NOT_FOUND with error message")
+  void shouldReturnNotFoundForResourceNotFoundException() {
+    var exception = new com.wcc.platform.domain.exceptions.ResourceNotFoundException("Resource not found");
+
+    var response = globalExceptionHandler.handleNotFoundException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            org.springframework.http.HttpStatus.NOT_FOUND.value(), "Resource not found", DETAILS);
+    assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given MaxUploadSizeExceededException, when handling, then return PAYLOAD_TOO_LARGE with size error message")
+  void shouldReturnPayloadTooLargeForMaxUploadSizeExceededException() {
+    var exception = new org.springframework.web.multipart.MaxUploadSizeExceededException(2_000_000);
+
+    var response =
+        globalExceptionHandler.handleMultipartException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE.value(),
+            "Uploaded file exceeds the maximum allowed upload limit of 2MB",
+            DETAILS);
+    assertEquals(
+        org.springframework.http.HttpStatus.PAYLOAD_TOO_LARGE, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given generic MultipartException, when handling, then return BAD_REQUEST with message")
+  void shouldReturnBadRequestForGenericMultipartException() {
+    var exception = new org.springframework.web.multipart.MultipartException("Failed to parse");
+
+    var response =
+        globalExceptionHandler.handleMultipartException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            BAD_REQUEST.value(),
+            "Failed to process multipart upload request: Failed to parse",
+            DETAILS);
+    assertEquals(BAD_REQUEST, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
 }

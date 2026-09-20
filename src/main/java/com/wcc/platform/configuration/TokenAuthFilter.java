@@ -63,7 +63,10 @@ public class TokenAuthFilter extends OncePerRequestFilter {
 
     final String authHeader = request.getHeader(AUTHORIZATION);
     if (StringUtils.hasText(authHeader) && authHeader.startsWith(BEARER)) {
-      final String token = authHeader.substring(AUTH_TOKEN_START);
+      String token = authHeader.substring(AUTH_TOKEN_START).trim();
+      while (token.regionMatches(true, 0, BEARER, 0, BEARER.length())) {
+        token = token.substring(AUTH_TOKEN_START).trim();
+      }
       final Optional<User> userOpt = authService.authenticateByTokenWithMember(token);
       if (userOpt.isPresent()) {
         final UserAccount.User user = userOpt.get();

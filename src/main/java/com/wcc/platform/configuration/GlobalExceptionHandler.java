@@ -24,10 +24,12 @@ import com.wcc.platform.domain.exceptions.MentorNotFoundException;
 import com.wcc.platform.domain.exceptions.MentorStatusException;
 import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.exceptions.ResourceNotFoundException;
 import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -41,6 +43,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
 /** Global controller to handle all exceptions for the API. */
 @SuppressWarnings({"PMD.ExcessiveImports"})
@@ -54,7 +58,8 @@ public class GlobalExceptionHandler {
     NoSuchElementException.class,
     MemberNotFoundException.class,
     MentorNotFoundException.class,
-    ApplicationNotFoundException.class
+    ApplicationNotFoundException.class,
+    ResourceNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
@@ -210,6 +215,47 @@ public class GlobalExceptionHandler {
             HttpStatus.FORBIDDEN.value(), ex.getMessage(), request.getDescription(false));
 
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+  }
+
+  /** Return 413 Payload Too Large or 400 Bad Request for MultipartException. */
+  @ExceptionHandler({MaxUploadSizeExceededException.class, MultipartException.class})
+  public ResponseEntity<ErrorDetails> handleMultipartException(
+      final MultipartException ex, final WebRequest request) {
+    log.warn("Multipart request error: {}", ex.getMessage(), ex);
+    Throwable root = ex;
+    while (root.getCause() != null && !root.equals(root.getCause())) {
+      root = root.getCause();
+    }
+    final String rootName = root.getClass().getSimpleName();
+    final String rootMsg =
+        root.getMessage() != null ? root.getMessage().toLowerCase(Locale.ROOT) : "";
+    final String exMsg =
+        ex.getMessage() != null ? ex.getMessage().toLowerCase(Locale.ROOT) : "";
+    final boolean isSizeLimit =
+        ex instanceof MaxUploadSizeExceededException
+            || rootName.contains("SizeLimitExceeded")
+            || rootName.contains("FileSizeLimitExceeded")
+            || rootName.contains("SizeException")
+            || exMsg.contains("size limit")
+            || exMsg.contains("maximum upload size")
+            || rootMsg.contains("size limit")
+            || rootMsg.contains("exceeds the configured maximum")
+            || rootMsg.contains("maximum upload size");
+
+    if (isSizeLimit) {
+      final var errorDetails =
+          new ErrorDetails(
+              HttpStatus.PAYLOAD_TOO_LARGE.value(),
+              "Uploaded file exceeds the maximum allowed upload limit of 2MB",
+              request.getDescription(false));
+      return new ResponseEntity<>(errorDetails, HttpStatus.PAYLOAD_TOO_LARGE);
+    }
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.BAD_REQUEST.value(),
+            "Failed to process multipart upload request: " + ex.getMessage(),
+            request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
   private String extractReadableMessage(final HttpMessageNotReadableException ex) {

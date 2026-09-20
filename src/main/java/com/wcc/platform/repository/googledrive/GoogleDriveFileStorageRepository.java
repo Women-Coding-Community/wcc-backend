@@ -167,7 +167,13 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
   @Override
   public void deleteFile(final String fileId) {
     try {
-      files().delete(fileId).execute();
+      files().delete(fileId).setSupportsAllDrives(true).execute();
+    } catch (com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
+      if (e.getStatusCode() == org.springframework.http.HttpStatus.NOT_FOUND.value()) {
+        log.warn("File {} not found in Google Drive when attempting to delete; skipping.", fileId);
+        return;
+      }
+      throw new PlatformInternalException("Failed to delete file from Google Drive", e);
     } catch (IOException e) {
       throw new PlatformInternalException("Failed to delete file from Google Drive", e);
     }
@@ -176,7 +182,11 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
   /** Gets a file from Google Drive. */
   public File getFile(final String fileId) {
     try {
-      return files().get(fileId).setFields("id, name, webViewLink").execute();
+      return files()
+          .get(fileId)
+          .setSupportsAllDrives(true)
+          .setFields("id, name, webViewLink")
+          .execute();
     } catch (IOException e) {
       throw new PlatformInternalException("Failed to get file from Google Drive", e);
     }
@@ -187,6 +197,8 @@ public class GoogleDriveFileStorageRepository implements FileStorageRepository {
     try {
       return files()
           .list()
+          .setSupportsAllDrives(true)
+          .setIncludeItemsFromAllDrives(true)
           .setPageSize(pageSize)
           .setFields("nextPageToken, files(id, name, webViewLink)")
           .execute();
