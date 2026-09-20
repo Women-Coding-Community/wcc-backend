@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wcc.platform.domain.cms.attributes.Country;
 import com.wcc.platform.domain.cms.attributes.Image;
 import com.wcc.platform.domain.cms.attributes.PronounCategory;
@@ -29,6 +30,12 @@ import org.springframework.validation.annotation.Validated;
 @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ImmutableField"})
 public class Mentee extends Member {
 
+  /**
+   * Approval status of the mentee. Read-only over the API: clients cannot set or change it through
+   * the registration payload; it is managed server-side (defaults to PENDING on creation and is
+   * only changed via the admin approval flow).
+   */
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private ProfileStatus profileStatus;
 
   @NotNull(message = "Skills must be provided")
