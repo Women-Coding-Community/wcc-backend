@@ -24,6 +24,7 @@ services:
     depends_on:
       - postgres
     environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker,qa}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/wcc
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: MFpFnhhICniFNPA
@@ -36,6 +37,22 @@ services:
       timeout: 1s
       retries: 5
       start_period: 5s
+    networks:
+      - app-network
+
+  admin-frontend:
+    build:
+      context: ../admin-wcc-app
+      dockerfile: Dockerfile
+    container_name: admin-frontend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - springboot-app
+    environment:
+      PORT: 3001
+      NEXT_PUBLIC_API_BASE: http://localhost:8080
+      NEXT_PUBLIC_API_KEY: local
     networks:
       - app-network
 
