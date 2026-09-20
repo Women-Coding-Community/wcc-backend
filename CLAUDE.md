@@ -114,8 +114,9 @@ Two independent authentication mechanisms:
 
 Interface: `FileStorageRepository` with two implementations (selected by `storage.type` property):
 
-- **Google Drive** (`storage.type=google-drive`):
-  - Requires `credentials.json` in resources (see `docs/google_drive_setup.md`)
+- **Google Drive** (`storage.type=google`):
+  - Uses Google Service Account JSON via `GOOGLE_DRIVE_CREDENTIALS_JSON` (see `docs/google_drive_setup.md`)
+  - Automated configuration via `./scripts/setup-google-drive.sh [local|dev|prod]`
   - Uploads to configured folder IDs
   - Sets public read permissions
   - Returns shareable web links

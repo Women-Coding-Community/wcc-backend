@@ -65,7 +65,7 @@ file:
 
 app:
   cors:
-    allowed-origins: http://localhost:3000,https://localhost:3000
+    allowed-origins: http://localhost:3000,https://localhost:3000,http://localhost:3001,https://localhost:3001,http://localhost:3002
   email:
     team-signature: |
       Best Regards<br>
@@ -97,16 +97,16 @@ app:
         member-types: [ MEMBER ]
 
 storage:
-  type: local
+  type: ${STORAGE_TYPE:local}
   google-drive:
-    credentials-json:
+    credentials-json: ${GOOGLE_DRIVE_CREDENTIALS_JSON:${STORAGE_GOOGLE_DRIVE_CREDENTIALS_JSON:}}
   folders:
-    main-folder: folder-id
-    resources-folder: folder-id
-    events-folder: folder-id
-    mentors-folder: folder-id
-    mentors-profile-folder: folder-id
-    images-folder: folder-id
+    main-folder: ${STORAGE_FOLDERS_MAIN_FOLDER:folder-id}
+    resources-folder: ${STORAGE_FOLDERS_RESOURCES_FOLDER:folder-id}
+    events-folder: ${STORAGE_FOLDERS_EVENTS_FOLDER:folder-id}
+    mentors-folder: ${STORAGE_FOLDERS_MENTORS_FOLDER:folder-id}
+    mentors-profile-folder: ${STORAGE_FOLDERS_MENTORS_PROFILE_FOLDER:folder-id}
+    images-folder: ${STORAGE_FOLDERS_IMAGES_FOLDER:folder-id}
 
 management:
   endpoint:

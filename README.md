@@ -276,8 +276,8 @@ You can generate a Postman collection from the application’s OpenAPI specifica
 
 * [Resource API Documentation](docs/resource_api.md) - API for uploading, retrieving, and managing
   resources and mentor profile pictures
-* [Google Drive API Setup](docs/google_drive_setup.md) - Instructions for setting up Google Drive
-  API credentials
+* [Google Drive Setup](docs/google_drive_setup.md) - Instructions and script for configuring Google Drive
+  storage with a service account for local and cloud environments
 
 ## Quality Checks
 
