@@ -8,6 +8,7 @@ import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMen
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipPageTest;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipResourcesPageTest;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorshipStudyGroupPageTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -27,7 +28,10 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.PageRepository;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +41,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "PMD.TooManyMethods"})
 class MentorshipPagesServiceTest {
   private ObjectMapper objectMapper;
   private PageRepository pageRepository;
@@ -301,5 +305,30 @@ class MentorshipPagesServiceTest {
         .thenThrow(new IllegalArgumentException("Conversion failed"));
 
     assertThrows(PlatformInternalException.class, service::getResources);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a cycle is open for registration, when getCurrentCycle, then return that cycle")
+  void shouldReturnCurrentCycleWhenRegistrationIsOpen() {
+    final LocalDate today = LocalDate.now();
+    final var openCycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(6L)
+            .registrationStartDate(today.minusDays(5))
+            .registrationEndDate(today.plusDays(10))
+            .status(CycleStatus.OPEN)
+            .build();
+    when(mentorshipService.getCurrentCycle()).thenReturn(openCycle);
+
+    assertThat(service.getCurrentCycle()).containsSame(openCycle);
+  }
+
+  @Test
+  @DisplayName("Given no cycle is open for registration, when getCurrentCycle, then return empty")
+  void shouldReturnEmptyWhenNoCycleIsOpen() {
+    when(mentorshipService.getCurrentCycle()).thenReturn(MentorshipService.CLOSED_CYCLE);
+
+    assertThat(service.getCurrentCycle()).isEmpty();
   }
 }

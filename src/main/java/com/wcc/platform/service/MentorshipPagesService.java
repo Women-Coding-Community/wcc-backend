@@ -20,7 +20,9 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.PageRepository;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 /** Mentorship service. */
@@ -192,5 +194,18 @@ public class MentorshipPagesService {
     }
     return repository.getFallback(
         MENTORSHIP_RESOURCES, MentorshipResourcesPage.class, objectMapper);
+  }
+
+  /**
+   * API to retrieve the mentorship cycle currently open for registration.
+   *
+   * @return the open cycle, or empty if registration is closed
+   */
+  public Optional<MentorshipCycleEntity> getCurrentCycle() {
+    final var cycle = service.getCurrentCycle();
+    if (!cycle.isRegistrationOpen()) {
+      return Optional.empty();
+    }
+    return Optional.of(cycle);
   }
 }

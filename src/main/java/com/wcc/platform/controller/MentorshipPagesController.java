@@ -12,6 +12,7 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorshipFaqPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipResourcesPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipStudyGroupsPage;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.service.MentorshipPagesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -116,5 +117,20 @@ public class MentorshipPagesController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<MentorshipResourcesPage> getMentorshipResources() {
     return ResponseEntity.ok(service.getResources());
+  }
+
+  /**
+   * API to get the mentorship cycle that is currently open for registration.
+   *
+   * @return Current open cycle, or 404 if none is open
+   */
+  @GetMapping("/cycles/current")
+  @Operation(summary = "API to retrieve the mentorship cycle currently open for registration")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<MentorshipCycleEntity> getCurrentCycle() {
+    return service
+        .getCurrentCycle()
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 }
