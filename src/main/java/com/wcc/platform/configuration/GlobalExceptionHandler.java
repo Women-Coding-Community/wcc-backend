@@ -29,6 +29,7 @@ import com.wcc.platform.domain.exceptions.TemplateValidationException;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -221,7 +222,19 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorDetails> handleMultipartException(
       final MultipartException ex, final WebRequest request) {
     log.warn("Multipart request error: {}", ex.getMessage());
-    if (ex instanceof MaxUploadSizeExceededException) {
+    Throwable root = ex;
+    while (root.getCause() != null && !root.equals(root.getCause())) {
+      root = root.getCause();
+    }
+    final String rootName = root.getClass().getSimpleName();
+    final String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase(Locale.ROOT) : "";
+    final boolean isSizeLimit =
+        ex instanceof MaxUploadSizeExceededException
+            || rootName.contains("SizeLimitExceeded")
+            || msg.contains("size limit")
+            || msg.contains("maximum upload size");
+
+    if (isSizeLimit) {
       final var errorDetails =
           new ErrorDetails(
               HttpStatus.PAYLOAD_TOO_LARGE.value(),

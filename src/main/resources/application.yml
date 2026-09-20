@@ -1,6 +1,6 @@
 server:
   tomcat:
-    max-swallow-size: -1
+    max-swallow-size: 50MB
 
 spring:
   application:
