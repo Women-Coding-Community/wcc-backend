@@ -221,18 +221,26 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({MaxUploadSizeExceededException.class, MultipartException.class})
   public ResponseEntity<ErrorDetails> handleMultipartException(
       final MultipartException ex, final WebRequest request) {
-    log.warn("Multipart request error: {}", ex.getMessage());
+    log.warn("Multipart request error: {}", ex.getMessage(), ex);
     Throwable root = ex;
     while (root.getCause() != null && !root.equals(root.getCause())) {
       root = root.getCause();
     }
     final String rootName = root.getClass().getSimpleName();
-    final String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase(Locale.ROOT) : "";
+    final String rootMsg =
+        root.getMessage() != null ? root.getMessage().toLowerCase(Locale.ROOT) : "";
+    final String exMsg =
+        ex.getMessage() != null ? ex.getMessage().toLowerCase(Locale.ROOT) : "";
     final boolean isSizeLimit =
         ex instanceof MaxUploadSizeExceededException
             || rootName.contains("SizeLimitExceeded")
-            || msg.contains("size limit")
-            || msg.contains("maximum upload size");
+            || rootName.contains("FileSizeLimitExceeded")
+            || rootName.contains("SizeException")
+            || exMsg.contains("size limit")
+            || exMsg.contains("maximum upload size")
+            || rootMsg.contains("size limit")
+            || rootMsg.contains("exceeds the configured maximum")
+            || rootMsg.contains("maximum upload size");
 
     if (isSizeLimit) {
       final var errorDetails =

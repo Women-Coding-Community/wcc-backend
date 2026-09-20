@@ -49,7 +49,7 @@ public class ResourceController {
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN})
   @Operation(
       summary = "Upload a resource",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Resource> uploadResource(
       @Parameter(description = "File to upload") @RequestParam("file") final MultipartFile file,
@@ -103,7 +103,7 @@ public class ResourceController {
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN})
   @Operation(
       summary = "Delete a resource",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteResource(
       @Parameter(description = "ID of the resource to delete") @PathVariable final UUID id) {
@@ -117,7 +117,7 @@ public class ResourceController {
   @RequiresPermission(Permission.USER_WRITE)
   @Operation(
       summary = "Save a member's profile picture from an external URL",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   public ResponseEntity<MemberProfilePicture> saveExternalProfilePicture(
       @Valid @RequestBody final ExternalProfilePictureRequest request) {
 
@@ -131,7 +131,7 @@ public class ResourceController {
   @RequiresPermission(Permission.USER_WRITE)
   @Operation(
       summary = "Upload a member's profile picture",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MemberProfilePicture> uploadMemberProfilePicture(
       @Parameter(description = "Id of the member") @RequestParam final Long memberId,
@@ -158,7 +158,7 @@ public class ResourceController {
   @RequiresPermission(Permission.USER_WRITE)
   @Operation(
       summary = "Delete a member's profile picture",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteMemberProfilePicture(
       @Parameter(description = "Id of the member") @PathVariable final Long memberId) {

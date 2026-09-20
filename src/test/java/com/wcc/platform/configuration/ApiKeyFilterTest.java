@@ -61,6 +61,25 @@ class ApiKeyFilterTest {
   }
 
   @Test
+  @DisplayName("Given valid api_key in query string, when filtering, then allow request")
+  void shouldAllowRequestWhenApiKeyInQueryParamMatches() throws Exception {
+    ObjectMapper objectMapper = mock(ObjectMapper.class);
+    ApiKeyFilter apiKeyFilter = new ApiKeyFilter(true, "test-api-key", objectMapper);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    when(request.getRequestURI()).thenReturn("/api/cms/v1/test");
+    when(request.getHeader("X-API-KEY")).thenReturn(null);
+    when(request.getQueryString()).thenReturn("other=123&api_key=test-api-key");
+
+    apiKeyFilter.doFilterInternal(request, response, filterChain);
+
+    verify(filterChain).doFilter(request, response);
+    verifyNoInteractions(response);
+  }
+
+  @Test
   @SuppressWarnings("unchecked")
   void shouldRejectRequestWhenApiKeyDoesNotMatch() throws Exception {
     HttpServletRequest request = mock(HttpServletRequest.class);

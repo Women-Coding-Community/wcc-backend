@@ -181,12 +181,14 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
     void shouldDeleteFileSuccessfully() throws IOException {
       // Given
       when(mockFiles.delete(TEST_FILE_ID)).thenReturn(mockDelete);
+      when(mockDelete.setSupportsAllDrives(true)).thenReturn(mockDelete);
 
       // When
       googleDriveRepository.deleteFile(TEST_FILE_ID);
 
       // Then
       verify(mockFiles).delete(TEST_FILE_ID);
+      verify(mockDelete).setSupportsAllDrives(true);
       verify(mockDelete).execute();
     }
 
@@ -195,6 +197,7 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
     void shouldThrowExceptionWhenDeletionFails() throws IOException {
       // Given
       when(mockFiles.delete(TEST_FILE_ID)).thenReturn(mockDelete);
+      when(mockDelete.setSupportsAllDrives(true)).thenReturn(mockDelete);
       doThrow(new IOException("Deletion failed")).when(mockDelete).execute();
 
       // When & Then
@@ -214,6 +217,7 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       // Given
       File expectedFile = createTestFile();
       when(mockFiles.get(TEST_FILE_ID)).thenReturn(mockGet);
+      when(mockGet.setSupportsAllDrives(true)).thenReturn(mockGet);
       when(mockGet.setFields(any(String.class))).thenReturn(mockGet);
       when(mockGet.execute()).thenReturn(expectedFile);
 
@@ -224,6 +228,7 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       assertThat(result).isNotNull();
       assertThat(result.getId()).isEqualTo(TEST_FILE_ID);
       assertThat(result.getName()).isEqualTo(TEST_FILE_NAME);
+      verify(mockGet).setSupportsAllDrives(true);
       verify(mockGet).setFields("id, name, webViewLink");
     }
 
@@ -232,6 +237,7 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
     void shouldThrowExceptionWhenGetFileFails() throws IOException {
       // Given
       when(mockFiles.get(TEST_FILE_ID)).thenReturn(mockGet);
+      when(mockGet.setSupportsAllDrives(true)).thenReturn(mockGet);
       when(mockGet.setFields(any(String.class))).thenReturn(mockGet);
       when(mockGet.execute()).thenThrow(new IOException("Get file failed"));
 
@@ -253,6 +259,8 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       int pageSize = 10;
       FileList expectedFileList = createTestFileList();
       when(mockFiles.list()).thenReturn(mockList);
+      when(mockList.setSupportsAllDrives(true)).thenReturn(mockList);
+      when(mockList.setIncludeItemsFromAllDrives(true)).thenReturn(mockList);
       when(mockList.setPageSize(pageSize)).thenReturn(mockList);
       when(mockList.setFields(any(String.class))).thenReturn(mockList);
       when(mockList.execute()).thenReturn(expectedFileList);
@@ -263,6 +271,8 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       // Then
       assertThat(result).isNotNull();
       assertThat(result.getFiles()).hasSize(1);
+      verify(mockList).setSupportsAllDrives(true);
+      verify(mockList).setIncludeItemsFromAllDrives(true);
       verify(mockList).setPageSize(pageSize);
       verify(mockList).setFields("nextPageToken, files(id, name, webViewLink)");
     }
@@ -273,6 +283,8 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       // Given
       int pageSize = 10;
       when(mockFiles.list()).thenReturn(mockList);
+      when(mockList.setSupportsAllDrives(true)).thenReturn(mockList);
+      when(mockList.setIncludeItemsFromAllDrives(true)).thenReturn(mockList);
       when(mockList.setPageSize(pageSize)).thenReturn(mockList);
       when(mockList.setFields(any(String.class))).thenReturn(mockList);
       when(mockList.execute()).thenThrow(new IOException("List files failed"));
