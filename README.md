@@ -14,6 +14,7 @@
                 * [IntelliJ JRE Config](#intellij-jre-config)
         * [Setup PostgreSQL database](#setup-postgresql-database)
     * [Run Locally](#run-locally)
+        * [Run the whole application with Docker](#run-the-whole-application-with-docker)
         * [Run Locally without Authentication](#run-locally-without-authentication)
     * [Generate Postman Collection](#generate-postman-collection)
     * [Open API Documentation](#open-api-documentation)
@@ -172,12 +173,18 @@ Setup Data source in the IntelliJ.
 **Note**: In case of problems with the database during the development phase,
 when changes to the db tables are frequent, from the DB source connection in IntelliJ drop the
 tables and refresh the DB. Start the application.
-To fix database issues (for example, incompatibility errors with older DB versions), the simple
-command
+To fix database issues (for example, incompatibility errors with older DB versions, or a
+Flyway migration error that stops the application from starting), wipe this project's database
+volume and start again:
 
-``docker system prune -a --volumes``
+```shell
+./scripts/app-stack.sh up --purge     # full stack (see below)
+# or, for the backend-only developer stack:
+docker compose -f docker/docker-compose.yml down -v && ./scripts/docker-up.sh
+```
 
-can be executed from the terminal.
+As a last resort, `docker system prune -a --volumes` also works — but be aware it deletes
+**every** unused image, container and volume on your machine, not just this project's.
 
 ## Run Locally
 
@@ -196,6 +203,72 @@ execute
 
 Now you have the application running connected to the postgres database.
 Test the application via: http://localhost:8080/swagger-ui/index.html
+
+### Run the whole application with Docker
+
+One command starts everything — backend API, admin portal, public website, PostgreSQL,
+MailHog — and seeds it with the QA login accounts (admin, mentorship admin, leader, member, a
+long-term mentor and an ad-hoc mentor), a MENTORS page and an open mentorship cycle. No test
+account is baked into the application source: the backend bootstraps only `admin@wcc.dev`, and
+the seed script creates the rest through the API.
+
+```shell
+./scripts/app-stack.sh up
+```
+
+| Service        | URL                                        | Source                              |
+|----------------|--------------------------------------------|-------------------------------------|
+| Backend API    | http://localhost:8080 (Swagger at `/swagger-ui/index.html`) | this repository (`docker` profile) |
+| Admin portal   | http://localhost:3000                      | `admin-wcc-app/`                    |
+| Public website | http://localhost:3001                      | [`wcc-frontend`](https://github.com/Women-Coding-Community/wcc-frontend) |
+| MailHog inbox  | http://localhost:8025                      |                                     |
+| PostgreSQL     | `localhost:5432`, db `wcc` (`POSTGRES_PORT=5433` if 5432 is taken) |             |
+
+Log in to the admin portal with any account from
+[`docs/qa_local_setup.md`](docs/qa_local_setup.md#seeded-accounts) (e.g. `admin@wcc.dev` /
+`wcc-admin`).
+
+The public website is built from a **sibling checkout** of `wcc-frontend`
+(`../wcc-frontend`). If yours lives elsewhere, or you have no checkout, point
+`WCC_FRONTEND_CONTEXT` at a directory or a git URL:
+
+```shell
+WCC_FRONTEND_CONTEXT=https://github.com/Women-Coding-Community/wcc-frontend.git ./scripts/app-stack.sh up
+```
+
+Other commands:
+
+```shell
+./scripts/app-stack.sh up --purge        # wipe the database volume first, then start and re-seed
+./scripts/app-stack.sh up --no-seed      # start without seeding
+./scripts/app-stack.sh seed              # re-run the seed (idempotent)
+./scripts/app-stack.sh cycle ad-hoc      # switch the open+current mentorship cycle: long-term | ad-hoc | both | none | open <id>
+./scripts/app-stack.sh down              # stop; data is kept
+./scripts/app-stack.sh purge             # stop and delete this stack's database volume
+./scripts/app-stack.sh logs [service]    # follow logs
+```
+
+Notes:
+
+* The stack is defined in [`docker/docker-compose.qa.yml`](docker/docker-compose.qa.yml)
+  (`app-stack.sh` is a thin wrapper around `docker compose -f docker/docker-compose.qa.yml`).
+  If a local PostgreSQL already uses port 5432, run with `POSTGRES_PORT=5433`.
+* The seed runs [`scripts/init-local-env.sh`](scripts/init-local-env.sh) inside the stack; it
+  also works from the host against a running backend. Payloads live in
+  [`scripts/seed-data/`](scripts/seed-data).
+* Cycle scenarios are applied by [`scripts/seed-cycles.sh`](scripts/seed-cycles.sh) directly in
+  the database (there is no API to open a cycle). `both` opens both cycle types, which makes
+  `GET /cycles/current` and mentee registration pick one of them non-deterministically — use
+  `long-term` or `ad-hoc` for registration flows and `none` for the "registration closed" path.
+* The `admin-wcc-app` image bakes `NEXT_PUBLIC_API_BASE=http://localhost:8080` in at build time
+  because the portal calls the API from the browser; the public website calls it server-side and
+  uses the internal `springboot-app` hostname.
+* This stack shares container names, ports and the database volume with the backend-only
+  developer stack `docker/docker-compose.yml` (`./scripts/docker-up.sh`), so run only one of
+  them at a time.
+* The [wcc-qa](https://github.com/Women-Coding-Community/wcc-qa) Playwright suite runs against
+  this stack with its default settings (`API_HOST=http://localhost:8080`, `API_KEY=local`,
+  `ADMIN_BASE_URL=http://localhost:3000`).
 
 * Start the Application from your IDE
 
@@ -361,8 +434,10 @@ A default admin user is auto-created at startup for local testing:
 - Email: admin@wcc.dev
 - Password: wcc-admin
 
-You can disable seeding with `app.seed.enabled=false`, or add/change users by editing
-the `app.seed.users` list in `application.yml` (or an environment-specific profile override).
+You can disable seeding with `app.seed.enabled=false`, or change this bootstrap user by editing
+the `app.seed.users` list in `application.yml`. Every other test account (mentorship admin,
+leader, member, long-term and ad-hoc mentors) is created by the seed script of the QA stack, not
+by the application — see [`docs/qa_local_setup.md`](docs/qa_local_setup.md#seeded-accounts).
 
 1. Copy env example and adjust as needed:
 
