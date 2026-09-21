@@ -57,7 +57,7 @@ export default function MentorApplicationsPanel({
       )}
 
       {applications.map((app) => (
-        <MenteeApplicationCard key={app.menteeId} application={app} showRejectionReason />
+        <MenteeApplicationCard key={app.applicationId} application={app} showRejectionReason />
       ))}
     </Box>
   );
