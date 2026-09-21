@@ -19,6 +19,8 @@
     * [Running the script locally (troubleshooting)](#running-the-script-locally-troubleshooting)
     * [Troubleshooting a failed run](#troubleshooting-a-failed-run)
     * [Restoring from a backup](#restoring-from-a-backup)
+        * [Restore locally (inspection or migration testing)](#restore-locally-inspection-or-migration-testing)
+        * [Restore into production (disaster recovery)](#restore-into-production-disaster-recovery)
     * [Out of scope](#out-of-scope)
 
 <!-- TOC -->
@@ -229,14 +231,99 @@ fixed.
 
 ## Restoring from a backup
 
-Restoring is a separate, manual administrative procedure and is out of
-scope for this workflow (see spec Assumptions). For restoring a downloaded
-`.dump` into a local database for inspection or migration testing, see
+This workflow only takes and retains backups — restoring is always a
+separate, manual, deliberate action, whether you're inspecting a backup
+locally or recovering production from an incident. Start by
+[downloading the artifact](#downloading-and-inspecting-a-backup) for the
+run you need.
+
+### Restore locally (inspection or migration testing)
+
+Use this to inspect a backup's contents, recover a specific record, or test
+a risky migration against real data without touching production. Requires a
+local Postgres (`docker compose -f docker/docker-compose.yml up postgres -d`).
+
+```bash
+# 1. Create a clean target database (never restore over your everyday dev DB)
+docker exec -it postgres psql -U postgres -c "DROP DATABASE IF EXISTS wcc_restore_test;"
+docker exec -it postgres psql -U postgres -c "CREATE DATABASE wcc_restore_test;"
+
+# 2. Restore the downloaded dump into it
+PGPASSWORD=<local-postgres-password> pg_restore \
+  -h localhost \
+  -p 5432 \
+  -U postgres \
+  -d wcc_restore_test \
+  --no-owner \
+  --no-privileges \
+  --schema=public \
+  wcc-prod-backup-<date>.dump
+
+# 3. Verify — connect and spot-check
+docker exec -it postgres psql -U postgres -d wcc_restore_test -c "\dt"
+```
+
+To then run application migrations against this restored copy (e.g. to
+validate a Flyway migration before it goes near production), see
 [Testing a Migration Against a Production Backup](flyway_migration_troubleshooting.md#testing-a-migration-against-a-production-backup).
+
+### Restore into production (disaster recovery)
+
+Only do this after a confirmed incident (bad migration, accidental data
+loss) and with another maintainer aware — this replaces live data and is
+not reversible once traffic resumes. There is no automated rollback for
+this step.
+
+```bash
+# 1. Stop the app so nothing writes to the database mid-restore
+fly scale count 0 -a wcc-backend
+
+# 2. Open a proxy tunnel to the production Postgres app
+fly proxy 15432:5432 -a wcc-postgres-prod &
+sleep 3
+
+# 3. Restore into a NEW database first, never directly over the live one —
+#    this lets you verify before cutting over, and keeps the original
+#    database intact as a fallback if the restore itself goes wrong
+PGPASSWORD=<prod-db-password> pg_restore \
+  -h localhost \
+  -p 15432 \
+  -U <prod-db-user> \
+  -d postgres \
+  --create \
+  --dbname=postgres \
+  --no-owner \
+  --no-privileges \
+  --schema=public \
+  wcc-prod-backup-<date>.dump
+# (if --create isn't viable against the managed instance, instead
+#  `CREATE DATABASE wcc_restored;` first, then restore with `-d wcc_restored`
+#  omitting --create/--dbname)
+
+# 4. Verify the restored database's row counts / recent records look right
+#    before doing anything irreversible
+
+# 5. Cut over: point the app's SPRING_DATASOURCE_URL at the restored
+#    database (or rename databases so the restored one takes the original
+#    name), then redeploy
+fly secrets set SPRING_DATASOURCE_URL=jdbc:postgresql://<host>/wcc_restored -a wcc-backend
+
+# 6. Resume traffic
+fly scale count 1 -a wcc-backend
+
+# 7. Close the proxy tunnel
+kill %1
+```
+
+Adjust database/user names to match your actual production configuration —
+the values above are illustrative. If in doubt, restore into a new database,
+verify thoroughly, and get a second maintainer to review the cutover step
+before running it.
 
 ## Out of scope
 
-- Restoring backups (see above) — this workflow only takes and retains them.
+- Automatic/self-service restoring — the workflow only takes and retains
+  backups; restoring is always the manual procedure above, never automated.
 - Non-production environments — only the production database is backed up
   (FR-008).
 - Selective/partial backups — every backup is a full dump of the `public`
