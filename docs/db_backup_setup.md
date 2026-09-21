@@ -30,9 +30,7 @@
 `.github/workflows/db-backup.yml` takes a full, compressed backup of the production
 Postgres database on an unattended schedule and stores it as a GitHub Actions
 artifact, so a bad migration or accidental deletion is recoverable without anyone
-having remembered to run a manual backup. See
-[specs/001-db-backup-workflow/spec.md](../specs/001-db-backup-workflow/spec.md) for
-the full feature specification.
+having remembered to run a manual backup.
 
 ## Structure and flow
 
@@ -142,7 +140,7 @@ gh secret set PROD_DB_USER --body "<prod-db-user>"
 gh secret set PROD_DB_PASSWORD --body "<prod-db-password>"
 
 # A narrowly-scoped Fly API token, if Fly.io supports one for this app;
-# otherwise fall back to the existing deploy token (see research.md decision 5)
+# otherwise fall back to the existing deploy token
 fly tokens create deploy -a wcc-postgres-prod
 gh secret set FLY_API_TOKEN_BACKUP --body "<token-output-above>"
 ```
@@ -151,9 +149,8 @@ gh secret set FLY_API_TOKEN_BACKUP --body "<token-output-above>"
 > reusing the deploy-scoped `FLY_API_TOKEN_PROD` secret already used by
 > `fly-prod-deploy-backend.yml` — a read-only backup job doesn't need deploy
 > permissions. If Fly.io doesn't support a narrower token, reusing
-> `FLY_API_TOKEN_PROD` as `FLY_API_TOKEN_BACKUP`'s value is an acceptable,
-> documented fallback (see [research.md](../specs/001-db-backup-workflow/research.md)
-> decision 5).
+> `FLY_API_TOKEN_PROD` as `FLY_API_TOKEN_BACKUP`'s value is an acceptable
+> fallback.
 
 ## Running the job manually
 
