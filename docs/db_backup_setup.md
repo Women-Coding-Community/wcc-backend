@@ -63,7 +63,8 @@ the full feature specification.
          ├─ success ──▶ Artifact appears under the run's "Artifacts" panel
          │
          └─ failure ──▶ GitHub's built-in workflow-failure notification
-                         is sent to repository maintainers/watchers
+                         is emailed to the user who last edited the
+                         workflow's schedule trigger
 ```
 
 Any step failing (missing secret, unreachable database, `pg_dump` error, empty
@@ -106,8 +107,13 @@ at steady state.
 ### Failure notification
 
 No custom notification integration is used. A failed run reports **failure**
-status, and GitHub Actions sends its built-in workflow-failure email to
-repository maintainers/watchers automatically.
+status, and GitHub Actions sends its built-in workflow-failure email
+automatically — but only to the user who last edited the `schedule` trigger
+in this workflow file, not to all repository maintainers or watchers. If
+that person is no longer on the team, nobody is notified; treat this as a
+single point of failure and check recent runs periodically
+(`gh run list --workflow=db-backup.yml`) rather than relying solely on
+email.
 
 ## Required secrets
 
@@ -177,7 +183,10 @@ gh run watch --exit-status
 gh run list --workflow=db-backup.yml
 
 # Download the artifact from a specific run
+# (gh nests it in a subdirectory named after the artifact, which is the
+#  same as the dump filename — cd into it before the next command)
 gh run download <run-id>
+cd wcc-prod-backup-<date>.dump
 
 # Confirm the dump is structurally valid (does not touch production)
 pg_restore --list wcc-prod-backup-<date>.dump
