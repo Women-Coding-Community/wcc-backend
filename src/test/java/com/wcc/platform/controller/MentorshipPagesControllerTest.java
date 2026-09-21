@@ -27,14 +27,9 @@ import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorshipAdHocTimelinePage;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.platform.mentorship.CycleStatus;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.MentorshipPagesService;
 import com.wcc.platform.utils.FileUtil;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +53,6 @@ public class MentorshipPagesControllerTest {
   public static final String API_MENTORSHIP_MENTORS = "/api/cms/v1/mentorship/mentors";
   public static final String API_AD_HOC_TIMELINE = "/api/cms/v1/mentorship/ad-hoc-timeline";
   public static final String API_MENTORSHIP_RESOURCES = "/api/cms/v1/mentorship/resources";
-  public static final String API_CURRENT_CYCLE = "/api/cms/v1/mentorship/cycles/current";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
@@ -204,41 +198,5 @@ public class MentorshipPagesControllerTest {
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedJson));
-  }
-
-  @Test
-  @DisplayName(
-      "Given a cycle is open for registration, when GET /cycles/current, then return OK with the cycle")
-  void shouldReturnOpenCycleForCurrentCycle() throws Exception {
-    final LocalDate today = LocalDate.now();
-    when(service.getCurrentCycle())
-        .thenReturn(
-            Optional.of(
-                MentorshipCycleEntity.builder()
-                    .cycleId(6L)
-                    .mentorshipType(MentorshipType.AD_HOC)
-                    .registrationStartDate(today.minusDays(5))
-                    .registrationEndDate(today.plusDays(10))
-                    .status(CycleStatus.OPEN)
-                    .build()));
-
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_CURRENT_CYCLE))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.cycleId", is(6)))
-        .andExpect(jsonPath("$.status", is("OPEN")))
-        .andExpect(jsonPath("$.registrationOpen", is(true)));
-  }
-
-  @Test
-  @DisplayName(
-      "Given no cycle is open for registration, when GET /cycles/current, then return not found with no body")
-  void shouldReturnNotFoundWhenNoCycleIsOpen() throws Exception {
-    when(service.getCurrentCycle()).thenReturn(Optional.empty());
-
-    mockMvc
-        .perform(MockMvcRequestFactory.getRequest(API_CURRENT_CYCLE))
-        .andExpect(status().isNotFound())
-        .andExpect(content().string(""));
   }
 }

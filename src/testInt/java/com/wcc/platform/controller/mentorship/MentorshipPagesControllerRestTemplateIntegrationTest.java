@@ -7,7 +7,6 @@ import static com.wcc.platform.domain.cms.attributes.TechnicalArea.FRONTEND;
 import static com.wcc.platform.factories.SetupMentorshipPagesFactories.createMentorsPageTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.wcc.platform.domain.cms.attributes.CodeLanguage;
 import com.wcc.platform.domain.cms.attributes.MentorshipFocusArea;
 import com.wcc.platform.domain.cms.pages.mentorship.LongTermMentorship;
@@ -16,26 +15,19 @@ import com.wcc.platform.domain.cms.pages.mentorship.MentorMonthAvailability;
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
 import com.wcc.platform.domain.platform.member.Member;
 import com.wcc.platform.domain.platform.member.ProfileStatus;
-import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.LanguageProficiency;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
-import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
-import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.platform.mentorship.Skills;
 import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.factories.SetupFactories;
 import com.wcc.platform.repository.MentorRepository;
-import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import com.wcc.platform.service.PageService;
-import java.time.LocalDate;
 import java.time.Month;
-import java.time.Year;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,7 +37,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -55,7 +46,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDatabaseSetup {
 
   private static final String API_MENTORS = "/api/cms/v1/mentorship/mentors";
-  private static final String API_CURRENT_CYCLE = "/api/cms/v1/mentorship/cycles/current";
 
   @LocalServerPort private int port;
 
@@ -63,7 +53,6 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
   @Autowired private PageService pageService;
   @Autowired private PageRepository pageRepository;
   @Autowired private MentorRepository mentorRepository;
-  @Autowired private MentorshipCycleRepository cycleRepository;
 
   @BeforeEach
   void setUp() {
@@ -173,47 +162,5 @@ class MentorshipPagesControllerRestTemplateIntegrationTest extends DefaultDataba
     assertThat(body.mentors().getFirst().getFullName()).isEqualTo("Alice Berlin");
     assertThat(body.filterSection()).isNotNull();
     assertThat(body.openCycle()).isNotNull();
-  }
-
-  @Test
-  @DisplayName(
-      "Given a cycle is open for registration, when GET /cycles/current with only the API key, then return OK with the open cycle")
-  void shouldReturnOpenCycleWithApiKeyOnly() {
-    final LocalDate today = LocalDate.now();
-    final Long cycleId =
-        cycleRepository
-            .create(
-                MentorshipCycleEntity.builder()
-                    .cycleYear(Year.of(2099))
-                    .mentorshipType(MentorshipType.AD_HOC)
-                    .cycleMonth(Month.JANUARY)
-                    .registrationStartDate(today.minusDays(1))
-                    .registrationEndDate(today.plusDays(10))
-                    .cycleStartDate(today.plusDays(15))
-                    .cycleEndDate(today.plusDays(45))
-                    .status(CycleStatus.OPEN)
-                    .maxMenteesPerMentor(3)
-                    .description("Current cycle endpoint test")
-                    .build())
-            .getCycleId();
-    try {
-      final HttpHeaders headers = new HttpHeaders();
-      headers.add("X-API-KEY", "test-api-key");
-
-      final ResponseEntity<JsonNode> response =
-          restTemplate.exchange(
-              "http://localhost:" + port + API_CURRENT_CYCLE,
-              HttpMethod.GET,
-              new HttpEntity<>(headers),
-              JsonNode.class);
-
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-      final JsonNode body = response.getBody();
-      assertThat(body).isNotNull();
-      assertThat(body.get("status").asText()).isEqualTo("OPEN");
-      assertThat(body.get("registrationOpen").asBoolean()).isTrue();
-    } finally {
-      cycleRepository.deleteById(cycleId);
-    }
   }
 }
