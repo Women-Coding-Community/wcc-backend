@@ -26,6 +26,7 @@ import com.wcc.platform.domain.platform.mentorship.Mentor;
 import com.wcc.platform.domain.platform.mentorship.MentorDto;
 import com.wcc.platform.domain.platform.type.MemberType;
 import com.wcc.platform.domain.platform.type.RoleType;
+import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MentorshipService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -51,6 +52,7 @@ class MentorControllerTest {
 
   @Autowired private MockMvc mockMvc;
   @MockBean private MentorshipService mentorshipService;
+  @MockBean private AuthService authService;
 
   @Test
   @DisplayName("Given mentors exist, when getting all mentors, then return 200 OK")

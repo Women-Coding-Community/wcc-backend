@@ -212,7 +212,7 @@ export default function MentorshipAdminPage() {
                 <Alert severity="error">{appsError[3]}</Alert>
               ) : (
                 pendingApps.map((app) => (
-                  <MenteeApplicationCard key={app.menteeId} application={app} />
+                  <MenteeApplicationCard key={app.applicationId} application={app} />
                 ))
               )}
               {!appsLoading[3] && pendingApps.length === 0 && (
@@ -229,7 +229,7 @@ export default function MentorshipAdminPage() {
                 <Alert severity="error">{appsError[4]}</Alert>
               ) : (
                 acceptedApps.map((app) => (
-                  <MenteeApplicationCard key={app.menteeId} application={app} />
+                  <MenteeApplicationCard key={app.applicationId} application={app} />
                 ))
               )}
               {!appsLoading[4] && acceptedApps.length === 0 && (
@@ -246,7 +246,11 @@ export default function MentorshipAdminPage() {
                 <Alert severity="error">{appsError[5]}</Alert>
               ) : (
                 rejectedApps.map((app) => (
-                  <MenteeApplicationCard key={app.menteeId} application={app} showRejectionReason />
+                  <MenteeApplicationCard
+                    key={app.applicationId}
+                    application={app}
+                    showRejectionReason
+                  />
                 ))
               )}
               {!appsLoading[5] && rejectedApps.length === 0 && (

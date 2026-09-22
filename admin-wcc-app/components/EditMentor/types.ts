@@ -7,4 +7,5 @@ export interface FormSectionProps {
   control: Control<EditMentorFormData>;
   errors: FieldErrors<EditMentorFormData>;
   setValue?: UseFormSetValue<EditMentorFormData>;
+  adHocError?: string | null;
 }

@@ -27,6 +27,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 Mentor Dashboard
               </Button>
             )}
+            {isMentor && (
+              <Button component={Link} href="/admin/mentor/profile" color="inherit">
+                My Profile
+              </Button>
+            )}
             {(isAdmin || isMentorshipAdmin || isLeader) && (
               <Button component={Link} href="/admin/mentors" color="inherit">
                 Mentors

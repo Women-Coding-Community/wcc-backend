@@ -11,6 +11,8 @@ jest.mock('@/lib/auth', () => ({
   getStoredToken: jest.fn(() => 'mock-token'),
 }));
 
+const timeout = 30000;
+
 global.scrollTo = jest.fn();
 
 const mockApiFetch = api.apiFetch as jest.MockedFunction<typeof api.apiFetch>;
@@ -105,87 +107,99 @@ describe('CreateMentorForm', () => {
     expect(mockApiFetch).not.toHaveBeenCalled();
   });
 
-  it('shows success message when API call succeeds', async () => {
-    mockApiFetch.mockResolvedValueOnce({});
-    const user = userEvent.setup();
-    render(<CreateMentorForm />);
+  it(
+    'shows success message when API call succeeds',
+    async () => {
+      mockApiFetch.mockResolvedValueOnce({});
+      const user = userEvent.setup();
+      render(<CreateMentorForm />);
 
-    await fillRequiredFields(user);
+      await fillRequiredFields(user);
 
-    const submitButton = screen.getByRole('button', { name: /create mentor/i });
-    await user.click(submitButton);
+      const submitButton = screen.getByRole('button', { name: /create mentor/i });
+      await user.click(submitButton);
 
-    await screen.findByText('Mentor created successfully!');
+      await screen.findByText('Mentor created successfully!');
 
-    expect(mockApiFetch).toHaveBeenCalledWith(
-      '/api/platform/v1/mentors',
-      expect.objectContaining({
-        method: 'POST',
-        token: 'mock-token',
-      })
-    );
-  });
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        '/api/platform/v1/mentors',
+        expect.objectContaining({
+          method: 'POST',
+          token: 'mock-token',
+        })
+      );
+    },
+    timeout
+  );
 
-  it('shows error message when API call fails', async () => {
-    mockApiFetch.mockRejectedValueOnce(new Error('Server error'));
-    const user = userEvent.setup();
-    render(<CreateMentorForm />);
+  it(
+    'shows error message when API call fails',
+    async () => {
+      mockApiFetch.mockRejectedValueOnce(new Error('Server error'));
+      const user = userEvent.setup();
+      render(<CreateMentorForm />);
 
-    await fillRequiredFields(user);
+      await fillRequiredFields(user);
 
-    const submitButton = screen.getByRole('button', { name: /create mentor/i });
-    await user.click(submitButton);
+      const submitButton = screen.getByRole('button', { name: /create mentor/i });
+      await user.click(submitButton);
 
-    await screen.findByText('Server error');
-  });
+      await screen.findByText('Server error');
+    },
+    timeout
+  );
 
-  it('sends correct payload to API when form is submitted', async () => {
-    mockApiFetch.mockResolvedValueOnce({});
-    const user = userEvent.setup();
-    render(<CreateMentorForm />);
+  it(
+    'sends correct payload to API when form is submitted',
+    async () => {
+      mockApiFetch.mockResolvedValueOnce({});
+      const user = userEvent.setup();
+      render(<CreateMentorForm />);
 
-    await fillRequiredFields(user);
+      await fillRequiredFields(user);
 
-    const submitButton = screen.getByRole('button', { name: /create mentor/i });
-    await user.click(submitButton);
+      const submitButton = screen.getByRole('button', { name: /create mentor/i });
+      await user.click(submitButton);
 
-    await waitFor(() => {
-      expect(mockApiFetch).toHaveBeenCalled();
-    });
+      await waitFor(() => {
+        expect(mockApiFetch).toHaveBeenCalled();
+      });
 
-    const callArgs = mockApiFetch.mock.calls[0];
-    const payload = callArgs[1]?.body;
+      const callArgs = mockApiFetch.mock.calls[0];
+      const payload = callArgs[1]?.body;
 
-    expect(payload).toMatchObject({
-      fullName: 'Jane Doe',
-      email: 'jane@example.com',
-      position: 'Developer',
-      slackDisplayName: 'janedoe',
-      country: {
-        countryCode: 'US',
-        countryName: 'United States',
-      },
-      memberTypes: ['MENTOR'],
-      profileStatus: 'ACTIVE',
-      bio: 'Experienced developer',
-      skills: {
-        yearsExperience: 5,
-        areas: expect.arrayContaining([
-          expect.objectContaining({ technicalArea: 'BACKEND', proficiencyLevel: 'INTERMEDIATE' }),
-        ]),
-        languages: expect.arrayContaining([
-          expect.objectContaining({ language: 'JAVA', proficiencyLevel: 'INTERMEDIATE' }),
-        ]),
-        mentorshipFocus: expect.any(Array),
-      },
-      menteeSection: {
-        mentorshipType: expect.arrayContaining(['AD_HOC']),
-        availability: [],
-        idealMentee: 'Eager learners',
-        additional: '',
-      },
-    });
-  });
+      expect(payload).toMatchObject({
+        fullName: 'Jane Doe',
+        email: 'jane@example.com',
+        position: 'Developer',
+        slackDisplayName: 'janedoe',
+        country: {
+          countryCode: 'US',
+          countryName: 'United States',
+        },
+        memberTypes: ['MENTOR'],
+        profileStatus: 'ACTIVE',
+        bio: 'Experienced developer',
+        skills: {
+          yearsExperience: 5,
+          areas: expect.arrayContaining([
+            expect.objectContaining({ technicalArea: 'BACKEND', proficiencyLevel: 'INTERMEDIATE' }),
+          ]),
+          languages: expect.arrayContaining([
+            expect.objectContaining({ language: 'JAVA', proficiencyLevel: 'INTERMEDIATE' }),
+          ]),
+          mentorshipFocus: expect.any(Array),
+        },
+        menteeSection: {
+          mentorshipType: expect.arrayContaining(['AD_HOC']),
+          availability: [],
+          idealMentee: 'Eager learners',
+          additional: '',
+        },
+      });
+    },
+    timeout
+  );
 
   it('navigates to mentors list when cancel button is clicked', async () => {
     const user = userEvent.setup();

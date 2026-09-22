@@ -4,8 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.configuration.ObjectMapperConfig;
+import com.wcc.platform.domain.platform.member.ProfileStatus;
+import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import java.time.Year;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,6 +68,7 @@ class MenteeRegistrationDeserializationTest {
     assertThat(registration.cycleYear()).isEqualTo(Year.of(2026));
     assertThat(registration.mentee()).isNotNull();
     assertThat(registration.mentee().getFullName()).isEqualTo("John Doe");
+    assertThat(registration.mentee().getProfileStatus()).isNull();
   }
 
   @Test
@@ -110,6 +114,60 @@ class MenteeRegistrationDeserializationTest {
 
     assertThat(registration).isNotNull();
     assertThat(registration.cycleYear()).isEqualTo(Year.of(2026));
+    assertThat(registration.mentee()).isNotNull();
     assertThat(registration.mentee().getFullName()).isEqualTo("Jane Doe");
+    assertThat(registration.mentee().getProfileStatus()).isNull();
+  }
+
+  @Test
+  @DisplayName(
+      "Given JSON with profileStatus, when deserializing mentee, then profileStatus should be ignored")
+  void shouldIgnoreProfileStatusWhenDeserializingMentee() throws Exception {
+    String json =
+        """
+        {
+          "fullName": "Jane Doe",
+          "position": "Engineer",
+          "email": "jane@example.com",
+          "slackDisplayName": "jane-slack",
+          "country": {"countryCode": "US", "countryName": "USA"},
+          "city": "New York",
+          "companyName": "Tech Corp",
+          "images": [],
+          "network": [],
+          "profileStatus": "ACTIVE",
+          "bio": "Test bio",
+          "skills": {
+            "yearsExperience": 2,
+            "areas": [],
+            "languages": [],
+            "mentorshipFocus": []
+          },
+          "spokenLanguages": []
+        }
+        """;
+
+    Mentee mentee = objectMapper.readValue(json, Mentee.class);
+
+    assertThat(mentee).isNotNull();
+    assertThat(mentee.getProfileStatus()).isNull();
+  }
+
+  @Test
+  @DisplayName(
+      "Given mentee with profileStatus, when serializing to JSON, then profileStatus should be included")
+  void shouldIncludeProfileStatusWhenSerializingMentee() throws Exception {
+    Mentee mentee =
+        Mentee.menteeBuilder()
+            .fullName("Jane Doe")
+            .email("jane@example.com")
+            .profileStatus(ProfileStatus.ACTIVE)
+            .bio("Test bio")
+            .spokenLanguages(List.of("English"))
+            .build();
+
+    String json = objectMapper.writeValueAsString(mentee);
+
+    assertThat(json).contains("\"profileStatus\":\"ACTIVE\"");
   }
 }

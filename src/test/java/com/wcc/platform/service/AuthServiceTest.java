@@ -79,7 +79,8 @@ class AuthServiceTest {
   void shouldNormalizeMixedCaseEmailToLowercaseWhenFindingUserByEmail() {
     var mixedCaseEmail = "User@Example.COM";
     var normalizedEmail = "user@example.com";
-    var userAccount = new UserAccount(1, 1L, normalizedEmail, "hash", List.of(RoleType.ADMIN), true);
+    var userAccount =
+        new UserAccount(1, 1L, normalizedEmail, "hash", List.of(RoleType.ADMIN), true);
     when(userAccountRepository.findByEmail(normalizedEmail)).thenReturn(Optional.of(userAccount));
 
     var result = authService.findUserByEmail(mixedCaseEmail);

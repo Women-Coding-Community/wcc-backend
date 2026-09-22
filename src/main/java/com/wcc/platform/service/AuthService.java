@@ -286,6 +286,27 @@ public class AuthService {
   }
 
   /**
+   * Grants access if the current user owns the resource (their memberId matches the given memberId)
+   * or holds at least one of the specified admin roles. Throws {@link ForbiddenException} otherwise.
+   *
+   * @param memberId the member ID of the resource being accessed
+   * @param adminRoles roles that bypass the ownership requirement
+   * @throws ForbiddenException if the user is neither the owner nor holds an admin role
+   */
+  public void requireSelfOrRoles(final Long memberId, final RoleType... adminRoles) {
+    final UserAccount.User currentUser = getCurrentUser();
+    if (currentUser.hasAnyRole(adminRoles)) {
+      return;
+    }
+    if (Objects.equals(currentUser.userAccount().getMemberId(), memberId)) {
+      return;
+    }
+    throw new ForbiddenException(
+        "Access denied. Must be the resource owner or hold one of: "
+            + Arrays.toString(adminRoles));
+  }
+
+  /**
    * Require specific role(s). User needs at least one of the specified roles (from member types or
    * assigned roles).
    *

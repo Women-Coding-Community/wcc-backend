@@ -411,18 +411,13 @@ avoid CORS issues.
 
 ### CI/CD and deploy (Vercel)
 
-A GitHub Actions workflow is provided at `.github/workflows/deploy-admin-frontend-dev.yml` to deploy
-the frontend to Vercel Dev environment on pushes to `main`. Configure the following repository
-secrets:
+The admin frontend is deployed to Vercel using Vercel's Git integration on pushes to `main`.
 
-- VERCEL_TOKEN
-- VERCEL_ORG_ID
-- VERCEL_PROJECT_ID
-- NEXT_PUBLIC_API_BASE
-- NEXT_PUBLIC_API_KEY (optional)
-- NEXT_PUBLIC_APP_URL (optional)
+Configure the following environment variables in the Vercel project dashboard:
 
-Alternatively, you can connect the repository directly in Vercel dashboard and set env vars there.
+- `NEXT_PUBLIC_API_BASE` (Backend API URL, e.g. `https://wcc-backend-prod.fly.dev`)
+- `NEXT_PUBLIC_API_KEY` (Matching backend's API key)
+- `NEXT_PUBLIC_APP_URL` (Frontend URL, e.g. `https://wcc-admin.vercel.app`)
 
 ## API Testing Collection with Bruno
 

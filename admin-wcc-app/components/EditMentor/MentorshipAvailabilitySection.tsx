@@ -1,4 +1,5 @@
 import {
+  Alert,
   Autocomplete,
   Box,
   Checkbox,
@@ -34,13 +35,13 @@ export default function MentorshipAvailabilitySection({
   control,
   errors,
   setValue,
+  adHocError,
 }: FormSectionProps) {
-  const mentorshipType = useWatch({
-    control,
-    name: 'mentorshipType',
-  });
+  const mentorshipType = useWatch({ control, name: 'mentorshipType' });
+  const monthAvailability = useWatch({ control, name: 'monthAvailability' });
 
   const hasAdHocMentorship = mentorshipType?.includes(MENTORSHIP_TYPE_VALUES.AD_HOC);
+  const hasLongTermMentorship = mentorshipType?.includes(MENTORSHIP_TYPE_VALUES.LONG_TERM);
 
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
@@ -93,6 +94,56 @@ export default function MentorshipAvailabilitySection({
           />
         </Grid>
 
+        {hasLongTermMentorship && (
+          <Grid size={12}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+              Long-Term Availability
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Controller
+                  name="longTermNumMentee"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <TextField
+                      {...field}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value === '' ? 1 : Number(e.target.value))}
+                      fullWidth
+                      required
+                      type="number"
+                      label="Number of Mentees"
+                      slotProps={{ htmlInput: { min: 1 } }}
+                      error={!!errors.longTermNumMentee}
+                      helperText={errors.longTermNumMentee?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Controller
+                  name="longTermHours"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <TextField
+                      {...field}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value === '' ? 2 : Number(e.target.value))}
+                      fullWidth
+                      required
+                      type="number"
+                      label="Max Hours per Month"
+                      slotProps={{ htmlInput: { min: 2 } }}
+                      error={!!errors.longTermHours}
+                      helperText={errors.longTermHours?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
+
         <Grid size={12}>
           <Controller
             name="idealMentee"
@@ -135,6 +186,11 @@ export default function MentorshipAvailabilitySection({
             <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Month Availability
             </Typography>
+            {adHocError && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                {adHocError}
+              </Alert>
+            )}
             <Grid container spacing={2}>
               {MONTHS.map((month, index) => (
                 <Grid size={{ xs: 12, sm: 4 }} key={month}>
@@ -149,6 +205,14 @@ export default function MentorshipAvailabilitySection({
                               checked={field.value}
                               onChange={(e) => {
                                 field.onChange(e.target.checked);
+                                if (e.target.checked && setValue) {
+                                  const currentHours = monthAvailability?.[index]?.hours ?? 0;
+                                  if (currentHours === 0) {
+                                    setValue(`monthAvailability.${index}.hours`, 1, {
+                                      shouldValidate: false,
+                                    });
+                                  }
+                                }
                                 if (!e.target.checked) {
                                   setValue?.(`monthAvailability.${index}.hours`, 0);
                                 }
@@ -176,7 +240,7 @@ export default function MentorshipAvailabilitySection({
                           type="number"
                           size="small"
                           label="hours"
-                          slotProps={{ htmlInput: { min: 0, max: 200 } }}
+                          slotProps={{ htmlInput: { min: 1, max: 200 } }}
                           sx={{ width: 80 }}
                         />
                       )}

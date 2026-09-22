@@ -28,6 +28,5 @@ export async function getMentorById(
   mentorId: string | number,
   token: string
 ): Promise<MentorItem | null> {
-  const mentors = await getMentors(token);
-  return mentors.find((m) => String(m.id) === String(mentorId)) ?? null;
+  return apiFetch<MentorItem>(`${MENTORS_PATH}/${mentorId}`, { token });
 }
