@@ -1,0 +1,37 @@
+{
+  "fullName": "QA Mentor Long-Term",
+  "position": "QA Mentor (long-term)",
+  "email": "mentor@wcc.dev",
+  "slackDisplayName": "@qa-mentor-long-term",
+  "country": { "countryCode": "GB", "countryName": "United Kingdom" },
+  "city": "London",
+  "companyName": "WCC QA",
+  "memberTypes": ["MENTOR"],
+  "images": [],
+  "network": [],
+  "isWomen": true,
+  "acceptMale": true,
+  "acceptPromotion": false,
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
+  "skills": {
+    "yearsExperience": 8,
+    "areas": [
+      { "technicalArea": "BACKEND", "proficiencyLevel": "EXPERT" },
+      { "technicalArea": "FULLSTACK", "proficiencyLevel": "ADVANCED" }
+    ],
+    "languages": [
+      { "language": "JAVA", "proficiencyLevel": "EXPERT" },
+      { "language": "JAVASCRIPT", "proficiencyLevel": "INTERMEDIATE" }
+    ],
+    "mentorshipFocus": ["Grow from beginner to mid-level", "Grow beyond senior level"]
+  },
+  "spokenLanguages": ["English"],
+  "bio": "QA seeded mentor offering long-term mentorship only.",
+  "menteeSection": {
+    "idealMentee": "Anyone testing the long-term mentorship flows.",
+    "additional": "QA account — see docs/qa_local_setup.md.",
+    "longTerm": { "numMentee": 2, "hours": 4 },
+    "adHoc": []
+  }
+}

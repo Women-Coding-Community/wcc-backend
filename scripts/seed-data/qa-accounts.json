@@ -1,0 +1,27 @@
+[
+  {
+    "email": "mentorship-admin@wcc.dev",
+    "roles": ["MENTORSHIP_ADMIN"],
+    "createdBy": "member-qa-mentorship-admin.json"
+  },
+  {
+    "email": "leader@wcc.dev",
+    "roles": ["LEADER"],
+    "createdBy": "member-qa-leader.json"
+  },
+  {
+    "email": "mentor@wcc.dev",
+    "roles": ["MENTOR"],
+    "createdBy": "mentor-qa-long-term.json"
+  },
+  {
+    "email": "mentor-adhoc@wcc.dev",
+    "roles": ["MENTOR"],
+    "createdBy": "mentor-qa-ad-hoc.json"
+  },
+  {
+    "email": "member@wcc.dev",
+    "roles": ["VIEWER"],
+    "createdBy": "member-qa-member.json"
+  }
+]

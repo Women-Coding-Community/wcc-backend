@@ -32,3 +32,7 @@ docker/docker-compose.yml
 **/values.dev.yaml
 LICENSE
 README.md
+
+# Local build output not needed inside images
+build
+admin-wcc-app/.next

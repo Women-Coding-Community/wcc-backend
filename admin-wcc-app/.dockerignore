@@ -1,0 +1,11 @@
+node_modules
+.next
+.vercel
+.env
+.env.*
+!.env.example
+coverage
+__tests__
+.vscode
+Dockerfile
+.dockerignore

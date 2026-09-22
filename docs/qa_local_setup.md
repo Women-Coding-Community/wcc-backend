@@ -4,12 +4,18 @@ This guide gets the WCC backend running on your machine with a set of ready-made
 accounts — one per role — so you can test role-based and mentorship flows without creating
 any data by hand.
 
-It's just the backend. The admin portal and the Playwright test suite are set up separately,
-and both are linked from [Next steps](#next-steps) at the end.
+It covers two ways to run the stack:
 
-**Read it in order.** *What you get* through *Making the mentor list work* takes you from
-nothing to a running backend, working logins and a successful API call. Everything after that
-is reference — come back to it when you need it.
+* **the whole application** — backend, admin portal, public website and seed data in one
+  command (`./scripts/app-stack.sh up`). This is what the Playwright suite in
+  [wcc-qa](https://github.com/Women-Coding-Community/wcc-qa) expects.
+* **the backend only** — `./scripts/docker-up.sh` (the developer stack,
+  `docker/docker-compose.yml`) when you run the admin portal yourself or only need the API.
+  Note it seeds **only** the admin account — the QA role accounts come from the QA stack.
+
+**Read it in order.** *What you get* through *Using the API* takes you from nothing to a
+running backend, working logins and a successful API call. Everything after that is reference —
+come back to it when you need it.
 
 <!-- TOC -->
 
@@ -19,7 +25,7 @@ is reference — come back to it when you need it.
   * [Quick start](#quick-start)
   * [Seeded accounts](#seeded-accounts)
   * [Using the API](#using-the-api)
-  * [Making the mentor list work](#making-the-mentor-list-work)
+  * [Seed data and mentorship cycles](#seed-data-and-mentorship-cycles)
   * [Resetting the environment](#resetting-the-environment)
   * [Verifying the seed](#verifying-the-seed)
   * [Notes and caveats](#notes-and-caveats)
@@ -32,25 +38,36 @@ is reference — come back to it when you need it.
 
 ## What you get
 
-Running the QA stack starts three containers:
+The QA stack (`docker/docker-compose.qa.yml`) is the whole application:
 
 * **the backend**, on `http://localhost:8080`
 * **PostgreSQL**, storing data in a Docker volume that survives restarts
 * **MailHog**, a mock mail server — outgoing email is captured at `http://localhost:8025`
   instead of being sent, so password-reset and notification flows can be tested safely
+* **the admin portal** (`admin-wcc-app`), on `http://localhost:3000`
+* **the public website** (`wcc-frontend`), on `http://localhost:3001`
 
-It also seeds **four user accounts**, one for each main role (Admin, Mentorship Admin, Mentor,
-Leader). The mentor account comes with an **ACTIVE mentor profile** and is eligible for
-matching — though there's one extra step before it shows up in mentor lists, covered in
-[Making the mentor list work](#making-the-mentor-list-work).
+plus a **seed** step that creates everything you need to test with — see
+[Seed data and mentorship cycles](#seed-data-and-mentorship-cycles):
+
+* **six login accounts**: admin, mentorship admin, leader, a plain member, a **long-term**
+  mentor and an **ad-hoc** mentor (both with ACTIVE mentor profiles, eligible for matching)
+* the MENTORS page and an **open mentorship cycle** (long-term by default, switchable)
 
 ## Prerequisites
 
 * **Docker Desktop** running (`docker ps` should succeed).
-* Ports **8080** (API), **5432** (Postgres), **1025/8025** (MailHog) free on your machine.
+* Ports **8080** (API), **5432** (Postgres), **1025/8025** (MailHog) free on your machine —
+  plus **3000** (admin portal) and **3001** (public website) for the full stack. If a local
+  PostgreSQL already uses 5432, set `POSTGRES_PORT=5433` (or any free port).
+* For the full stack, a checkout of
+  [wcc-frontend](https://github.com/Women-Coding-Community/wcc-frontend) **next to** this
+  repository (`../wcc-frontend`). Don't have one? Set
+  `WCC_FRONTEND_CONTEXT=https://github.com/Women-Coding-Community/wcc-frontend.git` and it is
+  cloned during the build.
 
-You don't need Java, Gradle, a database, or SDKMAN — everything runs in containers. Those are
-only needed if you want to run the app straight from your IDE.
+You don't need Java, Gradle, Node, a database, or SDKMAN — everything runs in containers. Those
+are only needed if you want to run the apps straight from your IDE.
 
 ### Apple Silicon (M1–M4)
 
@@ -66,35 +83,68 @@ normally at `http://localhost:8025`.
 
 ## Quick start
 
+### Whole application (recommended for QA)
+
 From the repository root:
 
 ```shell
-docker compose -f docker/docker-compose.qa.yml up --build
+./scripts/app-stack.sh up
 ```
 
-The first build takes a few minutes — it compiles the app inside the container, so this is
-normal. Once you see the application start log, you'll find:
+The first build takes several minutes — it compiles the backend and both Next.js apps inside
+containers. The script waits until every service is healthy, seeds the data, and prints the
+URLs:
 
+* Admin portal: `http://localhost:3000`
+* Public website: `http://localhost:3001`
 * API base: `http://localhost:8080`
 * Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 * MailHog inbox: `http://localhost:8025`
 
-To stop the stack, press `Ctrl+C`, or in another terminal:
+```shell
+./scripts/app-stack.sh down            # stop, keep data
+./scripts/app-stack.sh up --purge      # wipe the database and start fresh
+./scripts/app-stack.sh --help          # every command and flag
+```
+
+### Backend and database only
+
+If you only need the API (or want to run the admin portal from source with hot reload), start
+just the backend services of the same stack:
 
 ```shell
-docker compose -f docker/docker-compose.qa.yml down
+docker compose -f docker/docker-compose.qa.yml up --build -d --wait springboot-app
 ```
+
+That starts PostgreSQL, MailHog and the backend. Only `admin@wcc.dev` exists at that point —
+the other QA accounts (including both mentors), the MENTORS page and the open cycle come from the seed,
+so run it from the host (needs `curl`, `jq`, `psql` and `argon2` — `brew install argon2`; use
+`PGPORT=5433` if you changed `POSTGRES_PORT`):
+
+```shell
+./scripts/init-local-env.sh
+```
+
+Stop with `./scripts/app-stack.sh down`.
 
 ## Seeded accounts
 
 All accounts use the password **`wcc-admin`**.
 
-| Email                      | Role             | Member type | Notes                                            |
-|----------------------------|------------------|-------------|--------------------------------------------------|
-| `admin@wcc.dev`            | ADMIN            | MEMBER      | Linked to its own generated member *QA Admin*    |
-| `mentorship-admin@wcc.dev` | MENTORSHIP_ADMIN | MEMBER      | Can approve/reject mentors and manage matches    |
-| `mentor@wcc.dev`           | MENTOR           | MENTOR      | Has an **ACTIVE** mentor profile                 |
-| `leader@wcc.dev`           | LEADER           | LEADER      |                                                  |
+| Email                      | Role             | Member type | Notes                                                                        |
+|----------------------------|------------------|-------------|------------------------------------------------------------------------------|
+| `admin@wcc.dev`            | ADMIN            | MEMBER      | Bootstrapped by the backend itself (`app.seed.users` in `application.yml`)   |
+| `mentorship-admin@wcc.dev` | MENTORSHIP_ADMIN | MEMBER      | Can approve/reject mentors and manage matches                                |
+| `leader@wcc.dev`           | LEADER           | LEADER      |                                                                              |
+| `mentor@wcc.dev`           | MENTOR           | MENTOR      | **Long-term** mentor: ACTIVE profile, `longTerm` availability, no ad-hoc     |
+| `mentor-adhoc@wcc.dev`     | MENTOR           | MENTOR      | **Ad-hoc** mentor: ACTIVE profile, available every month, no long-term       |
+| `member@wcc.dev`           | VIEWER           | MEMBER      | Plain member (`VIEWER` role — shown as `MEMBER` / *Member In Community*)     |
+
+All of them except admin come from [`scripts/seed-data/`](../scripts/seed-data) (see
+[How the seeding works](#how-the-seeding-works)). There is no other sample data — no extra
+mentors, members or mentees — so what you see in the portal is exactly this list. The disabled
+`sonali.learn.ai@gmail.com` row you may notice in the database is shipped by a Flyway migration
+and cannot log in.
 
 The same accounts log into the admin portal (`admin-wcc-app`) once it's pointed at
 `http://localhost:8080`.
@@ -168,37 +218,57 @@ again and re-authorize. `GET /api/auth/me` will tell you which account a token b
 > the `'` quotes around `-d '{…}'` — fails with
 > `400 Unexpected character (''' (code 39))`.
 
-## Making the mentor list work
+## Seed data and mentorship cycles
 
-The seeded mentor account is ACTIVE, but `GET /api/cms/v1/mentorship/mentors` comes back
-`200 OK` with an empty `mentors` array. That looks like the seed didn't work — it did, and
-here's what's actually happening.
+`./scripts/app-stack.sh up` runs [`scripts/init-local-env.sh`](../scripts/init-local-env.sh)
+after the backend is healthy. It is **idempotent** — re-run it any time with
+`./scripts/app-stack.sh seed`. It creates, in this order:
 
-Without a `MENTORS` row in the `page` table, the API falls back to the static
-[`mentorsPage.json`](../src/main/resources/init-data/mentorsPage.json) — and that fallback
-never injects the mentor list, because the file ships with `"mentors": []`. Creating the page
-sorts it out, and you only need to do it once per database.
+| Step | What | Why |
+|------|------|-----|
+| QA accounts | the [seeded accounts](#seeded-accounts) except admin — created as members / mentors from [`scripts/seed-data/`](../scripts/seed-data), roles set with `PUT /api/auth/users/{id}/roles`, password set to `wcc-admin` (see [How the seeding works](#how-the-seeding-works)) | The role accounts the admin portal and the Playwright suite log in as. `admin@wcc.dev` is not seeded here — the backend bootstraps it. |
+| MENTORS page | `POST /api/platform/v1/page?pageType=MENTORS` with [`mentorsPage.json`](../src/main/resources/init-data/mentorsPage.json) | Without a `MENTORS` row in the `page` table, `GET /api/cms/v1/mentorship/mentors` serves a static fallback with an **empty** mentor list. |
+| Mentorship cycle | [`scripts/seed-cycles.sh`](../scripts/seed-cycles.sh) (direct SQL) | There is no API to create or reopen a cycle, and the cycles shipped by Flyway have expired registration windows. |
+| Mentors | `mentor@wcc.dev` (long-term) and `mentor-adhoc@wcc.dev` (ad-hoc), registered then **accepted** as admin | Listed on the public mentors page — one per `mentorshipTypes` filter value — and targets for mentee applications. |
+| Mentees | none shipped — drop a `mentee-<name>.json` into `scripts/seed-data/` to add one (applications reference mentors by email) | Registers against the open cycle; skipped when the scenario is `none`. |
 
-Log in as **`admin@wcc.dev`** first. Creating pages needs ADMIN or LEADER, so the mentor
-account will get `403 Role denied` here.
+### Switching the cycle scenario
 
-In Swagger, open **`POST /api/platform/v1/page`** under *Platform: Pages*, set `pageType` to
-`MENTORS`, and paste the **whole contents** of
-`src/main/resources/init-data/mentorsPage.json` into the request body, replacing the `{}`.
-There's no way to attach a file in Swagger, so pasting is the only option.
+Mentee registration only works while a cycle is OPEN **and** today is inside its registration
+window, and the mentee's `mentorshipType` must match that cycle. The seed opens a cycle that
+covers today; which type is open is the **cycle scenario**:
 
-That file's `"mentors": []` looks wrong, but it's fine — the stored page keeps an empty list.
-What matters is that a `MENTORS` row exists at all: that's what switches the API off the
-fallback and onto the database path, and only that path fills in the live mentors.
+```shell
+./scripts/app-stack.sh cycle long-term   # LONG_TERM open, AD_HOC closed   (default)
+./scripts/app-stack.sh cycle ad-hoc      # AD_HOC open for this month, LONG_TERM closed
+./scripts/app-stack.sh cycle none        # everything closed → registration returns "cycle is closed"
+./scripts/app-stack.sh cycle both        # both open — see the caveat below
+./scripts/app-stack.sh cycle open 7      # one specific cycle by id (e.g. October's ad-hoc), all others closed
+```
 
-To check it worked, call **`GET /api/cms/v1/mentorship/mentors`** — in Swagger it's under the
-*Pages: Mentorship* tag. You should see the mentor listed, plus `openCycle` and
-`filterSection`. Those two fields only ever come from the database path, so they're the quick
-way to tell which one you're getting.
+Switching is a one-second database update: no restart, no reseed, and existing mentors and
+mentees are untouched. `./scripts/app-stack.sh up --cycle ad-hoc` (or
+`CYCLE_SCENARIO=ad-hoc`) picks the scenario for the initial seed.
 
-> A known gap, tracked as
-> [#654](https://github.com/Women-Coding-Community/wcc-backend/issues/654) — delete this
-> section once the mentors page is seeded by the Docker setup.
+> **Open is not the same as current.** The backend's "current cycle"
+> (`GET /cycles/current`, mentee registration, the public `openCycle`) is the cycle whose
+> status is *open* **and** whose registration window contains today. Setting a cycle to *open*
+> from the admin portal changes only the status — a cycle whose registration dates are next
+> month stays "not current" until that month. Every `cycle` command above also moves the
+> registration window to `today − 7 … today + 30`, which is what makes the cycle current.
+> Each command prints the year's cycles with a `today_in_window` column so you can see why a
+> cycle is or isn't current; ids come from that table or `GET /cycles/all`.
+
+> **`both` caveat.** `GET /cycles/current` and mentee registration look up *the* open cycle
+> with `LIMIT 1` and no ordering, so with two open cycles they pick one unpredictably. Use
+> `both` only for admin screens that list cycles; use `long-term` or `ad-hoc` for registration
+> flows.
+
+Verify the current state with `GET /api/platform/v1/admin/mentorship/cycles/current` (ADMIN or
+MENTORSHIP_ADMIN), or look at `openCycle` in the public `GET /api/cms/v1/mentorship/mentors`.
+
+> The scripts bypass the service's cycle status-transition rules on purpose. They are QA
+> fixtures for the local Docker stack and must never be pointed at a shared environment.
 
 ---
 
@@ -207,58 +277,44 @@ way to tell which one you're getting.
 ## Resetting the environment
 
 The database lives in a Docker volume, so your accounts survive restarts. To wipe everything
-and re-seed from scratch — after changing the seed config, for instance:
+and re-seed from scratch — after changing the seed config, after a failed Flyway migration, or
+just to get a clean slate:
 
 ```shell
-docker compose -f docker/docker-compose.qa.yml down -v
-docker compose -f docker/docker-compose.qa.yml up --build
+./scripts/app-stack.sh up --purge
 ```
 
-> The `-v` flag deletes the `postgres-data` volume. The seeder **skips accounts that already
-> exist**, so without `-v` your changes to seeded users won't reach an existing database.
+> Both delete the `postgres-data` volume of **this project only**. The seeder **skips accounts
+> that already exist**, so without a purge your changes to seeded users won't reach an existing
+> database. `docker system prune -a --volumes` also works but wipes every unused image,
+> container and volume on your machine — keep it as a last resort.
 
 ## Verifying the seed
 
 Logging in is the real test — if you get a token back, the seed worked. This section is for
 when you don't, and want to see how far the seeding got.
 
-Start with the application logs:
+The seed prints one line per step and stops at the first failure with the HTTP status and
+response body, so re-run it and read the output:
 
 ```shell
-docker logs springboot-app 2>&1 | grep -iE "Seeded|mentor profile"
+./scripts/app-stack.sh seed
 ```
 
-What you see depends on whether the database was already populated.
-
-**First run**, or after a [reset](#resetting-the-environment) — the accounts are created:
+A healthy run confirms every QA account with a real login:
 
 ```
-Seeded user: admin@wcc.dev (roles: [Platform Administrator])
-Seeded user: mentorship-admin@wcc.dev (roles: [Mentorship Administrator])
-Seeded ACTIVE mentor profile: mentor@wcc.dev (id: 4)
-Reset seeded user credentials: mentor@wcc.dev (roles: [Mentor In Community])
-Seeded user: leader@wcc.dev (roles: [Platform Leader])
+✅  QA account mentorship-admin@wcc.dev ready (id: 7, roles: ["MENTORSHIP_ADMIN"]).
+✅  QA account leader@wcc.dev ready (id: 5, roles: ["LEADER"]).
+✅  QA account mentor@wcc.dev ready (id: 4, roles: ["MENTOR"]).
+✅  QA account mentor-adhoc@wcc.dev ready (id: 3, roles: ["MENTOR"]).
+✅  QA account member@wcc.dev ready (id: 6, roles: ["VIEWER"]).
 ```
 
-The mentor really does say *Reset* even on a brand-new database — creating its profile also
-creates the account, so the seeder finds one already sitting there a moment later. Nothing is
-wrong.
-
-**Every restart afterwards** — all the accounts exist by then, so the seeder resets passwords
-and roles rather than recreating anything, and there's no mentor-profile line:
-
-```
-Reset seeded user credentials: admin@wcc.dev (roles: [Platform Administrator])
-Reset seeded user credentials: mentorship-admin@wcc.dev (roles: [Mentorship Administrator])
-Reset seeded user credentials: mentor@wcc.dev (roles: [Mentor In Community])
-Reset seeded user credentials: leader@wcc.dev (roles: [Platform Leader])
-```
-
-`Reset seeded user credentials` means the seed **worked**. It reads like a warning, but it
-isn't one.
-
-No seeding lines at all usually means the entries are missing `enabled: true`, which the
-seeder skips silently — see [Adding or changing seeded users](#adding-or-changing-seeded-users).
+If it fails at *Logging in as admin@wcc.dev*, the backend's own bootstrap did not run — check
+`docker logs springboot-app 2>&1 | grep -i seeded` for `Seeded user: admin@wcc.dev` (first
+start) or `Reset seeded user credentials: admin@wcc.dev` (every later start; it reads like a
+warning but means the bootstrap worked).
 
 You can also query the database directly:
 
@@ -281,9 +337,10 @@ can't log in. That's expected, nothing to clean up.
   under `PATCH /api/platform/v1/mentors/{mentorId}/accept|reject` — they need the
   `MENTOR_APPROVE` permission, held by ADMIN and MENTORSHIP_ADMIN.
 * **Run one stack at a time.** The QA compose shares container names, ports and volume with
-  the regular `docker-compose.yml`, so they can't both be up at once.
-* **Local only.** The `qa` profile and its plaintext passwords are for local testing, and
-  must never be switched on in a deployed environment.
+  the developer stack `docker-compose.yml` (`./scripts/docker-up.sh`), so they can't both be up
+  at once.
+* **Local only.** The seed scripts and their plaintext passwords are for local testing, and
+  must never be pointed at a deployed environment.
 
 ## Reference
 
@@ -353,44 +410,42 @@ This part is for anyone changing how the seeding works, rather than just using i
 
 ### How the seeding works
 
-* The QA stack runs Spring profiles `docker,qa` (set in
-  [`docker/docker-compose.qa.yml`](../docker/docker-compose.qa.yml)).
-* The `qa` profile loads
-  [`src/main/resources/application-qa.yml`](../src/main/resources/application-qa.yml),
-  which defines the seeded users under `app.seed.users`.
-* On startup, `DevAdminSeeder` (an `ApplicationRunner`) reads that list and:
-  * creates a member matching each user's email,
-  * creates the user account with the configured password and roles,
-  * for users with the `MENTOR` role, creates a full mentor profile and activates it.
-* All four accounts (including admin) are defined in `app.seed.users`. The base
-  `application.yml` seeds just the admin; the `qa` profile adds the remaining roles.
+No QA account lives in the application source. The backend only bootstraps `admin@wcc.dev`
+(`app.seed.users` in `application.yml`, applied by `DevAdminSeeder` on every start); everything
+else is created by [`scripts/init-local-env.sh`](../scripts/init-local-env.sh) through the
+public API, exactly as a real user would be:
+
+1. **Members and mentors** — every `scripts/seed-data/member-*.json` is `POST`ed to
+   `/api/platform/v1/members`, every `mentor-*.json` to `/api/platform/v1/mentors` (and then
+   accepted). The backend provisions a user account for each (VIEWER for members, MENTOR for
+   mentors).
+2. **QA accounts** — for every entry in
+   [`scripts/seed-data/qa-accounts.json`](../scripts/seed-data/qa-accounts.json) the script
+   looks the account up by email, sets its exact roles with `PUT /api/auth/users/{id}/roles`,
+   then sets the password to `QA_PASSWORD` (default `wcc-admin`). Passwords cannot be set via
+   the API (only through the email reset flow), so that one step is an SQL `UPDATE` with an
+   Argon2id hash produced by the `argon2` CLI in the same parameters the backend uses. Each
+   account is then verified by logging in.
+3. Cycles, the MENTORS page and mentees as described in
+   [Seed data and mentorship cycles](#seed-data-and-mentorship-cycles).
 
 ### Adding or changing seeded users
 
-Edit `src/main/resources/application-qa.yml` and add an entry under `app.seed.users`:
+1. Add a member or mentor payload to `scripts/seed-data/` — `member-<name>.json` (the shape of
+   `POST /api/platform/v1/members`) or `mentor-<name>.json` (`POST /api/platform/v1/mentors`).
+   Copy an existing file; the seed picks files up by prefix.
+2. If it should be a **login account**, add it to `scripts/seed-data/qa-accounts.json`:
 
-```yaml
-app:
-  seed:
-    users:
-      - enabled: true            # required — entries without it are skipped silently
-        email: new-user@wcc.dev
-        password: wcc-admin
-        full-name: QA New User
-        roles: [LEADER]          # one or more RoleType values
-        member-types: [LEADER]   # optional; one or more MemberType values
-```
+   ```json
+   { "email": "new-user@wcc.dev", "roles": ["LEADER"], "createdBy": "member-new-user.json" }
+   ```
 
-> **Don't leave out `enabled: true`.** A missing `enabled` flag is treated as disabled, and
-> the entry is skipped without any error in the logs — which can leave a fresh database with
-> no usable accounts at all. If login fails for *every* account, check this first.
-
-Once you've changed the file, rebuild with a clean database (see
-[Resetting the environment](#resetting-the-environment)) — otherwise your changes won't
-reach the existing one.
+   (`createdBy` is documentation only.) The password is always `QA_PASSWORD`.
+3. Run `./scripts/app-stack.sh seed` — no rebuild, no database reset. Existing accounts are
+   updated in place (roles replaced, password reset).
 
 Valid `roles` values: `ADMIN`, `MENTORSHIP_ADMIN`, `LEADER`, `MENTOR`, `MENTEE`,
-`CONTRIBUTOR`, `VIEWER`. Valid `member-types`: `DIRECTOR`, `COLLABORATOR`, `EVANGELIST`,
+`CONTRIBUTOR`, `VIEWER`. Valid `memberTypes`: `DIRECTOR`, `COLLABORATOR`, `EVANGELIST`,
 `LEADER`, `MENTEE`, `MENTOR`, `MEMBER`, `PARTNER`, `SPEAKER`, `VOLUNTEER`.
 
 > **Watch out for member types that escalate privileges** — `DIRECTOR`, for example, maps to
@@ -415,10 +470,10 @@ Valid `roles` values: `ADMIN`, `MENTORSHIP_ADMIN`, `LEADER`, `MENTOR`, `MENTEE`,
 | `401 Unauthorized` on login               | Wrong password (must be `wcc-admin`) or the seed didn't run — check the logs.                        |
 | `401 {"message":"Invalid API Key"}`       | The `X-API-KEY` is missing. In Swagger, fill the `apiKey` field in **Authorize**; in `curl`, add `-H "X-API-KEY: local"`. |
 | Call works in Swagger but `401` in the terminal | Swagger sends both credentials once authorized; a copied `curl` has to send the API key explicitly. |
-| No accounts exist at all after a build    | The seeder skips entries without `enabled: true`. Every entry in `app.seed.users` needs it.          |
+| Only `admin@wcc.dev` can log in            | The seed did not run (e.g. `up --no-seed`, or it failed) — run `./scripts/app-stack.sh seed`.        |
 | `403 Invalid authentication` on a call that worked before | Token expired (60-minute TTL) — log in again and re-authorize.                       |
 | `403 Role denied`                         | Logged in as the wrong account — the message names the roles the endpoint accepts. Log in as `admin@wcc.dev` and re-authorize. |
-| Seeded user changes not taking effect     | The account already exists; reset with `down -v` (see above).                                        |
+| Seeded user changes not taking effect     | Re-run `./scripts/app-stack.sh seed` — accounts are updated in place; a rebuild is not needed.        |
 | Login works but `member` is missing       | The account has no linked member — verify the user exists in `user_accounts` with a member id.        |
 
 ### API requests
@@ -426,20 +481,23 @@ Valid `roles` values: `ADMIN`, `MENTORSHIP_ADMIN`, `LEADER`, `MENTOR`, `MENTEE`,
 | Symptom                                                    | Cause / fix                                                                        |
 |------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | `400 Unexpected character (''' (code 39))`                 | A `curl` fragment was pasted into Swagger including its `'` quotes — paste only JSON. |
-| `200 OK` but the `mentors` array is empty                  | The mentors CMS page doesn't exist, so the static-file fallback is served — see [Making the mentor list work](#making-the-mentor-list-work). Not a cycle problem. |
+| `200 OK` but the `mentors` array is empty                  | The mentors CMS page doesn't exist, so the static-file fallback is served. Run `./scripts/app-stack.sh seed` (or `./scripts/init-local-env.sh` against a backend-only stack) — see [Seed data and mentorship cycles](#seed-data-and-mentorship-cycles). Not a cycle problem. |
 | `409 Record already exists` creating a page                | The page is already in the database — nothing to fix. Use `PUT` to change an existing page. |
-| `GET /cycles/current` returns `404`                        | No mentorship cycle's registration window covers today — the seeded dates have expired. This does **not** hide mentors; it only gates mentee registration. There is no endpoint to reopen a cycle, so it needs a direct database update. |
+| `GET /cycles/current` returns `404`                        | No cycle is open with a registration window covering today. This does **not** hide mentors; it only gates mentee registration. Run `./scripts/app-stack.sh cycle long-term` (or `ad-hoc`). |
+| Mentee registration → `Mentee mentorship type … does not match current cycle type` | The open cycle is the other type. Switch it: `./scripts/app-stack.sh cycle ad-hoc` / `long-term`. |
 | Password-reset email never arrives                         | Check MailHog at `http://localhost:8025`; mail is never sent externally in local runs. |
 | Reset email arrives for the wrong person                   | The member record still holds a placeholder email — update the member, then re-request. |
 
 ## Next steps
 
-With the backend running and the accounts working, here's where to go next. Both need this
-stack up first, and both use the same [seeded accounts](#seeded-accounts):
+With the stack running and the accounts working, here's where to go next. Both use the same
+[seeded accounts](#seeded-accounts):
 
-* **Admin portal** — the Next.js app in `admin-wcc-app/`. The QA compose stack doesn't start
-  it, so you'll need to run it yourself — see
+* **Admin portal** — started by the full stack on `http://localhost:3000`. To run it from
+  source instead (hot reload), use the backend-only stack and follow
   [`admin-wcc-app/README.md`](../admin-wcc-app/README.md).
 * **Playwright test suite** — lives in
-  [`Women-Coding-Community/wcc-qa`](https://github.com/Women-Coding-Community/wcc-qa);
-  follow the setup instructions there.
+  [`Women-Coding-Community/wcc-qa`](https://github.com/Women-Coding-Community/wcc-qa). Its
+  defaults (`API_HOST=http://localhost:8080`, `API_KEY=local`,
+  `ADMIN_BASE_URL=http://localhost:3000`, the seeded `@wcc.dev` accounts) match the full stack
+  — follow the setup instructions there.

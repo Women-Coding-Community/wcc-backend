@@ -1,0 +1,49 @@
+{
+  "fullName": "QA Mentor Ad-Hoc",
+  "position": "QA Mentor (ad-hoc)",
+  "email": "mentor-adhoc@wcc.dev",
+  "slackDisplayName": "@qa-mentor-ad-hoc",
+  "country": { "countryCode": "GB", "countryName": "United Kingdom" },
+  "city": "Manchester",
+  "companyName": "WCC QA",
+  "memberTypes": ["MENTOR"],
+  "images": [],
+  "network": [],
+  "isWomen": true,
+  "acceptMale": true,
+  "acceptPromotion": false,
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
+  "skills": {
+    "yearsExperience": 6,
+    "areas": [
+      { "technicalArea": "FRONTEND", "proficiencyLevel": "EXPERT" },
+      { "technicalArea": "DEVOPS", "proficiencyLevel": "INTERMEDIATE" }
+    ],
+    "languages": [
+      { "language": "JAVASCRIPT", "proficiencyLevel": "EXPERT" },
+      { "language": "PYTHON", "proficiencyLevel": "INTERMEDIATE" }
+    ],
+    "mentorshipFocus": ["Switch career to IT", "Grow from beginner to mid-level"]
+  },
+  "spokenLanguages": ["English"],
+  "bio": "QA seeded mentor offering ad-hoc sessions only, every month of the year.",
+  "menteeSection": {
+    "idealMentee": "Anyone testing the ad-hoc mentorship flows.",
+    "additional": "QA account — see docs/qa_local_setup.md.",
+    "adHoc": [
+      { "month": "JANUARY", "hours": 2 },
+      { "month": "FEBRUARY", "hours": 2 },
+      { "month": "MARCH", "hours": 2 },
+      { "month": "APRIL", "hours": 2 },
+      { "month": "MAY", "hours": 2 },
+      { "month": "JUNE", "hours": 2 },
+      { "month": "JULY", "hours": 2 },
+      { "month": "AUGUST", "hours": 2 },
+      { "month": "SEPTEMBER", "hours": 2 },
+      { "month": "OCTOBER", "hours": 2 },
+      { "month": "NOVEMBER", "hours": 2 },
+      { "month": "DECEMBER", "hours": 2 }
+    ]
+  }
+}

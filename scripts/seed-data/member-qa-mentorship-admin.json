@@ -1,0 +1,14 @@
+{
+  "fullName": "QA Mentorship Admin",
+  "position": "QA Mentorship Admin",
+  "email": "mentorship-admin@wcc.dev",
+  "slackDisplayName": "@qa-mentorship-admin",
+  "country": { "countryCode": "GB", "countryName": "United Kingdom" },
+  "city": "London",
+  "companyName": "WCC QA",
+  "memberTypes": ["MEMBER"],
+  "isWomen": true,
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
+  "network": []
+}
