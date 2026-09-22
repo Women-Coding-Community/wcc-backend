@@ -204,7 +204,7 @@ execute
 Now you have the application running connected to the postgres database.
 Test the application via: http://localhost:8080/swagger-ui/index.html
 
-### Run the whole application with Docker
+### Run the all dependent applications with Docker
 
 One command starts everything — backend API, admin portal, public website, PostgreSQL,
 MailHog — and seeds it with the QA login accounts (admin, mentorship admin, leader, member, a
