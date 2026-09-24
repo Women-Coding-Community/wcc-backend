@@ -171,7 +171,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
         : null,
       adHoc: data.mentorshipType.includes('AD_HOC')
         ? data.monthAvailability
-            .filter((m) => m.enabled)
+            .filter((m) => m.enabled && m.hours > 0)
             .map((m) => ({ month: m.month, hours: m.hours }))
         : [],
     },
