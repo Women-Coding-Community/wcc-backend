@@ -17,6 +17,9 @@ bin/*
 
 application-prod.yml
 
+# Local database backup dumps (see scripts/db-backup.sh)
+*.dump
+
 # Integration Test
 integration-test/node_modules/*
 integration-test/test-results/*
