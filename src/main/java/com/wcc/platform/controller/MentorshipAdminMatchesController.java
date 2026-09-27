@@ -2,6 +2,7 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.domain.exceptions.CycleNotFoundException;
 import com.wcc.platform.domain.auth.Permission;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
@@ -199,7 +200,8 @@ public class MentorshipAdminMatchesController {
   /**
    * API to get the currently open mentorship cycle.
    *
-   * @return Current open cycle, or 404 if none is open
+   * @return Current open cycle
+   * @throws CycleNotFoundException if no open cycle exists
    */
   @GetMapping("/cycles/current")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
@@ -211,7 +213,7 @@ public class MentorshipAdminMatchesController {
     return cycleRepository
         .findOpenCycle()
         .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+        .orElseThrow(() -> new CycleNotFoundException("No open mentorship cycle found"));
   }
 
   /**
