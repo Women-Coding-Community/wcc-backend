@@ -1,6 +1,12 @@
 server:
   tomcat:
     max-swallow-size: 50MB
+    connection-timeout: 60000
+    threads:
+      max: 200
+      min-spare: 10
+    accept-count: 100
+    max-connections: 10000
 
 spring:
   application:
@@ -10,9 +16,10 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 2MB
-      max-request-size: 2MB
-      file-size-threshold: 2MB
+      max-file-size: 50MB
+      max-request-size: 50MB
+      file-size-threshold: 50MB
+      resolve-lazily: false
 
   datasource:
     url: jdbc:postgresql://localhost:5432/wcc
@@ -110,6 +117,8 @@ storage:
   type: ${STORAGE_TYPE:local}
   google-drive:
     credentials-json: ${GOOGLE_DRIVE_CREDENTIALS_JSON:${STORAGE_GOOGLE_DRIVE_CREDENTIALS_JSON:}}
+    connect-timeout-ms: 60000
+    read-timeout-ms: 90000
   folders:
     main-folder: ${STORAGE_FOLDERS_MAIN_FOLDER:folder-id}
     resources-folder: ${STORAGE_FOLDERS_RESOURCES_FOLDER:folder-id}

@@ -10,10 +10,11 @@ import static org.mockito.Mockito.when;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.config.TestGoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.filestorage.FileStorageItem;
+import com.wcc.platform.domain.platform.filestorage.FileStoragePage;
 import com.wcc.platform.properties.FolderStorageProperties;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.io.IOException;
@@ -69,8 +70,9 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
     return GoogleDriveTestUtils.createMockFile(TEST_FILE_ID, TEST_FILE_NAME, WEB_VIEW_LINK);
   }
 
-  private FileList createTestFileList() {
-    FileList fileList = new FileList();
+  private com.google.api.services.drive.model.FileList createTestFileList() {
+    com.google.api.services.drive.model.FileList fileList =
+        new com.google.api.services.drive.model.FileList();
     fileList.setFiles(List.of(createTestFile()));
     fileList.setNextPageToken("next-page-token");
     return fileList;
@@ -222,12 +224,12 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       when(mockGet.execute()).thenReturn(expectedFile);
 
       // When
-      File result = googleDriveRepository.getFile(TEST_FILE_ID);
+      FileStorageItem result = googleDriveRepository.getFile(TEST_FILE_ID);
 
       // Then
       assertThat(result).isNotNull();
-      assertThat(result.getId()).isEqualTo(TEST_FILE_ID);
-      assertThat(result.getName()).isEqualTo(TEST_FILE_NAME);
+      assertThat(result.id()).isEqualTo(TEST_FILE_ID);
+      assertThat(result.name()).isEqualTo(TEST_FILE_NAME);
       verify(mockGet).setSupportsAllDrives(true);
       verify(mockGet).setFields("id, name, webViewLink");
     }
@@ -257,7 +259,7 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
     void shouldListFilesSuccessfully() throws IOException {
       // Given
       int pageSize = 10;
-      FileList expectedFileList = createTestFileList();
+      com.google.api.services.drive.model.FileList expectedFileList = createTestFileList();
       when(mockFiles.list()).thenReturn(mockList);
       when(mockList.setSupportsAllDrives(true)).thenReturn(mockList);
       when(mockList.setIncludeItemsFromAllDrives(true)).thenReturn(mockList);
@@ -266,11 +268,11 @@ class GoogleDriveFileStorageRepositoryIntegrationTest extends DefaultDatabaseSet
       when(mockList.execute()).thenReturn(expectedFileList);
 
       // When
-      FileList result = googleDriveRepository.listFiles(pageSize);
+      FileStoragePage result = googleDriveRepository.listFiles(pageSize);
 
       // Then
       assertThat(result).isNotNull();
-      assertThat(result.getFiles()).hasSize(1);
+      assertThat(result.items()).hasSize(1);
       verify(mockList).setSupportsAllDrives(true);
       verify(mockList).setIncludeItemsFromAllDrives(true);
       verify(mockList).setPageSize(pageSize);

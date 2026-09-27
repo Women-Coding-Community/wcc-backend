@@ -11,12 +11,14 @@ import static org.mockito.Mockito.when;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.wcc.platform.configuration.GoogleDriveConfig;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
+import com.wcc.platform.domain.platform.filestorage.FileStorageItem;
+import com.wcc.platform.domain.platform.filestorage.FileStoragePage;
 import com.wcc.platform.properties.FolderStorageProperties;
 import java.io.IOException;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -182,8 +184,7 @@ class GoogleDriveFileStorageRepositoryTest {
   }
 
   @Test
-  @DisplayName(
-      "Given file already deleted (404), when deleting file, then ignore error gracefully")
+  @DisplayName("Given file already deleted (404), when deleting file, then ignore error gracefully")
   void shouldIgnoreNotFoundWhenDeletingFile() throws Exception {
     Drive.Files.Delete fileDeleteMock = mock(Drive.Files.Delete.class);
     com.google.api.client.googleapis.json.GoogleJsonResponseException notFoundException =
@@ -215,17 +216,18 @@ class GoogleDriveFileStorageRepositoryTest {
     when(fileGetMock.setFields("id, name, webViewLink")).thenReturn(fileGetMock);
     when(fileGetMock.execute()).thenReturn(expectedFile);
 
-    File actualFile = service.getFile("test-file-id");
+    FileStorageItem actualFile = service.getFile("test-file-id");
 
     assertThat(actualFile).isNotNull();
-    assertThat(actualFile.getId()).isEqualTo(expectedFile.getId());
-    assertThat(actualFile.getName()).isEqualTo(expectedFile.getName());
-    assertThat(actualFile.getWebViewLink()).isEqualTo(expectedFile.getWebViewLink());
+    assertThat(actualFile.id()).isEqualTo(expectedFile.getId());
+    assertThat(actualFile.name()).isEqualTo(expectedFile.getName());
+    assertThat(actualFile.webViewLink()).isEqualTo(expectedFile.getWebViewLink());
     verify(fileGetMock).execute();
   }
 
   @Test
-  @DisplayName("Given drive API error on get, when getting file, then throw PlatformInternalException")
+  @DisplayName(
+      "Given drive API error on get, when getting file, then throw PlatformInternalException")
   void shouldThrowPlatformInternalExceptionWhenGetFails() throws Exception {
     Drive.Files.Get fileGetMock = mock(Drive.Files.Get.class);
 
@@ -243,10 +245,12 @@ class GoogleDriveFileStorageRepositoryTest {
   }
 
   @Test
-  @DisplayName("Given valid page size, when listing files, then return FileList")
+  @DisplayName("Given valid page size, when listing files, then return FileStoragePage")
   void shouldListFilesSuccessfully() throws Exception {
     Drive.Files.List fileListMock = mock(Drive.Files.List.class);
-    FileList expectedFileList = new FileList();
+    com.google.api.services.drive.model.FileList expectedFileList =
+        new com.google.api.services.drive.model.FileList();
+    expectedFileList.setFiles(Collections.emptyList());
 
     when(driveServiceMock.files()).thenReturn(filesMock);
     when(filesMock.list()).thenReturn(fileListMock);
@@ -257,14 +261,15 @@ class GoogleDriveFileStorageRepositoryTest {
         .thenReturn(fileListMock);
     when(fileListMock.execute()).thenReturn(expectedFileList);
 
-    FileList actualFileList = service.listFiles(10);
+    FileStoragePage actualFileList = service.listFiles(10);
 
     assertThat(actualFileList).isNotNull();
     verify(fileListMock).execute();
   }
 
   @Test
-  @DisplayName("Given drive API error on list, when listing files, then throw PlatformInternalException")
+  @DisplayName(
+      "Given drive API error on list, when listing files, then throw PlatformInternalException")
   void shouldThrowPlatformInternalExceptionWhenListFails() throws Exception {
     Drive.Files.List fileList = mock(Drive.Files.List.class);
 

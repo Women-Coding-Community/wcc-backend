@@ -23,4 +23,7 @@ public class GoogleDriveConfig {
    * GOOGLE_DRIVE_CREDENTIALS_JSON} environment variable.
    */
   private String credentialsJson;
+
+  private int connectTimeoutMs = 60_000;
+  private int readTimeoutMs = 90_000;
 }
