@@ -56,7 +56,7 @@ export async function getMentorProfilePicture(
   }
 }
 
-export const MAX_PROFILE_PICTURE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+export const MAX_PROFILE_PICTURE_SIZE_BYTES = 1 * 1024 * 1024; // 1MB
 
 export async function uploadMentorProfilePicture(
   mentorId: string | number,
