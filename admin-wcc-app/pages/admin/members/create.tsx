@@ -127,7 +127,9 @@ export default function CreateMemberPage() {
   const validateForm = () => {
     const errors: Record<string, string> = {};
 
-    if (!formData.fullName) errors.fullName = 'Full name is required';
+    if (!formData.fullName.trim()) {
+      errors.fullName = 'Full name is required';
+    }
     if (!formData.position) errors.position = 'Position is required';
     if (!formData.email) errors.email = 'Email is required';
     else if (!validateEmail(formData.email)) errors.email = 'Invalid email format';
@@ -166,6 +168,7 @@ export default function CreateMemberPage() {
 
       const submitData = {
         ...restFormData,
+        fullName: restFormData.fullName.trim(),
         country: {
           countryCode: country?.countryCode,
           countryName: country?.countryName,
