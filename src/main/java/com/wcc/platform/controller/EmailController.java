@@ -51,7 +51,7 @@ public class EmailController {
   @Operation(
       summary = "Send a single email",
       description = "Sends an email to the specified recipient",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "200",
@@ -81,7 +81,7 @@ public class EmailController {
   @Operation(
       summary = "Send multiple emails in bulk",
       description = "Sends multiple emails to different recipients",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "200",
@@ -110,7 +110,7 @@ public class EmailController {
   @Operation(
       summary = "Preview an email template",
       description = "Renders an email template",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "201",
@@ -142,7 +142,7 @@ public class EmailController {
   @Operation(
       summary = "Send a single email using a template",
       description = "Sends an email with a template to the specified recipient",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ApiResponses({
     @ApiResponse(
         responseCode = "200",

@@ -123,4 +123,35 @@ class TokenAuthFilterTest {
     verify(filterChain).doFilter(request, response);
     assert SecurityContextHolder.getContext().getAuthentication() == null;
   }
+
+  @Test
+  @DisplayName(
+      "Given duplicate Bearer prefix When filter executes Then stripped token is authenticated")
+  void givenDuplicateBearerPrefixWhenDoFilterInternalThenAuthenticationIsSet()
+      throws ServletException, IOException {
+    final String token = "validToken123";
+    final String authHeader = "Bearer Bearer " + token;
+
+    when(request.getHeader("Authorization")).thenReturn(authHeader);
+
+    UserAccount mockUser = createAdminUserTest();
+    Member member =
+        Member.builder()
+            .id(1L)
+            .fullName("Admin WCC")
+            .memberTypes(List.of(MemberType.DIRECTOR))
+            .build();
+    UserAccount.User user = new UserAccount.User(mockUser, member);
+
+    when(authService.authenticateByTokenWithMember(token)).thenReturn(Optional.of(user));
+
+    tokenAuthFilter.doFilterInternal(request, response, filterChain);
+
+    var authentication = SecurityContextHolder.getContext().getAuthentication();
+    verify(authService).authenticateByTokenWithMember(token);
+    verify(filterChain).doFilter(request, response);
+
+    assertNotNull(authentication);
+    assertTrue(authentication.isAuthenticated());
+  }
 }

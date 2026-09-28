@@ -6,6 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +54,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
     final String requestUri = request.getRequestURI();
 
-    if (!securityEnabled) {
+    if (!securityEnabled || "OPTIONS".equalsIgnoreCase(request.getMethod())) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -60,17 +62,31 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     if (requestUri.startsWith("/api/cms/v1/") || requestUri.startsWith("/api/platform/v1/")) {
       String requestApiKey = request.getHeader(API_KEY_HEADER);
       if (requestApiKey == null || requestApiKey.isBlank()) {
-        // Fallback to query parameter for compatibility with public endpoints
-        requestApiKey = request.getParameter(API_KEY_QUERY);
+        // Fallback to query parameter without triggering servlet multipart/body parsing
+        requestApiKey = extractQueryParam(request, API_KEY_QUERY);
       }
       if (requestApiKey == null || !requestApiKey.equals(apiKey)) {
         final Map<String, String> errorBody = formatUnauthorizedError("Invalid API Key");
-        sendUnauthorizedResponse(response, errorBody);
+        sendUnauthorizedResponse(request, response, errorBody);
         return;
       }
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private String extractQueryParam(final HttpServletRequest request, final String paramName) {
+    final String queryString = request.getQueryString();
+    if (queryString == null || queryString.isBlank()) {
+      return null;
+    }
+    for (final String pair : queryString.split("&")) {
+      final int idx = pair.indexOf('=');
+      if (idx > 0 && pair.substring(0, idx).trim().equals(paramName)) {
+        return URLDecoder.decode(pair.substring(idx + 1).trim(), StandardCharsets.UTF_8);
+      }
+    }
+    return null;
   }
 
   private Map<String, String> formatUnauthorizedError(final String errorMessage) {
@@ -82,8 +98,15 @@ public class ApiKeyFilter extends OncePerRequestFilter {
   }
 
   private void sendUnauthorizedResponse(
-      final HttpServletResponse response, final Map<String, String> errorResponse)
+      final HttpServletRequest request,
+      final HttpServletResponse response,
+      final Map<String, String> errorResponse)
       throws IOException {
+    final String origin = request.getHeader("Origin");
+    if (origin != null && !origin.isBlank()) {
+      response.setHeader("Access-Control-Allow-Origin", origin);
+      response.setHeader("Access-Control-Allow-Credentials", "true");
+    }
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");

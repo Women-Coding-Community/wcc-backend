@@ -4,7 +4,7 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { API_BASE, API_KEY, apiFetch } from '@/lib/api';
+import { apiFetch } from '@/lib/api';
 import { getStoredToken } from '@/lib/auth';
 import { EditMentorFormData, editMentorSchema } from './schema';
 import ProfilePictureSection from './ProfilePictureSection';
@@ -12,8 +12,11 @@ import PersonalInfoSection from './PersonalInfoSection';
 import BioSection from './BioSection';
 import SkillsSection from './SkillsSection';
 import MentorshipAvailabilitySection from './MentorshipAvailabilitySection';
-import ResourcesSection from './ResourcesSection';
-import { getMentorById } from '@/services/mentorService';
+import {
+  getMentorById,
+  getMentorProfilePicture,
+  uploadMentorProfilePicture,
+} from '@/services/mentorService';
 import { MentorItem } from '@/types/mentor';
 
 const MONTHS = [
@@ -118,22 +121,16 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
     setFetchLoading(true);
     setFetchError(null);
 
-    Promise.all([
-      getMentorById(mentorId, token),
-      apiFetch<{ resource: { driveFileLink: string } }>(
-        `/api/platform/v1/resources/member-profile-picture/${mentorId}`,
-        { token }
-      ).catch(() => null),
-    ])
-      .then(([fetchedMentor, pictureData]) => {
+    Promise.all([getMentorById(mentorId, token), getMentorProfilePicture(mentorId, token)])
+      .then(([fetchedMentor, pictureUrl]) => {
         if (!fetchedMentor) {
           setFetchError(`Mentor with ID ${mentorId} not found`);
           return;
         }
         setMentor(fetchedMentor);
         reset(buildDefaultValues(fetchedMentor));
-        if (pictureData?.resource?.driveFileLink) {
-          setProfilePictureUrl(pictureData.resource.driveFileLink);
+        if (pictureUrl) {
+          setProfilePictureUrl(pictureUrl);
         }
       })
       .catch((e: unknown) => {
@@ -191,33 +188,17 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
       return;
     }
 
+    const previewUrl = URL.createObjectURL(file);
+    setProfilePictureUrl(previewUrl);
+
     setProfilePictureUploading(true);
     setApiError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const res = await fetch(
-        `${API_BASE}/api/platform/v1/resources/member-profile-picture?memberId=${mentorId}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            ...(API_KEY ? { 'X-API-KEY': API_KEY } : {}),
-          },
-          body: formData,
-          credentials: 'include',
-        }
-      );
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.message ?? `${res.status} ${res.statusText}`);
+      const link = await uploadMentorProfilePicture(mentorId, file, token);
+      if (link) {
+        setProfilePictureUrl(link);
       }
-
-      const data = await res.json();
-      setProfilePictureUrl(data.resource.driveFileLink);
     } catch (e: unknown) {
       setApiError(e instanceof Error ? e.message : 'Failed to upload profile picture');
     } finally {

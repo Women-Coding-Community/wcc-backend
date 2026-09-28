@@ -49,7 +49,7 @@ public class MemberController {
   @RequiresRole({RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN})
   @Operation(
       summary = "API to retrieve a list of all members",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<Member>> getAllMembers() {
     final List<Member> members = memberService.getAllMembers();
@@ -65,7 +65,7 @@ public class MemberController {
   @RequiresPermission(MEMBER_WRITE)
   @Operation(
       summary = "API to submit member registration",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Member> createMember(@Valid @RequestBody final Member member) {
     return new ResponseEntity<>(memberService.createMember(member), HttpStatus.CREATED);
@@ -82,7 +82,7 @@ public class MemberController {
   @RequiresPermission(MEMBER_WRITE)
   @Operation(
       summary = "API to update member data",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Member> updateMember(
       @PathVariable final Long memberId, @Valid @RequestBody final MemberDto memberDto) {
@@ -94,7 +94,7 @@ public class MemberController {
   @RequiresPermission(MEMBER_DELETE)
   @Operation(
       summary = "Delete a member",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public ResponseEntity<Void> deleteMember(
       @Parameter(description = "ID of the member to delete") @PathVariable final Long memberId) {

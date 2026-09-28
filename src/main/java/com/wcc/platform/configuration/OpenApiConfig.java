@@ -71,7 +71,9 @@ public class OpenApiConfig implements WebMvcConfigurer {
   /** Customize servers for open API. */
   @Bean
   public OpenAPI customOpenApi() {
-    return new OpenAPI().addServersItem(new Server().url(appBaseUrl));
+    return new OpenAPI()
+        .addServersItem(new Server().url(appBaseUrl).description("Configured server"))
+        .addServersItem(new Server().url("/").description("Current host"));
   }
 
   /** Customize Actuator endpoint tag. */
@@ -114,5 +116,34 @@ public class OpenApiConfig implements WebMvcConfigurer {
 
       schemas.put("Year", integerSchema);
     };
+  }
+
+  /**
+   * Ensure generated OpenAPI adds apiKey requirement to any operation that has bearerAuth
+   * so Swagger UI attaches the X-API-KEY header alongside Bearer tokens.
+   */
+  @Bean
+  public OpenApiCustomizer securitySchemesCustomizer() {
+    return openApi -> {
+      if (openApi.getPaths() == null) {
+        return;
+      }
+      openApi.getPaths().values().stream()
+          .flatMap(pathItem -> pathItem.readOperations().stream())
+          .forEach(OpenApiConfig::ensureApiKeyPresent);
+    };
+  }
+
+  private static void ensureApiKeyPresent(final Operation operation) {
+    final var security = operation.getSecurity();
+    if (security == null || security.isEmpty()) {
+      return;
+    }
+    final boolean hasBearer = security.stream().anyMatch(s -> s.containsKey("bearerAuth"));
+    final boolean hasApiKey = security.stream().anyMatch(s -> s.containsKey("apiKey"));
+    if (hasBearer && !hasApiKey) {
+      operation.addSecurityItem(
+          new io.swagger.v3.oas.models.security.SecurityRequirement().addList("apiKey"));
+    }
   }
 }

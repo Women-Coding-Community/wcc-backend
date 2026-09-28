@@ -6,26 +6,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
-import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
-import com.wcc.platform.domain.exceptions.CycleNotFoundException;
-import com.wcc.platform.domain.exceptions.DuplicatedException;
-import com.wcc.platform.domain.exceptions.EmailSendException;
-import com.wcc.platform.domain.exceptions.ErrorDetails;
-import com.wcc.platform.domain.exceptions.ForbiddenException;
-import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
-import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
-import com.wcc.platform.domain.exceptions.InvalidTokenException;
-import com.wcc.platform.domain.exceptions.MemberNotFoundException;
-import com.wcc.platform.domain.exceptions.MenteeNotSavedException;
-import com.wcc.platform.domain.exceptions.MenteeRegistrationLimitException;
-import com.wcc.platform.domain.exceptions.MentorCapacityExceededException;
-import com.wcc.platform.domain.exceptions.MentorNotFoundException;
-import com.wcc.platform.domain.exceptions.MentorStatusException;
-import com.wcc.platform.domain.exceptions.MentorshipCycleClosedException;
-import com.wcc.platform.domain.exceptions.PlatformInternalException;
-import com.wcc.platform.domain.exceptions.TemplateValidationException;
+import com.wcc.platform.domain.exceptions.*;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
@@ -42,9 +23,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 /** Global controller to handle all exceptions for the API. */
-@SuppressWarnings({"PMD.ExcessiveImports"})
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -56,7 +39,8 @@ public class GlobalExceptionHandler {
     NoSuchElementException.class,
     MemberNotFoundException.class,
     MentorNotFoundException.class,
-    ApplicationNotFoundException.class
+    ApplicationNotFoundException.class,
+    ResourceNotFoundException.class
   })
   @ResponseStatus(NOT_FOUND)
   public ResponseEntity<ErrorDetails> handleNotFoundException(
@@ -90,10 +74,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     InvalidProgramTypeException.class,
     IllegalArgumentException.class,
-    TemplateValidationException.class
+    TemplateValidationException.class,
+    InvalidTokenException.class
   })
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ErrorDetails> handleProgramTypeError(
+  public ResponseEntity<ErrorDetails> handleBadRequest(
       final RuntimeException ex, final WebRequest request) {
     final var errorDetails =
         new ErrorDetails(
@@ -102,46 +87,25 @@ public class GlobalExceptionHandler {
   }
 
   /** Receive {@link DataIntegrityViolationException} then return {@link HttpStatus#CONFLICT}. */
-  @ExceptionHandler(DataIntegrityViolationException.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  public ResponseEntity<ErrorDetails> handleDataAccessException(
-      final DataIntegrityViolationException ex, final WebRequest request) {
-    final var errorDetails =
-        new ErrorDetails(
-            HttpStatus.CONFLICT.value(),
-            ex.getMostSpecificCause().getMessage(),
-            request.getDescription(false));
-    return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
-  }
-
-  /** Receive {@link DuplicatedException} subclasses and return {@link HttpStatus#CONFLICT}. */
-  @ExceptionHandler(DuplicatedException.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  public ResponseEntity<ErrorDetails> handleRecordAlreadyExitsException(
-      final RuntimeException ex, final WebRequest request) {
-    final var errorDetails =
-        new ErrorDetails(
-            HttpStatus.CONFLICT.value(),
-            "Record already exists: " + ex.getMessage(),
-            request.getDescription(false));
-    return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
-  }
-
-  /**
-   * Receive MentorStatusException, MentorCapacityExceededException or
-   * InvalidCycleStatusTransitionException and return {@link HttpStatus#CONFLICT}.
-   */
   @ExceptionHandler({
     MentorStatusException.class,
     MentorCapacityExceededException.class,
-    InvalidCycleStatusTransitionException.class
+    InvalidCycleStatusTransitionException.class,
+    DataIntegrityViolationException.class,
+    DuplicatedException.class
   })
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorDetails> handleConflicts(
-      final RuntimeException ex, final WebRequest request) {
+      final Exception ex, final WebRequest request) {
+    String message = ex.getMessage();
+    if (ex instanceof DataIntegrityViolationException dive) {
+      message = dive.getMostSpecificCause().getMessage();
+    } else if (ex instanceof DuplicatedException) {
+      message = "Record already exists: " + message;
+    }
+
     final var errorDetails =
-        new ErrorDetails(
-            HttpStatus.CONFLICT.value(), ex.getMessage(), request.getDescription(false));
+        new ErrorDetails(HttpStatus.CONFLICT.value(), message, request.getDescription(false));
     return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
   }
 
@@ -192,17 +156,6 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
-  /** Return 400 Bad Request for InvalidTokenException. */
-  @ExceptionHandler(InvalidTokenException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseEntity<ErrorDetails> handleInvalidTokenException(
-      final InvalidTokenException ex, final WebRequest request) {
-    final var errorDetails =
-        new ErrorDetails(
-            HttpStatus.BAD_REQUEST.value(), ex.getMessage(), request.getDescription(false));
-    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-  }
-
   /** Return 403 Forbidden for ForbiddenException. */
   @ExceptionHandler(ForbiddenException.class)
   public ResponseEntity<ErrorDetails> handleForbiddenException(
@@ -212,6 +165,62 @@ public class GlobalExceptionHandler {
             HttpStatus.FORBIDDEN.value(), ex.getMessage(), request.getDescription(false));
 
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+  }
+
+  /** Return 400 Bad Request for MissingServletRequestPartException. */
+  @ExceptionHandler(MissingServletRequestPartException.class)
+  public ResponseEntity<ErrorDetails> handleMissingServletRequestPartException(
+      final MissingServletRequestPartException ex, final WebRequest request) {
+    log.warn("Missing servlet request part error: {}", ex.getMessage(), ex);
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.BAD_REQUEST.value(),
+            "Required part '"
+                + ex.getRequestPartName()
+                + "' is not present. Please select a file to upload.",
+            request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+  }
+
+  /** Return 413 Payload Too Large or 400 Bad Request for MultipartException. */
+  @ExceptionHandler({MaxUploadSizeExceededException.class, MultipartException.class})
+  public ResponseEntity<ErrorDetails> handleMultipartException(
+      final Exception ex, final WebRequest request) {
+    log.warn("Multipart request error: {}", ex.getMessage(), ex);
+    Throwable root = ex;
+    while (root.getCause() != null && !root.equals(root.getCause())) {
+      root = root.getCause();
+    }
+    final String rootName = root.getClass().getSimpleName();
+    final String rootMsg =
+        root.getMessage() != null ? root.getMessage().toLowerCase(Locale.ROOT) : "";
+    final String exMsg = ex.getMessage() != null ? ex.getMessage().toLowerCase(Locale.ROOT) : "";
+    final boolean isSizeLimit =
+        ex instanceof MaxUploadSizeExceededException
+            || rootName.contains("SizeLimitExceeded")
+            || rootName.contains("FileSizeLimitExceeded")
+            || rootName.contains("SizeException")
+            || exMsg.contains("size limit")
+            || exMsg.contains("maximum upload size")
+            || rootMsg.contains("size limit")
+            || rootMsg.contains("exceeds the configured maximum")
+            || rootMsg.contains("maximum upload size")
+            || rootMsg.contains("eofexception");
+
+    if (isSizeLimit) {
+      final var errorDetails =
+          new ErrorDetails(
+              HttpStatus.PAYLOAD_TOO_LARGE.value(),
+              "Uploaded file exceeds the maximum allowed upload limit of 50MB",
+              request.getDescription(false));
+      return new ResponseEntity<>(errorDetails, HttpStatus.PAYLOAD_TOO_LARGE);
+    }
+    final var errorDetails =
+        new ErrorDetails(
+            HttpStatus.BAD_REQUEST.value(),
+            "Failed to process multipart upload request: " + ex.getMessage(),
+            request.getDescription(false));
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
   private String extractReadableMessage(final HttpMessageNotReadableException ex) {

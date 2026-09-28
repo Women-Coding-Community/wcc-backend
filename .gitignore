@@ -43,6 +43,8 @@ src/main/resources/application-local.yml
 # bruno
 api-flows/results.html
 .env
+.env.*
+.env.local
 node_modules
 .DS_Store
 /fly.toml
