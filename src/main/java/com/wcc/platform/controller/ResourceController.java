@@ -11,6 +11,7 @@ import com.wcc.platform.domain.resource.Resource;
 import com.wcc.platform.service.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,13 +48,19 @@ public class ResourceController {
 
   /** Uploads a resource. */
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @RequiresRole({RoleType.ADMIN, RoleType.LEADER, RoleType.MENTORSHIP_ADMIN})
+  @RequiresRole({
+    RoleType.ADMIN,
+    RoleType.LEADER,
+    RoleType.MENTORSHIP_ADMIN,
+    RoleType.MENTOR,
+    RoleType.MENTEE
+  })
   @Operation(
       summary = "Upload a resource",
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<Resource> uploadResource(
-      @Parameter(description = "File to upload") @RequestParam("file") final MultipartFile file,
+      @Parameter(description = "File to upload") @RequestPart("file") final MultipartFile file,
       @Parameter(description = "Name of the resource") @RequestParam("name") final String name,
       @Parameter(description = "Description of the resource")
           @RequestParam(value = "description", required = false)
@@ -134,9 +142,9 @@ public class ResourceController {
       security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<MemberProfilePicture> uploadMemberProfilePicture(
-      @Parameter(description = "Id of the member") @RequestParam final Long memberId,
-      @Parameter(description = "Profile picture file") @RequestParam("file")
-          final MultipartFile file) {
+      @Parameter(description = "Id of the member", in = ParameterIn.QUERY) @RequestParam("memberId")
+          final Long memberId,
+      @RequestPart("file") final MultipartFile file) {
 
     final var profilePicture = resourceService.uploadMemberProfilePicture(memberId, file);
     return new ResponseEntity<>(profilePicture, HttpStatus.CREATED);
