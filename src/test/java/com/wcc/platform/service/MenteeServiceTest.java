@@ -756,6 +756,102 @@ class MenteeServiceTest {
 
   @Test
   @DisplayName(
+      "Given a PENDING mentee in an AD_HOC cycle, when registering, "
+          + "then no mentor notification is sent")
+  void shouldNotSendMentorNotificationForPendingMenteeInAdHocCycle() {
+    var currentYear = Year.now();
+    var pendingMentee =
+        Mentee.menteeBuilder()
+            .id(5L)
+            .fullName("Pending Mentee")
+            .email("pending@wcc.com")
+            .position(mentee.getPosition())
+            .slackDisplayName(mentee.getSlackDisplayName())
+            .country(mentee.getCountry())
+            .city(mentee.getCity())
+            .profileStatus(ProfileStatus.PENDING)
+            .bio(mentee.getBio())
+            .skills(mentee.getSkills())
+            .spokenLanguages(List.of("English"))
+            .build();
+    var registration =
+        new MenteeRegistration(
+            pendingMentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(1L, 1, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(menteeRepository.findById(5L)).thenReturn(Optional.of(pendingMentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+    when(menteeRepository.update(eq(5L), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+
+    menteeService.saveRegistration(registration);
+
+    verify(notificationService, never()).sendNewMenteesNotification(any(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given a PENDING mentee in an AD_HOC cycle, when registering, "
+          + "then applications are created with PENDING status")
+  void shouldCreateApplicationsWithPendingStatusForPendingMenteeInAdHocCycle() {
+    var currentYear = Year.now();
+    var pendingMentee =
+        Mentee.menteeBuilder()
+            .id(5L)
+            .fullName("Pending Mentee")
+            .email("pending@wcc.com")
+            .position(mentee.getPosition())
+            .slackDisplayName(mentee.getSlackDisplayName())
+            .country(mentee.getCountry())
+            .city(mentee.getCity())
+            .profileStatus(ProfileStatus.PENDING)
+            .bio(mentee.getBio())
+            .skills(mentee.getSkills())
+            .spokenLanguages(List.of("English"))
+            .build();
+    var registration =
+        new MenteeRegistration(
+            pendingMentee,
+            MentorshipType.AD_HOC,
+            currentYear,
+            List.of(new MenteeApplicationDto(1L, 1, "msg", "why")));
+
+    var cycle =
+        MentorshipCycleEntity.builder()
+            .cycleId(1L)
+            .cycleYear(currentYear)
+            .mentorshipType(MentorshipType.AD_HOC)
+            .status(CycleStatus.OPEN)
+            .build();
+
+    when(cycleRepository.findOpenCycle()).thenReturn(Optional.of(cycle));
+    when(menteeRepository.findById(5L)).thenReturn(Optional.of(pendingMentee));
+    when(applicationRepository.findByMenteeAndCycle(any(), any())).thenReturn(List.of());
+    when(applicationRepository.countMenteeApplications(any(), any())).thenReturn(0L);
+    when(menteeRepository.update(eq(5L), any(Mentee.class)))
+        .thenAnswer(invocation -> invocation.getArgument(1));
+
+    menteeService.saveRegistration(registration);
+
+    verify(applicationRepository)
+        .create(argThat(app -> app.getStatus() == ApplicationStatus.PENDING));
+    verify(notificationService, never()).sendNewMenteesNotification(any(), any());
+  }
+
+  @Test
+  @DisplayName(
       "Given a LONG_TERM cycle, when registering a mentee, "
           + "then applications are created with PENDING status")
   void shouldCreateApplicationsWithPendingStatusForLongTermCycle() {

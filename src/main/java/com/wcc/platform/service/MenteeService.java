@@ -6,6 +6,7 @@ import com.wcc.platform.domain.platform.member.ProfileStatus;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentee;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplication;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
 import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
@@ -74,7 +75,7 @@ public class MenteeService {
 
       validateRegistrationLimit(registrationCount);
       validateDuplicatedPriorities(
-          menteeId, cycle.getCycleId(), filteredRegistrations.toApplications(cycle, menteeId));
+          menteeId, cycle.getCycleId(), filteredRegistrations.applications());
 
       if (registrationCount != null && registrationCount > 0) {
         userProvisionService.provisionUserRole(
@@ -97,15 +98,14 @@ public class MenteeService {
 
     userProvisionService.provisionUserRole(menteeId, savedMentee.getEmail(), RoleType.MENTEE);
 
-    validateDuplicatedPriorities(
-        menteeId, cycle.getCycleId(), menteeRegistration.toApplications(cycle, menteeId));
+    validateDuplicatedPriorities(menteeId, cycle.getCycleId(), menteeRegistration.applications());
     return createMenteeRegistrations(menteeRegistration, cycle);
   }
 
   private void validateDuplicatedPriorities(
-      final Long menteeId, final Long cycleId, final List<MenteeApplication> applications) {
+      final Long menteeId, final Long cycleId, final List<MenteeApplicationDto> applications) {
     final List<Integer> requestPriorities =
-        applications.stream().map(MenteeApplication::getPriorityOrder).toList();
+        applications.stream().map(MenteeApplicationDto::priorityOrder).toList();
 
     if (requestPriorities.size() != requestPriorities.stream().distinct().count()) {
       throw new DuplicatedPriorityException("Priorities must be unique in the request");
@@ -208,14 +208,17 @@ public class MenteeService {
   private Mentee createMenteeRegistrations(
       final MenteeRegistration menteeRegistration, final MentorshipCycleEntity cycle) {
     final var menteeId = menteeRegistration.mentee().getId();
-    final var applications = menteeRegistration.toApplications(cycle, menteeId);
+    final var savedMentee = menteeRepository.findById(menteeId).orElseThrow();
+
+    final var applications =
+        menteeRegistration.toApplications(cycle, menteeId, savedMentee.getProfileStatus());
     applications.forEach(registrationsRepo::create);
 
-    if (cycle.getMentorshipType() == MentorshipType.AD_HOC) {
+    if (cycle.getMentorshipType() == MentorshipType.AD_HOC
+        && savedMentee.getProfileStatus() == ProfileStatus.ACTIVE) {
       applications.forEach(app -> notifyMentorForAdHocApplication(app, cycle));
     }
-
-    return menteeRepository.findById(menteeId).orElseThrow();
+    return savedMentee;
   }
 
   private void notifyMentorForAdHocApplication(
