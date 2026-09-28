@@ -52,11 +52,13 @@ public record MenteeSection(
 
   /**
    * Converts to a DTO scoped to the given mentorship cycle. For AD_HOC cycles the adHoc
-   * availability list is filtered to only the entries whose month matches the cycle month, so that
-   * mentors unavailable in the current cycle month are not surfaced by the AD_HOC type filter.
+   * availability list is filtered to only the entries whose month matches the cycle month and that
+   * declare more than zero hours, so that mentors unavailable in the current cycle month (or with no
+   * real availability, i.e. 0 hours) are not surfaced by the AD_HOC type filter.
    *
    * @param cycle the active mentorship cycle; when null or LONG_TERM the full adHoc list is kept
-   * @return a MenteeSection DTO with adHoc availability filtered to the current cycle month
+   * @return a MenteeSection DTO with adHoc availability filtered to the current cycle month and to
+   *     entries with positive hours
    */
   public MenteeSection toDtoForCycle(final MentorshipCycle cycle) {
     if (cycle == null
@@ -66,7 +68,10 @@ public record MenteeSection(
       return toDto();
     }
     final List<MentorMonthAvailability> filteredAdHoc =
-        adHoc.stream().filter(a -> Objects.equals(a.month(), cycle.month())).toList();
+        adHoc.stream()
+            .filter(a -> Objects.equals(a.month(), cycle.month()))
+            .filter(a -> a.hours() != null && a.hours() > 0)
+            .toList();
     return new MenteeSection(idealMentee, additional, longTerm, filteredAdHoc);
   }
 }

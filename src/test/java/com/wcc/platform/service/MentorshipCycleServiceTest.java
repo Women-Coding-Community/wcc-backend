@@ -6,11 +6,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.domain.exceptions.CycleNotFoundException;
 import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MentorshipCycleRepository;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,12 +32,12 @@ class MentorshipCycleServiceTest {
 
   @Test
   @DisplayName(
-      "Given cycle does not exist, when updating status, then throw NoSuchElementException")
+      "Given cycle does not exist, when updating status, then throw CycleNotFoundException")
   void shouldThrowWhenCycleNotFound() {
     when(cycleRepository.findById(99L)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> cycleService.updateStatus(99L, CycleStatus.OPEN))
-        .isInstanceOf(NoSuchElementException.class)
+        .isInstanceOf(CycleNotFoundException.class)
         .hasMessageContaining("99");
 
     verify(cycleRepository, never()).updateStatus(99L, CycleStatus.OPEN);

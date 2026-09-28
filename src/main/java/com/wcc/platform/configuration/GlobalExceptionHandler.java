@@ -10,7 +10,6 @@ import com.wcc.platform.domain.exceptions.*;
 import com.wcc.platform.repository.file.FileRepositoryException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,6 +35,7 @@ public class GlobalExceptionHandler {
   /** Receive ContentNotFoundException and return {@link HttpStatus#NOT_FOUND}. */
   @ExceptionHandler({
     ContentNotFoundException.class,
+    CycleNotFoundException.class,
     NoSuchElementException.class,
     MemberNotFoundException.class,
     MentorNotFoundException.class,
@@ -68,9 +68,8 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * @param ex
-   * @param request
-   * @return
+   * Receive {@link InvalidProgramTypeException} or {@link IllegalArgumentException} then return
+   * {@link HttpStatus#BAD_REQUEST}.
    */
   @ExceptionHandler({
     InvalidProgramTypeException.class,
@@ -87,6 +86,7 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
   }
 
+  /** Receive {@link DataIntegrityViolationException} then return {@link HttpStatus#CONFLICT}. */
   @ExceptionHandler({
     MentorStatusException.class,
     MentorCapacityExceededException.class,

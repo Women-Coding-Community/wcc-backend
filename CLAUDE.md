@@ -20,6 +20,12 @@ WCC (Women Coding Community) Platform Backend - A Spring Boot 3.2.5 application 
 docker compose -f docker/docker-compose.yml up --build
 ```
 
+**Run the whole application (backend + admin portal + public frontend + seed data):**
+```bash
+./scripts/app-stack.sh up            # add --purge for a fresh database; see README "Run the whole application with Docker"
+./scripts/app-stack.sh cycle ad-hoc  # switch the open mentorship cycle (long-term | ad-hoc | both | none)
+```
+
 **Run tests:**
 ```bash
 ./gradlew test                    # Unit tests

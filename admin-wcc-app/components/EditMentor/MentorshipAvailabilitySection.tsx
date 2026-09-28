@@ -213,6 +213,9 @@ export default function MentorshipAvailabilitySection({
                                     });
                                   }
                                 }
+                                if (!e.target.checked) {
+                                  setValue?.(`monthAvailability.${index}.hours`, 0);
+                                }
                               }}
                               size="small"
                             />
@@ -229,9 +232,11 @@ export default function MentorshipAvailabilitySection({
                         <TextField
                           {...field}
                           value={value}
-                          onChange={(e) =>
-                            onChange(e.target.value === '' ? 0 : Number(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const nextHours = e.target.value === '' ? 0 : Number(e.target.value);
+                            onChange(nextHours);
+                            setValue?.(`monthAvailability.${index}.enabled`, nextHours > 0);
+                          }}
                           type="number"
                           size="small"
                           label="hours"

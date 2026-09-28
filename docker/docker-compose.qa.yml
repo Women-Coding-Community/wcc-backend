@@ -1,20 +1,55 @@
-# Local QA stack: same as docker-compose.yml but runs the `docker,qa` profile,
-# which seeds MENTORSHIP_ADMIN, MENTOR and LEADER accounts in addition to admin.
+# Local QA environment: the whole application in one stack.
 #
-# Usage:
-#   docker compose -f docker/docker-compose.qa.yml up --build
+#   postgres        PostgreSQL 16                         localhost:${POSTGRES_PORT:-5432}
+#   mailhog         mock SMTP server + inbox               http://localhost:8025
+#   springboot-app  backend API (`docker` profile)          http://localhost:8080
+#                   bootstraps only admin@wcc.dev (app.seed.users in application.yml)
+#   admin-app       admin portal (admin-wcc-app/)          http://localhost:3000
+#   frontend        public website (wcc-frontend repo)     http://localhost:3001
+#   seed            one-shot seeder (profile `seed`) — scripts/init-local-env.sh:
+#                   the QA login accounts (mentorship-admin@, mentor@, leader@wcc.dev),
+#                   MENTORS page, mentorship cycles, sample mentors/mentees
+#
+# Usage (from the repository root) — prefer the wrapper script:
+#   ./scripts/app-stack.sh up            # build, start, wait for health, seed
+#   ./scripts/app-stack.sh up --purge    # same, but wipe the database first
+#   ./scripts/app-stack.sh cycle ad-hoc  # switch the open mentorship cycle
+#   ./scripts/app-stack.sh down          # stop (data is kept)
+#
+# Raw compose equivalents:
+#   docker compose -f docker/docker-compose.qa.yml up --build -d --wait
+#   docker compose -f docker/docker-compose.qa.yml run --rm seed
+#
+# Environment overrides:
+#   POSTGRES_PORT         host port for PostgreSQL (default 5432) — set it when a
+#                         local PostgreSQL already occupies 5432, e.g. 5433
+#   WCC_FRONTEND_CONTEXT  build context for the public website: a directory
+#                         (default ../../wcc-frontend, i.e. a sibling checkout) or a
+#                         git URL such as
+#                         https://github.com/Women-Coding-Community/wcc-frontend.git
+#   CYCLE_SCENARIO        cycle scenario for the seed: long-term (default) | ad-hoc | both | none
+#
+# This file shares container names, ports and the postgres-data volume with
+# docker-compose.yml (the backend-only developer stack), so run only one of them
+# at a time.
+
 services:
   postgres:
     image: postgres:16-alpine
     container_name: postgres
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: MFpFnhhICniFNPA
       POSTGRES_DB: wcc
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d wcc" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - app-network
 
@@ -27,7 +62,6 @@ services:
     networks:
       - app-network
 
-
   springboot-app:
     build:
       context: ..
@@ -37,10 +71,12 @@ services:
       - "8080:8080"
       - "5005:5005"
     depends_on:
-      - postgres
-      - mailhog
+      postgres:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
     environment:
-      SPRING_PROFILES_ACTIVE: docker,qa
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/wcc
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: MFpFnhhICniFNPA
@@ -53,11 +89,98 @@ services:
     healthcheck:
       # http://localhost:8080/actuator/health is always DOWN because of the
       # lack of mail service authentication
-      test: [ "CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health/ping | grep UP || exit 1" ]
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8080/actuator/health/ping | grep UP || exit 1" ]
       interval: 10s
       timeout: 1s
       retries: 5
       start_period: 5s
+    networks:
+      - app-network
+
+  admin-app:
+    build:
+      context: ../admin-wcc-app
+      dockerfile: Dockerfile
+      args:
+        # Inlined into the browser bundle at build time; the portal calls the
+        # backend from the browser, so this must be the host-reachable URL.
+        NEXT_PUBLIC_API_BASE: http://localhost:8080
+        NEXT_PUBLIC_API_KEY: local
+        NEXT_PUBLIC_APP_URL: http://localhost:3000
+    container_name: admin-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      springboot-app:
+        condition: service_healthy
+    healthcheck:
+      # 127.0.0.1 on purpose: Node listens on IPv4 only and busybox wget
+      # resolves `localhost` to ::1.
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:3000/login > /dev/null || exit 1" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ${WCC_FRONTEND_CONTEXT:-../../wcc-frontend}
+      target: nextjs
+    container_name: frontend
+    ports:
+      - "3001:3000"
+    environment:
+      # Read server-side only (getServerSideProps / API routes), so the
+      # in-network service name works here.
+      API_BASE_URL: http://springboot-app:8080/api/cms/v1
+      API_KEY: local
+    depends_on:
+      springboot-app:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3000" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - app-network
+
+  # One-shot seeder. Not started by `up`; run it explicitly:
+  #   docker compose -f docker/docker-compose.qa.yml run --rm seed
+  #   docker compose -f docker/docker-compose.qa.yml run --rm seed scripts/seed-cycles.sh ad-hoc
+  seed:
+    profiles:
+      - seed
+    build:
+      context: .
+      dockerfile: seed.Dockerfile
+    container_name: seed
+    environment:
+      API_BASE: http://springboot-app:8080/api
+      API_KEY: local
+      ADMIN_EMAIL: admin@wcc.dev
+      ADMIN_PASSWORD: wcc-admin
+      QA_PASSWORD: wcc-admin
+      CYCLE_SCENARIO: ${CYCLE_SCENARIO:-long-term}
+      DATA_DIR: /seed/scripts/seed-data
+      INIT_DATA_DIR: /seed/init-data
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: MFpFnhhICniFNPA
+      PGDATABASE: wcc
+    volumes:
+      - ../scripts:/seed/scripts:ro
+      - ../src/main/resources/init-data:/seed/init-data:ro
+    # No depends_on on purpose: the seed runs against an already-started stack
+    # (scripts/app-stack.sh starts it with --no-deps) and waits for the API
+    # itself, so seeding or switching cycles never rebuilds or restarts the
+    # other services — they may be under test at that moment.
+    entrypoint: [ "bash" ]
+    command: [ "scripts/init-local-env.sh" ]
     networks:
       - app-network
 

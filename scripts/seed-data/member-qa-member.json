@@ -1,0 +1,14 @@
+{
+  "fullName": "QA Member",
+  "position": "QA Member",
+  "email": "member@wcc.dev",
+  "slackDisplayName": "@qa-member",
+  "country": { "countryCode": "GB", "countryName": "United Kingdom" },
+  "city": "London",
+  "companyName": "WCC QA",
+  "memberTypes": ["MEMBER"],
+  "isWomen": true,
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
+  "network": []
+}

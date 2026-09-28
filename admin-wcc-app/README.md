@@ -11,7 +11,22 @@ mentorship matching by calling the backend API in this same repository.
   [`docs/qa_local_setup.md`](../docs/qa_local_setup.md) to start the backend with pre-seeded
   accounts.
 
-This app is **not** started by the Docker compose stacks; run it separately as below.
+## Run it with Docker (no setup)
+
+The full application stack builds and starts the portal for you on `http://localhost:3000`,
+together with the backend, seeded accounts and sample data — from the repository root:
+
+```shell
+./scripts/app-stack.sh up
+```
+
+See [`docs/qa_local_setup.md`](../docs/qa_local_setup.md). The image is built from the
+[`Dockerfile`](Dockerfile) in this directory; `NEXT_PUBLIC_*` values are baked in at build time
+(`docker/docker-compose.qa.yml` passes them as build args), so change them there, not in
+`.env`, when running in Docker.
+
+The rest of this README is for running the portal **from source** (hot reload) against the
+backend-only stack.
 
 ## Setup
 
