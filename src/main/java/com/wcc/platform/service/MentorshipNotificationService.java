@@ -153,13 +153,18 @@ public class MentorshipNotificationService {
         cycle.getCycleYear() != null
             ? cycle.getCycleYear().getValue()
             : LocalDate.now(ZONE_ID).getYear();
+    final String adhocNote =
+        cycle.getMentorshipType() == MentorshipType.AD_HOC
+            ? notificationConfig.getAdhocMenteeNote()
+            : "";
     sendNotification(
         TemplateType.NEW_MENTEES_REVIEW,
         Map.of(
             "mentorName", mentor.getFullName(),
             "year", year,
             "cycleType", cycle.getMentorshipType().getDescription(),
-            "mentorshipEmail", notificationConfig.getMentorshipEmail()),
+            "mentorshipEmail", notificationConfig.getMentorshipEmail(),
+            "adhocNote", adhocNote),
         List.of(mentor.getEmail(), notificationConfig.getMentorshipEmail()));
   }
 

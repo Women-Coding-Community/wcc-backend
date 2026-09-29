@@ -44,6 +44,10 @@ notification:
   mentorship-email: mentorship@womencodingcommunity.com
   mentor-profile-url: https://mentorship.womencodingcommunity.com/mentorship/mentors?keyword=
   volunteer-url: https://www.womencodingcommunity.com/volunteer
+  adhoc-mentee-note: >-
+    <p>In an Ad-Hoc cycle, a mentee can apply to more than one mentor. Once any mentor accepts,
+    the application is no longer available to others. If you cannot find an application in your
+    dashboard, it may have already been accepted by another mentor.</p>
 
 logging:
   level:
@@ -65,7 +69,7 @@ file:
 
 app:
   cors:
-    allowed-origins: http://localhost:3000,https://localhost:3000
+    allowed-origins: http://localhost:4000,https://localhost:4000
   email:
     team-signature: |
       Best Regards<br>

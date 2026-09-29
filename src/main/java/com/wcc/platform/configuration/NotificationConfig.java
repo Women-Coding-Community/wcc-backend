@@ -21,4 +21,5 @@ public class NotificationConfig {
   @NotBlank private String mentorProfileUrl;
   @NotBlank private String volunteerUrl;
   @NotBlank private String mentorshipEmail;
+  @NotBlank private String adhocMenteeNote;
 }
