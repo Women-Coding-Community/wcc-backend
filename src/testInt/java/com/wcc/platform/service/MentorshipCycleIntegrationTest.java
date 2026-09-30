@@ -129,4 +129,23 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
     assertThat(cycle.getCycleStartDate()).isNotNull();
     assertThat(cycle.getMaxMenteesPerMentor()).isGreaterThan(0);
   }
+
+  @Test
+  @DisplayName(
+      "Given database is seeded, when finding cycles by year 2026, then it should return only 2026 cycles")
+  void shouldFindCyclesByYear() {
+    final List<MentorshipCycleEntity> cycles = cycleRepository.findByYear(2026);
+
+    assertThat(cycles).isNotEmpty();
+    assertThat(cycles).allMatch(cycle -> cycle.getCycleYear().equals(Year.of(2026)));
+  }
+
+  @Test
+  @DisplayName(
+      "Given no cycles exist for year 9999, when finding cycles by year, then it should return empty")
+  void shouldReturnEmptyForYearWithNoCycles() {
+    final List<MentorshipCycleEntity> cycles = cycleRepository.findByYear(9999);
+
+    assertThat(cycles).isEmpty();
+  }
 }
