@@ -11,6 +11,8 @@ import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -175,7 +177,54 @@ class MentorshipCycleServiceTest {
         .hasMessageContaining("OPEN");
   }
 
+  @Test
+  @DisplayName("Given no year, when getting cycles, then return all cycles")
+  void shouldReturnAllCyclesWhenNoYear() {
+    final var cycles = List.of(cycleInYear(1L, 2025), cycleInYear(2L, 2026));
+    when(cycleRepository.getAll()).thenReturn(cycles);
+
+    final List<MentorshipCycleEntity> result = cycleService.getCycles(null);
+
+    assertThat(result).isEqualTo(cycles);
+  }
+
+  @Test
+  @DisplayName("Given a year, when getting cycles, then return only cycles in that year")
+  void shouldReturnCyclesForYear() {
+    final var cycles = List.of(cycleInYear(2L, 2026));
+    when(cycleRepository.findByYear(2026)).thenReturn(cycles);
+
+    final List<MentorshipCycleEntity> result = cycleService.getCycles(2026);
+
+    assertThat(result).isEqualTo(cycles);
+  }
+
+  @Test
+  @DisplayName("Given a year with no cycles, when getting cycles, then return an empty list")
+  void shouldReturnEmptyListForYearWithNoCycles() {
+    when(cycleRepository.findByYear(9999)).thenReturn(List.of());
+
+    final List<MentorshipCycleEntity> result = cycleService.getCycles(9999);
+
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  @DisplayName(
+      "Given year is not in YYYY format, when getting cycles, then throw IllegalArgumentException")
+  void shouldThrowWhenYearIsNotYyyy() {
+    assertThatThrownBy(() -> cycleService.getCycles(26))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Year must be in YYYY format");
+
+    verify(cycleRepository, never()).findByYear(26);
+  }
+
   private MentorshipCycleEntity cycleWithStatus(final Long cycleId, final CycleStatus status) {
     return MentorshipCycleEntity.builder().cycleId(cycleId).status(status).build();
+  }
+
+  private MentorshipCycleEntity cycleInYear(final Long cycleId, final int year) {
+    return MentorshipCycleEntity.builder().cycleId(cycleId).cycleYear(Year.of(year)).build();
   }
 }

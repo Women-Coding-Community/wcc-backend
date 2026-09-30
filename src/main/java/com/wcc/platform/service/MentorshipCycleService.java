@@ -5,6 +5,7 @@ import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,27 @@ public class MentorshipCycleService {
           CycleStatus.COMPLETED, Set.of(),
           CycleStatus.CANCELLED, Set.of());
 
+  private static final int MIN_YEAR = 1000;
+  private static final int MAX_YEAR = 9999;
+
   private final MentorshipCycleRepository cycleRepository;
+
+  /**
+   * Get mentorship cycles, optionally filtered by year.
+   *
+   * @param year optional cycle year filter
+   * @return list of mentorship cycles
+   * @throws IllegalArgumentException if the year is not in YYYY format
+   */
+  public List<MentorshipCycleEntity> getCycles(final Integer year) {
+    if (year == null) {
+      return cycleRepository.getAll();
+    }
+    if (year < MIN_YEAR || year > MAX_YEAR) {
+      throw new IllegalArgumentException("Year must be in YYYY format");
+    }
+    return cycleRepository.findByYear(year);
+  }
 
   /**
    * Update the status of a mentorship cycle, enforcing valid state transitions.
