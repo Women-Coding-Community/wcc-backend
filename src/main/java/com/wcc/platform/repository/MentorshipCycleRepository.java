@@ -3,6 +3,7 @@ package com.wcc.platform.repository;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import java.time.Month;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
@@ -67,4 +68,7 @@ public interface MentorshipCycleRepository extends CrudRepository<MentorshipCycl
    * @return the updated cycle entity
    */
   MentorshipCycleEntity updateStatus(Long cycleId, CycleStatus status);
+
+  Optional<MentorshipCycleEntity> findByYearAndTypeAndMonth(
+      Year year, MentorshipType type, Month month);
 }

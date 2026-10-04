@@ -2,12 +2,13 @@ package com.wcc.platform.controller;
 
 import com.wcc.platform.configuration.security.RequiresPermission;
 import com.wcc.platform.configuration.security.RequiresRole;
-import com.wcc.platform.domain.exceptions.CycleNotFoundException;
 import com.wcc.platform.domain.auth.Permission;
+import com.wcc.platform.domain.exceptions.CycleNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchCancelRequest;
 import com.wcc.platform.domain.platform.mentorship.MenteeApplicationAdminResponse;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleCreateRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
 import com.wcc.platform.domain.platform.mentorship.recommendation.MentorshipRecommendationResponse;
@@ -196,6 +197,24 @@ public class MentorshipAdminMatchesController {
   }
 
   // ==================== Cycle Management ====================
+
+  /**
+   * API to create a mentorship cycle in draft status.
+   *
+   * @param request The cycle creation request
+   * @return Created mentorship cycle
+   */
+  @PostMapping("/cycles")
+  @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
+  @Operation(
+      summary = "Create a mentorship cycle",
+      security = {@SecurityRequirement(name = BEARER_AUTH)})
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<MentorshipCycleEntity> createCycle(
+      @Valid @RequestBody final MentorshipCycleCreateRequest request) {
+    final MentorshipCycleEntity createdCycle = cycleService.createCycle(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(createdCycle);
+  }
 
   /**
    * API to get the currently open mentorship cycle.
