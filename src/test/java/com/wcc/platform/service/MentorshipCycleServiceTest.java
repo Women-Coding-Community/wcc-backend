@@ -7,11 +7,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.wcc.platform.domain.exceptions.CycleNotFoundException;
+import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleCreateRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
-import com.wcc.platform.repository.MentorshipCycleRepository;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
+import com.wcc.platform.repository.MentorshipCycleRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -207,6 +212,116 @@ class MentorshipCycleServiceTest {
     final List<MentorshipCycleEntity> result = cycleService.getCycles(Year.of(9999));
 
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  @DisplayName("Given valid cycle request, when creating cycle, then create draft cycle")
+  void shouldCreateDraftCycleWithDefaultMaxMenteesPerMentor() {
+    final var request = validCreateRequest(null);
+    final var createdCycle = cycleWithStatus(9L, CycleStatus.DRAFT);
+    when(cycleRepository.create(org.mockito.ArgumentMatchers.any(MentorshipCycleEntity.class)))
+        .thenReturn(createdCycle);
+
+    final MentorshipCycleEntity result = cycleService.createCycle(request);
+
+    assertThat(result.getStatus()).isEqualTo(CycleStatus.DRAFT);
+    verify(cycleRepository)
+        .create(
+            org.mockito.ArgumentMatchers.argThat(
+                cycle ->
+                    cycle.getCycleYear().equals(Year.of(2026))
+                        && cycle.getCycleMonth().equals(Month.OCTOBER)
+                        && cycle.getMentorshipType() == MentorshipType.AD_HOC
+                        && cycle.getMaxMenteesPerMentor() == 5));
+  }
+
+  @Test
+  @DisplayName("Given duplicate cycle, when creating cycle, then throw conflict exception")
+  void shouldPropagateDuplicateCycleException() {
+    when(cycleRepository.create(org.mockito.ArgumentMatchers.any(MentorshipCycleEntity.class)))
+        .thenThrow(new DuplicatedException("cycle already exists"));
+
+    assertThatThrownBy(() -> cycleService.createCycle(validCreateRequest(5)))
+        .isInstanceOf(DuplicatedException.class)
+        .hasMessage("cycle already exists");
+  }
+
+  @Test
+  @DisplayName(
+      "Given registration end before registration start, when creating cycle, then reject request")
+  void shouldRejectInvalidRegistrationDateRange() {
+    final var request =
+        new MentorshipCycleCreateRequest(
+            Year.of(2026),
+            Month.OCTOBER,
+            MentorshipType.AD_HOC,
+            LocalDate.of(2026, 10, 15),
+            LocalDate.of(2026, 10, 1),
+            LocalDate.of(2026, 10, 20),
+            null,
+            5,
+            "October cycle");
+
+    assertThatThrownBy(() -> cycleService.createCycle(request))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Registration end date");
+    verify(cycleRepository, never()).create(org.mockito.ArgumentMatchers.any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given cycle start before registration start, when creating cycle, then reject request")
+  void shouldRejectCycleStartBeforeRegistrationStart() {
+    final var request =
+        new MentorshipCycleCreateRequest(
+            Year.of(2026),
+            Month.OCTOBER,
+            MentorshipType.AD_HOC,
+            LocalDate.of(2026, 10, 15),
+            LocalDate.of(2026, 10, 20),
+            LocalDate.of(2026, 10, 1),
+            null,
+            5,
+            "October cycle");
+
+    assertThatThrownBy(() -> cycleService.createCycle(request))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Cycle start date");
+    verify(cycleRepository, never()).create(org.mockito.ArgumentMatchers.any());
+  }
+
+  @Test
+  @DisplayName("Given cycle end before cycle start, when creating cycle, then reject request")
+  void shouldRejectCycleEndBeforeCycleStart() {
+    final var request =
+        new MentorshipCycleCreateRequest(
+            Year.of(2026),
+            Month.OCTOBER,
+            MentorshipType.AD_HOC,
+            LocalDate.of(2026, 10, 1),
+            LocalDate.of(2026, 10, 15),
+            LocalDate.of(2026, 10, 20),
+            LocalDate.of(2026, 10, 19),
+            5,
+            "October cycle");
+
+    assertThatThrownBy(() -> cycleService.createCycle(request))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Cycle end date");
+    verify(cycleRepository, never()).create(org.mockito.ArgumentMatchers.any());
+  }
+
+  private MentorshipCycleCreateRequest validCreateRequest(final Integer maxMenteesPerMentor) {
+    return new MentorshipCycleCreateRequest(
+        Year.of(2026),
+        Month.OCTOBER,
+        MentorshipType.AD_HOC,
+        LocalDate.of(2026, 10, 1),
+        LocalDate.of(2026, 10, 15),
+        LocalDate.of(2026, 10, 20),
+        LocalDate.of(2026, 12, 20),
+        maxMenteesPerMentor,
+        "October cycle");
   }
 
   private MentorshipCycleEntity cycleWithStatus(final Long cycleId, final CycleStatus status) {
