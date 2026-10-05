@@ -18,9 +18,10 @@ describe('AdminLayout', () => {
   beforeEach(() => jest.clearAllMocks());
 
   describe('Given user is ADMIN', () => {
-    it('when rendered, then all nav items are visible', () => {
+    it('when rendered, then all nav items except Mentor Dashboard are visible', () => {
       renderLayout(['ADMIN']);
-      expect(screen.getByRole('link', { name: /mentor dashboard/i })).toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: /mentor dashboard/i })).not.toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /^home$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^mentors$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^members$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^mentees$/i })).toBeInTheDocument();
@@ -61,9 +62,9 @@ describe('AdminLayout', () => {
   });
 
   describe('Given user has no special roles', () => {
-    it('when rendered, then only Dashboard and Logout are visible', () => {
+    it('when rendered, then only Home and Logout are visible', () => {
       renderLayout([]);
-      expect(screen.getByRole('link', { name: /^dashboard$/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /^home$/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /mentor dashboard/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^mentees$/i })).not.toBeInTheDocument();
