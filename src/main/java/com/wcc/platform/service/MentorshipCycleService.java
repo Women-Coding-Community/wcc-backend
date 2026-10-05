@@ -3,8 +3,11 @@ package com.wcc.platform.service;
 import com.wcc.platform.domain.exceptions.CycleNotFoundException;
 import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleCreateRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MentorshipCycleRepository;
+import java.time.Month;
+import java.time.Year;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +48,48 @@ public class MentorshipCycleService {
     }
 
     return cycleRepository.updateStatus(cycleId, newStatus);
+  }
+
+  /**
+   * Creates a new mentorship cycle in draft status.
+   *
+   * @param request cycle creation data
+   * @return the created mentorship cycle
+   * @throws IllegalArgumentException if the supplied dates are inconsistent
+   */
+  public MentorshipCycleEntity createCycle(final MentorshipCycleCreateRequest request) {
+
+    if (request.registrationEndDate().isBefore(request.registrationStartDate())) {
+      throw new IllegalArgumentException(
+          "Registration end date must be greater than or equal to registration start date");
+    }
+
+    if (request.cycleStartDate().isBefore(request.registrationStartDate())) {
+      throw new IllegalArgumentException(
+          "Cycle start date must be greater than or equal to registration start date");
+    }
+
+    if (request.cycleEndDate() != null
+        && request.cycleEndDate().isBefore(request.cycleStartDate())) {
+      throw new IllegalArgumentException(
+          "Cycle end date must be greater than or equal to cycle start date");
+    }
+
+    final MentorshipCycleEntity cycle =
+        MentorshipCycleEntity.builder()
+            .cycleYear(Year.of(request.cycleYear()))
+            .cycleMonth(Month.of(request.cycleMonth()))
+            .mentorshipType(request.mentorshipType())
+            .registrationStartDate(request.registrationStartDate())
+            .registrationEndDate(request.registrationEndDate())
+            .cycleStartDate(request.cycleStartDate())
+            .cycleEndDate(request.cycleEndDate())
+            .status(CycleStatus.DRAFT)
+            .maxMenteesPerMentor(
+                request.maxMenteesPerMentor() != null ? request.maxMenteesPerMentor() : 5)
+            .description(request.description())
+            .build();
+
+    return cycleRepository.create(cycle);
   }
 }
