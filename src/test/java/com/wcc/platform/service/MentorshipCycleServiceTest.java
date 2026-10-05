@@ -207,8 +207,9 @@ class MentorshipCycleServiceTest {
   void shouldPropagateDuplicateCycleException() {
     when(cycleRepository.create(org.mockito.ArgumentMatchers.any(MentorshipCycleEntity.class)))
         .thenThrow(new DuplicatedException("cycle already exists"));
+    final var request = validCreateRequest(5);
 
-    assertThatThrownBy(() -> cycleService.createCycle(validCreateRequest(5)))
+    assertThatThrownBy(() -> cycleService.createCycle(request))
         .isInstanceOf(DuplicatedException.class)
         .hasMessage("cycle already exists");
   }
