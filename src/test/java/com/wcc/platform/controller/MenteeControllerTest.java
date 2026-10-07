@@ -23,9 +23,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -43,9 +43,9 @@ class MenteeControllerTest {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
-  @MockBean private MenteeService menteeService;
-  @MockBean private MenteeAdminService menteeAdminService;
-  @MockBean private MenteeWorkflowService menteeWorkflowService;
+  @MockitoBean private MenteeService menteeService;
+  @MockitoBean private MenteeAdminService menteeAdminService;
+  @MockitoBean private MenteeWorkflowService menteeWorkflowService;
 
   @Test
   @DisplayName("Given valid mentee registration, when creating mentee, then return 201 Created")
