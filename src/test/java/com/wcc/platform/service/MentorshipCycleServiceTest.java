@@ -194,7 +194,7 @@ class MentorshipCycleServiceTest {
     final var cycles = List.of(cycleInYear(2L, 2026));
     when(cycleRepository.findByYear(2026)).thenReturn(cycles);
 
-    final List<MentorshipCycleEntity> result = cycleService.getCycles(2026);
+    final List<MentorshipCycleEntity> result = cycleService.getCycles(Year.of(2026));
 
     assertThat(result).isEqualTo(cycles);
   }
@@ -204,20 +204,9 @@ class MentorshipCycleServiceTest {
   void shouldReturnEmptyListForYearWithNoCycles() {
     when(cycleRepository.findByYear(9999)).thenReturn(List.of());
 
-    final List<MentorshipCycleEntity> result = cycleService.getCycles(9999);
+    final List<MentorshipCycleEntity> result = cycleService.getCycles(Year.of(9999));
 
     assertThat(result).isEmpty();
-  }
-
-  @Test
-  @DisplayName(
-      "Given year is not in YYYY format, when getting cycles, then throw IllegalArgumentException")
-  void shouldThrowWhenYearIsNotYyyy() {
-    assertThatThrownBy(() -> cycleService.getCycles(26))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Year must be in YYYY format");
-
-    verify(cycleRepository, never()).findByYear(26);
   }
 
   private MentorshipCycleEntity cycleWithStatus(final Long cycleId, final CycleStatus status) {

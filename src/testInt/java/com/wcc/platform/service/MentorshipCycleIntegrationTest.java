@@ -1,12 +1,14 @@
 package com.wcc.platform.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
+import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private MentorshipCycleRepository cycleRepository;
+  @Autowired private MentorshipCycleService cycleService;
 
   @BeforeEach
   void setUp() {
@@ -147,5 +150,13 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
     final List<MentorshipCycleEntity> cycles = cycleRepository.findByYear(9999);
 
     assertThat(cycles).isEmpty();
+  }
+
+  @Test
+  @DisplayName(
+      "Given a past year, when getting cycles, then it should throw ConstraintViolationException")
+  void shouldRejectPastYear() {
+    assertThatThrownBy(() -> cycleService.getCycles(Year.of(2025)))
+        .isInstanceOf(ConstraintViolationException.class);
   }
 }

@@ -57,7 +57,7 @@ class MentorshipAdminMatchesControllerTest {
   @Test
   @DisplayName("Given year 2026, when getting all cycles, then return 200 OK with 2026 cycles")
   void shouldReturnCyclesForYear() throws Exception {
-    when(cycleService.getCycles(2026)).thenReturn(List.of(cycleInYear(2L, 2026)));
+    when(cycleService.getCycles(Year.of(2026))).thenReturn(List.of(cycleInYear(2L, 2026)));
 
     mockMvc
         .perform(getRequest(API_ALL_CYCLES).param("year", "2026"))
@@ -72,19 +72,6 @@ class MentorshipAdminMatchesControllerTest {
     mockMvc
         .perform(getRequest(API_ALL_CYCLES).param("year", "abc"))
         .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  @DisplayName(
-      "Given year is not in YYYY format, when getting all cycles, then return 400 BAD_REQUEST")
-  void shouldReturn400WhenYearIsNotYyyy() throws Exception {
-    when(cycleService.getCycles(26))
-        .thenThrow(new IllegalArgumentException("Year must be in YYYY format"));
-
-    mockMvc
-        .perform(getRequest(API_ALL_CYCLES).param("year", "26"))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message", is("Year must be in YYYY format")));
   }
 
   private MentorshipCycleEntity cycleInYear(final Long cycleId, final int year) {
