@@ -5,13 +5,14 @@
 # Seeds, in order:
 #   1. the MENTORS CMS page (without it GET /api/cms/v1/mentorship/mentors
 #      serves the static fallback and never lists mentors — issue #654)
-#   2. the mentorship cycle scenario (scripts/seed-cycles.sh)
-#   3. mentors from seed-data/mentor-*.json (registered, then accepted as admin)
-#   4. members from seed-data/member-*.json
-#   5. the QA login accounts listed in seed-data/qa-accounts.json: roles are
+#   2. the About Us CMS pages (scripts/seed-about-pages.sh)
+#   3. the mentorship cycle scenario (scripts/seed-cycles.sh)
+#   4. mentors from seed-data/mentor-*.json (registered, then accepted as admin)
+#   5. members from seed-data/member-*.json
+#   6. the QA login accounts listed in seed-data/qa-accounts.json: roles are
 #      assigned via the API and the password is set to QA_PASSWORD (the only
 #      thing the API cannot do, so it is one SQL UPDATE with an argon2 hash)
-#   6. mentees from seed-data/mentee-*.json, if any, with applications to the
+#   7. mentees from seed-data/mentee-*.json, if any, with applications to the
 #      mentors (none are shipped at the moment)
 #
 # Only admin@wcc.dev pre-exists — the backend bootstraps it from
@@ -147,6 +148,12 @@ seed_mentors_page() {
     409)     skip "MENTORS page already exists." ;;
     *)       expect "201" "create MENTORS page" ;;
   esac
+}
+
+seed_about_pages() {
+  API_BASE="$API_BASE" API_KEY="$API_KEY" ADMIN_EMAIL="$ADMIN_EMAIL" \
+    ADMIN_PASSWORD="$ADMIN_PASSWORD" INIT_DATA_DIR="$INIT_DATA_DIR" \
+    bash "${SCRIPT_DIR}/seed-about-pages.sh"
 }
 
 seed_cycles() {
@@ -323,6 +330,7 @@ require_tools
 wait_for_api
 login
 seed_mentors_page
+seed_about_pages
 seed_cycles
 seed_mentors
 seed_members
