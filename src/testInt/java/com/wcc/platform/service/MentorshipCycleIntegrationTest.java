@@ -1,12 +1,14 @@
 package com.wcc.platform.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
+import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
 
   @Autowired private MentorshipCycleRepository cycleRepository;
+  @Autowired private MentorshipCycleService cycleService;
 
   @BeforeEach
   void setUp() {
@@ -128,5 +131,32 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
     assertThat(cycle.getRegistrationEndDate()).isNotNull();
     assertThat(cycle.getCycleStartDate()).isNotNull();
     assertThat(cycle.getMaxMenteesPerMentor()).isGreaterThan(0);
+  }
+
+  @Test
+  @DisplayName(
+      "Given database is seeded, when finding cycles by year 2026, then it should return only 2026 cycles")
+  void shouldFindCyclesByYear() {
+    final List<MentorshipCycleEntity> cycles = cycleRepository.findByYear(2026);
+
+    assertThat(cycles).isNotEmpty();
+    assertThat(cycles).allMatch(cycle -> cycle.getCycleYear().equals(Year.of(2026)));
+  }
+
+  @Test
+  @DisplayName(
+      "Given no cycles exist for year 9999, when finding cycles by year, then it should return empty")
+  void shouldReturnEmptyForYearWithNoCycles() {
+    final List<MentorshipCycleEntity> cycles = cycleRepository.findByYear(9999);
+
+    assertThat(cycles).isEmpty();
+  }
+
+  @Test
+  @DisplayName(
+      "Given a past year, when getting cycles, then it should throw ConstraintViolationException")
+  void shouldRejectPastYear() {
+    assertThatThrownBy(() -> cycleService.getCycles(Year.of(2025)))
+        .isInstanceOf(ConstraintViolationException.class);
   }
 }
