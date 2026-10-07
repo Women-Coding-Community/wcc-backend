@@ -1,7 +1,9 @@
 import {
   createManualMatch,
+  getCycles,
   getMenteeApplications,
   getMentorshipRecommendations,
+  updateCycleStatus,
 } from '@/services/mentorshipService';
 import { apiFetch } from '@/lib/api';
 
@@ -84,6 +86,36 @@ describe('mentorshipService', () => {
         body: { mentorId: 10, notes: 'Good match for React skills' },
         token,
       });
+    });
+  });
+
+  describe('getCycles', () => {
+    it('should fetch cycles for a year', async () => {
+      const mockCycles = [{ cycleId: 1, cycleYear: 2026, status: 'OPEN' }];
+      (apiFetch as jest.Mock).mockResolvedValue(mockCycles);
+
+      const result = await getCycles(2026, token);
+
+      expect(apiFetch).toHaveBeenCalledWith(
+        '/api/platform/v1/admin/mentorship/cycles/all?year=2026',
+        { token }
+      );
+      expect(result).toEqual(mockCycles);
+    });
+  });
+
+  describe('updateCycleStatus', () => {
+    it('should send a PATCH request with the cycle ID and new status', async () => {
+      const updatedCycle = { cycleId: 1, cycleYear: 2026, status: 'CLOSED' };
+      (apiFetch as jest.Mock).mockResolvedValue(updatedCycle);
+
+      const result = await updateCycleStatus(1, 'CLOSED', token);
+
+      expect(apiFetch).toHaveBeenCalledWith(
+        '/api/platform/v1/admin/mentorship/cycles/status?cycleId=1&status=CLOSED',
+        { method: 'PATCH', token }
+      );
+      expect(result).toEqual(updatedCycle);
     });
   });
 });
