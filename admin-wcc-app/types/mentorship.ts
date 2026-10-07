@@ -67,3 +67,17 @@ export interface MentorshipRecommendationResponse {
   notMatchedMentors: MentorItem[];
   notMatchedMentees: MenteeItem[];
 }
+
+export type CycleStatus = 'DRAFT' | 'OPEN' | 'CLOSED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+export interface MentorshipCycle {
+  cycleId: number;
+  cycleYear: number;
+  mentorshipType: string;
+  cycleMonth: string;
+  registrationStartDate: string;
+  registrationEndDate: string;
+  cycleStartDate: string;
+  cycleEndDate: string;
+  status: CycleStatus;
+}
