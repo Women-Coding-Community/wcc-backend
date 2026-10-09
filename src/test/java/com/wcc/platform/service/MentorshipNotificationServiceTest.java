@@ -16,7 +16,9 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationStatus;
 import com.wcc.platform.domain.platform.mentorship.MatchStatus;
 import com.wcc.platform.domain.platform.mentorship.Mentor;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipMatch;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.MemberRepository;
@@ -179,6 +181,42 @@ class MentorshipNotificationServiceTest {
     var emailRequest = emailCaptor.getValue();
     assertThat(emailRequest.getRecipients()).containsAll(emails);
     assertThat(emailRequest.getRecipients()).contains("team@test.com");
+  }
+
+  @Test
+  @DisplayName(
+      "Given an Ad-Hoc cycle, when sendNewMenteesNotification, then NEW_MENTEES_REVIEW_ADHOC template is used")
+  void shouldUseAdhocReviewTemplateForAdhocCycle() {
+    var cycle = MentorshipCycleEntity.builder().mentorshipType(MentorshipType.AD_HOC).build();
+
+    when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendNewMenteesNotification(mentor, cycle);
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
+    verify(emailTemplateService)
+        .renderTemplate(eq(TemplateType.NEW_MENTEES_REVIEW_ADHOC), paramsCaptor.capture());
+  }
+
+  @Test
+  @DisplayName(
+      "Given a Long-Term cycle, when sendNewMenteesNotification, then NEW_MENTEES_REVIEW_LONG_TERM is used")
+  void shouldUseLongTermReviewTemplateForLongTermCycle() {
+    var cycle = MentorshipCycleEntity.builder().mentorshipType(MentorshipType.LONG_TERM).build();
+
+    when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
+    when(emailTemplateService.renderTemplate(any(), any()))
+        .thenReturn(new RenderedTemplate("Subject", "Body"));
+
+    notificationService.sendNewMenteesNotification(mentor, cycle);
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
+    verify(emailTemplateService)
+        .renderTemplate(eq(TemplateType.NEW_MENTEES_REVIEW_LONG_TERM), paramsCaptor.capture());
   }
 
   @Test
