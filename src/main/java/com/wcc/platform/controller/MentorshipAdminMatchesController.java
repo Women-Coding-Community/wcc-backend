@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.Year;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -255,9 +256,10 @@ public class MentorshipAdminMatchesController {
   }
 
   /**
-   * API to get all mentorship cycles.
+   * API to get all mentorship cycles, optionally filtered by year.
    *
-   * @return List of all cycles
+   * @param year optional cycle year filter
+   * @return List of cycles
    */
   @GetMapping("/cycles/all")
   @RequiresRole({RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN})
@@ -265,8 +267,10 @@ public class MentorshipAdminMatchesController {
       summary = "Get all mentorship cycles",
       security = {@SecurityRequirement(name = BEARER_AUTH)})
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<MentorshipCycleEntity>> getAllCycles() {
-    final List<MentorshipCycleEntity> cycles = cycleRepository.getAll();
+  public ResponseEntity<List<MentorshipCycleEntity>> getAllCycles(
+      @Parameter(description = "Cycle year filter (YYYY)") @RequestParam(required = false) @Valid
+          final Year year) {
+    final List<MentorshipCycleEntity> cycles = cycleService.getCycles(year);
     return ResponseEntity.ok(cycles);
   }
 
