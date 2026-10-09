@@ -20,9 +20,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Typography>
           <Stack direction="row" spacing={2}>
             <Button component={Link} href="/admin" color="inherit">
-              Dashboard
+              Home
             </Button>
-            {(isAdmin || isMentor) && (
+            {isMentor && (
               <Button component={Link} href="/admin/mentor" color="inherit">
                 Mentor Dashboard
               </Button>
