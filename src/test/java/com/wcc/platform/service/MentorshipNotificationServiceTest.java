@@ -185,14 +185,11 @@ class MentorshipNotificationServiceTest {
 
   @Test
   @DisplayName(
-      "Given an Ad-Hoc cycle, when sendNewMenteesNotification, then adhocNote is included in template params")
-  void shouldIncludeAdhocNoteForAdHocCycle() {
-    var adhocNote = "<p>In an Ad-Hoc cycle, a mentee can apply to more than one mentor.</p>";
-    var cycle =
-        MentorshipCycleEntity.builder().mentorshipType(MentorshipType.AD_HOC).build();
+      "Given an Ad-Hoc cycle, when sendNewMenteesNotification, then NEW_MENTEES_REVIEW_ADHOC template is used")
+  void shouldUseAdhocReviewTemplateForAdhocCycle() {
+    var cycle = MentorshipCycleEntity.builder().mentorshipType(MentorshipType.AD_HOC).build();
 
     when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
-    when(notificationConfig.getAdhocMenteeNote()).thenReturn(adhocNote);
     when(emailTemplateService.renderTemplate(any(), any()))
         .thenReturn(new RenderedTemplate("Subject", "Body"));
 
@@ -200,16 +197,15 @@ class MentorshipNotificationServiceTest {
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
-    verify(emailTemplateService).renderTemplate(eq(TemplateType.NEW_MENTEES_REVIEW), paramsCaptor.capture());
-    assertThat(paramsCaptor.getValue()).containsEntry("adhocNote", adhocNote);
+    verify(emailTemplateService)
+        .renderTemplate(eq(TemplateType.NEW_MENTEES_REVIEW_ADHOC), paramsCaptor.capture());
   }
 
   @Test
   @DisplayName(
-      "Given a Long-Term cycle, when sendNewMenteesNotification, then adhocNote is empty in template params")
-  void shouldExcludeAdhocNoteForLongTermCycle() {
-    var cycle =
-        MentorshipCycleEntity.builder().mentorshipType(MentorshipType.LONG_TERM).build();
+      "Given a Long-Term cycle, when sendNewMenteesNotification, then NEW_MENTEES_REVIEW_LONG_TERM is used")
+  void shouldUseLongTermReviewTemplateForLongTermCycle() {
+    var cycle = MentorshipCycleEntity.builder().mentorshipType(MentorshipType.LONG_TERM).build();
 
     when(notificationConfig.getMentorshipEmail()).thenReturn("team@test.com");
     when(emailTemplateService.renderTemplate(any(), any()))
@@ -219,8 +215,8 @@ class MentorshipNotificationServiceTest {
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<Map<String, Object>> paramsCaptor = ArgumentCaptor.forClass(Map.class);
-    verify(emailTemplateService).renderTemplate(eq(TemplateType.NEW_MENTEES_REVIEW), paramsCaptor.capture());
-    assertThat(paramsCaptor.getValue()).containsEntry("adhocNote", "");
+    verify(emailTemplateService)
+        .renderTemplate(eq(TemplateType.NEW_MENTEES_REVIEW_LONG_TERM), paramsCaptor.capture());
   }
 
   @Test

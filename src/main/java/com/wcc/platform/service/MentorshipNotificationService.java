@@ -143,7 +143,8 @@ public class MentorshipNotificationService {
   }
 
   /**
-   * Sends a NEW_MENTEES_REVIEW notification email to a mentor when manually assigned a mentee.
+   * Sends a new mentees review notification email to a mentor when a mentee applies for the mentor,
+   * or manually assigned by Admin
    *
    * @param mentor the mentor to notify
    * @param cycle the mentorship cycle
@@ -153,18 +154,17 @@ public class MentorshipNotificationService {
         cycle.getCycleYear() != null
             ? cycle.getCycleYear().getValue()
             : LocalDate.now(ZONE_ID).getYear();
-    final String adhocNote =
-        cycle.getMentorshipType() == MentorshipType.AD_HOC
-            ? notificationConfig.getAdhocMenteeNote()
-            : "";
+    final TemplateType emailTemplateType =
+        cycle.getMentorshipType() == MentorshipType.LONG_TERM
+            ? TemplateType.NEW_MENTEES_REVIEW_LONG_TERM
+            : TemplateType.NEW_MENTEES_REVIEW_ADHOC;
     sendNotification(
-        TemplateType.NEW_MENTEES_REVIEW,
+        emailTemplateType,
         Map.of(
             "mentorName", mentor.getFullName(),
             "year", year,
             "cycleType", cycle.getMentorshipType().getDescription(),
-            "mentorshipEmail", notificationConfig.getMentorshipEmail(),
-            "adhocNote", adhocNote),
+            "mentorshipEmail", notificationConfig.getMentorshipEmail()),
         List.of(mentor.getEmail(), notificationConfig.getMentorshipEmail()));
   }
 
