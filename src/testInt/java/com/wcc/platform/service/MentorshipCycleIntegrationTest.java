@@ -279,7 +279,7 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
     final String body =
         """
         {
-          "cycleMonth": 12,
+          "cycleMonth": "DECEMBER",
           "mentorshipType": "AD_HOC",
           "registrationStartDate": "2099-12-01",
           "registrationEndDate": "2099-12-15",
@@ -297,18 +297,17 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
   @Test
   @DisplayName("Given invalid cycle month, when posting cycle, then return 400")
   void shouldReturnBadRequestForInvalidCycleMonth() {
-    final CycleRequest validRequest = validRequest();
     final CycleRequest request =
         new CycleRequest(
-            validRequest.cycleYear(),
-            13,
-            validRequest.mentorshipType(),
-            validRequest.registrationStartDate(),
-            validRequest.registrationEndDate(),
-            validRequest.cycleStartDate(),
-            validRequest.cycleEndDate(),
-            validRequest.maxMenteesPerMentor(),
-            validRequest.description());
+            TEST_YEAR,
+            Month.JANUARY,
+            "AD_HOC",
+            "2099-11-01",
+            "2099-11-15",
+            "2099-11-20",
+            "2100-02-20",
+            5,
+            "January ad-hoc cycle");
 
     final ResponseEntity<String> response =
         restTemplate.exchange(url(), HttpMethod.POST, requestEntity(request), String.class);
@@ -350,7 +349,7 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
             validRequest.cycleMonth(),
             validRequest.mentorshipType(),
             validRequest.registrationStartDate(),
-            "2099-11-30",
+            "2099-10-30",
             validRequest.cycleStartDate(),
             validRequest.cycleEndDate(),
             validRequest.maxMenteesPerMentor(),
@@ -387,14 +386,14 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
   private CycleRequest validRequest() {
     return new CycleRequest(
         TEST_YEAR,
-        11,
+        Month.NOVEMBER,
         "AD_HOC",
         "2099-11-01",
         "2099-11-15",
         "2099-11-20",
         "2100-02-20",
         5,
-        "December ad-hoc cycle");
+        "November ad-hoc cycle");
   }
 
   private String loginAsAdmin() {
@@ -417,7 +416,7 @@ class MentorshipCycleIntegrationTest extends DefaultDatabaseSetup {
 
   private record CycleRequest(
       int cycleYear,
-      int cycleMonth,
+      Month cycleMonth,
       String mentorshipType,
       String registrationStartDate,
       String registrationEndDate,

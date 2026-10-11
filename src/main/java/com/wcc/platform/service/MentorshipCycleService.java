@@ -7,7 +7,6 @@ import com.wcc.platform.domain.platform.mentorship.MentorshipCycleCreateRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import jakarta.validation.constraints.FutureOrPresent;
-import java.time.Month;
 import java.time.Year;
 import java.util.List;
 import java.util.Map;
@@ -72,10 +71,6 @@ public class MentorshipCycleService {
    * @throws IllegalArgumentException if the supplied dates are inconsistent
    */
   public MentorshipCycleEntity createCycle(final MentorshipCycleCreateRequest request) {
-
-    if (request.cycleMonth().getValue() < 2 || request.cycleMonth().getValue() > 11) {
-      throw new IllegalArgumentException("Cycle month must be between February and November");
-    }
 
     if (request.registrationEndDate().isBefore(request.registrationStartDate())) {
       throw new IllegalArgumentException(

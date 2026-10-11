@@ -1,5 +1,6 @@
 package com.wcc.platform.domain.platform.mentorship;
 
+import com.wcc.platform.validation.ValidMentorshipCycleMonth;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,7 @@ import java.time.Year;
 /** Request payload for creating a mentorship cycle. */
 public record MentorshipCycleCreateRequest(
     @NotNull @FutureOrPresent Year cycleYear,
-    @NotNull Month cycleMonth,
+    @NotNull @ValidMentorshipCycleMonth Month cycleMonth,
     @NotNull MentorshipType mentorshipType,
     @NotNull @FutureOrPresent LocalDate registrationStartDate,
     @NotNull @FutureOrPresent LocalDate registrationEndDate,
