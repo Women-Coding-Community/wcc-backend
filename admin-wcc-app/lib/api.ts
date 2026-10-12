@@ -1,5 +1,5 @@
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080';
-export const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+export const API_KEY = process.env.NEXT_PUBLIC_API_KEY || 'local';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export type ApiRequestBody = Record<string, unknown> | unknown[] | string | number | boolean | null;

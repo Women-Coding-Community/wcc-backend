@@ -64,7 +64,7 @@ public class ProgrammeController {
   @Operation(
       summary = "Create program page content by program type",
       description = "Create program new page with any content type.",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.CONTRIBUTOR, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> createPage(
@@ -81,7 +81,7 @@ public class ProgrammeController {
   @Operation(
       summary = "Update program page content by program type",
       description = "Update the content of existent program page.",
-      security = {@SecurityRequirement(name = "bearerAuth")})
+      security = {@SecurityRequirement(name = "apiKey"), @SecurityRequirement(name = "bearerAuth")})
   @RequiresRole({RoleType.ADMIN, RoleType.CONTRIBUTOR, RoleType.LEADER})
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<Object> updatePage(

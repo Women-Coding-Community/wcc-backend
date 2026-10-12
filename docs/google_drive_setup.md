@@ -1,127 +1,140 @@
-# Google Drive API Setup Instructions
+# Google Drive Integration Setup Instructions
 
 <!-- TOC -->
 
-* [Google Drive API Setup Instructions](#google-drive-api-setup-instructions)
-    * [Setup Google Drive API](#setup-google-drive-api)
-        * [Steps](#steps)
-        * [Troubleshooting](#troubleshooting)
-    * [Google Drive Project's folders Setup](#google-drive-projects-folders-setup)
+* [Google Drive Integration Setup Instructions](#google-drive-integration-setup-instructions)
+    * [Overview](#overview)
+    * [Setup Google Drive API & Service Account](#setup-google-drive-api--service-account)
+        * [1. Enable Google Drive API](#1-enable-google-drive-api)
+        * [2. Create a Service Account & Download Key](#2-create-a-service-account--download-key)
+        * [3. Organization Policy Troubleshooting](#3-organization-policy-troubleshooting)
+    * [Google Drive Folder Setup & Permissions](#google-drive-folder-setup--permissions)
+        * [Proposed Folder Structure](#proposed-folder-structure)
+        * [Share Folder with Service Account](#share-folder-with-service-account)
+    * [Automated Setup & Verification Script](#automated-setup--verification-script)
+        * [Local Development](#local-development)
+        * [Fly.io Dev / Prod Deployment](#flyio-dev--prod-deployment)
+    * [Environment Variables Reference](#environment-variables-reference)
 
 <!-- TOC -->
 
-## Setup Google Drive API
+## Overview
 
-Enable the Google Drive API for your project in the Google Cloud Console.
+The WCC Platform Backend uses a **headless Google Cloud Service Account** to store and manage mentor profile pictures and platform resources in Google Drive. 
 
-### Steps
+Credentials are provided via environment variables (`GOOGLE_DRIVE_CREDENTIALS_JSON` / `STORAGE_GOOGLE_DRIVE_CREDENTIALS_JSON`), requiring no interactive browser logins or secrets bundled into container images.
 
-1. **Create a New OAuth Client in Google Cloud Console**
+---
 
-   a. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+## Setup Google Drive API & Service Account
 
-   b. Select your project or create a new one.
+### 1. Enable Google Drive API
 
-   c. Navigate to "APIs & Services" > "Credentials".
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Select your Google Cloud project (e.g. `wcc-platform`).
+3. Navigate to **APIs & Services > Library**.
+4. Search for **Google Drive API** and click **Enable**.
 
-   d. Click "Create Credentials" and select "OAuth client ID".
+### 2. Create a Service Account & Download Key
 
-   e. Select "Desktop app" as the application type.
+1. Navigate to **IAM & Admin > Service Accounts**.
+2. Click **Create Service Account**.
+3. Name it (e.g. `wcc-backend-drive`) and click **Done**. (No project-level IAM roles are needed because folder permissions are granted directly within Google Drive).
+4. Click on the created service account > **Keys** tab > **Add Key > Create new key**.
+5. Select **JSON** and click **Create** to download the key file (e.g. `service-account.json`).
+6. Note the **Service Account Email** (e.g. `wcc-backend-drive@<project-id>.iam.gserviceaccount.com`).
 
-   f. Enter a name for your OAuth client (e.g., "WCC Backend").
+### 3. Organization Policy Troubleshooting
 
-   g. Click "Create".
+If you receive the error `Service account key creation is disabled (iam.disableServiceAccountKeyCreation)`, disable the organization policy constraint via Google Cloud Shell:
 
-   h. Note down the Client ID and Client Secret that are displayed.
+```bash
+gcloud resource-manager org-policies disable-enforce \
+    iam.disableServiceAccountKeyCreation \
+    --organization=ORGANIZATION_ID
+```
+*(Or at project level: `--project=PROJECT_ID`).*
 
-2. **Update the `credentials.json.sample`  File**
+---
 
-   a. Open the file and rename to `src/main/resources/credentials.json`.
-
-   b. Replace the placeholder values with your actual credentials:
-
-   ```json
-   {
-     "installed": {
-       "client_id": "YOUR_NEW_CLIENT_ID.apps.googleusercontent.com",
-       "project_id": "YOUR_PROJECT_ID",
-       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-       "token_uri": "https://oauth2.googleapis.com/token",
-       "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-       "client_secret": "YOUR_NEW_CLIENT_SECRET",
-       "redirect_uris": [
-         "http://localhost"
-       ]
-     }
-   }
-   ```
-
-   c. Replace:
-    - `YOUR_NEW_CLIENT_ID.apps.googleusercontent.com` with your actual Client ID
-    - `YOUR_PROJECT_ID` with your Google Cloud project ID
-    - `YOUR_NEW_CLIENT_SECRET` with your actual Client Secret
-
-<b>Note:</b> Check the sample file `credentials.json.sample` for more details.
-
-3. **Enable Google Drive API**
-
-   a. In the Google Cloud Console, navigate to "APIs & Services" > "Library".
-
-   b. Search for "Google Drive API" and select it.
-
-   c. Click "Enable" if it's not already enabled.
-
-4. **First Run Authentication**
-
-   When you run the application for the first time after updating the credentials, it will:
-
-   a. Open a browser window asking you to authorize the application.
-
-   b. Sign in with the Google account that should have access to the Drive files.
-
-   c. Grant the requested permissions.
-
-   d. The application will then store the authentication tokens in the `tokens` directory.
-
-### Troubleshooting
-
-- If you encounter any issues during authentication, check the application logs for detailed error
-  messages.
-- Make sure the Google Drive API is enabled for your project in the Google Cloud Console.
-- Ensure that the Google account you're using has the necessary permissions for the Google Drive
-  folder specified in the application configuration.
-
-## Google Drive Project's folders Setup
+## Google Drive Folder Setup & Permissions
 
 ### Proposed Folder Structure
 
-1. The main folder is called 'Platform'
-2. Inside the 'Platform' folder, there are subfolders:
-    - `DEV`: For storing development resources from fly.io.
-    - `LOCAL`: For storing local tests resources for developers.
-    - `TEST`: For storing automation tests resources.
-3. Internal Sub-folder per environment
-    - EVENTS
-    - IMAGES
-    - MENTOR_PICTURES
-    - MENTOR_RESOURCES
-    - RESOURCES
+Create or identify the following folder structure in Google Drive:
 
-### Get Folder ID
+```text
+Platform
+├── DEV                     <-- Dev environment resources
+├── LOCAL                   <-- Local development & testing resources
+└── PROD                    <-- Production resources
+    ├── EVENTS              <-- Event materials and flyers
+    ├── IMAGES              <-- General platform images
+    ├── MENTOR_PICTURES     <-- Mentor profile pictures
+    ├── MENTOR_RESOURCES    <-- Mentor-specific documents
+    └── RESOURCES           <-- General mentorship resources
+```
 
-1. Go inside in each folder and copy the folder ID from the URL.
-2. Example: https://drive.google.com/drive/u/0/folders/12345678901234567890 the folder ID is
-   `12345678901234567890`
-3. Save the respective folder ID in the application.yml file for the respective environment.
-4. Example: for the local profile, create application-local.yml and add the following:
-   ```yaml
-   storage:
-     type: google
-     folders:
-       main-folder: folder_id_local_env
-       resources-folder: folder_id_local_env_and_sub_folder_resources
-       events-folder: folder_id_local_env_and_sub_folder_events
-       images-folder: folder_id_local_env_and_sub_folder_images
-       mentor-pictures-folder: folder_id_local_env_and_sub_folder_mentor_pictures
-       mentor-resources-folder: folder_id_local_env_and_sub_folder_mentor_resources
-   ```
+### Share Folder with Service Account
+
+Service accounts operate in their own storage space. To allow the backend to read/write into your shared folders:
+
+1. Right-click the root folder (e.g. `LOCAL`, `DEV`, or `Platform`) in Google Drive.
+2. Select **Share**.
+3. Paste the **Service Account Email** (`...@...iam.gserviceaccount.com`).
+4. Assign the role **Editor** and uncheck "Notify people".
+5. Click **Share**. All subfolders will inherit editor access automatically.
+
+---
+
+## Automated Setup & Verification Script
+
+The repository includes a self-contained helper script: [`scripts/setup-google-drive.sh`](../scripts/setup-google-drive.sh).
+
+### Local Development
+
+Run the script pointing to your downloaded key file:
+
+```bash
+./scripts/setup-google-drive.sh local --key ~/Downloads/service-account.json
+```
+
+The script will:
+1. Authenticate with Google Drive API via OAuth2 JWT bearer flow.
+2. Automatically discover all folder IDs.
+3. Perform a live upload and permission verification test.
+4. Generate a `.env.local` file with all required configuration.
+
+Then start the backend locally:
+```bash
+export $(cat .env.local | xargs)
+./gradlew bootRun
+```
+
+### Fly.io Dev / Prod Deployment
+
+To verify and apply secrets to Fly.io automatically:
+
+```bash
+# For dev environment:
+./scripts/setup-google-drive.sh dev --key ~/Downloads/service-account.json --set-fly-secrets
+
+# For prod environment:
+./scripts/setup-google-drive.sh prod --key ~/Downloads/service-account.json --set-fly-secrets
+```
+
+---
+
+## Environment Variables Reference
+
+| Variable | Description | Example |
+| :--- | :--- | :--- |
+| `STORAGE_TYPE` | Storage backend implementation (`google` or `local`) | `google` |
+| `GOOGLE_DRIVE_CREDENTIALS_JSON` | Full JSON content of the service account key | `{"type":"service_account",...}` |
+| `STORAGE_GOOGLE_DRIVE_CREDENTIALS_JSON` | Alias for Spring Boot property binding | `{"type":"service_account",...}` |
+| `STORAGE_FOLDERS_MAIN_FOLDER` | Google Drive parent folder ID | `1a2b3c4d...` |
+| `STORAGE_FOLDERS_MENTORS_PROFILE_FOLDER` | Folder ID for mentor profile pictures | `1e2f3g4h...` |
+| `STORAGE_FOLDERS_RESOURCES_FOLDER` | Folder ID for mentorship resources | `1i2j3k4l...` |
+| `STORAGE_FOLDERS_EVENTS_FOLDER` | Folder ID for event resources | `1m2n3o4p...` |
+| `STORAGE_FOLDERS_MENTORS_FOLDER` | Folder ID for mentor resources | `1q2r3s4t...` |
+| `STORAGE_FOLDERS_IMAGES_FOLDER` | Folder ID for general images | `1u2v3w4x...` |

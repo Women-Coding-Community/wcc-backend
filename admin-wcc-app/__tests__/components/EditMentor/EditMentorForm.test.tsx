@@ -15,6 +15,7 @@ jest.mock('@/lib/auth');
 global.scrollTo = jest.fn();
 
 const mockGetMentorById = mentorService.getMentorById as jest.Mock;
+const mockGetMentorProfilePicture = mentorService.getMentorProfilePicture as jest.Mock;
 const mockApiFetch = api.apiFetch as jest.MockedFunction<typeof api.apiFetch>;
 const mockGetStoredToken = auth.getStoredToken as jest.Mock;
 
@@ -53,6 +54,7 @@ describe('EditMentorForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetStoredToken.mockReturnValue('mock-token');
+    mockGetMentorProfilePicture.mockResolvedValue(null);
     mockApiFetch.mockResolvedValue(null);
   });
 
@@ -113,7 +115,7 @@ describe('EditMentorForm', () => {
   it('Given form is loaded, when Save Profile is clicked, then PUT request is made with mentor data', async () => {
     const user = userEvent.setup();
     mockGetMentorById.mockResolvedValue(fakeMentor);
-    mockApiFetch.mockResolvedValueOnce(null).mockResolvedValueOnce({});
+    mockApiFetch.mockResolvedValueOnce({});
 
     render(<EditMentorForm mentorId="7" />);
 
@@ -133,7 +135,7 @@ describe('EditMentorForm', () => {
   it('Given form is loaded, when Save Profile succeeds, then success message is shown', async () => {
     const user = userEvent.setup();
     mockGetMentorById.mockResolvedValue(fakeMentor);
-    mockApiFetch.mockResolvedValueOnce(null).mockResolvedValueOnce({});
+    mockApiFetch.mockResolvedValueOnce({});
 
     render(<EditMentorForm mentorId="7" />);
 
@@ -150,7 +152,7 @@ describe('EditMentorForm', () => {
   it('Given form is loaded, when Save Profile fails, then error message is shown', async () => {
     const user = userEvent.setup();
     mockGetMentorById.mockResolvedValue(fakeMentor);
-    mockApiFetch.mockResolvedValueOnce(null).mockRejectedValueOnce(new Error('Save failed'));
+    mockApiFetch.mockRejectedValueOnce(new Error('Save failed'));
 
     render(<EditMentorForm mentorId="7" />);
 
