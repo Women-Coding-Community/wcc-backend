@@ -23,9 +23,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for event controller. */
@@ -37,9 +37,9 @@ class EventControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean private EventService eventService;
+  @MockitoBean private EventService eventService;
 
-  @MockBean private FilterService filterService;
+  @MockitoBean private FilterService filterService;
 
   @Test
   void testInternalServerError() throws Exception {
