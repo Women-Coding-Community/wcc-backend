@@ -15,6 +15,7 @@ import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
+import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.exceptions.InvalidProgramTypeException;
 import com.wcc.platform.domain.exceptions.InvalidTokenException;
 import com.wcc.platform.domain.exceptions.MemberNotFoundException;
@@ -89,6 +90,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler({
     InvalidProgramTypeException.class,
+    InvalidMentorshipTypeException.class,
     IllegalArgumentException.class,
     TemplateValidationException.class
   })
