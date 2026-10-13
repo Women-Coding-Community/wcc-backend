@@ -60,6 +60,7 @@ export interface MentorItem {
   skills?: MentorSkills;
   spokenLanguages?: string[];
   bio?: string;
+  calendlyLink?: string;
   menteeSection?: MenteeSection;
   resources?: MentorResources;
 }
