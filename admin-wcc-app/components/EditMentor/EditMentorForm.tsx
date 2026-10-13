@@ -74,6 +74,7 @@ function buildDefaultValues(mentor: MentorItem): EditMentorFormData {
     longTermHours: mentor.menteeSection?.longTerm?.hours ?? 2,
     idealMentee: mentor.menteeSection?.idealMentee ?? '',
     additionalInfo: mentor.menteeSection?.additional ?? '',
+    calendlyLink: mentor.calendlyLink ?? '',
     monthAvailability: MONTHS.map((month) => ({
       month,
       hours: adHocMap.get(month) ?? 0,
@@ -156,6 +157,7 @@ export default function EditMentorForm({ mentorId }: EditMentorFormProps) {
     memberTypes: ['MENTOR'],
     network: data.network,
     bio: data.bio.trim(),
+    calendlyLink: (data.calendlyLink ?? '').trim(),
     spokenLanguages: data.spokenLanguages,
     skills: {
       yearsExperience: Number(data.yearsExperience),
