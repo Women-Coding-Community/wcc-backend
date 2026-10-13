@@ -349,14 +349,14 @@ class MenteeServiceIntegrationTest extends DefaultDatabaseSetup {
         MentorshipCycleEntity.builder()
             .cycleYear(TEST_YEAR_2028)
             .mentorshipType(MentorshipType.AD_HOC)
-            .cycleMonth(Month.DECEMBER)
+            .cycleMonth(Month.NOVEMBER)
             .registrationStartDate(LocalDate.now().minusDays(5))
             .registrationEndDate(LocalDate.now().plusDays(5))
             .cycleStartDate(LocalDate.now().plusDays(1))
             .cycleEndDate(LocalDate.now().plusDays(30))
             .status(CycleStatus.OPEN)
             .maxMenteesPerMentor(MAX_AD_HOC_MENTEES)
-            .description("Test AD_HOC cycle for December 2028")
+            .description("Test AD_HOC cycle for November 2028")
             .build();
 
     final var savedCycle = cycleRepository.create(adHocCycle);
