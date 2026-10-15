@@ -113,6 +113,28 @@ class AuthServiceTest {
   }
 
   @Test
+  void shouldRevokeAnyExistingTokensBeforeIssuingNewOneOnLogin() {
+    String email = "user@example.com";
+    String password = "password123";
+    String passwordHash = "hashed_password";
+
+    UserAccount userAccount =
+        new UserAccount(1, 1L, email, passwordHash, List.of(RoleType.ADMIN), true);
+
+    when(userAccountRepository.findByEmail(email)).thenReturn(Optional.of(userAccount));
+    when(passwordEncoder.matches(password, passwordHash)).thenReturn(true);
+    when(userTokenRepository.create(any(UserToken.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    authService.authenticateAndIssueToken(email, password);
+
+    final var inOrder = org.mockito.Mockito.inOrder(userTokenRepository);
+    inOrder.verify(userTokenRepository).lockUser(1);
+    inOrder.verify(userTokenRepository).revokeAllForUser(1);
+    inOrder.verify(userTokenRepository).create(any(UserToken.class));
+  }
+
+  @Test
   void testAuthenticateAndIssueTokenUserNotFoundReturnsEmpty() {
     String email = "notfound@example.com";
     String password = "password123";
@@ -280,7 +302,6 @@ class AuthServiceTest {
 
   @Test
   void testRequireAllPermissionsUserHasAllPermissions() {
-    Integer userId = 1;
     Long memberId = 1L;
 
     UserAccount userAccount = createAdminUserTest();
@@ -300,7 +321,6 @@ class AuthServiceTest {
 
   @Test
   void testRequireRoleUserHasRequiredRole() {
-    Integer userId = 1;
     Long memberId = 1L;
 
     UserAccount userAccount = createAdminUserTest();
