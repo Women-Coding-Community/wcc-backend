@@ -5,7 +5,7 @@ import com.wcc.platform.repository.MemberProfilePictureRepository;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,7 +15,8 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor
 public class PostgresMemberProfilePictureRepository implements MemberProfilePictureRepository {
   private static final String INSERT_SQL =
-      "INSERT INTO member_profile_picture (member_id, resource_id) VALUES (?, ?)";
+      "INSERT INTO member_profile_picture (member_id, resource_id) VALUES (?, ?) "
+          + "ON CONFLICT (member_id) DO UPDATE SET resource_id = EXCLUDED.resource_id";
   private static final String SELECT_BY_MEMBER_ID =
       "SELECT mpp.*, r.* FROM member_profile_picture mpp "
           + "LEFT JOIN resource r ON mpp.resource_id = r.id "
@@ -49,7 +50,8 @@ public class PostgresMemberProfilePictureRepository implements MemberProfilePict
       final MemberProfilePicture profilePicture =
           jdbcTemplate.queryForObject(SELECT_BY_RESOURCE_ID, rowMapper, resourceId);
       return Optional.ofNullable(profilePicture);
-    } catch (DataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
+      // No row for this resource id: genuinely absent, not a swallowed DB error.
       return Optional.empty();
     }
   }
@@ -60,7 +62,8 @@ public class PostgresMemberProfilePictureRepository implements MemberProfilePict
       final var profilePicture =
           jdbcTemplate.queryForObject(SELECT_BY_MEMBER_ID, rowMapper, memberId);
       return Optional.ofNullable(profilePicture);
-    } catch (DataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
+      // No row for this member: genuinely absent, not a swallowed DB error.
       return Optional.empty();
     }
   }
