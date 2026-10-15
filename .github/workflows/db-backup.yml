@@ -1,0 +1,51 @@
+name: "DB Backup"
+
+on:
+  ## schedule:
+  ##  - cron: '0 3 1,15 * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Optional reason for this manual run (recorded in the run log for audit)'
+        required: false
+        type: string
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Install PostgreSQL client tools
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Run database backup
+        id: backup
+        run: |
+          file="$(./scripts/db-backup.sh)"
+          echo "file=${file}" >> "$GITHUB_OUTPUT"
+        env:
+          PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
+          PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
+          PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
+          PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_BACKUP }}
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.backup.outputs.file }}
+          path: ${{ steps.backup.outputs.file }}
+          retention-days: 30
+          if-no-files-found: error

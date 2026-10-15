@@ -413,6 +413,15 @@ No GitHub CLI or open PR is required — it works entirely on your local diff.
 
 * [Deployment Guideline](docs/deployment.md)
 
+## Database Backups
+
+The production Postgres database is backed up automatically twice a month by
+the `DB Backup` GitHub Actions workflow
+(`.github/workflows/db-backup.yml`), which stores each backup as a
+30-day-retention workflow artifact and notifies maintainers on failure. To
+trigger a backup manually (e.g. before a risky migration) or to troubleshoot
+a failed run, see [Production Database Backup Workflow](docs/db_backup_setup.md).
+
 ## Frontend (Administration Platform)
 
 A Next.js + MUI frontend is included under `admin-wcc-app/` to allow authenticated admins to manage
