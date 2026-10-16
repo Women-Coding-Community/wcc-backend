@@ -1,4 +1,4 @@
-NEW_MENTEES_REVIEW:
+NEW_MENTEES_REVIEW_ADHOC:
   subject: "[Action Required] Pending Mentee Application(s) for {{year}} {{cycleType}} WCC Mentorship Programme"
   body: |
     <p>Dear {{mentorName}},</p>
@@ -7,10 +7,15 @@ NEW_MENTEES_REVIEW:
     </p>
 
     <p>
-    You have new mentee applications currently pending your review. 
-    Could you please log into your <a href="https://wcc-admin.vercel.app/"><strong>Mentor Dashboard</strong></a> today to check? 
+    You have new mentee applications currently pending your review.
+    Could you please log into your <a href="https://wcc-admin.vercel.app/"><strong>Mentor Dashboard</strong></a> today to check?
     </p>
-
+    
+    <p>
+    In an {{cycleType}} cycle, a mentee can apply to more than one mentor. Once any mentor accepts, the application is no longer available to others. 
+    If you cannot find an application in your dashboard, it may have already been accepted by another mentor.
+    </p>
+    
     <p>
     As an action point, please approve the mentee(s) you'd like to accept, or reject so that their application(s) can be forwarded to other mentors.
     </p>

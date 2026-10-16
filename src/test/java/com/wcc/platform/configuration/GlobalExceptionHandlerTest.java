@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.wcc.platform.domain.exceptions.DuplicatedMemberException;
 import com.wcc.platform.domain.exceptions.ErrorDetails;
 import com.wcc.platform.domain.exceptions.ForbiddenException;
+import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import java.util.List;
 import java.time.Month;
@@ -98,6 +99,19 @@ class GlobalExceptionHandlerTest {
 
     var expectation = new ErrorDetails(CONFLICT.value(), rootCause.getMessage(), DETAILS);
     assertEquals(CONFLICT, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given InvalidMentorshipTypeException, when handling, then return BAD_REQUEST")
+  void shouldReturnBadRequestForInvalidMentorshipTypeException() {
+    var exception = new InvalidMentorshipTypeException("Cycle type mismatch");
+
+    var response = globalExceptionHandler.handleProgramTypeError(exception, webRequest);
+
+    var expectation = new ErrorDetails(BAD_REQUEST.value(), "Cycle type mismatch", DETAILS);
+    assertEquals(BAD_REQUEST, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
 

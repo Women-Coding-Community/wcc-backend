@@ -1,0 +1,34 @@
+NEW_MENTEES_REVIEW_LONG_TERM:
+  subject: "[Action Required] Pending Mentee Application(s) for {{year}} {{cycleType}} WCC Mentorship Programme"
+  body: |
+    <p>Dear {{mentorName}},</p>
+    <p>
+    Thank you for being part of the <strong>Women Coding Community {{year}} {{cycleType}} Mentorship Programme</strong>!
+    </p>
+
+    <p>
+    You have new mentee applications currently pending your review.
+    Could you please log into your <a href="https://wcc-admin.vercel.app/"><strong>Mentor Dashboard</strong></a> today to check?
+    </p>
+    
+    <p>
+    As an action point, please approve the mentee(s) you'd like to accept, or reject so that their application(s) can be forwarded to other mentors.
+    </p>
+
+    <p>
+    <strong>Please note:</strong> If you have not logged into the dashboard before, please reply to this email, so we can send a password reset email from <strong>{{mentorshipEmail}}</strong>.
+    </p>
+
+    <p>
+    If you do not see the application(s) or have any other trouble accessing your account, please feel free to reply to this email.
+    </p>
+
+    <p>
+    Thank you for your continued support of the mentorship programme, and we hope to get your response soon.
+    </p>
+
+    <p>
+    {{teamEmailSignature}}
+    </p>
+
+    <p>[Automated Message]</p>
