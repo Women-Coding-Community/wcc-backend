@@ -107,7 +107,6 @@ public class MentorshipService {
               .acceptMale(mentor.getAcceptMale())
               .acceptPromotion(mentor.getAcceptPromotion())
               .meetingLink(mentor.getMeetingLink())
-              .memberTypes(mentor.getMemberTypes())
               .build();
 
       return mentorRepository.create(mentorWithExistingId);
