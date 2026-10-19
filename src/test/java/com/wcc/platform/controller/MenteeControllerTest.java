@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -67,6 +69,24 @@ class MenteeControllerTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(2)))
         .andExpect(jsonPath("$.fullName", is("Mark")));
+  }
+
+  @Test
+  @DisplayName("Given missing applications, when creating mentee, then return 400 Bad Request")
+  void shouldReturn400WhenApplicationsAreMissing() throws Exception {
+    var currentYear = java.time.Year.now();
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(API_MENTEES)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(
+                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[{\"technicalArea\":\"BACKEND\",\"proficiencyLevel\":\"BEGINNER\"}],\"languages\":[{\"language\":\"JAVASCRIPT\",\"proficiencyLevel\":\"BEGINNER\"}],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
+                        + currentYear+ "\"}"))
+        .andExpect(status().isBadRequest());
+
+    verify(menteeService, never()).saveRegistration(any());
   }
 
   @Test
