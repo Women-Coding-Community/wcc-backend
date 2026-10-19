@@ -16,9 +16,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for MentorshipController. */
@@ -30,7 +30,7 @@ class MentorshipControllerTest {
   private static final String API_CURRENT_CYCLE = "/api/platform/v1/mentorship/cycles/current";
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private MentorshipService mentorshipService;
+  @MockitoBean private MentorshipService mentorshipService;
 
   @Test
   @DisplayName(

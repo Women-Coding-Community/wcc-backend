@@ -20,9 +20,9 @@ import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for about page apis. */
@@ -33,8 +33,8 @@ class CmsControllerTest {
 
   private static final String API_PARTNERS = "/api/cms/v1/partners";
   @Autowired private MockMvc mockMvc;
-  @MockBean private CmsAboutUsService service;
-  @MockBean private SecurityProperties securityProperties;
+  @MockitoBean private CmsAboutUsService service;
+  @MockitoBean private SecurityProperties securityProperties;
 
   @Test
   void testPartnersInternalError() throws Exception {

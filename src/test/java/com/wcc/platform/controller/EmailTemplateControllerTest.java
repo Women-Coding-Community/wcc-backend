@@ -21,9 +21,9 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @ActiveProfiles("test")
@@ -34,8 +34,8 @@ class EmailTemplateControllerTest {
 
   private static final String API_EMAIL_TEMP_PREVIEW = "/api/platform/v1/email/template/preview";
   @Autowired private MockMvc mockMvc;
-  @MockBean private EmailService emailService;
-  @MockBean private EmailTemplateService emailTemplateService;
+  @MockitoBean private EmailService emailService;
+  @MockitoBean private EmailTemplateService emailTemplateService;
 
   @Test
   void previewValidRequestReturnsRenderedTemplate() throws Exception {

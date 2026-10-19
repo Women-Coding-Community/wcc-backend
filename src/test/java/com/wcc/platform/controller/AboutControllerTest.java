@@ -30,9 +30,9 @@ import com.wcc.platform.utils.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 /** Unit test for about page apis. */
@@ -50,7 +50,7 @@ class AboutControllerTest {
       "?currentPage=" + DEFAULT_CURRENT_PAGE + "&pageSize=" + DEFAULT_PAGE_SIZE;
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private CmsAboutUsService service;
+  @MockitoBean private CmsAboutUsService service;
 
   @Test
   void testPartnersInternalError() throws Exception {
