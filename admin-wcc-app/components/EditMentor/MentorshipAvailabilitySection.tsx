@@ -181,6 +181,25 @@ export default function MentorshipAvailabilitySection({
           />
         </Grid>
 
+        <Grid size={12}>
+          <Controller
+            name="calendlyLink"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                value={field.value ?? ''}
+                fullWidth
+                type="url"
+                label="Scheduling link (Calendly, Google Cal, etc)"
+                placeholder="e.g. https://calendly.com/your-link"
+                error={!!errors.calendlyLink}
+                helperText={errors.calendlyLink?.message}
+              />
+            )}
+          />
+        </Grid>
+
         {hasAdHocMentorship && (
           <Grid size={12}>
             <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
