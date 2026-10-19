@@ -22,6 +22,7 @@ import {
   Typography,
 } from '@mui/material';
 import AdminLayout from '@/components/AdminLayout';
+import NewCycleDialog from '@/components/mentorship/NewCycleDialog';
 import { useAuth } from '@/components/AuthProvider';
 import { getErrorMessage } from '@/lib/api';
 import { getStoredToken, isTokenExpired } from '@/lib/auth';
@@ -33,13 +34,13 @@ import { CycleStatus, MentorshipCycle } from '@/types/mentorship';
 const ALL = 'ALL';
 const CURRENT_YEAR = new Date().getFullYear();
 
-const STATUS_COLORS: Record<CycleStatus, ChipProps['color']> = {
-  DRAFT: 'default',
-  OPEN: 'success',
-  CLOSED: 'warning',
-  IN_PROGRESS: 'info',
-  COMPLETED: 'default',
-  CANCELLED: 'error',
+const STATUS_STYLES: Record<CycleStatus, Pick<ChipProps, 'color' | 'variant'>> = {
+  DRAFT: { color: 'default', variant: 'outlined' },
+  OPEN: { color: 'success', variant: 'filled' },
+  CLOSED: { color: 'warning', variant: 'filled' },
+  IN_PROGRESS: { color: 'info', variant: 'filled' },
+  COMPLETED: { color: 'primary', variant: 'filled' },
+  CANCELLED: { color: 'error', variant: 'filled' },
 };
 
 function statusDescription(value: CycleStatus): string {
@@ -77,6 +78,8 @@ export default function CyclesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [newCycleOpen, setNewCycleOpen] = useState(false);
+  const [newCycleId, setNewCycleId] = useState<number | null>(null);
 
   const canAccess = roles.includes('ADMIN') || roles.includes('MENTORSHIP_ADMIN');
 
@@ -144,6 +147,15 @@ export default function CyclesPage() {
     }
   }
 
+  async function handleCreated(cycle: MentorshipCycle) {
+    setNewCycleOpen(false);
+    setNewCycleId(cycle.cycleId);
+    setTypeFilter(ALL);
+    setStatusFilter(ALL);
+    setSuccess(`${cycleName(cycle)} · ${cycle.mentorshipType} was created as ${cycle.status}.`);
+    await loadCycles();
+  }
+
   if (!canAccess && roles.length > 0) return null;
 
   return (
@@ -152,6 +164,9 @@ export default function CyclesPage() {
         <Box display="flex" alignItems="center" gap={1}>
           <Typography variant="h5">Mentorship Cycles</Typography>
           {!loading && <Chip label={cycles.length} color="primary" size="small" />}
+          <Button variant="contained" onClick={() => setNewCycleOpen(true)} sx={{ ml: 'auto' }}>
+            New cycle
+          </Button>
         </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2, mt: 0.5 }}>
           Cycles for {CURRENT_YEAR}.
@@ -236,7 +251,7 @@ export default function CyclesPage() {
               </TableHead>
               <TableBody>
                 {shownCycles.map((cycle) => (
-                  <TableRow key={cycle.cycleId} hover>
+                  <TableRow key={cycle.cycleId} hover selected={cycle.cycleId === newCycleId}>
                     <TableCell>{cycleName(cycle)}</TableCell>
                     <TableCell>{cycle.mentorshipType}</TableCell>
                     <TableCell>
@@ -244,7 +259,7 @@ export default function CyclesPage() {
                     </TableCell>
                     <TableCell>{dateRange(cycle.cycleStartDate, cycle.cycleEndDate)}</TableCell>
                     <TableCell>
-                      <Chip label={cycle.status} color={STATUS_COLORS[cycle.status]} size="small" />
+                      <Chip label={cycle.status} {...STATUS_STYLES[cycle.status]} size="small" />
                     </TableCell>
                     <TableCell align="right">
                       <TextField
@@ -284,13 +299,13 @@ export default function CyclesPage() {
             <Box display="flex" alignItems="center" gap={1} mb={2}>
               <Chip
                 label={pendingChange.cycle.status}
-                color={STATUS_COLORS[pendingChange.cycle.status]}
+                {...STATUS_STYLES[pendingChange.cycle.status]}
                 size="small"
               />
               <Typography aria-hidden>→</Typography>
               <Chip
                 label={pendingChange.status}
-                color={STATUS_COLORS[pendingChange.status]}
+                {...STATUS_STYLES[pendingChange.status]}
                 size="small"
               />
             </Box>
@@ -308,6 +323,15 @@ export default function CyclesPage() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {token && (
+        <NewCycleDialog
+          open={newCycleOpen}
+          token={token}
+          onClose={() => setNewCycleOpen(false)}
+          onCreated={handleCreated}
+        />
+      )}
     </AdminLayout>
   );
 }
