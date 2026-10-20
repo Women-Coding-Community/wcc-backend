@@ -5,9 +5,11 @@ import com.wcc.platform.repository.UserTokenRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -72,8 +74,17 @@ public class PostgresUserTokenRepository implements UserTokenRepository {
   }
 
   @Override
-  public void revokeAllForUser(final Integer userId) {
-    jdbc.update("UPDATE user_tokens SET revoked = TRUE WHERE user_id = ? AND revoked = FALSE",
+  public List<String> revokeAllForUser(final Integer userId) {
+    return jdbc.query(
+        "UPDATE user_tokens SET revoked = TRUE WHERE user_id = ? AND revoked = FALSE "
+            + "RETURNING token",
+        (rs, rowNum) -> rs.getString("token"),
         userId);
+  }
+
+  @Override
+  public void lockUser(final Integer userId) {
+    jdbc.query(
+        "SELECT pg_advisory_xact_lock(?)", (ResultSetExtractor<Void>) rs -> null, userId);
   }
 }

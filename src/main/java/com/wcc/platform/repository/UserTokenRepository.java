@@ -2,6 +2,7 @@ package com.wcc.platform.repository;
 
 import com.wcc.platform.domain.auth.UserToken;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserTokenRepository {
@@ -17,6 +18,9 @@ public interface UserTokenRepository {
    * Revokes all active session tokens for the given user.
    *
    * @param userId the user account ID whose tokens should be revoked
+   * @return the token values that were revoked, so callers can evict them from cache.
    */
-  void revokeAllForUser(Integer userId);
+  List<String> revokeAllForUser(Integer userId);
+
+  void lockUser(Integer userId);
 }

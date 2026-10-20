@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for handling authentication-related operations. Provides methods for user
@@ -60,9 +61,9 @@ public class AuthService {
   }
 
   /**
-   * Updates the roles assigned to an existing user account, fully replacing existing roles.
-   * Callers may not modify their own roles. Non-ADMIN callers may only assign roles from the
-   * {@link #ASSIGNABLE_ROLES} allowlist and cannot target accounts with elevated roles.
+   * Updates the roles assigned to an existing user account, fully replacing existing roles. Callers
+   * may not modify their own roles. Non-ADMIN callers may only assign roles from the {@link
+   * #ASSIGNABLE_ROLES} allowlist and cannot target accounts with elevated roles.
    *
    * @param userId the ID of the user account to update
    * @param roles the new roles to assign
@@ -71,7 +72,7 @@ public class AuthService {
    * @throws ForbiddenException if the caller modifies their own roles, targets an elevated account,
    *     or assigns a role outside the permitted set
    */
-  @org.springframework.transaction.annotation.Transactional
+  @Transactional
   public UserAccount updateUserRoles(final Integer userId, final List<RoleType> roles) {
     final UserAccount userAccount =
         userAccountRepository
@@ -117,15 +118,18 @@ public class AuthService {
 
   /**
    * Authenticates a user based on the provided email and password and issues a token if successful.
-   * The token includes information such as issuance time and expiration time.
+   * Only one token is ever active per user: a per-user advisory lock serializes concurrent logins,
+   * and any previously issued token is revoked before the new one is created.
    *
    * @param email the email address of the user attempting to authenticate
    * @param password the plaintext password of the user attempting to authenticate
    * @return an {@code Optional<UserToken>} containing the issued token if authentication is
    *     successful, or an empty {@code Optional} if authentication fails
    */
+  @Transactional
   public Optional<UserToken> authenticateAndIssueToken(final String email, final String password) {
-    final Optional<UserAccount> userOpt = userAccountRepository.findByEmail(email.toLowerCase(Locale.ENGLISH));
+    final Optional<UserAccount> userOpt =
+        userAccountRepository.findByEmail(email.toLowerCase(Locale.ENGLISH));
     if (userOpt.isEmpty()) {
       return Optional.empty();
     }
@@ -166,6 +170,9 @@ public class AuthService {
   }
 
   private UserToken generateUserToken(final UserAccount user) {
+    userTokenRepository.lockUser(user.getId());
+    userTokenRepository.revokeAllForUser(user.getId());
+
     final String token = generateToken();
     final OffsetDateTime now = OffsetDateTime.now();
     final OffsetDateTime expires = now.plusMinutes(tokenTtlMinutes);
@@ -287,7 +294,8 @@ public class AuthService {
 
   /**
    * Grants access if the current user owns the resource (their memberId matches the given memberId)
-   * or holds at least one of the specified admin roles. Throws {@link ForbiddenException} otherwise.
+   * or holds at least one of the specified admin roles. Throws {@link ForbiddenException}
+   * otherwise.
    *
    * @param memberId the member ID of the resource being accessed
    * @param adminRoles roles that bypass the ownership requirement
@@ -302,8 +310,7 @@ public class AuthService {
       return;
     }
     throw new ForbiddenException(
-        "Access denied. Must be the resource owner or hold one of: "
-            + Arrays.toString(adminRoles));
+        "Access denied. Must be the resource owner or hold one of: " + Arrays.toString(adminRoles));
   }
 
   /**
