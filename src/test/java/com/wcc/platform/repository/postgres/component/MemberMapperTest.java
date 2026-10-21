@@ -3,6 +3,7 @@ package com.wcc.platform.repository.postgres.component;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -87,7 +88,7 @@ class MemberMapperTest {
   @Test
   void testAddMember() {
     Member member = mock(Member.class);
-    when(member.getFullName()).thenReturn("Jane Doe");
+    when(member.getFullName()).thenReturn("  Jane Doe  ");
     when(member.getSlackDisplayName()).thenReturn("jane");
     when(member.getPosition()).thenReturn("Manager");
     when(member.getCompanyName()).thenReturn("WCC");
@@ -111,6 +112,22 @@ class MemberMapperTest {
     Long memberId = memberMapper.addMember(member);
 
     assertEquals(10L, memberId);
+
+    verify(jdbc)
+        .update(
+            anyString(),
+            eq("Jane Doe"),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any());
+
     verify(memberTypeRepo, never()).addMemberType(anyLong(), anyInt());
     verify(socialNetworkRepo, never()).addSocialNetwork(anyLong(), any());
   }
@@ -118,7 +135,7 @@ class MemberMapperTest {
   @Test
   void testUpdateMember() {
     Member member = mock(Member.class);
-    when(member.getFullName()).thenReturn("Jane Doe");
+    when(member.getFullName()).thenReturn("  Jane Doe  ");
     when(member.getSlackDisplayName()).thenReturn("jane");
     when(member.getPosition()).thenReturn("Manager");
     when(member.getCompanyName()).thenReturn("WCC");
@@ -139,7 +156,7 @@ class MemberMapperTest {
     verify(jdbc)
         .update(
             anyString(),
-            any(),
+            eq("Jane Doe"),
             any(),
             any(),
             any(),
