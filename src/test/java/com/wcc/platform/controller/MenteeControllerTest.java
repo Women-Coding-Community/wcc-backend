@@ -5,19 +5,26 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
 import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.platform.mentorship.ApplicationRejectRequest;
+import com.wcc.platform.domain.platform.mentorship.MenteeApplicationDto;
+import com.wcc.platform.domain.platform.mentorship.MenteeRegistration;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
 import com.wcc.platform.service.MenteeAdminService;
 import com.wcc.platform.service.MenteeService;
 import com.wcc.platform.service.MenteeWorkflowService;
+import java.time.Year;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +58,14 @@ class MenteeControllerTest {
   @DisplayName("Given valid mentee registration, when creating mentee, then return 201 Created")
   void shouldCreateMenteeAndReturnCreated() throws Exception {
     var mockMentee = createMenteeTest(2L, "Mark", "mark@test.com");
-    var currentYear = java.time.Year.now();
+    var registration =
+        new MenteeRegistration(
+            mockMentee,
+            MentorshipType.AD_HOC,
+            Year.now(),
+            List.of(
+                new MenteeApplicationDto(
+                    1L, 1, null, "This mentor has skills I want to improve")));
 
     when(menteeService.saveRegistration(any())).thenReturn(mockMentee);
 
@@ -60,13 +74,49 @@ class MenteeControllerTest {
             MockMvcRequestBuilders.post(API_MENTEES)
                 .header(API_KEY_HEADER, API_KEY_VALUE)
                 .contentType(APPLICATION_JSON)
-                .content(
-                    "{\"mentee\":{\"id\":2,\"fullName\":\"Mark\",\"email\":\"mark@test.com\",\"position\":\"Software Engineer\",\"slackDisplayName\":\"mark-slack\",\"country\":{\"countryCode\":\"US\",\"countryName\":\"USA\"},\"city\":\"New York\",\"companyName\":\"Tech Corp\",\"images\":[],\"network\":[],\"profileStatus\":\"ACTIVE\",\"bio\":\"Mentee bio\",\"skills\":{\"yearsExperience\":2,\"areas\":[{\"technicalArea\":\"BACKEND\",\"proficiencyLevel\":\"BEGINNER\"}],\"languages\":[{\"language\":\"JAVASCRIPT\",\"proficiencyLevel\":\"BEGINNER\"}],\"mentorshipFocus\":[\"GROW_BEGINNER_TO_MID\"]}},\"mentorshipType\":\"AD_HOC\",\"cycleYear\":\""
-                        + currentYear
-                        + "\",\"applications\":[{\"mentorId\":1,\"priorityOrder\":1,\"whyMentor\":\"This mentor has skills I want to improve\"}]}"))
+                .content(objectMapper.writeValueAsString(registration)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", is(2)))
         .andExpect(jsonPath("$.fullName", is("Mark")));
+  }
+
+  @Test
+  @DisplayName("Given missing applications, when creating mentee, then return 400 Bad Request")
+  void shouldReturn400WhenApplicationsAreMissing() throws Exception {
+    var mockMentee = createMenteeTest(2L, "Mark", "mark@test.com");
+    var registration = new MenteeRegistration(mockMentee, MentorshipType.AD_HOC, Year.now(), null);
+    ObjectNode request = objectMapper.valueToTree(registration);
+    request.remove("applications");
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(API_MENTEES)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
+
+    verify(menteeService, never()).saveRegistration(any());
+  }
+
+  @Test
+  @DisplayName(
+      "Given null applications in registration, when creating mentee, then return 400 Bad Request")
+  void shouldReturn400WhenApplicationsIsNull() throws Exception {
+    var mockMentee = createMenteeTest(2L, "Mark", "mark@test.com");
+    var registration = new MenteeRegistration(mockMentee, MentorshipType.AD_HOC, Year.now(), null);
+    ObjectNode request = objectMapper.valueToTree(registration);
+    request.putNull("applications");
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(API_MENTEES)
+                .header(API_KEY_HEADER, API_KEY_VALUE)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isBadRequest());
+
+    verify(menteeService, never()).saveRegistration(any());
   }
 
   @Test

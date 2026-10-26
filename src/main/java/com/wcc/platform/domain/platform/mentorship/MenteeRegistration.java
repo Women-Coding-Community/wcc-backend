@@ -24,7 +24,9 @@ public record MenteeRegistration(
             example = "2026",
             description = "The year of the mentorship cycle")
         Year cycleYear,
-    @Size(min = 1, max = 5) List<MenteeApplicationDto> applications) {
+    @NotNull
+    @Size(min = 1, max = 5)
+    List<MenteeApplicationDto> applications) {
 
   /** Converts a list of {@code MenteeApplicationDto} to a list of {@code MenteeApplication}. */
   public List<MenteeApplication> toApplications(
