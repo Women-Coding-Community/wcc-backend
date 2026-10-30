@@ -94,10 +94,16 @@ class CmsServiceAboutUsTest {
   }
 
   @Test
-  void whenGetPartnersNotInDatabase() {
-    var exception = assertThrows(ContentNotFoundException.class, service::getPartners);
+  void whenGetPartnersNotInDatabaseThenReturnFallback() {
+    var partnersPage = createPartnersPageTest();
 
-    assertEquals("Content of Page PARTNERS not found", exception.getMessage());
+    when(pageRepository.getFallback(PageType.PARTNERS, PartnersPage.class, objectMapper))
+        .thenReturn(partnersPage);
+    when(pageRepository.findById(PageType.PARTNERS.getId())).thenReturn(Optional.empty());
+
+    var response = service.getPartners();
+
+    assertEquals(partnersPage, response);
   }
 
   @Test
@@ -114,10 +120,17 @@ class CmsServiceAboutUsTest {
   }
 
   @Test
-  void whenGetCodeOfConductNotInDatabase() {
-    var exception = assertThrows(ContentNotFoundException.class, service::getCodeOfConduct);
+  void whenGetCodeOfConductNotInDatabaseThenReturnFallback() {
+    var codeOfConductPage = createCodeOfConductPageTest();
 
-    assertEquals("Content of Page CODE_OF_CONDUCT not found", exception.getMessage());
+    when(pageRepository.getFallback(
+            PageType.CODE_OF_CONDUCT, CodeOfConductPage.class, objectMapper))
+        .thenReturn(codeOfConductPage);
+    when(pageRepository.findById(PageType.CODE_OF_CONDUCT.getId())).thenReturn(Optional.empty());
+
+    var response = service.getCodeOfConduct();
+
+    assertEquals(codeOfConductPage, response);
   }
 
   @Test
@@ -136,10 +149,16 @@ class CmsServiceAboutUsTest {
   }
 
   @Test
-  void whenGetAboutUsPageGivenNotStoredInDatabaseThenThrowsException() {
-    var exception = assertThrows(ContentNotFoundException.class, service::getAboutUs);
+  void whenGetAboutUsPageNotInDatabaseThenReturnFallback() {
+    var aboutUsPage = SetupPagesFactories.createAboutUsPageTest();
 
-    assertEquals("Content of Page ABOUT_US not found", exception.getMessage());
+    when(pageRepository.getFallback(PageType.ABOUT_US, AboutUsPage.class, objectMapper))
+        .thenReturn(aboutUsPage);
+    when(pageRepository.findById(PageType.ABOUT_US.getId())).thenReturn(Optional.empty());
+
+    var response = service.getAboutUs();
+
+    assertEquals(aboutUsPage, response);
   }
 
   @Test
@@ -156,10 +175,16 @@ class CmsServiceAboutUsTest {
   }
 
   @Test
-  void whenGetCelebrateHerPageGivenNotStoredInDatabaseThenThrowsException() {
-    var exception = assertThrows(ContentNotFoundException.class, service::getCelebrateHer);
+  void whenGetCelebrateHerPageNotInDatabaseThenReturnFallback() {
+    var celebrateHerPageTest = SetupPagesFactories.createCelebrateHerPageTest();
 
-    assertEquals("Content of Page CELEBRATE_HER not found", exception.getMessage());
+    when(pageRepository.getFallback(PageType.CELEBRATE_HER, CelebrateHerPage.class, objectMapper))
+        .thenReturn(celebrateHerPageTest);
+    when(pageRepository.findById(PageType.CELEBRATE_HER.getId())).thenReturn(Optional.empty());
+
+    var response = service.getCelebrateHer();
+
+    assertEquals(celebrateHerPageTest, response);
   }
 
   @Test

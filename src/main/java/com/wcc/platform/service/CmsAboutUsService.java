@@ -101,7 +101,8 @@ public class CmsAboutUsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.CODE_OF_CONDUCT);
+    return pageRepository.getFallback(
+        PageType.CODE_OF_CONDUCT, CodeOfConductPage.class, objectMapper);
   }
 
   /**
@@ -120,7 +121,7 @@ public class CmsAboutUsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.ABOUT_US);
+    return pageRepository.getFallback(PageType.ABOUT_US, AboutUsPage.class, objectMapper);
   }
 
   /**
@@ -139,7 +140,7 @@ public class CmsAboutUsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.CELEBRATE_HER);
+    return pageRepository.getFallback(PageType.CELEBRATE_HER, CelebrateHerPage.class, objectMapper);
   }
 
   /**
@@ -158,6 +159,6 @@ public class CmsAboutUsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.PARTNERS);
+    return pageRepository.getFallback(PageType.PARTNERS, PartnersPage.class, objectMapper);
   }
 }
