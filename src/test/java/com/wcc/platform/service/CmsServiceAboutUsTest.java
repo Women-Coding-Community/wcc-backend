@@ -44,10 +44,16 @@ class CmsServiceAboutUsTest {
   }
 
   @Test
-  void whenGetTeamGivenNotOnDatabaseThenThrowsException() {
-    var exception = assertThrows(ContentNotFoundException.class, service::getTeam);
+  void whenGetTeamNotInDatabaseThenReturnFallback() {
+    var teamPage = createTeamPageTest();
 
-    assertEquals("Content of Page TEAM not found", exception.getMessage());
+    when(pageRepository.getFallback(PageType.TEAM, TeamPage.class, objectMapper))
+        .thenReturn(teamPage);
+    when(pageRepository.findById(PageType.TEAM.getId())).thenReturn(Optional.empty());
+
+    var response = service.getTeam();
+
+    assertEquals(teamPage, response);
   }
 
   @Test

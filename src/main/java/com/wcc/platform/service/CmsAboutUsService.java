@@ -44,7 +44,7 @@ public class CmsAboutUsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.TEAM);
+    return pageRepository.getFallback(PageType.TEAM, TeamPage.class, objectMapper);
   }
 
   /**
