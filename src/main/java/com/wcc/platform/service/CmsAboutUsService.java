@@ -10,7 +10,6 @@ import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.repository.PageRepository;
 import com.wcc.platform.utils.PaginationUtil;
@@ -82,7 +81,7 @@ public class CmsAboutUsService {
       }
     }
 
-    throw new ContentNotFoundException(PageType.COLLABORATOR);
+    return pageRepository.getFallback(PageType.COLLABORATOR, CollaboratorPage.class, objectMapper);
   }
 
   /**

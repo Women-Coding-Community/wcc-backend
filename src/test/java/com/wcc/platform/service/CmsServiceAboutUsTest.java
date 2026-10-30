@@ -7,7 +7,6 @@ import static com.wcc.platform.factories.SetupPagesFactories.createCollaboratorP
 import static com.wcc.platform.factories.SetupPagesFactories.createPartnersPageTest;
 import static com.wcc.platform.factories.SetupPagesFactories.createTeamPageTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -20,7 +19,6 @@ import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
-import com.wcc.platform.domain.exceptions.ContentNotFoundException;
 import com.wcc.platform.factories.SetupPagesFactories;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
@@ -70,13 +68,16 @@ class CmsServiceAboutUsTest {
   }
 
   @Test
-  void whenGetCollaboratorNotInDatabase() {
-    var exception =
-        assertThrows(
-            ContentNotFoundException.class,
-            () -> service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE));
+  void whenGetCollaboratorNotInDatabaseThenReturnFallback() {
+    var collaboratorPage = createCollaboratorPageTest();
 
-    assertEquals("Content of Page COLLABORATOR not found", exception.getMessage());
+    when(pageRepository.getFallback(PageType.COLLABORATOR, CollaboratorPage.class, objectMapper))
+        .thenReturn(collaboratorPage);
+    when(pageRepository.findById(PageType.COLLABORATOR.getId())).thenReturn(Optional.empty());
+
+    var response = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
+
+    assertEquals(collaboratorPage, response);
   }
 
   @Test
