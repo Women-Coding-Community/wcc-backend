@@ -8,7 +8,7 @@
 #   frontend        public website (wcc-frontend repo)     http://localhost:3001
 #   seed            one-shot seeder (profile `seed`) — scripts/init-local-env.sh:
 #                   the QA login accounts (mentorship-admin@, mentor@, leader@wcc.dev),
-#                   MENTORS page, mentorship cycles, sample mentors/mentees
+#                   MENTORS and About Us pages, mentorship cycles, sample mentors/mentees
 #
 # Usage (from the repository root) — prefer the wrapper script:
 #   ./scripts/app-stack.sh up            # build, start, wait for health, seed

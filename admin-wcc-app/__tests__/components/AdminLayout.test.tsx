@@ -24,6 +24,7 @@ describe('AdminLayout', () => {
       expect(screen.getByRole('link', { name: /^mentors$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^members$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^mentees$/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /^cycles$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^users$/i })).toBeInTheDocument();
     });
   });
@@ -33,15 +34,17 @@ describe('AdminLayout', () => {
       renderLayout(['MENTOR']);
       expect(screen.getByRole('link', { name: /mentor dashboard/i })).toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^mentees$/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: /^cycles$/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^users$/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^members$/i })).not.toBeInTheDocument();
     });
   });
 
   describe('Given user is MENTORSHIP_ADMIN', () => {
-    it('when rendered, then Mentees, Mentors, and Members links are visible but not Mentor Dashboard or Users', () => {
+    it('when rendered, then Mentees, Cycles, Mentors, and Members links are visible but not Mentor Dashboard or Users', () => {
       renderLayout(['MENTORSHIP_ADMIN']);
       expect(screen.getByRole('link', { name: /^mentees$/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /^cycles$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^mentors$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^members$/i })).toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /mentor dashboard/i })).not.toBeInTheDocument();
@@ -56,6 +59,7 @@ describe('AdminLayout', () => {
       expect(screen.getByRole('link', { name: /^members$/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /^users$/i })).toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^mentees$/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: /^cycles$/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /mentor dashboard/i })).not.toBeInTheDocument();
     });
   });
@@ -67,6 +71,7 @@ describe('AdminLayout', () => {
       expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /mentor dashboard/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^mentees$/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: /^cycles$/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^mentors$/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^members$/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /^users$/i })).not.toBeInTheDocument();

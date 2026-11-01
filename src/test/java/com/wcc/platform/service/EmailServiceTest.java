@@ -9,12 +9,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
 import com.wcc.platform.domain.email.TemplateEmailRequest;
 import com.wcc.platform.domain.exceptions.EmailSendException;
 import com.wcc.platform.domain.template.RenderedTemplate;
 import com.wcc.platform.domain.template.TemplateType;
+import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Collections;
 import java.util.List;
@@ -33,11 +35,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 class EmailServiceTest {
 
+  private static final String MENTORSHIP_EMAIL = "mentorship@wcc.dev";
+
   @Mock private JavaMailSender javaMailSender;
 
   @Mock private MimeMessage mimeMessage;
 
   @Mock private EmailTemplateService emailTemplateService;
+
+  @Mock private NotificationConfig notificationConfig;
 
   @Mock private EmailResponse emailResponse;
 
@@ -49,6 +55,7 @@ class EmailServiceTest {
   void setUp() {
     MockitoAnnotations.openMocks(this);
     ReflectionTestUtils.setField(emailService, "fromEmail", "test@wcc.dev");
+    when(notificationConfig.getMentorshipEmail()).thenReturn(MENTORSHIP_EMAIL);
 
     emailRequest =
         EmailRequest.builder()
@@ -155,6 +162,43 @@ class EmailServiceTest {
     assertThat(response).isNotNull();
     assertThat(response.isSuccess()).isTrue();
     verify(javaMailSender).send(any(MimeMessage.class));
+  }
+
+  @Test
+  @DisplayName(
+      "Given email request without reply-to, when sending email, "
+          + "then reply-to should be the mentorship email")
+  void shouldSetMentorshipEmailAsReplyToWhenNotProvided() throws Exception {
+    var realMessage = new MimeMessage((Session) null);
+    when(javaMailSender.createMimeMessage()).thenReturn(realMessage);
+
+    emailService.sendEmail(emailRequest);
+
+    assertThat(realMessage.getReplyTo())
+        .extracting(Object::toString)
+        .containsExactly(MENTORSHIP_EMAIL);
+  }
+
+  @Test
+  @DisplayName(
+      "Given email request with its own reply-to, when sending email, "
+          + "then the provided reply-to should be kept")
+  void shouldKeepProvidedReplyToInsteadOfMentorshipEmail() throws Exception {
+    var realMessage = new MimeMessage((Session) null);
+    when(javaMailSender.createMimeMessage()).thenReturn(realMessage);
+    var request =
+        EmailRequest.builder()
+            .recipients(List.of("recipient@example.com"))
+            .subject("Test Subject")
+            .body("Test Body")
+            .replyTo("custom@wcc.dev")
+            .build();
+
+    emailService.sendEmail(request);
+
+    assertThat(realMessage.getReplyTo())
+        .extracting(Object::toString)
+        .containsExactly("custom@wcc.dev");
   }
 
   @Test

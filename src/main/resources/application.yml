@@ -80,7 +80,11 @@ app:
       <a href="https://www.meetup.com/women-coding-community">Meetup</a> |
       <a href="https://github.com/Women-Coding-Community">GitHub</a> |
       <a href="https://join.slack.com/t/womencodingcommunity/shared_invite/zt-2hpjwpx7l-rgceYBIWp6pCiwc0hVsX8A">Slack</a> |
-      <a href="mailto:mentorship@womencodingcommunity.com">email</a>
+      <a href="mailto:mentorship@womencodingcommunity.com">email</a><br>
+      <br>
+      <strong>[Automated Message] Please do not reply to this email, as this address is not monitored.
+      For any questions, please contact the Mentorship team at
+      <a href="mailto:mentorship@womencodingcommunity.com">mentorship@womencodingcommunity.com</a>.</strong>
   reset-password:
     base-url: ${APP_RESET_PASSWORD_BASE_URL:http://localhost:3000}
     ttl-minutes: 7200

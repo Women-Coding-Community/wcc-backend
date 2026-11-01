@@ -1,5 +1,10 @@
 import { apiFetch } from '@/lib/api';
-import { MenteeApplicationItem, MentorshipRecommendationResponse } from '@/types/mentorship';
+import {
+  CycleStatus,
+  MenteeApplicationItem,
+  MentorshipCycle,
+  MentorshipRecommendationResponse,
+} from '@/types/mentorship';
 
 const MENTORSHIP_ADMIN_PATH = '/api/platform/v1/admin/mentorship';
 const MENTEES_PATH = '/api/platform/v1/mentees';
@@ -39,6 +44,22 @@ export async function createManualMatch(
   return apiFetch<void>(`${MENTEES_PATH}/${menteeId}/cycles/${cycleId}/assign-mentor`, {
     method: 'POST',
     body: { mentorId, notes },
+    token,
+  });
+}
+
+export async function getCycles(year: number, token: string): Promise<MentorshipCycle[]> {
+  return apiFetch<MentorshipCycle[]>(`${MENTORSHIP_ADMIN_PATH}/cycles/all?year=${year}`, { token });
+}
+
+export async function updateCycleStatus(
+  cycleId: number,
+  status: CycleStatus,
+  token: string
+): Promise<MentorshipCycle> {
+  const params = new URLSearchParams({ cycleId: String(cycleId), status });
+  return apiFetch<MentorshipCycle>(`${MENTORSHIP_ADMIN_PATH}/cycles/status?${params.toString()}`, {
+    method: 'PATCH',
     token,
   });
 }

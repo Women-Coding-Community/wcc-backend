@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wcc.platform.domain.template.TemplateType;
 import com.wcc.platform.repository.postgres.DefaultDatabaseSetup;
 import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,5 +40,24 @@ public class EmailTemplateServiceTest extends DefaultDatabaseSetup {
     assertThat(out).isNotNull();
     assertThat(out.subject()).contains("Alice Mentor");
     assertThat(out.body()).contains("Mentorship");
+  }
+
+  @Test
+  @DisplayName(
+      "Given no custom signature, when rendering template, "
+          + "then body should include the bold no-reply notice")
+  void shouldIncludeNoReplyNoticeInDefaultSignature() {
+    Map<String, Object> parameters =
+        Map.of(
+            "mentorName", "Alice Mentor",
+            "menteeName", "Bob Mentee",
+            "program", "Mentorship",
+            "deadline", "2025-12-01");
+
+    var out = templateService.renderTemplate(TemplateType.FEEDBACK_MENTOR_ADHOC, parameters);
+
+    assertThat(out.body())
+        .contains("<strong>[Automated Message] Please do not reply to this email")
+        .contains("mailto:mentorship@womencodingcommunity.com");
   }
 }

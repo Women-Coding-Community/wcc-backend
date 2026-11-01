@@ -52,6 +52,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 Mentorship
               </Button>
             )}
+            {(isAdmin || isMentorshipAdmin) && (
+              <Button component={Link} href="/admin/mentorship/cycles" color="inherit">
+                Cycles
+              </Button>
+            )}
             {(isAdmin || isLeader) && (
               <Button component={Link} href="/admin/users" color="inherit">
                 Users

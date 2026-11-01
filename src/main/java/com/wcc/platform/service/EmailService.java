@@ -1,5 +1,6 @@
 package com.wcc.platform.service;
 
+import com.wcc.platform.configuration.NotificationConfig;
 import com.wcc.platform.domain.email.EmailRequest;
 import com.wcc.platform.domain.email.EmailResponse;
 import com.wcc.platform.domain.email.TemplateEmailRequest;
@@ -19,7 +20,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 /**
  * Service class for handling email operations. Provides functionality to send emails using
@@ -33,20 +33,24 @@ public class EmailService {
 
   private final String fromEmail;
   private final EmailTemplateService emailTemplateService;
+  private final NotificationConfig notificationConfig;
 
   /** Constructor for EmailService. */
   @Autowired
   public EmailService(
       final JavaMailSender javaMailSender,
       final @Value("${spring.mail.username}") String fromEmail,
-      final EmailTemplateService emailTemplateService) {
+      final EmailTemplateService emailTemplateService,
+      final NotificationConfig notificationConfig) {
     this.javaMailSender = javaMailSender;
     this.fromEmail = fromEmail;
     this.emailTemplateService = emailTemplateService;
+    this.notificationConfig = notificationConfig;
   }
 
   /**
-   * Sends an email based on the provided email request always sending as BCC.
+   * Sends an email based on the provided email request always sending as BCC. When the request has
+   * no reply-to address, replies are directed to the mentorship team email.
    *
    * @param emailRequest the email request containing recipient, subject, body, and other details
    * @return EmailResponse containing the status of the email sending operation
@@ -65,8 +69,9 @@ public class EmailService {
 
       mimeMessageHelper.setBcc(emailRequest.getRecipients().toArray(new String[0]));
 
-      if (!ObjectUtils.isEmpty(emailRequest.getReplyTo())) {
-        mimeMessageHelper.setReplyTo(emailRequest.getReplyTo());
+      final String replyTo = resolveReplyTo(emailRequest);
+      if (StringUtils.isNotBlank(replyTo)) {
+        mimeMessageHelper.setReplyTo(replyTo);
       }
 
       log.debug("Sending email content: {}", message);
@@ -90,6 +95,13 @@ public class EmailService {
       log.error(errorMsg, e);
       throw new EmailSendException(errorMsg, e);
     }
+  }
+
+  private String resolveReplyTo(final EmailRequest emailRequest) {
+    if (StringUtils.isNotBlank(emailRequest.getReplyTo())) {
+      return emailRequest.getReplyTo();
+    }
+    return notificationConfig.getMentorshipEmail();
   }
 
   /**
