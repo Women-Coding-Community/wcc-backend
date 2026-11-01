@@ -133,7 +133,9 @@ export default function CreateMemberPage() {
     if (!formData.position) errors.position = 'Position is required';
     if (!formData.email) errors.email = 'Email is required';
     else if (!validateEmail(formData.email)) errors.email = 'Invalid email format';
-    if (!formData.slackDisplayName) errors.slackDisplayName = 'Slack display name is required';
+    if (!formData.slackDisplayName.trim()) {
+      errors.slackDisplayName = 'Slack display name is required';
+    }
     if (!formData.country?.countryCode) errors.country = 'Country is required';
     if (!formData.memberTypes || formData.memberTypes.length === 0) {
       errors.memberTypes = 'At least one member type is required';
@@ -169,6 +171,7 @@ export default function CreateMemberPage() {
       const submitData = {
         ...restFormData,
         fullName: restFormData.fullName.trim(),
+        slackDisplayName: restFormData.slackDisplayName.trim(),
         country: {
           countryCode: country?.countryCode,
           countryName: country?.countryName,

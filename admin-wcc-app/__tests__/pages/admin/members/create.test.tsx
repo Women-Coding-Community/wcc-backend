@@ -31,17 +31,11 @@ describe('CreateMemberPage', () => {
     });
   });
 
-  it('trims full name before submitting member data', async () => {
-    mockApiFetch.mockResolvedValueOnce({});
-
-    const user = userEvent.setup();
-
-    render(<CreateMemberPage />);
-
+  const fillRequiredFields = async (user: ReturnType<typeof userEvent.setup>) => {
     await user.type(screen.getByLabelText(/full name/i), '  Jane Doe  ');
     await user.type(screen.getByLabelText(/email/i), 'jane@example.com');
     await user.type(screen.getByLabelText(/position/i), 'Developer');
-    await user.type(screen.getByLabelText(/slack display name/i), 'janedoe');
+    await user.type(screen.getByLabelText(/slack display name/i), '  jane doe  ');
 
     const countryInput = screen.getByLabelText(/country/i);
     await user.click(countryInput);
@@ -59,6 +53,15 @@ describe('CreateMemberPage', () => {
       name: /^member$/i,
     });
     await user.click(memberOption);
+  };
+
+  it('trims full name and Slack display name before submitting member data', async () => {
+    mockApiFetch.mockResolvedValueOnce({});
+
+    const user = userEvent.setup();
+
+    render(<CreateMemberPage />);
+    await fillRequiredFields(user);
 
     await user.click(screen.getByRole('button', { name: /create member/i }));
 
@@ -70,6 +73,25 @@ describe('CreateMemberPage', () => {
 
     expect(payload).toMatchObject({
       fullName: 'Jane Doe',
+      slackDisplayName: 'jane doe',
     });
+  });
+
+  it.each([
+    ['full name', /full name/i, 'Full name is required'],
+    ['Slack display name', /slack display name/i, 'Slack display name is required'],
+  ])('rejects a whitespace-only %s', async (_field, label, message) => {
+    const user = userEvent.setup();
+
+    render(<CreateMemberPage />);
+
+    await fillRequiredFields(user);
+    const input = screen.getByLabelText(label);
+    await user.clear(input);
+    await user.type(input, '   ');
+    await user.click(screen.getByRole('button', { name: /create member/i }));
+
+    expect(await screen.findByText(message)).toBeInTheDocument();
+    expect(mockApiFetch).not.toHaveBeenCalled();
   });
 });
