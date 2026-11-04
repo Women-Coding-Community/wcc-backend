@@ -40,7 +40,7 @@ class PostgresUserAccountRepositoryTest {
           + " persisted")
   void shouldLowercaseEmailWhenCreatingUserAccount() {
     UserAccount userAccount =
-        new UserAccount(1L, "Admin@Example.COM", "hash", List.of(RoleType.ADMIN), true);
+        new UserAccount(null, 1L, "Admin@Example.COM", "hash", List.of(RoleType.ADMIN), true);
 
     stubFindByEmailReturning(mappedUserAccount("admin@example.com"));
 
@@ -86,7 +86,7 @@ class PostgresUserAccountRepositoryTest {
           + " then it is still found because the lookup lowercases the search term")
   void shouldFindCreatedAccountRegardlessOfOriginalCasing() {
     UserAccount userAccount =
-        new UserAccount(1L, "Admin@Example.COM", "hash", List.of(RoleType.ADMIN), true);
+        new UserAccount(null, 1L, "Admin@Example.COM", "hash", List.of(RoleType.ADMIN), true);
 
     stubFindByEmailReturning(mappedUserAccount("admin@example.com"));
 
