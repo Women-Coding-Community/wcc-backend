@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 /** PostgresMemberRepositoryTest class for testing the PostgresMemberRepository. */
+@SuppressWarnings("PMD.TooManyMethods")
 class PostgresMemberRepositoryTest {
 
   private JdbcTemplate jdbc;
