@@ -1,5 +1,6 @@
 package com.wcc.platform.repository.postgres;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -240,6 +242,49 @@ class PostgresMemberRepositoryTest {
         .thenThrow(new RuntimeException("DB error"));
 
     assertThrows(RuntimeException.class, () -> repository.findById(memberId));
+  }
+
+  @Test
+  @DisplayName(
+      "Given a mixed-case email, when finding a member by email, then the lowercased email is"
+          + " used for the lookup")
+  void shouldLowercaseEmailWhenFindingByEmail() {
+    String mixedCaseEmail = "Test@Example.COM";
+    Member member = getMember();
+    when(jdbc.query(
+            anyString(), (ResultSetExtractor<Object>) any(), eq("test@example.com")))
+        .thenReturn(Optional.of(member));
+
+    Optional<Member> result = repository.findByEmail(mixedCaseEmail);
+
+    assertThat(result).contains(member);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a mixed-case email, when finding a member id by email, then the lowercased email is"
+          + " used for the lookup")
+  void shouldLowercaseEmailWhenFindingIdByEmail() {
+    String mixedCaseEmail = "Test@Example.COM";
+    when(jdbc.query(anyString(), any(ResultSetExtractor.class), eq("test@example.com")))
+        .thenReturn(1L);
+
+    Long result = repository.findIdByEmail(mixedCaseEmail);
+
+    assertThat(result).isEqualTo(1L);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a mixed-case email, when deleting a member by email, then the lowercased email is"
+          + " used for the delete")
+  void shouldLowercaseEmailWhenDeletingByEmail() {
+    String mixedCaseEmail = "Test@Example.COM";
+    when(jdbc.update(anyString(), eq("test@example.com"))).thenReturn(1);
+
+    repository.deleteByEmail(mixedCaseEmail);
+
+    verify(jdbc).update("DELETE FROM members WHERE email = ?", "test@example.com");
   }
 
   private Member getMember() {

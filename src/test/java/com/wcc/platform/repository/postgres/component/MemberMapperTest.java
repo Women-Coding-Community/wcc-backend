@@ -1,5 +1,6 @@
 package com.wcc.platform.repository.postgres.component;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,7 +23,9 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -152,5 +155,49 @@ class MemberMapperTest {
             any());
     verify(memberTypeRepo).deleteByMemberId(20L);
     verify(socialNetworkRepo).deleteByMemberId(20L);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a member with a mixed-case email, when updating the member, then the email is"
+          + " persisted in lowercase")
+  void shouldLowercaseEmailWhenUpdatingMember() {
+    Member member = mock(Member.class);
+    when(member.getFullName()).thenReturn("Jane Doe");
+    when(member.getSlackDisplayName()).thenReturn("jane");
+    when(member.getPosition()).thenReturn("Manager");
+    when(member.getCompanyName()).thenReturn("WCC");
+    when(member.getEmail()).thenReturn("Jane.Doe@Example.COM");
+    when(member.getCity()).thenReturn("Amsterdam");
+    when(member.getPronouns()).thenReturn("they/them");
+    when(member.getPronounCategory()).thenReturn(null);
+    Country country = mock(Country.class);
+    when(member.getCountry()).thenReturn(country);
+    when(countryRepository.findCountryIdByCode(anyString())).thenReturn(3L);
+
+    when(member.getImages()).thenReturn(Collections.emptyList());
+    when(member.getMemberTypes()).thenReturn(Collections.emptyList());
+    when(member.getNetwork()).thenReturn(Collections.emptyList());
+
+    ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass(String.class);
+
+    memberMapper.updateMember(member, 20L);
+
+    verify(jdbc)
+        .update(
+            anyString(),
+            any(),
+            any(),
+            any(),
+            any(),
+            emailCaptor.capture(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any());
+
+    assertThat(emailCaptor.getValue()).isEqualTo("jane.doe@example.com");
   }
 }
