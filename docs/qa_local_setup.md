@@ -139,6 +139,7 @@ All accounts use the password **`wcc-admin`**.
 | `mentor@wcc.dev`           | MENTOR           | MENTOR      | **Long-term** mentor: ACTIVE profile, `longTerm` availability, no ad-hoc     |
 | `mentor-adhoc@wcc.dev`     | MENTOR           | MENTOR      | **Ad-hoc** mentor: ACTIVE profile, available every month, no long-term       |
 | `member@wcc.dev`           | VIEWER           | MEMBER      | Plain member (`VIEWER` role — shown as `MEMBER` / *Member In Community*)     |
+| `mentee@wcc.dev`           | MENTEE           | MENTEE      | Login account only — **not** a registered mentee (no application, no cycle)  |
 
 All of them except admin come from [`scripts/seed-data/`](../scripts/seed-data) (see
 [How the seeding works](#how-the-seeding-works)). There is no other sample data — no extra

@@ -1,0 +1,14 @@
+{
+  "fullName": "QA Mentee",
+  "position": "QA Mentee",
+  "email": "mentee@wcc.dev",
+  "slackDisplayName": "@qa-mentee",
+  "country": { "countryCode": "GB", "countryName": "United Kingdom" },
+  "city": "London",
+  "companyName": "WCC QA",
+  "memberTypes": ["MENTEE"],
+  "isWomen": true,
+  "pronouns": "she/her",
+  "pronounCategory": "FEMININE",
+  "network": []
+}

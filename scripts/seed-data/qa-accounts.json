@@ -23,5 +23,10 @@
     "email": "member@wcc.dev",
     "roles": ["VIEWER"],
     "createdBy": "member-qa-member.json"
+  },
+  {
+    "email": "mentee@wcc.dev",
+    "roles": ["MENTEE"],
+    "createdBy": "member-qa-mentee.json"
   }
 ]
