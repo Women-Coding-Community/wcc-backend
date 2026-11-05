@@ -29,6 +29,7 @@ const fakeMentor = {
   country: { countryCode: 'DE', countryName: 'Germany' },
   profileStatus: 'ACTIVE',
   bio: 'Experienced engineer',
+  calendlyLink: 'https://calendly.com/jane',
   spokenLanguages: ['English', 'German'],
   skills: {
     yearsExperience: 8,
@@ -66,6 +67,7 @@ describe('EditMentorForm', () => {
       expect(screen.getByDisplayValue('jane@example.com')).toBeInTheDocument();
       expect(screen.getByDisplayValue('Senior Engineer')).toBeInTheDocument();
       expect(screen.getByDisplayValue('janesmith')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('https://calendly.com/jane')).toBeInTheDocument();
     });
   });
 
@@ -119,14 +121,21 @@ describe('EditMentorForm', () => {
 
     await screen.findByDisplayValue('Jane Smith');
 
+    const schedulingLink = screen.getByRole('textbox', { name: /scheduling link/i });
+    await user.clear(schedulingLink);
+    await user.type(schedulingLink, 'https://calendar.google.com/jane');
+
     const saveBtn = screen.getAllByRole('button', { name: /save profile/i })[0];
     await user.click(saveBtn);
 
     await waitFor(() => {
-      const calls = mockApiFetch.mock.calls.filter(
-        (c) => c[0] === '/api/platform/v1/mentors/7' && (c[1] as any)?.method === 'PUT'
+      expect(mockApiFetch).toHaveBeenCalledWith(
+        '/api/platform/v1/mentors/7',
+        expect.objectContaining({
+          method: 'PUT',
+          body: expect.objectContaining({ calendlyLink: 'https://calendar.google.com/jane' }),
+        })
       );
-      expect(calls.length).toBeGreaterThan(0);
     });
   });
 
