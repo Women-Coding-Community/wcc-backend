@@ -69,7 +69,8 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
           + "total_sessions = ?, "
           + "cancellation_reason = ?, "
           + "cancelled_by = ?, "
-          + "cancelled_at = ? "
+          + "cancelled_at = ?, "
+          + "completion_notes = ? "
           + "WHERE match_id = ?";
 
   private static final String DELETE = "DELETE FROM mentorship_matches WHERE match_id = ?";
@@ -121,6 +122,7 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
         entity.getCancelledAt() != null
             ? java.sql.Timestamp.from(entity.getCancelledAt().toInstant())
             : null,
+        entity.getCompletionNotes(),
         id);
 
     return findById(id).orElseThrow();
@@ -215,6 +217,7 @@ public class PostgresMentorshipMatchRepository implements MentorshipMatchReposit
             rs.getTimestamp("updated_at") != null
                 ? rs.getTimestamp("updated_at").toInstant().atZone(ZoneId.systemDefault())
                 : null)
+        .completionNotes(rs.getString("completion_notes"))
         .build();
   }
 }

@@ -38,6 +38,7 @@ public class MentorshipMatch {
   private ZonedDateTime cancelledAt;
   private ZonedDateTime createdAt;
   private ZonedDateTime updatedAt;
+  private String completionNotes;
 
   /**
    * Check if the match is currently active.
