@@ -48,7 +48,7 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
     jdbc.update(
         SQL_INSERT,
         userAccount.getMemberId(),
-        userAccount.getEmail(),
+        userAccount.getEmail().toLowerCase(Locale.ENGLISH),
         userAccount.getPasswordHash());
 
     final var userOption = findByEmail(userAccount.getEmail());
@@ -66,7 +66,7 @@ public class PostgresUserAccountRepository implements UserAccountRepository {
     jdbc.update(
         SQL_UPDATE,
         userAccount.getMemberId(),
-        userAccount.getEmail(),
+        userAccount.getEmail().toLowerCase(Locale.ENGLISH),
         userAccount.getPasswordHash(),
         userAccount.isEnabled(),
         id);

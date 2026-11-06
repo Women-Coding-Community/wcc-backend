@@ -5,6 +5,7 @@ import com.wcc.platform.repository.MemberRepository;
 import com.wcc.platform.repository.postgres.component.MemberMapper;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -50,7 +51,7 @@ public class PostgresMemberRepository implements MemberRepository {
           }
           return Optional.empty();
         },
-        email);
+        email.toLowerCase(Locale.ENGLISH));
   }
 
   @Override
@@ -63,7 +64,7 @@ public class PostgresMemberRepository implements MemberRepository {
           }
           return null;
         },
-        email);
+        email.toLowerCase(Locale.ENGLISH));
   }
 
   @Override
@@ -107,7 +108,7 @@ public class PostgresMemberRepository implements MemberRepository {
 
   @Override
   public void deleteByEmail(final String email) {
-    jdbc.update(DELETE_BY_SQL, email);
+    jdbc.update(DELETE_BY_SQL, email.toLowerCase(Locale.ENGLISH));
   }
 
   @Override

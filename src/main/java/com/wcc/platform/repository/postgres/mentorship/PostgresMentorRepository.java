@@ -13,6 +13,7 @@ import com.wcc.platform.repository.postgres.component.MentorMapper;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -95,7 +96,7 @@ public class PostgresMentorRepository implements MentorRepository {
           }
           return Optional.empty();
         },
-        email);
+        email.toLowerCase(Locale.ENGLISH));
   }
 
   @Override
@@ -113,7 +114,7 @@ public class PostgresMentorRepository implements MentorRepository {
           }
           return null;
         },
-        email);
+        email.toLowerCase(Locale.ENGLISH));
   }
 
   @Override
