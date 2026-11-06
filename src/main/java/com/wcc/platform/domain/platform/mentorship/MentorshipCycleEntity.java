@@ -1,6 +1,10 @@
 package com.wcc.platform.domain.platform.mentorship;
 
 import com.wcc.platform.domain.cms.pages.mentorship.MentorsPage;
+import com.wcc.platform.validation.ValidMentorshipCycleMonth;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -16,14 +20,22 @@ import lombok.Data;
 @Builder
 public class MentorshipCycleEntity {
   private Long cycleId;
+  @NotNull @FutureOrPresent
   private Year cycleYear;
+  @NotNull
   private MentorshipType mentorshipType;
+  @NotNull @ValidMentorshipCycleMonth
   private Month cycleMonth;
+  @NotNull @FutureOrPresent
   private LocalDate registrationStartDate;
+  @NotNull @FutureOrPresent
   private LocalDate registrationEndDate;
+  @NotNull @FutureOrPresent
   private LocalDate cycleStartDate;
+  @FutureOrPresent
   private LocalDate cycleEndDate;
   private CycleStatus status;
+  @Min(1)
   private Integer maxMenteesPerMentor;
   private String description;
   private ZonedDateTime createdAt;

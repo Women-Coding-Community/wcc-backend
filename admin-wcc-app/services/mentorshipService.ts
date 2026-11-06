@@ -4,6 +4,7 @@ import {
   MenteeApplicationItem,
   MentorshipCycle,
   MentorshipRecommendationResponse,
+  NewCycleRequest,
 } from '@/types/mentorship';
 
 const MENTORSHIP_ADMIN_PATH = '/api/platform/v1/admin/mentorship';
@@ -50,6 +51,17 @@ export async function createManualMatch(
 
 export async function getCycles(year: number, token: string): Promise<MentorshipCycle[]> {
   return apiFetch<MentorshipCycle[]>(`${MENTORSHIP_ADMIN_PATH}/cycles/all?year=${year}`, { token });
+}
+
+export async function createCycle(
+  request: NewCycleRequest,
+  token: string
+): Promise<MentorshipCycle> {
+  return apiFetch<MentorshipCycle>(`${MENTORSHIP_ADMIN_PATH}/cycles`, {
+    method: 'POST',
+    body: request,
+    token,
+  });
 }
 
 export async function updateCycleStatus(

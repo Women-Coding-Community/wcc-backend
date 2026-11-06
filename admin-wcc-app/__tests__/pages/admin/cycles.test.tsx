@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CyclesPage from '@/pages/admin/mentorship/cycles';
 import * as AuthProvider from '@/components/AuthProvider';
@@ -15,6 +15,7 @@ jest.mock('@/lib/auth');
 const mockUseAuth = AuthProvider.useAuth as jest.Mock;
 const mockGetCycles = mentorshipService.getCycles as jest.Mock;
 const mockUpdateCycleStatus = mentorshipService.updateCycleStatus as jest.Mock;
+const mockCreateCycle = mentorshipService.createCycle as jest.Mock;
 const mockGetStoredToken = auth.getStoredToken as jest.Mock;
 const mockIsTokenExpired = auth.isTokenExpired as jest.Mock;
 
@@ -186,6 +187,56 @@ describe('CyclesPage', () => {
           screen.getByText("Invalid status transition from 'DRAFT' to 'COMPLETED'")
         ).toBeInTheDocument();
       });
+    });
+
+    it('when New cycle is clicked, then the new cycle form opens', async () => {
+      const user = userEvent.setup();
+      setupAuth(['ADMIN']);
+
+      render(<CyclesPage />);
+
+      await screen.findByText('March 2026');
+      await user.click(screen.getByRole('button', { name: 'New cycle' }));
+
+      const dialog = await screen.findByRole('dialog');
+      expect(within(dialog).getByRole('button', { name: 'Create cycle' })).toBeInTheDocument();
+    });
+
+    it('when a cycle is created, then the list reloads with a success message', async () => {
+      const user = userEvent.setup();
+      setupAuth(['ADMIN']);
+      const newCycle = { ...adHocCycle, cycleId: 3, cycleMonth: 'JUNE' };
+      mockCreateCycle.mockResolvedValue(newCycle);
+
+      render(<CyclesPage />);
+
+      await screen.findByText('March 2026');
+      mockGetCycles.mockResolvedValue([longTermCycle, adHocCycle, newCycle]);
+      await user.click(screen.getByRole('button', { name: 'New cycle' }));
+      const dialog = await screen.findByRole('dialog');
+      await user.click(within(dialog).getByRole('combobox', { name: /month/i }));
+      await user.click(screen.getByRole('option', { name: 'June' }));
+      await user.click(within(dialog).getByRole('combobox', { name: /type/i }));
+      await user.click(screen.getByRole('option', { name: 'Ad Hoc' }));
+      fireEvent.change(within(dialog).getByLabelText(/registration start/i), {
+        target: { value: '2099-06-01' },
+      });
+      fireEvent.change(within(dialog).getByLabelText(/registration end/i), {
+        target: { value: '2099-06-10' },
+      });
+      fireEvent.change(within(dialog).getByLabelText(/cycle start/i), {
+        target: { value: '2099-06-15' },
+      });
+      await user.click(within(dialog).getByRole('button', { name: 'Create cycle' }));
+
+      expect(
+        await screen.findByText('June 2026 · Ad-Hoc was created as DRAFT.')
+      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+      expect(mockGetCycles).toHaveBeenCalledTimes(2);
+      expect(screen.getByText('June 2026').closest('tr')).toHaveClass('Mui-selected');
     });
 
     it('when API fails on load, then error message is displayed', async () => {

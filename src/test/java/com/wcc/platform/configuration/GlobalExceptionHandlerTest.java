@@ -16,6 +16,7 @@ import com.wcc.platform.domain.exceptions.ForbiddenException;
 import com.wcc.platform.domain.exceptions.InvalidMentorshipTypeException;
 import com.wcc.platform.domain.platform.mentorship.TechnicalAreaProficiency;
 import java.util.List;
+import java.time.Month;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -171,6 +172,32 @@ class GlobalExceptionHandlerTest {
         globalExceptionHandler.handleHttpMessageNotReadableException(exception, webRequest);
 
     var expectation = new ErrorDetails(BAD_REQUEST.value(), cause.getMessage(), DETAILS);
+    assertEquals(BAD_REQUEST, response.getStatusCode());
+    assertEquals(expectation, response.getBody());
+  }
+
+  @Test
+  @DisplayName(
+      "Given malformed JSON with invalid mentorship cycle month, "
+          + "when handling, then return the cycle month validation message")
+  void shouldReturnCycleMonthValidationMessageForInvalidMonth() {
+    record CycleRequest(Month cycleMonth) {}
+
+    var invalidJson = "{\"cycleMonth\":\"JANUAR\"}";
+    var cause =
+        assertThrows(
+            InvalidFormatException.class,
+            () -> new ObjectMapper().readValue(invalidJson, CycleRequest.class));
+    var exception =
+        new HttpMessageNotReadableException(
+            "JSON parse error", cause, new MockHttpInputMessage(invalidJson.getBytes()));
+
+    var response =
+        globalExceptionHandler.handleHttpMessageNotReadableException(exception, webRequest);
+
+    var expectation =
+        new ErrorDetails(
+            BAD_REQUEST.value(), "Cycle month must be between February and November", DETAILS);
     assertEquals(BAD_REQUEST, response.getStatusCode());
     assertEquals(expectation, response.getBody());
   }
