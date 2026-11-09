@@ -99,7 +99,6 @@ tasks {
             xml.required.set(true)  // Enable XML report for SonarQube
             html.required.set(true) // Keep HTML for local viewing
             csv.required.set(false) // Disable CSV to reduce clutter
-            html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/integration"))
         }
     }
 
@@ -133,6 +132,7 @@ tasks {
     }
 
     jacocoTestCoverageVerification {
+        dependsOn("jacocoTestReport", "jacocoIntegrationReport")
         executionData(
             fileTree(layout.buildDirectory.asFile.get()).include(
                 "jacoco/test.exec",
@@ -270,4 +270,3 @@ tasks.register("pmdAll") {
     description = "Runs all PMD checks (main, test, testInt)."
     dependsOn("pmdMain", "pmdTest", "pmdTestInt")
 }
-
