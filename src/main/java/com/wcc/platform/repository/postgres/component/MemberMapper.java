@@ -103,7 +103,7 @@ public class MemberMapper {
     final int defaultStatusPending = 1;
     jdbc.update(
         INSERT,
-        member.getFullName(),
+        StringUtils.trim(member.getFullName()),
         member.getSlackDisplayName(),
         member.getPosition(),
         member.getCompanyName(),
@@ -153,7 +153,7 @@ public class MemberMapper {
   public void updateMember(final Member member, final Long memberId) {
     jdbc.update(
         UPDATE_SQL,
-        member.getFullName(),
+        StringUtils.trim(member.getFullName()),
         member.getSlackDisplayName(),
         member.getPosition(),
         member.getCompanyName(),
