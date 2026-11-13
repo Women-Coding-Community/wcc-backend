@@ -33,9 +33,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -51,8 +51,8 @@ class MentorControllerTest {
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired private MockMvc mockMvc;
-  @MockBean private MentorshipService mentorshipService;
-  @MockBean private AuthService authService;
+  @MockitoBean private MentorshipService mentorshipService;
+  @MockitoBean private AuthService authService;
 
   @Test
   @DisplayName("Given mentors exist, when getting all mentors, then return 200 OK")
