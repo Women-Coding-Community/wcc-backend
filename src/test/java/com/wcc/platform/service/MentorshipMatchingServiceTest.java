@@ -3,6 +3,7 @@ package com.wcc.platform.service;
 import static com.wcc.platform.utils.MenteeApplicationTestBuilder.baseBuilder;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +32,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.mockito.ArgumentCaptor;
 
 @ExtendWith(MockitoExtension.class)
 class MentorshipMatchingServiceTest {
@@ -204,5 +208,38 @@ class MentorshipMatchingServiceTest {
     assertThatThrownBy(() -> service.confirmMatch(APPLICATION_ID))
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("MENTOR_ACCEPTED");
+  }
+
+  @Test
+  @DisplayName("Should save completion notes when completing a match")
+  void shouldSaveCompletionNotesWhenCompletingMatch() {
+    String notes = "All planned sessions completed";
+
+    MentorshipMatch activeMatch = MentorshipMatch.builder()
+        .matchId(MATCH_ID)
+        .mentorId(MENTOR_ID)
+        .menteeId(MENTEE_ID)
+        .cycleId(CYCLE_ID)
+        .applicationId(APPLICATION_ID)
+        .status(MatchStatus.ACTIVE)
+        .startDate(FIXED_DATE)
+        .totalSessions(5)
+        .build();
+
+    when(matchRepository.findById(MATCH_ID))
+        .thenReturn(Optional.of(activeMatch));
+
+    service.completeMatch(MATCH_ID, notes);
+
+    ArgumentCaptor<MentorshipMatch> captor =
+        ArgumentCaptor.forClass(MentorshipMatch.class);
+
+    verify(matchRepository).update(eq(MATCH_ID), captor.capture());
+
+    MentorshipMatch savedMatch = captor.getValue();
+
+    assertEquals(MatchStatus.COMPLETED, savedMatch.getStatus());
+    assertEquals(notes, savedMatch.getCompletionNotes());
+    assertNotNull(savedMatch.getEndDate());
   }
 }
