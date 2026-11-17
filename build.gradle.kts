@@ -63,6 +63,7 @@ dependencies {
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("org.flywaydb:flyway-core")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("com.h2database:h2:2.2.224")
 
     // Google Drive API
