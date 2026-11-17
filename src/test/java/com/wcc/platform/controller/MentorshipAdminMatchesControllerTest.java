@@ -1,20 +1,28 @@
 package com.wcc.platform.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.wcc.platform.factories.MockMvcRequestFactory.getRequest;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.wcc.platform.configuration.SecurityConfig;
 import com.wcc.platform.configuration.TestConfig;
+import com.wcc.platform.configuration.security.RequiresRole;
+import com.wcc.platform.domain.platform.mentorship.CycleStatus;
+import com.wcc.platform.domain.platform.mentorship.MentorshipCycleCreateRequest;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
+import com.wcc.platform.domain.platform.mentorship.MentorshipType;
+import com.wcc.platform.domain.platform.type.RoleType;
 import com.wcc.platform.repository.MentorshipCycleRepository;
 import com.wcc.platform.service.AuthService;
 import com.wcc.platform.service.MenteeWorkflowService;
 import com.wcc.platform.service.MentorshipCycleService;
 import com.wcc.platform.service.MentorshipMatchingService;
 import com.wcc.platform.service.MentorshipRecommendationService;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -72,6 +80,48 @@ class MentorshipAdminMatchesControllerTest {
     mockMvc
         .perform(getRequest(API_ALL_CYCLES).param("year", "abc"))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("Given valid cycle request, when creating cycle, then return created cycle")
+  void shouldCreateCycleAndDelegateToService() throws NoSuchMethodException {
+    final MentorshipCycleCreateRequest request = request();
+    final MentorshipCycleEntity created =
+        MentorshipCycleEntity.builder().cycleId(9L).status(CycleStatus.DRAFT).build();
+    when(cycleService.createCycle(request)).thenReturn(created);
+
+    final var controller =
+        new MentorshipAdminMatchesController(
+            matchingService,
+            cycleRepository,
+            recommendationService,
+            workflowService,
+            cycleService);
+    final var response = controller.createCycle(request);
+
+    assertThat(response.getStatusCode().value()).isEqualTo(201);
+    assertThat(response.getBody()).isSameAs(created);
+    verify(cycleService).createCycle(request);
+
+    final var method =
+        MentorshipAdminMatchesController.class.getDeclaredMethod(
+            "createCycle", MentorshipCycleCreateRequest.class);
+    final var annotation = method.getAnnotation(RequiresRole.class);
+    assertThat(annotation).isNotNull();
+    assertThat(annotation.value()).containsExactly(RoleType.ADMIN, RoleType.MENTORSHIP_ADMIN);
+  }
+
+  private MentorshipCycleCreateRequest request() {
+    return new MentorshipCycleCreateRequest(
+        Year.of(2026),
+        java.time.Month.OCTOBER,
+        MentorshipType.AD_HOC,
+        LocalDate.of(2026, 10, 1),
+        LocalDate.of(2026, 10, 15),
+        LocalDate.of(2026, 10, 20),
+        LocalDate.of(2026, 11, 20),
+        5,
+        "October cycle");
   }
 
   private MentorshipCycleEntity cycleInYear(final Long cycleId, final int year) {

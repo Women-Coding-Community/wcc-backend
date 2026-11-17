@@ -54,7 +54,7 @@ class PostgresMenteeApplicationRepositoryIntegrationTest extends DefaultDatabase
             MentorshipCycleEntity.builder()
                 .cycleYear(Year.of(2026))
                 .mentorshipType(MentorshipType.LONG_TERM)
-                .cycleMonth(Month.JANUARY)
+                .cycleMonth(Month.FEBRUARY)
                 .registrationStartDate(LocalDate.now().minusDays(1))
                 .registrationEndDate(LocalDate.now().plusDays(10))
                 .cycleStartDate(LocalDate.now().plusDays(15))
