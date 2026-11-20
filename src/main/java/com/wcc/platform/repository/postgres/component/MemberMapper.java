@@ -157,7 +157,7 @@ public class MemberMapper {
         member.getSlackDisplayName(),
         member.getPosition(),
         member.getCompanyName(),
-        member.getEmail(),
+        member.getEmail().toLowerCase(Locale.ENGLISH),
         member.getCity(),
         getCountryId(member.getCountry()),
         member.getPronouns(),

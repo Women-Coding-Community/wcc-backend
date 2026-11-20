@@ -1,6 +1,7 @@
 package com.wcc.platform.repository.postgres;
 
 import static com.wcc.platform.factories.SetupMentorFactories.createMentorTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,6 +26,7 @@ import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -91,6 +93,51 @@ class PostgresMentorRepositoryTest {
     Long mentorId = repository.findIdByEmail(email);
 
     assertEquals(expectedId, mentorId);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a mixed-case email, when finding a mentor by email, then the lowercased email is"
+          + " used for the lookup")
+  void shouldLowercaseEmailWhenFindingMentorByEmail() throws Exception {
+    String mixedCaseEmail = "A@B.COM";
+    Mentor mapped = mock(Mentor.class);
+    when(mentorMapper.mapRowToMentor(any(ResultSet.class))).thenReturn(mapped);
+    when(jdbc.query(anyString(), any(ResultSetExtractor.class), eq("a@b.com")))
+        .thenAnswer(
+            invocation -> {
+              ResultSetExtractor<?> extractor = invocation.getArgument(1);
+              ResultSet resultSet = mock(ResultSet.class);
+              when(resultSet.next()).thenReturn(true);
+              return extractor.extractData(resultSet);
+            });
+
+    Optional<Mentor> opt = repository.findByEmail(mixedCaseEmail);
+
+    assertThat(opt).contains(mapped);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a mixed-case email, when finding a mentor id by email, then the lowercased email is"
+          + " used for the lookup")
+  void shouldLowercaseEmailWhenFindingMentorIdByEmail() {
+    String mixedCaseEmail = "X@Y.COM";
+    long expectedId = 42L;
+
+    when(jdbc.query(anyString(), any(ResultSetExtractor.class), eq("x@y.com")))
+        .thenAnswer(
+            invocation -> {
+              ResultSetExtractor<?> extractor = invocation.getArgument(1);
+              ResultSet resultSet = mock(ResultSet.class);
+              when(resultSet.next()).thenReturn(true);
+              when(resultSet.getLong("mentor_id")).thenReturn(expectedId);
+              return extractor.extractData(resultSet);
+            });
+
+    Long mentorId = repository.findIdByEmail(mixedCaseEmail);
+
+    assertThat(mentorId).isEqualTo(expectedId);
   }
 
   @Test
