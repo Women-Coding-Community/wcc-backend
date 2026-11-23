@@ -27,6 +27,7 @@ import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupPagesFactories;
 import com.wcc.platform.service.CmsAboutUsService;
 import com.wcc.platform.utils.FileUtil;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -233,6 +234,61 @@ class AboutControllerTest {
         .andExpect(jsonPath("$.id", is("page:COLLABORATORS")))
         .andExpect(jsonPath("$.heroSection.title", is("WCC Collaborators")))
         .andExpect(jsonPath("$.collaborators.length()", is(1)));
+  }
+
+  @Test
+  @DisplayName(
+      "Given currentPage equals zero, when requesting collaborators, "
+          + "then it should be rejected as Not Acceptable")
+  void shouldRejectCollaboratorCurrentPageLowerThanOne() throws Exception {
+    mockMvc
+        .perform(
+            getRequest(API_COLLABORATORS + "?currentPage=0&pageSize=10")
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isNotAcceptable())
+        .andExpect(jsonPath("$.status", is(406)))
+        .andExpect(
+            jsonPath(
+                "$.message",
+                is("getCollaboratorPage.currentPage: Current page must be greater than zero")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
+  }
+
+  @Test
+  @DisplayName(
+      "Given pageSize equals zero, when requesting collaborators, "
+          + "then it should be rejected as Not Acceptable")
+  void shouldRejectCollaboratorPageSizeLowerThanOne() throws Exception {
+    mockMvc
+        .perform(
+            getRequest(API_COLLABORATORS + "?currentPage=1&pageSize=0")
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isNotAcceptable())
+        .andExpect(jsonPath("$.status", is(406)))
+        .andExpect(
+            jsonPath(
+                "$.message",
+                is("getCollaboratorPage.pageSize: Page size must be greater than zero")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
+  }
+
+  @Test
+  @DisplayName(
+      "Given the requested page exceeds the total pages, when requesting collaborators, "
+          + "then it should return Bad Request instead of Internal Server Error")
+  void shouldReturnBadRequestWhenCollaboratorPageExceedsTotalPages() throws Exception {
+    var message = "currentPage exceeds total pages. Total Pages: 1, Current Page: 2";
+    when(service.getCollaborator(DEFAULT_CURRENT_PAGE + 1, DEFAULT_PAGE_SIZE))
+        .thenThrow(new IllegalArgumentException(message));
+
+    mockMvc
+        .perform(
+            getRequest(API_COLLABORATORS + "?currentPage=2&pageSize=10")
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status", is(400)))
+        .andExpect(jsonPath("$.message", is(message)))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/collaborators")));
   }
 
   @Test

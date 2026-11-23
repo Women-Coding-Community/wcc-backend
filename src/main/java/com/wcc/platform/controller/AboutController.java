@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/cms/v1/")
 @SecurityRequirement(name = "apiKey")
 @Tag(name = "Pages: About Us", description = "All APIs under session About-Us")
+@Validated
 public class AboutController {
 
   private final CmsAboutUsService cmsService;
@@ -55,7 +57,9 @@ public class AboutController {
   @Operation(summary = "API to retrieve information about collaborators")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<CollaboratorPage> getCollaboratorPage(
-      @RequestParam(defaultValue = "1") final int currentPage,
+      @Min(value = 1, message = "Current page must be greater than zero")
+          @RequestParam(defaultValue = "1")
+          final int currentPage,
       @Min(value = 1, message = "Page size must be greater than zero")
           @RequestParam(defaultValue = "10")
           final int pageSize) {

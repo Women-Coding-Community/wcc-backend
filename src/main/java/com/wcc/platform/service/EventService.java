@@ -36,32 +36,32 @@ public class EventService {
   public EventsPage getEvents(final int currentPage, final int pageSize) {
     final var pageOptional = pageRepository.findById(EVENTS.getId());
     if (pageOptional.isPresent()) {
+      final EventsPage page;
       try {
-        final var page = objectMapper.convertValue(pageOptional.get(), EventsPage.class);
-        final var allEvents = page.data().items();
-
-        final List<Event> paginatedEvents =
-            PaginationUtil.getPaginatedResult(allEvents, currentPage, pageSize);
-
-        final Pagination paginationRecord =
-            new Pagination(
-                allEvents.size(),
-                PaginationUtil.getTotalPages(allEvents, pageSize),
-                currentPage,
-                pageSize);
-        final PageData<Event> eventPageData = new PageData<>(paginatedEvents);
-
-        return new EventsPage(
-            EVENTS.getId(),
-            new PageMetadata(paginationRecord),
-            page.heroSection(),
-            page.section(),
-            page.contact(),
-            eventPageData);
-
+        page = objectMapper.convertValue(pageOptional.get(), EventsPage.class);
       } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
+
+      final var allEvents = page.data().items();
+      final List<Event> paginatedEvents =
+          PaginationUtil.getPaginatedResult(allEvents, currentPage, pageSize);
+
+      final Pagination paginationRecord =
+          new Pagination(
+              allEvents.size(),
+              PaginationUtil.getTotalPages(allEvents, pageSize),
+              currentPage,
+              pageSize);
+      final PageData<Event> eventPageData = new PageData<>(paginatedEvents);
+
+      return new EventsPage(
+          EVENTS.getId(),
+          new PageMetadata(paginationRecord),
+          page.heroSection(),
+          page.section(),
+          page.contact(),
+          eventPageData);
     }
     return pageRepository.getFallback(EVENTS, EventsPage.class, objectMapper);
   }

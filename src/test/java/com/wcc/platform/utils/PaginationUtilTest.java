@@ -1,10 +1,12 @@
 package com.wcc.platform.utils;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class PaginationUtilTest {
@@ -47,5 +49,25 @@ class PaginationUtilTest {
             IllegalArgumentException.class, () -> PaginationUtil.getPaginatedResult(items, 4, 2));
     assertEquals(
         "currentPage exceeds total pages. Total Pages: 3, Current Page: 4", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName(
+      "Given an empty item list, when paginating, "
+          + "then it should throw IllegalArgumentException")
+  void shouldThrowIllegalArgumentExceptionForEmptyItemList() {
+    assertThatThrownBy(() -> PaginationUtil.getPaginatedResult(List.of(), 1, 10))
+        .isExactlyInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Items list cannot be null or empty.");
+  }
+
+  @Test
+  @DisplayName(
+      "Given currentPage lower than one, when paginating, "
+          + "then it should throw IllegalArgumentException")
+  void shouldThrowIllegalArgumentExceptionForCurrentPageLowerThanOne() {
+    assertThatThrownBy(() -> PaginationUtil.getPaginatedResult(items, 0, 2))
+        .isExactlyInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("currentPage exceeds total pages");
   }
 }
