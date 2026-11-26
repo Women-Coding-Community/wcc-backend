@@ -11,8 +11,6 @@ import com.wcc.platform.domain.exceptions.InvalidCycleStatusTransitionException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.repository.MentorshipCycleRepository;
-import java.time.Year;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,10 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class MentorshipCycleServiceTest {
+class MentorshipCycleStatusTest {
 
   @Mock private MentorshipCycleRepository cycleRepository;
-
   private MentorshipCycleService cycleService;
 
   @BeforeEach
@@ -53,7 +50,7 @@ class MentorshipCycleServiceTest {
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
     when(cycleRepository.updateStatus(1L, CycleStatus.OPEN)).thenReturn(updated);
 
-    final MentorshipCycleEntity result = cycleService.updateStatus(1L, CycleStatus.OPEN);
+    final var result = cycleService.updateStatus(1L, CycleStatus.OPEN);
 
     assertThat(result.getStatus()).isEqualTo(CycleStatus.OPEN);
     verify(cycleRepository).updateStatus(1L, CycleStatus.OPEN);
@@ -67,7 +64,7 @@ class MentorshipCycleServiceTest {
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
     when(cycleRepository.updateStatus(1L, CycleStatus.CANCELLED)).thenReturn(updated);
 
-    final MentorshipCycleEntity result = cycleService.updateStatus(1L, CycleStatus.CANCELLED);
+    final var result = cycleService.updateStatus(1L, CycleStatus.CANCELLED);
 
     assertThat(result.getStatus()).isEqualTo(CycleStatus.CANCELLED);
   }
@@ -80,7 +77,7 @@ class MentorshipCycleServiceTest {
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
     when(cycleRepository.updateStatus(1L, CycleStatus.CLOSED)).thenReturn(updated);
 
-    final MentorshipCycleEntity result = cycleService.updateStatus(1L, CycleStatus.CLOSED);
+    final var result = cycleService.updateStatus(1L, CycleStatus.CLOSED);
 
     assertThat(result.getStatus()).isEqualTo(CycleStatus.CLOSED);
   }
@@ -94,7 +91,7 @@ class MentorshipCycleServiceTest {
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
     when(cycleRepository.updateStatus(1L, CycleStatus.IN_PROGRESS)).thenReturn(updated);
 
-    final MentorshipCycleEntity result = cycleService.updateStatus(1L, CycleStatus.IN_PROGRESS);
+    final var result = cycleService.updateStatus(1L, CycleStatus.IN_PROGRESS);
 
     assertThat(result.getStatus()).isEqualTo(CycleStatus.IN_PROGRESS);
   }
@@ -108,14 +105,15 @@ class MentorshipCycleServiceTest {
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
     when(cycleRepository.updateStatus(1L, CycleStatus.COMPLETED)).thenReturn(updated);
 
-    final MentorshipCycleEntity result = cycleService.updateStatus(1L, CycleStatus.COMPLETED);
+    final var result = cycleService.updateStatus(1L, CycleStatus.COMPLETED);
 
     assertThat(result.getStatus()).isEqualTo(CycleStatus.COMPLETED);
   }
 
   @Test
   @DisplayName(
-      "Given cycle in DRAFT status, when transitioning to IN_PROGRESS, then throw InvalidCycleStatusTransitionException")
+      "Given cycle in DRAFT status, when transitioning to IN_PROGRESS, then throw "
+          + "InvalidCycleStatusTransitionException")
   void shouldRejectDraftToInProgress() {
     final var cycle = cycleWithStatus(1L, CycleStatus.DRAFT);
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
@@ -130,7 +128,8 @@ class MentorshipCycleServiceTest {
 
   @Test
   @DisplayName(
-      "Given cycle in OPEN status, when transitioning to DRAFT, then throw InvalidCycleStatusTransitionException")
+      "Given cycle in OPEN status, when transitioning to DRAFT, then throw "
+          + "InvalidCycleStatusTransitionException")
   void shouldRejectOpenToDraft() {
     final var cycle = cycleWithStatus(1L, CycleStatus.OPEN);
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
@@ -143,7 +142,8 @@ class MentorshipCycleServiceTest {
 
   @Test
   @DisplayName(
-      "Given cycle in COMPLETED status, when transitioning to any status, then throw InvalidCycleStatusTransitionException")
+      "Given cycle in COMPLETED status, when transitioning to any status, then throw "
+          + "InvalidCycleStatusTransitionException")
   void shouldRejectAnyTransitionFromCompleted() {
     final var cycle = cycleWithStatus(1L, CycleStatus.COMPLETED);
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
@@ -155,7 +155,8 @@ class MentorshipCycleServiceTest {
 
   @Test
   @DisplayName(
-      "Given cycle in CANCELLED status, when transitioning to any status, then throw InvalidCycleStatusTransitionException")
+      "Given cycle in CANCELLED status, when transitioning to any status, then throw "
+          + "InvalidCycleStatusTransitionException")
   void shouldRejectAnyTransitionFromCancelled() {
     final var cycle = cycleWithStatus(1L, CycleStatus.CANCELLED);
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
@@ -167,7 +168,8 @@ class MentorshipCycleServiceTest {
 
   @Test
   @DisplayName(
-      "Given cycle in OPEN status, when transitioning to same OPEN status, then throw InvalidCycleStatusTransitionException")
+      "Given cycle in OPEN status, when transitioning to same OPEN status, then throw "
+          + "InvalidCycleStatusTransitionException")
   void shouldRejectSameStatusTransition() {
     final var cycle = cycleWithStatus(1L, CycleStatus.OPEN);
     when(cycleRepository.findById(1L)).thenReturn(Optional.of(cycle));
@@ -177,43 +179,7 @@ class MentorshipCycleServiceTest {
         .hasMessageContaining("OPEN");
   }
 
-  @Test
-  @DisplayName("Given no year, when getting cycles, then return all cycles")
-  void shouldReturnAllCyclesWhenNoYear() {
-    final var cycles = List.of(cycleInYear(1L, 2025), cycleInYear(2L, 2026));
-    when(cycleRepository.getAll()).thenReturn(cycles);
-
-    final List<MentorshipCycleEntity> result = cycleService.getCycles(null);
-
-    assertThat(result).isEqualTo(cycles);
-  }
-
-  @Test
-  @DisplayName("Given a year, when getting cycles, then return only cycles in that year")
-  void shouldReturnCyclesForYear() {
-    final var cycles = List.of(cycleInYear(2L, 2026));
-    when(cycleRepository.findByYear(2026)).thenReturn(cycles);
-
-    final List<MentorshipCycleEntity> result = cycleService.getCycles(Year.of(2026));
-
-    assertThat(result).isEqualTo(cycles);
-  }
-
-  @Test
-  @DisplayName("Given a year with no cycles, when getting cycles, then return an empty list")
-  void shouldReturnEmptyListForYearWithNoCycles() {
-    when(cycleRepository.findByYear(9999)).thenReturn(List.of());
-
-    final List<MentorshipCycleEntity> result = cycleService.getCycles(Year.of(9999));
-
-    assertThat(result).isEmpty();
-  }
-
   private MentorshipCycleEntity cycleWithStatus(final Long cycleId, final CycleStatus status) {
     return MentorshipCycleEntity.builder().cycleId(cycleId).status(status).build();
-  }
-
-  private MentorshipCycleEntity cycleInYear(final Long cycleId, final int year) {
-    return MentorshipCycleEntity.builder().cycleId(cycleId).cycleYear(Year.of(year)).build();
   }
 }

@@ -1,5 +1,6 @@
 package com.wcc.platform.repository.postgres.mentorship;
 
+import com.wcc.platform.domain.exceptions.DuplicatedException;
 import com.wcc.platform.domain.platform.mentorship.CycleStatus;
 import com.wcc.platform.domain.platform.mentorship.MentorshipCycleEntity;
 import com.wcc.platform.domain.platform.mentorship.MentorshipType;
@@ -66,13 +67,25 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
           + "description = ?, updated_at = CURRENT_TIMESTAMP "
           + "WHERE cycle_id = ?";
 
+  private static final String SELECT_CYCLE_BY_KEY =
+      "SELECT * FROM mentorship_cycles "
+          + "WHERE cycle_year = ? AND mentorship_type = ? AND cycle_month = ?";
+
   private final JdbcTemplate jdbc;
 
   @Override
   public MentorshipCycleEntity create(final MentorshipCycleEntity entity) {
-    final var existing = findByYearAndType(entity.getCycleYear(), entity.getMentorshipType());
+    final var existing =
+        findByYearAndTypeAndMonth(
+            entity.getCycleYear(), entity.getMentorshipType(), entity.getCycleMonth());
+
     if (existing.isPresent()) {
-      return update(existing.get().getCycleId(), entity);
+      throw new DuplicatedException(
+          "Mentorship cycle already exists for year %d, type %s and month %s"
+              .formatted(
+                  entity.getCycleYear().getValue(),
+                  entity.getMentorshipType().name(),
+                  entity.getCycleMonth().name()));
     }
 
     final Long generatedId =
@@ -200,5 +213,16 @@ public class PostgresMentorshipCycleRepository implements MentorshipCycleReposit
         .createdAt(rs.getTimestamp("created_at").toInstant().atZone(ZoneId.systemDefault()))
         .updatedAt(rs.getTimestamp("updated_at").toInstant().atZone(ZoneId.systemDefault()))
         .build();
+  }
+
+  @Override
+  public Optional<MentorshipCycleEntity> findByYearAndTypeAndMonth(
+      final Year year, final MentorshipType type, final Month month) {
+    return jdbc.query(
+        SELECT_CYCLE_BY_KEY,
+        rs -> rs.next() ? Optional.of(mapRow(rs)) : Optional.empty(),
+        year.getValue(),
+        type.getMentorshipTypeId(),
+        month.getValue());
   }
 }
