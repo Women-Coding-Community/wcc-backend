@@ -17,14 +17,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @WebMvcTest(ApiKeyFilter.class)
 class ApiKeyFilterTest {
 
-  @MockBean private FilterChain filterChain;
+  @MockitoBean private FilterChain filterChain;
 
   @Test
   void shouldAllowRequestWhenSecurityDisabled() throws Exception {
