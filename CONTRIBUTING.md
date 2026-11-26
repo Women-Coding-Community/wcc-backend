@@ -89,10 +89,13 @@ git commit
 git push origin YourBranchName
 ```
 
-**9.** Create
-a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)!
+**9.** Test your changes locally before creating a pull request. Make sure the relevant tests pass and your changes work as expected.
 
-**10.** **Congratulations!** You've made your first contribution to [**Women Coding Community
+**10.** Create a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)! You can refer to this [sample pull request](https://github.com/Women-Coding-Community/wcc-backend/pull/770) for guidance.
+
+**11.** After raising your pull request, you can optionally add the `needs-qa` label.
+
+**12.** **Congratulations!** You've made your first contribution to [**Women Coding Community
 **](https://github.com/WomenCodingCommunity/wcc-backend)! 🙌🏼
 
 **_:trophy: After this, the maintainers will review the PR and will merge it if it helps move the
