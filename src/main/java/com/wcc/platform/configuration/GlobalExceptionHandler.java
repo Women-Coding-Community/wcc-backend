@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.wcc.platform.domain.exceptions.ApplicationMenteeWorkflowException;
 import com.wcc.platform.domain.exceptions.ApplicationNotFoundException;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.time.Month;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -218,6 +220,13 @@ public class GlobalExceptionHandler {
 
   private String extractReadableMessage(final HttpMessageNotReadableException ex) {
     final var cause = ex.getMostSpecificCause();
+
+    if (cause instanceof InvalidFormatException invalidFormat
+        && Month.class.equals(invalidFormat.getTargetType())
+        && invalidFormat.getPath().stream()
+            .anyMatch(reference -> "cycleMonth".equals(reference.getFieldName()))) {
+      return "Cycle month must be between February and November";
+    }
 
     if (cause instanceof UnrecognizedPropertyException unrecognizedProperty) {
       final var allowedFields =

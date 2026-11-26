@@ -1,4 +1,5 @@
 import {
+  createCycle,
   createManualMatch,
   getCycles,
   getMenteeApplications,
@@ -116,6 +117,31 @@ describe('mentorshipService', () => {
         { method: 'PATCH', token }
       );
       expect(result).toEqual(updatedCycle);
+    });
+  });
+
+  describe('createCycle', () => {
+    it('should send a POST request with the new cycle', async () => {
+      const request = {
+        cycleYear: 2026,
+        cycleMonth: 'OCTOBER',
+        mentorshipType: 'AD_HOC',
+        registrationStartDate: '2026-10-20',
+        registrationEndDate: '2026-10-25',
+        cycleStartDate: '2026-10-28',
+        maxMenteesPerMentor: 5,
+      };
+      const createdCycle = { cycleId: 9, cycleYear: 2026, status: 'DRAFT' };
+      (apiFetch as jest.Mock).mockResolvedValue(createdCycle);
+
+      const result = await createCycle(request, token);
+
+      expect(apiFetch).toHaveBeenCalledWith('/api/platform/v1/admin/mentorship/cycles', {
+        method: 'POST',
+        body: request,
+        token,
+      });
+      expect(result).toEqual(createdCycle);
     });
   });
 });

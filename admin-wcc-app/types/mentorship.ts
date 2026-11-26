@@ -81,3 +81,15 @@ export interface MentorshipCycle {
   cycleEndDate: string;
   status: CycleStatus;
 }
+
+export type NewCycleRequest = {
+  cycleYear: number;
+  cycleMonth: string;
+  mentorshipType: string;
+  registrationStartDate: string;
+  registrationEndDate: string;
+  cycleStartDate: string;
+  cycleEndDate?: string;
+  maxMenteesPerMentor: number;
+  description?: string;
+};
