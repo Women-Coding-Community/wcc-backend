@@ -20,6 +20,7 @@ import com.wcc.platform.factories.MockMvcRequestFactory;
 import com.wcc.platform.service.EventService;
 import com.wcc.platform.service.FilterService;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -93,6 +94,43 @@ class EventControllerTest {
         .andExpect(
             jsonPath(
                 "$.message", is("getEventsPage.pageSize: Page size must be greater than zero")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/events")));
+  }
+
+  @Test
+  @DisplayName(
+      "Given currentPage equals zero, when requesting events, "
+          + "then it should be rejected as Not Acceptable")
+  void shouldRejectCurrentPageLowerThanOne() throws Exception {
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/events?currentPage=0&pageSize=10")
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isNotAcceptable())
+        .andExpect(jsonPath("$.status", is(406)))
+        .andExpect(
+            jsonPath(
+                "$.message",
+                is("getEventsPage.currentPage: Current page must be greater than zero")))
+        .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/events")));
+  }
+
+  @Test
+  @DisplayName(
+      "Given the requested page exceeds the total pages, when requesting events, "
+          + "then it should return Bad Request instead of Internal Server Error")
+  void shouldReturnBadRequestWhenCurrentPageExceedsTotalPages() throws Exception {
+    var message = "currentPage exceeds total pages. Total Pages: 1, Current Page: 2";
+    when(eventService.getEvents(DEFAULT_CURRENT_PAGE + 1, DEFAULT_PAGE_SIZE))
+        .thenThrow(new IllegalArgumentException(message));
+
+    mockMvc
+        .perform(
+            MockMvcRequestFactory.getRequest("/api/cms/v1/events?currentPage=2&pageSize=10")
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status", is(400)))
+        .andExpect(jsonPath("$.message", is(message)))
         .andExpect(jsonPath("$.details", is("uri=/api/cms/v1/events")));
   }
 }

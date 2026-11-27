@@ -55,30 +55,31 @@ public class CmsAboutUsService {
     final var pageOptional = pageRepository.findById(PageType.COLLABORATOR.getId());
 
     if (pageOptional.isPresent()) {
+      final CollaboratorPage page;
       try {
-        final var page = objectMapper.convertValue(pageOptional.get(), CollaboratorPage.class);
-        final var allCollaborators = page.collaborators();
-        final var pagCollaborators =
-            PaginationUtil.getPaginatedResult(allCollaborators, currentPage, pageSize);
-
-        final Pagination paginationRecord =
-            new Pagination(
-                allCollaborators.size(),
-                PaginationUtil.getTotalPages(allCollaborators, pageSize),
-                currentPage,
-                pageSize);
-
-        return new CollaboratorPage(
-            PageType.COLLABORATOR.getId(),
-            new PageMetadata(paginationRecord),
-            page.heroSection(),
-            page.section(),
-            page.contact(),
-            pagCollaborators);
-
+        page = objectMapper.convertValue(pageOptional.get(), CollaboratorPage.class);
       } catch (IllegalArgumentException e) {
         throw new PlatformInternalException(e.getMessage(), e);
       }
+
+      final var allCollaborators = page.collaborators();
+      final var pagCollaborators =
+          PaginationUtil.getPaginatedResult(allCollaborators, currentPage, pageSize);
+
+      final Pagination paginationRecord =
+          new Pagination(
+              allCollaborators.size(),
+              PaginationUtil.getTotalPages(allCollaborators, pageSize),
+              currentPage,
+              pageSize);
+
+      return new CollaboratorPage(
+          PageType.COLLABORATOR.getId(),
+          new PageMetadata(paginationRecord),
+          page.heroSection(),
+          page.section(),
+          page.contact(),
+          pagCollaborators);
     }
 
     return pageRepository.getFallback(PageType.COLLABORATOR, CollaboratorPage.class, objectMapper);

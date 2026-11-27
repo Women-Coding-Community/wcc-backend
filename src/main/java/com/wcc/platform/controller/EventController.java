@@ -40,7 +40,9 @@ public class EventController {
   @Operation(summary = "API to retrieve information about events page")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<EventsPage> getEventsPage(
-      @RequestParam(defaultValue = "1") final int currentPage,
+      @Min(value = 1, message = "Current page must be greater than zero")
+          @RequestParam(defaultValue = "1")
+          final int currentPage,
       @Min(value = 1, message = "Page size must be greater than zero")
           @RequestParam(defaultValue = "10")
           final int pageSize) {

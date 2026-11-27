@@ -6,6 +6,7 @@ import static com.wcc.platform.factories.SetupPagesFactories.createCodeOfConduct
 import static com.wcc.platform.factories.SetupPagesFactories.createCollaboratorPageTest;
 import static com.wcc.platform.factories.SetupPagesFactories.createPartnersPageTest;
 import static com.wcc.platform.factories.SetupPagesFactories.createTeamPageTest;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,11 +20,13 @@ import com.wcc.platform.domain.cms.pages.aboutus.AboutUsPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CelebrateHerPage;
 import com.wcc.platform.domain.cms.pages.aboutus.CodeOfConductPage;
 import com.wcc.platform.domain.cms.pages.aboutus.PartnersPage;
+import com.wcc.platform.domain.exceptions.PlatformInternalException;
 import com.wcc.platform.factories.SetupPagesFactories;
 import com.wcc.platform.repository.PageRepository;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -92,6 +95,42 @@ class CmsServiceAboutUsTest {
     var response = service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE);
 
     assertEquals(collaboratorPage, response);
+  }
+
+  @Test
+  @DisplayName(
+      "Given a collaborator page with one collaborator, when requesting a page beyond the total, "
+          + "then it should throw IllegalArgumentException")
+  void shouldThrowIllegalArgumentExceptionWhenCollaboratorPageExceedsTotalPages() {
+    var collaboratorPage = createCollaboratorPageTest();
+    var mapPage = new ObjectMapper().convertValue(collaboratorPage, Map.class);
+
+    when(pageRepository.findById(PageType.COLLABORATOR.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(CollaboratorPage.class)))
+        .thenReturn(collaboratorPage);
+
+    assertThatThrownBy(
+            () -> service.getCollaborator(DEFAULT_CURRENT_PAGE + 1, DEFAULT_PAGE_SIZE))
+        .isExactlyInstanceOf(IllegalArgumentException.class)
+        .hasMessage(
+            "currentPage exceeds total pages. Total Pages: 1, Current Page: "
+                + (DEFAULT_CURRENT_PAGE + 1));
+  }
+
+  @Test
+  @DisplayName(
+      "Given a stored collaborator page that cannot be converted, when getting collaborators, "
+          + "then it should be reported as an internal error")
+  void shouldWrapCollaboratorConversionFailureInPlatformInternalException() {
+    var mapPage = Map.<String, Object>of("id", PageType.COLLABORATOR.getId());
+
+    when(pageRepository.findById(PageType.COLLABORATOR.getId())).thenReturn(Optional.of(mapPage));
+    when(objectMapper.convertValue(anyMap(), eq(CollaboratorPage.class)))
+        .thenThrow(new IllegalArgumentException("Invalid Json"));
+
+    assertThatThrownBy(() -> service.getCollaborator(DEFAULT_CURRENT_PAGE, DEFAULT_PAGE_SIZE))
+        .isExactlyInstanceOf(PlatformInternalException.class)
+        .hasMessage("Invalid Json");
   }
 
   @Test
