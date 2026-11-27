@@ -152,6 +152,7 @@ public class MentorshipMatchingService {
             .totalSessions(match.getTotalSessions())
             .createdAt(match.getCreatedAt())
             .updatedAt(ZonedDateTime.now())
+            .completionNotes(notes)
             .build();
 
     final MentorshipMatch result = matchRepository.update(matchId, updated);
@@ -203,6 +204,7 @@ public class MentorshipMatchingService {
             .cancelledAt(ZonedDateTime.now())
             .createdAt(match.getCreatedAt())
             .updatedAt(ZonedDateTime.now())
+            .completionNotes(match.getCompletionNotes())
             .build();
 
     final MentorshipMatch result = matchRepository.update(matchId, updated);
@@ -276,6 +278,7 @@ public class MentorshipMatchingService {
             .cancelledAt(match.getCancelledAt())
             .createdAt(match.getCreatedAt())
             .updatedAt(ZonedDateTime.now())
+            .completionNotes(match.getCompletionNotes())
             .build();
 
     return matchRepository.update(matchId, updated);
