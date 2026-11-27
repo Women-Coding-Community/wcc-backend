@@ -3,6 +3,7 @@ package com.wcc.platform.configuration;
 import static com.wcc.platform.factories.SetupUserAccountFactories.createAdminUserTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -89,7 +90,7 @@ class TokenAuthFilterTest {
 
     verify(authService, never()).authenticateByTokenWithMember(anyString());
     verify(filterChain).doFilter(request, response);
-    assert SecurityContextHolder.getContext().getAuthentication() == null;
+    assertNull(SecurityContextHolder.getContext().getAuthentication());
   }
 
   @Test
@@ -106,7 +107,7 @@ class TokenAuthFilterTest {
 
     verify(authService).authenticateByTokenWithMember(invalidToken);
     verify(filterChain).doFilter(request, response);
-    assert SecurityContextHolder.getContext().getAuthentication() == null;
+    assertNull(SecurityContextHolder.getContext().getAuthentication());
   }
 
   @Test
@@ -121,6 +122,6 @@ class TokenAuthFilterTest {
 
     verify(authService, never()).authenticateByTokenWithMember(anyString());
     verify(filterChain).doFilter(request, response);
-    assert SecurityContextHolder.getContext().getAuthentication() == null;
+    assertNull(SecurityContextHolder.getContext().getAuthentication());
   }
 }
